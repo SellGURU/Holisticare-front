@@ -1,16 +1,12 @@
-import { Route, Routes } from 'react-router-dom'
+import { RouterProvider } from 'react-router-dom'
 import './App.css'
-import { Home, Report } from './pages'
+import router from './router'
 
 function App() {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Home></Home>} />
-        <Route path="/report" element={<Report></Report>} />
-        {/* <Route path="*" element={<NotFound />} /> */}
-      </Routes>
+      <RouterProvider router={router} />
     </>
   )
 }
