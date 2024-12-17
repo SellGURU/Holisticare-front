@@ -124,7 +124,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
       },
       x: {
         ticks: {
-          color: "#FFFFFFDE", // Change the text color of x-axis labels
+          color: "#005F73", // Change the text color of x-axis labels
           font: {
             size: 10, // Change the font size of x-axis labels
           },

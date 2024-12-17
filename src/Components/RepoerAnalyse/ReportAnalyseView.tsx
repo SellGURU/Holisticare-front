@@ -204,10 +204,10 @@ useEffect(() => {
                         </div>
     
                     </div>
-                    <div className="my-10 text-light-primary-text dark:text-primary-text ">
+                    <div className="my-10  text-light-primary-text dark:text-primary-text ">
                         <div>
-                            <div id="Out of Reference" className=" text-[24px] font-medium">Needs Focus Biomarkers</div>
-                            <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-[12px]">{referenceData.total_biomarker_note}</div>
+                            <div id="Needs Focus Biomarkers" className=" text-Text-Primary TextStyle-Headline-4 ">Needs Focus Biomarkers</div>
+                            <div className=" text-Text-Secondary text-[12px]">{referenceData.total_biomarker_note}</div>
                         </div>   
                         <div className="w-full mt-4 grid gap-4 grid-cols-2">
                             {resolveBioMarkers().filter(val=>val.outofref== true).map((el) => {
@@ -220,9 +220,9 @@ useEffect(() => {
                         
                                 {/* <CustomCanvasChart></CustomCanvasChart> */}
                     </div>       
-                    <div className="my-10 ">
+                    <div className="my-10 hidden">
                         <div>
-                            <div id="Detailed analysis" className=" text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Detailed Analysis</div>
+                            <div id="Detailed Analysis" className=" text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Detailed Analysis</div>
                             <div className=" text-light-primary-text dark:text-[#FFFFFF99] text-[12px]">{referenceData.detailed_analysis_note}</div>
                         </div>  
     
@@ -235,7 +235,7 @@ useEffect(() => {
                         </div>
                     </div>     
     
-                    <div className="my-10 ">
+                    <div className="my-10 hidden">
                         <div className="w-full mb-3 flex items-center justify-between">
                             <div id="Treatment Plan" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Treatment Plan </div>
                             <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
@@ -285,7 +285,7 @@ useEffect(() => {
                         }
                     </div>    
                     
-                    <div className="my-10">
+                    <div className="my-10 hidden">
                         <div className="w-full mb-3 flex items-center justify-between">
                             <div id="Treatment Plan" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Action Plan</div>
                             <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
@@ -300,7 +300,7 @@ useEffect(() => {
                         }  
                     </div>
 
-                    <div className="my-10 ">
+                    <div className="my-10 hidden">
                         <div className="w-full mb-3 flex items-center justify-between">
                             <div id="Concerning Result" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Concerning Result</div>
                             <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">

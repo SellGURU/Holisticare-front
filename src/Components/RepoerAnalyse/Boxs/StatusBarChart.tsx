@@ -34,11 +34,11 @@ const StatusBarChart:React.FC<StatusBarChartProps> =(
                     left:data.values[0] / maxVal.value[1] * 100 + "%",
                   }}
                 >
-                  <div className="text-[10px] text-light-primary-text dark:text-[#FFFFFFDE] ]">
+                  <div className="text-[10px] text-Primary-DeepTeal">
                     {data.values[0]}
                   </div>
-                  <div className="w-[3px] h-[8px] ml-[2.5px] bg-black dark:bg-white"></div>
-                  <div className="w-2 h-2  rotate-45 bg-black dark:bg-white"></div>
+                  <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
+                  <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
                 </div>
                 {
                   sortKeysWithValues(data.chart_bounds).map((el,index:number) => {
@@ -56,12 +56,12 @@ const StatusBarChart:React.FC<StatusBarChartProps> =(
                       }}
                     >
                       {(index == 0 ) &&
-                        <div className="absolute left-[-4px] top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">
+                        <div className="absolute left-[-4px] top-3 text-[#005F73] text-[10px]">
                           {el.value[0]}
                         </div>
                       }
 
-                        <div style={{top:index %2 != 0?'-12px':'12px'}} className="absolute right-[-4px]  text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">
+                        <div style={{top:index %2 != 0?'-12px':'12px'}} className="absolute right-[-4px]  text-[#005F73] text-[10px]">
                           {el.value[1]}
                         </div>                      
                       </div>                      
