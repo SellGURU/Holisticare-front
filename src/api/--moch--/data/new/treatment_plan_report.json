@@ -1,0 +1,122 @@
+[
+    {
+        "category": "Diet",
+        "data": [
+            {
+                "Notes": "Your Aspartate Aminotransferase level is slightly elevated. Incorporate more liver-supporting foods like cruciferous vegetables and green tea to help improve liver function.",
+                "title": "Support Liver Health Through Diet",
+                "Based": "Based on your Aspartate Aminotransferase"
+            },
+            {
+                "Notes": "Your Aortic Pulse Pressure is healthy. Maintain a diet rich in healthy fats, like omega-3 fatty acids from fish or flaxseed, to support vascular health.",
+                "title": "Support Vascular Health with Healthy Fats",
+                "Based": "Based on your Aortic Pulse Pressure"
+            },
+            {
+                "Notes": "Your Calcium level is slightly lower than optimal. Increase your intake of calcium-rich foods like dairy, leafy greens, and fortified plant-based milk to support bone health.",
+                "title": "Increase Calcium Intake",
+                "Based": "Based on your Calcium"
+            },
+            {
+                "Notes": "Your blood glucose level is normal. Maintain a balanced diet with plenty of fiber, lean proteins, and healthy fats to help keep blood sugar levels stable.",
+                "title": "Maintain Healthy Blood Sugar Levels",
+                "Based": "Based on your Glucose"
+            },
+            {
+                "Notes": "Your HDL cholesterol is within a healthy range. Maintain a diet rich in healthy fats and fiber to continue supporting good cholesterol levels.",
+                "title": "Maintain Healthy HDL Cholesterol",
+                "Based": "Based on your HDL Cholesterol"
+            }
+        ]
+    },
+    {
+        "category": "Activity",
+        "data": [
+            {
+                "Notes": "Engage in moderate-intensity exercises to improve liver health without putting strain on the body.",
+                "title": "Engage in Moderate Physical Activity",
+                "Based": "Based on your Aspartate Aminotransferase"
+            },
+            {
+                "Notes": "Engage in regular cardiovascular exercises such as brisk walking, swimming, or cycling to maintain a healthy pulse pressure and overall cardiovascular health.",
+                "title": "Continue Cardiovascular Exercise",
+                "Based": "Based on your Aortic Pulse Pressure"
+            },
+            {
+                "Notes": "Engage in weight-bearing exercises such as walking or resistance training to help improve calcium absorption and maintain bone density.",
+                "title": "Increase Weight-Bearing Exercises",
+                "Based": "Based on your Calcium"
+            },
+            {
+                "Notes": "Regular physical activity, including both cardio and strength training, helps improve insulin sensitivity and blood sugar control.",
+                "title": "Engage in Regular Physical Activity",
+                "Based": "Based on your Glucose"
+            },
+            {
+                "Notes": "Engage in regular cardiovascular exercises like walking, cycling, or swimming to help maintain or increase HDL cholesterol levels.",
+                "title": "Cardiovascular Exercise for Healthy Cholesterol",
+                "Based": "Based on your HDL Cholesterol"
+            }
+        ]
+    },
+    {
+        "category": "Supplement",
+        "data": [
+            {
+                "Notes": "Consider supplements like milk thistle or N-acetylcysteine (NAC), known for supporting liver detoxification and improving liver function. Consult with your healthcare provider before use.",
+                "title": "Consider Liver Support Supplements",
+                "Based": "Based on your Aspartate Aminotransferase"
+            },
+            {
+                "Notes": "Consider CoQ10 or omega-3 supplements to support cardiovascular health. Be sure to consult your doctor before starting any new supplements.",
+                "title": "Support Cardiovascular Function with Supplements",
+                "Based": "Based on your Aortic Pulse Pressure"
+            },
+            {
+                "Notes": "Consider calcium supplements or a multivitamin containing calcium, but consult with your healthcare provider for the appropriate dosage and form.",
+                "title": "Consider Calcium Supplements",
+                "Based": "Based on your Calcium"
+            },
+            {
+                "Notes": "Consider adding magnesium or chromium supplements to support blood sugar regulation. Be sure to consult with your doctor before starting any supplements.",
+                "title": "Consider Blood Sugar Support Supplements",
+                "Based": "Based on your Glucose"
+            },
+            {
+                "Notes": "Consider omega-3 fatty acids or niacin supplements to support healthy cholesterol levels. Please consult your doctor before starting any new supplements.",
+                "title": "Consider Cholesterol Support Supplements",
+                "Based": "Based on your HDL Cholesterol"
+            }
+        ]
+    },
+    {
+        "category": "Mind",
+        "data": [
+            {
+                "Notes": "Practice mindfulness and stress-reduction techniques like meditation to support liver function by reducing stress, which can negatively affect liver health.",
+                "title": "Reduce Stress for Liver Health",
+                "Based": "Based on your Aspartate Aminotransferase"
+            },
+            {
+                "Notes": "Practice relaxation techniques like deep breathing or yoga to manage stress, as chronic stress can negatively impact cardiovascular health.",
+                "title": "Stress Management for Heart Health",
+                "Based": "Based on your Aortic Pulse Pressure"
+            },
+            {
+                "Notes": "Incorporate mindfulness practices like meditation to reduce stress, which can interfere with calcium absorption and bone health.",
+                "title": "Manage Stress for Better Calcium Absorption",
+                "Based": "Based on your Calcium"
+            },
+            {
+                "Notes": "Practice mindfulness and stress-reduction techniques to help manage stress, which can cause blood sugar levels to rise.",
+                "title": "Stress Management for Blood Sugar Control",
+                "Based": "Based on your Glucose"
+            },
+            {
+                "Notes": "Mindfulness and relaxation techniques can help reduce stress and inflammation, which are important for maintaining healthy cholesterol levels.",
+                "title": "Practice Stress Reduction for Cholesterol Health",
+                "Based": "Based on your HDL Cholesterol"
+            }
+        ]
+    }
+]

@@ -1,0 +1,772 @@
+[
+    {
+        "category": "Micronutrient Levels",
+        "subcategories": [
+            {
+                "subcategory": "Major Essential Minerals",
+                "biomarkers": [
+                    {
+                        "subcategory": "Major Essential Minerals",
+                        "name": "Calcium",
+                        "more_info": "Calcium is a mineral cation in your blood that is essential for the healthy functioning of your muscles, nervous system, and heart. Its serum concentration is very tightly regulated by your kidneys and endocrine system because deviations from the normal level can have serious consequences. If there is a mild elevation (less than 10.5), the first thing to do is to repeat the blood test to make sure it is not a lab error. Persistently high serum calcium (hypercalcemia) is commonly caused by either hyperparathyroidism (benign tumors of the parathyroid gland secreting too much parathyroid hormone) or cancer that has spread to the bones. Low serum calcium is most commonly caused by a low serum protein level (from malnutrition) because the calcium is bound to protein. A follow-up ionized serum calcium level will be normal if this is the only cause. Other causes of hypocalcemia are low vitamin D level, underactive parathyroids (hypoparathyroidism), magnesium deficiency, and kidney failure.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "mg/dL",
+                        "duration": "6 Month",
+                        "outofref": true,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    9,
+                                    10.2
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    8.9,
+                                    9
+                                ],
+                                [
+                                    10.2,
+                                    10.5
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    8.6,
+                                    8.9
+                                ],
+                                [
+                                    10.5,
+                                    11
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    8.6
+                                ],
+                                [
+                                    11,
+                                    15
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "8.1"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Major Essential Minerals",
+                        "name": "Carbon Dioxide",
+                        "more_info": "Carbon Dioxide should really be called bicarbonate or HCO3 because CO2 is actually the gas that your lungs exhale. When it is dissolved in water, CO2 is associates with a hydrogen ion to become HCO3 and acts as a buffer for acid in the blood. A low serum bicarbonate level indicates that your body is in an acidic state and the bicarbonate is being used up to buffer it. This can be caused by diabetes, kidney disease, and chronic diarrhea. A high bicarbonate level indicates alkaline pH of the blood due to acid loss from vomiting, lung disease, or Cushing's syndrome. While it is technically not a mineral but a molecule, it is one of the electrolytes so it is included in this section.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "mmol/L",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    25,
+                                    30
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    23,
+                                    25
+                                ],
+                                [
+                                    30,
+                                    33
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    21,
+                                    23
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    21
+                                ],
+                                [
+                                    33,
+                                    35
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "23"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Potassium",
+                        "more_info": "Potassium is the principal intracellular cation, and only about 2% of your total body potassium is located in your body fluids and blood stream. Increased serum potassium (hyperkalemia) is most commonly caused by kidney disease, but other medications, such as ACE inhibitors, potassium-sparing diuretics, and NSAIDs, can cause it. Hyperkalemia can cause abnormal heart rhythms and respiratory failure. Low serum potassium (hypokalemia) can be caused by dehydration, vomiting, diarrhea, and inadequate repletion when taking diuretics.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "mmol/L",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    4,
+                                    5
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    3.8,
+                                    4
+                                ],
+                                [
+                                    5,
+                                    5.3
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    3.5,
+                                    3.8
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    3.5
+                                ],
+                                [
+                                    5.3,
+                                    6
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "4.6"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Sodium",
+                        "more_info": "Sodium is the principal positively charged ion (called a 'cation') of the extracellular space. It is the same as the sodium found in most foods and table salt (sodium chloride). The body responds to changes in the serum sodium level in three main ways: (1) Modulating thirst: as little as a 1% increase in serum sodium can make you thirsty so you consume water to decrease the level to normal. (2) Producing sodium-regulating hormones: certain hormones (natriuretic peptide) cause the kidneys to lose sodium while others (aldosterone) cause them to retain sodium. (3) Producing water-regulating hormones: antidiuretic hormone (ADH) causes the kidneys to hold onto free water. Water follows sodium. When you eat a salty meal, you become thirsty and drink water. The extra fluid is retained (causing the characteristic post-Chinese food bloating and edema) until it can be excreted as the hormonal sodium excretion pathways kick in. ADH is inhibited by alcohol causing the excessive urination of clear water noted after drinking a lot of beer or other alcoholic beverages. When these mechanisms are not functioning well or are overwhelmed, a state of hypernatremia (high serum sodium) or hyponatremia (low serum sodium) can ensue. The most common cause of hypernatremia is dehydration from decreased water intake. Hyponatremia is most commonly from sodium loss through sweat that is replaced only with water. Other causes include diuretics, Addison's disease, diarrhea, and kidney disease.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "mmol/L",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    137,
+                                    144
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    135,
+                                    137
+                                ],
+                                [
+                                    144,
+                                    146
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    130,
+                                    135
+                                ],
+                                [
+                                    146,
+                                    150
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    130
+                                ],
+                                [
+                                    150,
+                                    200
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "141"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    }
+                ]
+            },
+            {
+                "subcategory": "Trace Essential Minerals",
+                "biomarkers": [
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Iron",
+                        "more_info": "Iron is an essential nutrient for the production of red blood cells and many enzyme-dependent reactions. While iron deficiency can cause anemia and fatigue, an excess of iron can increase free-radical production and increase the risk of cancer and cardiovascular disease. As with many nutrients, an optimal level is needed for good health - too much or too little can cause harm. The serum iron level can fluctuate quite significantly depending on recent dietary iron intake. A better indicator of iron deficiency is the transferrin saturation.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "µg/dL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    70,
+                                    120
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    60,
+                                    70
+                                ],
+                                [
+                                    120,
+                                    160
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    40,
+                                    60
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    40
+                                ],
+                                [
+                                    160,
+                                    180
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "63"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Total Iron Binding Capacity (TIBC)",
+                        "more_info": "Total Iron Binding Capacity is the amount of the iron binding protein called 'transferrin' in the blood stream. It is usually increased in iron deficiency and decreased in conditions of excess iron.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "µg/dL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    300,
+                                    400
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    250,
+                                    300
+                                ],
+                                [
+                                    400,
+                                    450
+                                ]
+                            ],
+                            "Ok": [],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    250
+                                ],
+                                [
+                                    450,
+                                    500
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "269"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Unsaturated Iron Binding Capacity (UIBC)",
+                        "more_info": "The UIBC is calculated by subtracting the serum iron from the TIBC",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "µg/dL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    200,
+                                    300
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    180,
+                                    200
+                                ],
+                                [
+                                    300,
+                                    400
+                                ]
+                            ],
+                            "Ok": [],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    180
+                                ],
+                                [
+                                    400,
+                                    450
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "166"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    }
+                ]
+            },
+            {
+                "subcategory": "Vitamins",
+                "biomarkers": [
+                    {
+                        "subcategory": "Vitamins",
+                        "name": "Vitamin D",
+                        "more_info": "Vitamin D can be synthesized in the skin from a precursor molecule upon exposure to ultraviolet B light. This is an important source because there is not much vitamin D in the typical diet, although it is found in some fish and eggs as well as vitamin D-fortified foods (e.g., dairy products). As a result, vitamin D deficiency is common in Northern latitudes and in the elderly who often get little sun exposure and have poor diets.\r\n\r\nVitamin D is critical for maintaining normal calcium metabolism, bone health, and immune system function. Severe vitamin D deficiency in childhood causes rickets (malformed long bones), but lesser levels of deficiency have been demonstrated to adversely affect the cardiovascular and immune systems and cause osteoporosis.\r\n\r\nValues in the deficient range and below are associated with an increase in hypertension, general joint and muscle aches, and poor immune system function.\r\n\r\nVitamin D exists in two forms, D2 and D3. Some studies have suggested that repletion with vitamin D3 more efficiently raises vitamin D levels than repletion with D2. To raise the level of a person with vitamin D insufficiency to sufficiency, it takes a three-month course of 800-1000 IU of vitamin D3.\r\n\r\nA number of studies have suggested that higher levels of serum vitamin D are associated with lower rates of common cancers.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "ng/mL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    40,
+                                    80
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    30,
+                                    40
+                                ],
+                                [
+                                    80,
+                                    100
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    20,
+                                    30
+                                ],
+                                [
+                                    100,
+                                    120
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    20
+                                ],
+                                [
+                                    120,
+                                    150
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "49"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "Hematology",
+        "subcategories": [
+            {
+                "subcategory": "Blood",
+                "biomarkers": [
+                    {
+                        "subcategory": "Blood",
+                        "name": "Hemoglobin",
+                        "more_info": "Hemoglobin A1C is also known as 'glycosylated' or 'glycated' hemoglobin. Hemoglobin is the protein in your red blood cells that carries oxygen. As your red blood cells circulate, they are exposed to the glucose in your blood plasma. Over time, the glucose molecules can attach to the hemoglobin which then becomes glycated hemoglobin. The percentage of glycated hemoglobin in your red blood cells depends on the amount of time the red blood cells circulate and the concentration of glucose to which they are exposed. Because the average life span of a red blood cell is 4 months approximately, the percentage of them containing glycated hemoglobin serves as an excellent measure of the average blood glucose level over the past 4 months.\r\n\r\nHgbA1c is a subset of the general category called advanced glycation end-products which go by the very descriptive acronym AGEs. (The more AGEs you have, the faster you age.) These are any biomolecules (proteins, etc.) that have undergone a reaction in which a glucose molecule becomes permanently attached. Once this happens, the proteins do not function well and unfortunately, unlike with red blood cells, they are often not removed from the body for a very long time. This leads to suboptimal function of the tissue. Lower levels of AGEs production lead to better maintenance of youthful tissue function.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "g/dL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    13,
+                                    15.5
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    12,
+                                    13
+                                ],
+                                [
+                                    15.5,
+                                    16.5
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    11.7,
+                                    12
+                                ],
+                                [
+                                    16.5,
+                                    17
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    11.7
+                                ],
+                                [
+                                    17,
+                                    18
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "12"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Mean Corpuscular Hemoglobin (MCH)",
+                        "more_info": "Mean Corpuscular Hemoglobin is the average amount of hemoglobin in each red blood cell (aka 'corpuscle') and can help your doctor understand the type and cause of anemia your may be exhibiting. It is calculated by dividing the total amount of hemoglobin by the RBC. It is reduced in iron-deficiency anemia.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "pg",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    29,
+                                    33
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    28,
+                                    29
+                                ],
+                                [
+                                    33,
+                                    34
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    27,
+                                    28
+                                ],
+                                [
+                                    34,
+                                    35
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    27
+                                ],
+                                [
+                                    35,
+                                    36
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "31"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Mean Corpuscular Hemoglobin Concentration (MCHC)",
+                        "more_info": "Mean Corpuscular Hemoglobin Concentration is similar to the MCH, but is calculated by dividing the hemoglobin by the hematocrit. It is the most sensitive indicator of iron deficiency anemia.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "g/dL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    33,
+                                    35
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    32,
+                                    33
+                                ],
+                                [
+                                    35,
+                                    36
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    31,
+                                    32
+                                ],
+                                [
+                                    36,
+                                    37
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    31
+                                ],
+                                [
+                                    37,
+                                    38
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "32.7"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Mean Corpuscular Volume (MCV)",
+                        "more_info": "Mean Corpuscular Volume is a measure of the average size of your red blood cells and when it is above or below the normal range can be indicative of particular disease states or nutrient deficiencies. For example, in vitamin B12 and/or folate deficiency, the size of the red blood cells increases. In iron deficiency anemia, the size of the red blood cell decreases.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "fL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    85,
+                                    95
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    80,
+                                    85
+                                ],
+                                [
+                                    95,
+                                    100
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    75,
+                                    80
+                                ],
+                                [
+                                    100,
+                                    105
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    75
+                                ],
+                                [
+                                    105,
+                                    110
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "92"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Platelets",
+                        "more_info": "Platelets are fragments of bone marrow precursor cells called 'megakaryocytes' and are the critical component in thrombus (clot) formation. In addition to maintaining hemostasis (controlling bleeding), platelets release growth factors that play significant roles wound healing and repair/regeneration of connective tissue. There are disorders of abnormally low and high platelet count called thrombocytopenia and thrombocytosis, respectively. Ninety five percent of people have a platelet count between 150,000 and 450,000 per microliter. A level 100,000-150,000 may be physiologically insignificant in a small percentage of people, but is more likely to be the early stages of a gradually worsening thrombocytopenia. Platelet levels below 25,000 can lead to an increase in life-threatening hemorrhages from minor trauma. Thrombocytosis above 500,000 can lead to an increase risk of strokes and heart attacks.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "10^9/L",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    200,
+                                    400
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    150,
+                                    200
+                                ],
+                                [
+                                    400,
+                                    450
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    140,
+                                    150
+                                ],
+                                [
+                                    450,
+                                    500
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    140
+                                ],
+                                [
+                                    500,
+                                    600
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "252"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    },
+                    {
+                        "subcategory": "Trace Essential Minerals",
+                        "name": "Red Blood Cells",
+                        "more_info": "Hemoglobin A1C is also known as 'glycosylated' or 'glycated' hemoglobin. Hemoglobin is the protein in your red blood cells that carries oxygen. As your red blood cells circulate, they are exposed to the glucose in your blood plasma. Over time, the glucose molecules can attach to the hemoglobin which then becomes glycated hemoglobin. The percentage of glycated hemoglobin in your red blood cells depends on the amount of time the red blood cells circulate and the concentration of glucose to which they are exposed. Because the average life span of a red blood cell is 4 months approximately, the percentage of them containing glycated hemoglobin serves as an excellent measure of the average blood glucose level over the past 4 months.\r\n\r\nHgbA1c is a subset of the general category called advanced glycation end-products which go by the very descriptive acronym AGEs. (The more AGEs you have, the faster you age.) These are any biomolecules (proteins, etc.) that have undergone a reaction in which a glucose molecule becomes permanently attached. Once this happens, the proteins do not function well and unfortunately, unlike with red blood cells, they are often not removed from the body for a very long time. This leads to suboptimal function of the tissue. Lower levels of AGEs production lead to better maintenance of youthful tissue function.",
+                        "cart_type": 2,
+                        "chart_type": "bar",
+                        "test_type": "vital",
+                        "unit": "million/µL",
+                        "duration": "6 Month",
+                        "outofref": false,
+                        "chart_bounds": {
+                            "Excellent": [
+                                [
+                                    4.5,
+                                    5.1
+                                ]
+                            ],
+                            "Good": [
+                                [
+                                    4.2,
+                                    4.5
+                                ],
+                                [
+                                    5.1,
+                                    5.4
+                                ]
+                            ],
+                            "Ok": [
+                                [
+                                    3.8,
+                                    4.2
+                                ],
+                                [
+                                    5.4,
+                                    5.7
+                                ]
+                            ],
+                            "Needs Focus": [
+                                [
+                                    0,
+                                    3.8
+                                ],
+                                [
+                                    5.7,
+                                    6
+                                ]
+                            ]
+                        },
+                        "values": [
+                            "4.4"
+                        ],
+                        "date": [
+                            "2024-07-01"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

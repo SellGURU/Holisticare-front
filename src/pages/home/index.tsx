@@ -1,4 +1,5 @@
 import { ReportSideMenu } from "../../Components"
+import ReportAnalyseView from "../../Components/RepoerAnalyse/ReportAnalyseView"
 
 const Home = () => {
     return (
@@ -7,6 +8,13 @@ const Home = () => {
                 <ReportSideMenu></ReportSideMenu>
 
             </div>
+
+
+            <div className="w-full pl-[200px]">
+                <ReportAnalyseView memberID={123}></ReportAnalyseView>
+
+            </div>
+
         </>
     )
 }

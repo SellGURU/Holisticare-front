@@ -1,0 +1,523 @@
+{
+	"test level": [
+	  {
+		"level": "Basic",
+		"checked": true,
+		"items": [
+		  {
+			"item": "Blood",
+			"selected": true
+		  },
+		  {
+			"item": "Vitamins",
+			"selected": true
+		  }
+		]
+	  },
+	  {
+		"level": "Intermediate",
+		"checked": false,
+		"items": [
+		  {
+			"item": "Blood",
+			"selected": true
+		  },
+		  {
+			"item": "Vitamins",
+			"selected": true
+		  },
+		  {
+			"item": "Trace Essential Minerals",
+			"selected": true
+		  },
+		  {
+			"item": "Major Essential Minerals",
+			"selected": true
+		  },
+		  {
+			"item": "Kidney Function",
+			"selected": true
+		  },
+		  {
+			"item": "Liver Function",
+			"selected": true
+		  },
+		  {
+			"item": "Immune Health",
+			"selected": true
+		  },
+		  {
+			"item": "Advanced Immune Health",
+			"selected": true
+		  },
+		  {
+			"item": "Glutathione",
+			"selected": true
+		  },
+		  {
+			"item": "NAD+",
+			"selected": true
+		  },
+		  {
+			"item": "Arterial Stiffness",
+			"selected": true
+		  },
+		  {
+			"item": "Arterial Thickness",
+			"selected": true
+		  },
+		  {
+			"item": "Coronary Calcium",
+			"selected": true
+		  },
+		  {
+			"item": "Cardiovascular Risk",
+			"selected": true
+		  },
+		  {
+			"item": "Diabetes & Glucose",
+			"selected": true
+		  },
+		  {
+			"item": "Muscle and Fat",
+			"selected": true
+		  },
+		  {
+			"item": "Skin Elasticity",
+			"selected": true
+		  },
+		  {
+			"item": "Bone Biomarkers",
+			"selected": true
+		  },
+		  {
+			"item": "Handgrip",
+			"selected": true
+		  },
+		  {
+			"item": "Lung Health",
+			"selected": true
+		  }
+		]
+	  },
+	  {
+		"level": "Professional",
+		"checked": false,
+		"items": [
+		  {
+			"item": "Blood",
+			"selected": true
+		  },
+		  {
+			"item": "Vitamins",
+			"selected": true
+		  },
+		  {
+			"item": "Trace Essential Minerals",
+			"selected": true
+		  },
+		  {
+			"item": "Major Essential Minerals",
+			"selected": true
+		  },
+		  {
+			"item": "Kidney Function",
+			"selected": true
+		  },
+		  {
+			"item": "Liver Function",
+			"selected": true
+		  },
+		  {
+			"item": "Immune Health",
+			"selected": true
+		  },
+		  {
+			"item": "Advanced Immune Health",
+			"selected": true
+		  },
+		  {
+			"item": "Glutathione",
+			"selected": true
+		  },
+		  {
+			"item": "NAD+",
+			"selected": true
+		  },
+		  {
+			"item": "Arterial Stiffness",
+			"selected": true
+		  },
+		  {
+			"item": "Arterial Thickness",
+			"selected": true
+		  },
+		  {
+			"item": "Coronary Calcium",
+			"selected": true
+		  },
+		  {
+			"item": "Cardiovascular Risk",
+			"selected": true
+		  },
+		  {
+			"item": "Diabetes & Glucose",
+			"selected": true
+		  },
+		  {
+			"item": "Muscle and Fat",
+			"selected": true
+		  },
+		  {
+			"item": "Skin Elasticity",
+			"selected": true
+		  },
+		  {
+			"item": "Bone Biomarkers",
+			"selected": true
+		  },
+		  {
+			"item": "Handgrip",
+			"selected": true
+		  },
+		  {
+			"item": "Lung Health",
+			"selected": true
+		  },
+		  {
+			"item": "Cognitive Function",
+			"selected": true
+		  },
+		  {
+			"item": "Sex Hormones",
+			"selected": true
+		  },
+		  {
+			"item": "Thyroid Function",
+			"selected": true
+		  },
+		  {
+			"item": "Growth/IGF Hormones",
+			"selected": true
+		  },
+		  {
+			"item": "Corticosteroids",
+			"selected": true
+		  },
+		  {
+			"item": "Heavy Metals",
+			"selected": true
+		  },
+		  {
+			"item": "Viruses",
+			"selected": true
+		  },
+		  {
+			"item": "Bacteria",
+			"selected": true
+		  },
+		  {
+			"item": "Telomere Length",
+			"selected": true
+		  },
+		  {
+			"item": "Epigenetic Clocks",
+			"selected": true
+		  },
+		  {
+			"item": "IgG Glycosylation Age",
+			"selected": true
+		  },
+		  {
+			"item": "Phenotypic Age",
+			"selected": true
+		  },
+		  {
+			"item": "Inflammation",
+			"selected": true
+		  },
+		  {
+			"item": "Senescent Cells and Balancing Factors",
+			"selected": true
+		  }
+		]
+	  }
+	],
+	
+	"features_table": [
+	{
+	  "feature": "Blood",
+	  "test_level": {
+		"Basic": true,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Vitamins",
+	  "test_level": {
+		"Basic": true,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Trace Essential Minerals",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Major Essential Minerals",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Kidney Function",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Liver Function",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Immune Health",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Advanced Immune Health",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Glutathione",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "NAD+",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Arterial Stiffness",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Arterial Thickness",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Coronary Calcium",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Cardiovascular Risk",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Diabetes & Glucose",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Muscle and Fat",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Skin Elasticity",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Bone Biomarkers",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Handgrip",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Lung Health",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": true,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Cognitive Function",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Sex Hormones",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Thyroid Function",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Growth/IGF Hormones",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Corticosteroids",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Heavy Metals",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Viruses",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Bacteria",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Telomere Length",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Epigenetic Clocks",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "IgG Glycosylation Age",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Phenotypic Age",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Inflammation",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	},
+	{
+	  "feature": "Senescent Cells and Balancing Factors",
+	  "test_level": {
+		"Basic": false,
+		"Intermediate": false,
+		"Professional": true
+	  }
+	}
+  ]
+  
+  }
+  
