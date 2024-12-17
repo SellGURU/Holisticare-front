@@ -24,8 +24,8 @@
   height: 1.25rem; /* Tailwind h-6 */
 }
 .report-sidemenu-menu-icon {
-  mask-image: url(./icons/menu.svg);
-  -webkit-mask-image: url(./icons/menu.svg);
+  mask-image: url(/icons/menu.svg);
+  -webkit-mask-image: url(/icons/menu.svg);
   mask-size: 100%;
   -webkit-mask-size: 100%;
   mask-repeat: no-repeat;
