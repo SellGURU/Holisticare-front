@@ -9,3 +9,46 @@
   width: 100%;
 }
 
+@layer utilities {
+    .TextStyle-Button {
+        @apply text-xs font-medium;
+    }
+    .TextStyle-Overline {
+        @apply text-[10px] font-medium;
+    }
+    .TextStyle-Headline-1 {
+        @apply text-[32px] font-medium;
+    }
+    .TextStyle-Headline-2 {
+        @apply text-[24px] font-medium;
+    }
+    .TextStyle-Headline-3 {
+        @apply text-[20px] font-medium;
+    }
+    .TextStyle-Headline-4 {
+        @apply text-[16px] font-medium;
+    }
+    .TextStyle-Headline-5 {
+        @apply text-[14px] font-medium;
+    }
+    .TextStyle-Headline-6 {
+        @apply text-[12px] font-medium;
+    }                
+
+    .TextStyle-Body-1 {
+        @apply text-[14px] ;
+    } 
+    .TextStyle-Body-2 {
+        @apply text-[12px] ;
+    }     
+    .TextStyle-Body-3 {
+        @apply text-[10px] ;
+    }   
+    
+    .TextStyle-Subtitle-1 {
+        @apply text-[16px] font-medium;
+    }  
+    .TextStyle-Subtitle-1 {
+        @apply text-[14px] font-medium;
+    }                 
+}
