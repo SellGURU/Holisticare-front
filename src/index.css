@@ -8,9 +8,11 @@
   height: 100%;
   width: 100%;
 }
+
+/* icons */
 .report-sidemenu-layer-icon {
-  mask-image: url(./icons/layer.svg);
-  -webkit-mask-image: url(./icons/layer.svg);
+  mask-image: url(/icons/layer.svg);
+  -webkit-mask-image: url(/icons/layer.svg);
   mask-size: 100%;
   -webkit-mask-size: 100%;
   mask-repeat: no-repeat;

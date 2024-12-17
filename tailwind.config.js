@@ -10,6 +10,7 @@ export default {
         inter: ['Inter', 'sans-serif'],
       },
       colors:{
+        "bg-color":"#E9F0F2",
         "Boarder":"#E2F1F8",
         "Red":"#FC5474",
         "Green":"#06C78D",

@@ -1,5 +1,5 @@
 import { useState } from "react";
-export const SideMenu = () => {
+const ReportSideMenu = () => {
   const menuItems = [
     "Client Summary",
     "Needs Focus Biomarker",
@@ -9,11 +9,11 @@ export const SideMenu = () => {
     "Action Plan",
   ];
   const [activeMenu, setactiveMenu] = useState("Client Summary");
-  const [ActiveLayer, setActiveLayer] = useState("layer");
+  const [ActiveLayer, setActiveLayer] = useState("menu");
   const [activeImg, setactiveImg] = useState(1);
   return (
-    <div className="h-full w-[178px] bg-white border border-gray-50 rounded-xl p-4 shadow-sm ">
-      <div className="flex  rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-[#F4F4F4]">
+    <div className="h-full max-h-[646px] min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 ">
+      <div className="flex  rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() => setActiveLayer("layer")}
           className={`flex ${
@@ -41,17 +41,17 @@ export const SideMenu = () => {
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
       <div className="mt-6">
-        <div className="text-xs font-medium text-[#383838] text-left">
+        <div className="TextStyle-Headline-6 text-left">
           Sections
         </div>
-        <div className="mt-2 flex flex-col gap-2">
+        <div className="mt-2 flex flex-col gap-1">
           {ActiveLayer == "menu" &&
             menuItems.map((item, index) => (
               <div
                 onClick={() => setactiveMenu(item)}
                 key={index}
-                className={`text-[10px] py-[2px] pl-1 text-nowrap  bg-[#F4F4F4]  text-[#383838] rounded-md border  hover:bg-[#E9E9E9] cursor-pointer ${
-                  item == activeMenu ? "border-[#6CC24A]" : "border-gray-50"
+                className={`text-[10px] h-[24px] flex justify-start items-center pl-2 text-nowrap  bg-backgroundColor-Main text-Text-Primary rounded-md border  hover:bg-gray-200 cursor-pointer ${
+                  item == activeMenu ? "border-Primary-EmeraldGreen" : "border-gray-50"
                 } flex justify-start`}
               >
                 {index + 1}. {item}
@@ -60,7 +60,7 @@ export const SideMenu = () => {
           {ActiveLayer == "layer" && (
             <div className="flex flex-col gap-2">
               {Array.from({ length: 6 }, (_, index) => (
-                <div onClick={()=>setactiveImg(index+1)} key={index} className={`${index+1 == activeImg ? 'border-[#6CC24A]' : 'border-gray-50'} border rounded-md relative overflow-hidden w-[146px] h-[56px] `}>
+                <div onClick={()=>setactiveImg(index+1)} key={index} className={`${index+1 == activeImg ? 'border-Primary-EmeraldGreen' : 'border-gray-50'} border rounded-md relative overflow-hidden w-[146px] h-[56px] `}>
                  <img className="absolute inset-0 w-[150px] h-[60px] object-cover" src={`./images/report-sidemenu/${index+1}.png`} alt="" />
                 </div>
               ))}
@@ -71,3 +71,5 @@ export const SideMenu = () => {
     </div>
   );
 };
+
+export default ReportSideMenu

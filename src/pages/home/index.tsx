@@ -1,10 +1,12 @@
-import { SideMenu } from "../../Components/sideMenu"
+import { ReportSideMenu } from "../../Components"
 
 const Home = () => {
     return (
         <>
-            this is home
-            <SideMenu></SideMenu>
+            <div className="fixed left-4 top-16">
+                <ReportSideMenu></ReportSideMenu>
+
+            </div>
         </>
     )
 }
