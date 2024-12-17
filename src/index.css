@@ -8,6 +8,40 @@
   height: 100%;
   width: 100%;
 }
+.report-sidemenu-layer-icon {
+  mask-image: url(./icons/layer.svg);
+  -webkit-mask-image: url(./icons/layer.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.25rem; /* Tailwind w-6 */
+  height: 1.25rem; /* Tailwind h-6 */
+}
+.report-sidemenu-menu-icon {
+  mask-image: url(./icons/menu.svg);
+  -webkit-mask-image: url(./icons/menu.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.25rem; /* Tailwind w-6 */
+  height: 1.25rem; /* Tailwind h-6 */
+}
+/* .report-side-menu-layer-icon{
+  mask-image: url('/public//icons//menu.svg');
+  mask-size: 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  @apply  h-4;
+} */
 
 @layer utilities {
     .TextStyle-Button {
