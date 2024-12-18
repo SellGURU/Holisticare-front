@@ -234,10 +234,36 @@ useEffect(() => {
                             })}
                         </div>
                     </div>     
-    
+                    <div className="my-10 ">
+                        <div className="w-full mb-3 flex items-center justify-between">
+                            <div id="Concerning Result" className=" TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
+                            <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
+                                {/* Total of 30 Treatment in 4 category */}
+                            </div>
+                            {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+                        </div>    
+                        <div >
+                            <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center">
+                                <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">Name</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">Result</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">Units</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">Lab Ref Range</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">Baseline</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">Optimal Range</div>
+                                <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">Changes</div>
+                            </div>
+                            {ResolveConceringData().map((el:any) => {
+                                return (
+                                    <>
+                                        <ConceringRow data={el}></ConceringRow>
+                                    </>
+                                )
+                            })}
+                        </div>
+                    </div>          
                     <div className="my-10 hidden">
                         <div className="w-full mb-3 flex items-center justify-between">
-                            <div id="Treatment Plan" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Treatment Plan </div>
+                            <div id="Treatment Plan" className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan </div>
                             <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                 {/* Total of 30 Treatment in 4 category */}
                             </div>
@@ -300,33 +326,7 @@ useEffect(() => {
                         }  
                     </div>
 
-                    <div className="my-10 hidden">
-                        <div className="w-full mb-3 flex items-center justify-between">
-                            <div id="Concerning Result" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Concerning Result</div>
-                            <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                                {/* Total of 30 Treatment in 4 category */}
-                            </div>
-                            {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-                        </div>    
-                        <div >
-                            <div className="w-full card-box2 rounded-t-[6px] h-[56px] flex justify-end items-center">
-                                <div className="textStyle-type1 w-[800px] pl-6">Name</div>
-                                <div className="textStyle-type1 w-[120px] text-center">Result</div>
-                                <div className="textStyle-type1   w-[120px] text-center">Units</div>
-                                <div className="textStyle-type1  w-[180px] text-center">Lab Ref Range</div>
-                                <div className="textStyle-type1  w-[130px] text-center">Baseline</div>
-                                <div className="textStyle-type1 w-[150px] text-center">Optimal Range</div>
-                                <div className="textStyle-type1  w-[130px] text-center">Changes</div>
-                            </div>
-                            {ResolveConceringData().map((el:any) => {
-                                return (
-                                    <>
-                                        <ConceringRow data={el}></ConceringRow>
-                                    </>
-                                )
-                            })}
-                        </div>
-                    </div>                                               
+                                                        
                     <div className="hidden print:block" id="printDiv">
                         <PrintReport ResolveConceringData={ResolveConceringData} caldenderData={caldenderData} TreatMentPlanData={TreatMentPlanData} resolveSubCategories={resolveSubCategories} resolveBioMarkers={resolveBioMarkers} referenceData={referenceData} resolveCategories={resolveCategories} ClientSummaryBoxs={ClientSummaryBoxs}></PrintReport>
                     </div>
