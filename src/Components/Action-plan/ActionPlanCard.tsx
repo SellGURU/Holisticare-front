@@ -60,7 +60,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
 
   return (
     <div
-      onClick={() => !isDisabled && navigate(`/action-plan/calendar/${id}`)}
+      // onClick={() => !isDisabled && navigate(`/action-plan/calendar/${id}`)}
       className={`w-[218px] h-[258px] rounded-[40px] bg-white border-Gray-50  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none   ${
         isDisabled ? "opacity-45 cursor-not-allowed" : ""
       }`}
