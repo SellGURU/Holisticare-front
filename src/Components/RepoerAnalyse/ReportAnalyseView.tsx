@@ -23,6 +23,7 @@ import { useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 import PrintReport from "./PrintReport"
+import { ActionPlan } from "../Action-plan"
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 interface ReportAnalyseViewprops {
@@ -136,7 +137,7 @@ useEffect(() => {
                     <BeatLoader size={8} color="#36d7b7" loading={loading} />
                 </div>
                 ): (
-                    <div className="pt-[54px]  pr-6 h-[98vh] ml-6 overflow-y-scroll overflow-x-hidden  ">
+                    <div className="pt-[54px] pb-[200px]  pr-6 h-[98vh] ml-6 overflow-y-scroll overflow-x-hidden  ">
                
                     <div className="flex gap-14">
                         <div className="min-w-[330px] w-[330px] relative">
@@ -325,7 +326,10 @@ useEffect(() => {
                             </div>                       
                         }  
                     </div>
-
+                    <div id="Action Plan" className="my-10">
+                        <div className="TextStyle-Headline-4 text-Text-Primary mb-4">Action Plan</div>
+                        <ActionPlan></ActionPlan>
+                    </div>
                                                         
                     <div className="hidden print:block" id="printDiv">
                         <PrintReport ResolveConceringData={ResolveConceringData} caldenderData={caldenderData} TreatMentPlanData={TreatMentPlanData} resolveSubCategories={resolveSubCategories} resolveBioMarkers={resolveBioMarkers} referenceData={referenceData} resolveCategories={resolveCategories} ClientSummaryBoxs={ClientSummaryBoxs}></PrintReport>

@@ -84,7 +84,7 @@
     .TextStyle-Subtitle-1 {
         @apply text-[16px] font-medium;
     }  
-    .TextStyle-Subtitle-1 {
+    .TextStyle-Subtitle-2 {
         @apply text-[14px] font-medium;
     }                 
 }

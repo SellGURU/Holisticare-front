@@ -1,0 +1,698 @@
+{
+    "Diet": {
+        "BenchmarkAreas": [
+            {
+                "Name": "Daily Activity",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value":3,
+                        "checked": true,
+                        "Benchmark": "Exercise activity_Lifestyle tracker/exercise app"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Steps_Wearable tracker",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    }
+                ]
+            },
+            {
+                "Name": "Stability",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Left leg_Left leg stand duration (secs)"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Left leg_Left leg squat ankle stability"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Left leg_Left leg squat knee stability"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Left leg_Left leg squat hip stability",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Right leg_Right leg stand duration (secs)"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Right leg_Right leg squat ankle stability"
+                    },
+                    {
+                        "Value": 3,
+                        "checked": true,
+                        "Benchmark": "Right leg_Right leg squat knee stability"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Right leg_Right leg squat hip stability",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Left foot stability_Hold 3 point contact when squating",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Right foot stability_Hold 3 point contact when squating",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower back posture_Neutral spine test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Spine curvature_Neutral spine test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper back posture_Neutral spine test"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Overhead squat test_Excessive lean forwards (excessive trunk flexion and/or hip flexion)"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Overhead squat test_Lower back arches"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Overhead squat test_Lower back rounds"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Overhead squat test_Asymmetrical weight shift"
+                    }
+                ]
+            },
+            {
+                "Name": "Mobility",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Sagital Squat - Air Squat ROM"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Sagital Hinge - 5kg ball pick up ROM"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Frontal Right leg side lunge ROM"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Frontal Left leg side lunge ROM"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Sagital Shoulder - Standing bent arm rotation left arm"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Sagital Shoulder - Standing bent arm rotation right arm"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Frontal Shoulder - Lying arm hip to above head right arm"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Frontal Shoulder - Lying arm hip to above head left arm"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Sagital Shoulder - Standing press left arm"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Sagital Shoulder - Standing press right arm"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Transverse - Twist to right",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Transverse - Twist to left",
+                        "tag" : ["Needs Focus" , "Client Goal"]
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Back extension"
+                    }
+                ]
+            },
+            {
+                "Name": "Flexibility",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Left ankle flexibility"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Right ankle flexibility"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Right hamstring"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Left hamstring"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Right faber hip test"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Left faber hip test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Left hip flexor test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Lower body_Right hip flexor test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Left arm pec test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Right arm pec test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Left arm Lat test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Right arm lat test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Right arm back touch"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Upper body_Left arm back touch"
+                    }
+                ]
+            },
+            {
+                "Name": "Cardiovascular fitness",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "VO2 Max_Sub maximal test on bike or treadmill"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Anerobic capacity_30 sec cycle sprint"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Long work capacity_20 min time trial"
+                    }
+                ]
+            },
+            {
+                "Name": "Power",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Left grip strength test"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Upper body_Right grip strength test"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Lower body_Forward jump"
+                    }
+                ]
+            },
+            {
+                "Name": "Bodyweight max strength",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Isometric hang_Deadhang"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Isometric hold_Plank"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Isometric Hold_Biering-Sorensen test lower back endurance"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Isometric squat_Wall squat"
+                    }
+                ]
+            },
+            {
+                "Name": "Weighted max strength",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Squat_Barbell squat"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Hinge_Deadlift"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": false,
+                        "Benchmark": "Pull max strength_Barbell row"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": false,
+                        "Benchmark": "Push overhead max strength_Barbell press"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Push max strength_Bench press"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Relative upper to lower body ratio_Use 1RM results"
+                    }
+                ]
+            },
+            {
+                "Name": "Muscle endurance",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Pull_Pull up"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Push_Press up max"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Legs_Air squat max"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Left leg_Max Bulgarian split squats"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Right leg_Max Bulgarian split squats"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Front core_Abdominal curl"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Back core_Hyper extension"
+                    }
+                ]
+            },
+            {
+                "Name": "Functional strength",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Pull locomotion_Prowler pull"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Push locomotion_Prowler push"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Carry_Farmers walk"
+                    }
+                ]
+            }
+        ]
+    },
+    "Mind": {
+        "BenchmarkAreas": [
+            {
+                "Name": "Emotional fitness",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Motivation_Survey"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Stages of change_Survey"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Stress management_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Fear avoidance about physical activity_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Fear Avoidance about work_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "OSWERTY lower back pain disability score_Survey"
+                    }
+                ]
+            }
+        ]
+    },
+    "Exercise": {
+        "BenchmarkAreas": [
+            {
+                "Name": "Emotional fitness",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Motivation_Survey"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Stages of change_Survey"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Stress management_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Fear avoidance about physical activity_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Fear Avoidance about work_Survey"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "OSWERTY lower back pain disability score_Survey"
+                    }
+                ]
+            }
+        ]
+    },
+    "Sleep": {
+        "BenchmarkAreas": [
+            {
+                "Name": "Time priorities",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Time working_Lifestyle tracker"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Time socialising_Lifestyle tracker"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Time exercising_Lifestyle tracker"
+                    }
+                ]
+            },
+            {
+                "Name": "Recovery",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Sleep quality_Wearable tracker"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Heart rate variability_Wearable tracker"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Time spent outside_Lifestyle tracker/exercise app"
+                    }
+                ]
+            },
+            {
+                "Name": "Metabolic Function",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Low HDL/High LDL_Lipid blood test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "High Blood Lipids_Lipid blood test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "HDL Ratio_Lipid blood test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Insulin sensitivity_Fasting glucose test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Kidney function_U&E test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Inflamation marker_CRP"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Liver function_LFT test"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Calcium_"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Iron_"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Hormone function_Female Estrogen"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Hormone function_Male Testosterone"
+                    }
+                ]
+            },
+            {
+                "Name": "Nutrition",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Calorie energy need_Calorie energy need (Total Daily Energy Expenditure) and actual surplus or deficit tracked"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Macro mix_Macro mix actual versus what is required for age and gender"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Water intake_Water intake versus target guidelines"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Alcohol intake_Alcohol intake against safe guidelines"
+                    }
+                ]
+            },
+            {
+                "Name": "Cardiovascular health",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Resting heart rate_Wearable tracker"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Blood pressure_Monitor"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Oxygen saturation_SPO2 %"
+                    }
+                ]
+            },
+            {
+                "Name": "Body composition",
+                "checked": true,
+                "Benchmarks": [
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Weight_Scales"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "BMI_Height and weight"
+                    },
+                    {
+                        "Value": 2,
+                        "checked": true,
+                        "Benchmark": "Fat free Muscle index_Calculation based on height, gender, body fat %, weight"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Body fat %_Scales"
+                    },
+                    {
+                        "Value": 1,
+                        "checked": true,
+                        "Benchmark": "Hip to Waist ratio_Measure"
+                    }
+                ]
+            }
+        ]
+    }
+}

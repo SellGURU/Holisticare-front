@@ -3,7 +3,7 @@ import ReportAnalyseView from "../../Components/RepoerAnalyse/ReportAnalyseView"
 import { TopBar } from "../../Components/topBar"
 const Home = () => {
     return (
-        <>
+       <div className="h-screen">
         <div className="w-full fixed top-0 ">
             <TopBar></TopBar>
         </div>
@@ -15,10 +15,12 @@ const Home = () => {
 
             <div className="w-full pl-[200px] pt-[80px]">
                 <ReportAnalyseView memberID={123}></ReportAnalyseView>
+               
+            </div>
+            
+           
 
             </div>
-
-        </>
     )
 }
 

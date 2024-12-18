@@ -1,0 +1,49 @@
+{"suggestions": [
+   
+    {
+        "pillar_name": "Diet",
+        "note": "Introduce more whole grains and legumes to lower total cholesterol and improve metabolic health.",
+        "title": "Manage total cholesterol",
+        "Based on your:": "Total Cholesterol",
+        "reference": [
+            {
+                "document name": {
+                    "content": "Some description about the biomarker."
+                }
+            }
+        ],
+        "days": ["Mon", "Wed", "Fri"]
+
+    },
+    {
+        "pillar_name": "Exercise",
+        "note": "Adopt regular aerobic exercises like brisk walking to manage cholesterol levels effectively.",
+        "title": "Lower LDL through Activity",
+        "Based on your:": "LDL Cholesterol",
+        "reference": [
+            {
+                "document name": {
+                    "content": "Some description about the biomarker."
+                }
+            }
+        ],
+        "days": ["Tue", "Thu", "Sat"]
+    },
+   
+    {
+        "pillar_name": "Supplement",
+        "note": "Consider omega-3 fatty acids and plant sterols to support healthy cholesterol management.",
+        "title": "Manage Cholesterol Levels",
+        "Based on your:": "LDL Cholesterol",
+        "reference": [
+            {
+                "document name": {
+                    "content": "Some description about the biomarker."
+                }
+            }
+        ],
+        "days": ["Sun", "Tue", "Sat"]
+
+    }
+]
+}
