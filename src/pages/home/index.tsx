@@ -1,5 +1,6 @@
 import { ReportSideMenu } from "../../Components"
 import ReportAnalyseView from "../../Components/RepoerAnalyse/ReportAnalyseView"
+// import {TreatmentPlan} from "../index.ts";
 
 const Home = () => {
     return (
@@ -14,6 +15,9 @@ const Home = () => {
                 <ReportAnalyseView memberID={123}></ReportAnalyseView>
 
             </div>
+            {/*<div>*/}
+            {/*    <TreatmentPlan/>*/}
+            {/*</div>*/}
 
         </>
     )
