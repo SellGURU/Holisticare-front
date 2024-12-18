@@ -161,8 +161,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
               <ul>
                 {data[day.dayName].map((activity: any, i: any) => (
                   <li key={i} className="flex flex-col lg:flex-row items-start gap-1 mt-[2px]">
-                    <span className="w-[10px] h-[10px] min-w-[10px] min-h-[10px] rounded-full border border-brand-primary-color"></span>
-                    <span className=" text-[6px] lg:text-[8px]   text-justify flex-grow">
+                    <span className="w-[12px] h-[12px] min-w-[10px] min-h-[10px] rounded-full border border-Primary-EmeraldGreen"></span>
+                    <span className=" text-[6px] lg:text-[10px] text-Text-Primary   text-justify flex-grow">
                       {activity}
                     </span>
                   </li>
