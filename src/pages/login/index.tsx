@@ -36,7 +36,7 @@ const Login = () => {
         Auth.login(values.email, values.password).then((res) => {
           console.log(res);
           appContext.login(res.data.access_token,res.data.permission);
-          navigate("/#/");
+          navigate("/");
           console.log("User registered successfully:", res.data);
         }).catch((res) => {
           // console.log(res)
