@@ -13,7 +13,7 @@ const Home = () => {
             </div>
 
 
-            <div className="w-full pl-[200px] pt-10">
+            <div className="w-full pl-[200px] pt-[80px]">
                 <ReportAnalyseView memberID={123}></ReportAnalyseView>
 
             </div>

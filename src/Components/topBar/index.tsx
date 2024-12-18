@@ -3,7 +3,7 @@ import { ButtonPrimary } from "../Button/ButtonPrimary";
 export const TopBar = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full flex items-center justify-between bg-white border-b border-gray-50 pl-4 pr-6 py-2 shadow-100">
+    <div className="w-full flex items-center justify-between bg-white border-b z-[99999999999999]  border-gray-50 pl-4 pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
         <img src="/icons/home.svg" alt="" />
         <div

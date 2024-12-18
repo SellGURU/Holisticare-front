@@ -220,10 +220,10 @@ useEffect(() => {
                         
                                 {/* <CustomCanvasChart></CustomCanvasChart> */}
                     </div>       
-                    <div className="my-10 hidden">
+                    <div className="my-10 ">
                         <div>
-                            <div id="Detailed Analysis" className=" text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Detailed Analysis</div>
-                            <div className=" text-light-primary-text dark:text-[#FFFFFF99] text-[12px]">{referenceData.detailed_analysis_note}</div>
+                            <div id="Detailed Analysis" className=" text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
+                            <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
                         </div>  
     
                         <div className="mt-6">
