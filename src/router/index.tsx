@@ -6,6 +6,7 @@ import GenerateNewActionPlan from "../Components/Action-plan/GenerateNewPlan";
 import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
 import Login from "../pages/login";
 import { Targeting } from "../Components/Action-plan/sections/Targeting";
+import GenerateCalendar from "../Components/Action-plan/sections/generatecalendar";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "action-plan/targeting/:id",
         element: <Targeting></Targeting>
+      },
+      {
+        path: "action-plan/edit/:id",
+        element: <GenerateCalendar></GenerateCalendar>
       }
     ],
   },

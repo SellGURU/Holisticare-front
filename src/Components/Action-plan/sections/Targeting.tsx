@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AnalyseButton from "../../AnalyseButton";
 import { CategorySection } from "./CategorySection";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
+import MainTopBar from "../../MainTopBar";
 type Item = {
   name: string;
   value: number;
@@ -77,7 +78,12 @@ export const Targeting = () => {
     );
   };
   return (
+    <>
+<div className="w-full fixed z-50 top-0 ">
+                <MainTopBar></MainTopBar>
+            </div>
     <div className="w-full h-full px-4 lg:px-8">
+      
        <div className="px-8 mb-2 pt-[80px] flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div
@@ -122,5 +128,6 @@ export const Targeting = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
