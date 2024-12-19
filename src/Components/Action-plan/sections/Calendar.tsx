@@ -48,7 +48,7 @@ export const Calendar = () => {
   //     Sunday: ["Activity 9"],
   //   });
   const navigate = useNavigate();
-  const [isGenerated, setisGenerated] = useState(false);
+  const [isGenerated, ] = useState(false);
   const [generateMode, setgenerateMode] = useState(false);
   // const [calendarData] = useState(CalendarData);
   const [ActiveCard, setActiveCard] = useState(2);
@@ -56,13 +56,13 @@ export const Calendar = () => {
     <>
       {generateMode ? (
         <GenerateCalendar
-        onBack={()=>{
-          setgenerateMode(false)
-        }}
-          onSave={() => {
-            setisGenerated(true);
-            setgenerateMode(false);
-          }}
+        // onBack={()=>{
+        //   setgenerateMode(false)
+        // }}
+        //   onSave={() => {
+        //     setisGenerated(true);
+        //     setgenerateMode(false);
+        //   }}
         ></GenerateCalendar>
       ) : (
         <div className=" px-4 lg:px-8 w-full h-full">
