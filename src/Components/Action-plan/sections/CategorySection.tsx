@@ -1,3 +1,4 @@
+import MiniAnallyseButton from "../../MiniAnalyseButton";
 type Item = {
   name: string;
   value: number;
@@ -23,9 +24,9 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
 
 }) => {
   return (
-    <div className="flex flex-col gap-5 bg-gray-200 dark:bg-black-secondary p-2 lg:p-4 rounded-lg mb-4">
+    <div className="flex flex-col gap-5 bg-backgroundColor-Card border border-Gray-50 shadow-100 px-4 py-3 rounded-[24px] mb-4">
       <div
-        className="w-full flex justify-between items-center
+        className="w-full flex justify-between items-center pr-3
         "
       >
         {" "}
@@ -38,14 +39,14 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
         className="hidden"
       />
      <div
-    className={`w-4 h-4 flex items-center justify-center rounded ${
-      category.isSelected ? 'bg-brand-secondary-color' : ' bg-gray-300 dark:bg-black-primary'
+    className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Primary-DeepTeal ${
+      category.isSelected ? 'bg-Primary-DeepTeal' : ' bg-white '
     }`}
   >
         {category.isSelected && (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-3 w-3 text-black"
+            className="h-3 w-3 text-white"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -57,7 +58,7 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
           </svg>
         )}
       </div>
-      <span className="text-xs font-medium text-light-primary-text dark:text-primary-text">{category.name}</span>
+      <span className="text-Text-Primary TextStyle-Headline-6 ">{category.name}</span>
     </label>
         {/* <div className="flex items-center">
           <input
@@ -74,20 +75,20 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
             {category.name}
           </label>
         </div> */}
-        {/* <div className="w-[32px] relative   h-[32px]">
+        <div className="w-[32px] relative   h-[32px]">
           <MiniAnallyseButton disabled={!category.isSelected} ></MiniAnallyseButton>
-        </div> */}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-4">
         {category.items.map((item, index) => (
           <div
             key={index}
-            className={`flex items-center justify-between bg-light-min-color dark:bg-black-primary px-2 py-1 rounded-md w-[195px] h-[56px] ${!category.isSelected ? 'opacity-50' : ''}`}
+            className={`flex items-center justify-between bg-white border border-Gray-50 shadow-100 px-2 py-1 rounded-[24px] w-[195px] h-[56px] ${!category.isSelected ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center gap-[6px]  text-xs ">
-              <div className="border border-brand-primary-color w-6 h-6 flex items-center justify-center rounded-full">
-              <img className="w-4 h-4 invert dark:inver-0" src="./images/report/heart.svg" alt={item.name} />
+              <div className="border border-Primary-EmeraldGreen w-6 h-6 flex items-center justify-center rounded-full TextStyle-Body-2 text-Text-Primary">
+              <img className="w-4 h-4 " src="/icons/liver-green.svg" alt={item.name} />
               </div>
              
               <span className="text-light-primary-text dark:text-primary-text">{item.name}</span>
@@ -98,10 +99,10 @@ export const CategorySection: React.FC<CategorySectionProps> = ({
                 onValueChange(category.id, item.name, parseInt(e.target.value) || 0)
               }
                 value={item.value}
-                className="w-[43px] h-[32px] outline-none bg-light-min-color  dark:bg-black-secondary border rounded-md border-light-border-color dark:border-main-border  px-[10px] text-brand-secondary-color text-xs "
+                className="w-[43px] h-[32px]  text-center outline-none bg-backgroundColor-Card border-Gray-50 border rounded-md  text-Primary-DeepTeal text-xs "
                 type="text"
               />
-              <span className="text-light-secondary-text dark:text-secondary-text text-[10px]">
+              <span className="text-Text-Secondary text-[10px]">
                 {item.unit}
               </span>
             </div>

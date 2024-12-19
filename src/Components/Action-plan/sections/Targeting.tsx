@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import AnalyseButton from "@/components/AnalyseButton";
+import AnalyseButton from "../../AnalyseButton";
 import { CategorySection } from "./CategorySection";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
 type Item = {
@@ -78,24 +78,28 @@ export const Targeting = () => {
   };
   return (
     <div className="w-full h-full px-4 lg:px-8">
-      <div className="mb-2">
-        <div className="w-[60px]">
-          <div
-            onClick={() => {
-              navigate(-1);
-            }}
-            className={`Aurora-tab-icon-container cursor-pointer h-[40px]`}
-          >
-            <img src="./Themes/Aurora/icons/arrow-left.svg" alt="Back" />
+       <div className="px-8 mb-2 pt-[80px] flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => {
+                navigate(-1);
+              }}
+              className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
+            >
+              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+            </div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Targeting
+            </div>
           </div>
+          <AnalyseButton text="Generate by AI" />
         </div>
-      </div>
-      <div className="w-full h-full  max-h-[485px] lg:max-h-[585px] overflow-y-scroll xl:overflow-hidden pb-2   inset-0 pt-6 rounded-2xl px-6 bg-light-min-color dark:bg-black-primary border border-light-border-color dark:border-main-border">
-        <div className="flex items-center justify-between text-sm font-medium w-full text-light-primary-text dark:text-primary-text">
-          Targeting
-          {/* <AnalyseButton text="Generate by AI" /> */}
-        </div>
-        <div className="flex flex-col gap-4 overflow-y-scroll max-h-[340px] lg:max-h-[440px] mt-4">
+      <div className="w-full pb-2 pt-6 rounded-2xl px-6  ">
+        {/* <div className="flex items-center justify-between text-sm font-medium w-full text-light-primary-text dark:text-primary-text">
+          Targeting */}
+         
+        {/* </div> */}
+        <div className="flex flex-col gap-4 overflow-y-scroll max-h-[340px] lg:max-h-[440px]">
           {categories.map((category) => (
             <CategorySection
               key={category.id}
@@ -112,6 +116,7 @@ export const Targeting = () => {
             style={{ width: "192px" }}
         
           >
+            <img src="/icons/tick-square.svg" alt="" />
             Save Changes
           </ButtonPrimary>
         </div>

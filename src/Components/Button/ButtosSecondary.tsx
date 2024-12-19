@@ -16,7 +16,7 @@ export const ButtonSecondary: React.FC<ButtonDefaultProps> = ({
     <button
       onClick={onClick}
       className={
-        ' text-[12px] text-white flex items-center justify-center gap-1 bg-Primary-EmeraldGreen rounded-3xl border border-gray-50 px-6 py-[6px] disabled:bg-[#999999] ' +
+        ' text-[12px] text-white  flex items-center justify-center gap-1 bg-Primary-EmeraldGreen rounded-3xl border border-gray-50 px-6 py-[6px] disabled:bg-[#999999] ' +
         ClassName
       }
       {...props}

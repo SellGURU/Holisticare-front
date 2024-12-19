@@ -5,6 +5,7 @@ import Layout from "../layout";
 import GenerateNewActionPlan from "../Components/Action-plan/GenerateNewPlan";
 import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
 import Login from "../pages/login";
+import { Targeting } from "../Components/Action-plan/sections/Targeting";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
         path: "action-plan/orders/:id",
         element: <PlanManagerModal></PlanManagerModal>,
       },
+      {
+        path: "action-plan/targeting/:id",
+        element: <Targeting></Targeting>
+      }
     ],
   },
   {
