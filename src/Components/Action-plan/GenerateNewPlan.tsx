@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import PlanCard from "./sections/PlanCard";
-import { useState } from "react";
+import { useState , } from "react";
+import { TopBar } from "../topBar";
 
 // import Data from "./data.json";
 import PlanManagerModal from "./sections/PLanManager";
@@ -50,11 +51,28 @@ const GenerateNewActionPlan = () => {
   ];
   const [isEditMode, setisEditMode] = useState(false);
   // const [Priorities] = useState<PrioritiesType>(Data);
+  const [isLoading, setisLoading] = useState(false);
 
   return (
     <>
-      <div className="px-8 mb-2">
-        <div className="w-[60px]">
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {" "}
+          
+          <div className="spinner">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="dot"></div>
+            ))}
+          </div>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div>
+        </div>
+      )}
+
+      <div className="w-full fixed top-0 ">
+        <TopBar></TopBar>
+      </div>
+      <div className="px-8 mb-2 pt-[80px]">
+        <div className="flex items-center gap-3">
           <div
             onClick={() => {
               if (isEditMode) {
@@ -63,27 +81,46 @@ const GenerateNewActionPlan = () => {
                 navigate(-1);
               }
             }}
-            className={`Aurora-tab-icon-container cursor-pointer h-[40px]`}
+            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
           >
-            <img className={`Aurora-icons-arrow-left`} />
+            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+          </div>
+          <div className="TextStyle-Headline-5 text-Text-Primary">
+            Generate Action Plan
           </div>
         </div>
       </div>
 
       <div className="w-full inset-0 z-10  flex items-center justify-center px-8  bg-opacity-50">
         {isEditMode ? (
-          <PlanManagerModal  />
+          <PlanManagerModal />
         ) : (
-          <div className="dark:bg-[#1E1E1E] h-full pb-[180px] lg:pb-0 max-h-[650px] min-h-[476px] overflow-auto lg:overflow-hidden flex   justify-center items-center relative text-light-secandary-text dark:text-primary-text border border-light-border-color dark:border-none  rounded-lg w-full dark:shadow-lg gap-6 flex-wrap py-5 lg:py-0 ">
-            {plans.map((el: any) => {
-              return (
-                <PlanCard  data={el}></PlanCard>
-              );
-            })}
+          <div className=" h-full pb-[180px] l flex flex-col   justify-center items-center relative py-[80px]  ">
+            <div className="text-Text-Primary text-base font-medium text-center">
+              Choose Your Method
+            </div>
+            <div className="mt-2 text-Text-Primary TextStyle-Body-1 text-center">
+              You can personalize your selected method by using the setting
+              button on the cards.
+            </div>
+            <div className=" mt-16 flex items-center justify-center gap-4 flex-wrap">
+              {plans.map((el: any) => {
+                return <PlanCard onClick={
+                  ()=>{
+                    setisLoading(true)
+                    setTimeout(()=>{
+                      setisLoading(false)
+                    },3000)
+                    navigate('/')
+                              
+
+                  }
+                } data={el}></PlanCard>;
+              })}
+            </div>
           </div>
         )}
       </div>
-   
     </>
   );
 };
