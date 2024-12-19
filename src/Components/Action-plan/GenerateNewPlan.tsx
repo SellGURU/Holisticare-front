@@ -110,8 +110,9 @@ const GenerateNewActionPlan = () => {
                     setisLoading(true)
                     setTimeout(()=>{
                       setisLoading(false)
+                      navigate('/report')
                     },3000)
-                    navigate('/')
+                    
                               
 
                   }

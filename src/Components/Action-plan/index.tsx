@@ -19,38 +19,38 @@ export const ActionPlan = () => {
 
   // const [isGenerated, setisGenerated] = useState(false);
   const [CardData, setCardData] = useState<Array<CardData>>([
-    {
-      cardID: 1,
-      status: "Completed",
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
-      progress: 100,
-      time: "Done",
-    },
-    {
-      cardID: 2,
-      status: "On Going",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 85,
-      time: "1 Week left",
-    },
-    {
-      cardID: 3,
-      status: "Paused",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 25,
-      time: "Waiting",
-    },
-    {
-      cardID: 4,
-      status: "Upcoming",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 0,
-      time: "Waiting",
-    },
+    // {
+    //   cardID: 1,
+    //   status: "Completed",
+    //   title: "Muscle Strengthening",
+    //   subtitle: "Something short and simple here",
+    //   progress: 100,
+    //   time: "Done",
+    // },
+    // {
+    //   cardID: 2,
+    //   status: "On Going",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 85,
+    //   time: "1 Week left",
+    // },
+    // {
+    //   cardID: 3,
+    //   status: "Paused",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 25,
+    //   time: "Waiting",
+    // },
+    // {
+    //   cardID: 4,
+    //   status: "Upcoming",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 0,
+    //   time: "Waiting",
+    // },
   ]);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
@@ -58,15 +58,15 @@ export const ActionPlan = () => {
   return (
     <>
       <div className="flex flex-col gap-3 w-full">
-        <div className="flex flex-col  justify-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
+        <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {CardData.length > 0 ? (
             <>
-              <img
+              {/* <img
                 onClick={() => navigate(`/action-plan/edit/${id}`)}
                 className="absolute top-4 right-4 cursor-pointer"
                 src="./Themes/Aurora/icons/setting-2.svg"
                 alt=""
-              />
+              /> */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 ">
                 {CardData.map((el, i) => (
                   <ActionPlanCard
