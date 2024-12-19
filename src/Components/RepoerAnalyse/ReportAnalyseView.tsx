@@ -137,7 +137,7 @@ useEffect(() => {
                     <BeatLoader size={8} color="#36d7b7" loading={loading} />
                 </div>
                 ): (
-                    <div className="pt-[54px] pb-[200px]  pr-6 h-[98vh] ml-6 overflow-y-scroll overflow-x-hidden  ">
+                    <div className="pt-[54px] pb-[200px] mt-[40px] pr-6 h-[98vh] ml-6 overflow-y-scroll overflow-x-hidden  ">
                
                     <div className="flex gap-14">
                         <div className="min-w-[330px] w-[330px] relative">
