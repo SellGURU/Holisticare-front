@@ -3,9 +3,11 @@ import { useEffect, useState } from "react"
 import { ButtonSecondary } from "../Button/ButtosSecondary"
 import Application from "../../api/app"
 import ClientCard from "./ClientCard"
+import { useNavigate } from "react-router-dom"
 
 const ClientList =() => {
     const [clientList,setClientList] = useState([])
+    const navigate = useNavigate()
     useEffect(() => {
         Application.getPatients().then((res) => {
             setClientList(res.data.patients_list_data)
@@ -20,7 +22,9 @@ const ClientList =() => {
                     <div className="text-Text-Primary font-medium opacity-[87%]">
                         Clients List
                     </div>
-                    <ButtonSecondary>
+                    <ButtonSecondary onClick={() => {
+                        navigate('/addClient')
+                    }}>
                         <div>Add Client</div>
                     </ButtonSecondary>
                 </div>
@@ -43,7 +47,9 @@ const ClientList =() => {
 
                         </div>
                         <div>
-                            <ButtonSecondary>
+                            <ButtonSecondary onClick={() => {
+                                navigate('/addClient')
+                            }}>
                                 <div className="w-[260px]">
                                     Add Client
                                 </div>
