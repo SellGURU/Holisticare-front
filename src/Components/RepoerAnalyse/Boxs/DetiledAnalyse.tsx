@@ -43,7 +43,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     <>
       <div
         id={data.subcategory}
-        className="w-full mb-4 py-4 px-6 dark:bg-[#1E1E1E] border border-light-blue-active dark:border-[#383838] rounded-[6px] "
+        className="w-full mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[6px] "
       >
         <div
           onClick={() => {
@@ -63,26 +63,26 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               }}
             >
               <div
-                className="w-9 h-9  flex justify-center bg-light-min-color dark:bg-[#1E1E1E] items-center  rounded-full"
+                className="w-9 h-9  flex justify-center bg-white items-center  rounded-full"
                 style={{}}
               >
                 <img
-                  className="invert dark:invert-0"
+                  className=""
                   src={resolveAnalyseIcon(data.subcategory)}
                   alt=""
                 />
               </div>
             </div>
             <div className="ml-2">
-              <div className="text-light-secandary-text dark:text-[#ffffffeb] flex items-center gap-2 text-[14px]">
+              <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
                 {data.subcategory}
                 {isOpen && <Legends></Legends>}
               </div>
               <div className="flex justify-start items-center">
-                <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-[10px]">
+                <div className="TextStyle-Body-3 text-Text-Secondary">
                   {data.num_of_biomarkers} biomarkers
                 </div>
-                <div className="text-light-secandary-text dark:text-[#FFFFFF99] ml-1 text-[10px]">
+                <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
                   {data.out_of_ref} {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
                 </div>
               </div>
@@ -103,13 +103,13 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
         </div>
         {isOpen && (
           <>
-            <div className="text-light-secandary-text dark:text-[#FFFFFF99] text-[14px] mt-4 font-medium">
+            <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
               Description
             </div>
-            <div className="text-[12px] h-[80px] overflow-y-auto text-light-secandary-text dark:text-[#FFFFFF99] mt-2 text-justify">
+            <div className=" h-[80px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
               {active.more_info}
             </div>
-            <div className="w-full dark:bg-[#272727] bg-light-min-color border-light-border-color flex items-start gap-2 p-4 dark:border-[#383838] rounded-[6px] min-h-[30px] mt-4">
+            <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 ">
                 {refrences?.biomarkers.map((value: any) => {
                   return (
@@ -119,11 +119,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                           setActiveBOx(value.name);
                           setActive(value);
                         }}
-                        className={`w-full h-10 mb-2 cursor-pointer ${
+                        className={`w-full h-10 mb-2 cursor-pointer text-sm ${
                           activeBox == value.name
-                            ? "dark:border-primary-color border-light-blue-active text-light-secandary-text dark:text-white"
-                            : "dark:border-[#383838] dark:text-[#FFFFFF99] text-light-primary-text"
-                        } dark:bg-[#1E1E1E] border items-center  rounded-[6px] flex justify-between px-4`}
+                            ? "border-Primary-EmeraldGreen "
+                            : "border-Gray-50"
+                        }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
                       >
                         <div className=" text-[12px]">{value.name}</div>
                         <img
@@ -140,7 +140,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
                   <div className="absolute cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
-                      <div className="text-light-primary-text dark:text-[#FFFFFFDE]  text-[12px] font-medium">
+                      <div className="TextStyle-Headline-6  text-Text-Primary">
                         Historical Chart
                       </div>
                       <Toggle
@@ -153,8 +153,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   </div>
                   {!isCheced ?
                     <div className="w-full ">
-                      <div className=" w-full p-4 border dark:border-[#383838] h-[159px] bg-light-min-color dark:bg-[#1E1E1E] rounded-[6px]">
-                        <div className="dark:text-[#FFFFFFDE] text-light-primary-text text-[12px] font-medium mb-20">
+                      <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
+                        <div className=" mb-20 TextStyle-Headline-6 text-Text-Primary">
                           Current Value
                         </div>
                         <StatusBarChart data={active}></StatusBarChart>
@@ -162,8 +162,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                     </div>
                   :
                     <div className="w-full">
-                      <div className=" w-full border dark:border-[#383838] p-4 h-[159px] dark:bg-[#1E1E1E] bg-light-min-color border-light-border-color rounded-[6px]">
-                        <div className="dark:text-[#FFFFFFDE] text-light-primary-text text-[12px] font-medium mb-5">
+                      <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
+                        <div className="TextStyle-Headline-6 text-Text-Primary mb-5">
                           Historical Data
                         </div>
                         <div className="mt-0 relative">

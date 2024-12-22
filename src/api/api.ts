@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-// import { getTokenFromLocalStorage } from "@/store/token";
+import { getTokenFromLocalStorage } from "../store/token";
 import { toast } from "react-toastify";
 // http://51.142.20.137:5052
 class Api {
@@ -13,7 +13,7 @@ class Api {
     }
     const response = axios.post(this.base_url + url, data, {
       headers: {
-        // Authorization: "Bearer " + getTokenFromLocalStorage(),
+        Authorization: "Bearer " + getTokenFromLocalStorage(),
         "Content-Type": config?.headers?.['Content-Type'] || "application/json",
       },
       // timeout:15000
@@ -24,7 +24,7 @@ class Api {
   protected static get(url:string , config?:any) {
     // toast.loading('pending ...')
     const response = axios.get(this.base_url+url , { headers: {
-      // Authorization: "Bearer " + getTokenFromLocalStorage(),
+      Authorization: "Bearer " + getTokenFromLocalStorage(),
       "Content-Type": config?.headers?.['Content-Type'] || "application/json",
     },});
     return response;    
