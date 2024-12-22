@@ -331,9 +331,9 @@ useEffect(() => {
                         <ActionPlan></ActionPlan>
                     </div>
                                                         
-                    {/* <div className="hidden print:block" id="printDiv">
+                    <div className="hidden print:block" id="printDiv">
                         <PrintReport ResolveConceringData={ResolveConceringData} caldenderData={caldenderData} TreatMentPlanData={TreatMentPlanData} resolveSubCategories={resolveSubCategories} resolveBioMarkers={resolveBioMarkers} referenceData={referenceData} resolveCategories={resolveCategories} ClientSummaryBoxs={ClientSummaryBoxs}></PrintReport>
-                    </div> */}
+                    </div>
                 </div>   
                 )}
         </>
