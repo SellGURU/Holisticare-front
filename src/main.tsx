@@ -10,10 +10,12 @@ import '@fontsource/rozha-one/400.css';
 
 import AppContextProvider from './store/app.tsx';
 import './api/axios.ts';
+import { ToastContainer } from 'react-toastify';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppContextProvider>
       <App />
     </AppContextProvider>
+    <ToastContainer />
   </StrictMode>,
 )
