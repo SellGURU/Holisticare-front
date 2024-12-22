@@ -66,7 +66,7 @@ const ReportSideMenu = () => {
             <div className="flex flex-col gap-2">
               {Array.from({ length: 6 }, (_, index) => (
                 <div onClick={()=>setactiveImg(index+1)} key={index} className={`${index+1 == activeImg ? 'border-Primary-EmeraldGreen' : 'border-gray-50'} border rounded-md relative overflow-hidden w-[146px] h-[56px] `}>
-                 <img className="absolute inset-0 w-[150px] h-[60px] object-cover" src={`./images/report-sidemenu/${index+1}.png`} alt="" />
+                 <img className="absolute inset-0 w-[150px] h-[60px] object-cover" src={`/images/report-sidemenu/${index+1}.png`} alt="" />
                 </div>
               ))}
             </div>
