@@ -1,0 +1,39 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react"
+import { ButtonSecondary } from "../Button/ButtosSecondary"
+import Application from "../../api/app"
+import ClientCard from "./ClientCard"
+
+const ClientList =() => {
+    const [clientList,setClientList] = useState([])
+    useEffect(() => {
+        Application.getPatients().then((res) => {
+            setClientList(res.data.patients_list_data)
+        })
+    },[])
+    return (
+        <>
+        <div className="px-6 pt-8 ">
+            <div className="w-full flex justify-between items-center">
+                <div className="text-Text-Primary font-medium opacity-[87%]">
+                    Clients List
+                </div>
+                <ButtonSecondary>
+                    <div>Add Client</div>
+                </ButtonSecondary>
+            </div>
+            <div className="w-full h-[1px] bg-white my-3"></div>
+
+            <div className=" w-full flex flex-wrap gap-4">
+                {clientList.map((client:any) => {
+                    return (
+                        <ClientCard client={client}></ClientCard>
+                    )
+                })}
+            </div>
+        </div>
+        </>
+    )
+}
+
+export default ClientList

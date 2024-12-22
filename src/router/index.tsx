@@ -7,6 +7,7 @@ import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
 import Login from "../pages/login";
 import { Targeting } from "../Components/Action-plan/sections/Targeting";
 import GenerateCalendar from "../Components/Action-plan/sections/generatecalendar";
+import { ClientList } from "../Components";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,12 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home></Home>,
+        children:[
+          {
+            path:'/',
+            element:<ClientList></ClientList>
+          }
+        ]
       },
       {
         path: "/report",
