@@ -15,7 +15,7 @@ const Report = () => {
 
 
             <div className="w-full pl-[200px]">
-                <ReportAnalyseView memberID={123}></ReportAnalyseView>
+                <ReportAnalyseView ></ReportAnalyseView>
                
             </div>
             
