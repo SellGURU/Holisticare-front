@@ -22,7 +22,7 @@ import  Application  from "../../api/app"
 import { useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
-// import PrintReport from "./PrintReport"
+import PrintReport from "./PrintReport"
 import { ActionPlan } from "../Action-plan"
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
@@ -331,9 +331,9 @@ useEffect(() => {
                         <ActionPlan></ActionPlan>
                     </div>
                                                         
-                    {/* <div className="hidden print:block" id="printDiv">
+                    <div className="hidden print:block" id="printDiv">
                         <PrintReport ResolveConceringData={ResolveConceringData} caldenderData={caldenderData} TreatMentPlanData={TreatMentPlanData} resolveSubCategories={resolveSubCategories} resolveBioMarkers={resolveBioMarkers} referenceData={referenceData} resolveCategories={resolveCategories} ClientSummaryBoxs={ClientSummaryBoxs}></PrintReport>
-                    </div> */}
+                    </div>
                 </div>   
                 )}
         </>
