@@ -101,7 +101,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     const [referenceData, setReferenceData] = useState<any>(null)
     const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([])
     useEffect(() => {
-        if(ClientSummaryBoxs != null &&referenceData!= null && caldenderData!=null){
+        if(ClientSummaryBoxs != null &&referenceData!= null ){
             setLoading(false)
         }
     },[ClientSummaryBoxs,referenceData,TreatMentPlanData,caldenderData,isHaveReport])    

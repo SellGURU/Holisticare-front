@@ -179,8 +179,9 @@ const PrintReport:React.FC<PrintReportProps> = ({ClientSummaryBoxs,ResolveConcer
                     <div className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Action Plan </div>
 
                 </div>  
-
-                <CalenderPrint data={caldenderData}></CalenderPrint>
+                {caldenderData!= null &&
+                    <CalenderPrint data={caldenderData}></CalenderPrint>
+                }
             </div>  
 
             <div className="my-10 " style={{pageBreakAfter:'always'}}>
