@@ -14,7 +14,6 @@ export const InputChat:FC<IInputChat>=({onChange, sendHandler})=>{
                 if (btnSendRef.current) {
                     btnSendRef.current.value = "";
                 }
-
             }} src={"/icons/send-2.svg"}/>
         </div>
 )

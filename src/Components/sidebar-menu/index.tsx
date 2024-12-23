@@ -15,11 +15,14 @@ export const SidBarMenu = () => {
     const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
     return (
         <>
-            <div className={"w-[80px] flex justify-center bg-white h-[500px] border-Boarder border rounded-xl p-5 "}>
+            <div className={"w-[55px] flex justify-center items-center relative bg-white h-[500px] border-Boarder border rounded-xl p-5 "}>
 
-                <ul className={"flex items-center flex-col gap-3"}>
-                    <li>
-                        <img src={"/avatar.svg"} className={"w-10 h-10 rounded-full border-2 border-whiteavatar"}/>
+                <div className={"absolute top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10"}>
+
+                </div>
+                <ul className={"flex items-center flex-col z-50 gap-3"}>
+                    <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
+                        <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
 
                     </li>
                     <li className={"text-Text-Primary TextStyle-Headline-6 text-center"}>Alex
@@ -44,7 +47,7 @@ export const SidBarMenu = () => {
                         <img src={"/icons/sidbar-menu/message-question.svg"}/>
                     }
                 </div>
-                <PopUpChat isOpen={toogleOpenChat}></PopUpChat>
+                <PopUpChat isOpen={toogleOpenChat} memberId={"82638261308"}></PopUpChat>
             </div>
         </>
     );

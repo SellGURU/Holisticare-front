@@ -19,8 +19,8 @@ type Message = {
     time: string;
 };
 
-export const PopUpChat = ({isOpen}:{isOpen:boolean}) => {
-    const memberId="872642194025"
+export const PopUpChat = ({isOpen,memberId}:{memberId:string,isOpen:boolean}) => {
+    const memberIdTest="872642194025"
     const [MessageData,setMessageData] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [conversationId, setConversationId] = useState<number>(1);
@@ -30,6 +30,7 @@ export const PopUpChat = ({isOpen}:{isOpen:boolean}) => {
 
     useEffect(() => {
         Application.getListChats({
+            // member_id:memberIdTest
             member_id:memberId
         }).then(res => {
             const resolve = res.data.messages.flatMap((mes:any,index:number) => {
