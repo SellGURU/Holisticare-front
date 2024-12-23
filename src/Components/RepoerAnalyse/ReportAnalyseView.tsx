@@ -345,7 +345,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
 
                              }                                   
                             {!isHaveReport &&
-                                <UploadTest></UploadTest>
+                                <UploadTest memberId={resolvedMemberID}></UploadTest>
                             }                            
                         </div>   
 

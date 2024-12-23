@@ -363,6 +363,11 @@ static downloadClinicReport(data:any){
     const response = this.post("/overview/calendar",data)
     return response
   }
+
+  static addLabReport(data:any) {
+    const response = this.post("/patients/add_lab_report",data)
+    return response
+  }
 }
 
 

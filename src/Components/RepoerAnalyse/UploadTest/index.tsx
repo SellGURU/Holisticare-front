@@ -2,28 +2,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
+import Uploading from "./uploading";
 
-const UploadTest = () => {
-    const convertToBase64 = (file: File): Promise<any> => {
-        return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+interface UploadTestProps {
+    memberId:any
+}
 
-        reader.readAsDataURL(file);
-
-        reader.onload = () => {
-            const base64 = reader.result as string;
-            resolve({ name: file.name, url:base64,type:file.type ,size:file.size});
-        };
-
-        reader.onerror = (error) => {
-            reject(error);
-        };
-        });
-    };     
+const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
+   
     const [files,setFiles] = useState<Array<any>>([])
+    const [upLoadingFiles,setUploadingFiles] = useState<Array<any>>([])
     return (
         <>
-            <div className="w-[99.1%] rounded-[16px] h-[89vh] top-6 flex justify-center  absolute left-0">
+            <div className="w-[93%] rounded-[16px] h-[89vh] top-14 flex justify-center  absolute left-0">
                 <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute">
 
                 </div>                                   
@@ -49,28 +40,61 @@ const UploadTest = () => {
                             </ButtonPrimary>
 
                         </div>
-                        <input type="file" onChange={(e:any) => {
-                            const file = e.target.files[0];
-                            convertToBase64(file).then((res) => {
-                                // setPhoto(res.url)
-                                setFiles([res.url])
-                            })
+                        <input type="file" multiple onChange={(e:any) => {
+                            const fileList = Array.from(e.target.files);
+                            setUploadingFiles([...upLoadingFiles,...fileList])
+                            // fileList.forEach((file:any) => {
+                            //     convertToBase64(file).then((res) => {
+                            //         Application.addLabReport({
+                            //             member_id:memberId,
+                            //             report:{
+                            //                 "file name":res.name,
+                            //                 "base64 string":res.url
+                            //             }
+                            //         }).then(() => {
+                            //             setFiles([...files,file])
+                            //         })
+                            //     })                         
+                            // });
+
+                            
                         }} id="uploadFile" className="w-full absolute invisible h-full left-0 top-0" />                                            
                     </div>
 
                     <div className="text-Text-Primary text-[12px] mt-2 w-[470px]">
                         {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
                     </div>
+                    <div className="mt-6 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-scroll">
+                        {files.map((el:any) => {
+                            return (
+                                <>
+                                    <div className="w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px]">
+                                       <div className="flex justify-start gap-2">
+                                            <img src="/images/Pdf.png" alt="" />
+                                            <div>
+                                                <div className="text-[12px] text-Text-Primary font-[600]">
+                                                    {el.name}
+                                                </div>
+                                                <div className="text-[12px] text-Text-Secondary">
+                                                    {(el.size / ( 1024)).toFixed(2)} KB
+                                                </div>
+                                            </div>
+                                       </div>
+                                    </div>
+                                </>
+                            )
+                        })}
+                        {upLoadingFiles.map((el:any) => {
+                            return (
+                                <>
+                                <Uploading memberId={memberId} file={el} onSuccess={(file) => {
+                                    setFiles([...files,file])
+                                }}></Uploading>
+                                </>
+                            )
+                        })}
+                    </div>        
                 </div>
-                <div>
-                    {files.map((_el:any) => {
-                        return (
-                            <>
-                                <div className="w-full h-[52px] bg-white rounded-[16px]"></div>
-                            </>
-                        )
-                    })}
-                </div>        
             </div>        
         </>
     )
