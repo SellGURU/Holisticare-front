@@ -62,7 +62,9 @@ export default {
         "600":"0px 8px 18px -6px #18274B1F, 0px 12px 42px -4px #18274B1F",
         "700":"0px 8px 22px -6px #18274B1F, 0px 14px 64px -4px #18274B1F ",
         "800":"0px 8px 28px -6px #18274B1F, 0px 18px 88px -4px #18274B24 ",
-        "input":"0px 0px 4px 0px #18274B1F"
+        "input":"0px 0px 4px 0px #18274B1F",
+        'chat-input': '4px 0px 12px 0px rgba(202, 202, 215, 0.25)',
+
       },
     },
   },
