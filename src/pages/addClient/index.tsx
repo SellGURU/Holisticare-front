@@ -113,10 +113,40 @@ const AddClient =() => {
                     </div>   
                     
                     <div className="flex justify-center w-full">
-                        <div className="max-w-[430px] w-full grid gap-4">
+                        <div className="max-w-[460px] w-full grid gap-4">
                             <TextField {...formik.getFieldProps("firstName")} name="firstName" label="First Name" placeholder="Enter client’s first name..." ></TextField>
                             <TextField {...formik.getFieldProps("lastName")} label="Last Name" placeholder="Enter client’s last name..." ></TextField>
                             <TextField {...formik.getFieldProps("email")} type="email" label="Email Address" placeholder="Enter client’s email address..."  ></TextField>
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <label className="text-Text-Primary  text-[12px] font-medium">Gender</label>
+                                    <div className="w-[219px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-gray-50 shadow-100">
+                                        <div className="text-[12px] text-gray-400">
+                                            Select client’s gender...
+                                        </div>
+                                        <div>
+                                            <img src="./icons/arrow-down-drop.svg" alt="" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-Text-Primary  text-[12px] font-medium">Age</label>
+                                    <div className="w-full flex justify-between">
+                                        <div className="w-[66px] h-[28px] bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border">
+
+                                        </div>
+                                        <div className="w-[88px] h-[28px] bg-backgroundColor-Card border border-gray-50">
+
+                                        </div>
+                                        <div className="w-[66px] h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border">
+
+                                        </div>                                        
+                                    </div>
+                                    <div className="text-[10px] text-Text-Secondary mt-1 px-2">Enter a number between 0 and 9</div>
+                                </div>
+                            </div>
+                            
                             <div>
                                 <label className="text-Text-Primary  text-[12px] font-medium">Client’s Photo</label>
                                 <div onClick={() => {
