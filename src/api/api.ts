@@ -16,6 +16,11 @@ class Api {
         Authorization: "Bearer " + getTokenFromLocalStorage(),
         "Content-Type": config?.headers?.['Content-Type'] || "application/json",
       },
+      onUploadProgress: (progressEvent:any) => {
+        if(config.onUploadProgress){
+          config.onUploadProgress(progressEvent)
+        }
+      },  
       // timeout:15000
     });
     return response;

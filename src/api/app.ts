@@ -364,8 +364,14 @@ static downloadClinicReport(data:any){
     return response
   }
 
-  static addLabReport(data:any) {
-    const response = this.post("/patients/add_lab_report",data)
+  static addLabReport(data:any,onUploadProgress:(progressEvent:any) => void) {
+    const response = this.post("/patients/add_lab_report",data,
+      {
+      onUploadProgress:(progressEvent:any) => {
+        onUploadProgress(progressEvent)
+      }        
+      }
+    )
     return response
   }
 }
