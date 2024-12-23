@@ -46,6 +46,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isFinalLoading, setisFinalLoading] = useState(false)
   // const [Priorities3,setPriorities3] = useState<PrioritiesType>({})
   // const [Priorities6,setPriorities6] = useState<PrioritiesType>({})
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -70,6 +71,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           treatment_plan: "",
         });
       }
+      setisFinalLoading(true)
+      setTimeout(()=>{
+        setisFinalLoading(false)
+        navigate(`/report/${id}`)
+      },3000)
       navigate(-1);
     }
   };
@@ -189,6 +195,19 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // const {themeISLight} = useContext(AppContext);
   return (
     <>
+          {isFinalLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {" "}
+          
+          <div className="spinner">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="dot"></div>
+            ))}
+          </div>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div>
+        </div>
+      )}
+
     <div className="fixed w-full top-0"><TopBar></TopBar></div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
         <div className="w-full px-4 py-6    relative   ">
