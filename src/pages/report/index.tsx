@@ -1,6 +1,7 @@
 import { ReportSideMenu } from "../../Components"
 import ReportAnalyseView from "../../Components/RepoerAnalyse/ReportAnalyseView"
 import { TopBar } from "../../Components/topBar"
+import { ComboBar } from "../../Components"
 
 const Report = () => {
     return (
@@ -19,7 +20,9 @@ const Report = () => {
                
             </div>
             
-           
+           <div className="absolute top-24 right-6">
+            <ComboBar></ComboBar>
+           </div>
 
         </div>
     )

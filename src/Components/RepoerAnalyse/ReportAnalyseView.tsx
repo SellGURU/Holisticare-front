@@ -25,7 +25,6 @@ import { BeatLoader } from "react-spinners"
 import PrintReport from "./PrintReport"
 import { ActionPlan } from "../Action-plan"
 import { TreatmentPlan } from "../TreatmentPlan"
-import { ButtonPrimary } from "../Button/ButtonPrimary"
 import UploadTest from "./UploadTest"
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
@@ -79,22 +78,6 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
             setCalenderData(calenderDataMoch)
         }
     },[isHaveReport])
-    const convertToBase64 = (file: File): Promise<any> => {
-        return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.readAsDataURL(file);
-
-        reader.onload = () => {
-            const base64 = reader.result as string;
-            resolve({ name: file.name, url:base64,type:file.type ,size:file.size});
-        };
-
-        reader.onerror = (error) => {
-            reject(error);
-        };
-        });
-    };  
     // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
     const [ClientSummaryBoxs,setClientSummaryBoxs] = useState<any>(null)
     const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
@@ -160,7 +143,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                 ): (
                     <>
 
-                        <div className={`pt-[54px] relative pb-[200px] mt-[40px] pr-6 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
+                        <div className={`pt-[54px] relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
                     
                             <div className="flex gap-14" >
                                 <div className="min-w-[330px] w-[330px] relative">
