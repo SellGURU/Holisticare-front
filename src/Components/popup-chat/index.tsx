@@ -30,8 +30,8 @@ export const PopUpChat = ({isOpen,memberId}:{memberId:string,isOpen:boolean}) =>
 
     useEffect(() => {
         Application.getListChats({
-            // member_id:memberIdTest
-            member_id:memberId
+            member_id:memberIdTest
+            // member_id:memberId
         }).then(res => {
             const resolve = res.data.messages.flatMap((mes:any,index:number) => {
                 const request:Message = {
@@ -84,7 +84,6 @@ export const PopUpChat = ({isOpen,memberId}:{memberId:string,isOpen:boolean}) =>
                     time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 };
                 setMessageData((prevMessages) => [...prevMessages, aiMessage]);
-
             }
             catch(err){
                 console.log(err);

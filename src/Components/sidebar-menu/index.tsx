@@ -1,5 +1,6 @@
 import {PopUpChat} from "../popup-chat";
-import {useState} from "react";
+import {useRef, useState} from "react";
+import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
 
 export const SidBarMenu = () => {
     const itemList:string[] = [
@@ -13,6 +14,23 @@ export const SidBarMenu = () => {
         "/icons/sidbar-menu/timeline.svg"
     ];
     const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
+
+    // Refs for modal and button to close it when clicking outside
+    const modalRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
+
+    // Handle modal close
+    const closeModal = () => {
+        setToogleOpenChat(false);
+    };
+
+    // Using the custom hook to automatically close the modal when clicking outside
+    useModalAutoClose({
+        refrence: modalRef,
+        buttonRefrence: buttonRef,
+        close: closeModal,
+    });
+
     return (
         <>
             <div className={"w-[55px] flex justify-center items-center relative bg-white h-[500px] border-Boarder border rounded-xl p-5 "}>
@@ -41,13 +59,18 @@ export const SidBarMenu = () => {
                 <div className={"w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center"}>
                     <img src={"/icons/add.svg"}/>
                 </div>
-                <div onClick={()=>setToogleOpenChat(!toogleOpenChat)} className={"w-8 h-8 rounded-md bg-white flex items-center justify-center"}>
+                <div  ref={buttonRef} onClick={()=>setToogleOpenChat(!toogleOpenChat)} className={"w-8 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center"}>
                     {toogleOpenChat ?
                         <img src={"/icons/close.svg"}/>:
                         <img src={"/icons/sidbar-menu/message-question.svg"}/>
                     }
                 </div>
-                <PopUpChat isOpen={toogleOpenChat} memberId={"82638261308"}></PopUpChat>
+                <div
+                    ref={modalRef}
+                    className="w-full"
+                >
+                    <PopUpChat isOpen={toogleOpenChat} memberId="82638261308"/>
+                </div>
             </div>
         </>
     );
