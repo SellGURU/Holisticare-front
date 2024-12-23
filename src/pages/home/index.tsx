@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom"
 import { SideMenu } from "../../Components"
 import MainTopBar from "../../Components/MainTopBar"
 import {SidBarMenu} from "../../Components/sidebar-menu";
-import {PopUpChat} from "../../Components/popup-chat";
 // import { TopBar } from "../../Components/topBar"
 
 const Home = () => {
@@ -22,15 +21,7 @@ const Home = () => {
                <div className={"w-[5vw] flex items-center justify-between flex-col py-[5vh] "}>
 
                <SidBarMenu/>
-                   <div className={"space-y-1"}>
-                       <div className={"w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center"}>
-                              <img src={"/icons/sidbar-menu/pluse.png"}/>
-                        </div>
-                       <div className={"w-8 h-8 rounded-md bg-white flex items-center justify-center"}>
-                           <img src={"/icons/sidbar-menu/message-question.svg"}/>
-                       </div>
-                       <PopUpChat></PopUpChat>
-                   </div>
+
                </div>
            </div>
 
