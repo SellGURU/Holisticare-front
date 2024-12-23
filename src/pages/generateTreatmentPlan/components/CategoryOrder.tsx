@@ -9,8 +9,8 @@ import PillarsBox from "./PillarsBox"
 import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
 // import { Button } from "symphony-ui"
 import MiniAnallyseButton from "../../../Components/MiniAnalyseButton"
-import Application from "../../../api/app"
-import { useConstructor } from "../../../help"
+// import Application from "../../../api/app"
+// import { useConstructor } from "../../../help"
 import { ClipLoader } from "react-spinners"
 interface CategoryOrderProps {
     isActionPlan?:boolean
@@ -18,12 +18,12 @@ interface CategoryOrderProps {
 
 const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
 
-    const [isLoading,setIsLoading] = useState(true)
+    const [isLoading,] = useState(false)
     const [active,setActive] = useState<string>('Suggestion')
     const [categoryOrderData,setCategoryData] = useState(TreatmentplanData)
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0])
     const [activeEl,] = useState<any>()
-    const [suggestion,setSuggestions] = useState<any>([])
+    const [suggestion,] = useState<any>([])
     const pillarData:any ={
     "Diet": [
         {
@@ -144,14 +144,14 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
         }
     ]
 }
-    useConstructor(() => {
-        setIsLoading(true)
-        Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
-            setIsLoading(false)
-            setCategoryData(res.data["Report Details"])
-            setSuggestions(res.data.suggestion_tab)
-        })
-    })
+    // useConstructor(() => {
+    //     setIsLoading(true)
+    //     Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
+    //         setIsLoading(false)
+    //         setCategoryData(res.data["Report Details"])
+    //         setSuggestions(res.data.suggestion_tab)
+    //     })
+    // })
     return (
         <>
             {isActionPlan ? 
@@ -185,9 +185,9 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                     </>
                 :
                     <>
-                        <div className="bg-white rounded-[6px]  p-6 h-[256px] mt-2  border border-light-border-color dark:bg-[#2F2F2F] dark:border-[#383838] overflow-auto">
-                            <div className="w-full flex justify-between">
-                                <div className="textStyle-type1 flex items-center gap-2"> <div className="dark:bg-primary-text bg-black rounded-full w-1 h-1"></div>  Report Details</div>
+                        <div className="bg-white rounded-[16px] shadow-100  p-6 h-[256px] mt-2  border border-Gray-50 overflow-auto">
+                            <div className="w-full flex items-center justify-between">
+                                <div className="text-sm font-medium text-Text-Primary flex items-center gap-2"> <div className="dark:bg-primary-text bg-Text-Triarty rounded-full w-1 h-1"></div>  Report Details</div>
                                 <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                                 </div>
@@ -225,24 +225,24 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                 })}
                             </div>
                         </div>       
-                        <div className="bg-white rounded-[6px]  p-6  mt-2  border border-light-border-color dark:bg-[#2F2F2F] dark:border-[#383838]  ">
+                        <div className="bg-white rounded-[16px]  shadow-100 p-6  mt-2  border border-Gray-25  ">
                                 <div className="w-full flex justify-center">
                                     <Toggle active={active} setActive={setActive} value={["Suggestion","Result"]}></Toggle>
                                 </div>
                                 
                                 <div className="w-full flex justify-between">
                                     <div className="flex justify-start items-center">
-                                        <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-brand-primary-color">
-                                            <img className="invert dark:invert-0" src={activeBio.icon} alt="" />
+                                        <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
+                                            <img className="" src={activeBio.icon} alt="" />
                                         </div>    
                                         <div>
                                         <div className="ml-2">
                                             <div className="flex">
-                                                <div className=" text-light-primary-text dark:text-[#FFFFFFDE] text-[14px] ">{activeBio.category}</div>
+                                                <div className=" text-Text-Primary text-[14px] ">{activeBio.category}</div>
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-[10px]">
-                                                    <span className="text-[12px] text-light-primary-text dark:text-[#FFFFFFDE]">{activeBio.total_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-light-primary-text dark:text-[#FFFFFFDE]">{activeBio.total_needs_focus}</span> Needs Focus
+                                                <div className=" text-Text-Secondary text-[10px]">
+                                                    <span className="text-[12px] text-Text-Primary">{activeBio.total_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-Text-Primay">{activeBio.total_needs_focus}</span> Needs Focus
                                         
                                                 </div>
                                             </div>
@@ -255,7 +255,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                     </div>
                                 </div>
                             
-                                <div className="w-full px-6 py-4 bg-light-min-color dark:bg-[#272727] rounded-[6px] mt-4">
+                                <div className="w-full px-6 py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
                                 {active == 'Suggestion' ?
                                         <>
                                             {
@@ -273,7 +273,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                         </>
                                 :
                                         <>
-                                            <div className="w-full dark:bg-[#272727] bg-light-min-color border-light-border-color flex items-start gap-4  dark:border-[#383838] rounded-[6px] min-h-[30px] ">
+                                            <div className="w-full bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 min-h-[30px] ">
                                                 {activeEl!=null &&
                                                     <>
                                                         {/* <div className="w-[240px] ">

@@ -4,7 +4,6 @@ import Application from "../../api/app";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import { Button } from "symphony-ui";
 import BenchmarkModal from "./components/BenchmarkModal";
 import TextBoxAi from "./components/TextBoxAi";
 // import GenerateWithAiModal from "@/pages/aiStudio/GenerateWithAiModal";
@@ -13,6 +12,9 @@ import TextBoxAi from "./components/TextBoxAi";
 import CategoryOrder from "./components/CategoryOrder";
 import AnalyseButton from "../../Components/AnalyseButton";
 import ConfirmAnalyseModal from "./components/ConfirmAnalyseModal";
+import { TopBar } from "../../Components/topBar";
+import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
+import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
 
@@ -187,32 +189,33 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // const {themeISLight} = useContext(AppContext);
   return (
     <>
-      <div className="w-full flex justify-center px-4 ">
-        <div className="w-full px-4 py-6  bg-white rounded-[6px] dark:bg-[#1E1E1E] border border-light-border-color dark:border-[#383838]  relative   ">
-          <div className="sticky top-0 ">
-            <div className="flex justify-start items-center gap-4">
-              <div
-                onClick={() => {
-                  navigate(-1);
-                }}
-                className={`Aurora-tab-icon-container w-[60px] cursor-pointer h-[35px]`}
-              >
-                <img className={`Aurora-icons-arrow-left`} />
-              </div>
-              <div className="text-[14px] font-medium text-light-secandary-text dark:text-[#FFFFFFDE]">
-                {isActionPlan
-                  ? "Generate Action Plan"
-                  : "Generate Treatment Plan"}
-              </div>
-            </div>
+    <div className="fixed w-full top-0"><TopBar></TopBar></div>
+      <div className="w-full flex justify-center px-4  pt-[80px]">
+        <div className="w-full px-4 py-6    relative   ">
+          <div className=" ">
+          <div className="flex items-center gap-3">
+          <div
+            onClick={() => {
+            
+                navigate(-1);
+              
+            }}
+            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
+          >
+            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+          </div>
+          <div className="TextStyle-Headline-5 text-Text-Primary">
+          Generate Treatment Plan
+          </div>
+        </div>
 
-            <div className="  mb-4 w-full h-[56px] flex justify-evenly border-light-border-color bg-white border dark:border-[#383838]  dark:bg-[#2F2F2F] rounded-[6px] mt-4">
+            <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">
               <div className="flex justify-center items-center gap-2">
                 <div
-                  className={`w-5 h-5 rounded-full ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center ${
                     generateStep == "Client Goals"
-                      ? "dark:border-brand-primary-color dark:text-brand-primary-color text-light-blue-active border-light-blue-active"
-                      : "text-light-primary-text border-light-primary-text dark:text-[#FFFFFF99]"
+                      ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                      : "text-Primary-DeepTeal border-Primary-EmeraldGreen"
                   } border flex justify-center items-center text-[12px] font-medium `}
                 >
                   1
@@ -220,8 +223,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div
                   className={`text-[12px] ${
                     generateStep == "Client Goals"
-                      ? "dark:text-brand-primary-color text-light-blue-active"
-                      : " text-light-primary-text dark:text-[#FFFFFF99]"
+                    ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                    : "text-Primary-DeepTeal border-Primary-EmeraldGreen"
                   } font-medium `}
                 >
                   Client Goals
@@ -238,8 +241,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div
                   className={`w-5 h-5 rounded-full ${
                     generateStep == "Generate Plan"
-                      ? "dark:border-brand-primary-color dark:text-brand-primary-color text-light-blue-active border-light-blue-active"
-                      : "text-light-primary-text border-light-primary-text dark:text-[#FFFFFF99]"
+                    ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                    : "text-Primary-DeepTeal border-Primary-DeepTeal"
                   } border flex justify-center items-center text-[12px] font-medium `}
                 >
                   2
@@ -247,8 +250,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div
                   className={`text-[12px] ${
                     generateStep == "Generate Plan"
-                      ? "dark:text-brand-primary-color border-brand-primary-color text-light-blue-active"
-                      : " text-light-primary-text dark:text-[#FFFFFF99]"
+                    ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                    : "text-Primary-DeepTeal border-Primary-EmeraldGreen"
                   } font-medium `}
                 >
                   Generate Plan
@@ -265,8 +268,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div
                   className={`w-5 h-5 rounded-full ${
                     generateStep == "Analysis"
-                      ? "dark:border-brand-primary-color dark:text-brand-primary-color text-light-blue-active border-light-blue-active"
-                      : "text-light-primary-text border-light-primary-text dark:text-[#FFFFFF99]"
+                    ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                    : "text-Primary-DeepTeal  border-Primary-DeepTeal"
                   } border flex justify-center items-center text-[12px] font-medium `}
                 >
                   3
@@ -274,8 +277,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div
                   className={`text-[12px] ${
                     generateStep == "Analysis"
-                      ? "dark:text-brand-primary-color text-light-blue-active"
-                      : " text-light-primary-text dark:text-[#FFFFFF99]"
+                    ? "text-Primary-EmeraldGreen border-Primary-EmeraldGreen"
+                    : "text-Primary-DeepTeal border-Primary-EmeraldGreen"
                   } font-medium `}
                 >
                   Analysis
@@ -285,7 +288,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           </div>
           <div className=" h-[340px] overflow-auto">
             {generateStep == "Client Goals" && (
-              <div className="bg-white rounded-[6px] px-6 py-6 h-[80%] mt-2  border border-light-border-color dark:bg-[#2F2F2F] dark:border-[#383838]">
+              <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
                   <div className="w-full flex justify-center mt-3">
                     <BeatLoader color={"white"} size={12}></BeatLoader>
@@ -296,11 +299,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   return (
                     <>
                       <div className="flex mt-3 justify-between">
-                        <div className="text-[12px] w-[250px] text-light-secandary-text dark:text-[#FFFFFFDE]">
+                        <div className="text-[12px] w-[250px] text-Text-Secondary">
                           {el}
                         </div>
 
-                        <div className="text-[12px] text-left w-full ml-4 text-light-secandary-text dark:text-[#FFFFFFDE]">
+                        <div className="text-[12px] text-left w-full ml-4 text-Text-Primary">
                           {clientGools[el][0]}
                         </div>
                       </div>
@@ -313,16 +316,16 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               <CategoryOrder isActionPlan={isActionPlan}></CategoryOrder>
             )}
             {generateStep == "Analysis" && (
-              <div className="bg-white rounded-[6px] px-6 py-6  mt-2  border border-light-border-color dark:bg-[#2F2F2F] dark:border-[#383838]  ">
+              <div className="bg-white rounded-[16px] px-6 py-6  mt-2  border border-Gray-50  ">
                 {isLoading ? (
                   <div className="w-full flex justify-center mt-3">
                     <BeatLoader color={"white"} size={12}></BeatLoader>
                   </div>
                 ) : (
-                  <div className="w-full dark:bg-[#272727] border h-[256px] overflow-y-scroll border-light-border-color p-6 dark:border-[#383838] rounded-[6px]">
-                    <div className="dark:text-[#FFFFFFDE] mb-1 text-light-secandary-text gap-2 flex justify-between items-center text-[14px] font-medium">
+                  <div className="w-full border h-[256px] overflow-y-scroll p-6 bg-backgroundColor-Card border-Gray-50 rounded-[16px]">
+                    <div className="dark:text-[#FFFFFFDE] mb-1 text-light-secandary-text gap-2 flex justify-between items-center text-[14px] font-medium text-Text-Primary">
                       <div className="flex justify-start items-center gap-2">
-                        <span className="w-1 h-1 bg-light-secandary-text rounded-full dark:bg-[#FFFFFFDE]"></span>
+                        {/* <span className="w-1 h-1 bg-light-secandary-text rounded-full dark:bg-[#FFFFFFDE]"></span> */}
                         Client Condition Insights
                       </div>
 
@@ -355,8 +358,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                       )}
                     </div>
                     <div className="w-full flex mt-4 items-center  justify-between">
-                      <div className="dark:text-[#FFFFFFDE]  mb-1 text-light-secandary-text gap-2 flex justify-start items-center text-[14px] font-medium">
-                        <span className="w-1 h-1 bg-light-secandary-text rounded-full dark:bg-[#FFFFFFDE]"></span>
+                      <div className="  mb-1 text-light-secandary-text gap-2 flex justify-start items-center text-[14px] text-Text-Primary font-medium">
+                        {/* <span className="w-1 h-1 bg-light-secandary-text rounded-full dark:bg-[#FFFFFFDE]"></span> */}
                         Needs Focus Benchmarks
                         {/* <img
                                             className=" transition-transform cursor-pointer w-5 h-5"
@@ -369,9 +372,9 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         onClick={() => {
                           setIsModalOpen(true);
                         }}
-                        className="text-[12px] cursor-pointer text-brand-primary-color font-medium"
+                        className="text-[12px] cursor-pointer text-Primary-DeepTeal font-medium"
                       >
-                        Benchmarks List
+                        Biomarker List
                       </div>
                     </div>
                     {treatmentPlanData["need_focus_biomarkers"].length > 0 && (
@@ -418,27 +421,28 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           </div>
           <div className="w-full mt-6 flex gap-4 justify-center">
             {generateStep != "Client Goals" && (
-              <Button onClick={resolveBack} theme="Aurora-pro">
+              <ButtonSecondary onClick={resolveBack} >
                 <div className="w-[100px]">Back</div>
-              </Button>
+              </ButtonSecondary>
             )}
-            <Button
+            <ButtonPrimary
               disabled={isLoading}
               onClick={() => {
                 resolveNextStep();
               }}
-              theme="Aurora"
+              
             >
               {isLoading ? (
                 <div className="w-full h-full flex justify-center items-center">
                   <BeatLoader size={8} color={"white"}></BeatLoader>
                 </div>
               ) : (
-                <div className="w-[100px]">
-                  {generateStep == "Analysis" ? "Save" : "Next Step"}
+                <div className="w-[100px] flex items-center justify-center gap-1">
+                  {generateStep == "Analysis" &&  <img src="/icons/tick-square.svg" alt="" />}  
+                  {generateStep == "Analysis" ? "Save Changes" : "Next Step"}
                 </div>
               )}
-            </Button>
+            </ButtonPrimary>
           </div>
         </div>
       </div>
