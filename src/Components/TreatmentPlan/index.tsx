@@ -74,20 +74,35 @@ export const TreatmentPlan = () => {
   };
   return (
     <>
-      <div className="my-10">
+    {
+      cardData.length < 1 ? (
+       <div className="w-full h-full flex flex-col items-center justify-center">
+        <img src="/icons/EmptyState.svg" alt="" />
+        <div className="text-base font-medium text-Text-Primary -mt-9">No Treatment Plan Generated Yet</div>
+        <div className="text-xs text-Text-Primary mt-2 mb-5">
+        Start creating your treatment plan
+        </div>
+        <ButtonPrimary><img src="/icons/tick-square.svg" alt="" /> Generate New</ButtonPrimary>
+       </div>
+      )
+      : 
+      (
+        <div className="">
         <div className="w-full mb-3 flex items-center justify-between">
-          <div
+          {/* <div
             id="Treatment Plan"
             className="TextStyle-Headline-4 text-Text-Primary"
           >
             Treatment Plan{" "}
-          </div>
+          </div> */}
           <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
             {/* Total of 30 Treatment in 4 category */}
           </div>
           {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
         </div>
-        <div className="flex items-center justify-center  p-4 ">
+        <>
+        </>
+        <div className="flex items-center justify-center  p-4 -mt-12 ">
           {cardData.map((card, index: number) => (
             <div
               key={card.id}
@@ -121,14 +136,14 @@ export const TreatmentPlan = () => {
                       <img
                         onClick={() => setShowModalIndex(index)}
                         className="-mr-5 ml-3 cursor-pointer"
-                        src="./icons/dots.svg"
+                        src="/icons/dots.svg"
                         alt=""
                       />
                     )}
                   </div>
 
                   <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
-                    <img src="./icons/calendar-2.svg" alt="" />
+                    <img src="/icons/calendar-2.svg" alt="" />
                     {card.date}
                   </div>
                   <div
@@ -158,7 +173,7 @@ export const TreatmentPlan = () => {
                       }}
                       className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                     >
-                      <img src="icons/edit-green.svg" alt="" />
+                      <img src="/icons/edit-green.svg" alt="" />
                       Edit
                     </div>
                     <div
@@ -182,7 +197,7 @@ export const TreatmentPlan = () => {
                         </div>
                       ) : (
                         <>
-                          <img src="icons/delete-green.svg" alt="" />
+                          <img src="/icons/delete-green.svg" alt="" />
                           Remove
                         </>
                       )}
@@ -279,6 +294,9 @@ export const TreatmentPlan = () => {
           </div>
         )}
       </div>
+      )
+    }
+
       <SlideOutPanel
         isOpen={isAnalysisOpen}
         onClose={() => setisAnalysisOpen(false)}

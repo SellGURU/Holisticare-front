@@ -5,7 +5,7 @@ import SummaryBox from "./SummaryBox"
 import RefrenceBox from "./Boxs/RefrenceBox"
 import DetiledAnalyse from "./Boxs/DetiledAnalyse"
 import ConceringRow from "./Boxs/ConceringRow"
-import TreatmentCard from "./Boxs/TreatmentPlanCard"
+// import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from "./Legends"
 // import Point from "./Point"
 import { useEffect, useState } from "react"
@@ -24,6 +24,7 @@ import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 import PrintReport from "./PrintReport"
 import { ActionPlan } from "../Action-plan"
+import { TreatmentPlan } from "../TreatmentPlan"
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 interface ReportAnalyseViewprops {
@@ -74,7 +75,7 @@ useEffect(() => {
         }
     },[])
 
-    const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
+    // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
     const [ClientSummaryBoxs,setClientSummaryBoxs] = useState<any>(null)
     const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
     const [referenceData, setReferenceData] = useState<any>(null)
@@ -262,15 +263,16 @@ useEffect(() => {
                             })}
                         </div>
                     </div>          
-                    <div className="my-10 hidden">
-                        <div className="w-full mb-3 flex items-center justify-between">
+                    <div className="my-10">
+                        <div className="w-full flex items-center justify-between">
                             <div id="Treatment Plan" className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan </div>
                             <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                 {/* Total of 30 Treatment in 4 category */}
                             </div>
                             {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-                        </div>      
-                        <div className="w-full gap-2 flex justify-between items-center">
+                        </div> 
+                        <TreatmentPlan></TreatmentPlan>     
+                        {/* <div className="w-full gap-2 flex justify-between items-center">
                             <div onClick={() => {
                                 setActiveTreatmentplan('Diet')
                             }} className={` bg-light-min-color dark:bg-[#1E1E1E] cursor-pointer h-[48px] gap-2 rounded-[6px] text-light-primary-text dark:text-[#FFFFFFDE] ${aciveTreatmentPlan == 'Diet'?'border dark:border-primary-color border-light-blue-active':''} w-full flex items-center px-4`}>
@@ -300,8 +302,8 @@ useEffect(() => {
                                     <img src="./images/report/treatment/pil.svg" alt="" />
                                 </div>                                          
                                 Supplement </div>
-                        </div>            
-                        {TreatMentPlanData.length >0 &&
+                        </div>             */}
+                        {/* {TreatMentPlanData.length >0 &&
                             <div className="w-full flex flex-wrap gap-6 bg-light-min-color dark:bg-[#1E1E1E] p-4 rounded-[6px] mt-4">
                                 {TreatMentPlanData?.filter((value:any)  => value.category ==aciveTreatmentPlan)[0].data.map((el:any) => {
                                     return (
@@ -309,7 +311,7 @@ useEffect(() => {
                                     )
                                 })}
                             </div>            
-                        }
+                        } */}
                     </div>    
                     
                     <div className="my-10 hidden">
