@@ -9,6 +9,7 @@ import { Targeting } from "../Components/Action-plan/sections/Targeting";
 import GenerateCalendar from "../Components/Action-plan/sections/generatecalendar";
 import { ClientList } from "../Components";
 import AddClient from "../pages/addClient";
+import GenerateNewPlan from "../pages/generateTreatmentPlan";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "generateActionPlan/:id",
         element: <GenerateNewActionPlan></GenerateNewActionPlan>,
+      },
+      {
+        path:'generateNewTreatmentPlan/:id',
+        element:<GenerateNewPlan></GenerateNewPlan>
       },
       {
         path: "action-plan/orders/:id",
