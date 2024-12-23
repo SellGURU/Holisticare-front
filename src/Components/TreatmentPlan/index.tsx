@@ -10,7 +10,7 @@ type CardData = {
   status: string;
 };
 
-const cardData: CardData[] = [
+const initialCardData: CardData[] = [
   {
     id: 1,
     date: "2024/29/09",
@@ -48,23 +48,30 @@ export const TreatmentPlan = () => {
         return "#000000"; // Fallback color
     }
   };
-  const [showModal, setshowModal] = useState(false);
+  const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
     close: () => {
-      setshowModal(false);
+      setShowModalIndex(null);
     },
   });
+  const [cardData, setCardData] = useState<CardData[]>(initialCardData);
 
-  const [DeleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(
+    null
+  );
   const [aciveTreatmentPlan, setActiveTreatmentplan] = useState("Diet");
   const [TreatMentPlanData] = useState<any>(treatmentPlanData);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
-
+  const handleDeleteCard = (index: number) => {
+    setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
+    setShowModalIndex(null);
+    setDeleteConfirmIndex(null);
+  };
   return (
     <>
       <div className="my-10">
@@ -112,7 +119,7 @@ export const TreatmentPlan = () => {
                     </div>
                     {card.status == "On Going" && (
                       <img
-                        onClick={() => setshowModal(true)}
+                        onClick={() => setShowModalIndex(index)}
                         className="-mr-5 ml-3 cursor-pointer"
                         src="./icons/dots.svg"
                         alt=""
@@ -137,7 +144,7 @@ export const TreatmentPlan = () => {
                     {card.status}
                   </div>
                 </div>
-                {showModal && (
+                {showModalIndex === index && (
                   <div
                     ref={showModalRefrence}
                     className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
@@ -158,15 +165,16 @@ export const TreatmentPlan = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (card.status == "On Going") {
-                          setDeleteConfirm(true);
+                          setDeleteConfirmIndex(index);
                         }
                       }}
                       className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                     >
-                      {DeleteConfirm ? (
+                      {deleteConfirmIndex === index ? (
                         <div
                           onClick={(e) => {
                             e.stopPropagation();
+                            handleDeleteCard(index);
                           }}
                           className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
                         >
@@ -262,7 +270,7 @@ export const TreatmentPlan = () => {
           </div>
         </div>
         {TreatMentPlanData.length > 0 && (
-          <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+          <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
             {TreatMentPlanData?.filter(
               (value: any) => value.category == aciveTreatmentPlan
             )[0].data.map((el: any) => {
@@ -276,13 +284,72 @@ export const TreatmentPlan = () => {
         onClose={() => setisAnalysisOpen(false)}
         headline="Analysis"
       >
-        Analysis
+        <>
+          <div className="rounded-xl border border-Gray-50">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+              Client Condition Insight
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
+              This patient has high blood pressure and experiences frequent
+              headaches, fatigue, and difficulty sleeping. Her condition is
+              further complicated by chronic stress from her demanding job and
+              poor dietary habits, which include consuming excessive amounts of
+              salty and processed foods. Despite being aware of the risks,
+              Leslie often feels too exhausted to exercise regularly, leading to
+              weight gain over the past year. She also reports feelings of
+              anxiety, especially in the evenings, which she believes
+              contributes to her restless nights. Her doctor has advised her to
+              make significant lifestyle changes, including stress management
+              techniques, a healthier diet, and incorporating daily physical
+              activity, but she finds it challenging to stay consistent. As a
+              result, her blood pressure remains uncontrolled, putting her at
+              risk for further cardiovascular complications.
+            </div>
+          </div>
+          <div className="rounded-xl border border-Gray-50">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+              Needs Focus Benchmarks
+            </div>
+            <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+              <li className="list-disc">Time Priorities</li>
+              <li className="list-disc">Recovery</li>
+              <li className="list-disc">Metabolic Function</li>
+              <li className="list-disc">Nutrition</li>
+            </ul>
+          </div>
+        </>
       </SlideOutPanel>
       <SlideOutPanel
         isOpen={isClientGoalOpen}
         onClose={() => setisClientGoalOpen(false)}
         headline="Client Goal"
-      >Client Goal</SlideOutPanel>
+      ><div className="border border-Gray-50 rounded-xl">
+        <div className=" ">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+            What you want to be able to do?
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
+            I liked to run but too unfit to do that now. I want a realistic entry into getting fitter where I build up the intensity to match my capability. I don’t enjoy squats as they make my legs hurt but recognise I may need to do them.
+            </div>
+          </div>
+        <div className=" border border-Gray-50">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+            How you want to look?
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
+            Lose the 18kg of weight I have put on since 2019 and get to a target weight of 82kg
+            </div>
+          </div>
+        <div className=" border border-Gray-50">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+            How you want to feel?
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
+            Have more energy and know my health is improving
+            </div>
+          </div>
+          </div>
+      </SlideOutPanel>
     </>
   );
 };
