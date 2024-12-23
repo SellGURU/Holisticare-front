@@ -45,8 +45,13 @@ const Uploading:React.FC<UploadingProps> = ({
                 onSuccess(file)
                 setIsCompleted(true)
                 // setFiles([...files,file])
+            }).catch(() => {
+                setIsCompleted(true)
             })
         })   
+        return () => {
+            setIsCompleted(false)   
+        }
     },[])
     return (
         <>

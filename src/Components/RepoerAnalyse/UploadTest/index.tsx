@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
 import Uploading from "./uploading";
+import { ButtonSecondary } from "../../Button/ButtosSecondary";
 
 interface UploadTestProps {
     memberId:any
 }
 
 const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
-   
+    const fileInputRef = useRef<any>(null);
     const [files,setFiles] = useState<Array<any>>([])
     const [upLoadingFiles,setUploadingFiles] = useState<Array<any>>([])
     return (
@@ -40,9 +41,11 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
                             </ButtonPrimary>
 
                         </div>
-                        <input type="file" multiple onChange={(e:any) => {
+                        <input type="file" ref={fileInputRef} multiple onChange={(e:any) => {
                             const fileList = Array.from(e.target.files);
-                            setUploadingFiles([...upLoadingFiles,...fileList])
+                            console.log(fileList)
+                            setUploadingFiles(fileList)
+                            fileInputRef.current.value = "";   
                             // fileList.forEach((file:any) => {
                             //     convertToBase64(file).then((res) => {
                             //         Application.addLabReport({
@@ -64,7 +67,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
                     <div className="text-Text-Primary text-[12px] mt-2 w-[470px]">
                         {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
                     </div>
-                    <div className="mt-6 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-scroll">
+                    <div className="mt-6 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
                         {files.map((el:any) => {
                             return (
                                 <>
@@ -84,16 +87,23 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
                                 </>
                             )
                         })}
-                        {upLoadingFiles.map((el:any) => {
+                        {upLoadingFiles.map((el:any,index:number) => {
                             return (
                                 <>
-                                <Uploading memberId={memberId} file={el} onSuccess={(file) => {
-                                    setFiles([...files,file])
+                                <Uploading key={index} memberId={memberId} file={el} onSuccess={(file) => {
+                                    // setFiles([...files,file])
+                                    setFiles((prevFiles) => [...prevFiles, file]);
                                 }}></Uploading>
                                 </>
                             )
                         })}
-                    </div>        
+                    </div>     
+                    {
+                        files.length >0 &&
+                            <div className="flex justify-center mt-1">
+                                <ButtonSecondary>Create Report</ButtonSecondary>
+                            </div>   
+                    }      
                 </div>
             </div>        
         </>
