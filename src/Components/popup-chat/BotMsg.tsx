@@ -1,4 +1,4 @@
-export const BotMsg=({msg}:any)=>{
+export const BotMsg=({msg}:{msg:string})=>{
     return (
         <div className={"flex items-start justify-start gap-1"}>
             <div>
@@ -10,8 +10,7 @@ export const BotMsg=({msg}:any)=>{
                     <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p>
                 </div>
                 <div className={"w-[213px] h-[152px] p-2 text-Text-Primary TextStyle-Body-2 bg-backgroundColor-Card border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tr-[20px] " }>
-                    <p>HbA1c is your average blood glucose (sugar) levels for the last two to three months. If you have
-                        diabetes, an ideal HbA1c level is 48mmol/mol (6.5%) or below.</p>
+                    <p>{msg}</p>
                 </div>
             </div>
 

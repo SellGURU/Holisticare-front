@@ -12,7 +12,7 @@ export const SidBarMenu = () => {
         "/icons/sidbar-menu/task-square.svg",
         "/icons/sidbar-menu/timeline.svg"
     ];
-    const [toogleOpenChat, setToogleOpenChat] = useState(false);
+    const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
     return (
         <>
             <div className={"w-[80px] flex justify-center bg-white h-[500px] border-Boarder border rounded-xl p-5 "}>

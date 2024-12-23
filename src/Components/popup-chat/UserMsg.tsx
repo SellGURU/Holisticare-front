@@ -1,4 +1,4 @@
-export const UserMsg=({msg}:any)=>{
+export const UserMsg=({msg}:{msg:string})=>{
     return (
         <div className={"flex items-start justify-start gap-2 mt-5"}>
 
@@ -12,7 +12,7 @@ export const UserMsg=({msg}:any)=>{
                         backgroundColor:"rgba(0, 95, 115, 0.25)"
                     }}
                     className={"w-[213px] min-h-[52px] p-2 text-Text-Primary TextStyle-Body-2 flex items-center justify-center  border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tl-[20px] "}>
-                    <p>Why is my Health Score so low?</p>
+                    <p>{msg}</p>
                 </div>
             </div>
             <div>
