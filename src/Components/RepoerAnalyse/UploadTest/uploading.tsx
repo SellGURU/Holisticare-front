@@ -51,21 +51,38 @@ const Uploading:React.FC<UploadingProps> = ({
         })   
         return () => {
             setIsCompleted(false)   
+            setProgress(0)
         }
     },[])
     return (
         <>
-            <div className="w-full px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]" style={{display:isCompleted?'none':'block'}}>
-                <div className="text-[12px] text-Text-Primary font-[600]">Uploading...</div>
-                <div className="text-Text-Secondary text-[12px] mt-1">
-                    {progress}%  • 30 seconds remaining
-                </div>
-                <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center" >
-                    <div className="bg-Primary-DeepTeal h-[5px] rounded-[12px]" style={{width:progress+'%'}}>
-
+            {isCompleted ?
+                <div className="w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px]">
+                    <div className="flex justify-start gap-2">
+                        <img src="/images/Pdf.png" alt="" />
+                        <div>
+                            <div className="text-[12px] text-Text-Primary font-[600]">
+                                {file.name}
+                            </div>
+                            <div className="text-[12px] text-Text-Secondary">
+                                {(file.size / ( 1024)).toFixed(2)} KB
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>        
+                </div>            
+            :
+                <div className="w-full px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]" style={{}}>
+                    <div className="text-[12px] text-Text-Primary font-[600]">Uploading...</div>
+                    <div className="text-Text-Secondary text-[12px] mt-1">
+                        {progress}%  • 30 seconds remaining
+                    </div>
+                    <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center" >
+                        <div className="bg-Primary-DeepTeal h-[5px] rounded-[12px]" style={{width:progress+'%'}}>
+
+                        </div>
+                    </div>
+                </div>        
+            }
         </>
     )
 }

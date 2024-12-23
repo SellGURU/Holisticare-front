@@ -7,9 +7,10 @@ import { ButtonSecondary } from "../../Button/ButtosSecondary";
 
 interface UploadTestProps {
     memberId:any
+    onGenderate:() => void
 }
 
-const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
+const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
     const fileInputRef = useRef<any>(null);
     const [files,setFiles] = useState<Array<any>>([])
     const [upLoadingFiles,setUploadingFiles] = useState<Array<any>>([])
@@ -43,8 +44,11 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
                         </div>
                         <input type="file" ref={fileInputRef} multiple onChange={(e:any) => {
                             const fileList = Array.from(e.target.files);
-                            console.log(fileList)
-                            setUploadingFiles(fileList)
+                            setFiles(upLoadingFiles)
+                            setUploadingFiles([])
+                            setTimeout(() => {
+                                setUploadingFiles(fileList)
+                            }, 200);
                             fileInputRef.current.value = "";   
                             // fileList.forEach((file:any) => {
                             //     convertToBase64(file).then((res) => {
@@ -87,21 +91,23 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId}) => {
                                 </>
                             )
                         })}
-                        {upLoadingFiles.map((el:any,index:number) => {
+                        {upLoadingFiles.map((el:any) => {
                             return (
                                 <>
-                                <Uploading key={index} memberId={memberId} file={el} onSuccess={(file) => {
+                                <Uploading  memberId={memberId} file={el} onSuccess={(file) => {
                                     // setFiles([...files,file])
-                                    setFiles((prevFiles) => [...prevFiles, file]);
+                                    // setFiles((prevFiles) => [...prevFiles, file]);
                                 }}></Uploading>
                                 </>
                             )
                         })}
                     </div>     
                     {
-                        files.length >0 &&
+                        upLoadingFiles.length >0 &&
                             <div className="flex justify-center mt-1">
-                                <ButtonSecondary>Create Report</ButtonSecondary>
+                                <ButtonSecondary onClick={() => {
+                                    onGenderate()
+                                }}>Create Report</ButtonSecondary>
                             </div>   
                     }      
                 </div>
