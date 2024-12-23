@@ -59,7 +59,7 @@ export const SidBarMenu = () => {
                 <div className={"w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center"}>
                     <img src={"/icons/add.svg"}/>
                 </div>
-                <div  ref={buttonRef} onClick={()=>setToogleOpenChat(!toogleOpenChat)} className={"w-8 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center"}>
+                <div  ref={buttonRef} onClick={()=>setToogleOpenChat(!toogleOpenChat)} className={"w-8 shadow-200 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center"}>
                     {toogleOpenChat ?
                         <img src={"/icons/close.svg"}/>:
                         <img src={"/icons/sidbar-menu/message-question.svg"}/>
@@ -67,7 +67,7 @@ export const SidBarMenu = () => {
                 </div>
                 <div
                     ref={modalRef}
-                    className="w-full"
+                    className="w-full shadow-200"
                 >
                     <PopUpChat isOpen={toogleOpenChat} memberId="82638261308"/>
                 </div>
