@@ -29,6 +29,7 @@ const router = createBrowserRouter([
         path: "/report/:id",
         element: <Report></Report>,
       },
+      
       {
         path: "generateActionPlan/:id",
         element: <GenerateNewActionPlan></GenerateNewActionPlan>,

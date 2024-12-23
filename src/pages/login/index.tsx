@@ -1,9 +1,11 @@
 import  Auth  from "../../api/auth";
 import { useApp } from "../../hooks";
 import { useNavigate,useLocation  } from "react-router-dom";
-import { Button, TextField } from "symphony-ui";
+// import { Button, TextField } from "symphony-ui";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import TextField from "../../Components/TextField";
+import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 
 const validationSchema = yup.object({
   
@@ -76,7 +78,7 @@ const Login = () => {
   //     });
   // };
   return (
-    <div className="w-full h-screen flex justify-center bg-white  dark:bg-black-background px-12 pt-[66px] gap-20 overflow-auto ">
+    <div className="w-full h-screen flex justify-center bg-backgroundColor-Main dark:bg-black-background px-12 pt-[66px] gap-20 overflow-auto ">
       <div className=" hidden md:block w-[35%] h-full self-center">
         <img src="./images/signin.svg" alt="" />
       </div>
@@ -91,8 +93,14 @@ const Login = () => {
             {" "}
             Welcome Back!
           </h3>
-               
-          <TextField
+             <TextField {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
+              <TextField {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField>   
+            <ButtonSecondary disabled={!formik.isValid} onClick={() => {
+                handleSubmit()              
+            }}>
+              Sign in
+            </ButtonSecondary>
+          {/* <TextField
             {...formik.getFieldProps("email")}
             label="Email Address"
             theme="Aurora"
@@ -123,21 +131,21 @@ const Login = () => {
               Sign in
             </Button>
            <div className="text-xs text-brand-primary-color text-right mt-2 cursor-pointer">Forgot Password?</div>
-          </div>
+          </div> */}
           <div className="flex items-center justify-center">
             <div className="flex-grow h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
             <span className="px-4 text-light-secandary-text dark:text-secondary-text">or</span>
             <div className="flex-grow h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent"></div>
           </div>
 
-          <Button
+          {/* <Button
             style={{ fontSize: "14px" }}
             data-width="full"
             theme="Aurora-pro"
           >
             <img src="./Themes/Aurora/icons/Google.svg" alt="" />
             Sign in with Google
-          </Button>
+          </Button> */}
 {showSignUpLink && (<div className="font-normal text-sm text-light-primary-text dark:text-primary-text">
           Don’t have an account?
             <span
