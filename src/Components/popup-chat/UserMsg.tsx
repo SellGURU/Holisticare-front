@@ -11,7 +11,7 @@ export const UserMsg=({msg}:{msg:string})=>{
                     style={{
                         backgroundColor:"rgba(0, 95, 115, 0.25)"
                     }}
-                    className={"w-[213px] min-h-[52px] p-2 text-Text-Primary TextStyle-Body-2 flex items-center justify-center  border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tl-[20px] "}>
+                    className={"w-[213px] min-h-[52px] p-2 pl-4 text-Text-Primary TextStyle-Body-2 flex items-center  border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tl-[20px] "}>
                     <p>{msg}</p>
                 </div>
             </div>

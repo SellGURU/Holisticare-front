@@ -1,7 +1,7 @@
 import {BotMsg} from "./BotMsg.tsx";
 import {UserMsg} from "./UserMsg.tsx";
 import {InputChat} from "./input-chat.tsx";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Application from "../../api/app.ts";
 
 interface IMessageData {
@@ -24,6 +24,9 @@ export const PopUpChat = ({isOpen}:{isOpen:boolean}) => {
     const [MessageData,setMessageData] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [conversationId, setConversationId] = useState<number>(1);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
 
     useEffect(() => {
         Application.getListChats({
@@ -87,6 +90,10 @@ export const PopUpChat = ({isOpen}:{isOpen:boolean}) => {
             }
         }
     };
+    useEffect(() => {
+        scrollToBottom()
+    }, [MessageData]);
+    const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
     return (
        <>
@@ -97,15 +104,27 @@ export const PopUpChat = ({isOpen}:{isOpen:boolean}) => {
                    {MessageData.map((MessageDatum) => {
                     if(MessageDatum.sender=="user"){
                      return (
+                         <>
+
                              <UserMsg msg={MessageDatum.text} key={MessageDatum.id}/>
+
+                         </>
+
                      )
                     }
                     else{
                         return (
+                            <>
+
                             <BotMsg msg={MessageDatum.text} key={MessageDatum.id}/>
+                            </>
                         )
                     }
                    })}
+
+
+                       <div  ref={messagesEndRef}></div>
+
 
                </div>
                <InputChat onChange={(event)=>setInput(event.target.value)} sendHandler={handleSend}/>
