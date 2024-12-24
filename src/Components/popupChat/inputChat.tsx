@@ -12,6 +12,9 @@ export const InputChat:FC<IInputChat>=({onChange, sendHandler})=>{
         if (event.key === 'Enter') {
             event.preventDefault();
             sendHandler();
+            if(btnSendRef.current!=null){
+                btnSendRef.current.value = "";
+            }
         }
     };
     return (

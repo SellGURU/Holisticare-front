@@ -48,6 +48,7 @@ const ReportSideMenu = () => {
           {ActiveLayer == "menu" &&
             menuItems.map((item, index) => (
               <div
+                
                 onClick={() => {
                   setactiveMenu(item)
                   document.getElementById(item)?.scrollIntoView({
