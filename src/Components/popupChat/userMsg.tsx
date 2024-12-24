@@ -1,11 +1,15 @@
+import {useParams} from "react-router-dom";
+
 export const UserMsg=({msg}:{msg:string})=>{
+    const {name } = useParams<{ name:string }>();
+
     return (
-        <div className={"flex items-start justify-start gap-2 mt-5"}>
+        <div className={"flex items-start justify-end gap-2 mt-5"}>
 
             <div className={"pt-2 spa"}>
-                <div className={"flex items-end justify-end "}>
+                <div className={"flex items-end justify-end gap-1 "}>
                     <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p>
-                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>Micheal Gough</h1>
+                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>{name}</h1>
                 </div>
                 <div
                     style={{

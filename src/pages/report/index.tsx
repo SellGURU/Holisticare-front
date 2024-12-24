@@ -20,7 +20,7 @@ const Report = () => {
                
             </div>
             
-           <div className="absolute top-24 right-6">
+           <div className="absolute top-24 right-6 h-[85vh] flex items-center justify-between flex-col ">
             <ComboBar></ComboBar>
            </div>
 
