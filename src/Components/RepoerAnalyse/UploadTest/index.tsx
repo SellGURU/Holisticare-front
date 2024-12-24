@@ -16,7 +16,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
     const [upLoadingFiles,setUploadingFiles] = useState<Array<any>>([])
     return (
         <>
-            <div className="w-[93%] rounded-[16px] h-[89vh] top-14 flex justify-center  absolute left-0">
+            <div className="w-[93%] rounded-[16px] h-[89vh] top-4 flex justify-center  absolute left-0">
                 <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute">
 
                 </div>                                   
