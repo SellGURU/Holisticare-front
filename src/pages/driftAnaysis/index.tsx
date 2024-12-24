@@ -209,7 +209,7 @@ export const DriftAnaysis = () => {
     <div className="h-full w-full pl-6 pt-8 flex items-start  gap-3">
     
         <>
-          {patients[0]?.member_id !== 1 ? (
+          {patients[0]?.member_id == 1 ? (
             <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
               <BeatLoader size={10} color="#0CBC84"></BeatLoader>
             </div>
