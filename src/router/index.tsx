@@ -10,6 +10,7 @@ import GenerateCalendar from "../Components/Action-plan/sections/generatecalenda
 import { ClientList } from "../Components";
 import AddClient from "../pages/addClient";
 import GenerateNewPlan from "../pages/generateTreatmentPlan";
+import AiKnowledge from "../pages/ai-knowledge/AiKnowledge.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,11 @@ const router = createBrowserRouter([
           {
             path:'/',
             element:<ClientList></ClientList>
-          }
+          },
+          {
+            path: "ai",
+            element: <AiKnowledge></AiKnowledge>,
+          },
         ]
       },
       {
@@ -43,6 +48,7 @@ const router = createBrowserRouter([
         path: "action-plan/orders/:id",
         element: <PlanManagerModal></PlanManagerModal>,
       },
+
       {
         path: "action-plan/targeting/:id",
         element: <Targeting></Targeting>
