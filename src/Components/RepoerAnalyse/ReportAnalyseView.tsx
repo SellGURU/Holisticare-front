@@ -41,6 +41,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     const [loading, setLoading] = useState(true);
     const [caldenderData,setCalenderData] = useState<any>(null)
     const [isHaveReport,setIsHaveReport] = useState(true)
+    const [isGenerated,setISGenerated] = useState(false)
     useEffect(() => {
         setLoading(true); 
         if(memberID != 123){
@@ -67,7 +68,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
             })
 
         }
-    }, [resolvedMemberID]);
+    }, [resolvedMemberID,isGenerated]);
 
     useEffect(() => {
         if(memberID == 123 || !isHaveReport){
@@ -345,7 +346,9 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
 
                              }                                   
                             {!isHaveReport &&
-                                <UploadTest memberId={resolvedMemberID}></UploadTest>
+                                <UploadTest onGenderate={() => {
+                                    setISGenerated(true)
+                                }} memberId={resolvedMemberID}></UploadTest>
                             }                            
                         </div>   
 
