@@ -52,7 +52,10 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                 setClientSummaryBoxs(res.data);    
                 if(res.data.categories.length == 0){
                     setIsHaveReport(false)
-                } 
+                    setISGenerated(false)
+                } else {
+                    setIsHaveReport(true)
+                }
         
             })
             Application.getConceringResults({ member_id: resolvedMemberID }).then(res => {

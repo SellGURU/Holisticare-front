@@ -71,7 +71,7 @@ const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
                     <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
                     </li>
-                    <li className={"text-Text-Primary TextStyle-Headline-6 text-center"}>
+                    <li className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
                         {name}
                     </li>
                     <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
