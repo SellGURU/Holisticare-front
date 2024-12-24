@@ -19,38 +19,38 @@ export const ActionPlan = () => {
 
   // const [isGenerated, setisGenerated] = useState(false);
   const [CardData, setCardData] = useState<Array<CardData>>([
-    {
-      cardID: 1,
-      status: "Completed",
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
-      progress: 100,
-      time: "Done",
-    },
-    {
-      cardID: 2,
-      status: "On Going",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 85,
-      time: "1 Week left",
-    },
-    {
-      cardID: 3,
-      status: "Paused",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 25,
-      time: "Waiting",
-    },
-    {
-      cardID: 4,
-      status: "Upcoming",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 0,
-      time: "Waiting",
-    },
+    // {
+    //   cardID: 1,
+    //   status: "Completed",
+    //   title: "Muscle Strengthening",
+    //   subtitle: "Something short and simple here",
+    //   progress: 100,
+    //   time: "Done",
+    // },
+    // {
+    //   cardID: 2,
+    //   status: "On Going",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 85,
+    //   time: "1 Week left",
+    // },
+    // {
+    //   cardID: 3,
+    //   status: "Paused",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 25,
+    //   time: "Waiting",
+    // },
+    // {
+    //   cardID: 4,
+    //   status: "Upcoming",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 0,
+    //   time: "Waiting",
+    // },
   ]);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
