@@ -1,10 +1,13 @@
 import {PopUpChat} from "../popupChat";
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
 import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
+import {AppContext} from "../../store/app.tsx";
 
 export const ComboBar = () => {
+    const { user } = useContext(AppContext);
+
     const { id } = useParams<{ id: string }>();
     const itemList:string[] = [
         "/images/sidbar-menu/info-circle.svg",
@@ -70,15 +73,14 @@ const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
                     <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
                     </li>
-                    <li className={"text-Text-Primary TextStyle-Headline-6 text-center"}>Alex
-                        Margo
+                    <li className={"text-Text-Primary TextStyle-Headline-6 text-center"}>
+                        {user.name}
                     </li>
                     <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
                     {itemList.map((srcImage) => (
-                        <li onClick={()=>setIsSlideOutPanel(true)} className={"rounded-full border w-8 h-8 flex items-center justify-center"}>
+                        <li onClick={()=>setIsSlideOutPanel(true)} className={"cursor-pointer rounded-full border w-8 h-8 flex items-center justify-center"}>
                             <img src={srcImage} className={"w-5 h-5"}/>
                         </li>
-
                     ))}
                 </ul>
             </div>

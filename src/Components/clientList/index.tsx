@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react"
+import { useEffect, useState} from "react"
 import { ButtonSecondary } from "../Button/ButtosSecondary"
 import Application from "../../api/app"
 import ClientCard from "./ClientCard"
@@ -13,6 +13,8 @@ const ClientList =() => {
             setClientList(res.data.patients_list_data)
         })
     },[])
+
+
     return (
         <>
         <div className="px-6 pt-8 ">

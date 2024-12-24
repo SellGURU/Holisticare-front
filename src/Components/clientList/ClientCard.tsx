@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { ButtonSecondary } from "../Button/ButtosSecondary"
+import {useContext} from "react";
+import {AppContext} from "../../store/app.tsx";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
@@ -8,6 +10,8 @@ interface ClientCardProps {
 
 const ClientCard:React.FC<ClientCardProps> =({client}) => {
     const navigate = useNavigate()
+    const { setInformationUser } = useContext(AppContext);
+
     return (
         <>
             <div onClick={() => {
@@ -28,7 +32,7 @@ const ClientCard:React.FC<ClientCardProps> =({client}) => {
 
                 <div className="mt-2 flex justify-between items-center">
                     <div className="text-Text-Secondary text-[10px] font-medium">Plan not started. Assign a trainer to start.</div>
-                    <ButtonSecondary size="small">
+                    <ButtonSecondary onClick={()=>setInformationUser(client)} size="small">
                         Assaign
                     </ButtonSecondary>
                 </div>

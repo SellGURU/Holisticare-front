@@ -12,27 +12,27 @@ type CardData = {
 };
 
 const initialCardData: CardData[] = [
-  {
-    id: 1,
-    date: "2024/29/09",
-    status: "Completed",
-  },
-  { id: 2, date: "2024/29/09", status: "Paused" },
-  {
-    id: 3,
-    date: "2024/29/09",
-    status: "Completed",
-  },
-  {
-    id: 4,
-    date: "2024/29/09",
-    status: "On Going",
-  },
-  {
-    id: 5,
-    date: "2024/29/11",
-    status: "Upcoming",
-  },
+  // {
+  //   id: 1,
+  //   date: "2024/29/09",
+  //   status: "Completed",
+  // },
+  // { id: 2, date: "2024/29/09", status: "Paused" },
+  // {
+  //   id: 3,
+  //   date: "2024/29/09",
+  //   status: "Completed",
+  // },
+  // {
+  //   id: 4,
+  //   date: "2024/29/09",
+  //   status: "On Going",
+  // },
+  // {
+  //   id: 5,
+  //   date: "2024/29/11",
+  //   status: "Upcoming",
+  // },
 ];
 export const TreatmentPlan = () => {
   const resolveStatusColor = (status: string) => {
