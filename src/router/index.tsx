@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: "/report/:id",
+        path: "/report/:id/:name",
         element: <Report></Report>,
       },
       

@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { ButtonSecondary } from "../Button/ButtosSecondary"
+import {useContext} from "react";
+import {AppContext} from "../../store/app.tsx";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
@@ -8,10 +10,11 @@ interface ClientCardProps {
 
 const ClientCard:React.FC<ClientCardProps> =({client}) => {
     const navigate = useNavigate()
+
     return (
         <>
             <div onClick={() => {
-                navigate('/report/'+client.member_id)
+                navigate('/report/'+client.member_id+"/"+client.name)
             }} className="min-w-[315px] w-[333px] p-4  bg-white shadow-200 rounded-[16px]">
                 <div className="flex">
                     <div className="w-[72px] h-[72px] overflow-hidden rounded-full object-cover">
