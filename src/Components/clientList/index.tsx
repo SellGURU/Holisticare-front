@@ -95,7 +95,7 @@ const ClientList = () => {
                 </div>
               </div>
             </div>
-            <div className=" w-full flex flex-wrap gap-6">
+            <div className=" w-full grid grid-cols-3 xl:grid-cols-4 gap-[18px]">
               {filteredClientList.map((client: any) => {
                 return <ClientCard client={client}></ClientCard>;
               })}
