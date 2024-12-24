@@ -10,6 +10,7 @@ import GenerateCalendar from "../Components/Action-plan/sections/generatecalenda
 import { ClientList } from "../Components";
 import AddClient from "../pages/addClient";
 import GenerateNewPlan from "../pages/generateTreatmentPlan";
+import { DriftAnaysis } from "../pages/driftAnaysis";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
           {
             path:'/',
             element:<ClientList></ClientList>
+          },
+          {
+            path:'/drift-analysis',
+            element:<DriftAnaysis></DriftAnaysis>
           }
         ]
       },

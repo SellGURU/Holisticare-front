@@ -1,7 +1,7 @@
 import React from "react";
 
 type SearchBoxProps = {
-  onSearch: (searchTerm: string) => void;
+  onSearch: (searchTerm: any) => void;
   placeHolder:string
 };
 
