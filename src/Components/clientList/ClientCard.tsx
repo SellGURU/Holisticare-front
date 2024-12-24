@@ -25,7 +25,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
     <>
       <div
         onClick={() => {
-          navigate("/report/" + client.member_id);
+          navigate(`/report/${client.member_id}/${client.name}`  );
         }}
         className="min-w-[315px]   min-h-[264px] w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative "
       >
