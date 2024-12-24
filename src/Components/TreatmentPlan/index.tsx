@@ -1,10 +1,12 @@
-import { useState, useRef } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useRef, useEffect } from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
+// import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import TreatmentCard from "./TreatmentCard";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
 import { SlideOutPanel } from "../SlideOutPanel";
 import { useNavigate , useParams} from "react-router-dom";
+import Application from "../../api/app";
 type CardData = {
   id: number;
   date: string;
@@ -34,7 +36,12 @@ const initialCardData: CardData[] = [
   //   status: "Upcoming",
   // },
 ];
-export const TreatmentPlan = () => {
+
+interface TreatmentPlanProps {
+  treatmentPlanData:any
+}
+
+export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
       case "Completed":
@@ -59,7 +66,7 @@ export const TreatmentPlan = () => {
       setShowModalIndex(null);
     },
   });
-  const [cardData, setCardData] = useState<CardData[]>(initialCardData);
+  const [cardData, setCardData] = useState<Array<any>>(initialCardData);
 
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(
     null
@@ -75,7 +82,14 @@ export const TreatmentPlan = () => {
   };
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>();
-
+  useEffect(() => {
+    Application.showHistory({
+      member_id:id
+    }).then((res) => {
+      console.log(res)
+      setCardData(res.data)
+    })
+  },[])
   return (
     <>
       {cardData.length < 1 ? (
@@ -114,7 +128,7 @@ export const TreatmentPlan = () => {
             {cardData.map((card, index: number) => (
               <div
                 key={card.id}
-                className={` ${card.status == "Upcoming" && "opacity-60"} ${
+                className={` ${card.state == "Upcoming" && "opacity-60"} ${
                   index % 2 == 0 ? "mt-10 " : "mt-0"
                 } relative flex flex-col  items-center -ml-10  `}
               >
@@ -140,7 +154,7 @@ export const TreatmentPlan = () => {
                       <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs text-Text-Primary  ">
                         0{index + 1}
                       </div>
-                      {card.status == "On Going" && (
+                      {card.state == "On Going" && (
                         <img
                           onClick={() => setShowModalIndex(index)}
                           className="-mr-5 ml-3 cursor-pointer"
@@ -152,7 +166,7 @@ export const TreatmentPlan = () => {
 
                     <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
                       <img src="/icons/calendar-2.svg" alt="" />
-                      {card.date}
+                      {card.formatted_date.split(',')[0]}
                     </div>
                     <div
                       // style={{ backgroundColor: resolveStatusColor() }}
@@ -160,11 +174,11 @@ export const TreatmentPlan = () => {
                     >
                       <div
                         style={{
-                          backgroundColor: resolveStatusColor(card.status),
+                          backgroundColor: resolveStatusColor(card.state),
                         }}
                         className={`w-2 h-2 rounded-full `}
                       ></div>
-                      {card.status}
+                      {card.state}
                     </div>
                   </div>
                   {showModalIndex === index && (

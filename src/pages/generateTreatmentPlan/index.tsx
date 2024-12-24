@@ -52,29 +52,26 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const resolveNextStep = () => {
     if (generateStep == "Client Goals") {
-      setGenereStep("Generate Plan");
-    } else if (generateStep == "Generate Plan") {
+      // setGenereStep("Generate Plan");
       generatePaln();
+    } else if (generateStep == "Generate Plan") {
+      setGenereStep("Analysis")
     }
     if (generateStep == "Analysis") {
       // alert(generateStep)
-      if (isActionPlan) {
-        Application.saveActionPaln({
-          treatment_id: "1",
-          description: "",
-          treatment_plan: "",
-        });
-      } else {
-        Application.saveTreatmentPaln({
-          treatment_id: "1",
-          description: "",
-          treatment_plan: "",
-        });
-      }
+ 
+      Application.saveTreatmentPaln({
+        ...treatmentPlanData,
+        treatment_id: treatmentPlanData.treatament_plan_id,
+        medical_summary:"",
+        member_id:id,
+
+      });
+      
       setisFinalLoading(true)
       setTimeout(()=>{
         setisFinalLoading(false)
-        navigate(`/report/${id}`)
+        navigate(`/report/${id}/amir`)
       },3000)
       navigate(-1);
     }
@@ -89,22 +86,22 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // const [activeMenu,setActiveMenu] = useState('3 Month')
   const generatePaln = () => {
     setIsLoading(true);
-    Application.AnalyseTreatmentPlan({
-      member_id: Number(id),
-    })
-      .then((res) => {
-        console.log(res.data);
-        // console.log(res)
-        setGenereStep("Analysis");
-        setIsLoading(false);
-        if (!res.data.detail) {
-          setTratmentPlanData(res.data);
-        }
-        // navigate(-1)
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+    // Application.AnalyseTreatmentPlan({
+    //   member_id: Number(id),
+    // })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     // console.log(res)
+    //     setGenereStep("Analysis");
+    //     setIsLoading(false);
+    //     if (!res.data.detail) {
+    //       setTratmentPlanData(res.data);
+    //     }
+    //     // navigate(-1)
+    //   })
+    //   .catch(() => {
+    //     setIsLoading(false);
+    //   });
     // Application.generateTreatmentPlan({
     //     member_id: Number(id),
     //     three_months_priority:Priorities3,
@@ -122,6 +119,15 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     // }).catch(()=> {
     //     setIsLoading(false)
     // });
+    Application.generateTreatmentPlan({
+      member_id:id
+    }).then(res => {
+      console.log(res)
+      setGenereStep("Generate Plan");
+      setTratmentPlanData(res.data)
+    }).finally(() =>{
+      setIsLoading(false)
+    })
   };
   // const modalAiGenerateRef = useRef(null)
   // const resolveChangeTextFields =(value:string,index:number,key:string,doOrdos:string) => {
@@ -167,7 +173,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // })
   const [isforceReload] = useState(false);
   const resolveNeedFocusText = () => {
-    return treatmentPlanData["need_focus_biomarkers"].map((el: any) => {
+    return treatmentPlanData["Needs Focus Biomarkers"].map((el: any) => {
       return el + "\n\n";
     });
     // return "scdc"
@@ -188,7 +194,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const updateDescription = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old.description = value.toString();
+      old.description = value?.toString();
       return old;
     });
   };
@@ -332,7 +338,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             )}
             {generateStep == "Generate Plan" && (
-              <CategoryOrder isActionPlan={isActionPlan}></CategoryOrder>
+              <CategoryOrder data={treatmentPlanData} isActionPlan={isActionPlan}></CategoryOrder>
             )}
             {generateStep == "Analysis" && (
               <div className="bg-white rounded-[16px] px-6 py-6  mt-2  border border-Gray-50  ">
@@ -364,7 +370,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                       </div>
                     </div>
                     <div>
-                      {treatmentPlanData?.description && (
+                      {treatmentPlanData["Client Condition Insights"] && (
                         <TextBoxAi
                           isUpchange={isforceReload}
                           isDescript
@@ -396,7 +402,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         Biomarker List
                       </div>
                     </div>
-                    {treatmentPlanData["need_focus_biomarkers"].length > 0 && (
+                    {treatmentPlanData["Needs Focus Biomarkers"].length > 0 && (
                       <TextBoxAi
                         isUpchange={isforceReload}
                         isNeedFocus
