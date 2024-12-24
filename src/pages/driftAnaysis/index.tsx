@@ -16,6 +16,7 @@ import { subscribe } from "../../utils/event";
 // import { useSelector } from "react-redux";
 import { Action } from "./Action";
 import AnalyseButton from "../../Components/AnalyseButton";
+import AiChat from "../../Components/AiChat";
 type menuItem = {
   name: string;
 };
@@ -205,15 +206,15 @@ export const DriftAnaysis = () => {
   // };
 
   return (
-    <div className="h-full w-full pl-6 pt-8 flex items-start gap-2">
+    <div className="h-full w-full pl-6 pt-8 flex items-start  gap-3">
     
         <>
           {patients[0]?.member_id !== 1 ? (
-            <div className="w-full flex flex-col gap-3 felx justify-center items-center h-[450px]">
+            <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
               <BeatLoader size={10} color="#0CBC84"></BeatLoader>
             </div>
           ) : (
-            <div className="w-full flex flex-col gap-3">
+            <div className="w-[75%] flex flex-col gap-3">
                 <div className="w-full flex justify-between text-Text-Primary">Drift Analysis <AnalyseButton text="Generate by AI"/> </div>
               <div className="w-full flex items-center justify-between">
                 <div className="w-[171px]"></div>
@@ -260,8 +261,8 @@ export const DriftAnaysis = () => {
                 </div> */}
               </div>
               { activeMenu === "Copilot" ? (
-                <div></div>
-                // <AiChat memberID={activeMemberID} />
+                
+                <AiChat memberID={activeMemberID} />
               ) : (
              <Action memberID={activeMemberID}></Action>
               )}
@@ -270,7 +271,7 @@ export const DriftAnaysis = () => {
             </div>
           )}
 
-          <div className="flex flex-col gap-[10px] justify-center w-[20%]    ">
+          <div className="flex flex-col gap-[10px] justify-center w-[25%]    ">
             <SearchBox
           
               onSearch={(e) => setSearchQuery(e.target.value)}

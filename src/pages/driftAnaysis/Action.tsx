@@ -55,7 +55,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     },
   ]);
 //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
-  const [isMessagesOpen, setisMessagesOpen] = useState(true);
+//   const [isMessagesOpen, setisMessagesOpen] = useState(true);
   const [isRoadCompleted] = useState(false);
   const handleMarkAsDone = (id: number) => {
     setMessagesData((prevData) =>
@@ -133,28 +133,26 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
             Messages{" "}
           </h5>
-          <img
+          {/* <img
             onClick={() => setisMessagesOpen(!isMessagesOpen)}
             className={` ${
               isMessagesOpen && "rotate-180"
             } invert dark:invert-0 w-4 h-4 transition-transform cursor-pointer`}
             src="./Themes/Aurora/icons/chevron-down.svg"
             alt=""
-          />
+          /> */}
         </div>
         <div
-          className={`flex flex-col gap-3 pr-3 mt-5  overflow-auto transition-max-height duration-500 ease-in-out  ${
-            isMessagesOpen ? "max-h-[220px]" : "max-h-0"
-          } `}
+          className={`flex flex-col gap-3 pr-3 mt-5  max-h-[220px] overflow-auto `}
         >
           {MessagesData.map((option) =>
             option.isDone ? (
-              <div className="w-[320px] p-4 bg-light-min-color dark:bg-black-secondary border border-light-border-color dark:border-main-border rounded-md flex items-center gap-3">
+              <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
                 <img
-                  src="./Themes/Aurora/icons/tick-circle-purple.svg"
+                  src="/icons/tick-circle.svg"
                   alt=""
                 />
-                <div className="border-l border-gray-600 pl-4 text-xs text-light-primary-text dark:text-primary-text">
+                <div className="border-l border-gray-600 pl-4 text-xs ">
                   Message sent successfully.
                 </div>
               </div>
