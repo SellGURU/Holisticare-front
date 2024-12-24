@@ -44,7 +44,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                         </div>
                         <input type="file" ref={fileInputRef} multiple onChange={(e:any) => {
                             const fileList = Array.from(e.target.files);
-                            setFiles(upLoadingFiles)
+                            setFiles([...files,...upLoadingFiles])
                             setUploadingFiles([])
                             setTimeout(() => {
                                 setUploadingFiles(fileList)

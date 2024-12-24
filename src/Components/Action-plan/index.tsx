@@ -19,38 +19,38 @@ export const ActionPlan = () => {
 
   // const [isGenerated, setisGenerated] = useState(false);
   const [CardData, setCardData] = useState<Array<CardData>>([
-    {
-      cardID: 1,
-      status: "Completed",
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
-      progress: 100,
-      time: "Done",
-    },
-    {
-      cardID: 2,
-      status: "On Going",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 85,
-      time: "1 Week left",
-    },
-    {
-      cardID: 3,
-      status: "Paused",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 25,
-      time: "Waiting",
-    },
-    {
-      cardID: 4,
-      status: "Upcoming",
-      title: "Stress Reduction",
-      subtitle: "Something short and simple here",
-      progress: 0,
-      time: "Waiting",
-    },
+    // {
+    //   cardID: 1,
+    //   status: "Completed",
+    //   title: "Muscle Strengthening",
+    //   subtitle: "Something short and simple here",
+    //   progress: 100,
+    //   time: "Done",
+    // },
+    // {
+    //   cardID: 2,
+    //   status: "On Going",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 85,
+    //   time: "1 Week left",
+    // },
+    // {
+    //   cardID: 3,
+    //   status: "Paused",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 25,
+    //   time: "Waiting",
+    // },
+    // {
+    //   cardID: 4,
+    //   status: "Upcoming",
+    //   title: "Stress Reduction",
+    //   subtitle: "Something short and simple here",
+    //   progress: 0,
+    //   time: "Waiting",
+    // },
   ]);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
@@ -112,25 +112,28 @@ export const ActionPlan = () => {
             </>
           ) : (
             <>
-              <div className=" h-[255px] w-[242px]">
-                <img src="/icons/EmptyState.svg" alt="" />
-                <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
-                  No Action Plan Generated Yet
-                </h5>
-                <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
-                  Start creating your action plan
-                </div>
-                <div className=" mt-6 flex w-full justify-center">
-                  <ButtonPrimary
-                    ClassName="py-[6px] px-6"
-                    onClick={() => {
-                      navigate("/generateActionPlan/123");
-                    }}
-                  >
-                    <img src="/icons/tick.svg" alt="" />
-                    Generate New
-                  </ButtonPrimary>
-                </div>
+              <div className=" h-[440px] flex justify-center items-center w-[242px]">
+               <div>
+                  <img src="/icons/EmptyState.svg" alt="" />
+                  <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                    No Action Plan Generated Yet
+                  </h5>
+                  <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
+                    Start creating your action plan
+                  </div>
+                  <div className=" mt-6 flex w-full justify-center">
+                    <ButtonPrimary
+                      ClassName="py-[6px] px-6"
+                      onClick={() => {
+                        navigate("/generateActionPlan/123");
+                      }}
+                    >
+                      <img src="/icons/tick.svg" alt="" />
+                      Generate New
+                    </ButtonPrimary>
+                  </div>
+
+               </div>
               </div>
             </>
           )}

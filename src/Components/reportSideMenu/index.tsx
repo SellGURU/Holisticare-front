@@ -48,11 +48,13 @@ const ReportSideMenu = () => {
           {ActiveLayer == "menu" &&
             menuItems.map((item, index) => (
               <div
+                
                 onClick={() => {
                   setactiveMenu(item)
                   document.getElementById(item)?.scrollIntoView({
-                      behavior:'smooth'
-                  })                  
+                      behavior:'smooth',
+                  })
+               
                 }}
                 key={index}
                 className={`text-[10px] h-[24px] flex justify-start items-center pl-2 text-nowrap  bg-backgroundColor-Main text-Text-Primary rounded-md border  hover:bg-gray-200 cursor-pointer ${

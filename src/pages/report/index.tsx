@@ -5,22 +5,22 @@ import { ComboBar } from "../../Components"
 
 const Report = () => {
     return (
-       <div className="h-screen">
-            <div className="w-full fixed z-50 top-0 ">
+       <div className="">
+            <div className="w-full sticky z-50 top-0 ">
                 <TopBar></TopBar>
             </div>
-            <div className="fixed left-4 top-16">
+            <div className="fixed z-10 left-4 top-16">
                 <ReportSideMenu></ReportSideMenu>
 
             </div>
 
 
-            <div className="w-full pl-[200px]">
+            <div className="w-full pl-[200px] fixed">
                 <ReportAnalyseView ></ReportAnalyseView>
                
             </div>
             
-           <div className="absolute top-24 right-6 h-[85vh] flex items-center justify-between flex-col ">
+           <div className="fixed top-20 right-6 h-[80vh] flex items-center justify-between flex-col ">
             <ComboBar></ComboBar>
            </div>
 
