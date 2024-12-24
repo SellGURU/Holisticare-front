@@ -272,7 +272,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     })}
                                 </div>
                             </div>          
-                            <div className="my-10">
+                            <div className="my-10 min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
                                     <div id="Treatment Plan" className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan </div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
@@ -337,7 +337,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                       
                                 }  
                             </div>
-                            <div id="Action Plan" className="my-10">
+                            <div id="Action Plan" className="my-10  min-h-[650px]">
                                 <div className="TextStyle-Headline-4 text-Text-Primary mb-4">Action Plan</div>
                                 <ActionPlan></ActionPlan>
                             </div>

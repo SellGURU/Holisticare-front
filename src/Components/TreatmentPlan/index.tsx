@@ -79,18 +79,21 @@ export const TreatmentPlan = () => {
   return (
     <>
       {cardData.length < 1 ? (
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <img src="/icons/EmptyState.svg" alt="" />
-          <div className="text-base font-medium text-Text-Primary -mt-9">
-            No Treatment Plan Generated Yet
+        <div className="w-full h-[450px] flex justify-center items-center">
+          <div className="w-full h-full flex flex-col items-center justify-center">
+            <img src="/icons/EmptyState.svg" alt="" />
+            <div className="text-base font-medium text-Text-Primary -mt-9">
+              No Treatment Plan Generated Yet
+            </div>
+            <div className="text-xs text-Text-Primary mt-2 mb-5">
+              Start creating your treatment plan
+            </div>
+            <ButtonPrimary             onClick={()=>navigate(`/generateNewTreatmentPlan/${id}`)}
+  >
+              <img src="/icons/tick-square.svg" alt="" /> Generate New
+            </ButtonPrimary>
           </div>
-          <div className="text-xs text-Text-Primary mt-2 mb-5">
-            Start creating your treatment plan
-          </div>
-          <ButtonPrimary             onClick={()=>navigate(`/generateNewTreatmentPlan/${id}`)}
->
-            <img src="/icons/tick-square.svg" alt="" /> Generate New
-          </ButtonPrimary>
+
         </div>
       ) : (
         <div className="">
