@@ -10,12 +10,11 @@ interface ClientCardProps {
 
 const ClientCard:React.FC<ClientCardProps> =({client}) => {
     const navigate = useNavigate()
-    const { setInformationUser } = useContext(AppContext);
 
     return (
         <>
             <div onClick={() => {
-                navigate('/report/'+client.member_id)
+                navigate('/report/'+client.member_id+"/"+client.name)
             }} className="min-w-[315px] w-[333px] p-4  bg-white shadow-200 rounded-[16px]">
                 <div className="flex">
                     <div className="w-[72px] h-[72px] overflow-hidden rounded-full object-cover">
@@ -32,7 +31,7 @@ const ClientCard:React.FC<ClientCardProps> =({client}) => {
 
                 <div className="mt-2 flex justify-between items-center">
                     <div className="text-Text-Secondary text-[10px] font-medium">Plan not started. Assign a trainer to start.</div>
-                    <ButtonSecondary onClick={()=>setInformationUser(client)} size="small">
+                    <ButtonSecondary size="small">
                         Assaign
                     </ButtonSecondary>
                 </div>

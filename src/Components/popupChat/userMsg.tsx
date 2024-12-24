@@ -1,8 +1,7 @@
-import {useContext} from "react";
-import {AppContext} from "../../store/app.tsx";
+import {useParams} from "react-router-dom";
 
 export const UserMsg=({msg}:{msg:string})=>{
-    const { user } = useContext(AppContext);
+    const {name } = useParams<{ name:string }>();
 
     return (
         <div className={"flex items-start justify-end gap-2 mt-5"}>
@@ -10,7 +9,7 @@ export const UserMsg=({msg}:{msg:string})=>{
             <div className={"pt-2 spa"}>
                 <div className={"flex items-end justify-end gap-1 "}>
                     <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p>
-                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>{user.name}</h1>
+                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>{name}</h1>
                 </div>
                 <div
                     style={{

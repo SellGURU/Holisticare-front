@@ -98,7 +98,7 @@ const AddClient =() => {
                                         </div>
                                     </ButtonPrimary>                                    
                                     <ButtonPrimary onClick={() => {
-                                        navigate('/report/'+memberId)
+                                        navigate('/report/'+memberId+"/"+formik.values.firstName+formik.values.lastName)
                                     }}>
                                         <div className="w-[130px]">
                                             Create Report

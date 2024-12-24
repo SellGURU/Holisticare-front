@@ -1,14 +1,12 @@
 import {PopUpChat} from "../popupChat";
-import {useContext, useRef, useState} from "react";
+import { useRef, useState} from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
 import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
-import {AppContext} from "../../store/app.tsx";
 
 export const ComboBar = () => {
-    const { user } = useContext(AppContext);
 
-    const { id } = useParams<{ id: string }>();
+    const { id,name } = useParams<{ id: string,name:string }>();
     const itemList:string[] = [
         "/images/sidbar-menu/info-circle.svg",
         "/icons/sidbar-menu/clipboard-text.svg",
@@ -74,7 +72,7 @@ const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
                         <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
                     </li>
                     <li className={"text-Text-Primary TextStyle-Headline-6 text-center"}>
-                        {user.name}
+                        {name}
                     </li>
                     <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
                     {itemList.map((srcImage) => (
