@@ -190,7 +190,7 @@ const AiKnowledge = () => {
             </SigmaContainer>
 
             <div
-                className="fixed right-5 top-[5%] w-[256px] h-[90vh] text-primary-textoverflow-y-auto overscroll-y-auto  flex flex-col ">
+                className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-textoverflow-y-auto overscroll-y-auto  flex flex-col ">
                 <div className="overflow-y-auto  bg-white p-4 rounded-2xl border-Gray-50 border">
                     <div className="mb-4">
                         <h3 className="text-lg text-light-secandary-text mb-2">Documents</h3>
