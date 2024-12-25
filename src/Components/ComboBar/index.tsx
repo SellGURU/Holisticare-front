@@ -67,7 +67,7 @@ const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
                 <div className={"absolute top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10"}>
 
                 </div>
-                <ul className={"flex items-center flex-col z-50 gap-3"}>
+                <ul className={"flex items-center flex-col z-10 gap-3"}>
                     <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
                     </li>
