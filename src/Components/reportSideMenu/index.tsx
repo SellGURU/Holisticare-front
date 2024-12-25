@@ -11,6 +11,7 @@ const ReportSideMenu = () => {
   const [activeMenu, setactiveMenu] = useState("Client Summary");
   const [ActiveLayer, setActiveLayer] = useState("menu");
   const [activeImg, setactiveImg] = useState(1);
+
   return (
     <div className="h-full max-h-[646px] min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 ">
       <div className="flex  rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
@@ -41,24 +42,22 @@ const ReportSideMenu = () => {
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
       <div className="mt-6">
-        <div className="TextStyle-Headline-6 text-left">
-          Sections
-        </div>
+        <div className="TextStyle-Headline-6 text-left">Sections</div>
         <div className="mt-2 flex flex-col gap-1">
           {ActiveLayer == "menu" &&
             menuItems.map((item, index) => (
               <div
-                
                 onClick={() => {
-                  setactiveMenu(item)
+                  setactiveMenu(item);
                   document.getElementById(item)?.scrollIntoView({
-                      behavior:'smooth',
-                  })
-               
+                    behavior: "smooth",
+                  });
                 }}
                 key={index}
                 className={`text-[10px] h-[24px] flex justify-start items-center pl-2 text-nowrap  bg-backgroundColor-Main text-Text-Primary rounded-md border  hover:bg-gray-200 cursor-pointer ${
-                  item == activeMenu ? "border-Primary-EmeraldGreen" : "border-gray-50"
+                  item == activeMenu
+                    ? "border-Primary-EmeraldGreen"
+                    : "border-gray-50"
                 } flex justify-start`}
               >
                 {index + 1}. {item}
@@ -66,11 +65,30 @@ const ReportSideMenu = () => {
             ))}
           {ActiveLayer == "layer" && (
             <div className="flex flex-col gap-2">
-              {Array.from({ length: 6 }, (_, index) => (
-                <div onClick={()=>setactiveImg(index+1)} key={index} className={`${index+1 == activeImg ? 'border-Primary-EmeraldGreen' : 'border-gray-50'} border rounded-md relative overflow-hidden w-[146px] h-[56px] `}>
-                 <img className="absolute inset-0 w-[150px] h-[60px] object-cover" src={`/images/report-sidemenu/${index+1}.png`} alt="" />
+              {menuItems.map((item,index)=>(
+                <div
+                  onClick={() => {setactiveImg(index + 1)
+                    document.getElementById(item)?.scrollIntoView({
+                      behavior: "smooth",
+                      
+                    });
+
+                  }}
+                  key={index}
+                  className={`${
+                    index + 1 == activeImg
+                      ? "border-Primary-EmeraldGreen"
+                      : "border-gray-50"
+                  } border rounded-md relative overflow-hidden w-[146px] h-[56px] `}
+                >
+                  <img
+                    className=" "
+                    src={`/images/report-sidemenu/${index + 1}.png`}
+                    alt=""
+                  />
                 </div>
               ))}
+            
             </div>
           )}
         </div>
@@ -79,4 +97,4 @@ const ReportSideMenu = () => {
   );
 };
 
-export default ReportSideMenu
+export default ReportSideMenu;

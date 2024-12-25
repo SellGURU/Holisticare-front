@@ -22,7 +22,7 @@ const SideMenu = () => {
   const graph =     {
     name:'Knowledge Graph ',
     icon:'sidemenu-menu-icon-trend-up',
-    url:''
+    url:'/ai'
 }     
   return (
     <>
@@ -37,11 +37,11 @@ const SideMenu = () => {
             </div>
           </div>
           <div className="w-full">
-            <div className="mt-12">
+            <div className="mt-8">
               {menus.map((menu) => (
                 <div
                   onClick={() => changeMenu(menu)}
-                  className={`py-3 w-full flex flex-col items-center gap-2  text-Primary-DeepTeal  ${
+                  className={`py-2 w-full flex flex-col  items-center   text-Primary-DeepTeal cursor-pointer   ${
                     activeMenu.name === menu.name
                       ? "border-Primary-DeepTeal border-r-2 bg-white"
                       : ""
@@ -54,7 +54,8 @@ const SideMenu = () => {
                         : "text-Text-Secondary"
                     }`}
                   />
-                  {activeMenu.name === menu.name && menu.name}
+                  <div className={`${activeMenu.name === menu.name ? '' : 'invisible'}`}>{menu.name}</div>
+                  {/* {activeMenu.name === menu.name && menu.name} */}
                 </div>
               ))}
               {/* <div className="py-3 flex justify-center">
@@ -95,9 +96,9 @@ const SideMenu = () => {
                 { activeMenu.name === graph.name && graph.name}
             </div>
           </div>
-          <div className=" absolute bottom-4  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+          <div className=" absolute bottom-0  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
           Powered by
-          <img src="/public/icons/side-menu/logo.svg" alt="" />
+          <img src="/icons/side-menu/logo.svg" alt="" />
           </div>
         
         </div>
