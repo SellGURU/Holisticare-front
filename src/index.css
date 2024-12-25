@@ -319,3 +319,8 @@ input[type="number"] {
 .Aurora-S-TextArea-error {
   @apply text-red-500 text-xs -mt-1;
 }
+
+
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
