@@ -52,8 +52,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const resolveNextStep = () => {
     if (generateStep == "Client Goals") {
-      // setGenereStep("Generate Plan");
-      generatePaln();
+      setGenereStep("Generate Plan");
+      // generatePaln();
     } else if (generateStep == "Generate Plan") {
       setGenereStep("Analysis")
     }
@@ -86,44 +86,10 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // const [activeMenu,setActiveMenu] = useState('3 Month')
   const generatePaln = () => {
     setIsLoading(true);
-    // Application.AnalyseTreatmentPlan({
-    //   member_id: Number(id),
-    // })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     // console.log(res)
-    //     setGenereStep("Analysis");
-    //     setIsLoading(false);
-    //     if (!res.data.detail) {
-    //       setTratmentPlanData(res.data);
-    //     }
-    //     // navigate(-1)
-    //   })
-    //   .catch(() => {
-    //     setIsLoading(false);
-    //   });
-    // Application.generateTreatmentPlan({
-    //     member_id: Number(id),
-    //     three_months_priority:Priorities3,
-    //     six_months_priority:Priorities6,
-    //     use_ai:false
-    // }).then(res => {
-    //     console.log(res.data);
-    //     // console.log(res)
-    //     setGenereStep("Analysis")
-    //     setIsLoading(false)
-    //     if(!res.data.detail){
-    //         setTratmentPlanData(res.data)
-    //     }
-    //     // navigate(-1)
-    // }).catch(()=> {
-    //     setIsLoading(false)
-    // });
     Application.generateTreatmentPlan({
       member_id:id
     }).then(res => {
-      console.log(res)
-      setGenereStep("Generate Plan");
+      setClientGools([])
       setTratmentPlanData(res.data)
     }).finally(() =>{
       setIsLoading(false)
@@ -151,17 +117,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // }
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
-    Application.getPatientReorders(id as string).then((res) => {
-      console.log(res);
-      setIsLoading(false);
-      if (res.data.client_goals) {
-        setClientGools(res.data.client_goals);
-      }
-      // if(res.data.priority_plan_3m){
-      //     setPriorities3(res.data.priority_plan_3m)
-      //     setPriorities6(res.data.priority_plan_6m)
-      // }
-    });
+    generatePaln()
   }, []);
   // const [isloadingGenerate,setIsLoadingGenerate] = useState(false)
   // const [showGenerateWithAi,setShowGenerateWithAi] = useState(false)
