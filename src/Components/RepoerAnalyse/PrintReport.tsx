@@ -19,6 +19,7 @@ interface PrintReportProps {
 }
 
 const PrintReport:React.FC<PrintReportProps> = ({ClientSummaryBoxs,ResolveConceringData,caldenderData,TreatMentPlanData,resolveSubCategories,resolveBioMarkers,referenceData,resolveCategories}) => {
+
     const resolveTreatmentPlanIcon = (category:string) => {
         if(category == 'Diet') {
             return './images/report/treatment/apple.svg'
@@ -179,7 +180,7 @@ const PrintReport:React.FC<PrintReportProps> = ({ClientSummaryBoxs,ResolveConcer
                     <div className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Action Plan </div>
 
                 </div>  
-                {caldenderData!= null &&
+                {caldenderData!= null && caldenderData.length>0 &&
                     <CalenderPrint data={caldenderData}></CalenderPrint>
                 }
             </div>  
