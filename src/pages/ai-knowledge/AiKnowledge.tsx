@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SigmaContainer } from "@react-sigma/core";
 import { useLoadGraph, useRegisterEvents, useSigma } from "@react-sigma/core";
@@ -161,20 +162,20 @@ const AiKnowledge = () => {
             )
         }, 600);
     },[])
-    const handleCheckboxChange = (item) => {
-        item.checked = !item.checked;
-        if (item.children) {
-            item.children.forEach((child) => {
-                child.checked = item.checked;
-                if (child.children) {
-                    child.children.forEach((subChild) => {
-                        subChild.checked = item.checked;
-                    });
-                }
-            });
-        }
-        // Update state or trigger re-render here
-    };
+    // const handleCheckboxChange = (item:any) => {
+    //     item.checked = !item.checked;
+    //     if (item.children) {
+    //         item.children.forEach((child:any) => {
+    //             child.checked = item.checked;
+    //             if (child.children) {
+    //                 child.children.forEach((subChild:any) => {
+    //                     subChild.checked = item.checked;
+    //                 });
+    //             }
+    //         });
+    //     }
+    //     // Update state or trigger re-render here
+    // };
 
     return (
         <div className="relative text-primary-text flex justify-center w-full h-[80vh] ">
