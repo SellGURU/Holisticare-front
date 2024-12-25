@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ButtonSecondary } from "../Button/ButtosSecondary";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useState, useRef } from "react";
+import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
@@ -32,7 +33,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
         {showModal && (
           <div
             ref={showModalRefrence}
-            className="absolute top-7 -right-[165px] z-20 w-[188px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+            className="absolute top-7 right-[10px] z-20 w-[188px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
             <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
               <img src="/icons/assign-green.svg" alt="" />
@@ -90,10 +91,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div>
-          <ButtonSecondary size="small">
+          <ButtonPrimary size="small">
             {" "}
-            <img src="/icons/Assign.svg" alt="" /> Assaign
-          </ButtonSecondary>
+            <img src="/icons/Assign.svg" alt="" />
+            Assaign
+          </ButtonPrimary>
         </div>
         <div className="w-full mt-2   flex justify-between">
           <div className="flex h-[120px] flex-col justify-between border-r border-Gray-50 pr-3 py-1">
