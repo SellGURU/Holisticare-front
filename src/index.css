@@ -57,8 +57,126 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.25rem; /* Tailwind w-6 */
-  height: 1.25rem; /* Tailwind h-6 */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-dashboard {
+  mask-image: url(/icons/side-menu/dashboard.svg);
+  -webkit-mask-image: url(/icons/side-menu/dashboard.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-shared-witth-you {
+  mask-image: url(/icons/side-menu/shared-witth-you.svg);
+  -webkit-mask-image: url(/icons/side-menu/shared-witth-you.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-messages {
+  mask-image: url(/icons/side-menu/messages.svg);
+  -webkit-mask-image: url(/icons/side-menu/messages.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-money-send {
+  mask-image: url(/icons/side-menu/money-send.svg);
+  -webkit-mask-image: url(/icons/side-menu/money-send.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-reports {
+  mask-image: url(/icons/side-menu/reports.svg);
+  -webkit-mask-image: url(/icons/side-menu/reports.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+
+.sidemenu-menu-icon-packages {
+  mask-image: url(/icons/side-menu/packages.svg);
+  -webkit-mask-image: url(/icons/side-menu/packages.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-setting {
+  mask-image: url(/icons/side-menu/setting-2.svg);
+  -webkit-mask-image: url(/icons/side-menu/setting-2.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-trend-up {
+  mask-image: url(/icons/side-menu/trend-up.svg);
+  -webkit-mask-image: url(/icons/side-menu/trend-up.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
+.sidemenu-menu-icon-drift-analysis {
+  mask-image: url(/icons/status-up.svg);
+  -webkit-mask-image: url(/icons/status-up.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
 }
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');
@@ -84,6 +202,15 @@ input[type="number"] {
     border-radius: 50%;
     position: absolute;
     animation: dotSpin 1.2s infinite linear;
+  }
+  .gradient-border {
+    border-style: solid;
+    border-image: linear-gradient(to right, #005F73 , #6CC24A ) 1;
+  }
+  .text-gradient {
+    background: linear-gradient(to right, #005F73, #6CC24A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .dot:nth-child(1) { transform: rotate(0deg) translate(20px); animation-delay: 0s; }
