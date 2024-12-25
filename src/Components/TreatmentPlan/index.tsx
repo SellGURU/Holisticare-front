@@ -72,29 +72,49 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
     null
   );
   const [aciveTreatmentPlan, setActiveTreatmentplan] = useState("Diet");
-  const [TreatMentPlanData] = useState<any>(treatmentPlanData);
+  const [TreatMentPlanData,setTreatmentPlanData] = useState<any>(treatmentPlanData);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
+  const [NeedFocusData,setNeedFocusData] = useState<Array<any>>([])
   const handleDeleteCard = (index: number) => {
     setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
     setShowModalIndex(null);
     setDeleteConfirmIndex(null);
   };
   const navigate = useNavigate()
+  const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
+  const [activeTreatment,setActiveTreatmnet] = useState('')
   useEffect(() => {
     Application.showHistory({
       member_id:id
     }).then((res) => {
-      console.log(res)
       setCardData(res.data)
+      if(res.data.length> 0){
+        setActiveTreatmnet(res.data[0].t_plan_id,)
+        
+      }
       setTimeout(() => {
         const container:any = document.getElementById('scrollContainer');
-        container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+        if(container){
+          container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+        }
         
       }, 500);
     })
   },[])
+  useEffect(() => {
+    if(activeTreatment != ''){
+        Application.getTreatmentPlanDetail({
+          treatment_id:activeTreatment,
+          member_id:id
+        }).then((res) => {
+          setTreatmentPlanData(res.data.details)
+          setClientGools(res.data.clinet_goals)
+          setNeedFocusData(res.data.need_focus_benchmarks)
+        })
+    }
+  },[activeTreatment])
   return (
     <>
       {cardData.length < 1 ? (
@@ -148,8 +168,11 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
                 )}
 
                 <div
-                  className={`absolute  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
-                    card.status == "On Going"
+                  onClick={() => {
+                    setActiveTreatmnet(card.t_plan_id)
+                  }}
+                  className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
+                    activeTreatment == card.t_plan_id
                       ? "border-Primary-EmeraldGreen"
                       : "border-Gray-25"
                   }`}
@@ -334,36 +357,19 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
         headline="Analysis"
       >
         <>
-          <div className="rounded-xl border border-Gray-50">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              Client Condition Insight
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
-              This patient has high blood pressure and experiences frequent
-              headaches, fatigue, and difficulty sleeping. Her condition is
-              further complicated by chronic stress from her demanding job and
-              poor dietary habits, which include consuming excessive amounts of
-              salty and processed foods. Despite being aware of the risks,
-              Leslie often feels too exhausted to exercise regularly, leading to
-              weight gain over the past year. She also reports feelings of
-              anxiety, especially in the evenings, which she believes
-              contributes to her restless nights. Her doctor has advised her to
-              make significant lifestyle changes, including stress management
-              techniques, a healthier diet, and incorporating daily physical
-              activity, but she finds it challenging to stay consistent. As a
-              result, her blood pressure remains uncontrolled, putting her at
-              risk for further cardiovascular complications.
-            </div>
-          </div>
+
           <div className="rounded-xl border border-Gray-50">
             <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Needs Focus Benchmarks
             </div>
             <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
-              <li className="list-disc">Time Priorities</li>
-              <li className="list-disc">Recovery</li>
-              <li className="list-disc">Metabolic Function</li>
-              <li className="list-disc">Nutrition</li>
+              {NeedFocusData.map((el) => {
+                return (
+                  <>
+                    <li className="list-disc">{el}</li>
+                  </>
+                )
+              })}
             </ul>
           </div>
         </>
@@ -373,36 +379,18 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
         onClose={() => setisClientGoalOpen(false)}
         headline="Client Goal"
       >
-        <div className="border border-Gray-50 rounded-xl">
-          <div className=" ">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              What you want to be able to do?
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
-              I liked to run but too unfit to do that now. I want a realistic
-              entry into getting fitter where I build up the intensity to match
-              my capability. I don’t enjoy squats as they make my legs hurt but
-              recognise I may need to do them.
-            </div>
+          <div>
+            {Object.keys(clientGools).map((el,index) => {
+              return (
+                <>
+                  <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" style={{borderTopLeftRadius:index!=0?'0px':'12px',borderTopRightRadius:index!=0?'0px':'12px'}}>{el}</div>
+                  <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                    {clientGools[el]}
+                  </div>
+                </>
+              )
+            })}
           </div>
-          <div className=" border border-Gray-50">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              How you want to look?
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
-              Lose the 18kg of weight I have put on since 2019 and get to a
-              target weight of 82kg
-            </div>
-          </div>
-          <div className=" border border-Gray-50">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              How you want to feel?
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-4 py-2">
-              Have more energy and know my health is improving
-            </div>
-          </div>
-        </div>
       </SlideOutPanel>
     </>
   );

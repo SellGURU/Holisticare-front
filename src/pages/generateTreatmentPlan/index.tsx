@@ -179,14 +179,20 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             
             <div className="w-full flex gap-2 justify-end items-center">
               <ButtonPrimary size="small">
-                {/* <img src="/icons/" alt="" /> */}
-                Analysis
+                <div className="w-full flex justify-between gap-2">
+                  <img src="/icons/status-up.svg" alt="" />
+                  Analysis
+
+                </div>
               </ButtonPrimary>
               <ButtonPrimary onClick={() => {
                 setSHowClientGoals(true)
               }} size="small">
                 {/* <img src="/icons/" alt="" /> */}
-                Client Goals
+                <div className="w-full flex justify-between gap-2">
+                  <img src="/icons/chart.svg" alt="" />
+                  Client Goals
+                </div>
               </ButtonPrimary>              
             </div>
             {/* <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">

@@ -374,6 +374,10 @@ static downloadClinicReport(data:any){
     )
     return response
   }
+  static getTreatmentPlanDetail(data:any) {
+    const response = this.post("/patients/treatment_plan_details_for_list",data)
+    return response
+  }
 }
 
 

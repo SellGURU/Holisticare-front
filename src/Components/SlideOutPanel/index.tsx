@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { publish } from '../../utils/event';
 type SlideOutPanelProps = {
     headline: string,
   isOpen: boolean;
@@ -17,6 +18,13 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen, onClose, c
           onClose()
         },
       });
+    useEffect(() => {
+      if(isOpen == true){
+        publish("openSideOut",{})
+      }else {
+        publish("closeSideOut",{})
+      }
+    },[isOpen])
   return (
     <div ref={showModalRefrence} className={`fixed top-[50px] z-20 right-0 h-full w-[320px] bg-white border-[2px] border-r-0 border-Gray-25 rounded-tl-2xl rounded-bl-2xl  shadow-lg transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex justify-between items-center p-4 ">

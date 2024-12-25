@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import SummaryBox from "./SummaryBox"
 // import MyChartComponent from "./StatusChart"
