@@ -9,8 +9,6 @@ import chroma from "chroma-js";
 // import { ApplicationMock } from "@/api";
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import Application from "../../api/app.ts";
-import {ButtonPrimary} from "../../Components/Button/ButtonPrimary.tsx";
-import {ButtonSecondary} from "../../Components/Button/ButtosSecondary.tsx";
 const GraphEvents = () => {
     const registerEvents = useRegisterEvents();
     const sigma = useSigma();
@@ -179,13 +177,13 @@ const AiKnowledge = () => {
     };
 
     return (
-        <div className="relative text-primary-text flex justify-center w-full h-screen ">
+        <div className="relative text-primary-text flex justify-center w-full h-[80vh] ">
 
             <SigmaContainer
                 settings={sigmaSetting}
                 id="sigma-container"
                 className={" !bg-bg-color"}
-                style={{height: '800px', width: window.innerWidth}}
+                style={{height: window.innerHeight - 50, width: window.innerWidth}}
             >
                 <LoadGraph graphData={graphData} activeFilters={activeFilters} isInitialLoad={isInitialLoad}/>
                 <GraphEvents/>
