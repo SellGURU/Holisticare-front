@@ -28,6 +28,7 @@ import UploadTest from "./UploadTest"
 import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
+import { publish } from "../../utils/event"
 interface ReportAnalyseViewprops {
     clientData?:any,
     memberID? : number | null
@@ -151,6 +152,11 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
           }
         }
       }, [location, loading]); // Add 'loading' to dependencies
+      useEffect(() => {
+        if (!isHaveReport) {
+          publish('noReportAvailable', { message: 'No report available' });
+        }
+      }, [isHaveReport]);
     return (
         <>        
          {loading ? (
