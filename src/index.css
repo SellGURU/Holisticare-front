@@ -269,3 +269,53 @@ input[type="number"] {
         @apply text-[14px] font-medium;
     }                 
 }
+
+
+
+.Aurora-TextArea-container {
+  @apply flex flex-col  w-[100%]  gap-y-1;
+}
+.Aurora-TextArea-label {
+  @apply leading-[19.36px] text-[12px] font-[500] text-Text-Primary opacity-85 ;
+}
+.Aurora-TextArea-input {
+  @apply focus:outline-none h-[95px] w-full resize-none px-2 rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[16px]  placeholder:font-[300]   pb-[12px] pt-[10px] border dark:border-[#383838]   bg-white  dark:bg-[#1E1E1E];
+}
+
+.Aurora-TextArea-inValid {
+  @apply border-red-500 border;
+}
+.Aurora-TextArea-box {
+  @apply rounded-[4px] flex items-center justify-between ;
+}
+.Aurora-TextArea-togglePassword {
+  @apply cursor-pointer;
+}
+
+.Aurora-TextArea-error {
+  @apply text-red-500 text-xs -mt-1;
+}
+
+.Aurora-S-TextArea-container {
+  @apply flex flex-col  w-[100%]  gap-y-1;
+}
+.Aurora-S-TextArea-label {
+  @apply leading-[19.36px] text-[12px] font-[500] opacity-85 text-Text-Primary;
+}
+.Aurora-S-TextArea-input {
+  @apply focus:outline-none   h-[200px] px-5 w-full resize-none  rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[12px] text-[12px] placeholder:font-[300]   pb-[12px] py-[24px] border bg-white border-gray-50;
+}
+
+.Aurora-S-TextArea-inValid {
+  @apply border-red-500 border;
+}
+.Aurora-S-TextArea-box {
+  @apply rounded-[4px] flex items-center justify-between ;
+}
+.Aurora-S-TextArea-togglePassword {
+  @apply cursor-pointer;
+}
+
+.Aurora-S-TextArea-error {
+  @apply text-red-500 text-xs -mt-1;
+}

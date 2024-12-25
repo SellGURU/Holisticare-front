@@ -124,7 +124,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
           </div>
           <></>
-          <div className="flex items-center justify-center  p-4 -mt-12 ">
+          <div className="flex items-center justify-start  p-4 -mt-12 ">
             {cardData.map((card, index: number) => (
               <div
                 key={card.id}

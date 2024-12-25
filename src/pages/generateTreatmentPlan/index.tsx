@@ -89,7 +89,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     Application.generateTreatmentPlan({
       member_id:id
     }).then(res => {
-      setClientGools([])
+      setClientGools(res.data.client_goals)
       setTratmentPlanData(res.data)
     }).finally(() =>{
       setIsLoading(false)
@@ -135,13 +135,13 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     // return "scdc"
   };
   const resolveDescriptText = () => {
-    return treatmentPlanData?.description;
+    return treatmentPlanData["Client Condition Insights"];
     // return "scdc"
   };
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["need focus benchmarks"] = value.includes(",")
+      old["Needs Focus Biomarkers"] = value.includes(",")
         ? [...value.split(",")][0]
         : [value];
       return old;
@@ -150,7 +150,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const updateDescription = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old.description = value?.toString();
+      old["Client Condition Insights"] = value?.toString();
       return old;
     });
   };
@@ -304,7 +304,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   </div>
                 ) : (
                   <div className="w-full border h-[256px] overflow-y-scroll p-6 bg-backgroundColor-Card border-Gray-50 rounded-[16px]">
-                    <div className="dark:text-[#FFFFFFDE] mb-1 text-light-secandary-text gap-2 flex justify-between items-center text-[14px] font-medium text-Text-Primary">
+                    <div className="mb-1 text-Text-Primary gap-2 flex justify-between items-center text-[14px] font-medium ">
                       <div className="flex justify-start items-center gap-2">
                         {/* <span className="w-1 h-1 bg-light-secandary-text rounded-full dark:bg-[#FFFFFFDE]"></span> */}
                         Client Condition Insights
@@ -418,7 +418,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   <BeatLoader size={8} color={"white"}></BeatLoader>
                 </div>
               ) : (
-                <div className="w-[100px] flex items-center justify-center gap-1">
+                <div className=" min-w-[100px] flex items-center justify-center gap-1">
                   {generateStep == "Analysis" &&  <img src="/icons/tick-square.svg" alt="" />}  
                   {generateStep == "Analysis" ? "Save Changes" : "Next Step"}
                 </div>
