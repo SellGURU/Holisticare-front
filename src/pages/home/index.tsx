@@ -14,7 +14,6 @@ const Home = () => {
             </div>
             <div className="w-full pl-[84px] pt-10 pb-2 h-[100vh] overflow-y-scroll">
                 <Outlet></Outlet>
-
             </div>
 
         </div>

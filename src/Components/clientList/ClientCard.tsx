@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ButtonSecondary } from "../Button/ButtosSecondary";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useState, useRef } from "react";
+import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
@@ -90,10 +91,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
           <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div>
-          <ButtonSecondary size="small">
+          <ButtonPrimary size="small">
             {" "}
-            <img src="/icons/Assign.svg" alt="" /> Assaign
-          </ButtonSecondary>
+            <img src="/icons/Assign.svg" alt="" />
+            Assaign
+          </ButtonPrimary>
         </div>
         <div className="w-full mt-2   flex justify-between">
           <div className="flex h-[120px] flex-col justify-between border-r border-Gray-50 pr-3 py-1">

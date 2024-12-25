@@ -6,6 +6,7 @@ import ClientCard from "./ClientCard";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../SelectBox";
 import SearchBox from "../SearchBox";
+import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -62,14 +63,14 @@ const ClientList = () => {
               <div className="text-Text-Primary font-medium opacity-[87%]">
                 Clients List
               </div>
-              <ButtonSecondary
+              <ButtonPrimary
                 onClick={() => {
                   navigate("/addClient");
                 }}
               >
                 <img src="/icons/user-add.svg" alt="" />
                 Add Client
-              </ButtonSecondary>
+              </ButtonPrimary>
             </div>
             <div className="w-full h-[1px] bg-white my-3"></div>
             <div className="w-full flex justify-between mb-3">
@@ -95,7 +96,7 @@ const ClientList = () => {
                 </div>
               </div>
             </div>
-            <div className=" w-full grid grid-cols-3 xl:grid-cols-4 gap-[18px]">
+            <div className=" w-full flex md:items-start md:justify-start justify-center items-center gap-[18px] flex-wrap">
               {filteredClientList.map((client: any) => {
                 return <ClientCard client={client}></ClientCard>;
               })}
@@ -109,13 +110,13 @@ const ClientList = () => {
                   <img src="./icons/EmptyState.svg" alt="" />
                 </div>
                 <div>
-                  <ButtonSecondary
+                  <ButtonPrimary
                     onClick={() => {
                       navigate("/addClient");
                     }}
                   >
                     <div className="w-[260px]">Add Client</div>
-                  </ButtonSecondary>
+                  </ButtonPrimary>
                 </div>
               </div>
             </div>
