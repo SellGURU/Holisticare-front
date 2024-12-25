@@ -13,8 +13,9 @@ import CategoryOrder from "./components/CategoryOrder";
 import AnalyseButton from "../../Components/AnalyseButton";
 import ConfirmAnalyseModal from "./components/ConfirmAnalyseModal";
 import { TopBar } from "../../Components/topBar";
-import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
+// import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
+import { SlideOutPanel } from "../../Components/SlideOutPanel";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
 
@@ -47,19 +48,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [isFinalLoading, setisFinalLoading] = useState(false)
+  const [showClientGoals,setSHowClientGoals] = useState(false)
   // const [Priorities3,setPriorities3] = useState<PrioritiesType>({})
   // const [Priorities6,setPriorities6] = useState<PrioritiesType>({})
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const resolveNextStep = () => {
-    if (generateStep == "Client Goals") {
-      setGenereStep("Generate Plan");
-      // generatePaln();
-    } else if (generateStep == "Generate Plan") {
-      setGenereStep("Analysis")
-    }
-    if (generateStep == "Analysis") {
-      // alert(generateStep)
- 
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
         treatment_id: treatmentPlanData.treatament_plan_id,
@@ -74,15 +67,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         navigate(`/report/${id}/amir`)
       },3000)
       navigate(-1);
-    }
   };
-  const resolveBack = () => {
-    if (generateStep == "Analysis") {
-      setGenereStep("Generate Plan");
-    } else {
-      setGenereStep("Client Goals");
-    }
-  };
+
   // const [activeMenu,setActiveMenu] = useState('3 Month')
   const generatePaln = () => {
     setIsLoading(true);
@@ -91,6 +77,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     }).then(res => {
       setClientGools(res.data.client_goals)
       setTratmentPlanData(res.data)
+      setGenereStep("Generate Plan")
     }).finally(() =>{
       setIsLoading(false)
     })
@@ -173,24 +160,36 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
     <div className="fixed w-full top-0"><TopBar></TopBar></div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
         <div className="w-full px-4 py-6    relative   ">
-          <div className=" ">
-          <div className="flex items-center gap-3">
-          <div
-            onClick={() => {
+          <div className=" flex mb-2 justify-between w-full">
+            <div className="flex w-full items-center gap-3">
+              <div
+                onClick={() => {
+                
+                    navigate(-1);
+                  
+                }}
+                className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
+              >
+                <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+              </div>
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+              Generate Treatment Plan
+              </div>
+            </div>
             
-                navigate(-1);
-              
-            }}
-            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
-          >
-            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
-          </div>
-          <div className="TextStyle-Headline-5 text-Text-Primary">
-          Generate Treatment Plan
-          </div>
-        </div>
-
-            <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">
+            <div className="w-full flex gap-2 justify-end items-center">
+              <ButtonPrimary size="small">
+                {/* <img src="/icons/" alt="" /> */}
+                Analysis
+              </ButtonPrimary>
+              <ButtonPrimary onClick={() => {
+                setSHowClientGoals(true)
+              }} size="small">
+                {/* <img src="/icons/" alt="" /> */}
+                Client Goals
+              </ButtonPrimary>              
+            </div>
+            {/* <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">
               <div className="flex justify-center items-center gap-2">
                 <div
                   className={`w-5 h-5 rounded-full flex items-center justify-center ${
@@ -265,9 +264,9 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   Analysis
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
-          <div className=" h-[340px] overflow-auto">
+          <div className=" h-[480px] pr-2 overflow-auto">
             {generateStep == "Client Goals" && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
@@ -401,11 +400,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             )}
           </div>
           <div className="w-full mt-6 flex gap-4 justify-center">
-            {generateStep != "Client Goals" && (
+            {/* {generateStep != "Client Goals" && (
               <ButtonSecondary onClick={resolveBack} >
                 <div className="w-[100px]">Back</div>
               </ButtonSecondary>
-            )}
+            )} */}
             <ButtonPrimary
               disabled={isLoading}
               onClick={() => {
@@ -419,8 +418,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 </div>
               ) : (
                 <div className=" min-w-[100px] flex items-center justify-center gap-1">
-                  {generateStep == "Analysis" &&  <img src="/icons/tick-square.svg" alt="" />}  
-                  {generateStep == "Analysis" ? "Save Changes" : "Next Step"}
+                   <img src="/icons/tick-square.svg" alt="" />
+                    Save Changes
                 </div>
               )}
             </ButtonPrimary>
@@ -437,6 +436,30 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         }}
         clientName={""}
       ></ConfirmAnalyseModal>
+
+
+      <SlideOutPanel
+        isOpen={showClientGoals}
+        onClose={() =>{
+          setSHowClientGoals(false)
+        }}
+        headline="Client Goals"
+      >
+        <>
+          <div>
+            {Object.keys(clientGools).map((el,index) => {
+              return (
+                <>
+                  <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" style={{borderTopLeftRadius:index!=0?'0px':'12px',borderTopRightRadius:index!=0?'0px':'12px'}}>{el}</div>
+                  <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                    {clientGools[el]}
+                  </div>
+                </>
+              )
+            })}
+          </div>
+        </>
+      </SlideOutPanel>      
     </>
   );
 };

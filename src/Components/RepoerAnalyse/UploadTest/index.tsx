@@ -94,7 +94,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                         {upLoadingFiles.map((el:any) => {
                             return (
                                 <>
-                                <Uploading  memberId={memberId} file={el} onSuccess={(file) => {
+                                <Uploading  memberId={memberId} file={el} onSuccess={(_file) => {
                                     // setFiles([...files,file])
                                     // setFiles((prevFiles) => [...prevFiles, file]);
                                 }}></Uploading>

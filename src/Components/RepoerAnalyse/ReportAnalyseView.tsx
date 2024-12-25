@@ -75,14 +75,14 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     }, [resolvedMemberID,isGenerated]);
 
     useEffect(() => {
-        if(memberID == 123 || !isHaveReport){
+        if(memberID == 123 || (!isHaveReport && !isGenerated)){
             setReferenceData(referencedata)
             setClientSummaryBoxs(mydata)
             setConcerningResult(conceringResultData)
             setTreatmentPlanData(treatmentPlanData)
             setCalenderData(calenderDataMoch)
         }
-    },[isHaveReport])
+    },[isHaveReport,isGenerated])
     // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
     const [ClientSummaryBoxs,setClientSummaryBoxs] = useState<any>(null)
     const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
@@ -315,7 +315,10 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                              }                                   
                             {!isHaveReport &&
                                 <UploadTest onGenderate={() => {
-                                    setISGenerated(true)
+                                    setLoading(true)
+                                    setTimeout(() => {
+                                        setISGenerated(true)
+                                    }, 5000);
                                 }} memberId={resolvedMemberID}></UploadTest>
                             }                            
                         </div>   

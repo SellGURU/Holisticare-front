@@ -88,6 +88,11 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
     }).then((res) => {
       console.log(res)
       setCardData(res.data)
+      setTimeout(() => {
+        const container:any = document.getElementById('scrollContainer');
+        container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+        
+      }, 500);
     })
   },[])
   return (
@@ -124,26 +129,26 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
           </div>
           <></>
-          <div className="flex items-center justify-start  p-4 -mt-12 ">
+          <div id="scrollContainer" className="flex items-center overflow-x-auto hidden-scrollbar  justify-start  p-4 -mt-12 ">
             {cardData.map((card, index: number) => (
               <div
                 key={card.id}
                 className={` ${card.state == "Upcoming" && "opacity-60"} ${
                   index % 2 == 0 ? "mt-10 " : "mt-0"
-                } relative flex flex-col  items-center -ml-10  `}
+                } relative flex flex-col   items-center -ml-10  `}
               >
                 {index % 2 == 0 ? (
                   <img
-                    className="relative -bottom-[63px]"
+                    className="relative min-w-[191px] -bottom-[63px]"
                     src="/images/Group (1).svg"
                     alt=""
                   />
                 ) : (
-                  <img className="relative " src="/images/Group.svg" alt="" />
+                  <img className="relative  min-w-[191px] " src="/images/Group.svg" alt="" />
                 )}
 
                 <div
-                  className={`absolute  mt-2 flex items-center justify-center w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
+                  className={`absolute  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                     card.status == "On Going"
                       ? "border-Primary-EmeraldGreen"
                       : "border-Gray-25"
@@ -231,7 +236,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             ))}
             <div
             onClick={()=>navigate(`/generateNewTreatmentPlan/${id}`)}
-              className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
+              className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
             >
               <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
               <div className="text-sm font-medium text-Primary-DeepTeal">
