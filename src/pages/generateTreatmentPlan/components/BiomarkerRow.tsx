@@ -16,7 +16,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       return "/icons/mind.svg";
     }
     if (value.pillar_name == "Activity") {
-      return "/icons/Activity.svg";
+      return "/icons/weight.svg";
     }
     if (value.pillar_name== "Supplement") {
       return "/icons/Supplement.svg";

@@ -154,7 +154,7 @@ static downloadClinicReport(data:any){
     return response
   }
   static aiStudio_copilotChat(data: any) {
-    const response = this.post("/ai_studio/copilot_chat",data)
+    const response = this.post("/copilot_chat",data)
     return response
   }
   static aiStudio_overview(data: any) {
@@ -188,7 +188,7 @@ static downloadClinicReport(data:any){
   }      
 
   static getListChats(data:any){
-    const response = this.post("/ai_studio/get_messages_id",data)
+    const response = this.post("/get_messages_id",data)
     return response
   }
 

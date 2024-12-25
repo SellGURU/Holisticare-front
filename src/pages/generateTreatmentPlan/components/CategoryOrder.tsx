@@ -4,7 +4,7 @@ import {  useState } from "react"
 import BioMarkerRowSuggestions from "./BiomarkerRow"
 import Toggle from "../../../Components/Toggle"
 // import StatusChart from "@/pages/RepoerAnalyse/StatusChart"
-import AnalyseButton from "../../../Components/AnalyseButton"
+// import AnalyseButton from "../../../Components/AnalyseButton"
 import PillarsBox from "./PillarsBox"
 // import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
 // import { Button } from "symphony-ui"
@@ -24,7 +24,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
     console.log(data["Report Details"])
     const [isLoading,] = useState(false)
     const [active,setActive] = useState<string>('Suggestion')
-    const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["Report Details"].categories)
+    const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["Report Details"])
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
     const [activeEl,setActiveEl] = useState<any>()
     const [suggestion,] = useState<any>(data["suggestion_tab"])
@@ -147,8 +147,28 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
             ]
         }
     ]
-}
-
+    }
+    const resolveIcon = (name: string) => {
+        if (name == "Cardiovascular and Respiratory Health") {
+        return "/icons/biomarkers/heart.svg";
+        }
+        if (name == "Organ Health and Function") {
+        return "/icons/biomarkers/Abdominal.svg";
+        }
+        if (name == "Urinary Health") {
+        return "/icons/biomarkers/Urine.svg";
+        }
+        if (name == "Metabolic and Nutritional Health") {
+        return "/icons/biomarkers/metabolism.svg";
+        }
+        if (name == "Immune, Inflammation, and Hormonal Health") {
+        return "/icons/biomarkers/Inflammation.svg";
+        }
+        // ./images/report/intestine.svg"
+        // ./images/report/muscle.svg
+        // ./images/report/virus.svg
+        return "/icons/biomarkers/heart.svg";
+    };
     // useConstructor(() => {
     //     setIsLoading(true)
     //     Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
@@ -164,9 +184,9 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
                     <div className="w-full dark:bg-[#383838] bg-light-min-color border-light-border-color mt-2 rounded-[6px] border dark:border-[#383838]  p-6">
                         <div className="w-full flex justify-between">
                             <div className="textStyle-type1 flex items-center"> Report Details</div>
-                            <div>
+                            {/* <div>
                                 <AnalyseButton text="Generate by AI"></AnalyseButton>                           
-                            </div>
+                            </div> */}
                         </div>    
                         <div>
                             {Object.keys(pillarData).map((value) => {
@@ -193,9 +213,9 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
                         <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                             <div className="w-full flex items-center justify-between">
                                 <div className="text-sm font-medium text-Text-Primary flex items-center gap-2"> <div className="dark:bg-primary-text bg-Text-Triarty rounded-full w-1 h-1"></div>  Report Details</div>
-                                <div>
+                                {/* <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
-                                </div>
+                                </div> */}
                             </div>
 
                             <div className="flex flex-wrap gap-6 mt-3">
@@ -235,10 +255,10 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
                                     <Toggle active={active} setActive={setActive} value={["Suggestion","Result"]}></Toggle>
                                 </div>
                                 
-                                <div className="w-full flex justify-between">
+                                <div className="w-full flex justify-between pr-4">
                                     <div className="flex justify-start items-center">
                                         <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
-                                            <img className="" src={activeBio?.icon} alt="" />
+                                            <img className="" src={resolveIcon(activeBio?.category)} alt="" />
                                         </div>    
                                         <div>
                                         <div className="ml-2">

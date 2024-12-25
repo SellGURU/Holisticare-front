@@ -110,8 +110,8 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
           member_id:id
         }).then((res) => {
           setTreatmentPlanData(res.data.details)
-          if(res.data.clinet_goals!=null){
-            setClientGools(res.data.clinet_goals)
+          if(res.data.client_goals!=null){
+            setClientGools(res.data.client_goals)
           }
           setNeedFocusData(res.data.need_focus_benchmarks)
         })

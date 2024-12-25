@@ -24,7 +24,6 @@ export const PopUpChat = ({isOpen,memberId}:{memberId:string,isOpen:boolean}) =>
     useEffect(() => {
         Application.getListChats({
             member_id:memberIdTest
-            // member_id:memberId
         }).then(res => {
             const resolve = res.data.messages.flatMap((mes:any,index:number) => {
                 const request:Message = {
