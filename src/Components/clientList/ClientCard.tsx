@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ButtonSecondary } from "../Button/ButtosSecondary";
+// import { ButtonSecondary } from "../Button/ButtosSecondary";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useState, useRef } from "react";
 import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";

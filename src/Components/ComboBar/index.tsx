@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {PopUpChat} from "../popupChat";
-import { useRef, useState} from "react";
+import { useEffect, useRef, useState} from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
 import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
 import { subscribe } from "../../utils/event.ts";
+import Application from "../../api/app.ts";
 
 export const ComboBar = () => {
 
-    const { id,name } = useParams<{ id: string,name:string }>();
+    const { id } = useParams<{ id: string }>();
     const itemList = [
         {
             name:'',
@@ -42,6 +44,18 @@ export const ComboBar = () => {
             url:"/icons/sidbar-menu/timeline.svg"
         },                                                    
     ];
+    const [patientInfo,setPatientInfo] = useState({
+        name:"",
+        email:'',
+        picture:""
+    })
+    useEffect(() => {
+       Application.getPatientsInfo({
+        member_id:id
+       }).then((res) => {
+            setPatientInfo(res.data)
+       }) 
+    },[])
     const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
 
     // Refs for modal and button to close it when clicking outside
@@ -99,10 +113,12 @@ export const ComboBar = () => {
                 </div>
                 <ul className={"flex items-center flex-col z-10 gap-3"}>
                     <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
-                        <img src={"/avatar.svg"} className={"border-whiteavatar"}/>
+                        <img src={patientInfo.picture!= ''?patientInfo.picture:`https://ui-avatars.com/api/?name=${patientInfo.name}`}   onError={(e: any) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
+                        }} className={"border-whiteavatar rounded-full"}/>
                     </li>
                     <li className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
-                        {name}
+                        {patientInfo.name.substring(0,20)}
                     </li>
                     <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
                     {itemList.map((el) => (

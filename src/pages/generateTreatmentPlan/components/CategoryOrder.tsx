@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BioMarkerBox from "./BiomarkerBox"
-import {  useState } from "react"
+import {  useEffect, useState } from "react"
 import BioMarkerRowSuggestions from "./BiomarkerRow"
 import Toggle from "../../../Components/Toggle"
 // import StatusChart from "@/pages/RepoerAnalyse/StatusChart"
 // import AnalyseButton from "../../../Components/AnalyseButton"
-import PillarsBox from "./PillarsBox"
+// import PillarsBox from "./PillarsBox"
 // import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
 // import { Button } from "symphony-ui"
 import MiniAnallyseButton from "../../../Components/MiniAnalyseButton"
@@ -18,136 +18,144 @@ import StatusBarChart from "../../../Components/RepoerAnalyse/Boxs/StatusBarChar
 interface CategoryOrderProps {
     isActionPlan?:boolean
     data:any
+    setData:(data:any) =>void
 }
 
-const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
-    console.log(data["Report Details"])
+const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData}) => {
+    
     const [isLoading,] = useState(false)
     const [active,setActive] = useState<string>('Suggestion')
     const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["Report Details"])
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
     const [activeEl,setActiveEl] = useState<any>()
     const [suggestion,] = useState<any>(data["suggestion_tab"])
-    const pillarData:any ={
-    "Diet": [
-        {
-            "text": "Consume one serving of calcium-rich food daily (leafy greens, dairy, or fortified grains) and include vitamin D foods (fish, fortified milk) 3 times a week.",
-            "reference": [
-                {
-                    "NIH_Calcium_Fact_Sheet.docx": {
-                        "content": "NIH fact sheet on calcium's role, food sources, intake levels, and importance with vitamin D."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Choose high-fiber vegetables, whole grains, and lean proteins daily. Avoid high-sugar foods to maintain stable blood sugar.",
-            "reference": [
-                {
-                    "ADA_Glycemic_Index_Guide.docx": {
-                        "content": "ADA guide on glycemic index for blood sugar control and meal planning."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Eat iron-rich foods (lean meats, beans, spinach) with vitamin C foods (citrus) to improve iron absorption.",
-            "reference": [
-                {
-                    "WHO_Iron_Nutrition_Guidelines.docx": {
-                        "content": "WHO guidelines on dietary iron, absorption, and vitamin C for iron uptake."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Increase fiber intake with whole grains, vegetables, and legumes daily to lower LDL cholesterol.",
-            "reference": [
-                {
-                    "NIH_Fiber_and_Heart_Health_Guide.docx": {
-                        "content": "NIH guide on dietary fiber's impact on cholesterol and heart health."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Add omega-3 foods (salmon, walnuts, flaxseeds) weekly to reduce triglycerides and inflammation.",
-            "reference": [
-                {
-                    "AHA_Omega-3_Guidelines.docx": {
-                        "content": "AHA guidelines on omega-3s for triglyceride reduction and heart health."
-                    }
-                }
-            ]
-        }
-    ],
-    "Supplement": [
-        {
-            "text": "Consider a vitamin D supplement if diet lacks sufficient sources for bone and immune health.",
-            "reference": [
-                {
-                    "NIH_Vitamin_D_Fact_Sheet.docx": {
-                        "content": "NIH fact sheet on vitamin D for bone health, immune function, and supplementation."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Take an omega-3 supplement if fish or plant sources are low in your diet to support heart and joint health.",
-            "reference": [
-                {
-                    "AHA_Omega-3_Supplement_Guide.docx": {
-                        "content": "AHA guide on omega-3 supplements for cardiovascular and anti-inflammatory benefits."
-                    }
-                }
-            ]
-        }
-    ],
-    "Mind": [
-        {
-            "text": "Practice mindfulness or relaxation techniques daily, like meditation or deep breathing, to manage stress.",
-            "reference": [
-                {
-                    "Mayo_Clinic_Mindfulness_Stress_Reduction_Guide.docx": {
-                        "content": "Mayo Clinic guide on mindfulness for stress reduction and mental health."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Engage in mentally stimulating activities (reading, puzzles, new skills) regularly for cognitive health.",
-            "reference": [
-                {
-                    "WHO_Cognitive_Health_Guide.docx": {
-                        "content": "WHO cognitive health guide recommends mental stimulation for brain health."
-                    }
-                }
-            ]
-        }
-    ],
-    "Activity": [
-        {
-            "text": "Do weight-bearing exercises (resistance training, walking) 3 times a week to support bone health.",
-            "reference": [
-                {
-                    "NIH_Bone_Health_and_Exercise_Factsheet.docx": {
-                        "content": "NIH factsheet on weight-bearing exercise benefits for bone health."
-                    }
-                }
-            ]
-        },
-        {
-            "text": "Include strength and flexibility exercises 2-3 times per week to improve muscle strength and mobility.",
-            "reference": [
-                {
-                    "WHO_Physical_Activity_for_Muscle_Strength.docx": {
-                        "content": "WHO guidelines on strength and flexibility training for injury prevention and health."
-                    }
-                }
-            ]
-        }
-    ]
-    }
+    useEffect(() => {
+        setData((pre: any) => {
+            const old = pre;
+            old["Report Details"] = categoryOrderData;
+            return old;
+        });
+    },[categoryOrderData])
+    // const pillarData:any ={
+    // "Diet": [
+    //     {
+    //         "text": "Consume one serving of calcium-rich food daily (leafy greens, dairy, or fortified grains) and include vitamin D foods (fish, fortified milk) 3 times a week.",
+    //         "reference": [
+    //             {
+    //                 "NIH_Calcium_Fact_Sheet.docx": {
+    //                     "content": "NIH fact sheet on calcium's role, food sources, intake levels, and importance with vitamin D."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Choose high-fiber vegetables, whole grains, and lean proteins daily. Avoid high-sugar foods to maintain stable blood sugar.",
+    //         "reference": [
+    //             {
+    //                 "ADA_Glycemic_Index_Guide.docx": {
+    //                     "content": "ADA guide on glycemic index for blood sugar control and meal planning."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Eat iron-rich foods (lean meats, beans, spinach) with vitamin C foods (citrus) to improve iron absorption.",
+    //         "reference": [
+    //             {
+    //                 "WHO_Iron_Nutrition_Guidelines.docx": {
+    //                     "content": "WHO guidelines on dietary iron, absorption, and vitamin C for iron uptake."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Increase fiber intake with whole grains, vegetables, and legumes daily to lower LDL cholesterol.",
+    //         "reference": [
+    //             {
+    //                 "NIH_Fiber_and_Heart_Health_Guide.docx": {
+    //                     "content": "NIH guide on dietary fiber's impact on cholesterol and heart health."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Add omega-3 foods (salmon, walnuts, flaxseeds) weekly to reduce triglycerides and inflammation.",
+    //         "reference": [
+    //             {
+    //                 "AHA_Omega-3_Guidelines.docx": {
+    //                     "content": "AHA guidelines on omega-3s for triglyceride reduction and heart health."
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // ],
+    // "Supplement": [
+    //     {
+    //         "text": "Consider a vitamin D supplement if diet lacks sufficient sources for bone and immune health.",
+    //         "reference": [
+    //             {
+    //                 "NIH_Vitamin_D_Fact_Sheet.docx": {
+    //                     "content": "NIH fact sheet on vitamin D for bone health, immune function, and supplementation."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Take an omega-3 supplement if fish or plant sources are low in your diet to support heart and joint health.",
+    //         "reference": [
+    //             {
+    //                 "AHA_Omega-3_Supplement_Guide.docx": {
+    //                     "content": "AHA guide on omega-3 supplements for cardiovascular and anti-inflammatory benefits."
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // ],
+    // "Mind": [
+    //     {
+    //         "text": "Practice mindfulness or relaxation techniques daily, like meditation or deep breathing, to manage stress.",
+    //         "reference": [
+    //             {
+    //                 "Mayo_Clinic_Mindfulness_Stress_Reduction_Guide.docx": {
+    //                     "content": "Mayo Clinic guide on mindfulness for stress reduction and mental health."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Engage in mentally stimulating activities (reading, puzzles, new skills) regularly for cognitive health.",
+    //         "reference": [
+    //             {
+    //                 "WHO_Cognitive_Health_Guide.docx": {
+    //                     "content": "WHO cognitive health guide recommends mental stimulation for brain health."
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // ],
+    // "Activity": [
+    //     {
+    //         "text": "Do weight-bearing exercises (resistance training, walking) 3 times a week to support bone health.",
+    //         "reference": [
+    //             {
+    //                 "NIH_Bone_Health_and_Exercise_Factsheet.docx": {
+    //                     "content": "NIH factsheet on weight-bearing exercise benefits for bone health."
+    //                 }
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         "text": "Include strength and flexibility exercises 2-3 times per week to improve muscle strength and mobility.",
+    //         "reference": [
+    //             {
+    //                 "WHO_Physical_Activity_for_Muscle_Strength.docx": {
+    //                     "content": "WHO guidelines on strength and flexibility training for injury prevention and health."
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // ]
+    // }
     const resolveIcon = (name: string) => {
         if (name == "Cardiovascular and Respiratory Health") {
         return "/icons/biomarkers/heart.svg";
@@ -188,7 +196,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
                                 <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                             </div> */}
                         </div>    
-                        <div>
+                        {/* <div>
                             {Object.keys(pillarData).map((value) => {
                                 return (
                                     <PillarsBox onChnageText={()=>{
@@ -196,7 +204,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
                                 )
                             })}
                         
-                        </div>     
+                        </div>      */}
                     </div>
 
                 </>

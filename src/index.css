@@ -303,7 +303,7 @@ input[type="number"] {
   @apply leading-[19.36px] text-[12px] font-[500] opacity-85 text-Text-Primary;
 }
 .Aurora-S-TextArea-input {
-  @apply focus:outline-none   h-[200px] px-5 w-full resize-none  rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[12px] text-[12px] placeholder:font-[300]   pb-[12px] py-[24px] border bg-white border-gray-50;
+  @apply focus:outline-none   h-[150px] px-2 w-full resize-none  rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[12px] text-[12px] placeholder:font-[300]   pb-[12px] py-[24px] bg-backgroundColor-Card border-gray-50;
 }
 
 .Aurora-S-TextArea-inValid {

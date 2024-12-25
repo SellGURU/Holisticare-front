@@ -10,6 +10,11 @@ class Application extends Api {
     return response;
   }
 
+  static getPatientsInfo(data:any) {
+    const response = this.post("/patients/patient_data",data)
+    return response
+  }
+
   static addDataEntery(data:any) {
     return this.post('/data_entry/',data)
   }

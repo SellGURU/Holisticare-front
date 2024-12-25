@@ -320,7 +320,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     setTimeout(() => {
                                         publish("QuestionaryTrackingCall",{})
                                         setISGenerated(true)
-                                    }, 5000);
+                                    }, 10000);
                                 }} memberId={resolvedMemberID}></UploadTest>
                             }                            
                         </div>   

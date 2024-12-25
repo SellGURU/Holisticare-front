@@ -49,6 +49,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFinalLoading, setisFinalLoading] = useState(false)
   const [showClientGoals,setSHowClientGoals] = useState(false)
+  const [showAnalyse,setSHowAnalyse] = useState(false)
   // const [Priorities3,setPriorities3] = useState<PrioritiesType>({})
   // const [Priorities6,setPriorities6] = useState<PrioritiesType>({})
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -58,6 +59,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         treatment_id: treatmentPlanData.treatament_plan_id,
         medical_summary:"",
         member_id:id,
+        report_detail:treatmentPlanData.report_details
 
       });
       
@@ -134,6 +136,13 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       return old;
     });
   };
+  const updateClientConditionInsights =(value: any) => {
+    setTratmentPlanData((pre: any) => {
+      const old = pre;
+      old["Client Condition Insights"] = value;
+      return old;
+    });
+  }
   const updateDescription = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
@@ -178,7 +187,9 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             </div>
             
             <div className="w-full flex gap-2 justify-end items-center">
-              <ButtonPrimary size="small">
+              <ButtonPrimary onClick={() => {
+                setSHowAnalyse(true)
+              }} size="small">
                 <div className="w-full flex justify-between gap-2">
                   <img src="/icons/status-up.svg" alt="" />
                   Analysis
@@ -299,7 +310,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             )}
             {generateStep == "Generate Plan" && (
-              <CategoryOrder data={treatmentPlanData} isActionPlan={isActionPlan}></CategoryOrder>
+              <CategoryOrder setData={setTratmentPlanData} data={treatmentPlanData} isActionPlan={isActionPlan}></CategoryOrder>
             )}
             {generateStep == "Analysis" && (
               <div className="bg-white rounded-[16px] px-6 py-6  mt-2  border border-Gray-50  ">
@@ -465,7 +476,46 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             })}
           </div>
         </>
-      </SlideOutPanel>      
+      </SlideOutPanel>  
+
+      <SlideOutPanel
+        isOpen={showAnalyse}
+        onClose={() =>{
+          setSHowAnalyse(false)
+        }}
+        headline="Analysis"
+      >
+        <div>
+            <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Client Condition Insight</div>
+            {treatmentPlanData &&
+                      <TextBoxAi
+                        isUpchange={isforceReload}
+                        isNeedFocus
+                        label=""
+                        onChange={(e) => {
+                          updateClientConditionInsights(e);
+                        }}
+                        value={treatmentPlanData["Client Condition Insights"]}/>  
+            }
+
+            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Needs Focus Biomarkers</div>
+            {treatmentPlanData &&
+              <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                      <TextBoxAi
+                        isUpchange={isforceReload}
+                        isNeedFocus
+                        label=""
+                        onChange={(e) => {
+                          updateNeedFocus(e);
+                        }}
+                        value={resolveNeedFocusText()}/>                
+                {/* <textarea  className="w-full h-[250px] hidden-scrollbar outline-none p-1 bg-backgroundColor-Card text-[12px]" onChange={(e) =>{
+                  updateNeedFocus(e.target.value);
+                }}  value={resolveNeedFocusText()} /> */}
+              </div>
+            }            
+        </div>
+      </SlideOutPanel>    
     </>
   );
 };

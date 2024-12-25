@@ -107,7 +107,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               Description
             </div>
             <div className=" h-[80px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
-              {active.more_info}
+              {active?.more_info}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 ">
