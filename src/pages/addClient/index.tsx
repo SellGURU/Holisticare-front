@@ -161,7 +161,7 @@ const AddClient =() => {
                                                 name="firstName"
                                                 label="First Name"
                                                 placeholder="Enter client’s first name..."
-                                                className={formik.errors.firstName && formik.touched.firstName ? "border-red-500" : ""}
+
                                             />
                                         </div>
                                         <div className="w-[220px]">
@@ -169,7 +169,7 @@ const AddClient =() => {
                                                 {...formik.getFieldProps("lastName")}
                                                 label="Last Name"
                                                 placeholder="Enter client’s last name..."
-                                                className={formik.errors.lastName && formik.touched.lastName ? "border-red-500" : ""}
+
                                             />
                                         </div>
                                     </div>
@@ -234,7 +234,6 @@ const AddClient =() => {
                                         </div>
                                     </div>
                                     <TextField
-                                        className={formik.errors.email && formik.touched.email ? "border-red-500" : ""}
                                         {...formik.getFieldProps("email")}
                                         type="email"
                                         label="Email Address"
@@ -269,7 +268,10 @@ const AddClient =() => {
                                         </div>
                                     </div>
                                     <div className="w-full flex justify-center mt-4">
-                                        <ButtonPrimary disabled={isLoading} onClick={submit}>
+                                        <ButtonPrimary disabled={isLoading ||
+                                            !formik.isValid ||
+                                            Object.values(formik.errors).some(error => error !== '')}
+                                                       onClick={submit}>
                                             Save Changes
                                         </ButtonPrimary>
                                     </div>
