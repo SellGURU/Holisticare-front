@@ -11,6 +11,7 @@ import { ClientList } from "../Components";
 import AddClient from "../pages/addClient";
 import GenerateNewPlan from "../pages/generateTreatmentPlan";
 import { DriftAnaysis } from "../pages/driftAnaysis";
+import AiKnowledge from "../pages/ai-knowledge/AiKnowledge.tsx";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
           {
             path:'/drift-analysis',
             element:<DriftAnaysis></DriftAnaysis>
-          }
+          },
+          {
+            path: "ai",
+            element: <AiKnowledge></AiKnowledge>,
+          },
         ]
       },
       {
