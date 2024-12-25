@@ -3,19 +3,44 @@ import { useRef, useState} from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
 import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
+import { subscribe } from "../../utils/event.ts";
 
 export const ComboBar = () => {
 
     const { id,name } = useParams<{ id: string,name:string }>();
-    const itemList:string[] = [
-        "/images/sidbar-menu/info-circle.svg",
-        "/icons/sidbar-menu/clipboard-text.svg",
-        "/icons/sidbar-menu/cloud-change.svg",
-        "/icons/sidbar-menu/messages.svg",
-        "/icons/sidbar-menu/note-2.svg",
-        "/icons/sidbar-menu/repeat.svg",
-        "/icons/sidbar-menu/task-square.svg",
-        "/icons/sidbar-menu/timeline.svg"
+    const itemList = [
+        {
+            name:'',
+            url:"/images/sidbar-menu/info-circle.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/clipboard-text.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/cloud-change.svg"
+        },        
+        {
+            name:'Questionary Tracking',
+            url:"/icons/sidbar-menu/messages.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/note-2.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/repeat.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/task-square.svg"
+        },
+        {
+            name:'',
+            url:"/icons/sidbar-menu/timeline.svg"
+        },                                                    
     ];
     const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
 
@@ -34,11 +59,16 @@ export const ComboBar = () => {
         buttonRefrence: buttonRef,
         close: closeModal,
     });
-const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
+    const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
+    const [updated,setUpdated]= useState(false)
+    subscribe("QuestionaryTrackingCall",() => {
+        setUpdated(true)
+    })
     return (
         <>
             <SlideOutPanel
                 isOpen={isSlideOutPanel}
+                isCombo={true}
                 onClose={() => setIsSlideOutPanel(false)}
                 headline="Questionary Tracking"
             >
@@ -75,9 +105,14 @@ const [isSlideOutPanel,setIsSlideOutPanel] = useState<boolean>(false)
                         {name}
                     </li>
                     <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
-                    {itemList.map((srcImage) => (
-                        <li onClick={()=>setIsSlideOutPanel(true)} className={"cursor-pointer rounded-full border w-8 h-8 flex items-center justify-center"}>
-                            <img src={srcImage} className={"w-5 h-5"}/>
+                    {itemList.map((el) => (
+                        <li onClick={()=>{
+                            if(el.name == 'Questionary Tracking'){
+                                setIsSlideOutPanel(true)
+                                setUpdated(false)
+                            }
+                        }} className={`cursor-pointer rounded-full border w-8 h-8 flex items-center justify-center ${updated && el.name == 'Questionary Tracking' && 'border-Orange'}`}>
+                            <img src={el.url} className={"w-5 h-5"}/>
                         </li>
                     ))}
                 </ul>

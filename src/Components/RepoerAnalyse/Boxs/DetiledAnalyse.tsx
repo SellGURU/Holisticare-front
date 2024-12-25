@@ -19,7 +19,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
-    refrences?.biomarkers[0].name
+    refrences?.biomarkers[0].name?refrences?.biomarkers[0].name:''
   );
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {

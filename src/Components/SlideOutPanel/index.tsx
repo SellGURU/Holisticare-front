@@ -6,9 +6,10 @@ type SlideOutPanelProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  isCombo?:boolean
 };
 
-export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen, onClose, children,headline }) => {
+export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen,isCombo, onClose, children,headline }) => {
     const showModalRefrence = useRef(null);
     const showModalButtonRefrence = useRef(null);
     useModalAutoClose({
@@ -19,12 +20,12 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen, onClose, c
         },
       });
     useEffect(() => {
-      if(isOpen == true){
+      if(isOpen == true && !isCombo){
         publish("openSideOut",{})
       }else {
         publish("closeSideOut",{})
       }
-    },[isOpen])
+    },[isOpen,isCombo])
   return (
     <div ref={showModalRefrence} className={`fixed top-[50px] z-20 right-0 h-full w-[320px] bg-white border-[2px] border-r-0 border-Gray-25 rounded-tl-2xl rounded-bl-2xl  shadow-lg transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex justify-between items-center p-4 ">

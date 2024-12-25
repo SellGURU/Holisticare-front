@@ -318,6 +318,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 <UploadTest onGenderate={() => {
                                     setLoading(true)
                                     setTimeout(() => {
+                                        publish("QuestionaryTrackingCall",{})
                                         setISGenerated(true)
                                     }, 5000);
                                 }} memberId={resolvedMemberID}></UploadTest>
