@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import SummaryBox from "./SummaryBox"
 // import MyChartComponent from "./StatusChart"
 import RefrenceBox from "./Boxs/RefrenceBox"
@@ -26,6 +25,7 @@ import PrintReport from "./PrintReport"
 import { ActionPlan } from "../Action-plan"
 import { TreatmentPlan } from "../TreatmentPlan"
 import UploadTest from "./UploadTest"
+import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 interface ReportAnalyseViewprops {
@@ -92,12 +92,6 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
             setLoading(false)
         }
     },[ClientSummaryBoxs,referenceData,TreatMentPlanData,caldenderData,isHaveReport])    
-    // useEffect(() => {
-    //     setClientSummaryBoxs(clientData?clientData:mydata)
-    // },[clientData])
-    
-
-    // const [summaryBoxCategory,setSummaryBOxCategory] = useState("")
     const resolveBioMarkers =() => {
         const refData:Array<any> =[]
         referenceData.categories?.forEach((el:any) => {
@@ -138,6 +132,25 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
         }
         return refData;
       };    
+      const location = useLocation();
+      useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const section = params.get('section');
+      
+        console.log('Scrolling to section:', section); // Debug log
+      
+        if (!loading && section) { // Ensure loading is complete
+          const element = document.getElementById(section);
+          if (element) {
+            element.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          } else {
+            console.warn(`Element with ID '${section}' not found.`);
+          }
+        }
+      }, [location, loading]); // Add 'loading' to dependencies
     return (
         <>        
          {loading ? (
@@ -184,22 +197,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 <div className="flex-grow w-full ">
                                     <div className="w-full flex justify-between">
 
-                                        {/* <div className=" flex items-center gap-5 justify-end">
-                                            <div className="flex justify-end items-center">
-                                                <div className="bg-[#06C78D] w-4 h-4 rounded-full"></div>
-                                                <div className="text-[#FFFFFFDE] text-[12px] ml-1">Normal</div>
-                                            </div>
-            
-                                            <div className="flex justify-end items-center">
-                                                <div className="bg-[#FBAD37] w-4 h-4 rounded-full"></div>
-                                                <div className="text-[#FFFFFFDE] text-[12px] ml-1">At risk</div>
-                                            </div>
-            
-                                            <div className="flex justify-end items-center">
-                                                <div className="bg-[#FC5474] w-4 h-4 rounded-full"></div>
-                                                <div className="text-[#FFFFFFDE] text-[12px] ml-1">Need action</div>
-                                            </div>                                        
-                                        </div> */}
+                                    
                                     </div>
                                     <div className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4" style={{lineHeight:'24px'}}>{ClientSummaryBoxs?.client_summary}</div>
                                     <div className="w-full mt-4 grid gap-4 grid-cols-2">
@@ -281,46 +279,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                                 </div> 
                                 <TreatmentPlan treatmentPlanData={TreatMentPlanData}></TreatmentPlan>     
-                                {/* <div className="w-full gap-2 flex justify-between items-center">
-                                    <div onClick={() => {
-                                        setActiveTreatmentplan('Diet')
-                                    }} className={` bg-light-min-color dark:bg-[#1E1E1E] cursor-pointer h-[48px] gap-2 rounded-[6px] text-light-primary-text dark:text-[#FFFFFFDE] ${aciveTreatmentPlan == 'Diet'?'border dark:border-primary-color border-light-blue-active':''} w-full flex items-center px-4`}>
-                                        <div className="w-6 h-6 dark:bg-[#333333] bg-light-overlay flex justify-center items-center rounded-[8px]">
-                                            <img src="./images/report/treatment/apple.svg" alt="" />
-                                        </div>
-                                        Diet
-                                        </div>
-                                    <div onClick={() => {
-                                        setActiveTreatmentplan('Mind')
-                                    }} className={`bg-light-min-color dark:bg-[#1E1E1E] cursor-pointer gap-2 h-[48px] rounded-[6px] text-light-primary-text dark:text-[#FFFFFFDE] ${aciveTreatmentPlan == 'Mind'?'border dark:border-primary-color border-light-blue-active':''} w-full flex items-center px-4`}>
-                                        <div className="w-6 h-6 dark:bg-[#333333] bg-light-overlay  flex justify-center items-center rounded-[8px]">
-                                            <img src="./images/report/treatment/mental-disorder.svg" alt="" />
-                                        </div>                                        
-                                        Mind</div>
-                                    <div onClick={() => {
-                                        setActiveTreatmentplan('Activity')
-                                    }} className={`bg-light-min-color dark:bg-[#1E1E1E] cursor-pointer gap-2 h-[48px] rounded-[6px] text-light-primary-text dark:text-[#FFFFFFDE] ${aciveTreatmentPlan == 'Activity'?'border  dark:border-primary-color border-light-blue-active':''} w-full flex items-center px-4`}>
-                                        <div className="w-6 h-6 dark:bg-[#333333] bg-light-overlay  flex justify-center items-center rounded-[8px]">
-                                            <img src="./images/report/treatment/weight.svg" alt="" />
-                                        </div>                                         
-                                        Activity</div>
-                                    <div onClick={() => {
-                                        setActiveTreatmentplan('Supplement')
-                                    }} className={`bg-light-min-color dark:bg-[#1E1E1E] cursor-pointer gap-2 h-[48px] rounded-[6px] text-light-primary-text dark:text-[#FFFFFFDE] ${aciveTreatmentPlan == 'Supplement'?'border dark:border-primary-color border-light-blue-active':''} w-full flex items-center px-4`}>
-                                        <div className="w-6 h-6 dark:bg-[#333333] bg-light-overlay  flex justify-center items-center rounded-[8px]">
-                                            <img src="./images/report/treatment/pil.svg" alt="" />
-                                        </div>                                          
-                                        Supplement </div>
-                                </div>             */}
-                                {/* {TreatMentPlanData.length >0 &&
-                                    <div className="w-full flex flex-wrap gap-6 bg-light-min-color dark:bg-[#1E1E1E] p-4 rounded-[6px] mt-4">
-                                        {TreatMentPlanData?.filter((value:any)  => value.category ==aciveTreatmentPlan)[0].data.map((el:any) => {
-                                            return (
-                                                <TreatmentCard data={el}></TreatmentCard>
-                                            )
-                                        })}
-                                    </div>            
-                                } */}
+                            
                             </div>    
                             
                             <div className="my-10 hidden">
