@@ -147,7 +147,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                 ): (
                     <>
 
-                        <div className={`pt-[54px] relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
+                        <div className={`pt-[20px] relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
                     
                             <div className="flex gap-14" >
                                 <div className="min-w-[330px] w-[330px] relative">
@@ -280,7 +280,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                                 </div> 
-                                <TreatmentPlan></TreatmentPlan>     
+                                <TreatmentPlan treatmentPlanData={TreatMentPlanData}></TreatmentPlan>     
                                 {/* <div className="w-full gap-2 flex justify-between items-center">
                                     <div onClick={() => {
                                         setActiveTreatmentplan('Diet')

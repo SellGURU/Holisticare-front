@@ -6,24 +6,28 @@ import Toggle from "../../../Components/Toggle"
 // import StatusChart from "@/pages/RepoerAnalyse/StatusChart"
 import AnalyseButton from "../../../Components/AnalyseButton"
 import PillarsBox from "./PillarsBox"
-import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
+// import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
 // import { Button } from "symphony-ui"
 import MiniAnallyseButton from "../../../Components/MiniAnalyseButton"
 // import Application from "../../../api/app"
 // import { useConstructor } from "../../../help"
+
 import { ClipLoader } from "react-spinners"
+import StatusChart from "../../../Components/RepoerAnalyse/StatusChart"
+import StatusBarChart from "../../../Components/RepoerAnalyse/Boxs/StatusBarChart"
 interface CategoryOrderProps {
     isActionPlan?:boolean
+    data:any
 }
 
-const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
-
+const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data}) => {
+    console.log(data["Report Details"])
     const [isLoading,] = useState(false)
     const [active,setActive] = useState<string>('Suggestion')
-    const [categoryOrderData,setCategoryData] = useState(TreatmentplanData)
-    const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0])
-    const [activeEl,] = useState<any>()
-    const [suggestion,] = useState<any>([])
+    const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["Report Details"].categories)
+    const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
+    const [activeEl,setActiveEl] = useState<any>()
+    const [suggestion,] = useState<any>(data["suggestion_tab"])
     const pillarData:any ={
     "Diet": [
         {
@@ -144,6 +148,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
         }
     ]
 }
+
     // useConstructor(() => {
     //     setIsLoading(true)
     //     Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
@@ -185,7 +190,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                     </>
                 :
                     <>
-                        <div className="bg-white rounded-[16px] shadow-100  p-6 h-[256px] mt-2  border border-Gray-50 overflow-auto">
+                        <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                             <div className="w-full flex items-center justify-between">
                                 <div className="text-sm font-medium text-Text-Primary flex items-center gap-2"> <div className="dark:bg-primary-text bg-Text-Triarty rounded-full w-1 h-1"></div>  Report Details</div>
                                 <div>
@@ -198,7 +203,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                     return (
                                         <>
                                         <BioMarkerBox 
-                                            isActive={activeBio.category == el.category}
+                                            isActive={activeBio?.category == el.category}
                                             onClick={() => {
                                                 setActiveBio(el)
                                                 // setActiveEl(el["Out of Reference"][0])
@@ -233,16 +238,16 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                 <div className="w-full flex justify-between">
                                     <div className="flex justify-start items-center">
                                         <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
-                                            <img className="" src={activeBio.icon} alt="" />
+                                            <img className="" src={activeBio?.icon} alt="" />
                                         </div>    
                                         <div>
                                         <div className="ml-2">
                                             <div className="flex">
-                                                <div className=" text-Text-Primary text-[14px] ">{activeBio.category}</div>
+                                                <div className=" text-Text-Primary text-[14px] ">{activeBio?.category}</div>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <div className=" text-Text-Secondary text-[10px]">
-                                                    <span className="text-[12px] text-Text-Primary">{activeBio.total_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-Text-Primay">{activeBio.total_needs_focus}</span> Needs Focus
+                                                    <span className="text-[12px] text-Text-Primary">{activeBio?.total_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-Text-Primay">{activeBio?.total_needs_focus}</span> Needs Focus
                                         
                                                 </div>
                                             </div>
@@ -273,96 +278,71 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan}) => {
                                         </>
                                 :
                                         <>
-                                            <div className="w-full bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 min-h-[30px] ">
-                                                {activeEl!=null &&
+                                            <div className="w-full flex gap-2   rounded-[16px]  min-h-[30px] ">
+                                                {
                                                     <>
-                                                        {/* <div className="w-[240px] ">
-                                                            {activeBio["Out of Reference"].map((value:any) => {
+                                                        <div className="w-[240px] ">
+                                                            {data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories.map((value:any) => {
                                                                 return (
                                                                     <>
-                                                                        <div  onClick={() => {
-                                                                            setActiveEl(value)
-                                                                        }} className={`w-full h-10 mb-2 cursor-pointer ${activeEl.name==value.name?'dark:border-brand-primary-color border-light-blue-active text-light-secandary-text dark:text-white':'dark:border-[#383838] dark:text-[#FFFFFF99] text-light-primary-text'} dark:bg-[#1E1E1E] border items-center  rounded-[6px] flex justify-between px-4`}>
-                                                                            <div className=" text-[12px]">{value.name}</div>
-                                                                            <img className="rotate-[-90deg] invert dark:invert-0  w-4" src="./Themes/Aurora/icons/arrow-Combo-left.svg" alt="" />
-                                                                        </div>
+                                                                        {value.biomarkers.map((resol:any) => {
+                                                                            return (
+                                                                                <>
+                                                                                    <div  onClick={() => {
+                                                                                        setActiveEl(resol)
+                                                                                    }} className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name==resol.name?' border-Primary-EmeraldGreen text-light-secandary-text ':'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}>
+                                                                                        <div className=" text-[12px] text-Text-Primary">{resol.name}</div>
+                                                                                        <img className=" invert dark:invert-0 rotate-0  w-4" src="/icons/arrow-right.svg" alt="" />
+                                                                                    </div>
+                                                                                </>
+                                                                            )
+                                                                        })}
                                                                     </>
                                                                 )
                                                             })}
 
-                                                        </div>       
-                                                        <div className="w-full h-[32px] p-6 dark:bg-[#1E1E1E]  rounded-[6px] min-h-[312px]">
-                                                            <div className=" text-light-primary-text dark:text-[#FFFFFFDE] text-[14px] font-[500]">
-                                                                {activeEl.name}
-                                                            </div>
-                                                            <div>
-                                                                <div style={{lineHeight:'24px'}} className=" text-light-secandary-text dark:text-[#FFFFFF99] text-[12px] mt-3">
-                                                                {activeEl.description}
+                                                        </div>      
+                                                        {activeEl !=null &&
+                                                            <div className="w-full h-[32px] p-6 bg-white border border-gray-50  rounded-[6px] min-h-[312px]">
+                                                                <div className=" text-Text-Primary text-[14px] font-[500]">
+                                                                    {activeEl.subcategory}
                                                                 </div>
-                                                            </div>
-                                                            <div className="flex w-full justify-center gap-4 mt-4">
                                                                 <div>
-                                                                    <div className="w-[500px] p-4 border dark:border-[#383838] h-[159px] bg-light-min-color dark:bg-[#1E1E1E] rounded-[6px]">
-                                                                        <div className="dark:text-[#FFFFFFDE] text-light-primary-text text-[12px] font-medium mb-20">
-                                                                            Current Value
+                                                                    <div style={{lineHeight:'24px'}} className=" text-Text-Secondary text-[12px] mt-3">
+                                                                    {activeEl.description}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex w-full justify-center gap-4 mt-4">
+                                                                    <div>
+                                                                        <div className="w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                                                            <div className="text-Text-Primary text-[12px] font-medium mb-20">
+                                                                                Last Value
+                                                                            </div>
+                                                                            <StatusBarChart data={activeEl}></StatusBarChart>
                                                                         </div>
-                                                                        <div className="w-full relative flex">
-                                                                                <div className={`absolute top-[-26px]  z-10`} style={{left:activeEl.value /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                    <div className="text-[10px] text-light-primary-text dark:text-[#FFFFFFDE] ]">{activeEl.value}</div>
-                                                                                    <div className="w-[3px] h-[8px] ml-[2.5px] bg-black dark:bg-white"></div>
-                                                                                    <div className="w-2 h-2  rotate-45 bg-black dark:bg-white"></div>
-                                                                                </div>
-                                                                                {
-                                                                                    activeEl.mode =='multi' ?
-                                                                                    <>
-                                                                                        <div className=" relative bg-[#FC5474] h-[8px] rounded-l-[8px]" style={{width:(activeEl.limite.firstNeedAction) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute left-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.start}</div>
-                                                                                        </div>   
-                                                                                        <div className=" relative bg-[#FBAD37] h-[8px] " style={{width:(activeEl.limite.firstAtRisk -activeEl.limite.firstNeedAction) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute right-2 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.firstAtRisk}</div>
-                                                                                        </div>                                                                                                            
-                                                                                        <div className=" relative bg-[#06C78D] h-[8px] " style={{width:(activeEl.limite.normal -activeEl.limite.firstAtRisk) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                       
-                                                                                            <div className="absolute right-3 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.normal}</div>
-                                                                                        </div>
-                                                                                        <div className=" relative bg-[#FBAD37] h-[8px] " style={{width:(activeEl.limite.atRisk -activeEl.limite.normal) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute right-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.atRisk}</div>
-                                                                                        </div>
-                                                                                        <div className=" relative bg-[#FC5474] h-[8px] rounded-r-[8px]" style={{width:(activeEl.limite.needAction -activeEl.limite.atRisk) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute right-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.needAction}</div>
-                                                                                        </div>                                                    
-                                                                                    </>
-                                                                                    :
-                                                                                    <>
-                                                                                        <div className=" relative bg-[#06C78D] h-[8px] rounded-l-[8px]" style={{width:activeEl.limite.normal /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute left-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.start}</div>
-                                                                                            <div className="absolute right-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.normal}</div>
-                                                                                        </div>
-                                                                                        <div className=" relative bg-[#FBAD37] h-[8px] " style={{width:(activeEl.limite.atRisk -activeEl.limite.normal) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute right-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.atRisk}</div>
-                                                                                        </div>
-                                                                                        <div className=" relative bg-[#FC5474] h-[8px] rounded-r-[8px]" style={{width:(activeEl.limite.needAction -activeEl.limite.atRisk) /activeEl.limite.needAction * 100 + '%'}}>
-                                                                                            <div className="absolute right-0 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-[10px]">{activeEl.limite.needAction}</div>
-                                                                                        </div>
-                                                                                    </>
-                                                                                }
-                                                                        </div>                                                                      
                                                                     </div>
+                                                                    <div>
+                                                                        <div className="w-[500px]  p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                                                            <div className="text-Text-Primary text-[12px] font-medium mb-5">
+                                                                                Historical Data
+                                                                            </div>                                    
+                                                                            <div className="mt-0 relative">
+                                                                                <StatusChart
+                                                                                    mode={
+                                                                                    activeEl.chart_bounds["Needs Focus"].length>1 && activeEl.chart_bounds["Ok"].length>1 ?'multi':'line'
+                                                                                    }
+                                                                                    statusBar={activeEl.chart_bounds}
+                                                                                    labels={[...activeEl.date].reverse()}
+                                                                                    dataPoints={[...activeEl.values].reverse()}
+                                                                                ></StatusChart>                                            
+
+                                                                            </div>                                    
+                                                                        </div>
+                                                                    </div>                                            
+
                                                                 </div>
-                                                                <div>
-                                                                    <div className="w-[500px] border dark:border-[#383838] p-4 h-[159px] dark:bg-[#1E1E1E] bg-light-min-color border-light-border-color rounded-[6px]">
-                                                                        <div className="dark:text-[#FFFFFFDE] text-light-primary-text text-[12px] font-medium mb-5">
-                                                                            Historical Data
-                                                                        </div>                                    
-                                                                        <div className="mt-0 relative">
-                                                                            <StatusChart mode={activeEl.mode} statusBar={activeEl.limite} labels={activeEl.history.label} dataPoints={activeEl.history.values} ></StatusChart>                                               
-
-                                                                        </div>                                    
-                                                                    </div>
-                                                                </div>                                            
-
                                                             </div>
-                                                        </div> */}
+                                                        } 
                                                     </>
                                                 }
                                             </div>                        
