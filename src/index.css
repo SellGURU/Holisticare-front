@@ -241,6 +241,9 @@ input[type="number"] {
     50% { background-color: #4CAF50; }
   }
 @layer utilities {
+    .TextStyle-Tiny {
+        @apply text-[8px] font-normal;
+    }
     .TextStyle-Button {
         @apply text-xs font-medium;
     }

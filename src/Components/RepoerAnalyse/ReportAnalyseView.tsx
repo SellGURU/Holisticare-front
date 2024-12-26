@@ -8,7 +8,7 @@ import ConceringRow from "./Boxs/ConceringRow"
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from "./Legends"
 // import Point from "./Point"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
@@ -30,6 +30,7 @@ import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 import { publish } from "../../utils/event"
+import {Tooltip} from "../Tooltip/tooltip.tsx";
 interface ReportAnalyseViewprops {
     clientData?:any,
     memberID? : number | null
@@ -291,19 +292,32 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>          
                             <div className="my-10 min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
-                                    <div id="Treatment Plan" className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan </div>
-                                    <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                                        {/* Total of 30 Treatment in 4 category */}
+                                    <div id="Treatment Plan"
+                                         className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan
                                     </div>
+
+                                    <Tooltip
+                                        contextText={"Your plans will be customized to optimize 4 pillard (Nutrition, Mind,\n" +
+                                            "                                            Activity, Supplement) promoting\n" +
+                                            "                                            enhanced health and longevity."}>
+                                        <img src={"/icons/info.svg"} alt="info"/>
+                                        <h1 className={"text-Primary-DeepTeal TextStyle-Body-2"}>Plan Priority</h1>
+
+                                    </Tooltip>
+
+
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-                                </div> 
-                                <TreatmentPlan treatmentPlanData={TreatMentPlanData}></TreatmentPlan>     
-                            
-                            </div>    
-                            
+                                </div>
+                                <TreatmentPlan treatmentPlanData={TreatMentPlanData}></TreatmentPlan>
+
+                            </div>
+
                             <div className="my-10 hidden">
                                 <div className="w-full mb-3 flex items-center justify-between">
-                                    <div id="Treatment Plan" className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Action Plan</div>
+                                    <div id="Treatment Plan"
+                                         className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">Action
+                                        Plan
+                                    </div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                         {/* Total of 30 Treatment in 4 category */}
                                     </div>

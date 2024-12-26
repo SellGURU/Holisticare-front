@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useLocation, useNavigate} from "react-router-dom";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
 import Breadcrumb from "../Breadcrumb/Breadcrumb.tsx";
 export const TopBar = () => {
-  const navigate = useNavigate();
 
     const printreport  = () => {
       const mywindow:any = window.open("", "PRINT", "height=300,width=800");
