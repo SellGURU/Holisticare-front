@@ -56,7 +56,7 @@ export const ActionPlan = () => {
   ]);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
-  const [isCalenDarGenerated,] = useState(true);
+  const [isCalenDarGenerated,] = useState(false);
   useEffect(() => {
     Application.ActionPlanBlockList({member_id:id}).then((res) => {
       setCardData(res.data)
@@ -93,7 +93,7 @@ export const ActionPlan = () => {
                   </div>
                 </div>
               </div>
-              <div className="mt-5">
+              <div className="mt-2">
                 {isCalenDarGenerated ? (
                  <CalenderComponent data={calendarData}></CalenderComponent>
                 ) : (
