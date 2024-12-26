@@ -86,27 +86,29 @@ import { ButtonPrimary } from "../../Button/ButtonPrimary";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
   value: any;
+  category:string
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
+  category
 }) => {
   const resolveIcon = () => {
-    if (value.pillar_name == "Diet") {
+    if (category == "Diet") {
       return "/icons/diet.svg";
     }
-    if (value.pillar_name == "Mind") {
+    if (category == "Mind") {
       return "/icons/mind.svg";
     }
-    if (value.pillar_name == "Exercise") {
+    if (category == "Activity") {
       return "/icons/weight.svg";
     }
-    if (value.pillar_name == "Supplement") {
+    if (category== "Supplement") {
       return "/icons/Supplement.svg";
     }
   };
   // const [showModal, setshowModal] = useState(false);
-  const [editableValue, setEditableValue] = useState(value.note);
-  const [selectedDays, setSelectedDays] = useState<string[]>(value.days || []);
+  const [editableValue, setEditableValue] = useState(value.instructions);
+  const [selectedDays, setSelectedDays] = useState<string[]>(value.repeat_days || []);
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -128,7 +130,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
             <div className="text-Primary-DeepTeal mt-1 text-[10px] font-[500] text-center">
-              {value.pillar_name}
+              {category}
             </div>
           </div>
           <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-2 flex justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
@@ -143,7 +145,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="text-Text-Secondarytext-xs inline-flex gap-1 ">
                   Based on your:
                   <span
-                    // onClick={() => setshowModal(true)}
                     className=" text-Primary-EmeraldGreen flex items-center gap-2 cursor-pointer"
                   >
                     {value["Based on your:"]}
@@ -170,10 +171,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
           </div>
-          <div className=" hidden lg:flex flex-col gap-2">
-            {/* <div className="w-[32px] relative h-[32px]">
-            <MiniAnallyseButton />
-          </div> */}
+          {/* <div className=" hidden lg:flex flex-col gap-2">
             <div className="w-8 h-[112px] flex flex-col justify-between items-center rounded-md border  border-brand-primary-color py-3">
               <img
                 className="w-4 h-4 invert dark:invert-0"
@@ -192,33 +190,32 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 alt=""
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
-      {/* {showModal && <RefrenceModal
-          reference={value.reference}
-          isOpen={showModal}
-          onClose={() => setshowModal(false)}
-        />} */}
+
     </>
   );
 };
 
-import Data from "../calandar.json";
-import { useNavigate } from "react-router-dom";
+// import Data from "../calandar.json";
+import { useNavigate, useParams } from "react-router-dom";
 import MainTopBar from "../../MainTopBar";
 import AnalyseButton from "../../AnalyseButton";
-interface GenerateCalendarProps {
+import Application from "../../../api/app";
 
-
-}
-const GenerateCalendar: React.FC<GenerateCalendarProps> = ({
-
-
-
-}) => {
+const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
-  const [data] = useState(Data.suggestions);
+  const { id ,blackId} = useParams();
+  useEffect(() => {
+    Application.ActionPlanGenerateTask({
+      member_id:id,
+      blocks_id:blackId
+    }).then((res) => {
+      setData(res.data)
+    })
+  },[])  
+  const [data,setData] = useState<any>({});
   const navigate = useNavigate();
   return (
     <>
@@ -252,10 +249,26 @@ const GenerateCalendar: React.FC<GenerateCalendarProps> = ({
           {/* <AnalyseButton text="Generate by AI" /> */}
           {/* </div> */}
           <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll pr-3">
-            {data.map((category: any, index: number) => (
-              // <CategorySection key={index} category={category} />
+            {/* {data.map((category: any, index: number) => (
               <BioMarkerRowSuggestions key={index} value={category} />
-            ))}
+            ))} */}
+            {
+              Object.keys(data).map((key) => {
+                return (
+                  <>
+                    {
+                      data[key].map((el:any,index:number) => {
+                        return (
+                          <>
+                            <BioMarkerRowSuggestions category={key} key={index} value={el} />
+                          </>
+                        )
+                      })
+                    }
+                  </>
+                )
+              })
+            }
           </div>
         </div>
         <div className="w-[120px] mx-auto mt-4">

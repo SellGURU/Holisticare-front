@@ -102,7 +102,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
-                    navigate(`/action-plan/targeting/${id}`);
+                    navigate(`/action-plan/targeting/${id}/${el.id}`);
                   }
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
@@ -134,7 +134,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
-                    navigate(`/action-plan/edit/${id}`);
+                    navigate(`/action-plan/edit/${id}/${el.id}`);
                   }
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"

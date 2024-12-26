@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         element: <Targeting></Targeting>
       },
       {
-        path: "action-plan/edit/:id",
+        path: "action-plan/edit/:id/:blackId",
         element: <GenerateCalendar></GenerateCalendar>
       },
       {
