@@ -1,5 +1,15 @@
 export const menus = [
     {
+        name: 'Home',
+        icon: 'sidemenu-menu-icon-home',
+        url: ''
+    },
+    {
+        name:'Shared with you',
+        icon:'sidemenu-menu-icon-shared-witth-you',
+        url:''
+    },
+    {
         name: 'Dashboard',
         icon: 'sidemenu-menu-icon-dashboard',
         url: '',
@@ -12,18 +22,14 @@ export const menus = [
     },
   
    
-    {
-        name:'Shared with you',
-        icon:'sidemenu-menu-icon-shared-witth-you',
-        url:''
-    },
+   
     {
         name:'Client List',
         icon:'sidemenu-menu-icon-clientList',
         url:'/'
     },      
     {
-        name:'',
+        name:'Messages',
         icon:'sidemenu-menu-icon-messages',
         url:''
     },      

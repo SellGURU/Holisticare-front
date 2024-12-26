@@ -19,15 +19,15 @@ const SideMenu = () => {
     setActiveMenu(menu);
     navigate(menu.url);
   };
-  const graph =     {
-    name:'Knowledge Graph ',
-    icon:'sidemenu-menu-icon-trend-up',
-    url:'/ai'
-}     
+  const graph = {
+    name: "Knowledge Graph ",
+    icon: "sidemenu-menu-icon-trend-up",
+    url: "/ai",
+  };
   return (
     <>
       <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border">
-        <div className=" w-full mt-6 relative ">
+        <div className=" w-full mt-4 relative ">
           <div className="px-4">
             <div
               className="text-Text-Secondary text-[14px] text-center"
@@ -37,26 +37,72 @@ const SideMenu = () => {
             </div>
           </div>
           <div className="w-full">
-            <div className="mt-8">
+            <div className="mt-3">
               {menus.map((menu) => (
-                <div
-                  onClick={() => changeMenu(menu)}
-                  className={`py-2 w-full flex flex-col  items-center   text-Primary-DeepTeal cursor-pointer   ${
-                    activeMenu.name === menu.name
-                      ? "border-Primary-DeepTeal border-r-2 bg-white"
-                      : ""
-                  } text-[10px] font-semibold`}
-                >
+                <>
                   <div
-                    className={`${menu.icon} ${
+                    onClick={() => changeMenu(menu)}
+                    className={`py-2 w-full flex flex-col  items-center   text-Primary-EmeraldGreen cursor-pointer   ${
                       activeMenu.name === menu.name
-                        ? "text-Primary-DeepTeal"
-                        : "text-Text-Secondary"
-                    }`}
-                  />
-                  <div className={`${activeMenu.name === menu.name ? '' : 'invisible'}`}>{menu.name}</div>
-                  {/* {activeMenu.name === menu.name && menu.name} */}
-                </div>
+                        ? "border-Primary-EmeraldGreen border-r-2 bg-white"
+                        : ""
+                    }   text-[10px] font-semibold`}
+                  >
+                    <div
+                      className={`${menu.icon} ${
+                        activeMenu.name === menu.name
+                          ? "text-Primary-EmeraldGreen"
+                          : "text-[#888888]"
+                      }`}
+                    />
+                    <div
+                      className={`${
+                        activeMenu.name === menu.name ? "" : "invisible"
+                      }`}
+                    >
+                      {menu.name}
+                    </div>
+                    {/* {activeMenu.name === menu.name && menu.name} */}
+                  </div>
+                  {menu.name === "Shared with you" ? (
+                 
+                      
+                      <div className="w-[80%] bg-Gray-50 h-px mb-1 mx-auto"></div>
+                    
+                  ):menu.name === "Messages" && (
+                    <div className="border-y border-Gray-50 w-[80%] py-1 flex items-center justify-center mx-auto">
+                    {" "}
+                    <div
+                      onClick={() => {
+                        changeMenu(graph);
+                      }}
+                      style={{
+                        //   borderImage:
+                        //     "linear-gradient(to right, #005F73 , #6CC24A ) 1",
+                        
+                        borderRadius: "16px",
+                      }}
+                      className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center  text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
+                        activeMenu.name === graph.name
+                          ? "bg-gradient-to-r from-[#005F73] to-[#6CC24A]"
+                          : ""
+                      }`}
+                    >
+                      {activeMenu.name === graph.name ? (
+                        <img
+                          src="/icons/side-menu/command-square-active.svg"
+                          alt=""
+                        />
+                      ) : (
+                        <img src="/icons/side-menu/command-square.svg" alt="" />
+                      )}
+                      {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
+                      {/* { activeMenu.name === graph.name && graph.name} */}
+                    </div>
+                  </div>
+                  )
+                }
+                </>
               ))}
               {/* <div className="py-3 flex justify-center">
                                 <img src="./icons/side-menu/dashboard.svg" alt="" />
@@ -78,29 +124,12 @@ const SideMenu = () => {
                                 <img src="./icons/side-menu/setting-2.svg" alt="" />
                             </div>                                                                                                                 */}
             </div>
-            <div
-            onClick={()=>{
-                changeMenu(graph)
-            }}
-              className={`my-2 border-y my-gradient-border py-4 w-full flex flex-col items-center text-center  text-[9px]  text-white font-semibold min-h-[56px] ${activeMenu.name === graph.name ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]' : ''}`}
-            >
-                {
-                    activeMenu.name === graph.name ? (
-                        <img src="/icons/side-menu/trend-up-white.svg" alt="" />
-                    ):(
-                        <img src="/icons/side-menu/trend-up.svg" alt="" />
-
-                    )
-                }
-              {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
-                { activeMenu.name === graph.name && graph.name}
-            </div>
+  
           </div>
-          <div className=" absolute bottom-0  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
-          Powered by
-          <img src="/icons/side-menu/logo.svg" alt="" />
+          <div className=" absolute -bottom-1  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+            Powered by
+            <img src="/icons/side-menu/logo.svg" alt="" />
           </div>
-        
         </div>
       </div>
     </>
