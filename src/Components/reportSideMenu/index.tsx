@@ -21,11 +21,15 @@ const ReportSideMenu = () => {
       const customEvent = event as CustomEvent;
       console.log(customEvent.detail.message);
       setDisableClicks(true); 
-      setactiveMenu('')
+      setactiveMenu('Client Summary')
       
     };
-
+    const handleReportAvailable = () => {
+      setDisableClicks(false); 
+      setactiveMenu('Client Summary')
+    };
     subscribe('noReportAvailable', handleNoReportAvailable);
+    subscribe('ReportAvailable', handleReportAvailable);
 
 
   }, []);

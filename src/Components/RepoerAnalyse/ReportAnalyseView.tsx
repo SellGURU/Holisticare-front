@@ -158,6 +158,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
       useEffect(() => {
         if (!isHaveReport) {
           publish('noReportAvailable', { message: 'No report available' });
+        }else {
+          publish("ReportAvailable",{})
         }
       }, [isHaveReport]);
     return (
