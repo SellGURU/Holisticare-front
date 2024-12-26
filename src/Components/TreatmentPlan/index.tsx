@@ -91,7 +91,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
     }).then((res) => {
       setCardData(res.data)
       if(res.data.length> 0){
-        setActiveTreatmnet(res.data[0].t_plan_id,)
+        setActiveTreatmnet(res.data[res.data.length-1].t_plan_id)
         
       }
       setTimeout(() => {

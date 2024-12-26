@@ -57,7 +57,6 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
         member_id:id,
-
       });
       
       setisFinalLoading(true)
@@ -492,7 +491,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         onChange={(e) => {
                           updateClientConditionInsights(e);
                         }}
-                        value={treatmentPlanData["Client Condition Insights"]}/>  
+                        value={treatmentPlanData["medical_summary"]}/>  
             }
 
             <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Needs Focus Biomarkers</div>

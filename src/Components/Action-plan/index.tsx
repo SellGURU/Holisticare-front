@@ -67,7 +67,14 @@ export const ActionPlan:React.FC<ActionPlanProps> = () => {
   useEffect(() => {
     Application.ActionPlanBlockList({member_id:id}).then((res) => {
       setCardData(res.data)
-      setActiveAction(res.data.length>0?res.data[0]:null)
+      setActiveAction(res.data.length>0?res.data[res.data.length-1]:null)
+      setTimeout(() => {
+        const container:any = document.getElementById('actionList');
+        if(container){
+          container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+        }
+        
+      }, 500);      
     })
   },[])
   return (
@@ -76,7 +83,7 @@ export const ActionPlan:React.FC<ActionPlanProps> = () => {
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {CardData.length > 0 ? (
             <>
-              <div className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  ">
+              <div id="actionList" className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  ">
                 {CardData.map((el, i) => (
                   <ActionPlanCard
                     isActive={activeAction.id == el.id}

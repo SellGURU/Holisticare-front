@@ -28,6 +28,7 @@ const Uploading:React.FC<UploadingProps> = ({
         });
     };      
     const [isCompleted,setIsCompleted] = useState(false)
+    const [isFailed,setIsFailed] = useState(false)
     const [progress,setProgress] = useState(0)
     useEffect(() => {
         convertToBase64(file).then((res) => {
@@ -46,6 +47,7 @@ const Uploading:React.FC<UploadingProps> = ({
                 setIsCompleted(true)
                 // setFiles([...files,file])
             }).catch(() => {
+                setIsFailed(true)
                 setIsCompleted(true)
             })
         })   
@@ -57,7 +59,7 @@ const Uploading:React.FC<UploadingProps> = ({
     return (
         <>
             {isCompleted ?
-                <div className="w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px]">
+                <div className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'}`}>
                     <div className="flex justify-start gap-2">
                         <img src="/images/Pdf.png" alt="" />
                         <div>
