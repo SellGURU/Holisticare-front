@@ -1,24 +1,26 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
 import { ActionPlanCard } from "./ActionPlanCard";
 import { useNavigate, useParams } from "react-router-dom";
 import CalenderComponent from "../CalendarComponent/CalendarComponent";
 import CalendarData from "../../api/--moch--/data/new/Calender.json";
+import Application from "../../api/app";
 
-type CardData = {
-  cardID: number;
-  status: "Completed" | "On Going" | "Paused" | "Upcoming";
-  title: string;
-  subtitle: string;
-  progress: number;
-  time: string;
-};
+// type CardData = {
+//   cardID: number;
+//   status: "Completed" | "On Going" | "Paused" | "Upcoming";
+//   title: string;
+//   subtitle: string;
+//   progress: number;
+//   time: string;
+// };
 export const ActionPlan = () => {
   const { id } = useParams<{ id: string }>();
   const [calendarData] = useState(CalendarData);
 
   // const [isGenerated, setisGenerated] = useState(false);
-  const [CardData, setCardData] = useState<Array<CardData>>([
+  const [CardData, setCardData] = useState<Array<any>>([
     // {
     //   cardID: 1,
     //   status: "Completed",
@@ -55,19 +57,18 @@ export const ActionPlan = () => {
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
   const [isCalenDarGenerated,] = useState(true);
+  useEffect(() => {
+    Application.ActionPlanBlockList({member_id:id}).then((res) => {
+      setCardData(res.data)
+    })
+  },[])
   return (
     <>
       <div className="flex flex-col gap-3 w-full">
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {CardData.length > 0 ? (
             <>
-              {/* <img
-                onClick={() => navigate(`/action-plan/edit/${id}`)}
-                className="absolute top-4 right-4 cursor-pointer"
-                src="./Themes/Aurora/icons/setting-2.svg"
-                alt=""
-              /> */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 ">
+              <div className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  ">
                 {CardData.map((el, i) => (
                   <ActionPlanCard
                     onDelete={(cardID: number) => {
@@ -84,7 +85,7 @@ export const ActionPlan = () => {
                   onClick={() => {
                     navigate(`/generateActionPlan/${id}`);
                   }}
-                  className="  w-[218px] h-[258px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                  className=" min-w-[218px] w-[218px] min-h-[258px] h-[258px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
                 >
                   <div className="flex flex-col  TextStyle-Subtitle-2 ">
                     <img className="" src="/icons/add-blue.svg" alt="" />
@@ -125,7 +126,7 @@ export const ActionPlan = () => {
                     <ButtonPrimary
                       ClassName="py-[6px] px-6"
                       onClick={() => {
-                        navigate("/generateActionPlan/123");
+                        navigate("/generateActionPlan/"+id);
                       }}
                     >
                       <img src="/icons/tick.svg" alt="" />
