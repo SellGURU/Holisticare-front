@@ -9,7 +9,6 @@ interface ClientCardProps {
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
-  console.log(client);
 
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
