@@ -275,7 +275,12 @@ const GenerateCalendar: React.FC = () => {
           <ButtonPrimary
           style={{textWrap: 'nowrap'}}
             onClick={() => {
-              navigate(-1)
+              Application.ActionPlanSaveTask({
+                blocks_id:blackId,
+                member_id:id,
+                tasks:data
+              })
+              // navigate(-1)
               // if (typeof onSave === "function") {
               //   onSave();
               // } else {

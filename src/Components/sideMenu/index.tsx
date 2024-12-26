@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -5,8 +6,13 @@ import { menus } from "./menu";
 const SideMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const graph = {
+    name: "Knowledge Graph ",
+    icon: "sidemenu-menu-icon-trend-up",
+    url: "/aiKnowledge",
+  };  
   const [activeMenu, setActiveMenu] = useState(() => {
-    return menus.find((menu) => menu.url === location.pathname) || menus[0];
+    return menus.find((menu) => menu.url === location.pathname) || graph;
   });
   //   useEffect(() => {
   //     const currentActiveMenu =
@@ -19,11 +25,7 @@ const SideMenu = () => {
     setActiveMenu(menu);
     navigate(menu.url);
   };
-  const graph = {
-    name: "Knowledge Graph ",
-    icon: "sidemenu-menu-icon-trend-up",
-    url: "/ai",
-  };
+
   return (
     <>
       <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border">

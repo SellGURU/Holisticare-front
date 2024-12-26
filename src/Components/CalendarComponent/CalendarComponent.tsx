@@ -62,29 +62,68 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
 
   // return days;
   // };
+  // const getCurrentMonthWithBuffer2 = () => {
+  //   const today = new Date();
+
+  //   // Get the current month and year
+  //   const year = today.getFullYear();
+  //   const month = today.getMonth(); // 0-based index (0 = January)
+
+  //   // Get the first day of the current month
+  //   const firstDayOfMonth = new Date(year, month, 1);
+
+  //   // Calculate the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  //   const firstDayWeekday = firstDayOfMonth.getDay();
+
+  //   // Calculate how many days to subtract to get the previous Monday
+  //   const daysToSubtract = (firstDayWeekday + 6) % 7; // Adjust so Monday is the first day
+
+  //   // Set the startDate to the previous Monday
+  //   const startDate = new Date(firstDayOfMonth);
+  //   startDate.setDate(firstDayOfMonth.getDate() - daysToSubtract);
+
+  //   // Calculate the endDate 7 days after the start of the current month
+  //   const endDate = new Date(startDate);
+  //   endDate.setDate(startDate.getDate() + 41); // Cover the entire month plus buffer
+
+  //   const days = [];
+
+  //   // Loop through the dates from startDate to endDate
+  //   for (
+  //     let date = new Date(startDate);
+  //     date <= endDate;
+  //     date.setDate(date.getDate() + 1)
+  //   ) {
+  //     const dayNumber = date.getDate();
+  //     const dayName = date.toLocaleString("en-US", { weekday: "long" });
+  //     const monthName = date.toLocaleString("en-US", { month: "long" });
+
+  //     days.push({
+  //       dayNumber,
+  //       dayName,
+  //       monthName,
+  //       dateObject: new Date(date), // Create a new Date object to avoid mutation
+  //     });
+  //   }
+
+  //   return days;
+  // };
   const getCurrentMonthWithBuffer = () => {
     const today = new Date();
 
-    // Get the current month and year
-    const year = today.getFullYear();
-    const month = today.getMonth(); // 0-based index (0 = January)
+    // Get today's weekday (0 = Sunday, ..., 6 = Saturday)
+    const todayWeekday = today.getDay();
 
-    // Get the first day of the current month
-    const firstDayOfMonth = new Date(year, month, 1);
+    // Calculate how many days to subtract to get the previous Monday (buffer start)
+    const daysToSubtract = (todayWeekday + 6) % 7; // Adjust so Monday is the first day
 
-    // Calculate the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
-    const firstDayWeekday = firstDayOfMonth.getDay();
+    // Set the startDate to the previous Monday (or just today if no buffer needed)
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - daysToSubtract); // Buffer starts from Monday
 
-    // Calculate how many days to subtract to get the previous Monday
-    const daysToSubtract = (firstDayWeekday + 6) % 7; // Adjust so Monday is the first day
-
-    // Set the startDate to the previous Monday
-    const startDate = new Date(firstDayOfMonth);
-    startDate.setDate(firstDayOfMonth.getDate() - daysToSubtract);
-
-    // Calculate the endDate 7 days after the start of the current month
+    // Calculate the endDate 41 days after the startDate (6 weeks buffer)
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 41); // Cover the entire month plus buffer
+    endDate.setDate(startDate.getDate() + 41);
 
     const days = [];
 
@@ -108,6 +147,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
 
     return days;
   };
+
   const [currenDay, setCurrentDay] = useState(0);
   const [currenMonth, setCurrentMonth] = useState("");
   useEffect(() => {
@@ -159,11 +199,12 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                 {day.dayNumber}
               </div>
               <ul>
-                {data[day.dayName].map((activity: any, i: any) => (
+                {/* <div>{data.filter((el:any) =>new Date(el.date).toDateString() == day.dateObject.toDateString()).length}</div> */}
+                {data.filter((el:any) =>new Date(el.date).toDateString() == day.dateObject.toDateString()).map((activity: any, i: any) => (
                   <li key={i} className="flex flex-col lg:flex-row items-start gap-1 mt-[2px]">
                     <span className="w-[12px] h-[12px] min-w-[10px] min-h-[10px] rounded-full border border-Primary-EmeraldGreen"></span>
                     <span className=" text-[6px] lg:text-[10px] text-Text-Primary   text-justify flex-grow">
-                      {activity}
+                      {activity.name}
                     </span>
                   </li>
                 ))}

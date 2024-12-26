@@ -17,12 +17,16 @@ interface ActionPlanCardProps {
   el: any;
   index: number;
   onDelete: (cardID: number) => void;
+  onClick:() => void
+  isActive?:boolean
 }
 
 export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   el,
   index,
   onDelete,
+  onClick,
+  isActive
 }) => {
   // const { status, title, subtitle, progress, time, cardID } = el;
   const navigate = useNavigate();
@@ -61,8 +65,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
 
   return (
     <div
-      // onClick={() => !isDisabled && navigate(`/action-plan/calendar/${id}`)}
-      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white border-Gray-50   border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none   ${
+      onClick={() => onClick()}
+      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen':'border-Gray-50  '}  ${
         isDisabled ? "opacity-45 cursor-not-allowed" : ""
       }`} 
     >
@@ -76,7 +80,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
-          className="w-[56px] h-[46px] border-t border-Gray-50 z-10  rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-10 mr-6 bg-white text-Primary-DeepTeal  "
+          className="w-[65px] z-[-1] h-[46px] border-t border-Gray-50   rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  "
         >
           0{index}
         </div>

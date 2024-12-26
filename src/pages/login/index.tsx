@@ -38,7 +38,7 @@ const Login = () => {
         Auth.login(values.email, values.password).then((res) => {
           console.log(res);
           appContext.login(res.data.access_token,res.data.permission);
-          navigate("/");
+          navigate("/aiKnowledge");
           console.log("User registered successfully:", res.data);
         }).catch((res) => {
           // console.log(res)
@@ -85,7 +85,7 @@ const Login = () => {
       <div className="w-full max-w-[400px]  flex flex-col ">
         <img
           className="object-contain w-[194px] h-[130px] mx-auto "
-          src="./images/holisticare.svg"
+          src="./icons/Logo.png"
           alt=""
         />
         <div className="flex flex-col  gap-5 mt-6 ">

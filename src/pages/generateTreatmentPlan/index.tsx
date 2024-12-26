@@ -188,7 +188,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 setSHowAnalyse(true)
               }} size="small">
                 <div className="w-full flex justify-between gap-2">
-                  <img src="/icons/status-up.svg" alt="" />
+                  <img src="/icons/analyse.svg" alt="" />
                   Analysis
 
                 </div>

@@ -270,11 +270,11 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             </div>
           </div>
           <div className="w-full flex justify-end gap-2 my-3">
-            <ButtonPrimary onClick={() => setisAnalysisOpen(true)}>
+            <ButtonPrimary size="small" onClick={() => setisAnalysisOpen(true)}>
               {" "}
-              <img src="/icons/status-up.svg" alt="" /> Analysis
+              <img src="/icons/analyse.svg" alt="" /> Analysis
             </ButtonPrimary>
-            <ButtonPrimary onClick={() => setisClientGoalOpen(true)}>
+            <ButtonPrimary size="small" onClick={() => setisClientGoalOpen(true)}>
               {" "}
               <img src="/icons/chart.svg" alt="" /> Client Goals
             </ButtonPrimary>

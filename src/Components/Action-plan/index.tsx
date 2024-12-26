@@ -4,7 +4,7 @@ import { ButtonPrimary } from "../Button/ButtonPrimary";
 import { ActionPlanCard } from "./ActionPlanCard";
 import { useNavigate, useParams } from "react-router-dom";
 import CalenderComponent from "../CalendarComponent/CalendarComponent";
-import CalendarData from "../../api/--moch--/data/new/Calender.json";
+// import CalendarData from "../../api/--moch--/data/new/Calender.json";
 import Application from "../../api/app";
 
 // type CardData = {
@@ -15,11 +15,14 @@ import Application from "../../api/app";
 //   progress: number;
 //   time: string;
 // };
-export const ActionPlan = () => {
-  const { id } = useParams<{ id: string }>();
-  const [calendarData] = useState(CalendarData);
+interface ActionPlanProps {
+  calenderDataUper:any
+}
 
-  // const [isGenerated, setisGenerated] = useState(false);
+export const ActionPlan:React.FC<ActionPlanProps> = () => {
+  const { id } = useParams<{ id: string }>();
+  // const [calendarData,setCalender] = useState(calenderDataUper);
+
   const [CardData, setCardData] = useState<Array<any>>([
     // {
     //   cardID: 1,
@@ -54,12 +57,17 @@ export const ActionPlan = () => {
     //   time: "Waiting",
     // },
   ]);
+  const [activeAction,setActiveAction] = useState(CardData.length>0?CardData[0]:null)
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
-  const [isCalenDarGenerated,] = useState(false);
+  useEffect(() => {
+    console.log(activeAction)
+  })
+  // const [isCalenDarGenerated,setISCalenderGenerated] = useState(false);
   useEffect(() => {
     Application.ActionPlanBlockList({member_id:id}).then((res) => {
       setCardData(res.data)
+      setActiveAction(res.data.length>0?res.data[0]:null)
     })
   },[])
   return (
@@ -71,6 +79,11 @@ export const ActionPlan = () => {
               <div className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  ">
                 {CardData.map((el, i) => (
                   <ActionPlanCard
+                    isActive={activeAction.id == el.id}
+                    onClick={() => {
+                      // setCalender(el.calendar)
+                      setActiveAction(el)
+                    }}
                     onDelete={(cardID: number) => {
                       setCardData(
                         CardData.filter((card) => card.cardID !== cardID)
@@ -94,8 +107,10 @@ export const ActionPlan = () => {
                 </div>
               </div>
               <div className="mt-2">
-                {isCalenDarGenerated ? (
-                 <CalenderComponent data={calendarData}></CalenderComponent>
+                {activeAction!=null &&activeAction?.calendar?.length >0 ? (
+                  <>
+                    <CalenderComponent data={activeAction.calendar}></CalenderComponent>
+                  </>
                 ) : (
                   <div className="w-full flex flex-col items-center">
                     <img src="/icons/NoCalendar.svg" alt="" />
@@ -103,7 +118,9 @@ export const ActionPlan = () => {
                       No Calendar Generated Yet
                     </div>
                     <div className="TextStyle-Body-2 text-Text-Primary mt-2 mb-3">Start creating your action plan</div>
-                    <ButtonPrimary>
+                    <ButtonPrimary onClick={() => {
+                       navigate(`/action-plan/edit/${id}/${activeAction.id}`);
+                    }}>
                       <img src="/icons/tick.svg" alt="" />
                       Generate Day to Day Activity
                     </ButtonPrimary>

@@ -390,9 +390,13 @@ static downloadClinicReport(data:any){
   }
 
   static ActionPlanRoadMap =(data:any) => {
-    const response = this.post("/action_plan/roadmap",data)
+    const response = this.post("/action_plan/add_block",data)
     return response
   }
+  static ActionPlanSaveTask =(data:any) => {
+    const response = this.post("/action_plan/block/save_tasks",data)
+    return response
+  }  
   static ActionPlanBlockList =(data:any) => {
     const response = this.post("/action_plan/list_of_blocks",data)
     return response

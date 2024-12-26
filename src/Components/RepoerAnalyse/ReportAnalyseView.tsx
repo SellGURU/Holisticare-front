@@ -317,7 +317,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>
                             <div id="Action Plan" className="my-10 sectionScrollEl min-h-[650px]">
                                 <div className="TextStyle-Headline-4 text-Text-Primary mb-4">Action Plan</div>
-                                <ActionPlan></ActionPlan>
+                                <ActionPlan calenderDataUper={caldenderData}></ActionPlan>
                             </div>
                              {
                                 isHaveReport &&

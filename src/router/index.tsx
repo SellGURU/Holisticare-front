@@ -31,7 +31,7 @@ const router = createBrowserRouter([
             element:<DriftAnaysis></DriftAnaysis>
           },
           {
-            path: "/ai",
+            path: "/aiKnowledge",
             element: <AiKnowledge></AiKnowledge>,
           },
         ]
