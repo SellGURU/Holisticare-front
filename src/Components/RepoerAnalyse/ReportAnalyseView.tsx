@@ -59,7 +59,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     
         })
         Application.getConceringResults({ member_id: resolvedMemberID }).then(res => {
-            setConcerningResult(res.data);     
+            setConcerningResult(res.data.table);     
             
         })    
         Application.getOverviewtplan({member_id: resolvedMemberID}).then(res => {

@@ -87,10 +87,12 @@ import { ButtonPrimary } from "../../Button/ButtonPrimary";
 interface BioMarkerRowSuggestionsProps {
   value: any;
   category:string
+  changeData:(value:any) => void
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
-  category
+  category,
+  changeData,
 }) => {
   const resolveIcon = () => {
     if (category == "Diet") {
@@ -106,6 +108,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       return "/icons/Supplement.svg";
     }
   };
+
   // const [showModal, setshowModal] = useState(false);
   const [editableValue, setEditableValue] = useState(value.instructions);
   const [selectedDays, setSelectedDays] = useState<string[]>(value.repeat_days || []);
@@ -117,8 +120,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
   useEffect(() => {
     value.days = selectedDays;
-    console.log(value.days);
   }, [selectedDays, value]);
+  useEffect(() => {
+    changeData({
+      ...value,
+      instructions:editableValue,
+      repeat_days:[...selectedDays]
+    })
+  },[editableValue,selectedDays])
   return (
     <>
       <div className="w-full bg-white border border-Gray-50 shadow-100  h-full rounded-[24px] px-6 p-3 lg:p-6">
@@ -206,19 +215,35 @@ import Application from "../../../api/app";
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
+  const [isLoading, setisLoading] = useState(false);
   const { id ,blackId} = useParams();
   useEffect(() => {
+    setisLoading(true)
     Application.ActionPlanGenerateTask({
       member_id:id,
       blocks_id:blackId
     }).then((res) => {
       setData(res.data)
+      setisLoading(false)
     })
   },[])  
   const [data,setData] = useState<any>({});
+  
   const navigate = useNavigate();
   return (
     <>
+    {isLoading && (
+      <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        {" "}
+        
+        <div className="spinner">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="dot"></div>
+          ))}
+        </div>
+        {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
+      </div>
+    )}    
     <div className="w-full fixed z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
@@ -260,7 +285,18 @@ const GenerateCalendar: React.FC = () => {
                       data[key].map((el:any,index:number) => {
                         return (
                           <>
-                            <BioMarkerRowSuggestions category={key} key={index} value={el} />
+                            <BioMarkerRowSuggestions changeData={(value) => {
+                              const wrapper:any ={}
+                              const newData = data[key].map((vl:any,index2:number) => {
+                                if(index == index2){
+                                  return value
+                                }
+                                return vl
+                              })      
+
+                              wrapper[key] =newData
+                              setData({...data,...wrapper})                    
+                            }} category={key} key={index} value={el} />
                           </>
                         )
                       })
@@ -275,10 +311,15 @@ const GenerateCalendar: React.FC = () => {
           <ButtonPrimary
           style={{textWrap: 'nowrap'}}
             onClick={() => {
+              setisLoading(true)
               Application.ActionPlanSaveTask({
                 blocks_id:blackId,
                 member_id:id,
                 tasks:data
+              }).then(() => {
+                navigate(-1)
+              }).finally(() => {
+                setisLoading(false)
               })
               // navigate(-1)
               // if (typeof onSave === "function") {

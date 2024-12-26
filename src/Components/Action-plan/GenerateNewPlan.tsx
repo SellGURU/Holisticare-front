@@ -49,7 +49,7 @@ import Application from "../../api/app";
 //   ];
 const GenerateNewActionPlan = () => {
   const navigate = useNavigate();
-  const [plans,setPlan] = useState([])
+  const [plans,setPlan] = useState<any>(null)
   const { id } = useParams<{ id: string }>();
   useEffect(() => {
     Application.getActionPlanMethods({
@@ -126,13 +126,23 @@ const GenerateNewActionPlan = () => {
               button on the cards.
             </div>
             <div className=" mt-16 flex items-center justify-center gap-4 flex-wrap">
-              {Object.keys(plans).map((el: any) => {
-                return <PlanCard name={el} onClick={
-                  ()=>{
-                     generateActionPlan(plans[el])         
-                  }
-                } data={plans[el]}></PlanCard>;
-              })}
+              {plans == null ?
+                <div className="spinner">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="dot"></div>
+                  ))}
+                </div>
+              :
+              <>
+                {Object.keys(plans?plans:{}).map((el: any) => {
+                  return <PlanCard name={el} onClick={
+                    ()=>{
+                      generateActionPlan(plans[el])         
+                    }
+                  } data={plans[el]}></PlanCard>;
+                })}
+              </>
+              }
             </div>
           </div>
         )}
