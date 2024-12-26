@@ -56,10 +56,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const resolveNextStep = () => {
       Application.saveTreatmentPaln({
         ...treatmentPlanData,
-        treatment_id: treatmentPlanData.treatament_plan_id,
-        medical_summary:"",
         member_id:id,
-        report_detail:treatmentPlanData.report_details
 
       });
       
@@ -118,19 +115,19 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // })
   const [isforceReload] = useState(false);
   const resolveNeedFocusText = () => {
-    return treatmentPlanData["Needs Focus Biomarkers"].map((el: any) => {
+    return treatmentPlanData["need_focus_benchmarks_list"].map((el: any) => {
       return el + "\n\n";
     });
     // return "scdc"
   };
   const resolveDescriptText = () => {
-    return treatmentPlanData["Client Condition Insights"];
+    return treatmentPlanData["medical_summary"];
     // return "scdc"
   };
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["Needs Focus Biomarkers"] = value.includes(",")
+      old["need_focus_benchmarks_list"] = value.includes(",")
         ? [...value.split(",")][0]
         : [value];
       return old;
@@ -139,14 +136,14 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const updateClientConditionInsights =(value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["Client Condition Insights"] = value;
+      old["medical_summary"] = value;
       return old;
     });
   }
   const updateDescription = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["Client Condition Insights"] = value?.toString();
+      old["medical_summary"] = value?.toString();
       return old;
     });
   };

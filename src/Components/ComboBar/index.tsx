@@ -112,17 +112,17 @@ export const ComboBar = () => {
 
                 </div>
                 <ul className={"flex items-center flex-col z-10 gap-3"}>
-                    <li className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
+                    <li key={'1'} className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={patientInfo.picture!= ''?patientInfo.picture:`https://ui-avatars.com/api/?name=${patientInfo.name}`}   onError={(e: any) => {
                             e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
                         }} className={"border-whiteavatar rounded-full"}/>
                     </li>
-                    <li className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
+                    <li key={'2'} className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
                         {patientInfo.name.substring(0,20)}
                     </li>
-                    <li className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
-                    {itemList.map((el) => (
-                        <li onClick={()=>{
+                    <li key={'line'} className={"h-[2px] w-full px-[1px] bg-green-400"}></li>
+                    {itemList.map((el,index) => (
+                        <li key={index+'el'} onClick={()=>{
                             if(el.name == 'Questionary Tracking'){
                                 setIsSlideOutPanel(true)
                                 setUpdated(false)

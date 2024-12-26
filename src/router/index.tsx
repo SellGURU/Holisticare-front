@@ -54,7 +54,7 @@ const router = createBrowserRouter([
         element: <PlanManagerModal></PlanManagerModal>,
       },
       {
-        path: "action-plan/targeting/:id",
+        path: "action-plan/targeting/:id/:blackId",
         element: <Targeting></Targeting>
       },
       {

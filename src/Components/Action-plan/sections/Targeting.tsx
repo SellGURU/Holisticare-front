@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import AnalyseButton from "../../AnalyseButton";
 import { CategorySection } from "./CategorySection";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
 import MainTopBar from "../../MainTopBar";
+import Application from "../../../api/app";
 type Item = {
   name: string;
   value: number;
@@ -48,7 +49,15 @@ const initialData: Category[] = [
 export const Targeting = () => {
   const [categories, setCategories] = useState<Category[]>(initialData);
   const navigate = useNavigate();
-
+  const { id ,blackId} = useParams();
+  useEffect(() => {
+    Application.ActionPlanGenerateTask({
+      member_id:id,
+      blocks_id:blackId
+    }).then(() => {
+      
+    })
+  },[])
   const handleCheckboxChange = (id: number) => {
     setCategories((prevCategories) =>
       prevCategories.map((category) =>

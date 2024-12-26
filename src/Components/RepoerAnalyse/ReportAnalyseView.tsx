@@ -179,12 +179,12 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                 ): (
                     <>
 
-                        <div className={`pt-[20px] relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
+                        <div className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
                     
                             <div className="flex gap-14" >
                                 <div className="min-w-[330px] w-[330px] relative">
                                     <div>
-                                        <div id="Client Summary" className=" text-Text-Primary TextStyle-Headline-4  flex items-center ">
+                                        <div id="Client Summary" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center ">
                                             Client Summary
                                             <div className="ml-4">
                                                 <Legends></Legends>
@@ -197,10 +197,10 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     <div className="relative">
                                         <img className="" src="/human.png" alt="" />
                                         <div>
-                                            {resolveCategories().map((el:any) => {
+                                            {resolveCategories().map((el:any,index:number) => {
                                                 return (
                                                     <>
-                                                        <Point name={el.subcategory} status={resolveStatusArray(el.status)} onClick={() => {
+                                                        <Point key={index} name={el.subcategory} status={resolveStatusArray(el.status)} onClick={() => {
                                                             // setSummaryBOxCategory(el.name)
                                                             document.getElementById(el.subcategory)?.scrollIntoView({
                                                                 behavior:'smooth'
@@ -234,7 +234,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>
                             <div className="my-10  text-light-primary-text dark:text-primary-text ">
                                 <div>
-                                    <div id="Needs Focus Biomarkers" className=" text-Text-Primary TextStyle-Headline-4 ">Needs Focus Biomarkers</div>
+                                    <div id="Needs Focus Biomarkers" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 ">Needs Focus Biomarkers</div>
                                     <div className=" text-Text-Secondary text-[12px]">{referenceData.total_biomarker_note}</div>
                                 </div>   
                                 <div className="w-full mt-4 grid gap-4 grid-cols-2">
@@ -250,7 +250,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>       
                             <div className="my-10 ">
                                 <div>
-                                    <div id="Detailed Analysis" className=" text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
+                                    <div id="Detailed Analysis" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
                                     <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
                                 </div>  
             
@@ -264,7 +264,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>     
                             <div className="my-10 ">
                                 <div className="w-full mb-3 flex items-center justify-between">
-                                    <div id="Concerning Result" className=" TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
+                                    <div id="Concerning Result" className=" sectionScrollEl TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                         {/* Total of 30 Treatment in 4 category */}
                                     </div>
@@ -291,7 +291,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>          
                             <div className="my-10 min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
-                                    <div id="Treatment Plan" className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan </div>
+                                    <div id="Treatment Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary">Treatment Plan </div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                         {/* Total of 30 Treatment in 4 category */}
                                     </div>
@@ -315,7 +315,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                       
                                 }  
                             </div>
-                            <div id="Action Plan" className="my-10  min-h-[650px]">
+                            <div id="Action Plan" className="my-10 sectionScrollEl min-h-[650px]">
                                 <div className="TextStyle-Headline-4 text-Text-Primary mb-4">Action Plan</div>
                                 <ActionPlan></ActionPlan>
                             </div>

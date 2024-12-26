@@ -25,14 +25,14 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
     
     const [isLoading,] = useState(false)
     const [active,setActive] = useState<string>('Suggestion')
-    const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["Report Details"])
+    const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["report_detail"])
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
     const [activeEl,setActiveEl] = useState<any>()
     const [suggestion,] = useState<any>(data["suggestion_tab"])
     useEffect(() => {
         setData((pre: any) => {
             const old = pre;
-            old["Report Details"] = categoryOrderData;
+            old["report_detail"] = categoryOrderData;
             return old;
         });
     },[categoryOrderData])

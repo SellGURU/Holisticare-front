@@ -17,7 +17,7 @@ class Api {
         "Content-Type": config?.headers?.['Content-Type'] || "application/json",
       },
       onUploadProgress: (progressEvent:any) => {
-        if(config.onUploadProgress){
+        if(config?.onUploadProgress){
           config.onUploadProgress(progressEvent)
         }
       },  

@@ -397,6 +397,10 @@ static downloadClinicReport(data:any){
     const response = this.post("/action_plan/list_of_blocks",data)
     return response
   }  
+  static ActionPlanGenerateTask=(data:any) => {
+    const response = this.post("/action_plan/block/generate_tasks",data)
+    return response
+  }    
 }
 
 
