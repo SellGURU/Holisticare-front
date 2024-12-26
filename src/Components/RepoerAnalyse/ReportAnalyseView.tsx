@@ -45,6 +45,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     const [caldenderData,setCalenderData] = useState<any>(null)
     const [isHaveReport,setIsHaveReport] = useState(true)
     const [isGenerateLoading,setISGenerateLoading] = useState(false)
+    const [PlanPriority,setPlanPriority] = useState<string>("")
+    const [showCategory,setShowCategory] = useState<{items:string}[]>([])
     const fetchData =() => {
         Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then((res) => {
             setReferenceData(res.data);        
@@ -69,6 +71,12 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
         })
         Application.getCaldenderdata({member_id: resolvedMemberID}).then(res => {
             setCalenderData(res.data)
+        })
+        Application.showPlanPriority({member_id: resolvedMemberID}).then(res => {
+            setPlanPriority(res.data);
+        })
+        Application.showCategory({member_id: resolvedMemberID}).then(res => {
+            setShowCategory(res.data.items);
         })
     }
     useEffect(() => {
@@ -215,9 +223,32 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 </div>
             
                                 <div className="flex-grow w-full ">
-                                    <div className="w-full flex justify-between">
+                                    <div className="w-full flex justify-end">
+                                        <Tooltip
+                                            className={"h-[115px]"}
+                                            contextText={() => {
+                                                return (
+                                                    <div >
+                                                        <h1 className={"TextStyle-Tiny text-Primary-DeepTeal"}>Gategory:</h1>
+                                                        <div className={"flex flex-wrap items-start justify-start gap-3"}>
+                                                            {showCategory.length>0&&showCategory.map((text:any,index:number)=>{
+                                                                console.log(text,"jiji")
+                                                                return (
+                                                                    <p className={"TextStyle-Tiny text-Text-Secondary"}>
+                                                                        {text.item}{index+1}
+                                                                    </p>
+                                                                )
+                                                            })}
 
-                                    
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }}
+                                        >
+                                            <img src={"/icons/info.svg"} alt="info" />
+                                            <h1 className={"text-Primary-DeepTeal TextStyle-Body-2"}>Category</h1>
+                                        </Tooltip>
+
                                     </div>
                                     <div className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4" style={{lineHeight:'24px'}}>{ClientSummaryBoxs?.client_summary}</div>
                                     <div className="w-full mt-4 grid gap-4 grid-cols-2">
@@ -295,16 +326,18 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     <div id="Treatment Plan"
                                          className="TextStyle-Headline-4 text-Text-Primary">Treatment Plan
                                     </div>
-
                                     <Tooltip
-                                        contextText={"Your plans will be customized to optimize 4 pillard (Nutrition, Mind,\n" +
-                                            "                                            Activity, Supplement) promoting\n" +
-                                            "                                            enhanced health and longevity."}>
-                                        <img src={"/icons/info.svg"} alt="info"/>
+                                        contextText={() => {
+                                            return (
+                                                <>
+                                                    {PlanPriority}
+                                                </>
+                                            );
+                                        }}
+                                    >
+                                        <img src={"/icons/info.svg"} alt="info" />
                                         <h1 className={"text-Primary-DeepTeal TextStyle-Body-2"}>Plan Priority</h1>
-
                                     </Tooltip>
-
 
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                                 </div>

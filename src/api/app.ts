@@ -368,6 +368,14 @@ static downloadClinicReport(data:any){
     const response = this.post("/overview/calendar",data)
     return response
   }
+  static showPlanPriority(data:any) {
+    const response = this.post("/clinic/show_plan_priority",data)
+    return response
+  }
+  static showCategory(data:any) {
+    const response = this.post("/clinic/show_category",data)
+    return response
+  }
 
   static addLabReport(data:any,onUploadProgress:(progressEvent:any) => void) {
     const response = this.post("/patients/add_lab_report",data,
