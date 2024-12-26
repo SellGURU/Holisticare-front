@@ -41,32 +41,32 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences}) => {
             </div>
             <div className="ml-2">
             <div id={data.subcategory} className="text-light-primary-text dark:text-[#FFFFFFDE] text-sm">
-                {data.subcategory}
+                {data?.subcategory}
             </div>
             <div className="flex justify-start items-center">
                 <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-sm">
                 {" "}
                 <span className=" text-black dark:text-white">
-                    {data.num_of_biomarkers}
+                    {data?.num_of_biomarkers}
                 </span>{" "}
                 biomarkers
                 </div>
                 <div className=" text-light-secandary-text dark:text-[#FFFFFF99] ml-2 text-sm">
                 <span className="dark:text-white text-black">
-                    {data.out_of_ref}
+                    {data?.out_of_ref}
                 </span>{" "}
-                {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
+                {data?.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
                 </div>
             </div>
             </div>
         </div>  
         <div className="w-full mt-4 grid gap-8 grid-cols-1">
-            <div className="text-xs text-gray-800">{data.description}</div>
-            {refrences.biomarkers.map((el:any) => {
+            <div className="text-xs text-gray-800">{data?.description}</div>
+            {refrences?.biomarkers.map((el:any) => {
                 return (
                     <>
                         <BiomarkersPrint data={el}></BiomarkersPrint>
-                        <div className="text-xs text-justify text-gray-700">{el.more_info}</div>
+                        <div className="text-xs text-justify text-gray-700">{el?.more_info}</div>
                         <hr />
                     </>
                 )

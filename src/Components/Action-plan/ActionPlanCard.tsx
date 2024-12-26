@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef } from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useNavigate, useParams } from "react-router-dom";
 // import ConfirmModal from "./sections/ConfirmModal";
 
-type CardData = {
-  cardID: number;
-  status: "Completed" | "On Going" | "Paused" | "Upcoming";
-  title: string;
-  subtitle: string;
-  progress: number;
-  time: string;
-};
+// type CardData = {
+//   cardID: number;
+//   status: "Completed" | "On Going" | "Paused" | "Upcoming";
+//   title: string;
+//   subtitle: string;
+//   progress: number;
+//   time: string;
+// };
 
 interface ActionPlanCardProps {
-  el: CardData;
+  el: any;
   index: number;
   onDelete: (cardID: number) => void;
 }
@@ -23,12 +24,12 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   index,
   onDelete,
 }) => {
-  const { status, title, subtitle, progress, time, cardID } = el;
+  // const { status, title, subtitle, progress, time, cardID } = el;
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
-    switch (status) {
+    switch (el.status) {
       case "Completed":
         return "#55DD4A";
       case "On Going":
@@ -38,7 +39,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       case "Upcoming":
         return "#FFC123";
       default:
-        return "#000000"; // Fallback color
+        return "#3C79D6"; // Fallback color
     }
   };
 
@@ -56,14 +57,14 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const [DeleteConfirm, setDeleteConfirm] = useState(false);
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
-  const isDisabled = status === "Completed";
+  const isDisabled = el.status === "Completed";
 
   return (
     <div
       // onClick={() => !isDisabled && navigate(`/action-plan/calendar/${id}`)}
-      className={`w-[218px] h-[258px] rounded-[40px] bg-white border-Gray-50  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none   ${
+      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white border-Gray-50   border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none   ${
         isDisabled ? "opacity-45 cursor-not-allowed" : ""
-      }`}
+      }`} 
     >
       <div className="flex w-full items-start start-0  px-2 justify-between">
         <div className="flex items mt-2 gap-1 TextStyle-Body-3  text-Text-Primary">
@@ -71,7 +72,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
             style={{ backgroundColor: resolveStatusColor() }}
             className={`w-2 h-2 rounded-full mt-1`}
           ></div>
-          {status}
+          {el.status? el.status :'On Going'}
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
@@ -161,7 +162,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       if (!isDisabled) {
-                        onDelete(cardID);
+                        onDelete(el.id);
                       }
                     }}
                     className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
@@ -185,21 +186,21 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       </div>
       <div className="mt-2 flex flex-col items-center justify-center gap-[6px]">
         <h5 className="TextStyle-Headline-6 text-Text-Primary">
-          {title}
+          {el.title}
         </h5>
         <h6 className="TextStyle-Body-3 text-Text-Secondary">
-          {subtitle}
+          {el.description}
         </h6>
       </div>
       <div className="mt-10 flex flex-col gap-1 w-[185px] mx-auto">
         <div className="flex w-full justify-between text-[10px]  text-Text-Secondary">
           Progress
-          <span>{progress}%</span>
+          <span>{el.progress}%</span>
         </div>
         <div className="h-[6px] bg-Secondary-SelverGray rounded-full">
           <div
             className="h-full bg-Primary-EmeraldGreen rounded-full"
-            style={{ width: `${progress}%` }}
+            style={{ width: `${el.progress}%` }}
           ></div>
         </div>
       </div>
@@ -210,7 +211,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
             src="/icons/timer.svg"
             alt=""
           />
-          {time}
+          {el.to_date}
         </div>
       </div>
       {/* {showConfirmModal && (

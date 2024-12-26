@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import MiniAnallyseButton from "../../Components/MiniAnalyseButton";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
+import { SlideOutPanel } from "../../Components/SlideOutPanel";
 interface ActionProps {
   memberID: number | null;
 }
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
+    console.log(memberID);
+    
   const [RoadMapData, SetRoadMapData] = useState([
     {
       id: 1,
@@ -73,10 +76,18 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const handleOptionDelete = (id: number) => {
     SetRoadMapData((prevData) => prevData.filter((option) => option.id !== id));
   };
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
-
+const [showModal, setshowModal] = useState(false)
   return (
+    <>
+   {
+    showModal && (
+        <SlideOutPanel headline="Edit Action Plan" isOpen={showModal} onClose={()=>setshowModal(false)}>
+<div></div>
+        </SlideOutPanel>
+    )
+   }
     <div className="w-full flex flex-col gap-2 ">
         <div className="w-full h-fit bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="text-sm font-medium">State</div>
@@ -116,7 +127,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           >
             {RoadMapData.map((option) => (
               <AccordionCard
-                onClick={() => navigate(`/action-edit/${memberID}`)}
+                onClick={() => setshowModal(true)}
                 onDelete={() => handleOptionDelete(option.id)}
                 key={option.id}
                 title={option.title}
@@ -170,6 +181,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 interface AccordionCardProps {

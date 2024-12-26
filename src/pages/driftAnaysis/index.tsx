@@ -22,11 +22,14 @@ type menuItem = {
 };
 
 interface Patient {
-  Email: string;
-  Name: string;
-  Status: string;
+  email: string;
+  name: string;
+  status: string;
   member_id: number;
-  Picture: string;
+  picture: string;
+  sex: string,
+  tags: string[],
+  age: number
 }
 
 export const DriftAnaysis = () => {
@@ -42,11 +45,14 @@ export const DriftAnaysis = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [patients, setPatients] = useState<Patient[]>([
     {
-      Email: "",
+      email: "",
       member_id: 1,
-      Name: "",
-      Status: "",
-      Picture: "",
+      name: "",
+      status: "",
+      picture: "",
+      sex: "",
+      age :0,
+      tags: [],
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
@@ -99,18 +105,18 @@ export const DriftAnaysis = () => {
     if (searchQuery != "" && activeStatus != "All") {
       return patients.filter(
         (el) =>
-          el.Name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          el.Status == activeStatus
+          el.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          el.status == activeStatus
       );
     } else {
       if (activeStatus != "All") {
         return patients.filter((el) => {
-          return el.Status == activeStatus;
+          return el.status == activeStatus;
         });
       } else if (searchQuery != "") {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
         return patients.filter((el) =>
-          el.Name.toUpperCase().includes(searchQuery.toUpperCase())
+          el.name.toUpperCase().includes(searchQuery.toUpperCase())
         );
       } else if (searchQuery == "" && activeStatus == "All") {
         return patients;
@@ -124,7 +130,7 @@ export const DriftAnaysis = () => {
     const fetchData = async () => {
       try {
         const response = await Application.aiStudio_patients();
-        setPatients(response.data);
+        setPatients(response.data.patients_list_data);
         setActiveMemberID(response.data[0].member_id);
       } catch (err) {
         console.log(err);
@@ -209,6 +215,7 @@ export const DriftAnaysis = () => {
     <div className="h-full w-full pl-6 pt-8 flex items-start  gap-3">
     
         <>
+   
           {patients[0]?.member_id == 1 ? (
             <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
               <BeatLoader size={10} color="#0CBC84"></BeatLoader>
@@ -284,23 +291,29 @@ export const DriftAnaysis = () => {
             />
 
             <div className="flex flex-col pr-1  max-h-[531px] w-full overflow-auto">
-              {resolvedFiltersData().map((client, i) => (
+              {resolvedFiltersData().map((client, i) => {
+                console.log(client);
+                
+                return(
                 <ClientCard
                   index={i}
                   key={i}
-                  name={client.Name}
-                  email={client.Email}
-                  picture={client.Picture}
+                  name={client.name}
+                  email={client.email}
+                  picture={client.picture}
                   memberID={client.member_id}
                   setCardActive={setActiveMemberID}
                   // onClick={() => {
                   //   setcardActive(i + 1); // Update the active card index
                   //   setActiveMemberID(client.member_id); // Set active member ID
                   // }}
-                  status={client.Status}
+                  status={client.status}
                   cardActive={activeMemberID}
+                  tags={client.tags}
                 />
-              ))}
+                )
+            })}
+              
             </div>
           </div>
         </>

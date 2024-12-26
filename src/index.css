@@ -100,8 +100,8 @@ input[type="number"] {
   height: 1.5rem; /* Tailwind h-6 */
 }
 .sidemenu-menu-icon-money-send {
-  mask-image: url(/icons/side-menu/money-send.svg);
-  -webkit-mask-image: url(/icons/side-menu/money-send.svg);
+  mask-image: url(/icons/side-menu/bookmark-2.svg);
+  -webkit-mask-image: url(/icons/side-menu/bookmark-2.svg);
   mask-size: 100%;
   -webkit-mask-size: 100%;
   mask-repeat: no-repeat;
@@ -127,8 +127,8 @@ input[type="number"] {
 }
 
 .sidemenu-menu-icon-packages {
-  mask-image: url(/icons/side-menu/packages.svg);
-  -webkit-mask-image: url(/icons/side-menu/packages.svg);
+  mask-image: url(/icons/side-menu/wallet-3.svg);
+  -webkit-mask-image: url(/icons/side-menu/wallet-3.svg);
   mask-size: 100%;
   -webkit-mask-size: 100%;
   mask-repeat: no-repeat;
@@ -178,6 +178,19 @@ input[type="number"] {
   width: 1.5rem; /* Tailwind w-6 */
   height: 1.5rem; /* Tailwind h-6 */
 }
+.sidemenu-menu-icon-home {
+  mask-image: url(/icons/side-menu/home-2.svg);
+  -webkit-mask-image: url(/icons/side-menu/home-2.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+  width: 1.5rem; /* Tailwind w-6 */
+  height: 1.5rem; /* Tailwind h-6 */
+}
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');
   mask-size: 100%;
@@ -205,6 +218,7 @@ input[type="number"] {
   }
   .gradient-border {
     border-style: solid;
+    
     border-image: linear-gradient(to right, #005F73 , #6CC24A ) 1;
   }
   .text-gradient {

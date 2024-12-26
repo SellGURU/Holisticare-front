@@ -90,9 +90,10 @@ const InputMentions:React.FC<InputMentionsProps> = ({value,onChange,onSubmit,cha
        
     return (
         <>
-        <div className="w-[98%] bg-black-primar  absolute bottom-0 ml-2 mb-2    border dark:border-main-border px-[6px] py-1 flex items-center gap-3 rounded-md">
+        <div className="w-[98%]  bg-[#E9F0F2]  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
+            <img className="cursor-default" src="/icons/attach-svgrepo-com 1.svg" alt="" />
             <input
-            className="w-full border dark:border-main-border bg-white border-light-border-color dark:bg-black-secondary rounded-md outline-none pl-2 py-1 text-xs text-light-secandary-text dark:text-primary-text"
+            className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Secondary"
             type="text"
             placeholder="Write message here ..."
             value={value}
@@ -112,7 +113,11 @@ const InputMentions:React.FC<InputMentionsProps> = ({value,onChange,onSubmit,cha
                     // whiteSpace: 'pre-wrap', // Preserve line breaks
                     }}
                 ></div>             */}
-            <img onClick={onSubmit} src="/Themes/Aurora/icons/send.svg" alt="" />
+                <div className="flex items-center gap-2">
+                    <img className="cursor-pointer" src="/icons/smiley-o-svgrepo-com 1.svg" alt="" />
+                    <img className="cursor-pointer" onClick={onSubmit}  src="/icons/send.svg" alt="" />
+                </div>
+          
 
         </div>           
         {isShowMentions && suggestions.length>0 &&
