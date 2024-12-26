@@ -20,7 +20,7 @@ import resolvePosition from "./resolvePosition"
 import resolveStatusArray from "./resolveStatusArray"
 import  Application  from "../../api/app"
 import { useParams } from "react-router-dom";
-import { BeatLoader } from "react-spinners"
+// import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 import PrintReport from "./PrintReport"
 import { ActionPlan } from "../Action-plan"
@@ -43,47 +43,49 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     const [loading, setLoading] = useState(true);
     const [caldenderData,setCalenderData] = useState<any>(null)
     const [isHaveReport,setIsHaveReport] = useState(true)
-    const [isGenerated,setISGenerated] = useState(false)
+    const [isGenerateLoading,setISGenerateLoading] = useState(false)
+    const fetchData =() => {
+        Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then((res) => {
+            setReferenceData(res.data);        
+        })
+        Application.getClientSummaryCategories({ member_id: resolvedMemberID }).then(res => {
+            setClientSummaryBoxs(res.data);    
+            setISGenerateLoading(false)
+            if(res.data.categories.length == 0){
+                setIsHaveReport(false)
+            } else {
+                setIsHaveReport(true)
+            }
+    
+        })
+        Application.getConceringResults({ member_id: resolvedMemberID }).then(res => {
+            setConcerningResult(res.data);     
+            
+        })    
+        Application.getOverviewtplan({member_id: resolvedMemberID}).then(res => {
+            setTreatmentPlanData(res.data);     
+                
+        })
+        Application.getCaldenderdata({member_id: resolvedMemberID}).then(res => {
+            setCalenderData(res.data)
+        })
+    }
     useEffect(() => {
         setLoading(true); 
-        if(memberID != 123){
-            Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then((res) => {
-                setReferenceData(res.data);        
-            })
-            Application.getClientSummaryCategories({ member_id: resolvedMemberID }).then(res => {
-                setClientSummaryBoxs(res.data);    
-                if(res.data.categories.length == 0){
-                    setIsHaveReport(false)
-                    setISGenerated(false)
-                } else {
-                    setIsHaveReport(true)
-                }
-        
-            })
-            Application.getConceringResults({ member_id: resolvedMemberID }).then(res => {
-                setConcerningResult(res.data);     
-                
-            })    
-            Application.getOverviewtplan({member_id: resolvedMemberID}).then(res => {
-                setTreatmentPlanData(res.data);     
-                    
-            })
-            Application.getCaldenderdata({member_id: resolvedMemberID}).then(res => {
-                setCalenderData(res.data)
-            })
-
+        if(resolvedMemberID != 123){
+            fetchData()
         }
-    }, [resolvedMemberID,isGenerated]);
+    }, [resolvedMemberID]);
 
     useEffect(() => {
-        if(memberID == 123 || (!isHaveReport && !isGenerated)){
+        if(resolvedMemberID == 123 || !isHaveReport){
             setReferenceData(referencedata)
             setClientSummaryBoxs(mydata)
             setConcerningResult(conceringResultData)
             setTreatmentPlanData(treatmentPlanData)
             setCalenderData(calenderDataMoch)
         }
-    },[isHaveReport,isGenerated])
+    },[isHaveReport])
     // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
     const [ClientSummaryBoxs,setClientSummaryBoxs] = useState<any>(null)
     const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
@@ -156,13 +158,23 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
       useEffect(() => {
         if (!isHaveReport) {
           publish('noReportAvailable', { message: 'No report available' });
+        }else {
+          publish("ReportAvailable",{})
         }
       }, [isHaveReport]);
     return (
         <>        
          {loading ? (
-                <div className="h-[600px] w-full flex items-center justify-center">
-                    <BeatLoader size={8} color="#36d7b7" loading={loading} />
+
+                <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+                {" "}
+                
+                <div className="spinner">
+                    {[...Array(8)].map((_, i) => (
+                    <div key={i} className="dot"></div>
+                    ))}
+                </div>
+                {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
                 </div>
                 ): (
                     <>
@@ -314,14 +326,32 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>
 
                              }                                   
-                            {!isHaveReport &&
-                                <UploadTest onGenderate={() => {
-                                    setLoading(true)
-                                    setTimeout(() => {
-                                        publish("QuestionaryTrackingCall",{})
-                                        setISGenerated(true)
-                                    }, 10000);
-                                }} memberId={resolvedMemberID}></UploadTest>
+                            {!isHaveReport &&(
+                                <>
+                                    {isGenerateLoading ?
+                                    <>
+                                        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+                                        {" "}
+                                        
+                                        <div className="spinner">
+                                            {[...Array(8)].map((_, i) => (
+                                            <div key={i} className="dot"></div>
+                                            ))}
+                                        </div>
+                                        <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re analyzing your test results to create a detailed health plan. This may take a moment.</div>
+                                        </div>                                    
+                                    </>
+                                    :
+                                        <UploadTest onGenderate={() => {
+                                            setISGenerateLoading(true)
+                                            setTimeout(() => {
+                                                publish("QuestionaryTrackingCall",{})
+                                                fetchData()
+                                            }, 5000);
+                                        }} memberId={resolvedMemberID}></UploadTest>
+                                    }
+                                </>
+                            )
                             }                            
                         </div>   
 

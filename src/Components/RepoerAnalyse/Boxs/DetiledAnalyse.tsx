@@ -80,10 +80,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               <div className="flex justify-start items-center">
                 <div className="TextStyle-Body-3 text-Text-Secondary">
-                  {data.num_of_biomarkers} biomarkers
+                  {data?.num_of_biomarkers} biomarkers
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
-                  {data.out_of_ref} {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
+                  {data?.out_of_ref} {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
                 </div>
               </div>
             </div>
@@ -157,7 +157,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className=" mb-20 TextStyle-Headline-6 text-Text-Primary">
                           Current Value
                         </div>
-                        <StatusBarChart data={active}></StatusBarChart>
+                        {active &&
+                          <StatusBarChart data={active}></StatusBarChart>
+                        }
                       </div>
                     </div>
                   :
@@ -167,14 +169,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                           Historical Data
                         </div>
                         <div className="mt-0 relative">
-                          <StatusChart
-                            mode={
-                              active.chart_bounds["Needs Focus"].length>1 && active.chart_bounds["Ok"].length>1 ?'multi':'line'
-                            }
-                            statusBar={active.chart_bounds}
-                            labels={[...active.date].reverse()}
-                            dataPoints={[...active.values].reverse()}
-                          ></StatusChart>
+                          {active &&
+                            <StatusChart
+                              mode={
+                                active.chart_bounds["Needs Focus"].length>1 && active.chart_bounds["Ok"].length>1 ?'multi':'line'
+                              }
+                              statusBar={active?.chart_bounds}
+                              labels={[...active.date].reverse()}
+                              dataPoints={[...active.values].reverse()}
+                            ></StatusChart>
+                          }
                         </div>
                       </div>
                     </div>
