@@ -11,7 +11,7 @@ const Legends =() => {
             </div>
             {
                 isVisibele &&
-                    <div className="absolute top-6 z-30 left-10 w-[120px] px-4 py-2  rounded-[6px] bg-white border border-Gray-50 text-Text-Primary">
+                    <div className="absolute top-6 z-30 left-10 w-[140px] px-4 py-2  rounded-[6px] bg-white border border-Gray-50 text-Text-Primary">
                         <div className=" h-[32px]  text-[12px] flex justify-start items-center gap-2">
                             <div className="w-2 h-2 bg-[#7F39FB] rounded-full"></div>
                             Excellent
