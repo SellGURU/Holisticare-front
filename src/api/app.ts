@@ -155,7 +155,7 @@ static downloadClinicReport(data:any){
     return response
   }
   static aiStudio_patients() {
-    const response = this.post("/ai_studio/patient_list")
+    const response = this.get("/drift_analysis/patients ")
     return response
   }
   static aiStudio_copilotChat(data: any) {

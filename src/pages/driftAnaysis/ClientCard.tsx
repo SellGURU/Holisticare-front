@@ -8,6 +8,7 @@ interface ClientCardProps {
   name: string;
   email: string;
   status: string;
+  tags: string[];
   cardActive: null | number;
   // onClick: () => void;
   memberID: number;
@@ -17,8 +18,9 @@ const getStatusBgColorClass = (
   status: string,
   currentStatus: string
 ): string => {
-  if (status.toLowerCase() === currentStatus.toLowerCase()) {
-    switch (status.toLowerCase()) {
+    
+  if ( status && status.toLowerCase() === currentStatus.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "high":
         return "bg-red-status text-black";
       case "low":
@@ -53,13 +55,15 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   name,
   email,
   picture,
-  status,
+  status ="",
+  tags,
   cardActive,
   memberID,
   setCardActive,
 }) => {
   // const theme = useSelector((state: any) => state.theme.value.name);
   // console.log(memberID);
+console.log(status);
 
   return (
     <div
@@ -85,19 +89,24 @@ export const ClientCard: React.FC<ClientCardProps> = ({
                 : `https://ui-avatars.com/api/?name=${name}`
             }
             alt=""
-          /> text-xs
-          <div className=" font-medium flex flex-col ">
+          /> 
+          <div className=" text-xs font-medium flex flex-col ">
             {name}
           </div>
         </div>
-        <div
+        <div className="flex flex-col gap-1">
+            {tags.map((tag)=>(
+                <div
           className={`text-Text-Primary text-[8px] px-2 py-[2px] rounded-2xl ${getStatusBgColorClass(
-            status,
-            status
+            tag,
+            tag
           )} `}
         >
-          {status}{" "}
+          {tag}{" "}
         </div>
+            ))}
+        </div>
+        
       </div>
       <div className="mt-3 flex justify-between items-center">
         <div className="flex flex-col  text-primary-text">
@@ -111,8 +120,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         </div>
       </div>
       {/* <Link to={`/information/${memberID}/Analysis`}> */}
-        <div className=" absolute right-[5%] bottom-1 flex flex-col gap-4">
-          <div className="cursor-pointer bg-white border border-Gray-50 shadow-100  rounded-full p-2">
+        <div className=" absolute right-1 bottom-1 flex flex-col gap-4">
+          <div className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2">
             {" "}
             <img src="/icons/export.svg" alt="" />
           </div>
