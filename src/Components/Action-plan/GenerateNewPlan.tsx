@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PlanCard from "./sections/PlanCard";
-import { useState , } from "react";
+import { useEffect, useState , } from "react";
 import { TopBar } from "../topBar";
 
 // import Data from "./data.json";
 import PlanManagerModal from "./sections/PLanManager";
+import Application from "../../api/app";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // interface Benchmark {
 //   Benchmark: string;
@@ -23,35 +24,56 @@ import PlanManagerModal from "./sections/PLanManager";
 //   BenchmarkAreas: BenchmarkArea[];
 // }
 // type PrioritiesType = Record<string, Category>;
-
+// [
+//     {
+//       planId: 1,
+//       name: "Method 1",
+//       description: "Create Your AI Twin",
+//       features: ["Feature 1", "Feature 2", "Feature 3"],
+//       Duration: "3 month",
+//     },
+//     {
+//       planId: 2,
+//       name: "Method 2",
+//       description: "Create Your AI Twin",
+//       features: ["Feature 1", "Feature 2", "Feature 3"],
+//       Duration: "3 month",
+//     },
+//     {
+//       planId: 3,
+//       name: "Method 3",
+//       description: "Create Your AI Twin",
+//       features: ["Feature 1", "Feature 2", "Feature 3"],
+//       Duration: "3 month",
+//     },
+//   ];
 const GenerateNewActionPlan = () => {
   const navigate = useNavigate();
-  const plans = [
-    {
-      planId: 1,
-      name: "Method 1",
-      description: "Create Your AI Twin",
-      features: ["Feature 1", "Feature 2", "Feature 3"],
-      Duration: "3 month",
-    },
-    {
-      planId: 2,
-      name: "Method 2",
-      description: "Create Your AI Twin",
-      features: ["Feature 1", "Feature 2", "Feature 3"],
-      Duration: "3 month",
-    },
-    {
-      planId: 3,
-      name: "Method 3",
-      description: "Create Your AI Twin",
-      features: ["Feature 1", "Feature 2", "Feature 3"],
-      Duration: "3 month",
-    },
-  ];
+  const [plans,setPlan] = useState([])
+  const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+    Application.getActionPlanMethods({
+      member_id:id
+    }).then((res)=> {
+      setPlan(res.data)
+    })
+  },[])
   const [isEditMode, setisEditMode] = useState(false);
   // const [Priorities] = useState<PrioritiesType>(Data);
   const [isLoading, setisLoading] = useState(false);
+  const generateActionPlan = (method:any) => {
+      setisLoading(true)
+      Application.ActionPlanRoadMap({
+        member_id:id,
+        method:method
+      }).finally(() => {
+          setisLoading(false)
+          navigate('/report/'+id+'/a?section=Action Plan')
+
+      })
+      // setTimeout(()=>{
+      // },3000)
+  }
 
   return (
     <>
@@ -104,19 +126,12 @@ const GenerateNewActionPlan = () => {
               button on the cards.
             </div>
             <div className=" mt-16 flex items-center justify-center gap-4 flex-wrap">
-              {plans.map((el: any) => {
-                return <PlanCard onClick={
+              {Object.keys(plans).map((el: any) => {
+                return <PlanCard name={el} onClick={
                   ()=>{
-                    setisLoading(true)
-                    setTimeout(()=>{
-                      setisLoading(false)
-                      navigate('/report')
-                    },3000)
-                    
-                              
-
+                     generateActionPlan(plans[el])         
                   }
-                } data={el}></PlanCard>;
+                } data={plans[el]}></PlanCard>;
               })}
             </div>
           </div>

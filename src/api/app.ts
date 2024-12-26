@@ -383,6 +383,20 @@ static downloadClinicReport(data:any){
     const response = this.post("/patients/treatment_plan_details_for_list",data)
     return response
   }
+
+  static getActionPlanMethods =(data:any) => {
+    const response = this.post("/action_plan/methods",data)
+    return response
+  }
+
+  static ActionPlanRoadMap =(data:any) => {
+    const response = this.post("/action_plan/roadmap",data)
+    return response
+  }
+  static ActionPlanBlockList =(data:any) => {
+    const response = this.post("/action_plan/list_of_blocks",data)
+    return response
+  }  
 }
 
 
