@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
 import { subscribe } from "../../utils/event.ts";
 import Application from "../../api/app.ts";
+import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 
 export const ComboBar = () => {
 
@@ -98,9 +99,12 @@ export const ComboBar = () => {
                         </div>
                     </div>
                     <div className={"flex items-center justify-center flex-col"}>
-                        <img src={"/images/EmptyState.svg"}/>
-                        <h1 className={"text-Text-Primary TextStyle-Body-2"}>No Data Found</h1>
-                        <p className={"text-center text-Text-Secondary mt-5 TextStyle-Body-3"}>For more accurate results, please complete the questionnaire</p>
+                        <img className="w-[160px]" src={"/images/EmptyState.svg"}/>
+                        <h1 className={"text-Text-Primary mt-[-40px] TextStyle-Body-2"}>No Data Found</h1>
+                        <p className={"text-center mb-2 text-Text-Secondary w-[240px] mt-5 TextStyle-Body-3"}>For more accurate results, please complete the questionnaire</p>
+                        <ButtonPrimary size="small">
+                            Complete Questionary
+                        </ButtonPrimary>
                     </div>
                 </div>
 

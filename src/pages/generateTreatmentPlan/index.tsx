@@ -496,7 +496,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
 
             <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Needs Focus Biomarkers</div>
             {treatmentPlanData &&
-              <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+              <div className="bg-backgroundColor-Card p-4 pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
                       <TextBoxAi
                         isUpchange={isforceReload}
                         isNeedFocus

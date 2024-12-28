@@ -28,7 +28,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
     const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["report_detail"])
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
     const [activeEl,setActiveEl] = useState<any>()
-    const [suggestion,] = useState<any>(data["suggestion_tab"])
+    // const [suggestion,] = useState<any>(data["suggestion_tab"])
     useEffect(() => {
         setData((pre: any) => {
             const old = pre;
@@ -220,7 +220,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                     <>
                         <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                             <div className="w-full flex items-center justify-between">
-                                <div className="text-sm font-medium text-Text-Primary flex items-center gap-2"> <div className="dark:bg-primary-text bg-Text-Triarty rounded-full w-1 h-1"></div>  Report Details</div>
+                                <div className="text-sm font-medium text-Text-Primary flex items-center gap-2"> <div className="bg-Text-Primary rounded-full w-1 h-1"></div>  Report Details</div>
                                 {/* <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                                 </div> */}
@@ -234,6 +234,11 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                             isActive={activeBio?.category == el.category}
                                             onClick={() => {
                                                 setActiveBio(el)
+                                                const old = active
+                                                setActive("")
+                                                setTimeout(() => {
+                                                    setActive(old)
+                                                }, 10);
                                                 // setActiveEl(el["Out of Reference"][0])
                                             }}
                                             onCheck={() => {
@@ -275,7 +280,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <div className=" text-Text-Secondary text-[10px]">
-                                                    <span className="text-[12px] text-Text-Primary">{activeBio?.total_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-Text-Primay">{activeBio?.total_needs_focus}</span> Needs Focus
+                                                    <span className="text-[12px] text-Text-Primary">{activeBio?.num_biomarkers}</span> Total Biomarkers <span className="ml-2 text-[12px]  text-Text-Primary">{activeBio?.needs_focus_count}</span> Needs Focus
                                         
                                                 </div>
                                             </div>
@@ -292,12 +297,40 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                 {active == 'Suggestion' ?
                                         <>
                                             {
-                                                suggestion.filter((el:any) => el.category == activeBio.category).length > 0 &&
+                                                data["suggestion_tab"].filter((el:any) => el.category == activeBio.category).length > 0 &&
                                                     <>
-                                                        {suggestion.filter((el:any) => el.category == activeBio.category)[0].suggestions.map((el:any) => {
+                                                        {data["suggestion_tab"].filter((el:any) => el.category == activeBio.category)[0].suggestions.map((el:any) => {
                                                             return (
                                                                 <div className="mt-2">
-                                                                    <BioMarkerRowSuggestions value={el}></BioMarkerRowSuggestions>
+                                                                    <BioMarkerRowSuggestions value={el} onchange={(valu:any) =>{
+                                                                       setData((pre:any) => {
+                                                                        const newData = {...pre}
+                                                                        const suggestion_tab = [...newData.suggestion_tab]
+                                                                        newData.suggestion_tab=suggestion_tab.map((values :any)=> {
+                                                                            // console.log(el)
+                                                                            if(values.category == activeBio.category){
+                                                                                const newSugs = [...values.suggestions]
+                                                                                const newSugesResolved = newSugs.map(ns => {
+                                                                                    if(ns.title == valu.title){
+                                                                                        console.log("findTitle")
+                                                                                        return valu
+                                                                                    }else {
+                                                                                        return ns
+                                                                                    }
+                                                                                })
+                                                                                return {
+                                                                                    ...values,
+                                                                                    suggestions:newSugesResolved
+                                                                                }
+                                                                            }else {
+                                                                                return values
+                                                                            }
+                                                                        })
+                                                                        console.log(newData.suggestion_tab)
+                                                                        return newData
+                                                                       })
+                                                                       console.log(valu)
+                                                                    }}></BioMarkerRowSuggestions>
                                                                 </div>
                                                             )
                                                         })}

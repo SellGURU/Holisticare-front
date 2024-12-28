@@ -95,8 +95,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             className={`${isOpen ? "rotate-180" : ""} cursor-pointer`}
           >
             <img
-              className="invert dark:invert-0"
-              src="./Themes/Aurora/icons/arrow-Combo-left.svg"
+              className="invert dark:invert-0 w-[24px]"
+              src="/icons/arrow-down-green.svg"
               alt=""
             />
           </div>

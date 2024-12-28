@@ -248,21 +248,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 
                                         {/* <CustomCanvasChart></CustomCanvasChart> */}
                             </div>       
-                            <div className="my-10 ">
-                                <div>
-                                    <div id="Detailed Analysis" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
-                                    <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
-                                </div>  
-            
-                                <div className="mt-6">
-                                    {resolveCategories().map((el:any) => {
-                                        return (
-                                            <DetiledAnalyse refrences={resolveSubCategories().filter(val =>val.subcategory == el.subcategory )[0]} data={el}></DetiledAnalyse>
-                                        )
-                                    })}
-                                </div>
-                            </div>     
-                            <div className="my-10 ">
+                            <div className="my-10 min-h-[400px]">
                                 <div className="w-full mb-3 flex items-center justify-between">
                                     <div id="Concerning Result" className=" sectionScrollEl TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
@@ -288,13 +274,26 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                         )
                                     })}
                                 </div>
-                            </div>          
+                            </div>                               
+                            <div className="my-10 ">
+                                <div>
+                                    <div id="Detailed Analysis" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
+                                    <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
+                                </div>  
+            
+                                <div className="mt-6">
+                                    {resolveCategories().map((el:any) => {
+                                        return (
+                                            <DetiledAnalyse refrences={resolveSubCategories().filter(val =>val.subcategory == el.subcategory )[0]} data={el}></DetiledAnalyse>
+                                        )
+                                    })}
+                                </div>
+                            </div>     
+       
                             <div className="my-10 min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
                                     <div id="Treatment Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary">Treatment Plan </div>
-                                    <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                                        {/* Total of 30 Treatment in 4 category */}
-                                    </div>
+                                    <InfoToltip mode="Treatment"></InfoToltip>
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                                 </div> 
                                 <TreatmentPlan treatmentPlanData={TreatMentPlanData}></TreatmentPlan>     

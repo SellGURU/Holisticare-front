@@ -410,6 +410,10 @@ static downloadClinicReport(data:any){
     const response = this.post("/clinic/show_category",data)
     return response
   }
+  static showPlanPriorty =(data:any) => {
+    const response = this.post("/clinic/show_plan_priority",data)
+    return response
+  }  
 }
 
 

@@ -6,7 +6,7 @@ const ReportSideMenu = () => {
     "Client Summary",
     "Needs Focus Biomarkers",
     "Detailed Analysis",
-    "Concerning Result",
+    // "Concerning Result",
     "Treatment Plan",
     "Action Plan",
   ];
@@ -92,7 +92,7 @@ const ReportSideMenu = () => {
                   }}
                   key={index}
                   className={`${
-                    index + 1 === activeImg ? "border-Primary-EmeraldGreen" : "border-gray-50"
+                    index + 1 == activeImg ? "border-Primary-EmeraldGreen" : "border-gray-50"
                   } border rounded-md relative overflow-hidden w-[146px] h-[56px] `}
                 >
                   <img className=" " src={`/images/report-sidemenu/${index + 1}.png`} alt="" />
