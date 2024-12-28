@@ -12,7 +12,7 @@ interface AnalyseButtonProps {
 }
 
 const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text }) => {
-  const [isloadingGenerate, setIsLoadingGenerate] = useState(false);
+  const [isloadingGenerate] = useState(false);
   const [showAiReport,setShowAiReport] = useState(false)
   const modalAiGenerateRef = useRef(null)
   useModalAutoClose({
