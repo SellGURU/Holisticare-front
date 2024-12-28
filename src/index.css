@@ -338,3 +338,7 @@ input[type="number"] {
 .hidden-scrollbar::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Edge */
 }
+
+.shadow-chat-input{
+  box-shadow: 4px 0px 12px 0px #CACAD740;
+}

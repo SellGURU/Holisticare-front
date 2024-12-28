@@ -28,13 +28,12 @@ const Report = () => {
                 <ReportAnalyseView ></ReportAnalyseView>
                
             </div>
-            {
-                isVisibleCombo &&
-                    <div className="fixed top-20 right-6 h-[80vh] flex items-center justify-between flex-col ">
-                        <ComboBar></ComboBar>
-                    </div>
+            
+            <div className={`fixed top-20 right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo?'visible':'invisible'} `}>
+                <ComboBar></ComboBar>
+            </div>
 
-            }
+        
 
         </div>
     )

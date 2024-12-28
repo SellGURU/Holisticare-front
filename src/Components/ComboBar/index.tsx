@@ -119,7 +119,7 @@ export const ComboBar = () => {
                     <li key={'1'} className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={patientInfo.picture!= ''?patientInfo.picture:`https://ui-avatars.com/api/?name=${patientInfo.name}`}   onError={(e: any) => {
                             e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
-                        }} className={"border-whiteavatar rounded-full"}/>
+                        }} className={"border-whiteavatar w-full h-full rounded-full"}/>
                     </li>
                     <li key={'2'} className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
                         {patientInfo.name.substring(0,20)}
@@ -151,7 +151,7 @@ export const ComboBar = () => {
                     ref={modalRef}
                     className="w-full shadow-200"
                 >
-                    <PopUpChat isOpen={toogleOpenChat} memberId={id as string}/>
+                    <PopUpChat isOpen={toogleOpenChat} info={patientInfo} memberId={id as string}/>
                 </div>
             </div>
         </>

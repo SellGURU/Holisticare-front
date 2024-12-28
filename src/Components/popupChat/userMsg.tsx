@@ -1,15 +1,16 @@
-import {useParams} from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import {useParams} from "react-router-dom";
 
-export const UserMsg=({msg}:{msg:string})=>{
-    const {name } = useParams<{ name:string }>();
+export const UserMsg=({msg,info}:{msg:string,info:any})=>{
+    // const {name } = useParams<{ name:string }>();
 
     return (
         <div className={"flex items-start justify-end gap-2 mt-5"}>
 
             <div className={"pt-2 spa"}>
                 <div className={"flex items-end justify-end gap-1 "}>
-                    <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p>
-                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>{name}</h1>
+                    {/* <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p> */}
+                    <h1 className={"text-Text-Primary TextStyle-Headline-6 "}>{info.name}</h1>
                 </div>
                 <div
                     style={{
@@ -19,8 +20,8 @@ export const UserMsg=({msg}:{msg:string})=>{
                     <p>{msg}</p>
                 </div>
             </div>
-            <div>
-                <img src={"/images/chat/Float Button.svg"}/>
+            <div className="mr-1">
+                <img className="rounded-full w-[30px] h-[30px]" src={info.picture}/>
             </div>
         </div>
     )

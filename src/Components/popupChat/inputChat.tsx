@@ -19,7 +19,7 @@ export const InputChat:FC<IInputChat>=({onChange, sendHandler})=>{
     };
     return (
         <div className={"flex items-center justify-center rounded-xl py-3 px-2 shadow-chat-input"}>
-             <input onKeyDown={handleKeyDown} ref={btnSendRef} onChange={onChange} placeholder={"Ask me anything..."} className={"bg-white w-full h-full !border-none !outline-none"}/>
+             <input onKeyDown={handleKeyDown} ref={btnSendRef} onChange={onChange} placeholder={"Ask me anything..."} className={"bg-white w-full text-[12px] text-Text-Secondary pl-2 h-full !border-none !outline-none"}/>
             <img onClick={()=>{
                 sendHandler()
                 if (btnSendRef.current) {

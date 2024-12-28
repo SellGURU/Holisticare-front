@@ -74,7 +74,40 @@ export const TopBar:React.FC<TopBarProps> = ({
           url:'/report/Generate-Treatment-Plan'
         }
       ]
-    }else {
+    }
+    if(locationAddress.includes("Generate-Action-Plan")){
+      return [
+        {
+          name:'Home',
+          url:'/'
+        },
+        {
+          name:'Report',
+          url:'/report/'+routeData[3]+'/a'
+        },
+        {
+          name:'Generate Action Plan',
+          url:'/report/Generate-Action-Plan'
+        }
+      ]
+    }   
+    if(locationAddress.includes("action-plan/edit")){
+      return [
+        {
+          name:'Home',
+          url:'/'
+        },
+        {
+          name:'Report',
+          url:'/report/'+routeData[3]+'/a'
+        },
+        {
+          name:'Action Plan',
+          url:'/report/'
+        }
+      ]
+    }       
+    else {
       return [
         {
           name:'Home',

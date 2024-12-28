@@ -194,10 +194,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
 // import Data from "../calandar.json";
 import { useNavigate, useParams } from "react-router-dom";
-import MainTopBar from "../../MainTopBar";
+// import MainTopBar from "../../MainTopBar";
 import AnalyseButton from "../../AnalyseButton";
 import Application from "../../../api/app";
 import MiniAnallyseButton from "../../MiniAnalyseButton";
+import { TopBar } from "../../topBar";
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
@@ -231,7 +232,7 @@ const GenerateCalendar: React.FC = () => {
       </div>
     )}    
     <div className="w-full fixed z-50 top-0 ">
-        <MainTopBar></MainTopBar>
+        <TopBar></TopBar>
       </div>
     <div className="w-full h-full px-3 lg:px-6">
       
