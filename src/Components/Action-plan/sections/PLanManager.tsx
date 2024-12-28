@@ -4,52 +4,56 @@ import React, { useEffect, useState } from "react";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
 // import { BeatLoader } from "react-spinners";
 // import OrderSelector from "./OrderSelector.";
-import Data from "../data.json";
-import { TopBar } from "../../topBar";
+// import { TopBar } from "../../topBar";
 import { useNavigate } from "react-router-dom";
-interface Benchmark {
-  Benchmark: string;
-  Value: number;
-  checked: boolean;
-  tag?: Array<string>;
-}
+// interface Benchmark {
+//   Benchmark: string;
+//   Value: number;
+//   checked: boolean;
+//   tag?: Array<string>;
+// }
 
-interface BenchmarkArea {
-  Name: string;
-  Benchmarks: Benchmark[];
-  checked: boolean;
-}
+// interface BenchmarkArea {
+//   Name: string;
+//   Benchmarks: Benchmark[];
+//   checked: boolean;
+// }
 
-interface Category {
-  BenchmarkAreas: BenchmarkArea[];
-}
-type PrioritiesType = Record<string, Category>;
+// interface Category {
+//   BenchmarkAreas: BenchmarkArea[];
+// }
+// type PrioritiesType = Record<string, Category>;
 
 interface PlanManagerModalProps {
   setDataGenerate?: (data: any) => void;
   // onCompleteAction?: () => void;
+  dataVal:any
   isgenerate?: boolean;
   isNewGenerate?: boolean;
 }
 
 const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   isNewGenerate,
-  isgenerate,
-  setDataGenerate,
+  dataVal
   // onCompleteAction,
 }) => {
+  console.log(new Set(dataVal.interventions.map((el:any) => el.pillar)))
+  const [categories] = useState(new Set(dataVal.interventions.map((el:any) => el.pillar)))
+  
   // const theme = useSelector((state: any) => state.theme.value.name);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  // const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [buttonState, setButtonState] = useState("initial");
-  const [data] = useState<PrioritiesType>(Data);
+  const [data,setdata] = useState<any>(dataVal);
   // const { id } = useParams<{ id: string }>();
-
-  const [allData, setAllData] = useState(data);
+  const resolveDataFromCategory = (categoryName:string) => {
+    return data.interventions.filter((el:any) =>el.pillar == categoryName)
+  }
+  // const [allData, setAllData] = useState(data);
   // const [categories,setCategories] = useState<Array<string>>([])
-  useEffect(() => {
-    setAllData(data);
-    setExpanded({}); // Reset expanded state when data changes
-  }, [data]);
+  // useEffect(() => {
+  //   setAllData(data);
+  //   setExpanded({}); // Reset expanded state when data changes
+  // }, [data]);
 
   // const handleClick = () => {
   //   setButtonState("loading");
@@ -76,13 +80,13 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   //   return levels;
   // });
 
-  const toggleExpand = (category: string, areaIndex: number) => {
-    const key = `${category}-${areaIndex}`;
-    setExpanded((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  // const toggleExpand = (category: string, areaIndex: number) => {
+  //   const key = `${category}-${areaIndex}`;
+  //   setExpanded((prev) => ({
+  //     ...prev,
+  //     [key]: !prev[key],
+  //   }));
+  // };
 
   // const handleLevelChange = (
   //   category: string,
@@ -96,74 +100,71 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   //     [key]: level,
   //   }));
   // };
-  const handleCheckboxChange = (
-    areaIndex: number,
-    benchmarkIndex: number,
-    topLevelKey: string,
-    state: boolean
-  ) => {
-    setAllData((prevState) => {
-      const updatedData = { ...prevState }; // Clone the current state
-
-      // Access the specific benchmark using the dynamic key
-
-      // Toggle the "checked" state
-      updatedData[topLevelKey].BenchmarkAreas[areaIndex].Benchmarks[
-        benchmarkIndex
-      ].checked = state;
-
-      if (setDataGenerate) {
-        setDataGenerate(updatedData);
-      }
-      return updatedData; // Return the updated state
-    });
-  };
   const handleValueChange = (
-    areaIndex: number,
-    benchmarkIndex: number,
-    topLevelKey: string,
+    keyVal: string,
+    name:string,
     value: number
   ) => {
-    setAllData((prevState) => {
-      const updatedData = { ...prevState }; // Clone the current state
+    setdata((prevState:any) => {
+      const updatedData = { ...prevState };
+      const interventions = updatedData.interventions
 
-      // Access the specific benchmark using the dynamic key
-
-      // Toggle the "checked" state
-      updatedData[topLevelKey].BenchmarkAreas[areaIndex].Benchmarks[
-        benchmarkIndex
-      ].Value = value;
-
-      if (setDataGenerate) {
-        setDataGenerate(updatedData);
-      }
-      return updatedData; // Return the updated state
-    });
+      updatedData.interventions =interventions.map((el:any) => {
+        if(el.pillar == keyVal && el.name == name){
+          return {
+            ...el,
+            level:value
+          }
+        }else {
+          return el
+        }
+      })
+      console.log(updatedData.interventions)
+      return updatedData
+    })
   };
 
   const handleCheckBoxChangeParent = (
-    areaIndex: number,
-    topLevelKey: string,
+    keyVal: string,
+    name:string,
     state: boolean
   ) => {
-    setAllData((prevState) => {
-      const updatedData = { ...prevState }; // Clone the current state
 
-      // Access the specific benchmark using the dynamic key
+    setdata((prevState:any) => {
+      const updatedData = { ...prevState };
+      const interventions = updatedData.interventions
 
-      // Toggle the "checked" state
-      updatedData[topLevelKey].BenchmarkAreas[areaIndex].checked = state;
-      updatedData[topLevelKey].BenchmarkAreas[areaIndex].Benchmarks.map(
-        (element) => {
-          element.checked = state;
+      updatedData.interventions =interventions.map((el:any) => {
+        if(el.pillar == keyVal && el.name == name){
+          return {
+            ...el,
+            selected:state
+          }
+        }else {
+          return el
         }
-      );
+      })
+      console.log(updatedData.interventions)
+      return updatedData
+    })
+    // setAllData((prevState) => {
+    //   const updatedData = { ...prevState }; // Clone the current state
 
-      if (setDataGenerate) {
-        setDataGenerate(updatedData);
-      }
-      return updatedData; // Return the updated state
-    });
+    //   // Access the specific benchmark using the dynamic key
+
+    //   // Toggle the "checked" state
+    //   updatedData[topLevelKey].BenchmarkAreas[areaIndex].checked = state;
+    //   updatedData[topLevelKey].BenchmarkAreas[areaIndex].Benchmarks.map(
+    //     (element) => {
+    //       element.checked = state;
+    //     }
+    //   );
+
+    //   if (setDataGenerate) {
+    //     setDataGenerate(updatedData);
+    //   }
+    //   return updatedData; // Return the updated state
+    // });
   };
 
   //   const SendToApi = () => {
@@ -176,12 +177,12 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   const navigate = useNavigate();
   return (
     <>
-      <div className="w-full fixed top-0 ">
+      {/* <div className="w-full fixed top-0 ">
         <TopBar></TopBar>
-      </div>
+      </div> */}
 
       <div className="px-6">
-        <div className="px-8 mb-2 pt-[80px]">
+        {/* <div className="px-8 mb-2 pt-[80px]">
           <div className="flex items-center gap-3">
             <div
               onClick={() => {
@@ -195,7 +196,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
               Set Orders
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div
           className={` p-4  w-lg w-full h-fit  overflow-auto  overflow-x-hidden`}
@@ -214,7 +215,254 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
           </div> */}
 
             <div className=" w-full flex justify-between flex-wrap  gap-3">
-              {Object.entries(allData).map(
+
+              {
+                Array.from(categories).map((categoryName:any,index) => {
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        className={`py-3 rounded-[24px] bg-white border border-Gray-50 shadow-100  relative select-none w-fit  min-w-[300px] max-w-[300px] h-[420px] overflow-auto overflow-x-hidden   `}
+                      >
+                        <div className="flex px-3 pb-1 justify-between items-center border-b  w-full ">
+                          <span className="flex items-center gap-2 TextStyle-Button text-Text-Primary">
+                            <div className="bg-backgroundColor-Main rounded-lg p-1 flex items-center justify-center">
+                              <div className={`w-4 h-4 `}>
+                                {categoryName == "Diet" && (
+                                  <img src={"/icons/diet.svg"} alt="" />
+                                )}
+                                {categoryName == "Activity" && (
+                                  <img src={"/icons/weight.svg"} alt="" />
+                                )}
+                                {categoryName == "Mind" && (
+                                  <img src={"/icons/mind.svg"} alt="" />
+                                )}
+                                {categoryName == "Supplement" && (
+                                  <img src={"/icons/Supplement.svg"} alt="" />
+                                )}
+                              </div>
+                            </div>
+                            {categoryName}
+                          </span>
+                        </div>      
+
+                        <ul className="mt-2">
+                          {resolveDataFromCategory(categoryName).map((area:any,areaIndex:number) => (
+                            <li key={areaIndex} className="flex flex-col px-2 my-2">
+                              <div className="flex items-center">
+                                {/* <img
+                                  src="/icons/arrow-down-green.svg"
+                                  onClick={() =>
+                                    toggleExpand(categoryName, areaIndex)
+                                  }
+                                  className={`${
+                                    expanded[`${categoryName}-${areaIndex}`]
+                                      ? "rotate-180"
+                                      : ""
+                                  } transition-transform cursor-pointer -ml-5`}
+                                /> */}
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={area.selected}
+                                    onClick={() => setshowOrder(true)}
+                                    onChange={() => {
+                                      handleCheckBoxChangeParent(
+                                        categoryName,
+                                        area.name,
+                                        !area.selected
+                                      );
+                                    }}
+                                    className="hidden"
+                                  />
+                                  <div
+                                    className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
+                                      area.selected
+                                        ? "bg-Primary-DeepTeal"
+                                        : "bg-white"
+                                    }`}
+                                  >
+                                    {area.selected && (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-3 w-3 text-white"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  <span className="TextStyle-Body-2 overflow-hidden text-nowrap text-ellipsis min-w-[130px] max-w-[130px] text-Text-Primary">
+                                    {area.name}
+                                  </span>
+                                  <span className="text-[10px] text-Text-Secondary mr-1">
+                                    Level:
+                                  </span>
+                                  <div className="flex border rounded-[4px] border-Gray-50 bg-Gray-15">
+                                    {Array.from(
+                                      { length: isNewGenerate ? 0 : 2 },
+                                      (_, i) => (
+                                        <button
+                                          key={i}
+                                          onClick={() => {
+                                            setshowOrder(true);
+                                            handleValueChange(
+                                              categoryName,
+                                              area.name,
+                                              i + 1
+                                            );
+                                          }}
+                                          className={`w-5 h-5 flex items-center justify-center text-sm ${
+                                            area.level === i + 1
+                                              ? " text-Primary-EmeraldGreen"
+                                              : " text-Text-Secondary"
+                                          }`}
+                                        >
+                                          {i + 1}
+                                        </button>
+                                      )
+                                    )}
+                                  </div>                                  
+                                </label>
+                              </div>
+                              {/* {expanded[`${categoryName}-${areaIndex}`] && (
+                                <ul className="ml-4">
+                                  {area.Benchmarks.map(
+                                    (benchmark, benchmarkIndex) => (
+                                      <li
+                                        key={benchmarkIndex}
+                                        className="flex items-center my-1"
+                                      >
+                                        <label className="flex gap-2  items-start cursor-pointer ">
+                                          <input
+                                            type="checkbox"
+                                            checked={
+                                              benchmark.checked && area.checked
+                                            }
+                                            onClick={() => setshowOrder(true)}
+                                            onChange={() => {
+                                              if (area.checked) {
+                                                handleCheckboxChange(
+                                                  areaIndex,
+                                                  benchmarkIndex,
+                                                  categoryName,
+                                                  !benchmark.checked
+                                                );
+                                              }
+                                            }}
+                                            className="hidden"
+                                          />
+                                          <div
+                                            className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
+                                              benchmark.checked && area.checked
+                                                ? "bg-Primary-DeepTeal"
+                                                : "bg-white"
+                                            }`}
+                                          >
+                                            {benchmark.checked && area.checked && (
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-3 w-3 text-white"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                              >
+                                                <path
+                                                  fillRule="evenodd"
+                                                  d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                                                  clipRule="evenodd"
+                                                />
+                                              </svg>
+                                            )}
+                                          </div>
+                                          <div className="TextStyle-Body-2 text-Text-Primary w-[60px]">
+                                            {benchmark.Benchmark.substring(
+                                              0,
+                                              isNewGenerate ? 18 : 35
+                                            )}
+                                            {benchmark?.tag && (
+                                              <>
+                                                {benchmark?.tag.length > 0 && (
+                                                  <>
+                                                    <div className="flex flex-col mt-[0px] gap-2">
+                                                      {benchmark?.tag.map((el) => {
+                                                        console.log(el);
+
+                                                        return (
+                                                          <span
+                                                            className={` ${
+                                                              el == "Needs Focus"
+                                                                ? "bg-[#FC5474]"
+                                                                : "bg-[#FBAD37]"
+                                                            } ml-1 px-1 w-max text-[10px] h-24px text-white rounded-[24px]`}
+                                                          >
+                                                            {el}
+                                                          </span>
+                                                        );
+                                                      })}
+                                                    </div>
+                                                  </>
+                                                )}
+                                              </>
+                                            )}
+                                          </div>
+                                        </label>
+                                        {benchmark.checked ? (
+                                          <div className="w-full flex items-center justify-end ml-10">
+                                            {!isNewGenerate && (
+                                              <span className="text-[10px] text-Text-Secondary mr-1">
+                                                Level:
+                                              </span>
+                                            )}
+                                            <div className="flex border rounded-[4px] border-Gray-50 bg-Gray-15">
+                                              {Array.from(
+                                                { length: isNewGenerate ? 0 : 3 },
+                                                (_, i) => (
+                                                  <button
+                                                    key={i}
+                                                    onClick={() => {
+                                                      setshowOrder(true);
+                                                      handleValueChange(
+                                                        areaIndex,
+                                                        benchmarkIndex,
+                                                        categoryName,
+                                                        i + 1
+                                                      );
+                                                    }}
+                                                    className={`w-5 h-5 flex items-center justify-center text-sm ${
+                                                      benchmark.Value === i + 1
+                                                        ? " text-Primary-EmeraldGreen"
+                                                        : " text-Text-Secondary"
+                                                    }`}
+                                                  >
+                                                    {i + 1}
+                                                  </button>
+                                                )
+                                              )}
+                                            </div>
+                                          </div>
+                                        ) : undefined}
+                                      </li>
+                                    )
+                                  )}
+                                </ul>
+                              )} */}
+                            </li>
+                          ))}
+                        </ul>                                          
+                      </div>                    
+                    </>
+                  )
+                })
+              }
+
+
+
+              {/* {Object.entries(allData).map(
                 ([categoryName, category], categoryIndex) => (
                   <div
                     key={categoryIndex}
@@ -268,11 +516,6 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                 checked={area.checked}
                                 onClick={() => setshowOrder(true)}
                                 onChange={() => {
-                                  // if(!categories.includes(area.Name as string)){
-                                  //   setCategories([...categories,area.Name])
-                                  // }else {
-                                  //   setCategories([...categories.filter(item => item !== area.Name)])
-                                  // }
                                   handleCheckBoxChangeParent(
                                     areaIndex,
                                     categoryName,
@@ -307,30 +550,6 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                 {area.Name}
                               </span>
                             </label>
-                            {/* <label className="flex gap-1 items-center justify-start cursor-pointer text-xs font-normal text-light-primary-text dark:text-secondary-text">
-                            <input
-                              type="checkbox"
-                              checked={area.checked}
-                              onClick={() => setshowOrder(true)}
-                              onChange={() => {
-                                // if(!categories.includes(area.Name as string)){
-                                //   setCategories([...categories,area.Name])
-                                // }else {
-                                //   setCategories([...categories.filter(item => item !== area.Name)])
-                                // }
-                                handleCheckBoxChangeParent(
-                                  areaIndex,
-                                  categoryName,
-                                  !area.checked
-                                );
-                              }}
-                              className="mr-2 peer shrink-0 appearance-none w-5 h-5 rounded-md bg-black-primary border border-main-border checked:bg-brand-secondary-color checked:border-transparent checked:text-black checked:before:content-['✔'] checked:before:text-black checked:before:block checked:before:text-center"
-                            />
-
-                            <div className="peer-checked:dark:text-primary-text peer-checked:text-light-secandary-text">
-                              {area.Name}
-                            </div>
-                          </label> */}
                           </div>
                           {expanded[`${categoryName}-${areaIndex}`] && (
                             <ul className="ml-4">
@@ -458,7 +677,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                     </ul>
                   </div>
                 )
-              )}
+              )} */}
             </div>
             <div className="mt-12 w-[192px]  mx-auto flex justify-center">
               <ButtonPrimary
