@@ -162,7 +162,9 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         </div>
       )}
 
-    <div className="fixed w-full top-0"><TopBar></TopBar></div>
+    <div className="fixed w-full top-0">
+      <TopBar></TopBar>
+    </div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
         <div className="w-full px-4 py-6    relative   ">
           <div className=" flex mb-2 justify-between w-full">

@@ -16,7 +16,7 @@ const Report = () => {
     return (
        <div className="">
             <div className="w-full sticky z-50 top-0 ">
-                <TopBar></TopBar>
+                <TopBar canDownload></TopBar>
             </div>
             <div className="fixed z-10 left-4 top-16">
                 <ReportSideMenu></ReportSideMenu>

@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
-export const TopBar = () => {
+// import { useEffect } from "react";
+
+interface TopBarProps {
+  canDownload?:boolean
+}
+
+export const TopBar:React.FC<TopBarProps> = ({
+  canDownload
+}) => {
   const navigate = useNavigate();
   const printreport  = () => {
       const mywindow:any = window.open("", "PRINT", "height=300,width=800");
@@ -48,33 +56,80 @@ export const TopBar = () => {
       }
       // mywindow.print()        
   }  
+  const resolveNav =() => {
+    const locationAddress = window.location.pathname
+    const routeData = locationAddress.split("/")
+    if(locationAddress.includes("Generate-Treatment-Plan")){
+      return [
+        {
+          name:'Home',
+          url:'/'
+        },
+        {
+          name:'Report',
+          url:'/report/'+routeData[3]+'/a'
+        },
+        {
+          name:'Generate Treatment Plan',
+          url:'/report/Generate-Treatment-Plan'
+        }
+      ]
+    }else {
+      return [
+        {
+          name:'Home',
+          url:'/'
+        },
+        {
+          name:'Report',
+          url:'/report/'+routeData[2]+'/a'
+        },        
+      ]
+    }
+  }
   return (
     <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
         <img src="/icons/home.svg" alt="" />
-        <div
-          onClick={() => navigate("/")}
-          className="TextStyle-Button text-[#445A74] cursor-pointer ml-1"
-        >
-          Home
-        </div>
+        {resolveNav().map((el,index:number) => {
+          return (
+            <>
+            <div
+              onClick={() =>{
+                if(index !=resolveNav().length-1){
+                  navigate(el.url)
+                }
+              }}
+              className={`TextStyle-Button text-[#445A74] ${index ==resolveNav().length-1 ?'opacity-50':''} cursor-pointer ml-1` }
+            >
+              {el.name}
+            </div>
+            {index !=resolveNav().length-1 
+            &&
+             <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
+            }
+            </>
+          )
+        })}
 
-        <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
-        <span className="TextStyle-Button text-[#6783A0]">Report</span>
+        {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
+        <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
       <div className="flex gap-10 ">
-        <div className="flex gap-3">
-        <ButtonPrimary size="small" onClick={printreport}>
-          <img src="/icons/download.svg" alt="" />
-          Download
-        </ButtonPrimary>
-        <div className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer ">
-            <img src="/icons/share.svg" alt="" />
-            Share
+        {canDownload &&
+          <div className="flex gap-3">
+            <ButtonPrimary size="small" onClick={printreport}>
+              <img src="/icons/download.svg" alt="" />
+              Download
+            </ButtonPrimary>
+            <div className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer ">
+                <img src="/icons/share.svg" alt="" />
+                Share
+            </div>
           </div>
-        </div>
+        }
         
-          <div className="flex items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]">
+        <div className="flex items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]">
           <img src="/icons/topbar-logo2.png" alt="" />
           Clinic Longevity 1
         </div>

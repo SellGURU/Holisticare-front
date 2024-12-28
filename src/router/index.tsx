@@ -3,7 +3,7 @@ import { Home, Report } from "../pages";
 import ProtectedRoute from "./protected";
 import Layout from "../layout";
 import GenerateNewActionPlan from "../Components/Action-plan/GenerateNewPlan";
-import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
+// import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
 import Login from "../pages/login";
 import { Targeting } from "../Components/Action-plan/sections/Targeting";
 import GenerateCalendar from "../Components/Action-plan/sections/generatecalendar";
@@ -46,13 +46,13 @@ const router = createBrowserRouter([
         element: <GenerateNewActionPlan></GenerateNewActionPlan>,
       },
       {
-        path:'generateNewTreatmentPlan/:id',
+        path:'report/Generate-Treatment-Plan/:id',
         element:<GenerateNewPlan></GenerateNewPlan>
       },
-      {
-        path: "action-plan/orders/:id",
-        element: <PlanManagerModal></PlanManagerModal>,
-      },
+      // {
+      //   path: "action-plan/orders/:id",
+      //   element: <PlanManagerModal dataVal={}></PlanManagerModal>,
+      // },
       {
         path: "action-plan/targeting/:id/:blackId",
         element: <Targeting></Targeting>
