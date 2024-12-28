@@ -30,6 +30,7 @@ import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 import { publish } from "../../utils/event"
+import InfoToltip from "../InfoToltip"
 interface ReportAnalyseViewprops {
     clientData?:any,
     memberID? : number | null
@@ -214,9 +215,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 </div>
             
                                 <div className="flex-grow w-full ">
-                                    <div className="w-full flex justify-between">
-
-                                    
+                                    <div className="w-full flex justify-end">
+                                        <InfoToltip></InfoToltip>
                                     </div>
                                     <div className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4" style={{lineHeight:'24px'}}>{ClientSummaryBoxs?.client_summary}</div>
                                     <div className="w-full mt-4 grid gap-4 grid-cols-2">

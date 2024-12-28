@@ -22,7 +22,7 @@ export const ButtonPrimary: React.FC<ButtonDefaultProps> = ({
       className={
         ` text-[12px]  flex items-center justify-center gap-1 ${outLine?'bg-backgroundColor-Main border-Primary-DeepTeal text-Primary-DeepTeal':'bg-Primary-DeepTeal border-gray-50 text-white'}  rounded-3xl border  disabled:bg-[#999999]
           ${
-           size == 'small'? ' px-3 py-1 ' :' px-6 py-[6px] ' 
+           size == 'small'? ' px-4 py-[2px] ' :' px-6 py-[6px] ' 
           }
         ` +
         ClassName

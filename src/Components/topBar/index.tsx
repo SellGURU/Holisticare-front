@@ -64,7 +64,7 @@ export const TopBar = () => {
       </div>
       <div className="flex gap-10 ">
         <div className="flex gap-3">
-        <ButtonPrimary onClick={printreport}>
+        <ButtonPrimary size="small" onClick={printreport}>
           <img src="/icons/download.svg" alt="" />
           Download
         </ButtonPrimary>
