@@ -51,6 +51,7 @@ const GenerateNewActionPlan = () => {
   const navigate = useNavigate();
   const [plans,setPlan] = useState<any>(null)
   const [activePlan,setActivePlan] = useState<any>(null) 
+  const [activePlanName,setActivePlanName] = useState<any>(null) 
   const { id } = useParams<{ id: string }>();
   useEffect(() => {
     Application.getActionPlanMethods({
@@ -120,7 +121,15 @@ const GenerateNewActionPlan = () => {
 
       <div className="w-full inset-0 z-10  flex items-center justify-center px-8  bg-opacity-50">
         {isEditMode ? (
-          <PlanManagerModal dataVal={activePlan}  />
+          <PlanManagerModal onSave={(value:any) => {
+            setActivePlan(value)
+            setPlan((pre:any) => {
+              const newData = {...pre}
+              newData[activePlanName] = value
+              return newData
+            })
+            setisEditMode(false)
+          }} dataVal={activePlan} />
         ) : (
           <div className=" h-full pb-[180px] l flex flex-col   justify-center items-center relative py-[80px]  ">
             <div className="text-Text-Primary text-base font-medium text-center">
@@ -143,6 +152,7 @@ const GenerateNewActionPlan = () => {
                   return <PlanCard
                   onEdit={() => {
                     setActivePlan(plans[el])
+                    setActivePlanName(el)
                     setisEditMode(true)
                   }}
                    name={el} 
@@ -150,7 +160,8 @@ const GenerateNewActionPlan = () => {
                     ()=>{
                       generateActionPlan(plans[el])         
                     }
-                  } data={plans[el]}></PlanCard>;
+                  }
+                  data={plans[el]}></PlanCard>;
                 })}
               </>
               }

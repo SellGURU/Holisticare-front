@@ -31,7 +31,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
             <span className="TextStyle-Headline-6 text-Text-Primary ">
               Create Your AI Twin
             </span>
-            <div className="h-[100px] overflow-y-auto grid gap-1">
+            <div className="h-[100px] overflow-y-auto overflow-x-hidden grid gap-1">
               {data.interventions.filter((val:any) =>val.selected == true).map((el: any, i: number) => (
                 <div
                   key={i}

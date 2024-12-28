@@ -5,7 +5,7 @@ import { ButtonPrimary } from "../../Button/ButtonPrimary";
 // import { BeatLoader } from "react-spinners";
 // import OrderSelector from "./OrderSelector.";
 // import { TopBar } from "../../topBar";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 // interface Benchmark {
 //   Benchmark: string;
 //   Value: number;
@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 interface PlanManagerModalProps {
   setDataGenerate?: (data: any) => void;
   // onCompleteAction?: () => void;
+  onSave:(data:any) => void,
   dataVal:any
   isgenerate?: boolean;
   isNewGenerate?: boolean;
@@ -34,10 +35,10 @@ interface PlanManagerModalProps {
 
 const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   isNewGenerate,
-  dataVal
+  dataVal,
+  onSave
   // onCompleteAction,
 }) => {
-  console.log(new Set(dataVal.interventions.map((el:any) => el.pillar)))
   const [categories] = useState(new Set(dataVal.interventions.map((el:any) => el.pillar)))
   
   // const theme = useSelector((state: any) => state.theme.value.name);
@@ -174,7 +175,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   //   }
   const [, setshowOrder] = useState(false);
   // const [Order, setOrder] = useState("Manual Order");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <>
       {/* <div className="w-full fixed top-0 ">
@@ -682,8 +683,8 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
             <div className="mt-12 w-[192px]  mx-auto flex justify-center">
               <ButtonPrimary
                    onClick={() => {
-                   
-                  navigate(-1)
+                    onSave(data)
+                  // navigate(-1)
                   }}
               >
                 <img src="/icons/tick-square.svg" alt="" />
