@@ -249,7 +249,10 @@ const GenerateCalendar: React.FC = () => {
             Edit Action Plan
           </div>
         </div>
-        <AnalyseButton text="Generate by AI"></AnalyseButton>
+        <div className="relative">
+          <AnalyseButton text="Generate by AI"></AnalyseButton>
+
+        </div>
       </div>
       <div className=" w-full rounded-2xl  p-3  lg:p-6">
         <div className=" mx-auto p-">

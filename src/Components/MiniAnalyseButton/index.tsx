@@ -4,7 +4,7 @@ import useModalAutoClose from "../../hooks/UseModalAutoClose"
 // import GenerateWithAiModal from "@/pages/aiStudio/GenerateWithAiModal"
 import React, { useRef, useState } from "react"
 import { BeatLoader } from "react-spinners"
-import { ButtonSecondary } from "../Button/ButtosSecondary"
+// import { ButtonSecondary } from "../Button/ButtosSecondary"
 import GenerateWithAiModal from "../GenerateWithAiModal"
 interface MiniAnallyseButtonProps{
     disabled?: boolean
