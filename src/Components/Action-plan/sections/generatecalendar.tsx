@@ -180,27 +180,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
           </div>
-          {/* <div className=" hidden lg:flex flex-col gap-2">
-            <div className="w-8 h-[112px] flex flex-col justify-between items-center rounded-md border  border-brand-primary-color py-3">
-              <img
-                className="w-4 h-4 invert dark:invert-0"
-                src="./Themes/Aurora/icons/Ai generated.svg"
-                alt=""
-              />
-              <img
-                className="w-4 h-4"
-                src="./Themes/Aurora/icons/message-text.svg"
-                alt=""
-              />
-              <div className="h-px w-6 bg-brand-primary-color mx-auto"></div>
-              <img
-                className="w-4 h-4"
-                src="./Themes/Aurora/icons/tick-circle.svg"
-                alt=""
-              />
-            </div>
-          </div> */}
+          <div className="relative">
+            <MiniAnallyseButton />
+
+          </div>          
         </div>
+
       </div>
 
     </>
@@ -212,6 +197,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import MainTopBar from "../../MainTopBar";
 import AnalyseButton from "../../AnalyseButton";
 import Application from "../../../api/app";
+import MiniAnallyseButton from "../../MiniAnalyseButton";
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
