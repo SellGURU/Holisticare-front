@@ -141,9 +141,6 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
       useEffect(() => {
         const params = new URLSearchParams(location.search);
         const section = params.get('section');
-      
-        console.log('Scrolling to section:', section); // Debug log
-      
         if (!loading && section) { // Ensure loading is complete
           const element = document.getElementById(section);
           if (element) {

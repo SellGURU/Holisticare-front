@@ -62,7 +62,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       setisFinalLoading(true)
       setTimeout(()=>{
         setisFinalLoading(false)
-        navigate(`/report/${id}/amir`)
+        navigate(`/report/${id}/a?section=Treatment Plan`)
       },3000)
       navigate(-1);
   };

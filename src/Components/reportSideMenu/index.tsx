@@ -1,5 +1,6 @@
 import  { useState, useEffect } from "react";
 import { subscribe } from "../../utils/event"; // Adjust the import path as needed
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const ReportSideMenu = () => {
   const menuItems = [
@@ -15,26 +16,40 @@ const ReportSideMenu = () => {
   const [ActiveLayer, setActiveLayer] = useState("menu");
   const [activeImg, setactiveImg] = useState(1);
   const [disableClicks, setDisableClicks] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const handleNoReportAvailable = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      console.log(customEvent.detail.message);
+    const params = new URLSearchParams(location.search);
+    const handleNoReportAvailable = () => {
       setDisableClicks(true); 
-      setactiveMenu('Client Summary')
+      if(params.get("section")){
+        setactiveMenu(params.get("section") as string)
+      }else {
+        setactiveMenu('Client Summary')
+      }
       
     };
     const handleReportAvailable = () => {
       setDisableClicks(false); 
-      setactiveMenu('Client Summary')
+      if(params.get("section")){
+        setactiveMenu(params.get("section") as string)
+      }else {
+        setactiveMenu('Client Summary')
+      }
     };
     subscribe('noReportAvailable', handleNoReportAvailable);
     subscribe('ReportAvailable', handleReportAvailable);
 
 
   }, []);
-
-  
+  const [, setSearchParams] = useSearchParams();
+  const onchangeMenu =(item:string) => {
+    setSearchParams({["section"]: item})
+    setactiveMenu(item);
+    document.getElementById(item)?.scrollIntoView({
+      behavior: "smooth",
+    });      
+  }
   return (
     <div className="h-full max-h-[646px] min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 ">
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
@@ -64,10 +79,8 @@ const ReportSideMenu = () => {
               <div
                 onClick={() => {
                   if (!disableClicks) {
-                    setactiveMenu(item);
-                    document.getElementById(item)?.scrollIntoView({
-                      behavior: "smooth",
-                    });
+                    onchangeMenu(item)
+
                   }
                 }}
                 key={index}
