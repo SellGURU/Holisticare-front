@@ -160,6 +160,27 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
           publish("ReportAvailable",{})
         }
       }, [isHaveReport]);
+    const isInViewport = (element: HTMLElement): boolean => {
+        const rect = element.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= window.innerHeight;
+    };      
+    const handleScroll = () => {
+      // Select all the sections with the class "content"
+      const sections = document.querySelectorAll(".sectionScrollEl");
+      sections.forEach((section) => {
+        const element = section as HTMLElement;
+        if (isInViewport(element)) {
+          const sectionId = element.id;
+        //   console.log(sectionId)
+          publish("scrolledSection",{section:sectionId})
+        //   if (sectionId !== currentSection) {
+        //     // Update the state and query parameter only if the section changes
+        //     setCurrentSection(sectionId);
+        //     setSearchParams({ section: sectionId }); // Update the URL query parameter
+        //   }
+        }
+      });
+    };
     return (
         <>        
          {loading ? (
@@ -177,7 +198,9 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                 ): (
                     <>
 
-                        <div className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
+                        <div onScrollCapture={() => {
+                            handleScroll()
+                        }}  className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
                     
                             <div className="flex gap-14" >
                                 <div className="min-w-[330px] w-[330px] relative">
@@ -247,7 +270,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             </div>       
                             <div className="my-10 min-h-[400px]">
                                 <div className="w-full mb-3 flex items-center justify-between">
-                                    <div id="Concerning Result" className=" sectionScrollEl TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
+                                    <div id="Concerning Result" className="  TextStyle-Headline-4 text-Text-Primary">Concerning Result</div>
                                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                                         {/* Total of 30 Treatment in 4 category */}
                                     </div>
@@ -311,8 +334,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                       
                                 }  
                             </div>
-                            <div id="Action Plan" className="my-10 sectionScrollEl min-h-[650px]">
-                                <div className="TextStyle-Headline-4 text-Text-Primary mb-4">Action Plan</div>
+                            <div id="Action Plan" className="my-10  min-h-[650px]">
+                                <div id="Action Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4">Action Plan</div>
                                 <ActionPlan calenderDataUper={caldenderData}></ActionPlan>
                             </div>
                              {

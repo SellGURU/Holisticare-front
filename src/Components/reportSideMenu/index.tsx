@@ -39,7 +39,11 @@ const ReportSideMenu = () => {
     };
     subscribe('noReportAvailable', handleNoReportAvailable);
     subscribe('ReportAvailable', handleReportAvailable);
-
+    subscribe("scrolledSection",(data)=> {
+      // console.log(data)
+      // setSearchParams({["section"]: data.detail.section})
+      setactiveMenu(data.detail.section)
+    })
 
   }, []);
   const [, setSearchParams] = useSearchParams();
@@ -47,7 +51,7 @@ const ReportSideMenu = () => {
     setSearchParams({["section"]: item})
     setactiveMenu(item);
     document.getElementById(item)?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "instant",
     });      
   }
   return (
