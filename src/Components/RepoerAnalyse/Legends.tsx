@@ -6,8 +6,8 @@ const Legends =() => {
         <div className="relative">
             <div onMouseEnter={() => {setIsVisible(true)}} onMouseLeave={() => {
                 setIsVisible(false)
-            }} className="w-full flex justify-start items-center cursor-pointer  text-Primary-DeepTeal text-[12px]">Legend
-                <img src="/icons/user-navbar/info-circle.svg" className="w-4 cursor-pointer invert dark:invert-0 h-4 ml-1" alt="" />
+            }} className="w-full flex justify-start items-center cursor-pointer  text-Text-Secondary text-[12px]">Legend
+                <img src="/icons/sidbar-menu/info-circle.svg" className="w-4 cursor-pointer invert dark:invert-0 h-4 ml-1" alt="" />
             </div>
             {
                 isVisibele &&
