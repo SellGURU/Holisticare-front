@@ -63,7 +63,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               }}
             >
               <div
-                className="w-9 h-9  flex justify-center bg-white items-center  rounded-full"
+                className="w-[35px] h-[35px]  flex justify-center bg-white items-center  rounded-full"
                 style={{}}
               >
                 <img
