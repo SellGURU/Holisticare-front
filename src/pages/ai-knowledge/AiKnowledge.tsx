@@ -85,7 +85,7 @@ const LoadGraph: React.FC<LoadGraphProps> = ({ activeFilters, graphData, isIniti
             if (nodeSet.has(edge.source) && nodeSet.has(edge.target)) {
                 graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
                     weight: edge.weight,
-                    color: "#fff",
+                    color: "#696969",
                 });
             } else {
                 console.warn(`Missing nodes for edge: ${edge.source} -> ${edge.target}`);
