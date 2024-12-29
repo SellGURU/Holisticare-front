@@ -320,7 +320,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                           }}
                                           className={`w-5 h-5 flex items-center justify-center text-sm ${
                                             area.level === i + 1
-                                              ? " text-Primary-EmeraldGreen"
+                                              ? " text-Primary-DeepTeal"
                                               : " text-Text-Secondary"
                                           }`}
                                         >

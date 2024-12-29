@@ -32,7 +32,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen,isCombo, on
         <h2 className="text-xs font-medium text-Primary-DeepTeal">{headline}</h2>
         <img ref={showModalButtonRefrence} className='cursor-pointer' onClick={onClose} src='/icons/close.svg' />
       </div>
-      <div className="p-3 overflow-y-auto">
+      <div className="p-3 pt-1 overflow-y-auto">
         {children}
       </div>
     </div>

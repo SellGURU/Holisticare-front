@@ -91,7 +91,18 @@ const GenerateNewActionPlan = () => {
           <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div>
         </div>
       )}
-
+      {plans == null && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {" "}
+          
+          <div className="spinner">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="dot"></div>
+            ))}
+          </div>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We are generating tailored methods aligned with your treatment plan. This may take a moment.</div>
+        </div>
+      )}
       <div className="w-full fixed top-0 ">
         <TopBar></TopBar>
       </div>
@@ -139,12 +150,12 @@ const GenerateNewActionPlan = () => {
               You can personalize your selected method by using the setting
               button on the cards.
             </div>
-            <div className=" mt-16 flex items-center justify-center gap-4 flex-wrap">
+            <div className=" mt-6 flex items-center justify-center gap-4 flex-wrap">
               {plans == null ?
                 <div className="spinner">
-                  {[...Array(8)].map((_, i) => (
+                  {/* {[...Array(8)].map((_, i) => (
                     <div key={i} className="dot"></div>
-                  ))}
+                  ))} */}
                 </div>
               :
               <>

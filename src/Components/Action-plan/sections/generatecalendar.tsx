@@ -247,7 +247,7 @@ const GenerateCalendar: React.FC = () => {
             <img className="w-6 h-6" src="/icons/arrow-back.svg" />
           </div>
           <div className="TextStyle-Headline-5 text-Text-Primary">
-            Edit Action Plan
+            Generate Day to Day Activity
           </div>
         </div>
         <div className="relative">
