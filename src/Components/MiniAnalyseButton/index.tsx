@@ -21,13 +21,15 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
         },
         
     })
+    console.log(showAiReport);
+    
     return (
         <>
-            <>
-                <div className="h-8 bg-Primary-EmeraldGreen cursor-pointer w-8 max-w-8 max-h-8 min-h-8 rounded-md" onClick={() => {
+            <div className="relative">
+                <div className="h-8 bg-Primary-EmeraldGreen cursor-pointer w-8 max-w-8 max-h-8 min-h-8  flex items-center justify-center rounded-md" onClick={() => {
                     setShowAiReport(true)
                 }}>
-                    <img className="invisible" src="/icons/stars.svg" alt="" />
+                    <img className="" src="/icons/stars.svg" alt="" />
                 </div>
                 {isLoading?
                     <div className="absolute w-[16px] flex pt-2 pl-[2px] top-1">
@@ -45,7 +47,7 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
                 </>
                     }
                     {showAiReport &&
-                    <div className="absolute left-[-150px] top-10 z-40">
+                    <div className="absolute invisible right-[-0px] top-10 ">
                         <GenerateWithAiModal isBenchMark={false} isLimite={false} onSuccess={(_val:any) => {
                             setShowAiReport(false)
                             // setPramt(val)
@@ -55,7 +57,7 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
                     </div>
                     }
                 
-            </>        
+                </div>    
         </>
     )
 }

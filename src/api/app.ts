@@ -414,6 +414,10 @@ static downloadClinicReport(data:any){
     const response = this.post("/clinic/show_plan_priority",data)
     return response
   }  
+  static driftPatientInfo =() => {
+    const response = this.get("/drift_analysis/patient_info",)
+    return response
+  }  
 }
 
 

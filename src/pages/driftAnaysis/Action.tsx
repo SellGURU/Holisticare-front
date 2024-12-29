@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import MiniAnallyseButton from "../../Components/MiniAnalyseButton";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 import { SlideOutPanel } from "../../Components/SlideOutPanel";
+import Application from "../../api/app";
 interface ActionProps {
   memberID: number | null;
 }
@@ -79,6 +80,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
 //   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
 const [showModal, setshowModal] = useState(false)
+useState(()=>{
+  const response = Application.driftPatientInfo()
+  console.log(response);
+  
+})
   return (
     <>
    {

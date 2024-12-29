@@ -141,12 +141,12 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
     });
   }, [memberId]);
   return (
-    <div className="w-full  mx-auto bg-white shadow-200  rounded-[16px] relative flex flex-col p-4 ">
+    <div className="w-full  mx-auto bg-white shadow-200 min-h-[570px]  rounded-[16px] relative flex flex-col p-4 ">
         <div className="text-Text-Primary text-sm font-medium">State</div>
       <div className="p-4 text-center text-primary-text text-xs">
         {messages.length > 1 && chatStartDate}
       </div>
-      <div className="p-4 space-y-4 max-h-[300px] overflow-y-auto">
+      <div className="p-4 space-y-4 max-h-[430px] overflow-y-auto">
         {messages.map((msg, index: number) => (
           <>
             {msg.sender == "ai" ? (
