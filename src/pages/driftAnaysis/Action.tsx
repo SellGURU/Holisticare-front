@@ -89,13 +89,13 @@ const [showModal, setshowModal] = useState(false)
     )
    }
     <div className="w-full flex flex-col gap-2 ">
-        <div className="w-full h-fit bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
             <div className="text-sm font-medium">State</div>
-            <p className="text-xs text-justify my-4">This patient has an imbalance in the intake and consumption of calories and has a travel plan for the next week. He has said that during his 5-day trip, he is not able to implement his plans and requests a new plane.</p>
-            <p className="text-xs text-justify mb-4">According to the reference below, I am thinking of a Fasting Plan that we can re-plan for him so that we can control the amount of calories he eats during fasting. We can also suggest exercises that keep the amount of calories he eats at a balanced level while being comfortable.</p>
+            <p className="text-xs text-justify my-2">This patient has an imbalance in the intake and consumption of calories and has a travel plan for the next week. He has said that during his 5-day trip, he is not able to implement his plans and requests a new plane.</p>
+            <p className="text-xs text-justify ">According to the reference below, I am thinking of a Fasting Plan that we can re-plan for him so that we can control the amount of calories he eats during fasting. We can also suggest exercises that keep the amount of calories he eats at a balanced level while being comfortable.</p>
             <a className="text-xs text-[#55B0FF]" href="">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4516560/</a>
         </div>
-        <div className="w-full h-fit  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full max-h-[226px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -109,7 +109,7 @@ const [showModal, setshowModal] = useState(false)
             src=""
             alt=""
           /> */}
-          <MiniAnallyseButton/>
+          <MiniAnallyseButton ></MiniAnallyseButton>
         </div>
         {isRoadCompleted ? (
           <div className="flex flex-col  items-center justify-center">
@@ -123,7 +123,7 @@ const [showModal, setshowModal] = useState(false)
           </div>
         ) : (
           <div
-            className={`flex flex-col gap-3 pr-3 mt-5`}
+            className={`flex flex-col gap-2 pr-3 mt-2`}
           >
             {RoadMapData.map((option) => (
               <AccordionCard
@@ -138,7 +138,7 @@ const [showModal, setshowModal] = useState(false)
           </div>
         )}
       </div>
-      <div className="w-full h-fit max-h-[286px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+      <div className="w-full h-full max-h-[176px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
