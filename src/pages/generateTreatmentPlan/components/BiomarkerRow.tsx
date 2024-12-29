@@ -1,11 +1,13 @@
-import {  useState} from "react";
+import {  useEffect, useState} from "react";
 import RefrenceModal from "./RefrenceData";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
   value: any;
+  onchange:(value:string) =>void
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
+  onchange
 }) => {
 
   const resolveIcon = () => {
@@ -24,7 +26,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
 const [showModal, setshowModal] = useState(false)
 const [editableValue, setEditableValue] = useState(value.note);
-
+  useEffect(() => {
+    onchange({
+      ...value,
+      note:editableValue
+    })
+  },[editableValue])
   return (
     <>
       <div className="w-full flex justify-center items-center gap-4">

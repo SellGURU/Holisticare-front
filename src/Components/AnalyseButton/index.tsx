@@ -1,23 +1,37 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useRef, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import { ButtonSecondary } from "../Button/ButtosSecondary";
+import GenerateWithAiModal from "../GenerateWithAiModal";
+import useModalAutoClose from "../../hooks/UseModalAutoClose";
 
 interface AnalyseButtonProps {
   text: string;
   onAnalyse?: () => void;
 }
 
-const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text, onAnalyse }) => {
-  const [isloadingGenerate, setIsLoadingGenerate] = useState(false);
+const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text }) => {
+  const [isloadingGenerate] = useState(false);
+  const [showAiReport,setShowAiReport] = useState(false)
+  const modalAiGenerateRef = useRef(null)
+  useModalAutoClose({
+      refrence:modalAiGenerateRef,
+      close:() => {
+          setShowAiReport(false)
+      },
+      
+  })  
   return (
     <>
       <ButtonSecondary
         onClick={() => {
-          if (onAnalyse) {
-            onAnalyse();
-          } else {
-            setIsLoadingGenerate(true);
-          }
+          // if (onAnalyse) {
+          //   onAnalyse();
+          // } else {
+          //   setIsLoadingGenerate(true);
+          // }
+          setShowAiReport(true)
           // setShowGenerateWithAi(true)
         }}
         
@@ -33,6 +47,16 @@ const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text, onAnalyse }) => {
           </>
         )}
       </ButtonSecondary>
+      {showAiReport &&
+      <div className="absolute left-[-150px] top-10 z-40">
+          <GenerateWithAiModal isBenchMark={false} isLimite={false} onSuccess={(_val:any) => {
+              setShowAiReport(false)
+              // setPramt(val)
+              // beGenerateWithAi(val)
+          }} refEl={modalAiGenerateRef}></GenerateWithAiModal>
+
+      </div>      
+      }
     </>
   );
 };

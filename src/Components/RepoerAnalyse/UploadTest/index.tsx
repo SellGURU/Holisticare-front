@@ -37,8 +37,11 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                             Drag and drop your test file here or click to upload.
                         </div>
                         <div className="w-full mt-3 flex justify-center">
-                            <ButtonPrimary >
-                                Upload Test Results
+                            <ButtonPrimary size="small">
+                                <div className="w-[140px]">
+                                    Upload Test Results
+
+                                </div>
                             </ButtonPrimary>
 
                         </div>
@@ -107,7 +110,10 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                             <div className="flex justify-center mt-1">
                                 <ButtonSecondary onClick={() => {
                                     onGenderate()
-                                }}>Create Report</ButtonSecondary>
+                                }}>
+                                    <img src="/icons/tick-square.svg" alt="" />
+                                    Create Report
+                                </ButtonSecondary>
                             </div>   
                     }      
                 </div>

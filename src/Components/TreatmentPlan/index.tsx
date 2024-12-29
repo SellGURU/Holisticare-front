@@ -129,7 +129,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             <div className="text-xs text-Text-Primary mt-2 mb-5">
               Start creating your treatment plan
             </div>
-            <ButtonPrimary             onClick={()=>navigate(`/generateNewTreatmentPlan/${id}`)}
+            <ButtonPrimary             onClick={()=>navigate(`/report/Generate-Treatment-Plan/${id}`)}
   >
               <img src="/icons/tick-square.svg" alt="" /> Generate New
             </ButtonPrimary>
@@ -260,7 +260,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
               </div>
             ))}
             <div
-            onClick={()=>navigate(`/generateNewTreatmentPlan/${id}`)}
+            onClick={()=>navigate(`/report/Generate-Treatment-Plan/${id}`)}
               className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
             >
               <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />

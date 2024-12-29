@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import {SlideOutPanel} from "../SlideOutPanel";
 import { subscribe } from "../../utils/event.ts";
 import Application from "../../api/app.ts";
+import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 
 export const ComboBar = () => {
 
@@ -98,9 +99,12 @@ export const ComboBar = () => {
                         </div>
                     </div>
                     <div className={"flex items-center justify-center flex-col"}>
-                        <img src={"/images/EmptyState.svg"}/>
-                        <h1 className={"text-Text-Primary TextStyle-Body-2"}>No Data Found</h1>
-                        <p className={"text-center text-Text-Secondary mt-5 TextStyle-Body-3"}>For more accurate results, please complete the questionnaire</p>
+                        <img className="w-[160px]" src={"/images/EmptyState.svg"}/>
+                        <h1 className={"text-Text-Primary mt-[-40px] TextStyle-Body-2"}>No Data Found</h1>
+                        <p className={"text-center mb-2 text-Text-Secondary w-[240px] mt-5 TextStyle-Body-3"}>For more accurate results, please complete the questionnaire</p>
+                        <ButtonPrimary size="small">
+                            Complete Questionary
+                        </ButtonPrimary>
                     </div>
                 </div>
 
@@ -115,7 +119,7 @@ export const ComboBar = () => {
                     <li key={'1'} className={"flex items-center justify-center border-2 rounded-full  w-10 h-10 "}>
                         <img src={patientInfo.picture!= ''?patientInfo.picture:`https://ui-avatars.com/api/?name=${patientInfo.name}`}   onError={(e: any) => {
                             e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
-                        }} className={"border-whiteavatar rounded-full"}/>
+                        }} className={"border-whiteavatar w-full h-full rounded-full"}/>
                     </li>
                     <li key={'2'} className={"text-Text-Primary TextStyle-Headline-6 w-10 text-center"} style={{whiteSpace:'',textOverflow:'ellipsis',overflow:'hidden'}}>
                         {patientInfo.name.substring(0,20)}
@@ -147,7 +151,7 @@ export const ComboBar = () => {
                     ref={modalRef}
                     className="w-full shadow-200"
                 >
-                    <PopUpChat isOpen={toogleOpenChat} memberId={id as string}/>
+                    <PopUpChat isOpen={toogleOpenChat} info={patientInfo} memberId={id as string}/>
                 </div>
             </div>
         </>

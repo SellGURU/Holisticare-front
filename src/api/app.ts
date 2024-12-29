@@ -405,6 +405,15 @@ static downloadClinicReport(data:any){
     const response = this.post("/action_plan/block/generate_tasks",data)
     return response
   }    
+
+  static showCategory =(data:any) => {
+    const response = this.post("/clinic/show_category",data)
+    return response
+  }
+  static showPlanPriorty =(data:any) => {
+    const response = this.post("/clinic/show_plan_priority",data)
+    return response
+  }  
 }
 
 

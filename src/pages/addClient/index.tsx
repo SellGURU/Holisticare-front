@@ -6,6 +6,8 @@ import TextField from "../../Components/TextField"
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useModalAutoClose from "../../hooks/UseModalAutoClose"
+import MainTopBar from "../../Components/MainTopBar"
+import * as yup from "yup";
 
 const AddClient =() => {
     const formik = useFormik({
@@ -16,18 +18,12 @@ const AddClient =() => {
             age:30,
             gender:'unset'
         },
+        validationSchema:yup.object({
+            age:yup.number().min(12).max(60)
+        }),
         onSubmit :() => {
             // Logic for submission
         },
-        validate: (values) => {
-            const errors: any = {};
-            if (!values.firstName) errors.firstName = "First name is required";
-            if (!values.lastName) errors.lastName = "Last name is required";
-            if (!values.email) errors.email = "Email is required";
-            if (values.age <= 0) errors.age = "Age must be greater than 0";
-            if (values.gender === 'unset') errors.gender = "Gender is required";
-            return errors;
-        }
     });
 
     const selectRef = useRef(null)
@@ -94,11 +90,15 @@ const AddClient =() => {
 
     return (
         <>
+            <div className="w-full sticky z-50 top-0 ">
+                <MainTopBar></MainTopBar>
+            </div>           
             <div className="w-full p-8">
                 {
                     isAdded ?
                         <>
                             <div className="w-full flex justify-center items-center h-[80vh]">
+                             
                                 <div className="w-[440px] h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
                                     <div className="w-full flex justify-center mt-8">
                                         <img src="/icons/tick-circle.svg" className="w-[64px] h-[64px]" alt="" />
@@ -218,11 +218,11 @@ const AddClient =() => {
                                                 <div className="w-[88px] h-[28px] bg-backgroundColor-Card border border-gray-50">
                                                     <input
                                                         {...formik.getFieldProps("age")}
-                                                        value={formik.values.age}
+                                                        value={Number(formik.values.age)}
                                                         type="number"
                                                         placeholder="30"
-                                                        min={0}
-                                                        max={130}
+                                                        min={12}
+                                                        max={60}
                                                         className={`w-full text-center text-Text-Primary text-[14px] outline-none ${formik.errors.age && formik.touched.age ? "border-red-500" : ""}`}
                                                     />
                                                 </div>
@@ -230,7 +230,7 @@ const AddClient =() => {
                                                     +
                                                 </div>
                                             </div>
-                                            <div className="text-[10px] text-Text-Secondary mt-1 px-2">Enter a number between 0 and 9</div>
+                                            <div className="text-[10px] text-Text-Secondary mt-1 px-2">Enter a number between 12 and 60</div>
                                         </div>
                                     </div>
                                     <TextField
@@ -272,7 +272,8 @@ const AddClient =() => {
                                             !formik.isValid ||
                                             Object.values(formik.errors).some(error => error !== '')}
                                                        onClick={submit}>
-                                            Save Changes
+                                            <img src="./icons/tick-square.svg" alt="" />
+                                           Add Client
                                         </ButtonPrimary>
                                     </div>
                                 </div>

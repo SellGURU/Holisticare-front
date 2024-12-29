@@ -107,11 +107,11 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
             <div className="flex justify-between items-center">
               <div className=" text-Text-Secondary text-[10px]">
                 <span className="text-[12px] text-Text-Primary">
-                  {data.total_biomarkers}
+                  {data.num_biomarkers}
                 </span>{" "}
                 Total Biomarkers{" "}
                 <span className="ml-2 text-[12px] text-Text-Primary">
-                  {data.total_needs_focus}
+                  {data.needs_focus_count}
                 </span>{" "}
                 Needs Focus
               </div>

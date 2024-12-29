@@ -180,27 +180,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
           </div>
-          {/* <div className=" hidden lg:flex flex-col gap-2">
-            <div className="w-8 h-[112px] flex flex-col justify-between items-center rounded-md border  border-brand-primary-color py-3">
-              <img
-                className="w-4 h-4 invert dark:invert-0"
-                src="./Themes/Aurora/icons/Ai generated.svg"
-                alt=""
-              />
-              <img
-                className="w-4 h-4"
-                src="./Themes/Aurora/icons/message-text.svg"
-                alt=""
-              />
-              <div className="h-px w-6 bg-brand-primary-color mx-auto"></div>
-              <img
-                className="w-4 h-4"
-                src="./Themes/Aurora/icons/tick-circle.svg"
-                alt=""
-              />
-            </div>
-          </div> */}
+          <div className="relative">
+            <MiniAnallyseButton />
+
+          </div>          
         </div>
+
       </div>
 
     </>
@@ -209,9 +194,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
 // import Data from "../calandar.json";
 import { useNavigate, useParams } from "react-router-dom";
-import MainTopBar from "../../MainTopBar";
+// import MainTopBar from "../../MainTopBar";
 import AnalyseButton from "../../AnalyseButton";
 import Application from "../../../api/app";
+import MiniAnallyseButton from "../../MiniAnalyseButton";
+import { TopBar } from "../../topBar";
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
@@ -245,7 +232,7 @@ const GenerateCalendar: React.FC = () => {
       </div>
     )}    
     <div className="w-full fixed z-50 top-0 ">
-        <MainTopBar></MainTopBar>
+        <TopBar></TopBar>
       </div>
     <div className="w-full h-full px-3 lg:px-6">
       
@@ -263,7 +250,10 @@ const GenerateCalendar: React.FC = () => {
             Edit Action Plan
           </div>
         </div>
-        <AnalyseButton text="Generate by AI"></AnalyseButton>
+        <div className="relative">
+          <AnalyseButton text="Generate by AI"></AnalyseButton>
+
+        </div>
       </div>
       <div className=" w-full rounded-2xl  p-3  lg:p-6">
         <div className=" mx-auto p-">

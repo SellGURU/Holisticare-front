@@ -1,16 +1,13 @@
-import { useParams } from "react-router-dom";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
 import { ButtonSecondary } from "../../Button/ButtosSecondary";
 interface PlanCardProps {
   data: any;
   name:string
   onClick: ()=>void,
+  onEdit:() => void
 }
-const PlanCard: React.FC<PlanCardProps> = ({ data,name ,onClick}) => {
-  const { id } = useParams<{ id: string }>();
+const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
 
-  const navigate = useNavigate();
 
   return (
     <>
@@ -24,7 +21,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name ,onClick}) => {
           <div>{name}</div>{" "}
           <img
             className="cursor-pointer"
-            onClick={() => navigate(`/action-plan/orders/${id}`)}
+            onClick={() => onEdit()}
             src="/icons/setting-3.svg"
             alt=""
           />
@@ -34,7 +31,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name ,onClick}) => {
             <span className="TextStyle-Headline-6 text-Text-Primary ">
               Create Your AI Twin
             </span>
-            <div className="h-[100px] overflow-y-auto grid gap-1">
+            <div className="h-[100px] overflow-y-auto overflow-x-hidden grid gap-1">
               {data.interventions.filter((val:any) =>val.selected == true).map((el: any, i: number) => (
                 <div
                   key={i}

@@ -79,11 +79,11 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
     },[isLimite])
     return (
         <>
-            <div ref={refEl} className={`w-[205px] ${isLimite?'h-[150px]':'h-[190px]'} overflow-auto px-3 py-2 rounded-[6px] dark:bg-[#272727] border bg-gray-50 border-light-border-color dark:border-[#383838]`}>
-                <div className="dark:bg-black-primary px-2 flex justify-between items-center border dark:border-main-border rounded-md -ml-1 ">
+            <div ref={refEl} className={`w-[205px] ${isLimite?'h-[150px]':'h-[190px]'} overflow-auto px-3 py-2 rounded-[6px] bg-white border  border-gray-50 shadow-200`}>
+                <div className="px-2 flex justify-between bg-backgroundColor-Main  border border-gray-50 items-center rounded-md -ml-1 ">
                     <input value={askAi} onChange={(e) => {
                         setAskAi(e.target.value)
-                    }} className="bg-transparent outline-none text-[10px] pl-2 dark:text-white h-[24px] py-2 opacity-80 " type="text" placeholder="Ask AI to..." />
+                    }} className=" outline-none text-[10px] pl-2 text-Text-Secondary  bg-backgroundColor-Main h-[24px] py-2 opacity-80 " type="text" placeholder="Ask AI to..." />
                     {askAi.length>0 &&
                     <>
                         <img onClick={() => {
@@ -96,7 +96,7 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
                     <>
                         <div onClick={() => {
                              onSuccess('Generate by Knowledge')
-                        }} className={`text-[10px] text-light-secandary-text dark:text-[#FFFFFFDE] gap-2 h-[34px] flex justify-start items-center border-b cursor-pointer border-b-[#383838]`}>
+                        }} className={`text-[10px] text-Text-Primary gap-2 h-[34px] flex justify-start items-center border-b cursor-pointer border-b-[#383838]`}>
                             <img className="invert dark:invert-0" src={'./images/Analyse/folder-cloud.svg'} alt="" />
                             Generate by Knowledge
                         </div>                        
@@ -119,7 +119,7 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
                         <>
                             <div onClick={() => {
                                 onSuccess(el.key)
-                            }} className={`text-[10px] text-light-secandary-text dark:text-[#FFFFFFDE] gap-2 h-[34px] flex justify-start items-center ${index == promps.length-1 ?'border-none':'border-b'} cursor-pointer border-b-[#383838]`}>
+                            }} className={`text-[10px]  text-Text-Primary gap-2 h-[34px] flex justify-start items-center ${index == promps.length-1 ?'border-none':'border-b'} cursor-pointer border-Secondary-SelverGray]`}>
                                 <img className="invert dark:invert-0" src={el.icon} alt="" />
                             {el.key}</div>                        
                         </>

@@ -36,7 +36,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
             <div className="flex justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal ">
               More Info
               <img
-                src="./icons/user-navbar/info-circle.svg"
+                src="/icons/user-navbar/info-circle.svg"
                 className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
                 alt=""
               />
@@ -75,7 +75,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
             <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
               <div className="text-Primary-DeepTeal text-[10px]">{data.unit}</div>
               <div className="w-[16px]">
-                <img src="./Themes/Aurora/icons/arrow-Combo-left.svg" alt="" />
+                <img src="/icons/arrow-down-green.svg" alt="" />
               </div>
             </div>
             {isCheced && (
@@ -83,7 +83,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
                 <div className="w-[16px]">
                   <img
-                    src="./Themes/Aurora/icons/arrow-Combo-left.svg"
+                    src="/icons/arrow-down-green.svg"
                     alt=""
                   />
                 </div>
