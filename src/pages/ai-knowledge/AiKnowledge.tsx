@@ -211,7 +211,10 @@ const AiKnowledge = () => {
                                                 htmlFor="contracts"
                                                 className="ml-2 text-Text-Primary TextStyle-Headline-6 flex gap-1"
                                             >
-                                                {el}
+                                                <div className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis">
+                                                    {el}
+
+                                                </div>
                                             </label>
 
                                         </div>

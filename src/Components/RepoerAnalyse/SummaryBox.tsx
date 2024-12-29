@@ -67,7 +67,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
               <span className="text-Text-Secondary">
                 {data.out_of_ref}
               </span>{" "}
-             {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
+             {data.out_of_ref > 1 ?'Needs Focus':'Needs Focus'}{" "}
             </div>
           </div>
         </div>
