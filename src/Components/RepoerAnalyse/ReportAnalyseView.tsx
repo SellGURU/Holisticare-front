@@ -185,7 +185,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                         <div id="Client Summary" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center ">
                                             Client Summary
                                             <div className="ml-4">
-                                                <Legends></Legends>
+                                                <Legends isGray></Legends>
                                             </div>
                                         </div>
                                         {ClientSummaryBoxs &&

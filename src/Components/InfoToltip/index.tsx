@@ -40,7 +40,7 @@ const InfoToltip:React.FC<InfoToltipProps> =({mode}) => {
                 </div>
             </div>
             {isVisible &&
-                <div className="w-[350px] p-2 left-[-270px] z-20 top-5 bg-white border border-gray-50 rounded-[6px] shadow-200 absolute">
+                <div className="w-[350px] max-w-[350px] p-2 left-[-257px] z-20 top-5 bg-white border border-gray-50 rounded-[6px] shadow-200 absolute">
 
                     {
                         mode == 'Treatment' ?

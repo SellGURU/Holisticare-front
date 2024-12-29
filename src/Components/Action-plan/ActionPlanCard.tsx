@@ -82,7 +82,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           // style={{ borderColor: resolveStatusColor() }}
           className="w-[65px] z-[-1] h-[46px] border-t border-Gray-50   rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  "
         >
-          0{index}
+          {index<10 && 0}{index}
         </div>
         <div className="relative mt-3">
           <img

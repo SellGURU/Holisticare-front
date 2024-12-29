@@ -50,7 +50,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               />
               {showMoreInfo &&
                 <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
-                  <div className="text-[9px] text-Text-Primary">
+                  <div className="text-[9px] text-Text-Secondary">
                     {data.more_info}
                   </div>
                 </div>

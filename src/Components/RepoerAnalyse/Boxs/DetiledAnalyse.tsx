@@ -39,6 +39,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
       setIsOpen(true);
     }
   });
+  const [showMoreInfo,setShowMoreInfo] = useState(false)
   return (
     <>
       <div
@@ -154,8 +155,36 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   {!isCheced ?
                     <div className="w-full ">
                       <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
-                        <div className=" mb-20 TextStyle-Headline-6 text-Text-Primary">
-                          Current Value
+                        <div className="flex mb-20 mt-[-8px] justify-between items-center">
+                          <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
+                            Current Value
+                            <div onMouseEnter={() => {
+                              setShowMoreInfo(true)
+                            }} onMouseLeave={() => {
+                              setShowMoreInfo(false)
+                            }} className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal ">
+                              More Info
+                              <img
+                                src="/icons/user-navbar/info-circle.svg"
+                                className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
+                                alt=""
+                              />
+                              {showMoreInfo &&
+                                <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                                  <div className="text-[9px] text-Text-Secondary text-justify">
+                                    {active.more_info}
+                                  </div>
+                                </div>
+                              }
+                            </div>                          
+
+                          </div>
+                          <div className="w-[70px] mr-36 flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
+                            <div className="text-Primary-DeepTeal text-[10px]">{active.unit}</div>
+                            <div className="w-[16px]">
+                              <img src="/icons/arrow-down-green.svg" alt="" />
+                            </div>
+                          </div>                          
                         </div>
                         {active &&
                           <StatusBarChart data={active}></StatusBarChart>

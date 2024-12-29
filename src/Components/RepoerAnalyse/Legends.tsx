@@ -1,13 +1,16 @@
 import { useState } from "react"
 
-const Legends =() => {
+interface LegendsProps {
+    isGray?:boolean
+}
+const Legends:React.FC<LegendsProps> =({isGray}) => {
     const [isVisibele ,setIsVisible] = useState(false)
     return (
         <div className="relative">
             <div onMouseEnter={() => {setIsVisible(true)}} onMouseLeave={() => {
                 setIsVisible(false)
-            }} className="w-full flex justify-start items-center cursor-pointer  text-Text-Secondary text-[12px]">Legend
-                <img src="/icons/sidbar-menu/info-circle.svg" className="w-4 cursor-pointer invert dark:invert-0 h-4 ml-1" alt="" />
+            }} className={`w-full flex justify-start items-center cursor-pointer ${isGray ?"text-Text-Secondary ":'text-Primary-DeepTeal'} text-[12px]`}>Legend
+                <img src={isGray?"/icons/sidbar-menu/info-circle.svg":'/images/sidbar-menu/info-circle.svg'} className="w-4 cursor-pointer invert dark:invert-0 h-4 ml-1" alt="" />
             </div>
             {
                 isVisibele &&
