@@ -54,7 +54,7 @@ export const DriftAnaysis = () => {
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
-  const [, setOverviewData] = useState<any>(null);
+//   const [, setOverviewData] = useState<any>(null);
 
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
@@ -136,20 +136,20 @@ export const DriftAnaysis = () => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    if (activeMemberID != null) {
-      Application.aiStudio_overview({
-        member_id: activeMemberID,
-      }).then((res) => {
-        // setDescription(res.data.description)
-        // setAlerts(res.data.alerts || {});
-        // setRecommendations(res.data.recommendations || {});
-        setOverviewData(res.data);
+//   useEffect(() => {
+//     if (activeMemberID != null) {
+//       Application.aiStudio_overview({
+//         member_id: activeMemberID,
+//       }).then((res) => {
+//         // setDescription(res.data.description)
+//         // setAlerts(res.data.alerts || {});
+//         // setRecommendations(res.data.recommendations || {});
+//         setOverviewData(res.data);
 
-        // console.log(res);
-      });
-    }
-  }, [activeMemberID]);
+//         // console.log(res);
+//       });
+//     }
+//   }, [activeMemberID]);
   const [, setActivePatent] = useState(patients[0]);
   useEffect(() => {
     if (activeMemberID != null) {
@@ -159,16 +159,16 @@ export const DriftAnaysis = () => {
     }
   }, [activeMemberID]);
   //   const [reloadData, setReloadData] = useState(false);
-  const [, SetReportsData] = useState([]);
-  useEffect(() => {
-    if (activeMemberID != null) {
-      Application.showReportList({
-        member_id: activeMemberID,
-      }).then((res) => {
-        SetReportsData(res.data);
-      });
-    }
-  }, [activeMemberID]);
+//   const [, SetReportsData] = useState([]);
+//   useEffect(() => {
+//     if (activeMemberID != null) {
+//       Application.showReportList({
+//         member_id: activeMemberID,
+//       }).then((res) => {
+//         SetReportsData(res.data);
+//       });
+//     }
+//   }, [activeMemberID]);
   const status: Array<string> = [
     "All",
     "Need to Check",
@@ -274,7 +274,7 @@ export const DriftAnaysis = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-[10px] justify-center w-[25%]    ">
+        <div className="flex flex-col gap-[10px] justify-center w-[26%]    ">
           <SearchBox
             onSearch={(e) => setSearchQuery(e.target.value)}
             placeHolder="Search for client..."

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 // import { useNavigate } from "react-router-dom";
 import MiniAnallyseButton from "../../Components/MiniAnalyseButton";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
@@ -7,61 +7,70 @@ import Application from "../../api/app";
 interface ActionProps {
   memberID: number | null;
 }
+interface RoadMapOption {
+  id: string;
+  description: string;
+  action: string;
+}
+
+interface MessageOption extends RoadMapOption {
+  isDone?: boolean;
+}
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
     console.log(memberID);
     
-  const [RoadMapData, SetRoadMapData] = useState([
-    {
-      id: 1,
-      title: "Option 1",
-      description:
-        "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
-    },
-    {
-      id: 2,
-      title: "Option 2",
-      description:
-        "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    },
-    {
-      id: 3,
-      title: "Option 3",
-      description:
-        "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    },
-    {
-      id: 4,
-      title: "Option 4",
-      description:
-        "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    },
-    {
-      id: 5,
-      title: "Option 5",
-      description:
-        "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    },
+  const [RoadMapData, SetRoadMapData] = useState<RoadMapOption[]>([
+    // {
+    //   id: 1,
+    //   title: "Option 1",
+    //   description:
+    //     "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
+    // },
+    // {
+    //   id: 2,
+    //   title: "Option 2",
+    //   description:
+    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
+    // },
+    // {
+    //   id: 3,
+    //   title: "Option 3",
+    //   description:
+    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
+    // },
+    // {
+    //   id: 4,
+    //   title: "Option 4",
+    //   description:
+    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
+    // },
+    // {
+    //   id: 5,
+    //   title: "Option 5",
+    //   description:
+    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
+    // },
   ]);
-  const [MessagesData, setMessagesData] = useState([
-    {
-      id: 1,
-      title: "Option 1",
-      description:
-        "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
-      isDone: false,
-    },
-    {
-      id: 2,
-      title: "Option 2",
-      description:
-        "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-      isDone: true,
-    },
+  const [MessagesData, setMessagesData] = useState<MessageOption[]>([
+    // {
+    //   id: 1,
+    //   title: "Option 1",
+    //   description:
+    //     "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
+    //   isDone: false,
+    // },
+    // {
+    //   id: 2,
+    //   title: "Option 2",
+    //   description:
+    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
+    //   isDone: false,
+    // },
   ]);
 //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
 //   const [isMessagesOpen, setisMessagesOpen] = useState(true);
   const [isRoadCompleted] = useState(false);
-  const handleMarkAsDone = (id: number) => {
+  const handleMarkAsDone = (id: string) => {
     setMessagesData((prevData) =>
       prevData.map((message) =>
         message.id === id ? { ...message, isDone: true } : message
@@ -69,22 +78,44 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     );
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setMessagesData((prevData) =>
       prevData.filter((message) => message.id !== id)
     );
   };
-  const handleOptionDelete = (id: number) => {
+  const handleOptionDelete = (id: string) => {
     SetRoadMapData((prevData) => prevData.filter((option) => option.id !== id));
   };
 //   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
 const [showModal, setshowModal] = useState(false)
-useState(()=>{
-  const response = Application.driftPatientInfo()
-  console.log(response);
-  
-})
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await Application.driftPatientInfo({ member_id: memberID });
+      
+      if (response && response.data && response.data.State) {
+        setDescription(response.data.State.description);
+        setRecommendation(response.data.State.recommendation);
+        setReference(response.data.State.reference);
+        SetRoadMapData(response.data.RoadMap.options)
+        SetRoadMapData(response.data.RoadMap.options)
+        setMessagesData(response.data.Message.options)
+      } else {
+        throw new Error('Invalid data structure');
+      }
+      
+      console.log(response);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    }
+  };
+
+  fetchData();
+}, [memberID]);
+ const [Description, setDescription] = useState('')
+ const [recommendation, setRecommendation] = useState('')
+ const [reference, setReference] = useState('')
   return (
     <>
    {
@@ -97,11 +128,11 @@ useState(()=>{
     <div className="w-full flex flex-col gap-2 ">
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
             <div className="text-sm font-medium">State</div>
-            <p className="text-xs text-justify my-2">This patient has an imbalance in the intake and consumption of calories and has a travel plan for the next week. He has said that during his 5-day trip, he is not able to implement his plans and requests a new plane.</p>
-            <p className="text-xs text-justify ">According to the reference below, I am thinking of a Fasting Plan that we can re-plan for him so that we can control the amount of calories he eats during fasting. We can also suggest exercises that keep the amount of calories he eats at a balanced level while being comfortable.</p>
-            <a className="text-xs text-[#55B0FF]" href="">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4516560/</a>
+            <p className="text-xs text-justify my-2">{Description}</p>
+            <p className="text-xs text-justify ">{recommendation}</p>
+            <a className="text-xs text-[#55B0FF]" href="">{reference}/</a>
         </div>
-        <div className="w-full max-h-[220px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  max-h-[260px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -136,15 +167,15 @@ useState(()=>{
                 onClick={() => setshowModal(true)}
                 onDelete={() => handleOptionDelete(option.id)}
                 key={option.id}
-                title={option.title}
+                title={option.id}
                 description={option.description}
-                buttonText="Procced"
+                buttonText={option.action}
               />
             ))}
           </div>
         )}
       </div>
-      <div className="w-full h-full max-h-[155px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+      <div className="w-full h-full max-h-[156px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -176,11 +207,11 @@ useState(()=>{
             ) : (
               <AccordionCard
                 key={option.id}
-                title={option.title}
+                title={option.id}
                 description={option.description}
                 onClick={() => handleMarkAsDone(option.id)}
                 onDelete={() => handleDelete(option.id)}
-                buttonText="Approve"
+                buttonText={option.action}
               />
             )
           )}
