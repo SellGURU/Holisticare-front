@@ -101,7 +101,7 @@ useState(()=>{
             <p className="text-xs text-justify ">According to the reference below, I am thinking of a Fasting Plan that we can re-plan for him so that we can control the amount of calories he eats during fasting. We can also suggest exercises that keep the amount of calories he eats at a balanced level while being comfortable.</p>
             <a className="text-xs text-[#55B0FF]" href="">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4516560/</a>
         </div>
-        <div className="w-full max-h-[226px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full max-h-[220px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -144,7 +144,7 @@ useState(()=>{
           </div>
         )}
       </div>
-      <div className="w-full h-full max-h-[176px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+      <div className="w-full h-full max-h-[155px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
         <div className="w-full flex justify-between items-center">
           <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
