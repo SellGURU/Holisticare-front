@@ -61,7 +61,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
               <span className=" text-Text-Secondary">
                 {data.num_of_biomarkers}
               </span>{" "}
-              biomarkers
+              Biomarkers
             </div>
             <div className=" text-Text-Secondary ml-2 text-[10px]">
               <span className="text-Text-Secondary">

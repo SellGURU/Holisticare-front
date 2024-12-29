@@ -14,8 +14,9 @@ interface RefrenceBoxProps {
 
 const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
   const [isCheced, setIsCheced] = useState(false);
-  const isLongName = data.name.length > 20;
-  console.log(data.name);
+  const isLongName = data.name.length > 23;
+  // console.log(data.name);
+  const [showMoreInfo,setShowMoreInfo] = useState(false)
   
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
@@ -24,22 +25,36 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
       <div id={data.name} className="w-full h-[188px] pt-3 px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]">
         <div className="flex justify-between items-center">
           <div
-            {...(isLongName && {
-              "data-tooltip-id": "name",
-              "data-tooltip-content": data.name,
-            })}
+
             className="text-Text-Primary TextStyle-Headline-5  items-center cursor-default gap-2 flex justify-start  "
           >
-            {data.name.substring(0, 20)}
-            {isLongName && <Tooltip id="name" />}
+            <div {...(isLongName && {
+              "data-tooltip-id": "name",
+              "data-tooltip-content": data.name,
+            })} className="max-w-[160px] text-nowrap overflow-hidden text-ellipsis">
+              {data.name}
 
-            <div className="flex justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal ">
+            </div>
+            {isLongName && <Tooltip className="z-30" id="name" />}
+
+            <div onMouseEnter={() => {
+              setShowMoreInfo(true)
+            }} onMouseLeave={() => {
+              setShowMoreInfo(false)
+            }} className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal ">
               More Info
               <img
                 src="/icons/user-navbar/info-circle.svg"
                 className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
                 alt=""
               />
+              {showMoreInfo &&
+                <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                  <div className="text-[9px] text-Text-Primary">
+                    {data.more_info}
+                  </div>
+                </div>
+              }
             </div>
             <div
               onClick={() => {
