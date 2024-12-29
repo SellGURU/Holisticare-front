@@ -84,7 +84,7 @@ export const PopUpChat = ({isOpen,memberId,info}:{memberId:string,isOpen:boolean
     };
     useEffect(() => {
         scrollToBottom()
-    }, [MessageData]);
+    }, [MessageData,isOpen]);
     const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
     return (
