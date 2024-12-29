@@ -189,7 +189,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                             </div>
                                         </div>
                                         {ClientSummaryBoxs &&
-                                            <div className="text-Text-Secondary text-[12px]">Total of {ClientSummaryBoxs.total_subcategory} groups in {ClientSummaryBoxs.total_category} category</div>
+                                            <div className="text-Text-Secondary text-[12px]">Total of {ClientSummaryBoxs.total_subcategory} exams in {ClientSummaryBoxs.total_category} groups</div>
                                         }
                                     </div> 
                                     <div className="relative">
@@ -211,7 +211,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                           
                                 </div>
             
-                                <div className="flex-grow w-full ">
+                                <div className="flex-grow w-full mt-1 ">
                                     <div className="w-full flex justify-end">
                                         <InfoToltip></InfoToltip>
                                     </div>
