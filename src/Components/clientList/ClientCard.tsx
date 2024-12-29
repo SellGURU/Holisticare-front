@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useState, useRef } from "react";
 import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
+import Application from "../../api/app.ts";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
+  ondelete:(memberid:any) => void
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
+const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
 
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
@@ -24,9 +26,6 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
   return (
     <>
       <div
-        onClick={() => {
-          navigate(`/report/${client.member_id}/${client.name}`  );
-        }}
         className="min-w-[315px]   min-h-[264px] w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative "
       >
         {showModal && (
@@ -39,7 +38,13 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
               Assign to ...
             </div>
 
-            <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
+            <div onClick={() => {
+              setshowModal(false)
+              Application.deletePatient({
+                member_id:client.member_id
+              })
+              ondelete(client.member_id)
+            }} className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
               <img src="/icons/directbox-send.svg" alt="" />
               Send to Archieve
             </div>
@@ -49,7 +54,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ client }) => {
             </div>
           </div>
         )}
-        <div className="flex">
+        <div onClick={() => {
+          navigate(`/report/${client.member_id}/${client.name}`  );
+        }} className="flex">
           <div className="w-[72px] h-[72px] overflow-hidden rounded-full object-cover">
             <img
               className="w-full h-full"

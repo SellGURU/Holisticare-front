@@ -266,7 +266,7 @@ static downloadClinicReport(data:any){
     return response     
   }
 
-  static deleteClinic = (data:any) => {
+  static deletePatient = (data:any) => {
     const response = this.post("/patients/delete_patient",data)
     return response     
   }  
