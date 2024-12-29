@@ -15,7 +15,7 @@ import { subscribe } from "../../utils/event";
 // import ReportAnalyseView from "../RepoerAnalyse/ReportAnalyseView";
 // import { useSelector } from "react-redux";
 import { Action } from "./Action";
-import AnalyseButton from "../../Components/AnalyseButton";
+// import AnalyseButton from "../../Components/AnalyseButton";
 import AiChat from "../../Components/AiChat";
 type menuItem = {
   name: string;
@@ -27,15 +27,13 @@ interface Patient {
   status: string;
   member_id: number;
   picture: string;
-  sex: string,
-  tags: string[],
-  age: number
+  sex: string;
+  tags: string[];
+  age: number;
 }
 
 export const DriftAnaysis = () => {
   // const theme = useSelector((state: any) => state.theme.value.name);
-
-
 
   const [activeMenu, setActiveMenu] = useState("Action");
   // const [isStateOpen, setIsStateOpen] = useState(true);
@@ -51,12 +49,12 @@ export const DriftAnaysis = () => {
       status: "",
       picture: "",
       sex: "",
-      age :0,
+      age: 0,
       tags: [],
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
-  const [  , setOverviewData] = useState<any>(null);
+  const [, setOverviewData] = useState<any>(null);
 
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
@@ -75,11 +73,11 @@ export const DriftAnaysis = () => {
   //   const matchesStatus = activeStatus === "All" || client.Status === activeStatus;
   //   return matchesSearch && matchesStatus
   // });
-//   const [showWeaklyData, setSHowWeaklyData] = useState(false);
-//   const [isloadingGenerate, setIsLoadingGenerate] = useState(false);
-//   const [generateReportGoolsData, setGenerateReportGoolsData] = useState({
-//     "Type of progress": [],
-//   });
+  //   const [showWeaklyData, setSHowWeaklyData] = useState(false);
+  //   const [isloadingGenerate, setIsLoadingGenerate] = useState(false);
+  //   const [generateReportGoolsData, setGenerateReportGoolsData] = useState({
+  //     "Type of progress": [],
+  //   });
   // useEffect(() => {
   //   if(searchQuery!= '' && activeStatus != 'All'){
   //     setFilteredClients(() =>{
@@ -131,7 +129,7 @@ export const DriftAnaysis = () => {
       try {
         const response = await Application.aiStudio_patients();
         setPatients(response.data.patients_list_data);
-        setActiveMemberID(response.data[0].member_id);
+        setActiveMemberID(response.data.patients_list_data[0].member_id);
       } catch (err) {
         console.log(err);
       }
@@ -147,7 +145,7 @@ export const DriftAnaysis = () => {
         // setAlerts(res.data.alerts || {});
         // setRecommendations(res.data.recommendations || {});
         setOverviewData(res.data);
-       
+
         // console.log(res);
       });
     }
@@ -160,7 +158,7 @@ export const DriftAnaysis = () => {
       );
     }
   }, [activeMemberID]);
-//   const [reloadData, setReloadData] = useState(false);
+  //   const [reloadData, setReloadData] = useState(false);
   const [, SetReportsData] = useState([]);
   useEffect(() => {
     if (activeMemberID != null) {
@@ -177,9 +175,9 @@ export const DriftAnaysis = () => {
     "Checked",
     "Incomplete Data",
   ];
-//   const [isCreateReportMode, setisCreateReportMode] = useState(false);
-//   const [isEditMode, setEditMode] = useState(false);
-//   const [currentReportId, setCurrentReportId] = useState("");
+  //   const [isCreateReportMode, setisCreateReportMode] = useState(false);
+  //   const [isEditMode, setEditMode] = useState(false);
+  //   const [currentReportId, setCurrentReportId] = useState("");
   const [, setShowAiGenerateAi] = useState(false);
   const modalAiGenerateRef = useRef(null);
   useModalAutoClose({
@@ -195,10 +193,10 @@ export const DriftAnaysis = () => {
   // const renderRecommendations = () => {
   //   return Object.entries(recommendations).map(([category, details]) => {
   //     console.log(recommendations);
-      
+
   //     const dosKey = Object.keys(details).find(key => key.includes("Do's"));
   //     console.log(dosKey);
-      
+
   //     if (dosKey) {
   //       return (
   //         <li key={category} className="flex items-center gap-2">
@@ -212,28 +210,29 @@ export const DriftAnaysis = () => {
   // };
 
   return (
-    <div className="h-full w-full pl-6 pt-4 flex items-start overflow-x-hidden gap-3">
-    
-        <>
-   
-          {patients[0]?.member_id == 1 ? (
-            <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
-              <BeatLoader size={10} color="#0CBC84"></BeatLoader>
+    <div className="h-full w-full pl-6 pt-12 flex items-start overflow-x-hidden gap-3">
+      <>
+        {patients[0]?.member_id == 1 ? (
+          <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
+            <BeatLoader size={10} color="#0CBC84"></BeatLoader>
+          </div>
+        ) : (
+          <div className="w-[75%] flex flex-col gap-3">
+            <div className="w-full flex justify-between text-Text-Primary">
+              Drift Analysis 
+              {/* <AnalyseButton text="Generate by AI" />{" "} */}
             </div>
-          ) : (
-            <div className="w-[75%] flex flex-col gap-3">
-                <div className="w-full flex justify-between text-Text-Primary">Drift Analysis <AnalyseButton text="Generate by AI"/> </div>
-              <div className="w-full flex items-center justify-between">
-                <div className="w-[171px]"></div>
-                <div className="w-full flex justify-center">
+            <div className="w-full flex items-center justify-between">
+              <div className="w-[171px]"></div>
+              <div className="w-full flex justify-center">
                 <ActivityMenu
                   activeMenu={activeMenu}
                   menus={menus}
                   onChangeMenuAction={(menu) => setActiveMenu(menu)}
                 />
-                </div>
-               
-                {/* <div className="flex justify-end invisible items-center gap-2">
+              </div>
+
+              {/* <div className="flex justify-end invisible items-center gap-2">
                   <Button
                     onClick={() => {
                       Application.getManualData().then((res) => {
@@ -266,35 +265,31 @@ export const DriftAnaysis = () => {
                     />
                   </Button>
                 </div> */}
-              </div>
-              { activeMenu === "Copilot" ? (
-                
-                <AiChat memberID={activeMemberID} />
-              ) : (
-             <Action memberID={activeMemberID}></Action>
-              )}
-            
-              
             </div>
-          )}
+            {activeMenu === "Copilot" ? (
+              <AiChat memberID={activeMemberID} />
+            ) : (
+              <Action memberID={activeMemberID}></Action>
+            )}
+          </div>
+        )}
 
-          <div className="flex flex-col gap-[10px] justify-center w-[25%]    ">
-            <SearchBox
-          
-              onSearch={(e) => setSearchQuery(e.target.value)}
-              placeHolder="Search for client..."
-            />
-            <StatusMenu
-              status={status}
-              activeStatus={activeStatus as any}
-              onChange={(value) => setActiveStatus(value)}
-            />
+        <div className="flex flex-col gap-[10px] justify-center w-[25%]    ">
+          <SearchBox
+            onSearch={(e) => setSearchQuery(e.target.value)}
+            placeHolder="Search for client..."
+          />
+          <StatusMenu
+            status={status}
+            activeStatus={activeStatus as any}
+            onChange={(value) => setActiveStatus(value)}
+          />
 
-            <div className="flex flex-col pr-1  max-h-[571px] w-full overflow-auto">
-              {resolvedFiltersData().map((client, i) => {
-                console.log(client);
-                
-                return(
+          <div className="flex flex-col pr-1  max-h-[545px] w-full overflow-auto">
+            {resolvedFiltersData().map((client, i) => {
+              console.log(client);
+
+              return (
                 <ClientCard
                   index={i}
                   key={i}
@@ -311,13 +306,11 @@ export const DriftAnaysis = () => {
                   cardActive={activeMemberID}
                   tags={client.tags}
                 />
-                )
+              );
             })}
-              
-            </div>
           </div>
-        </>
-      
+        </div>
+      </>
     </div>
   );
 };
