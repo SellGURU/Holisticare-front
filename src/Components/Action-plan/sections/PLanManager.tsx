@@ -304,13 +304,14 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                   <span className="text-[10px] text-Text-Secondary mr-1">
                                     Level:
                                   </span>
-                                  <div className="flex border rounded-[4px] border-Gray-50 bg-Gray-15">
+                                  <div className={`flex border rounded-[4px] border-Gray-50 bg-Gray-15 ${area.selected ? 'bg-Gray-15' : 'bg-[#B0B0B0]'}`}>
                                     {Array.from(
                                       { length: isNewGenerate ? 0 : 2 },
                                       (_, i) => (
                                         <button
                                           key={i}
                                           onClick={() => {
+                                           
                                             setshowOrder(true);
                                             handleValueChange(
                                               categoryName,

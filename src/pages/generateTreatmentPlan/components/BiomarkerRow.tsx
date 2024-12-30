@@ -58,9 +58,9 @@ const [editableValue, setEditableValue] = useState(value.note);
             {value.reference && (
               <div onClick={()=>setshowModal(true)} className=" text-light-secandary-text dark:text-secondary-text text-xs inline-flex ml-1">
                 Based on your:{" "}
-                <span className="dark:text-brand-primary-color text-light-blue-active flex items-center gap-2 cursor-pointer">
+                <span className="text-[#6CC24A] flex items-center ml-1 gap-2 cursor-pointer">
                   TelomerAge{" "}
-                  <img src="./Themes/Aurora/icons/export.svg" alt="" />
+                  <img src="/icons/export.svg" alt="" />
                 </span>
               </div>
             )}

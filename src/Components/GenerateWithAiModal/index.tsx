@@ -15,11 +15,16 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
     const [askAi,setAskAi] = useState("")
     const [promps,setpromps] = useState([
         {
-            key:'Goal Alignment',
+            key:'Generate by Knowledge',
             icon:'../images/Analyse/refresh-left-square.svg'
         },
         {
-            key:'Add Encouragement',
+            key:'Goal Alignment',
+            // icon:'./images/Analyse/activity.svg'
+            icon:'./images/Analyse/add-square.svg'
+        },
+        {
+            key:'Add Encouragementt',
             // icon:'./images/Analyse/activity.svg'
             icon:'./images/Analyse/add-square.svg'
         },
