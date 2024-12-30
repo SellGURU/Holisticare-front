@@ -65,8 +65,6 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
       }
     });
 
-    loadGraph(graph);
-    // assign();
     forceAtlas2.assign(graph, {
       iterations: 100, // Number of iterations to stabilize layout
       settings: {
@@ -74,51 +72,53 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
         scalingRatio: 2, // Space between nodes
       },
     });
+    loadGraph(graph);
+    // assign();
   }, [activeFilters, graphData, isInitialLoad, loadGraph, assign]);
 
   return null;
 };
+const GraphEvents = ({setisLoading}:{setisLoading:(action:boolean)=>void}) => {
+  const registerEvents = useRegisterEvents();
+  const sigma = useSigma();
+  const [draggedNode, setDraggedNode] = useState<string | null>(null);
 
+  useEffect(() => {
+    registerEvents({
+      downNode: (e: any) => {
+        setDraggedNode(e.node);
+        const graph = sigma.getGraph();
+        graph.setNodeAttribute(e.node, "highlighted", true);
+        sigma.refresh();
+      },
+      mousemovebody: (e: any) => {
+        if (!draggedNode) return;
+        const pos = sigma.viewportToGraph(e);
+        sigma.getGraph().setNodeAttribute(draggedNode, "x", pos.x);
+        sigma.getGraph().setNodeAttribute(draggedNode, "y", pos.y);
+        e.preventSigmaDefault();
+        e.original.preventDefault();
+        e.original.stopPropagation();
+      },
+      mouseup: () => {
+        if (draggedNode) {
+          const graph = sigma.getGraph();
+          graph.removeNodeAttribute(draggedNode, "highlighted");
+          setDraggedNode(null);
+          sigma.refresh();
+        }
+      },
+      afterRender: () => {
+        setisLoading(false); // Disable loading state
+      },
+    });
+  }, [registerEvents, sigma, draggedNode]);
+
+  return null;
+};
 const AiKnowledge = () => {
   const [isLoading, setisLoading] = useState(true);
-  const GraphEvents = () => {
-    const registerEvents = useRegisterEvents();
-    const sigma = useSigma();
-    const [draggedNode, setDraggedNode] = useState<string | null>(null);
 
-    useEffect(() => {
-      registerEvents({
-        downNode: (e: any) => {
-          setDraggedNode(e.node);
-          const graph = sigma.getGraph();
-          graph.setNodeAttribute(e.node, "highlighted", true);
-          sigma.refresh();
-        },
-        mousemovebody: (e: any) => {
-          if (!draggedNode) return;
-          const pos = sigma.viewportToGraph(e);
-          sigma.getGraph().setNodeAttribute(draggedNode, "x", pos.x);
-          sigma.getGraph().setNodeAttribute(draggedNode, "y", pos.y);
-          e.preventSigmaDefault();
-          e.original.preventDefault();
-          e.original.stopPropagation();
-        },
-        mouseup: () => {
-          if (draggedNode) {
-            const graph = sigma.getGraph();
-            graph.removeNodeAttribute(draggedNode, "highlighted");
-            setDraggedNode(null);
-            sigma.refresh();
-          }
-        },
-        afterRender: () => {
-          setisLoading(false); // Disable loading state
-        },
-      });
-    }, [registerEvents, sigma, draggedNode]);
-
-    return null;
-  };
   // const [isContractsOpen, setIsContractsOpen] = useState(true);
   // const [isAgreementsOpen, setIsAgreementsOpen] = useState(true);
   // const [isReportsOpen, setIsReportsOpen] = useState(true);
@@ -230,7 +230,7 @@ const AiKnowledge = () => {
           activeFilters={activeFilters}
           isInitialLoad={isInitialLoad}
         />
-        <GraphEvents />
+        <GraphEvents  setisLoading={setisLoading}/>
       </SigmaContainer>
 
       <div className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-textoverflow-y-auto overscroll-y-auto  flex flex-col ">
