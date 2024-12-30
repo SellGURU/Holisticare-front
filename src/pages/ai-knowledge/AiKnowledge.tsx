@@ -5,46 +5,13 @@ import { useLoadGraph, useRegisterEvents, useSigma } from "@react-sigma/core";
 import "@react-sigma/core/lib/react-sigma.min.css";
 import { useEffect, useState } from "react";
 import Graph from "graphology";
+import forceAtlas2 from "graphology-layout-forceatlas2";
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from "chroma-js";
 // import { ApplicationMock } from "@/api";
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import Application from "../../api/app.ts";
-const GraphEvents = () => {
-    const registerEvents = useRegisterEvents();
-    const sigma = useSigma();
-    const [draggedNode, setDraggedNode] = useState<string | null>(null);
 
-    useEffect(() => {
-        registerEvents({
-            downNode: (e:any) => {
-                setDraggedNode(e.node);
-                const graph = sigma.getGraph();
-                graph.setNodeAttribute(e.node, "highlighted", true);
-                sigma.refresh();
-            },
-            mousemovebody: (e:any) => {
-                if (!draggedNode) return;
-                const pos = sigma.viewportToGraph(e);
-                sigma.getGraph().setNodeAttribute(draggedNode, "x", pos.x);
-                sigma.getGraph().setNodeAttribute(draggedNode, "y", pos.y);
-                e.preventSigmaDefault();
-                e.original.preventDefault();
-                e.original.stopPropagation();
-            },
-            mouseup: () => {
-                if (draggedNode) {
-                    const graph = sigma.getGraph();
-                    graph.removeNodeAttribute(draggedNode, "highlighted");
-                    setDraggedNode(null);
-                    sigma.refresh();
-                }
-            },
-        });
-    }, [registerEvents, sigma, draggedNode]);
-
-    return null;
-};
 
 interface LoadGraphProps {
     activeFilters: string[];
@@ -93,12 +60,59 @@ const LoadGraph: React.FC<LoadGraphProps> = ({ activeFilters, graphData, isIniti
         });
 
         loadGraph(graph);
-        assign();
+        // assign();
+        forceAtlas2.assign(graph, {
+            iterations: 100, // Number of iterations to stabilize layout
+            settings: {
+            gravity: 1, // Controls node clustering
+            scalingRatio: 2, // Space between nodes
+            },
+        });        
     }, [activeFilters, graphData, isInitialLoad, loadGraph, assign]);
 
     return null;
 };
+
 const AiKnowledge = () => {
+    const [isLoading,setisLoading] = useState(true)
+    const GraphEvents = () => {
+        const registerEvents = useRegisterEvents();
+        const sigma = useSigma();
+        const [draggedNode, setDraggedNode] = useState<string | null>(null);
+       
+        useEffect(() => {
+            registerEvents({
+                downNode: (e:any) => {
+                    setDraggedNode(e.node);
+                    const graph = sigma.getGraph();
+                    graph.setNodeAttribute(e.node, "highlighted", true);
+                    sigma.refresh();
+                },
+                mousemovebody: (e:any) => {
+                    if (!draggedNode) return;
+                    const pos = sigma.viewportToGraph(e);
+                    sigma.getGraph().setNodeAttribute(draggedNode, "x", pos.x);
+                    sigma.getGraph().setNodeAttribute(draggedNode, "y", pos.y);
+                    e.preventSigmaDefault();
+                    e.original.preventDefault();
+                    e.original.stopPropagation();
+                },
+                mouseup: () => {
+                    if (draggedNode) {
+                        const graph = sigma.getGraph();
+                        graph.removeNodeAttribute(draggedNode, "highlighted");
+                        setDraggedNode(null);
+                        sigma.refresh();
+                    }
+                },
+                afterRender: () => {
+                    setisLoading(false); // Disable loading state
+                },
+            });
+        }, [registerEvents, sigma, draggedNode]);
+
+        return null;
+    };    
     // const [isContractsOpen, setIsContractsOpen] = useState(true);
     // const [isAgreementsOpen, setIsAgreementsOpen] = useState(true);
     // const [isReportsOpen, setIsReportsOpen] = useState(true);
@@ -186,6 +200,26 @@ const AiKnowledge = () => {
                 className={" !bg-bg-color"}
                 style={{height: window.innerHeight - 50, width: window.innerWidth}}
             >
+                {isLoading && (
+                    <div
+                    style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "35%",
+                        transform: "translate(-50%, -50%)",
+                        zIndex: 1000,
+                        padding: "10px",
+                        borderRadius: "5px",
+                        textAlign: "center",
+                    }}
+                    >
+                        <div className="spinner">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className="dot"></div>
+                        ))}
+                        </div>
+                    </div>
+                )}                
                 <LoadGraph graphData={graphData} activeFilters={activeFilters} isInitialLoad={isInitialLoad}/>
                 <GraphEvents/>
             </SigmaContainer>
