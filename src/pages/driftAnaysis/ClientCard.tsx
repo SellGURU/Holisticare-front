@@ -20,6 +20,8 @@ const getStatusBgColorClass = (
 ): string => {
     
   if ( status && status.toLowerCase() === currentStatus.toLowerCase()) {
+ 
+    
     switch (status?.toLowerCase()) {
       case "high":
         return "bg-red-status text-black";
@@ -37,13 +39,13 @@ const getStatusBgColorClass = (
         return "bg-[#FC5474] text-black";
       case "incompleted":
         return "bg-[#FC5474] text-white";
-      case "incomplete data":
+      case "critical":
         return "bg-[#FC5474] text-white";
       case "all":
         return "text-white bg-Primary-DeepTeal";
-      case "Needs checking":
+      case "needs checking":
         return "bg-[#FFBD59] text-black";
-      case "checked":
+      case "stable":
         return "bg-[#06C78D] text-white";
       default:
         return "border border-light-blue-active  text-[8px]";
@@ -100,7 +102,7 @@ console.log(status);
         <div className="flex flex-col gap-1">
             {tags?.map((tag)=>(
                 <div
-          className={`text-Text-Primary bg-[#FFBD59] text-[8px] px-2 py-[2px] rounded-2xl
+          className={`text-Text-Primary  text-[8px] px-2 py-[2px] rounded-2xl
            ${getStatusBgColorClass(
             tag,
             tag

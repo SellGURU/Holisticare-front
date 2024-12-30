@@ -246,7 +246,7 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
         <h6 className="text-xs font-medium">
           {title}
         </h6>
-        <div className="border-l border-Secondary-SelverGray pl-4 text-xs font-normal text-justify max-w-[810px] ">
+        <div className="border-l border-Secondary-SelverGray pl-4 pr-4 text-xs font-normal text-justify max-w-[810px] ">
           {description}
         </div>
       </div>
