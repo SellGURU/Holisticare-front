@@ -96,7 +96,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             className={`${isOpen ? "rotate-180" : ""} cursor-pointer`}
           >
             <img
-              className="invert dark:invert-0 w-[24px]"
+              className=" w-[24px]"
               src="/icons/arrow-down-green.svg"
               alt=""
             />
@@ -128,7 +128,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                       >
                         <div className=" text-[12px]">{value.name}</div>
                         <img
-                          className="rotate-[-90deg] invert dark:invert-0  w-4"
+                          className="rotate-[-90deg]  w-4"
                           src="./Themes/Aurora/icons/arrow-Combo-left.svg"
                           alt=""
                         />
@@ -166,7 +166,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               More Info
                               <img
                                 src="/icons/user-navbar/info-circle.svg"
-                                className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
+                                className="w-4  cursor-pointer h-4 ml-1"
                                 alt=""
                               />
                               {showMoreInfo && active.more_info  &&

@@ -356,7 +356,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                                                                         setActiveEl(resol)
                                                                                     }} className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name==resol.name?' border-Primary-EmeraldGreen text-light-secandary-text ':'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}>
                                                                                         <div className=" text-[12px] text-Text-Primary">{resol.name}</div>
-                                                                                        <img className=" invert dark:invert-0 rotate-0  w-4" src="/icons/arrow-right.svg" alt="" />
+                                                                                        <img className="  rotate-0  w-4" src="/icons/arrow-right.svg" alt="" />
                                                                                     </div>
                                                                                 </>
                                                                             )
