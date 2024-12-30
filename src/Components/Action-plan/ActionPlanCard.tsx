@@ -33,7 +33,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
-    switch (el.status) {
+    switch (el.state) {
       case "Completed":
         return "#55DD4A";
       case "On Going":
@@ -76,7 +76,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
             style={{ backgroundColor: resolveStatusColor() }}
             className={`w-2 h-2 rounded-full mt-1`}
           ></div>
-          {el.status? el.status :'On Going'}
+          {el.state? el.state :'On Going'}
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}

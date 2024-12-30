@@ -11,13 +11,13 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch , placeHolder}) => {
          <img
         src="/icons/search.svg"
         alt="Search"
-        className="w-5 h-5"
+        className="w-4 h-4"
       />
       <input
         type="text"
         placeholder={placeHolder}
         onChange={(e) => onSearch(e.target.value)}
-        className="w-full flex justify-center pl-3  rounded-lg focus:outline-none text-Text-Secondary text-[10px] font-light"
+        className="w-full flex justify-center pl-3 bg-inherit  rounded-lg focus:outline-none text-Text-Secondary text-[10px] font-light"
       />
      
     </div>
