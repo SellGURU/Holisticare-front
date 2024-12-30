@@ -7,7 +7,8 @@ type SearchBoxProps = {
 
 const SearchBox: React.FC<SearchBoxProps> = ({ onSearch , placeHolder}) => {
   return (
-    <div className="relative flex justify-start items-center  min-w-[300px] h-8 rounded-lg bg-backgroundColor-Secondary shadow-100 py-[10px] px-4">
+    <div className="relative flex justify-start items-center  min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary shadow-100 py-[10px] px-4">
+
          <img
         src="/icons/search.svg"
         alt="Search"

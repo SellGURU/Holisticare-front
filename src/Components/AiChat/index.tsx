@@ -168,7 +168,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
                       </span>
                     </div>
                     <div
-                      className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px text-Text-Primary rounded-[20px] rounded-tl-none "
+                      className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
                       style={{ lineHeight: "26px" }}
                     >
                       {formatText(msg.text)}

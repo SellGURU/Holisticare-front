@@ -169,7 +169,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
                                 alt=""
                               />
-                              {showMoreInfo &&
+                              {showMoreInfo && active.more_info  &&
                                 <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                                   <div className="text-[9px] text-Text-Secondary text-justify">
                                     {active.more_info}

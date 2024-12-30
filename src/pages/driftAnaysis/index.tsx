@@ -276,6 +276,7 @@ console.log(searchQuery)
 
         <div className="flex flex-col gap-[10px] justify-center w-[26%]    ">
           <SearchBox
+          
             onSearch={(search) => setSearchQuery(search)}
             placeHolder="Search for client..."
           />

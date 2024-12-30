@@ -114,7 +114,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
                 {client.enroll_date}
               </div>
             </div>
-            <div className="flex flex-col gap-1">
+            {/* <div className="flex flex-col gap-1">
               {" "}
               <div className="text-[10px] text-Text-Secondary text-nowrap">
                 Last Follow-up
@@ -122,10 +122,10 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
               <div className="text-Text-Primary text-xs">
                 {client.last_followup}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className=" w-full flex flex-col justify-between  pl-3 py-1">
-            <div className="flex w-full justify-between text-Text-Primary text-xs">
+            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
               <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                 <img src="/icons/client-card/Status.svg" alt="" />
                 Status
@@ -137,35 +137,35 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
                 )
               }
            
-            </div>
-            <div className="flex w-full justify-between text-Text-Primary text-xs">
+            </div> */}
+            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
               <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                 <img src="/icons/client-card/Weight.svg" alt="" />
                 Weight
               </div>
               {client.weight}
-            </div>
-            <div className="flex w-full justify-between text-Text-Primary text-xs">
+            </div> */}
+            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
               <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                 <img src="/icons/client-card/Height.svg" alt="" />
                 Height
               </div>
               180 CM
-            </div>
-            <div className="flex w-full justify-between text-Text-Primary text-xs">
+            </div> */}
+            <div className="flex w-full justify-between text-Text-Primary text-xs capitalize">
               <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                 <img src="/icons/client-card/Gender-man.svg" alt="" />
                 Gender
               </div>
               {client.sex}
             </div>
-            <div className="flex w-full justify-between text-Text-Primary text-xs">
+            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
               <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                 <img src="/icons/client-card/Status.svg" alt="" />
                 KPI 01{" "}
               </div>
               amount of KPI 01
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

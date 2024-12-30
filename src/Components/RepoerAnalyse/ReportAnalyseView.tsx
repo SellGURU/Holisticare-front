@@ -212,7 +212,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                             </div>
                                         </div>
                                         {ClientSummaryBoxs &&
-                                            <div className="text-Text-Secondary text-[12px]">Total of {ClientSummaryBoxs.total_subcategory} exams in {ClientSummaryBoxs.total_category} groups</div>
+                                            <div className="text-Text-Secondary text-[12px]">Total of {ClientSummaryBoxs.total_subcategory} Biomarkers in {ClientSummaryBoxs.total_category} categories</div>
                                         }
                                     </div> 
                                     <div className="relative">

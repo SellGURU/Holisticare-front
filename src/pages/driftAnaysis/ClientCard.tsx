@@ -98,12 +98,14 @@ console.log(status);
           </div>
         </div>
         <div className="flex flex-col gap-1">
-            {tags.map((tag)=>(
+            {tags?.map((tag)=>(
                 <div
-          className={`text-Text-Primary text-[8px] px-2 py-[2px] rounded-2xl ${getStatusBgColorClass(
+          className={`text-Text-Primary text-[8px] px-2 py-[2px] rounded-2xl
+           ${getStatusBgColorClass(
             tag,
             tag
-          )} `}
+          )} 
+          `}
         >
           {tag}{" "}
         </div>
