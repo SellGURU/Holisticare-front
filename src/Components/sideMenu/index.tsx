@@ -28,7 +28,7 @@ const SideMenu = () => {
 
   return (
     <>
-      <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border-t-none border">
+      <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border  border-t-none">
         <div className=" w-full mt-4 relative ">
           <div className="px-4">
             <div

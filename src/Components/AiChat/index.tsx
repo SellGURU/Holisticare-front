@@ -112,7 +112,9 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   };
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const objDiv:any = document.getElementById("aiChat");
+    objDiv.scrollTop = objDiv.scrollHeight;    
   };
   useEffect(() => {
     scrollToBottom();
@@ -146,7 +148,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
       <div className="p-4 text-center text-primary-text text-xs">
         {messages.length > 1 && chatStartDate}
       </div>
-      <div className="p-4 space-y-4 max-h-[430px] overflow-y-auto">
+      <div id="aiChat" className="p-4 space-y-4 max-h-[430px] overflow-y-scroll">
         {messages.map((msg, index: number) => (
           <>
             {msg.sender == "ai" ? (
