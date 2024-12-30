@@ -88,6 +88,9 @@ console.log(status);
                 ? picture
                 : `https://ui-avatars.com/api/?name=${name}`
             }
+            onError={(e: any) => {
+              e.target.src = `https://ui-avatars.com/api/?name=${name}`; // Set fallback image
+            }}
             alt=""
           /> 
           <div className=" text-xs font-medium flex flex-col ">
