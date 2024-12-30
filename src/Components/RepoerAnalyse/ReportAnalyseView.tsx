@@ -295,7 +295,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     })}
                                 </div>
                             </div>                               
-                            <div className="my-10 ">
+                            <div className="my-10 min-h-[650px]">
                                 <div>
                                     <div id="Detailed Analysis" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
                                     <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
