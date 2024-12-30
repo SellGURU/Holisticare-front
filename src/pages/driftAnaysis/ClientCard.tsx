@@ -41,7 +41,7 @@ const getStatusBgColorClass = (
         return "bg-[#FC5474] text-white";
       case "all":
         return "text-white bg-Primary-DeepTeal";
-      case "need to check":
+      case "Needs checking":
         return "bg-[#FFBD59] text-black";
       case "checked":
         return "bg-[#06C78D] text-white";
@@ -100,7 +100,7 @@ console.log(status);
         <div className="flex flex-col gap-1">
             {tags?.map((tag)=>(
                 <div
-          className={`text-Text-Primary text-[8px] px-2 py-[2px] rounded-2xl
+          className={`text-Text-Primary bg-[#FFBD59] text-[8px] px-2 py-[2px] rounded-2xl
            ${getStatusBgColorClass(
             tag,
             tag

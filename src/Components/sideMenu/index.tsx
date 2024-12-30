@@ -31,11 +31,14 @@ const SideMenu = () => {
       <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border border-t-0 ">
         <div className=" w-full mt-4 relative ">
           <div className="px-4">
-            <div
+            {/* <div
               className="text-Text-Secondary text-[14px] text-center"
               style={{ fontFamily: "Rozha One" }}
             >
               Clinic Logo
+            </div> */}
+            <div>
+              <img src="/images/Logo-Light.svg" alt="" />
             </div>
           </div>
           <div className="w-full">

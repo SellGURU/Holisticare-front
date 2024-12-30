@@ -45,7 +45,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
             style={{}}
           >
             <img
-              className="invert dark:invert-0"
+              className=""
               src={resolveAnalyseIcon(data.subcategory)}
               alt=""
             />
