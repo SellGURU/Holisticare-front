@@ -311,13 +311,15 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                         <button
                                           key={i}
                                           onClick={() => {
-                                           
+                                           if(area.selected){
                                             setshowOrder(true);
                                             handleValueChange(
                                               categoryName,
                                               area.name,
                                               i + 1
                                             );
+                                           }
+                                          
                                           }}
                                           className={`w-5 h-5 flex items-center justify-center text-sm ${
                                             area.level === i + 1

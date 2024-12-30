@@ -130,7 +130,12 @@ useEffect(() => {
             <div className="text-sm font-medium">State</div>
             <p className="text-xs text-justify my-2">{Description}</p>
             <p className="text-xs text-justify ">{recommendation}</p>
-            <a className="text-xs text-[#55B0FF]" href="">{reference}/</a>
+            {
+              reference  &&(
+                <a className="text-xs text-[#55B0FF]" href="">{reference}/</a>
+
+              )
+            }
         </div>
         <div className="w-full  max-h-[260px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
 
@@ -241,7 +246,7 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
         <h6 className="text-xs font-medium">
           {title}
         </h6>
-        <div className="border-l border-Secondary-SelverGray pl-4 text-xs font-normal max-w-[711px] ">
+        <div className="border-l border-Secondary-SelverGray pl-4 text-xs font-normal text-justify max-w-[810px] ">
           {description}
         </div>
       </div>
