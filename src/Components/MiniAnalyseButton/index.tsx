@@ -47,7 +47,7 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
                 </>
                     }
                     {showAiReport &&
-                    <div className="absolute invisible right-[-0px] top-10 ">
+                    <div className="absolute z-30 right-[-0px] top-10 ">
                         <GenerateWithAiModal isBenchMark={false} isLimite={false} onSuccess={(_val:any) => {
                             setShowAiReport(false)
                             // setPramt(val)

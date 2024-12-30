@@ -3,7 +3,7 @@ function subscribe(eventName:string, listener:(data:any)=>void) {
   document.addEventListener(eventName, listener);
 }
 
-function unsubscribe(eventName:string, listener:()=>void) {
+function unsubscribe(eventName:string, listener:(data:any)=>void) {
   document.removeEventListener(eventName, listener);
 }
 

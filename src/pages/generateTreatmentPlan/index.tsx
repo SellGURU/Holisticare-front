@@ -16,6 +16,7 @@ import { TopBar } from "../../Components/topBar";
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 import { SlideOutPanel } from "../../Components/SlideOutPanel";
+// import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
 
@@ -484,7 +485,23 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         headline="Analysis"
       >
         <div>
+            <div className="flex mb-4 justify-between items-center">
+                <div className="bg-Primary-EmeraldGreen flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+                  <img src="/icons/stars.svg" alt="" />
+                  <div className="mt-[2px]">
+                    Quick Analysis
+                  </div>
+                </div>
+                <div className="bg-Primary-EmeraldGreen flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+                  <img src="/icons/stars.svg" alt="" />
+                  <div className="mt-[2px]">
+                    Comprehensive Analysis
+
+                  </div>
+                </div>                
+            </div>
             <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Client Condition Insight</div>
+            
             {treatmentPlanData &&
                       <TextBoxAi
                         isUpchange={isforceReload}

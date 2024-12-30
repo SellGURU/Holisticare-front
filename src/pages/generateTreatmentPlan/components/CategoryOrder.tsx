@@ -27,7 +27,8 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
     const [active,setActive] = useState<string>('Suggestion')
     const [categoryOrderData,setCategoryData] = useState<Array<any>>(data["report_detail"])
     const [activeBio,setActiveBio] = useState<any>(categoryOrderData.filter(el=>el.checked == true)[0]?categoryOrderData.filter(el=>el.checked == true)[0]:categoryOrderData[0])
-    const [activeEl,setActiveEl] = useState<any>()
+    // console.log(data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories[0].biomarkers[0])
+    const [activeEl,setActiveEl] = useState<any>(data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories[0].biomarkers[0])
     // const [suggestion,] = useState<any>(data["suggestion_tab"])
     useEffect(() => {
         setData((pre: any) => {
@@ -287,10 +288,12 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                         </div>                    
                                         </div>       
                                     </div>
-                                    <div className="w-[32px] relative  h-[32px]">
-                                        <MiniAnallyseButton></MiniAnallyseButton>                        
+                                    {active == 'Suggestion' &&
+                                        <div className="w-[32px] relative  h-[32px]">
+                                            <MiniAnallyseButton></MiniAnallyseButton>                        
 
-                                    </div>
+                                        </div>
+                                    }
                                 </div>
                             
                                 <div className="w-full px-6 py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
@@ -342,7 +345,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                             <div className="w-full flex gap-2   rounded-[16px]  min-h-[30px] ">
                                                 {
                                                     <>
-                                                        <div className="w-[240px] ">
+                                                        <div className="w-[300px] min-w-[300px]">
                                                             {data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories.map((value:any) => {
                                                                 return (
                                                                     <>

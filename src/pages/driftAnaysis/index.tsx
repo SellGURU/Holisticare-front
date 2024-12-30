@@ -210,7 +210,7 @@ export const DriftAnaysis = () => {
   // };
 console.log(searchQuery)
   return (
-    <div className="h-full w-full pl-6 pt-12 flex items-start overflow-x-hidden gap-3">
+    <div className=" w-full pl-6 pt-6 flex items-start overflow-hidden gap-3">
       <>
         {patients[0]?.member_id == 1 ? (
           <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
@@ -285,7 +285,7 @@ console.log(searchQuery)
             onChange={(value) => setActiveStatus(value)}
           />
 
-          <div className="flex flex-col pr-1  max-h-[545px] w-full overflow-auto">
+          <div className="flex flex-col pr-1  max-h-[500px] w-full overflow-auto">
             {resolvedFiltersData().map((client, i) => {
               console.log(client);
 

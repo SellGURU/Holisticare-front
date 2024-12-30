@@ -177,7 +177,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
               </div>
             ))}
         </div>
-        <div className="grid grid-cols-7 gap-y-2 gap-x-[100px] lg:gap-0 w-full bg-backgroundColor-Card   ">
+        <div className="grid grid-cols-7  gap-[1px]  w-full   ">
           {getCurrentMonthWithBuffer().map((day, index) => (
             <div
               key={index}
@@ -185,8 +185,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                 day.dayNumber == currenDay && day.monthName == currenMonth
                   ? "dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary "
                   : currenMonth == day.monthName
-                  ? "bg-backgroundColor-Card"
-                  : "bg-backgroundColor-Main"
+                  ? "bg-backgroundColor-Main"
+                  : "bg-backgroundColor-Card"
               }`}
             >
               <div

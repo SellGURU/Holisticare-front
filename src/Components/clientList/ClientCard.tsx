@@ -55,7 +55,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
           </div>
         )}
         <div onClick={() => {
-          navigate(`/report/${client.member_id}/${client.name}`  );
+          // navigate(`/report/${client.member_id}/${client.name}`  );
         }} className="flex">
           <div className="w-[72px] h-[72px] overflow-hidden rounded-full object-cover">
             <img
@@ -93,14 +93,16 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
 
-        <div className="mt-2 flex justify-between items-center">
-          <div className="text-Text-Secondary text-[10px] font-medium">
+        <div className="mt-2 flex justify-end items-center">
+          {/* <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
-          </div>
-          <ButtonPrimary size="small">
+          </div> */}
+          <ButtonPrimary onClick={() => {
+            navigate(`/report/${client.member_id}/${client.name}`  );            
+          }} size="small">
             {" "}
-            <img src="/icons/Assign.svg" alt="" />
-            Assaign
+            {/* <img src="/icons/Assign.svg" alt="" /> */}
+            Health Plan
           </ButtonPrimary>
         </div>
         <div className="w-full mt-2   flex justify-between">

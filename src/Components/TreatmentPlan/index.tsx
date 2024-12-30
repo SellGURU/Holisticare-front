@@ -182,7 +182,7 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
                   <div className=" flex w-full justify-center items-center flex-col gap-2">
                     <div className="flex w-full  justify-center ">
                       <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs text-Text-Primary  ">
-                        0{index + 1}
+                        {index+1<10&& 0}{index + 1}
                       </div>
                       {card.state == "On Going" && (
                         <img

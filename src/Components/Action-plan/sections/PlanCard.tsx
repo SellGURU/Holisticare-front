@@ -11,7 +11,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
 
   return (
     <>
-      <div className="w-[292px] h-fit min-h-[311px] bg-white   relative border border-Gray-200 shadow-200 rounded-[28px]  ">
+      <div className="w-[292px] h-fit min-h-[311px] bg-white   relative border  shadow-200 rounded-[40px]  ">
         <div className="w-full flex justify-between   items-center   TextStyle-Headline-4 text-Primary-DeepTeal px-4  py-3   border-b border-Gray-50">
           {/* <img
             className=" invisible dark:visible absolute inset-0 min-w-[340px] -top-1 -left-1 "
@@ -52,7 +52,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
             Duration: {data.duration}
           </div>
           <div className=" mt-2 w-full   flex justify-center ">
-            <ButtonSecondary onClick={onClick} style={{width:'100%'}}> <img src="/icons/tick-square.svg" alt="" /> Select Method</ButtonSecondary>
+            <ButtonSecondary onClick={onClick} style={{width:'100%',borderRadius:'20px'}}> <img src="/icons/tick-square.svg" alt="" /> Select Method</ButtonSecondary>
           </div>
         </div>
       </div>

@@ -33,7 +33,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
           style={{
-            background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#005F73 ${data.status[0]}% ${data.status[1]+data.status[0]}%,#FBAD37 ${
+            background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1]+data.status[0]}%,#FBAD37 ${
               data.status[1]+data.status[0]
             }% ${data.status[1] + data.status[2]+data.status[0]}%,#FC5474 ${
               data.status[2] +data.status[1] +data.status[0]
@@ -41,7 +41,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
           }}
         >
           <div
-            className="w-[34px] h-[34px]  flex justify-center bg-white items-center  rounded-full"
+            className="w-[35px] h-[35px]  flex justify-center bg-white items-center  rounded-full"
             style={{}}
           >
             <img
@@ -67,7 +67,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
               <span className="text-Text-Secondary">
                 {data.out_of_ref}
               </span>{" "}
-             {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
+             {data.out_of_ref > 1 ?'Needs Focus':'Needs Focus'}{" "}
             </div>
           </div>
         </div>

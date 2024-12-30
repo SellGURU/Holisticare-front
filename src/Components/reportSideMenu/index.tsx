@@ -39,7 +39,11 @@ const ReportSideMenu = () => {
     };
     subscribe('noReportAvailable', handleNoReportAvailable);
     subscribe('ReportAvailable', handleReportAvailable);
-
+    subscribe("scrolledSection",(data)=> {
+      // console.log(data)
+      // setSearchParams({["section"]: data.detail.section})
+      setactiveMenu(data.detail.section)
+    })
 
   }, []);
   const [, setSearchParams] = useSearchParams();
@@ -47,7 +51,7 @@ const ReportSideMenu = () => {
     setSearchParams({["section"]: item})
     setactiveMenu(item);
     document.getElementById(item)?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "instant",
     });      
   }
   return (
@@ -84,7 +88,7 @@ const ReportSideMenu = () => {
                   }
                 }}
                 key={index}
-                className={`text-[10px] h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
+                className={`text-[10px] ${(disableClicks && index!=0)?'opacity-50':''} h-[24px] flex justify-start items-center pl-2 text-nowrap bg-backgroundColor-Main text-Text-Primary rounded-md border cursor-pointer ${
                   item === activeMenu ? "border-Primary-EmeraldGreen" : "border-gray-50"
                 } flex justify-start`}
               >

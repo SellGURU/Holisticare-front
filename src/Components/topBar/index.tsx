@@ -102,7 +102,7 @@ export const TopBar:React.FC<TopBarProps> = ({
           url:'/report/'+routeData[3]+'/a'
         },
         {
-          name:'Action Plan',
+          name:'Generate Day to Day Activity',
           url:'/report/'
         }
       ]

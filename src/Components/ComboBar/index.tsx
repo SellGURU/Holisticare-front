@@ -18,7 +18,7 @@ export const ComboBar = () => {
         },
         {
             name:'',
-            url:"/icons/sidbar-menu/clipboard-text.svg"
+            url:"/icons/sidbar-menu/messages.svg"
         },
         {
             name:'',
@@ -26,7 +26,7 @@ export const ComboBar = () => {
         },        
         {
             name:'Questionary Tracking',
-            url:"/icons/sidbar-menu/messages.svg"
+            url:"/icons/sidbar-menu/clipboard-text.svg"
         },
         {
             name:'',
@@ -131,8 +131,13 @@ export const ComboBar = () => {
                                 setIsSlideOutPanel(true)
                                 setUpdated(false)
                             }
-                        }} className={`cursor-pointer rounded-full border w-8 h-8 flex items-center justify-center ${updated && el.name == 'Questionary Tracking' && 'border-Orange'}`}>
+                        }} className={`cursor-pointer rounded-full relative border w-8 h-8 flex items-center justify-center ${updated && el.name == 'Questionary Tracking' && 'border-2 border-Orange'}`}>
                             <img src={el.url} className={"w-5 h-5"}/>
+                            {updated && el.name == 'Questionary Tracking' &&
+                                <img className="absolute top-[-4px]  right-[-3px]" src="/icons/warning.svg" alt="" />
+                            // <div className="w-[12px] h-[12px] bg-[#FFBD59] rounded-full absolute top-[-4px]  right-[-3px]">
+                            // </div>
+                            }
                         </li>
                     ))}
                 </ul>

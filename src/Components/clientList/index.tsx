@@ -87,7 +87,7 @@ const ClientList = () => {
                     navigate("/addClient");
                   }}
                 >
-                  <img src="/icons/user-add.svg" alt="" />
+                  <img className="mr-1" src="/icons/user-add2.svg" alt="" />
                   Add Client
                 </ButtonPrimary>
               </div>

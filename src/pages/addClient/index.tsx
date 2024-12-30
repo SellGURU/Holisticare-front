@@ -126,7 +126,7 @@ const AddClient =() => {
                                             }}>
                                                 <img src={"/icons/tick.svg"} className={"h-5 h-5"}/>
                                                 <div className="w-[140px]">
-                                                    Develop health plan
+                                                    Develop Health Plan
                                                 </div>
                                             </ButtonPrimary>
                                         </div>
@@ -192,7 +192,7 @@ const AddClient =() => {
                                                         </div>
                                                 }
                                                 <div>
-                                                    <img className={`${showSelect && 'rotate-180'}`} src="./icons/arrow-down-drop.svg" alt=""/>
+                                                    <img className={`${showSelect && 'rotate-180'}`} src="/icons/arow-down-drop.svg" alt=""/>
                                                 </div>
                                             </div>
                                             {
