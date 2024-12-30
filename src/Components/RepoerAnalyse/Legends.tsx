@@ -10,7 +10,7 @@ const Legends:React.FC<LegendsProps> =({isGray}) => {
             <div onMouseEnter={() => {setIsVisible(true)}} onMouseLeave={() => {
                 setIsVisible(false)
             }} className={`w-full flex justify-start items-center cursor-pointer ${isGray ?"text-Text-Secondary ":'text-Primary-DeepTeal'} text-[12px]`}>Legend
-                <img src={isGray?"/icons/sidbar-menu/info-circle.svg":'/images/sidbar-menu/info-circle.svg'} className="w-4 cursor-pointer invert dark:invert-0 h-4 ml-1" alt="" />
+                <img src={isGray?"/icons/sidbar-menu/info-circle.svg":'/images/sidbar-menu/info-circle.svg'} className="w-4 cursor-pointer h-4 ml-1" alt="" />
             </div>
             {
                 isVisibele &&
