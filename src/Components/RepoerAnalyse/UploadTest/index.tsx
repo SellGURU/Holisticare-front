@@ -112,7 +112,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                                     onGenderate()
                                 }}>
                                     <img src="/icons/tick-square.svg" alt="" />
-                                    Create Report
+                                    develop health plan
                                 </ButtonSecondary>
                             </div>   
                     }      

@@ -304,7 +304,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                   <span className="text-[10px] text-Text-Secondary mr-1">
                                     Level:
                                   </span>
-                                  <div className={`flex border rounded-[4px] border-Gray-50 bg-Gray-15 ${area.selected ? 'bg-Gray-15' : 'bg-[#B0B0B0]'}`}>
+                                  <div className={`flex border rounded-[4px] border-Gray-50 bg-Gray-15 `}>
                                     {Array.from(
                                       { length: isNewGenerate ? 0 : 2 },
                                       (_, i) => (
@@ -321,10 +321,10 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                            }
                                           
                                           }}
-                                          className={`w-5 h-5 flex items-center justify-center text-sm ${
+                                          className={`w-5 h-5 flex items-center justify-center text-sm ${!area.selected && 'text-[#B0B0B0]'}  ${
                                             area.level === i + 1
                                               ? " text-Primary-DeepTeal"
-                                              : " text-Text-Secondary"
+                                              :  "text-Text-Secondary" 
                                           }`}
                                         >
                                           {i + 1}

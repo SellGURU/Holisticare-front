@@ -379,16 +379,31 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                                                 <div className="flex w-full justify-center gap-4 mt-4">
                                                                     <div>
                                                                         <div className="w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
-                                                                            <div className="text-Text-Primary text-[12px] font-medium mb-20">
+                                                                            <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-20">
                                                                                 Last Value
+                                                                                 <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
+                                                                                    <div className="text-Primary-DeepTeal text-[10px]">{activeEl.unit}</div>
+                                                                                        <div className="w-[16px]">
+                                                                                        <img src="/icons/arrow-down-green.svg" alt="" />
+                                                                                        </div>
+                                                                                    </div>                             
                                                                             </div>
                                                                             <StatusBarChart data={activeEl}></StatusBarChart>
                                                                         </div>
                                                                     </div>
                                                                     <div>
                                                                         <div className="w-[500px]  p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
-                                                                            <div className="text-Text-Primary text-[12px] font-medium mb-5">
+                                                                            <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
                                                                                 Historical Data
+                                                                                <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                                                                                    <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
+                                                                                    <div className="w-[16px]">
+                                                                                    <img
+                                                                                        src="/icons/arrow-down-green.svg"
+                                                                                        alt=""
+                                                                                    />
+                                                                                    </div>
+                                                                                </div>                                                                  
                                                                             </div>                                    
                                                                             <div className="mt-0 relative">
                                                                                 <StatusChart

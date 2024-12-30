@@ -126,7 +126,7 @@ const AddClient =() => {
                                             }}>
                                                 <img src={"/icons/tick.svg"} className={"h-5 h-5"}/>
                                                 <div className="w-[140px]">
-                                                    Create Report
+                                                develop health plan
                                                 </div>
                                             </ButtonPrimary>
                                         </div>
