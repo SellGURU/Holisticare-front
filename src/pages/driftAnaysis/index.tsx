@@ -171,7 +171,7 @@ export const DriftAnaysis = () => {
 //   }, [activeMemberID]);
   const status: Array<string> = [
     "All",
-    "Need to Check",
+    "Need to check",
     "Checked",
     "Incomplete Data",
   ];
@@ -208,7 +208,7 @@ export const DriftAnaysis = () => {
   //     return null;
   //   });
   // };
-
+console.log(searchQuery)
   return (
     <div className="h-full w-full pl-6 pt-12 flex items-start overflow-x-hidden gap-3">
       <>
@@ -276,7 +276,7 @@ export const DriftAnaysis = () => {
 
         <div className="flex flex-col gap-[10px] justify-center w-[26%]    ">
           <SearchBox
-            onSearch={(e) => setSearchQuery(e.target.value)}
+            onSearch={(search) => setSearchQuery(search)}
             placeHolder="Search for client..."
           />
           <StatusMenu

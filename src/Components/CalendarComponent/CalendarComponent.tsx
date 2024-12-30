@@ -173,7 +173,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                 key={index}
                 className=" text-xs font-medium text-center text-Text-Primary "
               >
-                {day.dayName.slice(0,3)} {index+4}
+                {day.dayName.slice(0,3)} 
               </div>
             ))}
         </div>

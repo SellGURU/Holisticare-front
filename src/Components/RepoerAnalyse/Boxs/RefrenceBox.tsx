@@ -13,6 +13,7 @@ interface RefrenceBoxProps {
 }
 
 const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
+  console.log(data)
   const [isCheced, setIsCheced] = useState(false);
   const isLongName = data.name.length > 23;
   // console.log(data.name);
@@ -45,10 +46,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               More Info
               <img
                 src="/icons/user-navbar/info-circle.svg"
-                className="w-4 invert dark:invert-0 cursor-pointer h-4 ml-1"
+                className="w-4  cursor-pointer h-4 ml-1"
                 alt=""
               />
-              {showMoreInfo &&
+              {showMoreInfo && data.more_info &&
                 <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                   <div className="text-[9px] text-Text-Primary">
                     {data.more_info}
