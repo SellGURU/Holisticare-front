@@ -63,7 +63,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       setisFinalLoading(true)
       setTimeout(()=>{
         setisFinalLoading(false)
-        navigate(`/report/${id}/a?section=Treatment Plan`)
+        navigate(`/report/${id}/a?section=Holistic Plan`)
       },3000)
       navigate(-1);
   };
@@ -159,7 +159,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               <div key={i} className="dot"></div>
             ))}
           </div>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your Holistic Plan based on the selected method. This may take a moment.</div>
         </div>
       )}
 
@@ -181,7 +181,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <img className="w-6 h-6" src="/icons/arrow-back.svg" />
               </div>
               <div className="TextStyle-Headline-5 text-Text-Primary">
-              Generate Treatment Plan
+              Generate Holistic Plan
               </div>
             </div>
             

@@ -59,7 +59,7 @@ export const TopBar:React.FC<TopBarProps> = ({
   const resolveNav =() => {
     const locationAddress = window.location.pathname
     const routeData = locationAddress.split("/")
-    if(locationAddress.includes("Generate-Treatment-Plan")){
+    if(locationAddress.includes("Generate-Holistic-Plan")){
       return [
         {
           name:'Home',
@@ -70,8 +70,8 @@ export const TopBar:React.FC<TopBarProps> = ({
           url:'/report/'+routeData[3]+'/a'
         },
         {
-          name:'Generate Treatment Plan',
-          url:'/report/Generate-Treatment-Plan'
+          name:'Generate Holistic Plan',
+          url:'/report/Generate-Holistic-Plan'
         }
       ]
     }

@@ -8,7 +8,7 @@ const ReportSideMenu = () => {
     "Needs Focus Biomarkers",
     "Detailed Analysis",
     // "Concerning Result",
-    "Treatment Plan",
+    "Holistic Plan",
     "Action Plan",
   ];
   

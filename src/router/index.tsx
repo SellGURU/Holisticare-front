@@ -46,7 +46,7 @@ const router = createBrowserRouter([
         element: <GenerateNewActionPlan></GenerateNewActionPlan>,
       },
       {
-        path:'report/Generate-Treatment-Plan/:id',
+        path:'report/Generate-Holistic-Plan/:id',
         element:<GenerateNewPlan></GenerateNewPlan>
       },
       // {
