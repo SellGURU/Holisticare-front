@@ -8,9 +8,11 @@ import { BeatLoader } from "react-spinners"
 import GenerateWithAiModal from "../GenerateWithAiModal"
 interface MiniAnallyseButtonProps{
     disabled?: boolean
+    onResolve?:(value:string) => void
+    isLoading?:boolean
 }
-const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
-     const [isLoading ,] = useState(false)
+const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled,isLoading,onResolve}) => {
+    //  const [isLoading ,] = useState(false)
      const [showAiReport,setShowAiReport] = useState(false)
     // const [,setPramt] = useState("") 
     const modalAiGenerateRef = useRef(null)
@@ -29,11 +31,13 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
                 <div className="h-8 bg-Primary-EmeraldGreen cursor-pointer w-8 max-w-8 max-h-8 min-h-8  flex items-center justify-center rounded-md" onClick={() => {
                     setShowAiReport(true)
                 }}>
-                    <img className="" src="/icons/stars.svg" alt="" />
+                    {!isLoading &&
+                        <img className="" src="/icons/stars.svg" alt="" />
+                     }
                 </div>
                 {isLoading?
                     <div className="absolute w-[16px] flex pt-2 pl-[2px] top-1">
-                        <BeatLoader size={5} color="green"></BeatLoader>
+                        <BeatLoader size={5} color="#ffffff"></BeatLoader>
 
                     </div>
                 :
@@ -48,10 +52,13 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> =({disabled}) => {
                     }
                     {showAiReport &&
                     <div className="absolute z-30 right-[-0px] top-10 ">
-                        <GenerateWithAiModal isBenchMark={false} isLimite={false} onSuccess={(_val:any) => {
+                        <GenerateWithAiModal isBenchMark={false} isLimite={false} onSuccess={(val:any) => {
                             setShowAiReport(false)
                             // setPramt(val)
                             // beGenerateWithAi(val)
+                            if(onResolve){
+                                onResolve(val)
+                            }
                         }} refEl={modalAiGenerateRef}></GenerateWithAiModal>
 
                     </div>

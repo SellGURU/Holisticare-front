@@ -39,10 +39,10 @@ const RefrenceModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
   return (
     <>
-      <div className="fixed inset-0 z-10 flex items-center justify-center bg-light-overlay lg:ml-20 dark:bg-black-background bg-opacity-80 dark:bg-opacity-95 text-primary-text px-10 lg:px-0">
+      <div className="fixed inset-0 z-50 flex items-center justify-center  border   text-primary-text px-10 lg:px-0">
         <div
           ref={modalRef}
-          className="bg-white dark:bg-black-secondary rounded p-4 w-full max-w-[1260px] max-h-[463px] overflow-y-scroll overflow-x-hidden relative"
+          className="bg-white border border-gray-50 shadow-500 z-50 dark:bg-black-secondary rounded p-4 w-full max-w-[1260px] max-h-[463px] overflow-y-scroll overflow-x-hidden relative"
         >
           <div className="flex w-full   justify-between text-sm font-medium ">
             Reference Documents{" "}

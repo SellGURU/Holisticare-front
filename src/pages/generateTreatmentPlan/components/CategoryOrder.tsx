@@ -15,6 +15,7 @@ import MiniAnallyseButton from "../../../Components/MiniAnalyseButton"
 import { ClipLoader } from "react-spinners"
 import StatusChart from "../../../Components/RepoerAnalyse/StatusChart"
 import StatusBarChart from "../../../Components/RepoerAnalyse/Boxs/StatusBarChart"
+import Application from "../../../api/app"
 interface CategoryOrderProps {
     isActionPlan?:boolean
     data:any
@@ -37,6 +38,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
             return old;
         });
     },[categoryOrderData])
+    const [isLoadingAi,setISLoadingAi] = useState(false)
     // const pillarData:any ={
     // "Diet": [
     //     {
@@ -290,7 +292,30 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                     </div>
                                     {active == 'Suggestion' &&
                                         <div className="w-[32px] relative  h-[32px]">
-                                            <MiniAnallyseButton></MiniAnallyseButton>                        
+                                            <MiniAnallyseButton isLoading={isLoadingAi} onResolve={(value:string) => {
+                                                setISLoadingAi(true)
+                                                Application.UpdateTreatmentPlanWithAi({
+                                                     treatment_category:activeBio.category,
+                                                     suggestion_tab_list:data["suggestion_tab"].filter((el:any) => el.category == activeBio.category)[0].suggestions,
+                                                    ai_generation_mode:value
+                                                }).then(res => {
+                                                    if(res.data){
+                                                        setData((pre: any) => {
+                                                            const old = {...pre};
+                                                            console.log(old["suggestion_tab"])
+                                                            old["suggestion_tab"] = [...old["suggestion_tab"].filter((el:any) => el.category != activeBio.category),res.data];
+                                                            return old;
+                                                        });
+                                                        const old = active
+                                                        setActive("")
+                                                        setTimeout(() => {
+                                                            setActive(old)
+                                                        }, 10);
+                                                    }
+                                                }).finally(() => {
+                                                    setISLoadingAi(false)
+                                                })
+                                            }} ></MiniAnallyseButton>                        
 
                                         </div>
                                     }
