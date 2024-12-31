@@ -115,7 +115,7 @@ const ClientList = () => {
                   </div>
                 </div>
               </div>
-              <div className=" w-full flex md:items-start md:justify-start justify-center items-center gap-[18px] flex-wrap">
+              <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
                 {filteredClientList.map((client: any) => {
                   return <ClientCard ondelete={(memberId:any) => {
                     setFilteredClientList((pre) => {

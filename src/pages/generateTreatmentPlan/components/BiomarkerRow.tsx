@@ -9,7 +9,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange
 }) => {
-
+  console.log(value)
   const resolveIcon = () => {
     if (value.pillar_name== "Diet") {
       return "/icons/diet.svg";
@@ -55,11 +55,11 @@ const [editableValue, setEditableValue] = useState(value.note);
               rows={2}
           
             />
-            {value.reference && (
+            {value["Based on your:"] && (
               <div onClick={()=>setshowModal(true)} className=" text-light-secandary-text dark:text-secondary-text text-xs inline-flex ml-1">
                 Based on your:{" "}
                 <span className="text-[#6CC24A] flex items-center ml-1 gap-2 cursor-pointer">
-                  TelomerAge{" "}
+                  {value["Based on your:"]}{" "}
                   <img src="/icons/export.svg" alt="" />
                 </span>
               </div>
