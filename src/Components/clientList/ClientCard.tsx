@@ -26,7 +26,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
   return (
     <>
       <div
-        className="min-w-[315px]   min-h-[264px] w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative "
+        className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative "
       >
         {showModal && (
           <div
@@ -106,7 +106,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
           </ButtonPrimary>
         </div>
         <div className="w-full mt-2   flex justify-between">
-          <div className="flex h-[120px] flex-col justify-between border-r border-Gray-50 pr-3 py-1">
+          <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
             <div className="flex flex-col gap-1">
               {" "}
               <div className="text-[10px] text-Text-Secondary">Enroll Date</div>

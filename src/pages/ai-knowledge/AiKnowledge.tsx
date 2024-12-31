@@ -69,7 +69,7 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
       iterations: 100, // Number of iterations to stabilize layout
       settings: {
         gravity: 1, // Controls node clustering
-        scalingRatio: 2, // Space between nodes
+        scalingRatio: 20, // Space between nodes
       },
     });
     loadGraph(graph);
