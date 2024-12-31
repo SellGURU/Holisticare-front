@@ -486,13 +486,13 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       >
         <div>
             <div className="flex mb-4 justify-between items-center">
-                <div className="bg-Primary-EmeraldGreen flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+                <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
                   <img src="/icons/stars.svg" alt="" />
                   <div className="mt-[2px]">
                     Quick Analysis
                   </div>
                 </div>
-                <div className="bg-Primary-EmeraldGreen flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+                <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
                   <img src="/icons/stars.svg" alt="" />
                   <div className="mt-[2px]">
                     Comprehensive Analysis
@@ -500,7 +500,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   </div>
                 </div>                
             </div>
-            <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Client Condition Insight</div>
+            <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none" >Client Condition Insight</div>
             
             {treatmentPlanData &&
                       <TextBoxAi
@@ -513,7 +513,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         value={treatmentPlanData["medical_summary"]}/>  
             }
 
-            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" >Needs Focus Biomarkers</div>
+            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none" >Needs Focus Biomarkers</div>
             {treatmentPlanData &&
               <div className="bg-backgroundColor-Card p-4 pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
                       <TextBoxAi
