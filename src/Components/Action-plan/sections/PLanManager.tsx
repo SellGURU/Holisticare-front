@@ -324,7 +324,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                           className={`w-5 h-5 flex items-center justify-center text-sm ${!area.selected && 'text-[#B0B0B0]'}  ${
                                             area.level === i + 1
                                               ? " text-Primary-DeepTeal"
-                                              :  "text-Text-Secondary" 
+                                              :  "text-[#B0B0B0CC]" 
                                           }`}
                                         >
                                           {i + 1}
