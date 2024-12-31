@@ -84,7 +84,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         >
           {index<10 && 0}{index}
         </div>
-        <div className="relative mt-3">
+        <div className="relative py-3">
           <img
             ref={showModalButtonRefrence}
             onClick={(e) => {
