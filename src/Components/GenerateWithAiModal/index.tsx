@@ -14,33 +14,33 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
 }) => {
     const [askAi,setAskAi] = useState("")
     const [promps,setpromps] = useState([
-        {
-            key:'Generate by Knowledge',
-            icon:'../images/Analyse/refresh-left-square.svg'
-        },
-        {
-            key:'Goal Alignment',
-            // icon:'./images/Analyse/activity.svg'
-            icon:'./images/Analyse/add-square.svg'
-        },
-        {
-            key:'Add Encouragementt',
-            // icon:'./images/Analyse/activity.svg'
-            icon:'./images/Analyse/add-square.svg'
-        },
-        {
-            key:'Action Oriented',
-            icon:'./images/Analyse/activity.svg'
-        },
-        {
-            key:'Habit building',
-            // icon:'./images/Analyse/maximize-2.svg'
-            icon:'./images/Analyse/task-square.svg'
-        },
-        {
-            key:'Progressive Difficulty',
-            icon:'./images/Analyse/status-up.svg'
-        },                                
+        // {
+        //     key:'Generate by Knowledge',
+        //     icon:'../images/Analyse/refresh-left-square.svg'
+        // },
+        // {
+        //     key:'Goal Alignment',
+        //     // icon:'./images/Analyse/activity.svg'
+        //     icon:'./images/Analyse/add-square.svg'
+        // },
+        // {
+        //     key:'Add Encouragementt',
+        //     // icon:'./images/Analyse/activity.svg'
+        //     icon:'./images/Analyse/add-square.svg'
+        // },
+        // {
+        //     key:'Action Oriented',
+        //     icon:'./images/Analyse/activity.svg'
+        // },
+        // {
+        //     key:'Habit building',
+        //     // icon:'./images/Analyse/maximize-2.svg'
+        //     icon:'./images/Analyse/task-square.svg'
+        // },
+        // {
+        //     key:'Progressive Difficulty',
+        //     icon:'./images/Analyse/status-up.svg'
+        // },                                
         // {
         //     key:'Make Longer',
         //     icon:'./images/Analyse/refresh-left-square.svg'

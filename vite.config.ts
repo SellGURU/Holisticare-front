@@ -25,6 +25,10 @@ export default defineConfig({
           },
         ],
       },
+      workbox: {
+        skipWaiting: true, // Forces the new service worker to activate immediately
+        clientsClaim: true, // Takes control of clients without requiring a reload
+      },      
     }),
   ],
 });

@@ -30,7 +30,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
         <div className=" bg-light-min-color dark:bg-black-secondary h-full flex flex-col  px-2 pt-4">
           <div className="flex flex-col gap-3 pl-3">
             <span className="TextStyle-Headline-6 text-Text-Primary ">
-              Create Your AI Twin
+              {data.description}
             </span>
             <div className="h-[100px] overflow-y-auto overflow-x-hidden grid gap-1">
               {data.interventions.filter((val:any) =>val.selected == true).map((el: any, i: number) => (
