@@ -196,15 +196,25 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                       <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
                         <div className="TextStyle-Headline-6 flex justify-between  pr-[140px] items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
-                          <div className="w-[94px] flex justify-between items-center mt-[-8px] p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
-                            <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
-                            <div className="w-[16px]">
-                              <img
-                                src="/icons/arrow-down-green.svg"
-                                alt=""
-                              />
-                            </div>
-                          </div>                          
+                          <div className="flex justify-end items-center  mt-[-8px]  gap-2">
+                            <div className="w-[70px]  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
+                              <div className="text-Primary-DeepTeal text-[10px]">{active.unit}</div>
+                              <div className="w-[16px]">
+                                <img src="/icons/arrow-down-green.svg" alt="" />
+                              </div>
+                            </div>                              
+                            <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                              <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
+                              <div className="w-[16px]">
+                                <img
+                                  src="/icons/arrow-down-green.svg"
+                                  alt=""
+                                />
+                              </div>
+                            </div>       
+                                            
+
+                          </div>
                         </div>
                         <div className="mt-0 relative">
                           {active &&
