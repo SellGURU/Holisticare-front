@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ButtonSecondary } from "../../Button/ButtosSecondary";
+import { Tooltip } from "react-tooltip";
 interface PlanCardProps {
   data: any;
   name:string
@@ -35,14 +36,23 @@ const PlanCard: React.FC<PlanCardProps> = ({ data,name,onEdit ,onClick}) => {
               {data.interventions.filter((val:any) =>val.selected == true).map((el: any, i: number) => (
                 <div
                   key={i}
-                  className="flex items-center gap-1 text-Text-Primary TextStyle-Body-2  "
+                  className="flex items-center gap-1 text-Text-Primary TextStyle-Body-2 pr-[6px]  "
                 >
                   <img src="/icons/tick-circle.svg" alt="" />
-                  <div className="overflow-hidden" style={{textWrap:'nowrap',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>
-                    {el.name}
-
+                  <div
+                    data-tooltip-id={`tooltip-${i}`}
+                    className="overflow-hidden select-none"
+                    style={{ textWrap: 'nowrap', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+                  >
+                    {el.name.length > 35 ? el.name.substring(0, 35) + '...' : el.name}
                   </div>
+                  {el.name.length > 35 && (
+                    <Tooltip id={`tooltip-${i}`} place="top">
+                      {el.name}
+                    </Tooltip>
+                  )}
                 </div>
+              
               ))}
 
             </div>
