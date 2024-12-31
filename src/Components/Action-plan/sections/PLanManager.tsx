@@ -229,16 +229,16 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                           <span className="flex items-center gap-2 TextStyle-Button text-Text-Primary">
                             <div className="bg-backgroundColor-Main rounded-lg p-1 flex items-center justify-center">
                               <div className={`w-4 h-4 `}>
-                                {categoryName == "Diet" && (
+                                {categoryName == "DIET" && (
                                   <img src={"/icons/diet.svg"} alt="" />
                                 )}
-                                {categoryName == "Activity" && (
+                                {categoryName == "ACTIVITY" && (
                                   <img src={"/icons/weight.svg"} alt="" />
                                 )}
-                                {categoryName == "Mind" && (
+                                {categoryName == "MIND" && (
                                   <img src={"/icons/mind.svg"} alt="" />
                                 )}
-                                {categoryName == "Supplement" && (
+                                {categoryName == "SUPPLEMENT" && (
                                   <img src={"/icons/Supplement.svg"} alt="" />
                                 )}
                               </div>

@@ -63,11 +63,12 @@ const GenerateNewActionPlan = () => {
   const [isEditMode, setisEditMode] = useState(false);
   // const [Priorities] = useState<PrioritiesType>(Data);
   const [isLoading, setisLoading] = useState(false);
-  const generateActionPlan = (method:any) => {
+  const generateActionPlan = (method:any,name:string) => {
       setisLoading(true)
       Application.ActionPlanRoadMap({
         member_id:id,
-        method:method
+        method:method,
+        method_name:name
       }).finally(() => {
           setisLoading(false)
           navigate('/report/'+id+'/a?section=Action Plan')
@@ -169,7 +170,7 @@ const GenerateNewActionPlan = () => {
                    name={el} 
                    onClick={
                     ()=>{
-                      generateActionPlan(plans[el])         
+                      generateActionPlan(plans[el],el)         
                     }
                   }
                   data={plans[el]}></PlanCard>;

@@ -192,7 +192,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         <h5 className="TextStyle-Headline-6 text-Text-Primary">
           {el.title}
         </h5>
-        <h6 className="TextStyle-Body-3 text-Text-Secondary">
+        <h6 className="TextStyle-Body-3 text-nowrap overflow-hidden text-ellipsis w-[80%] text-Text-Secondary">
           {el.description}
         </h6>
       </div>
