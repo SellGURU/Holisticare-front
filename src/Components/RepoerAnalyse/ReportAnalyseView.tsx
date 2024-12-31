@@ -312,7 +312,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
        
                             <div className="my-10 min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
-                                    <div id="Treatment Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary">Treatment Plan </div>
+                                    <div id="Holistic Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary">Holistic Plan</div>
                                     <InfoToltip mode="Treatment"></InfoToltip>
                                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                                 </div> 
