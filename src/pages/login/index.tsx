@@ -32,7 +32,8 @@ const Login = () => {
       password: "",
     },
     validationSchema,
-
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async (values) => {
       try {
         Auth.login(values.email, values.password).then((res) => {
@@ -93,8 +94,8 @@ const Login = () => {
             {" "}
             Welcome Back!
           </h3>
-             <TextField {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
-              <TextField {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField>   
+             <TextField inValid={formik.errors?.email != undefined && (formik.touched?.email as boolean)}  errorMessage={formik.errors?.email} {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
+              <TextField errorMessage={formik.errors?.password} inValid={formik.errors?.password != undefined && (formik.touched?.password as boolean)} {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField>   
             <ButtonSecondary disabled={!formik.isValid} onClick={() => {
                 handleSubmit()              
             }}>

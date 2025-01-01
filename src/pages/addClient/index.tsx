@@ -157,6 +157,7 @@ const AddClient =() => {
                                     <div className="w-full flex justify-between items-start h-[50px] overflow-visible">
                                         <div className="w-[220px]">
                                             <TextField
+                                            type="text"
                                                 {...formik.getFieldProps("firstName")}
                                                 name="firstName"
                                                 label="First Name"
@@ -166,6 +167,8 @@ const AddClient =() => {
                                         </div>
                                         <div className="w-[220px]">
                                             <TextField
+                                                                                        type="text"
+
                                                 {...formik.getFieldProps("lastName")}
                                                 label="Last Name"
                                                 placeholder="Enter client’s last name..."
