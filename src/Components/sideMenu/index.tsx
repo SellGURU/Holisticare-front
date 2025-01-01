@@ -51,10 +51,10 @@ const SideMenu = () => {
                       activeMenu.name === menu.name
                         ? "border-Primary-EmeraldGreen border-r-2 bg-white shadow-drop"
                         : ""
-                    }   text-[10px] font-semibold`}
+                    }   text-[8px] xl:text-[10px] font-semibold`}
                   >
                     <div
-                      className={`${menu.icon} ${
+                      className={` w-5 h-5  xl:w-6 xl:h-6 ${menu.icon} ${
                         activeMenu.name === menu.name
                           ? "text-Primary-EmeraldGreen"
                           : "text-[#888888]"
@@ -87,7 +87,7 @@ const SideMenu = () => {
                         
                         borderRadius: "16px",
                       }}
-                      className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center  text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
+                      className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center text-[8px]  xl:text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
                         activeMenu.name === graph.name
                           ? "bg-gradient-to-r from-[#005F73] to-[#6CC24A]"
                           : ""
