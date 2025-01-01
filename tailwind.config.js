@@ -53,6 +53,7 @@ export default {
         }
       },
       boxShadow:{
+        "drop": "0px -1px 24px 0 #005F731A",
         "Btn":"0px 0px 4px 0px #00000026",
         "100":"0px 2px 4px -2px #18274B1F,0px 4px 4px -2px #18274B14",
         "200":"0px 4px 6px -4px #18274B1F, 0px 8px 8px -4px #18274B14 ",

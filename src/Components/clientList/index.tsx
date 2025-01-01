@@ -6,7 +6,7 @@ import ClientCard from "./ClientCard";
 import { useNavigate } from "react-router-dom";
 import SelectBox from "../SelectBox";
 import SearchBox from "../SearchBox";
-import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
+import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -29,16 +29,18 @@ const ClientList = () => {
   );
   const navigate = useNavigate();
   const getPatients = () => {
-    Application.getPatients().then((res) => {
-      setClientList(res.data.patients_list_data);
-      setFilteredClientList(res.data.patients_list_data);
-    }).finally(() => {
-      setIsLoading(false)
-    });    
-  }
+    Application.getPatients()
+      .then((res) => {
+        setClientList(res.data.patients_list_data);
+        setFilteredClientList(res.data.patients_list_data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   useEffect(() => {
-    setIsLoading(true)
-    getPatients()
+    setIsLoading(true);
+    getPatients();
   }, []);
   console.log(clientList);
 
@@ -60,21 +62,20 @@ const ClientList = () => {
     );
     setFilteredClientList(searchResult);
   };
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSearch, setshowSearch] = useState(false);
   return (
     <>
       {isLoading ? (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {" "}
-          
           <div className="spinner">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="dot"></div>
             ))}
           </div>
         </div>
-        )
-        :
+      ) : (
         <div className="px-6 pt-8 ">
           {clientList.length > 0 ? (
             <>
@@ -102,31 +103,50 @@ const ClientList = () => {
                     Sort by: <SelectBox onChange={handleFilterChange} />
                   </div>
                   <div className="flex w-[96px] h-[32px] rounded-md ">
-                      <div className="bg-Primary-DeepTeal w-full flex items-center justify-center rounded-md rounded-r-none">
-                          <img src="/icons/grid-1.svg" alt="" />
-                      </div>
-                      <div className="bg-white flex items-center w-full justify-center rounded-md rounded-l-none">
-                          <img src="/icons/textalign-left.svg" alt="" />
-                      </div>
+                    <div className="bg-Primary-DeepTeal w-full flex items-center justify-center rounded-md rounded-r-none">
+                      <img src="/icons/grid-1.svg" alt="" />
+                    </div>
+                    <div className="bg-white flex items-center w-full justify-center rounded-md rounded-l-none">
+                      <img src="/icons/textalign-left.svg" alt="" />
+                    </div>
                   </div>
-                  <SearchBox onSearch={handleSearch} placeHolder="Search for Client ..."></SearchBox>
+                  {showSearch ? (
+                    <SearchBox
+                      ClassName={`rounded-md`}
+                      onSearch={handleSearch}
+                      placeHolder="Search for Client ..."
+                    ></SearchBox>
+                  ) : (
+                    <div
+                      onClick={() => setshowSearch(true)}
+                      className="bg-backgroundColor-Secondary rounded-md px-4 py-2 flex justify-center items-center shadow-100"
+                    >
+                      <img src="/icons/search.svg" alt="" />
+                    </div>
+                  )}
+
                   <div className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4">
-                      <img src="/icons/filter.svg" alt="" />
+                    <img src="/icons/filter.svg" alt="" />
                   </div>
                 </div>
               </div>
               <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
                 {filteredClientList.map((client: any) => {
-                  return <ClientCard ondelete={(memberId:any) => {
-                    setFilteredClientList((pre) => {
-                      const nes = [...pre]
-                      return nes.filter((el) =>el.member_id!=memberId)
-                    })
-                    setClientList((pre) => {
-                      const nes = [...pre]
-                      return nes.filter((el) =>el.member_id!=memberId)
-                    })
-                  }} client={client}></ClientCard>;
+                  return (
+                    <ClientCard
+                      ondelete={(memberId: any) => {
+                        setFilteredClientList((pre) => {
+                          const nes = [...pre];
+                          return nes.filter((el) => el.member_id != memberId);
+                        });
+                        setClientList((pre) => {
+                          const nes = [...pre];
+                          return nes.filter((el) => el.member_id != memberId);
+                        });
+                      }}
+                      client={client}
+                    ></ClientCard>
+                  );
                 })}
               </div>
             </>
@@ -151,7 +171,7 @@ const ClientList = () => {
             </>
           )}
         </div>
-      }
+      )}
     </>
   );
 };

@@ -49,7 +49,7 @@ const SideMenu = () => {
                     onClick={() => changeMenu(menu)}
                     className={`py-2 w-full flex flex-col  items-center   text-Primary-EmeraldGreen cursor-pointer   ${
                       activeMenu.name === menu.name
-                        ? "border-Primary-EmeraldGreen border-r-2 bg-white"
+                        ? "border-Primary-EmeraldGreen border-r-2 bg-white shadow-drop"
                         : ""
                     }   text-[10px] font-semibold`}
                   >
