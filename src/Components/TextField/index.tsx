@@ -47,7 +47,7 @@ const TextField: React.FC<TextFieldProps> = ({
         {type === "password" && (
           <div
             onClick={togglePassword}
-            className="absolute top-2 right-0 pr-3 flex items-center text-sm"
+            className="absolute top-2 right-0 pr-3 flex items-center text-sm cursor-pointer"
           >
             {showPassword ? (
                 <img src="/icons/eyeOff.svg" alt="" />
