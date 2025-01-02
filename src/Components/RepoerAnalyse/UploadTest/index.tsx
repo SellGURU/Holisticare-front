@@ -78,18 +78,19 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                         {files.map((el:any) => {
                             return (
                                 <>
-                                    <div className="w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px]">
+                                    <div className="w-full flex justify-between items-center px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ">
                                        <div className="flex justify-start gap-2">
                                             <img src="/images/Pdf.png" alt="" />
                                             <div>
                                                 <div className="text-[12px] text-Text-Primary font-[600]">
-                                                    {el.name}
+                                                    {el.name} 
                                                 </div>
                                                 <div className="text-[12px] text-Text-Secondary">
                                                     {(el.size / ( 1024)).toFixed(2)} KB
                                                 </div>
                                             </div>
                                        </div>
+                                       <img className="w-6 h-6 cursor-pointer" src="/icons/delete.svg" alt="" />
                                     </div>
                                 </>
                             )

@@ -108,6 +108,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
 
   //   return days;
   // };
+  console.log(data)
   const getCurrentMonthWithBuffer = () => {
     const today = new Date();
 
@@ -158,59 +159,106 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
     setCurrentDay(monthName);
     setCurrentMonth(currentMonth);
   }, []); // Empty dependency array ensures this runs only once
+  const resolveIcon = (category:any)=>{
+    if(category== "Diet"){
+      return "/icons/diet.svg"
+    }
+    if(category == "Activity"){
+      return "/icons/weight.svg"
+    }
+    if(category == "Supplement"){
+      return "/icons/Supplement.svg"
+    }
+    if(category == "Mind"){
+      return "/icons/mind.svg"
+    }
+  }
+  const today = new Date(); // Current date at the component level
+  today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   return (
     <>
-      <div className="w-full   py-4 rounded-lg  relative ">
-        {/* <div className="flex items-center gap-2 cursor-pointer">
-                <h2 className="text-sm font-semibold">July 2024</h2>
-                <img className={`${theme}-icons-arrow-down`} alt="" />
-            </div> */}
-        <div className="grid grid-cols-7 w-full   lg:gap-2 gap-[100px]  mt-1 mb-2  py-5   ">
+      <div className="w-full py-4 rounded-lg relative">
+        <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1 mb-2 py-5">
           {getCurrentMonthWithBuffer()
             .slice(0, 7)
             .map((day, index) => (
               <div
                 key={index}
-                className=" text-xs font-medium text-center text-Text-Primary "
+                className="text-xs font-medium text-center text-Text-Primary"
               >
-                {day.dayName.slice(0,3)} 
+                {day.dayName.slice(0, 3)}
               </div>
             ))}
         </div>
-        <div className="grid grid-cols-7  gap-[1px]  w-full   ">
-          {getCurrentMonthWithBuffer().map((day, index) => (
-            <div
-              key={index}
-              className={` px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px]  border border-Gray-100   rounded-lg  ${
-                day.dayNumber == currenDay && day.monthName == currenMonth
-                  ? "dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary "
-                  : currenMonth == day.monthName
-                  ? "bg-backgroundColor-Main"
-                  : "bg-backgroundColor-Card"
-              }`}
-            >
+        <div className="grid grid-cols-7 gap-[1px] w-full">
+          {getCurrentMonthWithBuffer().map((day, index) => {
+            const activitiesForTheDay = data.filter(
+              (el: any) =>
+                new Date(el.date).toDateString() ===
+                day.dateObject.toDateString()
+            );
+
+            const categories = Array.from(
+              new Set(activitiesForTheDay.map((a: any) => a.category))
+            );
+
+            return (
               <div
-                className={` ${
-                  day.dayNumber == currenDay && day.monthName == currenMonth
-                    ? "dtext-Text-Primary"
-                    :   currenMonth !== day.monthName ? 'text-Text-Secondary' :"text-Text-Primary "
-                }  text-xs`}
+                key={index}
+                className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border border-Gray-100 rounded-lg ${
+                  day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? "dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary"
+                    : currenMonth === day.monthName
+                    ? "bg-backgroundColor-Main"
+                    : "bg-backgroundColor-Card"
+                }`}
               >
-                {day.dayNumber}
-              </div>
-              <ul>
-                {/* <div>{data.filter((el:any) =>new Date(el.date).toDateString() == day.dateObject.toDateString()).length}</div> */}
-                {data.filter((el:any) =>new Date(el.date).toDateString() == day.dateObject.toDateString()).map((activity: any, i: any) => (
-                  <li key={i} className="flex flex-col lg:flex-row items-start gap-1 mt-[2px]">
-                    <span className="w-[12px] h-[12px] min-w-[10px] min-h-[10px] rounded-full border border-Primary-EmeraldGreen"></span>
-                    <span className=" text-[6px] lg:text-[10px] text-Text-Primary   text-justify flex-grow">
-                      {activity.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                <div
+                  className={`${
+                    day.dayNumber === currenDay && day.monthName === currenMonth
+                      ? "dtext-Text-Primary"
+                      : currenMonth !== day.monthName
+                      ? "text-Text-Secondary"
+                      : "text-Text-Primary"
+                  } text-xs`}
+                >
+                  {day.dayNumber}
+                </div>
+                <ul>
+  {categories.map((category: any) => (
+    <li className="mt-2" key={category}>
+      <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
+        <img src={resolveIcon(category)} alt="" />
+        {category}
+      </div>
+      {activitiesForTheDay
+        .filter((activity: any) => activity.category === category)
+        .map((activity: any, i: number) => {
+          const activityDate = new Date(activity.date);
+          const isPastDate = activityDate < today;          const opacityClass = !activity.status && isPastDate ? 'opacity-70' : 'opacity-100';
+
+          return (
+            <div
+              key={i}
+              className={`flex  gap-1 mt-1 ${opacityClass}`}
+            >
+              {activity.status ? (
+                <img src="/icons/activity-circle-done.svg" alt="" />
+              ) : (
+                <img src="/icons/acitivty-circle.svg" alt="" />
+              )}
+              <span className="text-[6px] lg:text-[10px] text-Text-Primary text-justify flex-grow">
+                {activity.name}
+              </span>
             </div>
-          ))}
+          );
+        })}
+    </li>
+  ))}
+</ul>
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

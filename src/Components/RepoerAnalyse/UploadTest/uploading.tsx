@@ -59,7 +59,7 @@ const Uploading:React.FC<UploadingProps> = ({
     return (
         <>
             {isCompleted ?
-                <div className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'}`}>
+                <div className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'} flex justify-between`}>
                     <div className="flex justify-start gap-2">
                         <img src="/images/Pdf.png" alt="" />
                         <div>
@@ -71,18 +71,28 @@ const Uploading:React.FC<UploadingProps> = ({
                             </div>
                         </div>
                     </div>
+                    <img className="cursor-pointer w-6 h-6" src="/icons/delete.svg" alt="" />
+
                 </div>            
             :
-                <div className="w-full px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]" style={{}}>
-                    <div className="text-[12px] text-Text-Primary font-[600]">Uploading...</div>
+                <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]" style={{}}>
+                    <div className="w-full flex justify-between">
+                        <div>
+                        <div className="text-[12px] text-Text-Primary font-[600]">Uploading...</div>
                     <div className="text-Text-Secondary text-[12px] mt-1">
                         {progress}%  • 30 seconds remaining
+                    </div>
+                        </div>
+                    
+                    <img className="cursor-pointer" src="/icons/close.svg" alt="" />
+
                     </div>
                     <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center" >
                         <div className="bg-Primary-DeepTeal h-[5px] rounded-[12px]" style={{width:progress+'%'}}>
 
                         </div>
                     </div>
+
                 </div>        
             }
         </>

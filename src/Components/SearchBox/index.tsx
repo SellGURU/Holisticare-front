@@ -3,11 +3,13 @@ import React from "react";
 type SearchBoxProps = {
   onSearch: (searchTerm: any) => void;
   placeHolder:string
+  ClassName?:string,
+  
 };
 
-const SearchBox: React.FC<SearchBoxProps> = ({ onSearch , placeHolder}) => {
+const SearchBox: React.FC<SearchBoxProps> = ({ onSearch , placeHolder,ClassName,}) => {
   return (
-    <div className="relative flex justify-start items-center  min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary shadow-100 py-[10px] px-4">
+    <div className={`relative flex justify-start items-center  min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary shadow-200 py-[10px] px-4  ${ClassName}`}>
 
          <img
         src="/icons/search.svg"

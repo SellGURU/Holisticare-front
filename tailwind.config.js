@@ -53,6 +53,7 @@ export default {
         }
       },
       boxShadow:{
+        "drop": "0px -1px 24px 0 #005F731A",
         "Btn":"0px 0px 4px 0px #00000026",
         "100":"0px 2px 4px -2px #18274B1F,0px 4px 4px -2px #18274B14",
         "200":"0px 4px 6px -4px #18274B1F, 0px 8px 8px -4px #18274B14 ",
@@ -63,6 +64,11 @@ export default {
         "700":"0px 8px 22px -6px #18274B1F, 0px 14px 64px -4px #18274B1F ",
         "800":"0px 8px 28px -6px #18274B1F, 0px 18px 88px -4px #18274B24 ",
         "input":"0px 0px 4px 0px #18274B1F"
+      },
+      screens: {
+        'h-sm': {'raw': '(min-height: 720px)'},
+        'h-md': {'raw': '(min-height: 800px)'},
+        'h-lg': {'raw': '(min-height: 1000px)'},
       },
     },
   },

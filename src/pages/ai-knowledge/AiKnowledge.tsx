@@ -11,6 +11,7 @@ import chroma from "chroma-js";
 // import { ApplicationMock } from "@/api";
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import Application from "../../api/app.ts";
+import SearchBox from "../../Components/SearchBox/index.tsx";
 
 interface LoadGraphProps {
   activeFilters: string[];
@@ -233,8 +234,9 @@ const AiKnowledge = () => {
         <GraphEvents  setisLoading={setisLoading}/>
       </SigmaContainer>
 
-      <div className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-textoverflow-y-auto overscroll-y-auto  flex flex-col ">
-        <div className="overflow-y-auto  bg-white p-4 rounded-2xl border-Gray-50 border">
+      <div className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-text overflow-y-auto overscroll-y-auto  flex flex-col ">
+        <SearchBox ClassName="rounded-[12px]"   placeHolder="Search for document ..." onSearch={()=>{}}></SearchBox>
+        <div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
           <div className="mb-4">
             <h3 className="text-lg text-light-secandary-text mb-2">
               Documents

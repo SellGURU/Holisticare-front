@@ -37,8 +37,8 @@ const SideMenu = () => {
             >
               Clinic Logo
             </div> */}
-            <div>
-              <img src="/images/Logo-Light.svg" alt="" />
+            <div className="flex items-center justify-center">
+              <img className="size-10 h-sm:size-12" src="/images/Logo-Light.svg" alt="" />
             </div>
           </div>
           <div className="w-full">
@@ -49,12 +49,12 @@ const SideMenu = () => {
                     onClick={() => changeMenu(menu)}
                     className={`py-2 w-full flex flex-col  items-center   text-Primary-EmeraldGreen cursor-pointer   ${
                       activeMenu.name === menu.name
-                        ? "border-Primary-EmeraldGreen border-r-2 bg-white"
+                        ? "border-Primary-EmeraldGreen border-r-2 bg-white shadow-drop"
                         : ""
-                    }   text-[10px] font-semibold`}
+                    }   text-[8px] h-sm:text-[10px] font-semibold`}
                   >
                     <div
-                      className={`${menu.icon} ${
+                      className={` w-5 h-5  h-sm:w-6 h-sm:h-6 ${menu.icon} ${
                         activeMenu.name === menu.name
                           ? "text-Primary-EmeraldGreen"
                           : "text-[#888888]"
@@ -87,19 +87,19 @@ const SideMenu = () => {
                         
                         borderRadius: "16px",
                       }}
-                      className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center  text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
+                      className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center text-[8px]  h-sm:text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
                         activeMenu.name === graph.name
                           ? "bg-gradient-to-r from-[#005F73] to-[#6CC24A]"
                           : ""
                       }`}
                     >
                       {activeMenu.name === graph.name ? (
-                        <img
+                        <img className= "w-5 h-5 h-sm:w-6 h-sm:h-6"
                           src="/icons/side-menu/command-square-active.svg"
                           alt=""
                         />
                       ) : (
-                        <img src="/icons/side-menu/command-square.svg" alt="" />
+                        <img className= "w-5 h-5 h-sm:w-6 h-sm:h-6" src="/icons/side-menu/command-square.svg" alt="" />
                       )}
                       {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
                       {/* { activeMenu.name === graph.name && graph.name} */}

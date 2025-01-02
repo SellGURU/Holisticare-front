@@ -60,8 +60,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-dashboard {
   mask-image: url(/icons/side-menu/dashboard.svg);
@@ -73,8 +72,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-shared-witth-you {
   mask-image: url(/icons/side-menu/shared-witth-you.svg);
@@ -86,8 +84,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-messages {
   mask-image: url(/icons/side-menu/messages.svg);
@@ -99,8 +96,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-money-send {
   mask-image: url(/icons/side-menu/bookmark-2.svg);
@@ -112,8 +108,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-reports {
   mask-image: url(/icons/side-menu/reports.svg);
@@ -125,8 +120,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 
 .sidemenu-menu-icon-packages {
@@ -139,8 +133,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-setting {
   mask-image: url(/icons/side-menu/setting-2.svg);
@@ -152,8 +145,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-trend-up {
   mask-image: url(/icons/side-menu/trend-up.svg);
@@ -165,8 +157,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-drift-analysis {
   mask-image: url(/icons/status-up.svg);
@@ -178,8 +169,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 .sidemenu-menu-icon-home {
   mask-image: url(/icons/side-menu/home-2.svg);
@@ -191,8 +181,7 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-  width: 1.5rem; /* Tailwind w-6 */
-  height: 1.5rem; /* Tailwind h-6 */
+
 }
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');

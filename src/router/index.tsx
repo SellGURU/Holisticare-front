@@ -12,6 +12,7 @@ import AddClient from "../pages/addClient";
 import GenerateNewPlan from "../pages/generateTreatmentPlan";
 import { DriftAnaysis } from "../pages/driftAnaysis";
 import AiKnowledge from "../pages/ai-knowledge/AiKnowledge.tsx";
+import SignUp from "../pages/signUp/index.tsx";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login></Login>,
   },
+  {
+    path:"/register",
+    element: <SignUp></SignUp>
+  }
 ]);
 
 export default router;
