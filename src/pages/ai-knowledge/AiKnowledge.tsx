@@ -200,7 +200,7 @@ const AiKnowledge = () => {
 
   return (
     <div className="relative text-primary-text flex justify-center w-full h-[80vh] ">
-      {/* <SigmaContainer
+      <SigmaContainer
         settings={sigmaSetting}
         id="sigma-container"
         className={" !bg-bg-color"}
@@ -232,7 +232,7 @@ const AiKnowledge = () => {
           isInitialLoad={isInitialLoad}
         />
         <GraphEvents  setisLoading={setisLoading}/>
-      </SigmaContainer> */}
+      </SigmaContainer>
 
       <div className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-text overflow-y-auto overscroll-y-auto  flex flex-col ">
         <SearchBox ClassName="rounded-[12px]"   placeHolder="Search for document ..." onSearch={()=>{}}></SearchBox>
