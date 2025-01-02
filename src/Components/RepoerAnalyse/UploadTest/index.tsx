@@ -90,7 +90,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                                                 </div>
                                             </div>
                                        </div>
-                                       <img className="w-6 h-6" src="/public/icons/delete.svg" alt="" />
+                                       <img className="w-6 h-6 cursor-pointer" src="/icons/delete.svg" alt="" />
                                     </div>
                                 </>
                             )

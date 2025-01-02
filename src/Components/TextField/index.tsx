@@ -59,7 +59,7 @@ const TextField: React.FC<TextFieldProps> = ({
         )}
       </div>
       {inValid &&  (
-        <span className="text-red-500 text-xs mt-1">{errorMessage}</span>
+        <span className="text-red-500 text-[10px] mt-1">{errorMessage}</span>
       )}
     </div>
   );
