@@ -66,7 +66,7 @@ export default {
         "input":"0px 0px 4px 0px #18274B1F"
       },
       screens: {
-        'h-sm': {'raw': '(min-height: 730px)'},
+        'h-sm': {'raw': '(min-height: 720px)'},
         'h-md': {'raw': '(min-height: 800px)'},
         'h-lg': {'raw': '(min-height: 1000px)'},
       },
