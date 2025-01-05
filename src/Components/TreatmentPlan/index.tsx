@@ -79,6 +79,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
+  const [clientSummary, setclientSummary] = useState('second')
   const handleDeleteCard = (index: number) => {
     setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
     setShowModalIndex(null);
@@ -115,6 +116,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           setClientGools(res.data.client_goals);
         }
         setNeedFocusData(res.data.need_focus_benchmarks);
+        setclientSummary(res.data.medical_summary)
       });
     }
   }, [activeTreatment]);
@@ -386,6 +388,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 );
               })}
             </ul>
+          </div>
+          <div className="rounded-xl border border-Gray-50 mt-3">
+            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+            Client Condition Insights
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+            {clientSummary}
+            </div>
           </div>
         </>
       </SlideOutPanel>
