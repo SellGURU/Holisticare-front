@@ -84,7 +84,7 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
     },[isLimite])
     return (
         <>
-            <div ref={refEl} className={`w-[205px] ${isLimite?'h-[150px]':'h-[190px]'} overflow-auto px-3 py-2 rounded-[6px] bg-white border  border-gray-50 shadow-200`}>
+            <div ref={refEl} className={`w-[205px] ${isLimite?'h-[150px]':'h-[190px]'} h-fit overflow-auto px-3 py-2 rounded-[6px] bg-white border  border-gray-50 shadow-200`}>
                 <div className="px-2 flex justify-between bg-backgroundColor-Main  border border-gray-50 items-center rounded-md -ml-1 ">
                     <input value={askAi} onChange={(e) => {
                         setAskAi(e.target.value)
@@ -125,7 +125,7 @@ const GenerateWithAiModal:React.FC<GenerateWithAiModalProps> = ({
                             <div onClick={() => {
                                 onSuccess(el.key)
                             }} className={`text-[10px]  text-Text-Primary gap-2 h-[34px] flex justify-start items-center ${index == promps.length-1 ?'border-none':'border-b'} cursor-pointer border-Secondary-SelverGray]`}>
-                                <img className="invert dark:invert-0" src={el.icon} alt="" />
+                                <img className="" src={el.icon} alt="" />
                             {el.key}</div>                        
                         </>
                     )

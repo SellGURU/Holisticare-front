@@ -202,8 +202,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                             handleScroll()
                         }}  className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport?'overflow-y-scroll':'overflow-y-hidden '}  overflow-x-hidden `}>
                     
-                            <div className="flex gap-14" >
-                                <div className="min-w-[330px] w-[330px] relative">
+                            <div className="flex gap-14 " >
+                                <div className="min-w-[430px] w-[330px] relative min-h-[750px]">
                                     <div>
                                         <div id="Client Summary" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center ">
                                             Client Summary
@@ -252,7 +252,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 </div>
             
                             </div>
-                            <div className="my-10 min-h-[400px] text-light-primary-text dark:text-primary-text ">
+                            <div className="my-[200px] min-h-[400px] text-light-primary-text dark:text-primary-text ">
                                 <div>
                                     <div id="Needs Focus Biomarkers" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 ">Needs Focus Biomarkers</div>
                                     <div className=" text-Text-Secondary text-[12px]">{referenceData.total_biomarker_note}</div>
@@ -295,7 +295,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     })}
                                 </div>
                             </div>                               
-                            <div className="my-10 min-h-[650px]">
+                            <div className="my-[200px] min-h-[650px]">
                                 <div>
                                     <div id="Detailed Analysis" className="sectionScrollEl text-Text-Primary TextStyle-Headline-4">Detailed Analysis</div>
                                     <div className="TextStyle-Body-2 text-Text-Secondary mt-2">{referenceData.detailed_analysis_note}</div>
@@ -310,7 +310,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 </div>
                             </div>     
        
-                            <div className="my-10 min-h-[650px]">
+                            <div className="my-[200px] min-h-[650px]">
                                 <div className="w-full flex items-center justify-between">
                                     <div id="Holistic Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary">Holistic Plan</div>
                                     <InfoToltip mode="Treatment"></InfoToltip>
@@ -334,7 +334,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                       
                                 }  
                             </div>
-                            <div id="Action Plan" className="my-10  min-h-[650px]">
+                            <div id="Action Plan" className="my-[200px]  min-h-[650px]">
                                 <div id="Action Plan" className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4">Action Plan</div>
                                 <ActionPlan calenderDataUper={caldenderData}></ActionPlan>
                             </div>

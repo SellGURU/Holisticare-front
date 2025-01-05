@@ -101,7 +101,9 @@ const GenerateNewActionPlan = () => {
               <div key={i} className="dot"></div>
             ))}
           </div>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We are generating tailored methods aligned with your treatment plan. This may take a moment.</div>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We are generating tailored methods aligned with your Holistic Plan
+
+. This may take a moment.</div>
         </div>
       )}
       <div className="w-full fixed top-0 ">

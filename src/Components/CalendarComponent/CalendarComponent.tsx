@@ -243,11 +243,11 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
               className={`flex  gap-1 mt-1 ${opacityClass}`}
             >
               {activity.status ? (
-                <img src="/icons/activity-circle-done.svg" alt="" />
+                <img className="w-3 h-3" src="/icons/activity-circle-done.svg" alt="" />
               ) : (
-                <img src="/icons/acitivty-circle.svg" alt="" />
+                <img className="w-3 h-3" src="/icons/acitivty-circle.svg" alt="" />
               )}
-              <span className="text-[6px] lg:text-[10px] text-Text-Primary text-justify flex-grow">
+              <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
                 {activity.name}
               </span>
             </div>
