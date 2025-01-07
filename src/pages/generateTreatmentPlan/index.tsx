@@ -115,9 +115,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // })
   const [isforceReload] = useState(false);
   const resolveNeedFocusText = () => {
-    return treatmentPlanData["need_focus_benchmarks_list"].map((el: any) => {
-      return el + "\n\n";
-    });
+    return treatmentPlanData["need_focus_benchmarks_list"];
     // return "scdc"
   };
   const resolveDescriptText = () => {
@@ -127,9 +125,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["need_focus_benchmarks_list"] = value.includes(",")
-        ? [...value.split(",")][0]
-        : [value];
+      old["need_focus_benchmarks_list"] =[value.toString()];
       return old;
     });
   };
