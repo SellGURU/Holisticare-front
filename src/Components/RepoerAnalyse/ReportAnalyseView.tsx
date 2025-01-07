@@ -12,7 +12,7 @@ import { useEffect, useState } from "react"
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
-import referencedata from '../../api/--moch--/data/new/client_summary_outofrefs.json';
+import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 
 import Point from "./Point"
@@ -80,7 +80,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
 
     useEffect(() => {
         if(resolvedMemberID == 123 || !isHaveReport){
-            setReferenceData(referencedata)
+            setReferenceData(referencedataMoch)
             setClientSummaryBoxs(mydata)
             setConcerningResult(conceringResultData)
             setTreatmentPlanData(treatmentPlanData)

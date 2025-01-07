@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StatusChart from "../StatusChart";
 import { subscribe } from "../../../utils/event";
 import Legends from "../Legends";
@@ -15,6 +15,7 @@ interface DetiledAnalyseProps {
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
   console.log(data);
+  console.log(refrences)
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
@@ -39,6 +40,12 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
       setIsOpen(true);
     }
   });
+  useEffect(() => {
+    if(refrences!= null) {
+      setActiveBOx(refrences?.biomarkers[0].name?refrences?.biomarkers[0].name:'')
+      setActive(refrences?.biomarkers[0])
+    }
+  },[refrences])
   const [showMoreInfo,setShowMoreInfo] = useState(false)
   return (
     <>
