@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
+import TooltipText from "../../TooltipText"
 import { resolveMaxValue, sortKeysWithValues } from "./Help"
 
 interface StatusBarChartProps {
@@ -56,9 +56,14 @@ const StatusBarChart:React.FC<StatusBarChartProps> =(
                           backgroundColor:resolveColor(el.key)
                       }}
                     >
-                        <div className="absolute w-full text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
-                          {el.key+" "+"("+el.value[0]+" - "+el.value[1]+')'}
-                        </div>      
+                          <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
+                          <TooltipText tooltipValue={el.key+" "+"("+el.value[0]+" - "+el.value[1]+')'} >
+                              <>
+                                {el.key+" "+"("+el.value[0]+" - "+el.value[1]+')'}
+                              </>
+
+                          </TooltipText>
+                          </div>      
                         {
                           data.values[0] >=el.value[0] && el.value[1]>=data.values[0] &&
                             <div
