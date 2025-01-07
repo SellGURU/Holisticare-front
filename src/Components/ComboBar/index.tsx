@@ -9,13 +9,13 @@ import Application from "../../api/app.ts";
 import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import { useConstructor } from "../../help.ts";
 import { useFormik } from "formik";
-
+import Data from "./data.json";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
     { name: "Client Info", url: "/images/sidbar-menu/info-circle.svg" },
     { name: "Data Syncing", url: "/icons/sidbar-menu/messages.svg" },
-    { name: "Cloud Change", url: "/icons/sidbar-menu/cloud-change.svg" },
+    { name: "File History", url: "/icons/sidbar-menu/cloud-change.svg" },
     {
       name: "Questionary Tracking",
       url: "/icons/sidbar-menu/clipboard-text.svg",
@@ -30,7 +30,7 @@ export const ComboBar = () => {
     email: "",
     picture: "",
   });
-  const [data, setData] = useState<any>(null);
+  const [data] = useState<any>(Data);
 
   useEffect(() => {
     Application.getPatientsInfo({
@@ -44,7 +44,7 @@ export const ComboBar = () => {
     Application.getSummary(id as string).then((res) => {
       console.log(res);
       if (res.data != "Internal Server Error") {
-        setData(res.data);
+        // setData(res.data);
         formik.setFieldValue("firstName", res.data.personal_info["first_name"]);
         formik.setFieldValue("lastName", res.data.personal_info["last_name"]);
         // setImage(res.data.personal_info.picture);
@@ -115,9 +115,9 @@ export const ComboBar = () => {
     switch (activeItem) {
       case "Client Info":
         return (
-            <>
-            {
-                data.personal_info ? (   <div className="bg-backgroundColor-Card border rounded-md border-[#005F73] text-xs text-Text-Primary border-opacity-10 p-2 flex flex-col gap-5 pt-4 ">
+          <>
+            {data.personal_info ? (
+              <div className="bg-backgroundColor-Card border rounded-md border-[#005F73] text-xs text-Text-Primary border-opacity-10 p-2 flex flex-col gap-5 pt-4 ">
                 <div className="w-full flex justify-between items-center">
                   <div className="text-Text-Secondary font-medium flex items-center gap-1">
                     <img src="/icons/workouts.svg" alt="" />
@@ -161,22 +161,16 @@ export const ComboBar = () => {
                   {data?.personal_info["phone"] || "No Data"}
                 </div>
               </div>
-
-                )
-                : (
-                    <div className="flex flex-col items-center justify-center h-[200px]">
-                    <img
-                      className=" object-contain"
-                      src="/icons/document-text.svg"
-                      alt=""
-                    />
-                    <div className="text-[12px] text-[#383838]">
-                      No Data Found
-                    </div>
-                  </div>
-                )
-            }
-       
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[200px]">
+                <img
+                  className=" object-contain"
+                  src="/icons/document-text.svg"
+                  alt=""
+                />
+                <div className="text-[12px] text-[#383838]">No Data Found</div>
+              </div>
+            )}
           </>
         );
       case "Data Syncing":
@@ -196,14 +190,16 @@ export const ComboBar = () => {
                       <div className="w-full mt-2">
                         {data["Data Syncing"]?.map((el: any) => {
                           return (
-                            <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
-                              <div className="text-[10px] w-[50px] text-Text-Primary">
+                            <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
+                              <div className="text-[10px] w-[50px]  text-Text-Primary">
                                 {el.Data}
                               </div>
-                              <div>{el["Last Sync"]}</div>
-                              <div className="text-[8px] w-[60px]">
+                              <div className="w-[60px] text-center">
+                                {el["Last Sync"]}
+                              </div>
+                              <div className="text-[8px] ">
                                 <div
-                                  className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-2 ${
+                                  className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
                                     el["State"] == "Connected"
                                       ? "bg-[#DEF7EC]"
                                       : "bg-[#F9DEDC]"
@@ -247,8 +243,55 @@ export const ComboBar = () => {
             </div>
           </div>
         );
-      case "Cloud Change":
-        return <div>Cloud Change Content</div>;
+      case "File History":
+        return <div className=" w-full">
+        <div className="px-2">
+          <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+            <div>File Name</div>
+            <div>Upload Date</div>
+            <div>Action</div>
+          </div>
+
+          <>
+            {data["File History"]?.length > 0 ? (
+              <>
+                <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
+                  <div className="w-full mt-2">
+                    {data["File History"]?.map((el: any) => {
+                      return (
+                        <div className=" bg-white border border-Gray-50 mb-1 p-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
+                          <div className="text-[10px] w-[50px]  text-Text-Primary">
+                            {el.Data}
+                          </div>
+                          <div className="w-[70px] text-center">
+                            {el["Upload Date"]} 
+                          </div>
+                          <div className="flex items-center justify-end gap-1">
+                            <img  className="cursor-pointer" src="/icons/eye-green.svg" alt="" />
+                            <img className="cursor-pointer"  src="/icons/import.svg" alt="" />
+                          </div>
+                        
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[200px]">
+                <img
+                  className=" object-contain"
+                  src="/icons/document-text.svg"
+                  alt=""
+                />
+                <div className="text-[12px] text-[#383838]">
+                  No Data Found
+                </div>
+              </div>
+            )}
+          </>
+        </div>
+      </div>
       case "Questionary Tracking":
         return (
           <div className=" w-full">
@@ -267,13 +310,13 @@ export const ComboBar = () => {
                         {data["Questionary Tracking"]?.map((el: any) => {
                           return (
                             <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
-                              <div className="text-[10px] w-[50px] text-Text-Primary">
+                              <div className="text-[10px]  text-Text-Primary">
                                 {el.Data}
                               </div>
 
-                              <div className="text-[8px] w-[60px]">
+                              <div className="text-[8px] ">
                                 <div
-                                  className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-2 ${
+                                  className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
                                     el["State"] == "Complete"
                                       ? "bg-[#DEF7EC]"
                                       : "bg-[#F9DEDC]"
