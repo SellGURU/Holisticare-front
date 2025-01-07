@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
 import Uploading from "./uploading";
 import { ButtonSecondary } from "../../Button/ButtosSecondary";
 
