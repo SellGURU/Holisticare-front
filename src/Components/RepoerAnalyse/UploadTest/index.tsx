@@ -29,7 +29,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
 
                     <div onClick={() => {
                         document.getElementById("uploadFile")?.click()
-                    }} className="w-[576px] shadow-100 border-spacing-9 mt-6 h-[182px] bg-white rounded-[12px] border border-dashed border-Primary-DeepTeal">
+                    }} className="w-[576px] shadow-100 border-spacing-9 mt-4 h-[160px] bg-white rounded-[12px] border border-dashed border-Primary-DeepTeal">
                         <div className="w-full flex justify-center mt-6">
                             <img src="/icons/upload-test.svg" alt="" />
                         </div>
@@ -37,12 +37,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                             Drag and drop your test file here or click to upload.
                         </div>
                         <div className="w-full mt-3 flex justify-center">
-                            <ButtonPrimary size="small">
-                                <div className="w-[140px]">
-                                    Upload Test Results
-
-                                </div>
-                            </ButtonPrimary>
+                            <div className="text-Primary-DeepTeal cursor-pointer text-[12px] underline">Upload Test Results</div>
 
                         </div>
                         <input type="file" ref={fileInputRef} multiple onChange={(e:any) => {
@@ -74,7 +69,7 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                     <div className="text-Text-Primary text-[12px] mt-2 w-[470px]">
                         {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
                     </div>
-                    <div className="mt-6 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
+                    <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
                         {files.map((el:any) => {
                             return (
                                 <>
@@ -106,6 +101,22 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                             )
                         })}
                     </div>     
+
+                    <div className="flex justify-center items-center w-full">
+                        <div className="h-[1px] bg-Text-Triarty w-[180px] relative">
+                        </div>
+                        <div className=" text-Text-Primary text-[10px] ">
+                            <div className=" px-3">
+                                Alternatively
+                            </div>    
+                        </div>
+                        <div className="h-[1px] bg-Text-Triarty w-[180px] relative">
+                        </div>                        
+                    </div>
+                    <div className="w-full mt-6 flex justify-center">
+                        <div className="text-Primary-DeepTeal cursor-pointer text-[12px] underline">Complete Questionnaire</div>
+
+                    </div>                    
                     {
                         upLoadingFiles.length >0 &&
                             <div className="flex justify-center mt-1">
