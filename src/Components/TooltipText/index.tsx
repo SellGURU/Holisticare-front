@@ -19,7 +19,7 @@ const TooltipText:React.FC<TooltipTextProps> =({ tooltipValue,children ,...props
     }, [tooltipValue]);    
     return (
         <>
-         <span ref={textRef} data-tooltip-id="tooltip" data-tooltip-content={tooltipValue} {...props} style={{
+         <span ref={textRef} data-tooltip-id={isEllipsized?"tooltip":''} data-tooltip-content={tooltipValue} {...props} style={{
             textWrap:'nowrap',
             overflow:'hidden',
             textOverflow:'ellipsis'
