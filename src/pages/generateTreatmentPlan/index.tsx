@@ -125,7 +125,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["need_focus_benchmarks_list"] =[value];
+      old["need_focus_benchmarks_list"] =[value.toString()];
       return old;
     });
   };
