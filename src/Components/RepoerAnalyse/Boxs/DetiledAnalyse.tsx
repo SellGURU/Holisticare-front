@@ -155,7 +155,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   {!isCheced ?
                     <div className="w-full ">
                       <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
-                        <div className="flex mb-20 mt-[-8px] justify-between items-center">
+                        <div className="flex mb-[74px] mt-[-8px] justify-between items-center">
                           <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
                             Current Value
                             <div onMouseEnter={() => {

@@ -370,7 +370,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                             <div className="w-full flex gap-2   rounded-[16px]  min-h-[30px] ">
                                                 {
                                                     <>
-                                                        <div className="w-[300px] min-w-[300px]">
+                                                        <div className="w-[220px] min-w-[220px]">
                                                             {data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories.map((value:any) => {
                                                                 return (
                                                                     <>
@@ -404,7 +404,7 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                                                 <div className="flex w-full justify-center gap-4 mt-4">
                                                                     <div>
                                                                         <div className="w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
-                                                                            <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-20">
+                                                                            <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
                                                                                 Last Value
                                                                                  <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
                                                                                     <div className="text-Primary-DeepTeal text-[10px]">{activeEl.unit}</div>
