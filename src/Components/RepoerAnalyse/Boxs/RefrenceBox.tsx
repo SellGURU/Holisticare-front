@@ -121,7 +121,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
           </>
         ) : (
           <>
-            <div className="mt-16">
+            <div className="mt-14">
                 <StatusBarChart data={data}></StatusBarChart>
             </div>
           </>
