@@ -244,16 +244,21 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     <div className="w-full flex justify-between">
                                         <div className="flex justify-start items-center">
                                             <div className="text-[14px] font-medium text-Text-Primary">{userInfoData?.name}</div>
-                                            {
-                                                userInfoData.sex &&
-                                                <>
-                                                    <div className="text-[12px] text-Text-Secondary ml-3">Gender: {userInfoData.sex} </div>
-                                                    <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
-                                                </>
+                                            {userInfoData 
+                                            &&
+                                            <>
+                                                {
+                                                    userInfoData.sex &&
+                                                    <>
+                                                        <div className="text-[12px] text-Text-Secondary ml-3">Gender: {userInfoData.sex} </div>
+                                                        <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
+                                                    </>
 
-                                            }
-                                            {userInfoData.age &&
-                                                <div className="text-[12px] text-Text-Secondary ">Age: {userInfoData.age}</div>
+                                                }
+                                                {userInfoData.age &&
+                                                    <div className="text-[12px] text-Text-Secondary ">Age: {userInfoData.age}</div>
+                                                }
+                                            </>
                                             }
                                         </div>
                                         <InfoToltip></InfoToltip>
