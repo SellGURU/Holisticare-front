@@ -43,6 +43,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     const resolvedMemberID = id ? parseInt(id) : memberID;
     const [loading, setLoading] = useState(true);
     const [caldenderData,setCalenderData] = useState<any>(null)
+    const [userInfoData,setUserInfoData] = useState<any>(null)
     const [isHaveReport,setIsHaveReport] = useState(true)
     const [isGenerateLoading,setISGenerateLoading] = useState(false)
     const fetchData =() => {
@@ -70,6 +71,11 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
         Application.getCaldenderdata({member_id: resolvedMemberID}).then(res => {
             setCalenderData(res.data)
         })
+         Application.getPatientsInfo({
+            member_id: resolvedMemberID,
+        }).then((res) => {
+            setUserInfoData(res.data)
+         })
     }
     useEffect(() => {
         setLoading(true); 
@@ -235,7 +241,21 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                 </div>
             
                                 <div className="flex-grow w-full mt-1 ">
-                                    <div className="w-full flex justify-end">
+                                    <div className="w-full flex justify-between">
+                                        <div className="flex justify-start items-center">
+                                            <div className="text-[14px] font-medium text-Text-Primary">{userInfoData?.name}</div>
+                                            {
+                                                userInfoData.sex &&
+                                                <>
+                                                    <div className="text-[12px] text-Text-Secondary ml-3">Gender: {userInfoData.sex} </div>
+                                                    <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
+                                                </>
+
+                                            }
+                                            {userInfoData.age &&
+                                                <div className="text-[12px] text-Text-Secondary ">Age: {userInfoData.age}</div>
+                                            }
+                                        </div>
                                         <InfoToltip></InfoToltip>
                                     </div>
                                     <div className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4" style={{lineHeight:'24px'}}>{ClientSummaryBoxs?.client_summary}</div>
