@@ -240,8 +240,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                     </div>                           
                                 </div>
             
-                                <div className="flex-grow w-full mt-1 ">
-                                    <div className="w-full flex justify-between">
+                                <div className="flex-grow w-full mt-0 ">
+                                    <div className="w-full flex justify-between items-center">
                                         <div className="flex justify-start items-center">
                                             <div className="text-[14px] font-medium text-Text-Primary">{userInfoData?.name}</div>
                                             {userInfoData 
