@@ -108,46 +108,89 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
 
   //   return days;
   // };
-  console.log(data)
-  const getCurrentMonthWithBuffer = () => {
-    const today = new Date();
+  // const getCurrentMonthWithBuffer = () => {
+  //   const today = new Date();
 
-    // Get today's weekday (0 = Sunday, ..., 6 = Saturday)
-    const todayWeekday = today.getDay();
+  //   // Get today's weekday (0 = Sunday, ..., 6 = Saturday)
+  //   const todayWeekday = today.getDay();
 
-    // Calculate how many days to subtract to get the previous Monday (buffer start)
-    const daysToSubtract = (todayWeekday + 6) % 7; // Adjust so Monday is the first day
+  //   // Calculate how many days to subtract to get the previous Monday (buffer start)
+  //   const daysToSubtract = (todayWeekday + 6) % 7; // Adjust so Monday is the first day
 
-    // Set the startDate to the previous Monday (or just today if no buffer needed)
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() - daysToSubtract); // Buffer starts from Monday
+  //   // Set the startDate to the previous Monday (or just today if no buffer needed)
+  //   const startDate = new Date(today);
+  //   startDate.setDate(today.getDate() - daysToSubtract); // Buffer starts from Monday
 
-    // Calculate the endDate 41 days after the startDate (6 weeks buffer)
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 41);
+  //   // Calculate the endDate 41 days after the startDate (6 weeks buffer)
+  //   const endDate = new Date(startDate);
+  //   endDate.setDate(startDate.getDate() + 41);
 
-    const days = [];
+  //   const days = [];
 
-    // Loop through the dates from startDate to endDate
-    for (
-      let date = new Date(startDate);
-      date <= endDate;
-      date.setDate(date.getDate() + 1)
-    ) {
-      const dayNumber = date.getDate();
-      const dayName = date.toLocaleString("en-US", { weekday: "long" });
-      const monthName = date.toLocaleString("en-US", { month: "long" });
+  //   // Loop through the dates from startDate to endDate
+  //   for (
+  //     let date = new Date(startDate);
+  //     date <= endDate;
+  //     date.setDate(date.getDate() + 1)
+  //   ) {
+  //     const dayNumber = date.getDate();
+  //     const dayName = date.toLocaleString("en-US", { weekday: "long" });
+  //     const monthName = date.toLocaleString("en-US", { month: "long" });
 
-      days.push({
-        dayNumber,
-        dayName,
-        monthName,
-        dateObject: new Date(date), // Create a new Date object to avoid mutation
-      });
-    }
+  //     days.push({
+  //       dayNumber,
+  //       dayName,
+  //       monthName,
+  //       dateObject: new Date(date), // Create a new Date object to avoid mutation
+  //     });
+  //   }
 
-    return days;
-  };
+  //   return days;
+  // };
+
+const getCurrentMonthWithBuffer = () => {
+  const today = new Date();
+
+  // Get the first day and last day of the current month
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  // Calculate the start date (3 days before the first day of the month)
+  const startDate:any = new Date(firstDayOfMonth);
+  startDate.setDate(firstDayOfMonth.getDate() - 3);
+
+  // Calculate the end date (3 days after the last day of the month)
+  const endDate:any = new Date(lastDayOfMonth);
+
+  // Adjust the startDate and endDate to ensure the total number of days is a multiple of 7
+  while ((endDate - startDate + (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24) % 7 !== 0) {
+    endDate.setDate(endDate.getDate() + 1);
+  }
+
+  const days = [];
+
+  // Loop through the dates from startDate to endDate
+  for (
+    let date = new Date(startDate);
+    date <= endDate;
+    date.setDate(date.getDate() + 1)
+  ) {
+    const dayNumber = date.getDate();
+    const dayName = date.toLocaleString("en-US", { weekday: "long" });
+    const monthName = date.toLocaleString("en-US", { month: "long" });
+
+    days.push({
+      dayNumber,
+      dayName,
+      monthName,
+      dateObject: new Date(date), // Create a new Date object to avoid mutation
+    });
+  }
+
+  return days;
+};
+
+
 
   const [currenDay, setCurrentDay] = useState(0);
   const [currenMonth, setCurrentMonth] = useState("");
@@ -209,8 +252,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                   day.dayNumber === currenDay && day.monthName === currenMonth
                     ? "dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary"
                     : currenMonth === day.monthName
-                    ? "bg-backgroundColor-Main"
-                    : "bg-backgroundColor-Card"
+                    ? " bg-backgroundColor-Card"
+                    : " bg-backgroundColor-Main" 
                 }`}
               >
                 <div
