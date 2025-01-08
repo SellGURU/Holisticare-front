@@ -157,13 +157,19 @@ const getCurrentMonthWithBuffer = () => {
 
   // Calculate the start date (3 days before the first day of the month)
   const startDate:any = new Date(firstDayOfMonth);
-  startDate.setDate(firstDayOfMonth.getDate() - 3);
+  // startDate.setDate(firstDayOfMonth.getDate() - 3);
+
+  // Adjust the startDate to the nearest previous Sunday
+  while (startDate.getDay() !== 1) {
+    startDate.setDate(startDate.getDate() - 1);
+  }
 
   // Calculate the end date (3 days after the last day of the month)
   const endDate:any = new Date(lastDayOfMonth);
+  // endDate.setDate(lastDayOfMonth.getDate() + 3);
 
-  // Adjust the startDate and endDate to ensure the total number of days is a multiple of 7
-  while ((endDate - startDate + (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24) % 7 !== 0) {
+  // Adjust the endDate to ensure the total number of days is a multiple of 7
+  while ((endDate - startDate+ (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24) % 7 !== 0) {
     endDate.setDate(endDate.getDate() + 1);
   }
 
@@ -189,6 +195,7 @@ const getCurrentMonthWithBuffer = () => {
 
   return days;
 };
+
 
 
 
