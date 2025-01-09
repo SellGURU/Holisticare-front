@@ -10,7 +10,9 @@ import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import { useConstructor } from "../../help.ts";
 import { useFormik } from "formik";
 import Data from "./data.json";
+import TimeLine from "./components/timeLine.tsx";
 import Accordion from "../Accordion/index.tsx";
+import { ChatModal } from "./components/chatModal.tsx";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
@@ -23,8 +25,8 @@ export const ComboBar = () => {
     },
     { name: "Expert’s Note", url: "/icons/sidbar-menu/note-2.svg" },
     { name: "Repeat", url: "/icons/sidbar-menu/repeat.svg" },
-    { name: "Tasks", url: "/icons/sidbar-menu/task-square.svg" },
-    { name: "Timeline", url: "/icons/sidbar-menu/timeline.svg" },
+    { name: "Timeline", url: "/icons/sidbar-menu/task-square.svg" },
+    { name: "chat history", url: "/icons/sidbar-menu/timeline.svg" },
   ];
   const [patientInfo, setPatientInfo] = useState({
     name: "",
@@ -534,6 +536,15 @@ export const ComboBar = () => {
           </div>
         );
       // Add more cases as needed
+     case "Timeline" :
+        return(
+            <TimeLine/>
+        )
+        case "chat history":
+            return(
+                <ChatModal memberId={id}             info={patientInfo}
+                ></ChatModal>
+            )
       default:
         return <div>No Content</div>;
     }
