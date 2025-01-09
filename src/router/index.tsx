@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home, Report } from "../pages";
+import { DashBoard, Home, Report } from "../pages";
 import ProtectedRoute from "./protected";
 import Layout from "../layout";
 import GenerateNewActionPlan from "../Components/Action-plan/GenerateNewPlan";
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
             path:'/',
             element:<ClientList></ClientList>
           },
+          {
+            path:'/dashboard',
+            element:<DashBoard></DashBoard>
+          },          
           {
             path:'/drift-analysis',
             element:<DriftAnaysis></DriftAnaysis>

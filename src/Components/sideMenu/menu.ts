@@ -12,7 +12,7 @@ export const menus = [
     {
         name: 'Dashboard',
         icon: 'sidemenu-menu-icon-dashboard',
-        url: '',
+        url: '/dashboard',
 
     },
     {
