@@ -15,7 +15,7 @@ export default {
         "Boarder":"#E2F1F8",
         "Red":"#FC5474",
         "Green":"#06C78D",
-        "Orange":"#FBAD37",
+        "Orange":"#FFBD59",
         "Blue":"#4C88FF",
         "Disable":"#909090",
         "Primary":{
