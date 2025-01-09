@@ -31,7 +31,7 @@ const MessageList: React.FC = () => {
 //   };
 
   return (
-    <div className="max-w-[315px] h-[664px] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+    <div className="w-full h-[664px] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
       <h2 className="text-sm text-Text-Primary font-medium">Recently Messages</h2>
       <div className="w-full  shadow-200  flex mt-3"   >
         {['All', 'Read', 'Unread'].map((type) => (
