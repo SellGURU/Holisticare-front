@@ -7,7 +7,6 @@ type Step = {
 
 type Section = {
   status: string;
-  color: string;
   steps: Step[];
 };
 const resolveStatusColor = (state: string) => {
@@ -27,8 +26,36 @@ const resolveStatusColor = (state: string) => {
 const steps: Section[] = [
   {
     status: "On Going",
-    color: "bg-blue-500",
+  
     steps: [
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
+      {
+        title: "Step Title",
+        explains: ["Explain 1", "Explain 2", "Explain 3"],
+      },
       {
         title: "Step Title",
         explains: ["Explain 1", "Explain 2", "Explain 3"],
@@ -43,7 +70,7 @@ const steps: Section[] = [
   },
   {
     status: "Upcoming",
-    color: "bg-orange-400",
+   
     steps: [
       {
         title: "Step Title",
@@ -64,54 +91,59 @@ const TimelineStep: React.FC<{
   status: string;
   index: number;
 }> = ({ title, explains, status, index }) => (
-  <div className=" w-full relative min-h-[100px]   mb-4 text-xs">
-    <div className={`flex items-center relative`}>
-      {index % 2 !== 0 && (
+  <>
+   
+    <div className=" w-full  relative mt-2    mb-4 text-xs">
+      <div className={` relative  w-full`}>
         <div
-          className={`bg-Primary-DeepTeal rounded-tl-lg rounded-bl-lg pl-1 text-white text-[10px] pr-4 -mr-3    `}
+          className="  w-6 h-6 rounded-full flex items-center justify-center z-20 "
+          style={{ backgroundColor: resolveStatusColor(status) }}
+        >
+          <img className="  w-4 h-4" src="/icons/tick-square.svg" alt="" />
+        </div>
+
+        <div
+          className={` absolute -mt-5 ${
+            index % 2 == 0 ? "ml-3" : "-ml-16"
+          } -z-[1] text-nowrap bg-Primary-DeepTeal rounded-lg px-4 text-white text-[10px]`}
         >
           {title}
         </div>
-      )}
+
+        <div
+          className={`relative top-0 ${
+            index % 2 == 0 ? "-right-12 " : "-left-10 "
+          }`}
+        >
+          {index % 2 == 0 ? (
+            <img src="/icons/Vector 389.svg" alt="" />
+          ) : (
+            <img src="/icons/Vector 393.svg" alt="" />
+          )}
+        </div>
+      </div>
       <div
-        className="w-6 h-6 rounded-full flex items-center justify-center z-10 "
-        style={{ backgroundColor: resolveStatusColor(status) }}
+        className={`flex flex-col absolute z-50  top-7 ${
+          index % 2 == 0 ? "-right-[90px] " : "-left-[90px] "
+        }} `}
       >
-        <img className="w-4 h-4" src="/icons/tick-square.svg" alt="" />
-      </div>
-      {index % 2 == 0 && (
-        <div
-          className={`bg-Primary-DeepTeal rounded-tr-lg rounded-br-lg pl-4 text-white text-[10px] pr-1 -ml-3   `}
-        >
-          {title}
-        </div>
-      )}
-      <div className="absolute top-6 right-0">
-        <img src="/icons/Vector 389.svg" alt="" />
-      </div>
-    </div>
-    <div className="flex flex-col absolute z-50 -right-[70px] top-7 ">
-      <div>
         {explains.map((explain, index) => (
-          <div key={index} className="ml-4">
-            • {explain}
+          <div key={index} className=" flex items-center gap-1 text-[8px] text-Text-Secondary">
+            <div className="w-[3px] h-[3px] bg-Orange rounded-full"></div> {explain}
           </div>
         ))}
       </div>
     </div>
-  </div>
+  </>
 );
 
 const TimeLine: React.FC = () => {
   return (
-    <div className="flex flex-col items-center p-5 text-xs ovey ">
+    <div className="flex flex-col items-center  text-xs max-h-[600px] overflow-auto ">
       {steps.map((section, index) => (
-        <div
-          key={index}
-          className="flex flex-col items-center mb-8 relative "
-        >
+        <div key={index} className="flex flex-col items-center mb-6  relative ">
           <div
-            className={`px-2.5 py-1 rounded-full text-Text-Primary  ${
+            className={`px-2.5 py-1 text-[10px] rounded-full text-Text-Primary  ${
               section.status === "On Going" ? "bg-[#8ECAE6]" : "bg-[#F9DEDC]"
             } flex items-center gap-1`}
           >
@@ -121,10 +153,14 @@ const TimeLine: React.FC = () => {
             ></div>
             {section.status}
           </div>
+  
           {/* <div className='h-full bg-red-600 w-2 absolute left-[46%] top-6 '></div> */}
-
-          {section.steps.map((step, index) => (
-           
+          <div className="relative ">
+          <div style={{backgroundColor : resolveStatusColor(section.status)}}
+      className={`absolute block  w-[3px] h-[120%] right-3 
+        ml-5  -z-[1]`}
+    ></div>
+            {section.steps.map((step, index) => (
               <TimelineStep
                 key={index}
                 title={step.title}
@@ -132,8 +168,8 @@ const TimeLine: React.FC = () => {
                 status={section.status}
                 index={index}
               />
-            
-          ))}
+            ))}
+          </div>
         </div>
       ))}
     </div>
