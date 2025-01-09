@@ -29,9 +29,9 @@ const NumberBox:React.FC<numberBoxProps> = ({mode,title,value,icon}) => {
     }
     return (
         <Card>
-            <div className={"text-light-primary-text dark:text-primary-text flex items-start justify-center flex-col  gap-2"}>
+            <div className={"text-Text-Primary flex items-start justify-center flex-col  gap-2"}>
                 <div className={"flex items-center justify-between w-full"}>
-                    <h1 className={"font-medium text-2xl text-light-primary-text dark:text-primary-text"}>{value} </h1>
+                    <h1 className={"font-medium text-2xl text-light-primary-text dark:text-primary-text"}>{value}</h1>
                     <div className={"flex justify-center items-center w-[42px] h-[42px] rounded-full bg-[#E2F1F8]"}>
                         <img src={icon} alt="icon"  className={"text-brand-primary-color w-5 h-5"}/>
                     </div>

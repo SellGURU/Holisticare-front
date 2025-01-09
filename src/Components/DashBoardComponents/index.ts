@@ -1,3 +1,3 @@
 import NumberBoxes from "./NumberBoxs";
-
-export {NumberBoxes}
+import MessageList from "./Messages";
+export {NumberBoxes, MessageList}

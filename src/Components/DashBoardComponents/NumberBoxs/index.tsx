@@ -22,27 +22,27 @@ const NumberBoxes:React.FC<NumberBoxesProps> = ({reports}) => {
               mode="added"
               value={resolveValue("Total Enrollment")}
               title="Total Enrollment"
-              icon={''}
+              icon={'/icons/profile-tick.svg'}
 
             />
             <NumberBox
               mode="increase"
               value={resolveValue("Incomplete Client Data")}
               title="Incomplete Client Data"
-              icon={''}
+              icon={'icons/profile-delete.svg'}
 
             />
             <NumberBox
               mode="reduction"
               value={resolveValue("Client Needs Check")}
               title="Client Need Checking"
-              icon={''}
+              icon={'icons/profile-check.svg'}
             />
             <NumberBox
               mode="increase"
               value={resolveValue("Client Checked")}
               title="Clients Checked"
-              icon={''}
+              icon={'/icons/profile-tick.svg'}
 
             />
           </div>        
