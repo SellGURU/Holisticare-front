@@ -1,6 +1,6 @@
 import  Auth  from "../../api/auth";
 import { useApp } from "../../hooks";
-import { useNavigate,useLocation  } from "react-router-dom";
+import { useNavigate,  } from "react-router-dom";
 // import { Button, TextField } from "symphony-ui";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -21,9 +21,9 @@ const validationSchema = yup.object({
 const Login = () => {
   const appContext = useApp();
   const navigate = useNavigate();
-  const location = useLocation(); // use useLocation to access the location object
-  const searchParams = new URLSearchParams(location.search);
-  const showSignUpLink = searchParams.get('demo') === 'true';
+  // const location = useLocation(); // use useLocation to access the location object
+  // const searchParams = new URLSearchParams(location.search);
+  // const showSignUpLink = searchParams.get('demo') === 'true';
   // const [password, setPassword] = useState("");
   // const [showPassword, setShowPassword] = useState(false);
   const formik = useFormik({
@@ -39,7 +39,7 @@ const Login = () => {
         Auth.login(values.email, values.password).then((res) => {
           console.log(res);
           appContext.login(res.data.access_token,res.data.permission);
-          navigate("/aiKnowledge");
+          navigate("/");
           console.log("User registered successfully:", res.data);
         }).catch((res) => {
           // console.log(res)
@@ -147,15 +147,21 @@ const Login = () => {
             <img src="./Themes/Aurora/icons/Google.svg" alt="" />
             Sign in with Google
           </Button> */}
-{showSignUpLink && (<div className="font-normal text-sm text-light-primary-text dark:text-primary-text">
+
+
+
+{/* {showSignUpLink && ( */}
+<div className="font-normal text-sm text-light-primary-text dark:text-primary-text">
           Don’t have an account?
             <span
               onClick={() => navigate("/register")}
-              className="text-brand-primary-color cursor-pointer text-base font-medium ml-1"
+              className="text-Primary-EmeraldGreen cursor-pointer text-base font-medium ml-1"
             >
               Sign up
             </span>{" "}
-          </div>)}
+          </div>
+        
+        {/* )} */}
           
         </div>
       </div>
