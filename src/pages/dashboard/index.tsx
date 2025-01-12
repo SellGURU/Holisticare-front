@@ -1,4 +1,4 @@
-import { NumberBoxes , MessageList, Tasks, Clients, Reminder, Employes, TaskManager} from "../../Components/DashBoardComponents"
+import { NumberBoxes , MessageList, Clients, Reminder, Employes, TaskManager} from "../../Components/DashBoardComponents"
 
 const DashBoard =() => {
     return (
