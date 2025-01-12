@@ -111,9 +111,11 @@ const ClientList = () => {
                         activeList === "grid"
                           ? "bg-Primary-DeepTeal"
                           : "bg-white"
-                      }  w-full flex items-center justify-center rounded-md rounded-r-none`}
+                      }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer`}
                     >
-                      <img src="/icons/grid-1.svg" alt="" />
+                      <SvgIcon src="/icons/grid-1.svg" color={activeList == 'grid' ? '#FFF' : '#38383899'} />
+
+                      
                     </div>
                     <div
                       onClick={() => setActiveList("list")}
@@ -121,9 +123,9 @@ const ClientList = () => {
                         activeList === "list"
                           ? "bg-Primary-DeepTeal"
                           : "bg-white"
-                      } flex items-center w-full justify-center rounded-md rounded-l-none`}
+                      } flex items-center w-full justify-center rounded-md rounded-l-none cursor-pointer`}
                     >
-<SvgIcon src="/icons/textalign-left.svg" color="#FC5474" />
+<SvgIcon src="/icons/textalign-left.svg" color={activeList == 'list' ? '#FFF' : '#38383899'} />
                       
                     </div>
                   </div>
