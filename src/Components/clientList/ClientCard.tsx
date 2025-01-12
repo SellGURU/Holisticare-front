@@ -63,7 +63,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
-              {isFavorite ? "Remove from favorite" : "Add to favorite"}            </div>
+              {isFavorite || client.favorite ? "Remove from favorite" : "Add to favorite"}            </div>
           </div>
         )}
         <div
