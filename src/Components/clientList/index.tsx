@@ -21,6 +21,7 @@ type ClientData = {
   sex: string;
   email: string;
   weight: number;
+  favorite?: boolean;
   // Add other properties as needed
 };
 const ClientList = () => {
@@ -66,6 +67,14 @@ const ClientList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
+  const toggleFavorite = (memberId: number) => {
+    setClientList((prevList) =>
+      prevList.map((client) =>
+        client.member_id === memberId ? { ...client, favorite: true } : client
+      )
+    );
+  };
+
   return (
     <>
       {isLoading ? (
@@ -166,6 +175,7 @@ const ClientList = () => {
                         });
                       }}
                       client={client}
+                      onToggleFavorite={toggleFavorite}
                     ></ClientCard>
                   );
                 })}

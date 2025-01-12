@@ -2,16 +2,20 @@ import { useNavigate } from "react-router-dom";
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 import { useState, useRef } from "react";
-import {ButtonPrimary} from "../Button/ButtonPrimary.tsx";
+import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import Application from "../../api/app.ts";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
-  ondelete:(memberid:any) => void
+  ondelete: (memberid: any) => void;
+  onToggleFavorite: (memberId: number) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
-
+const ClientCard: React.FC<ClientCardProps> = ({
+  client,
+  ondelete,
+  onToggleFavorite,
+}) => {
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -23,11 +27,10 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
       setshowModal(false);
     },
   });
+  const [isFavorite, setIsFavorite] = useState(false);
   return (
     <>
-      <div
-        className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative "
-      >
+      <div className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
         {showModal && (
           <div
             ref={showModalRefrence}
@@ -38,28 +41,40 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
               Assign to ...
             </div>
 
-            <div onClick={() => {
-              setshowModal(false)
-              Application.deletePatient({
-                member_id:client.member_id
-              })
-              ondelete(client.member_id)
-            }} className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
+            <div
+              onClick={() => {
+                setshowModal(false);
+                Application.deletePatient({
+                  member_id: client.member_id,
+                });
+                ondelete(client.member_id);
+              }}
+              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+            >
               <img src="/icons/directbox-send.svg" alt="" />
               Send to Archieve
             </div>
-            <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer">
+            <div
+              onClick={() => {
+                onToggleFavorite(client.member_id);
+                setIsFavorite(!isFavorite)
+                setshowModal(false)
+              }}
+              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+            >
               <img src="/icons/star.svg" alt="" />
-              Add to favorite
-            </div>
+              {isFavorite ? "Remove from favorite" : "Add to favorite"}            </div>
           </div>
         )}
-        <div onClick={() => {
-          // navigate(`/report/${client.member_id}/${client.name}`  );
-        }} className="flex">
-          <div className="w-[72px] h-[72px] overflow-hidden rounded-full object-cover">
+        <div
+          onClick={() => {
+            // navigate(`/report/${client.member_id}/${client.name}`  );
+          }}
+          className="flex"
+        >
+          <div className="w-[72px] h-[72px]  rounded-full object-cover relative">
             <img
-              className="w-full h-full"
+              className="w-full h-full rounded-full"
               onError={(e: any) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${client.name}`; // Set fallback image
               }}
@@ -70,6 +85,13 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
               }
               alt=""
             />
+            {client.favorite || isFavorite && (
+              <img
+                className="absolute bottom-0 right-0"
+                src="/icons/Icon_star.svg"
+                alt=""
+              />
+            )}
           </div>
           <div className="pl-2 grid grid-cols-1 gap-1 ">
             <div className="text-Text-Primary text-[14px] font-medium">
@@ -97,9 +119,12 @@ const ClientCard: React.FC<ClientCardProps> = ({ client,ondelete }) => {
           {/* <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div> */}
-          <ButtonPrimary onClick={() => {
-            navigate(`/report/${client.member_id}/${client.name}`  );            
-          }} size="small">
+          <ButtonPrimary
+            onClick={() => {
+              navigate(`/report/${client.member_id}/${client.name}`);
+            }}
+            size="small"
+          >
             {" "}
             {/* <img src="/icons/Assign.svg" alt="" /> */}
             Health Plan
