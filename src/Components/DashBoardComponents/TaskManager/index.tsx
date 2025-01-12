@@ -76,7 +76,7 @@ const TaskManager: React.FC = () => {
     );
   };
   return (
-    <div className="max-w-[646px] w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+    <div className=" w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm font-medium">Tasks</h2>
         <div className="flex items-center gap-3">
