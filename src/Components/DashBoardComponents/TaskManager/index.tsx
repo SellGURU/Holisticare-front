@@ -91,7 +91,7 @@ const TaskManager: React.FC = () => {
         </div>
        
       </div>
-      <ul className="grid grid-cols-2 gap-x-4 mb-4 min-h-[191px]">
+      <ul className="grid grid-cols-2 gap-3 mb-4 min-h-[191px]">
         {currentTasks.map((task) => (
           <li
             key={task.id}
