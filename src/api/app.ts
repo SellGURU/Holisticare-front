@@ -418,6 +418,10 @@ static downloadClinicReport(data:any){
     const response = this.post(`/drift_analysis/patient_info`, data)
     return response
   }  
+  static getClientInfo =(data:any) => {
+    const response = this.post(`/health_profile/patient_info`, data)
+    return response
+  }  
 }
 
 

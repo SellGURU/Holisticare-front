@@ -13,6 +13,7 @@ import Data from "./data.json";
 import TimeLine from "./components/timeLine.tsx";
 import Accordion from "../Accordion/index.tsx";
 import { ChatModal } from "./components/chatModal.tsx";
+import { ClientInfo } from "./components/clientInfo.tsx";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
@@ -120,63 +121,7 @@ export const ComboBar = () => {
     switch (activeItem) {
       case "Client Info":
         return (
-          <>
-            {data.personal_info ? (
-              <div className="bg-backgroundColor-Card border rounded-md border-[#005F73] text-xs text-Text-Primary border-opacity-10 p-2 flex flex-col gap-5 pt-4 ">
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/workouts.svg" alt="" />
-                    Total workouts
-                  </div>
-                  {data?.personal_info["total workouts"] || "No Data"}
-                </div>
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/health.svg" alt="" />
-                    Total Cardio Activities
-                  </div>
-                  {data?.personal_info["total Cardio Activities"] || "No Data"}
-                </div>
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/frame.svg" alt="" />
-                    Expert
-                  </div>
-                  {data?.personal_info["expert"] || "No Data"}
-                </div>
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/location.svg" alt="" />
-                    Location{" "}
-                  </div>
-                  {data?.personal_info["Location"] || "No Data"}
-                </div>
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/sms.svg" alt="" />
-                    Email{" "}
-                  </div>
-                  {data?.personal_info["email"] || "No Data"}
-                </div>
-                <div className="w-full flex justify-between items-center">
-                  <div className="text-Text-Secondary font-medium flex items-center gap-1">
-                    <img src="/icons/call.svg" alt="" />
-                    Phone
-                  </div>
-                  {data?.personal_info["phone"] || "No Data"}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-[200px]">
-                <img
-                  className=" object-contain"
-                  src="/icons/document-text.svg"
-                  alt=""
-                />
-                <div className="text-[12px] text-[#383838]">No Data Found</div>
-              </div>
-            )}
-          </>
+         <ClientInfo/>
         );
       case "Data Syncing":
         return (
