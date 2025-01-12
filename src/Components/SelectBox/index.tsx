@@ -22,10 +22,10 @@ const SelectBox: React.FC<SelectBoxProps> = ({ onChange }) => {
         <option value="lowerScores">Lower Scores</option>
       </select>
       <img
-        className={`absolute top-2 right-2 transition-transform duration-200 ${
+        className={` w-3 h-3 object-contain opacity-80 absolute top-2 right-2 transition-transform duration-200 ${
           isOpen ? "rotate-180" : ""
         }`}
-        src="/icons/arrow-down-drop.svg"
+        src="/icons/arow-down-drop.svg"
         alt=""
       />
     </div>

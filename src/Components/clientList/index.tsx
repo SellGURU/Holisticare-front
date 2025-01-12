@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import SelectBox from "../SelectBox";
 import SearchBox from "../SearchBox";
 import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
+import SvgIcon from "../../utils/svgIcon.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -64,6 +65,7 @@ const ClientList = () => {
   };
   const [isLoading, setIsLoading] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
+  const [activeList, setActiveList] = useState("grid");
   return (
     <>
       {isLoading ? (
@@ -103,19 +105,36 @@ const ClientList = () => {
                     Sort by: <SelectBox onChange={handleFilterChange} />
                   </div>
                   <div className="flex w-[96px] h-[32px] rounded-md ">
-                    <div className="bg-Primary-DeepTeal w-full flex items-center justify-center rounded-md rounded-r-none">
+                    <div
+                      onClick={() => setActiveList("grid")}
+                      className={` ${
+                        activeList === "grid"
+                          ? "bg-Primary-DeepTeal"
+                          : "bg-white"
+                      }  w-full flex items-center justify-center rounded-md rounded-r-none`}
+                    >
                       <img src="/icons/grid-1.svg" alt="" />
                     </div>
-                    <div className="bg-white flex items-center w-full justify-center rounded-md rounded-l-none">
-                      <img src="/icons/textalign-left.svg" alt="" />
+                    <div
+                      onClick={() => setActiveList("list")}
+                      className={` ${
+                        activeList === "list"
+                          ? "bg-Primary-DeepTeal"
+                          : "bg-white"
+                      } flex items-center w-full justify-center rounded-md rounded-l-none`}
+                    >
+<SvgIcon src="/icons/textalign-left.svg" color="#FC5474" />
+                      
                     </div>
                   </div>
                   {showSearch ? (
-                    <SearchBox
-                      ClassName={`rounded-md`}
-                      onSearch={handleSearch}
-                      placeHolder="Search for Client ..."
-                    ></SearchBox>
+                    <div onMouseLeave={()=>setshowSearch(false)}>
+                      <SearchBox
+                        ClassName={`rounded-md`}
+                        onSearch={handleSearch}
+                        placeHolder="Search for Client ..."
+                      ></SearchBox>
+                    </div>
                   ) : (
                     <div
                       onClick={() => setshowSearch(true)}
