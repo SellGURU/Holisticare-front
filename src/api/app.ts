@@ -422,6 +422,24 @@ static downloadClinicReport(data:any){
     const response = this.post(`/health_profile/patient_info`, data)
     return response
   }  
+  static getDataSyncing =(data:any) => {
+    const response = this.post(`/summary/data_syncing_devices
+    `, data)
+    return response
+  }  
+  static getQuestionary_tracking =(data:any) => {
+    const response = this.post(`/health_profile/questionary_tracking/list
+
+    `, data)
+    return response
+  }  
+  static Questionary_tracking_action =(data:any) => {
+    const response = this.post(`/health_profile/questionary_tracking/action
+
+
+    `, data)
+    return response
+  }  
 }
 
 

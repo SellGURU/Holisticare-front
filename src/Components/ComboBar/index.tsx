@@ -14,6 +14,8 @@ import TimeLine from "./components/timeLine.tsx";
 import Accordion from "../Accordion/index.tsx";
 import { ChatModal } from "./components/chatModal.tsx";
 import { ClientInfo } from "./components/clientInfo.tsx";
+import { DataSyncing } from "./components/dataSyncing.tsx";
+import { Questionary } from "./components/Questionary.tsx";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
@@ -121,77 +123,11 @@ export const ComboBar = () => {
     switch (activeItem) {
       case "Client Info":
         return (
-         <ClientInfo/>
+         <ClientInfo></ClientInfo>
         );
       case "Data Syncing":
         return (
-          <div className=" w-full">
-            <div className="px-2">
-              <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-                <div>Data</div>
-                <div>Last Sync</div>
-                <div>State</div>
-              </div>
-
-              <>
-                {data["Data Syncing"]?.length > 0 ? (
-                  <>
-                    <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
-                      <div className="w-full mt-2">
-                        {data["Data Syncing"]?.map((el: any) => {
-                          return (
-                            <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
-                              <div className="text-[10px] w-[50px]  text-Text-Primary">
-                                {el.Data}
-                              </div>
-                              <div className="w-[60px] text-center">
-                                {el["Last Sync"]}
-                              </div>
-                              <div className="text-[8px] ">
-                                <div
-                                  className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
-                                    el["State"] == "Connected"
-                                      ? "bg-[#DEF7EC]"
-                                      : "bg-[#F9DEDC]"
-                                  }`}
-                                  //   style={{
-                                  //     backgroundColor: 'red'
-                                  //       resolveStatusColor(
-                                  //         el["State"]
-                                  //       ),
-                                  //   }}
-                                >
-                                  <div
-                                    className={`w-3 h-3 rounded-full  ${
-                                      el["State"] == "Connected"
-                                        ? "bg-[#06C78D]"
-                                        : "bg-[#FFBD59]"
-                                    }`}
-                                  ></div>
-                                  {el["State"]}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-[200px]">
-                    <img
-                      className=" object-contain"
-                      src="/icons/document-text.svg"
-                      alt=""
-                    />
-                    <div className="text-[12px] text-[#383838]">
-                      No Data Found
-                    </div>
-                  </div>
-                )}
-              </>
-            </div>
-          </div>
+          <DataSyncing></DataSyncing>
         );
       case "File History":
         return (
@@ -253,105 +189,9 @@ export const ComboBar = () => {
         );
       case "Questionary Tracking":
         return (
-          // <div className=" w-full">
-          //   <div className="px-2">
-          //     <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-          //       <div>Questionary Name</div>
-          //       <div>State</div>
-          //       <div>Action</div>
-          //     </div>
-
-          //     <>
-          //       {data["Questionary Tracking"]?.length > 0 ? (
-          //         <>
-          //           <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
-          //             <div className="w-full mt-2">
-          //               {data["Questionary Tracking"]?.map((el: any) => {
-          //                 return (
-          //                   <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
-          //                     <div className="text-[10px]  text-Text-Primary">
-          //                       {el.Data}
-          //                     </div>
-
-          //                     <div className="text-[8px] ">
-          //                       <div
-          //                         className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
-          //                           el["State"] == "Complete"
-          //                             ? "bg-[#DEF7EC]"
-          //                             : "bg-[#F9DEDC]"
-          //                         }`}
-          //                         //   style={{
-          //                         //     backgroundColor: 'red'
-          //                         //       resolveStatusColor(
-          //                         //         el["State"]
-          //                         //       ),
-          //                         //   }}
-          //                       >
-          //                         <div
-          //                           className={`w-3 h-3 rounded-full  ${
-          //                             el["State"] == "Complete"
-          //                               ? "bg-[#06C78D]"
-          //                               : "bg-[#FFBD59]"
-          //                           }`}
-          //                         ></div>
-          //                         {el["State"]}
-          //                       </div>
-          //                     </div>
-          //                     <div>
-          //                       {el["Action"] === "Complete" ? (
-          //                         <img src="/icons/eye-green.svg" alt="" />
-          //                       ) : (
-          //                         // Render this if action is not "Complete"
-          //                         <img src="/icons/Fiilout-Form.svg" alt="" />
-          //                       )}
-          //                     </div>
-          //                   </div>
-          //                 );
-          //               })}
-          //             </div>
-          //           </div>
-          //         </>
-          //       ) : (
-          //         <div className="flex flex-col items-center justify-center h-[250px] ">
-          //           <img
-          //             className=" object-contain"
-          //             src="/icons/document-text.svg"
-          //             alt=""
-          //           />
-          //           <div className="text-[12px] text-[#383838] mt-1">
-          //             No Data Found
-          //           </div>
-          //           <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
-          //             For more accurate results, please complete the
-          //             questionnaire
-          //           </p>
-          //           <ButtonPrimary>Complete Questionary</ButtonPrimary>
-          //         </div>
-          //       )}
-          //     </>
-          //   </div>
-          // </div>
-                <div>
-                    <div
-                        className="rounded-xl border bg-backgroundColor-Main border-Gray-50 flex items-center justify-between px-5">
-                        <div>
-                            <p className={"text-Primary-DeepTeal TextStyle-Headline-6"}>Data</p>
-                        </div>
-                        <div className={"flex items-center justify-between gap-5 py-3 "}>
-                            <p className={"text-Primary-DeepTeal TextStyle-Headline-6"}>State</p>
-                            <p className={"text-Primary-DeepTeal TextStyle-Headline-6"}>Action</p>
-                        </div>
-                    </div>
-                    <div className={"flex items-center justify-center flex-col"}>
-                        <img className="w-[160px]" src={"/images/EmptyState.svg"}/>
-                        <h1 className={"text-Text-Primary mt-[-40px] TextStyle-Body-2"}>No Data Found</h1>
-                        <p className={"text-center mb-2 text-Text-Secondary w-[240px] mt-5 TextStyle-Body-3"}>For more accurate results, please complete the questionnaire</p>
-                        <ButtonPrimary size="small">
-                            Complete Questionary
-                        </ButtonPrimary>
-                    </div>
-                </div>          
-        );
+         
+          <Questionary></Questionary>
+        )
       case "Expert’s Note":
         return (
           <div className=" w-full ">
