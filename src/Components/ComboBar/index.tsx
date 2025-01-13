@@ -6,15 +6,16 @@ import { useParams } from "react-router-dom";
 import { SlideOutPanel } from "../SlideOutPanel";
 import { subscribe } from "../../utils/event.ts";
 import Application from "../../api/app.ts";
-import { useConstructor } from "../../help.ts";
-import { useFormik } from "formik";
-import Data from "./data.json";
+// import { useConstructor } from "../../help.ts";
+// import { useFormik } from "formik";
+// import Data from "./data.json";
 import TimeLine from "./components/timeLine.tsx";
 import { ChatModal } from "./components/chatModal.tsx";
 import { ClientInfo } from "./components/clientInfo.tsx";
 import { DataSyncing } from "./components/dataSyncing.tsx";
 import { Questionary } from "./components/Questionary.tsx";
 import { Notes } from "./components/notes.tsx";
+import { FilleHistory } from "./components/filleHistory.tsx";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
@@ -35,7 +36,6 @@ export const ComboBar = () => {
     email: "",
     picture: "",
   });
-  const [data, ] = useState<any>(Data);
 
   useEffect(() => {
     Application.getPatientsInfo({
@@ -44,51 +44,51 @@ export const ComboBar = () => {
       setPatientInfo(res.data);
     });
   }, []);
-  useConstructor(() => {
-    // setIsLoading(true);
-    Application.getSummary(id as string).then((res) => {
-      console.log(res);
-      if (res.data != "Internal Server Error") {
-        // setData(res.data);
-        formik.setFieldValue("firstName", res.data.personal_info["first_name"]);
-        formik.setFieldValue("lastName", res.data.personal_info["last_name"]);
-        // setImage(res.data.personal_info.picture);
-        formik.setFieldValue(
-          "workOuts",
-          res.data.personal_info["total workouts"] != "No Data"
-            ? res.data.personal_info["total workouts"]
-            : ""
-        );
-        formik.setFieldValue(
-          "Activity",
-          res.data.personal_info["total Cardio Activities"] != "No Data"
-            ? res.data.personal_info["total Cardio Activities"]
-            : ""
-        );
-        formik.setFieldValue(
-          "expert",
-          res.data.personal_info.expert ? res.data.personal_info.expert : ""
-        );
-        formik.setFieldValue(
-          "location",
-          res.data.personal_info.Location ? res.data.personal_info.Location : ""
-        );
-      }
-      //   setIsLoading(false);
-    });
-  });
+  // useConstructor(() => {
+  //   // setIsLoading(true);
+  //   Application.getSummary(id as string).then((res) => {
+  //     console.log(res);
+  //     if (res.data != "Internal Server Error") {
+  //       // setData(res.data);
+  //       formik.setFieldValue("firstName", res.data.personal_info["first_name"]);
+  //       formik.setFieldValue("lastName", res.data.personal_info["last_name"]);
+  //       // setImage(res.data.personal_info.picture);
+  //       formik.setFieldValue(
+  //         "workOuts",
+  //         res.data.personal_info["total workouts"] != "No Data"
+  //           ? res.data.personal_info["total workouts"]
+  //           : ""
+  //       );
+  //       formik.setFieldValue(
+  //         "Activity",
+  //         res.data.personal_info["total Cardio Activities"] != "No Data"
+  //           ? res.data.personal_info["total Cardio Activities"]
+  //           : ""
+  //       );
+  //       formik.setFieldValue(
+  //         "expert",
+  //         res.data.personal_info.expert ? res.data.personal_info.expert : ""
+  //       );
+  //       formik.setFieldValue(
+  //         "location",
+  //         res.data.personal_info.Location ? res.data.personal_info.Location : ""
+  //       );
+  //     }
+  //     //   setIsLoading(false);
+  //   });
+  // });
 
-  const formik = useFormik({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      workOuts: "",
-      Activity: "",
-      expert: "",
-      location: "",
-    },
-    onSubmit: () => {},
-  });
+  // const formik = useFormik({
+  //   initialValues: {
+  //     firstName: "",
+  //     lastName: "",
+  //     workOuts: "",
+  //     Activity: "",
+  //     expert: "",
+  //     location: "",
+  //   },
+  //   onSubmit: () => {},
+  // });
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
 
   // Refs for modal and button to close it when clicking outside
@@ -128,61 +128,7 @@ export const ComboBar = () => {
         );
       case "File History":
         return (
-          <div className=" w-full">
-            <div className="px-2">
-              <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-                <div>File Name</div>
-                <div>Upload Date</div>
-                <div>Action</div>
-              </div>
-
-              <>
-                {data["File History"]?.length > 0 ? (
-                  <>
-                    <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
-                      <div className="w-full mt-2">
-                        {data["File History"]?.map((el: any) => {
-                          return (
-                            <div className=" bg-white border border-Gray-50 mb-1 p-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
-                              <div className="text-[10px] w-[50px]  text-Text-Primary">
-                                {el.Data}
-                              </div>
-                              <div className="w-[70px] text-center">
-                                {el["Upload Date"]}
-                              </div>
-                              <div className="flex items-center justify-end gap-1">
-                                <img
-                                  className="cursor-pointer"
-                                  src="/icons/eye-green.svg"
-                                  alt=""
-                                />
-                                <img
-                                  className="cursor-pointer"
-                                  src="/icons/import.svg"
-                                  alt=""
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-[200px]">
-                    <img
-                      className=" object-contain"
-                      src="/icons/document-text.svg"
-                      alt=""
-                    />
-                    <div className="text-[12px] text-[#383838]">
-                      No Data Found
-                    </div>
-                  </div>
-                )}
-              </>
-            </div>
-          </div>
+         <FilleHistory></FilleHistory>
         );
       case "Questionary Tracking":
         return (

@@ -467,6 +467,19 @@ class Application extends Api {
       `/health_profile/notes/add_notes`,data);
     return response;
   };
+  static getFilleList = (data: any) => {
+    const response = this.post(
+      `/patients/get_list_lab_report
+      `,data);
+    return response;
+  };
+  static downloadFille = (data: any) => {
+    const response = this.post(
+      `/patients/download_lab_report
+
+      `,data);
+    return response;
+  };
 }
 
 export default Application;
