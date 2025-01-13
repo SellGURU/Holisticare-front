@@ -67,13 +67,7 @@ const ClientList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
-  const toggleFavorite = (memberId: number) => {
-    setClientList((prevList) =>
-      prevList.map((client) =>
-        client.member_id === memberId ? { ...client, favorite: true } : client
-      )
-    );
-  };
+
 
   return (
     <>
@@ -175,7 +169,6 @@ const ClientList = () => {
                         });
                       }}
                       client={client}
-                      onToggleFavorite={toggleFavorite}
                     ></ClientCard>
                   );
                 })}

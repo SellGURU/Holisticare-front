@@ -8,13 +8,11 @@ import Application from "../../api/app.ts";
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
-  onToggleFavorite: (memberId: number) => void;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
   client,
   ondelete,
-  onToggleFavorite,
 }) => {
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
@@ -27,7 +25,22 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(client.favorite);
+    const handleToggleFavorite = async () => {
+    try {
+      // Call API to toggle favorite status
+      await Application.addFavorite({
+        member_id: client.member_id,
+        is_favorite: !isFavorite,
+      });
+
+      // Update the local state to reflect the change
+      setIsFavorite(!isFavorite);
+      setshowModal(false);
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+    }
+  };
   return (
     <>
       <div className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
@@ -55,15 +68,11 @@ const ClientCard: React.FC<ClientCardProps> = ({
               Send to Archieve
             </div>
             <div
-              onClick={() => {
-                onToggleFavorite(client.member_id);
-                setIsFavorite(!isFavorite)
-                setshowModal(false)
-              }}
+                           onClick={handleToggleFavorite}
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
-              {isFavorite || client.favorite ? "Remove from favorite" : "Add to favorite"}            </div>
+              { isFavorite? "Remove from favorite" : "Add to favorite"}            </div>
           </div>
         )}
         <div
@@ -85,7 +94,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               }
               alt=""
             />
-            {client.favorite || isFavorite && (
+         {isFavorite && (
               <img
                 className="absolute bottom-0 right-0"
                 src="/icons/Icon_star.svg"
