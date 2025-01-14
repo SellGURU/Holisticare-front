@@ -4,7 +4,7 @@ import ProtectedRoute from "./protected";
 import Layout from "../layout";
 import GenerateNewActionPlan from "../Components/Action-plan/GenerateNewPlan";
 // import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
-import Login from "../pages/login";
+import Login from "../pages/login/index2";
 import { Targeting } from "../Components/Action-plan/sections/Targeting";
 import GenerateCalendar from "../Components/Action-plan/sections/generatecalendar";
 import { ClientList } from "../Components";
