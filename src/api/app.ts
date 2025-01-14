@@ -480,6 +480,14 @@ class Application extends Api {
       `,data);
     return response;
   };
+  static addFavorite = (data: any) => {
+    const response = this.post(
+      `/patients/add_to_fav_list
+
+
+      `,data);
+    return response;
+  };
 }
 
 export default Application;
