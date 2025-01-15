@@ -65,7 +65,9 @@ const Login = () => {
                     <div className="mb-4">
                         <TextField errorMessage={formik.errors?.password} inValid={formik.errors?.password != undefined && (formik.touched?.password as boolean)} {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField> 
                         <div className="w-full mt-2 flex justify-end items-center">
-                            <div className="text-[12px] cursor-pointer text-Primary-DeepTeal font-medium hover:opacity-85 hover:underline">Forgot password?</div>
+                            <div onClick={() => {
+                                navigate('/forgetPassword')
+                            }} className="text-[12px] cursor-pointer text-Primary-DeepTeal font-medium hover:opacity-85 hover:underline">Forgot password?</div>
                         </div>
 
                     </div>

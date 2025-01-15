@@ -32,6 +32,7 @@
     "react-spinners": "^0.15.0",
     "react-toastify": "^11.0.0",
     "react-tooltip": "^5.28.0",
+    "react-verification-input": "^4.2.0",
     "sigma": "^3.0.0-beta.26",
     "symphony-ui": "^1.0.16",
     "yop": "^0.0.0",
