@@ -85,6 +85,8 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "weight",
     header: "Weight",
+    enableSorting: false,
+
     cell: ({ row }) => {
       return (
         <div className="flex items-center justify-center">
@@ -95,6 +97,8 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "height",
+    enableSorting: false,
+
     header: "Height",
     cell: ({ row }) => {
       return (
@@ -133,8 +137,8 @@ export const columns: ColumnDef<any>[] = [
       return (
         
         <div className="items-center justify-center  flex ">
-        <Badge  status={row.original.status || 'normal'}>
-          {row.original.status || 'normal'}
+        <Badge  status={row.original.status || 'at-risk'}>
+          {row.original.status || 'No Data'}
         </Badge>
         </div>
       );
@@ -143,6 +147,8 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "score",
     header: "Score",
+    enableSorting: false,
+
     cell: ({ row }) => {
       return (
        <div className="text-Text-Primary ">
@@ -154,6 +160,8 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "information.progress",
     header: "Progress",
+    enableSorting: false,
+
     cell: ({ row }) => {
       
       return (
@@ -220,7 +228,7 @@ export const columns: ColumnDef<any>[] = [
    cell: ({ row }) => {
       return (
         <div className="flex justify-center w-full gap-2">
-            <img src="/public/icons/sms-tracking.svg" alt="" className="cursor-pointer" />
+            <img src="/icons/sms-tracking.svg" alt="" className="cursor-pointer" />
           <img onClick={() => {
             publish("confirmDelete",{id:row.original.information.member_id,name:row.original.information.name})
             // const status = confirm("delete this member?")
