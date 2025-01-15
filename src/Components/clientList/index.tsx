@@ -8,6 +8,7 @@ import SelectBox from "../SelectBox";
 import SearchBox from "../SearchBox";
 import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import SvgIcon from "../../utils/svgIcon.tsx";
+import Table from "../table.tsx/index.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -68,7 +69,6 @@ const ClientList = () => {
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
 
-
   return (
     <>
       {isLoading ? (
@@ -116,9 +116,10 @@ const ClientList = () => {
                           : "bg-white"
                       }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer`}
                     >
-                      <SvgIcon src="/icons/grid-1.svg" color={activeList == 'grid' ? '#FFF' : '#38383899'} />
-
-                      
+                      <SvgIcon
+                        src="/icons/grid-1.svg"
+                        color={activeList == "grid" ? "#FFF" : "#38383899"}
+                      />
                     </div>
                     <div
                       onClick={() => setActiveList("list")}
@@ -128,12 +129,14 @@ const ClientList = () => {
                           : "bg-white"
                       } flex items-center w-full justify-center rounded-md rounded-l-none cursor-pointer`}
                     >
-<SvgIcon src="/icons/textalign-left.svg" color={activeList == 'list' ? '#FFF' : '#38383899'} />
-                      
+                      <SvgIcon
+                        src="/icons/textalign-left.svg"
+                        color={activeList == "list" ? "#FFF" : "#38383899"}
+                      />
                     </div>
                   </div>
                   {showSearch ? (
-                    <div onMouseLeave={()=>setshowSearch(false)}>
+                    <div onMouseLeave={() => setshowSearch(false)}>
                       <SearchBox
                         ClassName={`rounded-md`}
                         onSearch={handleSearch}
@@ -154,25 +157,29 @@ const ClientList = () => {
                   </div>
                 </div>
               </div>
-              <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
-                {filteredClientList.map((client: any) => {
-                  return (
-                    <ClientCard
-                      ondelete={(memberId: any) => {
-                        setFilteredClientList((pre) => {
-                          const nes = [...pre];
-                          return nes.filter((el) => el.member_id != memberId);
-                        });
-                        setClientList((pre) => {
-                          const nes = [...pre];
-                          return nes.filter((el) => el.member_id != memberId);
-                        });
-                      }}
-                      client={client}
-                    ></ClientCard>
-                  );
-                })}
-              </div>
+              {activeList == "grid" ? (
+                <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
+                  {filteredClientList.map((client: any) => {
+                    return (
+                      <ClientCard
+                        ondelete={(memberId: any) => {
+                          setFilteredClientList((pre) => {
+                            const nes = [...pre];
+                            return nes.filter((el) => el.member_id != memberId);
+                          });
+                          setClientList((pre) => {
+                            const nes = [...pre];
+                            return nes.filter((el) => el.member_id != memberId);
+                          });
+                        }}
+                        client={client}
+                      ></ClientCard>
+                    );
+                  })}
+                </div>
+              ) : (
+                <Table classData={clientList}></Table>
+              )}
             </>
           ) : (
             <>
