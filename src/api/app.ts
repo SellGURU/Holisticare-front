@@ -499,14 +499,24 @@ class Application extends Api {
   };
   static deleteHolisticPlan = (data: any) => {
     const response = this.post(
-      `/delete_treatment_plan
-
-
-
-
-      `,data);
+      `/delete_treatment_plan`,data);
     return response;
   };
+
+
+  static SendVerification = ({email}:{email:string}) => {
+    const response = this.post('/auth/forget_password/send_verification',{
+      email :email
+    })
+    return response
+  }
+  static varifyCode = ({email,reset_code}:{email:string,reset_code:string}) => {
+    const response = this.post('/auth/forget_password/verify_reset_code',{
+      email :email,
+      reset_code:reset_code
+    })
+    return response
+  }  
 }
 
 export default Application;
