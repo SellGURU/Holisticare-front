@@ -80,7 +80,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
   const [clientSummary, setclientSummary] = useState('second')
-  const handleDeleteCard = (index: number) => {
+  const handleDeleteCard = (index: number,id:string) => {
+    Application.deleteHolisticPlan({
+      treatment_id: id,
+    })
     setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
     setShowModalIndex(null);
     setDeleteConfirmIndex(null);
@@ -197,14 +200,16 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         {index + 1 < 10 && 0}
                         {index + 1}
                       </div>
-                      {card.state == "On Going" && (
-                        <img
+                   { activeTreatment == card.t_plan_id && (
+                    <img
                           onClick={() => setShowModalIndex(index)}
                           className="-mr-5 ml-3 cursor-pointer"
                           src="/icons/dots.svg"
                           alt=""
                         />
-                      )}
+                   )}
+                        
+                  
                     </div>
 
                     <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
@@ -244,9 +249,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (card.status == "On Going") {
+                         
                             setDeleteConfirmIndex(index);
-                          }
+                          
                         }}
                         className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                       >
@@ -254,7 +259,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteCard(index);
+                              handleDeleteCard(index,card.t_plan_id);
                             }}
                             className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
                           >

@@ -488,6 +488,25 @@ class Application extends Api {
       `,data);
     return response;
   };
+  static deleteActionCard = (data: any) => {
+    const response = this.post(
+      `/delete_block
+
+
+
+      `,data);
+    return response;
+  };
+  static deleteHolisticPlan = (data: any) => {
+    const response = this.post(
+      `/delete_treatment_plan
+
+
+
+
+      `,data);
+    return response;
+  };
 }
 
 export default Application;

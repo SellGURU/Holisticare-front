@@ -91,9 +91,10 @@ export const ActionPlan:React.FC<ActionPlanProps> = () => {
                       // setCalender(el.calendar)
                       setActiveAction(el)
                     }}
-                    onDelete={(cardID: number) => {
+                    onDelete={(id: number) => {
+                      Application.deleteActionCard({id:el.id})
                       setCardData(
-                        CardData.filter((card) => card.cardID !== cardID)
+                        CardData.filter((card) => card.id !== id)
                       );
                     }}
                     key={i}
