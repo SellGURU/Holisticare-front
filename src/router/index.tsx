@@ -12,7 +12,7 @@ import AddClient from "../pages/addClient";
 import GenerateNewPlan from "../pages/generateTreatmentPlan";
 import { DriftAnaysis } from "../pages/driftAnaysis";
 import AiKnowledge from "../pages/ai-knowledge/AiKnowledge.tsx";
-import SignUp from "../pages/signUp/index.tsx";
+import SignUp from "../pages/signUp/index2.tsx";
 
 const router = createBrowserRouter([
   {

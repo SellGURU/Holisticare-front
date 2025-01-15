@@ -79,7 +79,6 @@ const SignUp: React.FC = () => {
     !formik.values.email ||
     !formik.values.password ||
     !checkboxChecked;
-  !formik.isValid;
   return (
     <div className="w-full h-screen flex  justify-center dark:bg-black-background px-12 pt-[66px] gap-20 overflow-auto ">
       <div className=" h-full hidden md:block w-[40%] self-center">
