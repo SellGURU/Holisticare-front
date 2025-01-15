@@ -7,6 +7,7 @@ import { useApp } from "../../hooks";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BeatLoader} from "react-spinners";
+import AuthLayout from "../../layout/AuthLayout";
 
 const validationSchema = yup.object({
   email: yup.string().email("Enter a valid email").required("Email is required"),
@@ -51,47 +52,44 @@ const Login = () => {
         }).finally(() => {
             setIsLoading(false)
         })        
-    }
+    }    
     return (
         <>
-            <div className="w-full h-screen overflow-hidden flex justify-between items-start">
-                <div className="hidden lg:block w-[50%] h-screen">
-                    <img src="./images/loginImage.png" className="w-full object-cover h-full" alt="" />
+            <AuthLayout>
+                <div className="flex justify-center items-center mb-4">
+                    <img src="./icons/HolisticareLogo.svg" alt="" />
                 </div>
-                <div className="flex-grow flex justify-center items-center bg-backgroundColor-Main min-h-screen">
-                    <div className="w-[300px]">
-                        <div className="text-xl font-medium text-Text-Primary text-center">Welcome Back!</div>
-                        <div className="mt-6 grid gap-4">
-                            <TextField inValid={formik.errors?.email != undefined && (formik.touched?.email as boolean)}  errorMessage={formik.errors?.email} {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
-                            <div className="mb-4">
-                                <TextField errorMessage={formik.errors?.password} inValid={formik.errors?.password != undefined && (formik.touched?.password as boolean)} {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField> 
-                                <div className="w-full mt-2 flex justify-end items-center">
-                                    <div className="text-[12px] cursor-pointer text-Primary-DeepTeal font-medium hover:opacity-85 hover:underline">Forgot password?</div>
-                                </div>
-
-                            </div>
-                            <ButtonSecondary ClassName="rounded-[20px]" disabled={!formik.isValid} onClick={() => {
-                                submit()  
-                            }}>
-                            {isLoading ?
-                                <div className="flex justify-center items-center w-full min-h-[18px]">
-                                    <BeatLoader size={8} color="white"></BeatLoader>
-
-                                </div>
-                            :
-                            'Log in'
-                            }
-                            </ButtonSecondary>            
-                            <div className="flex items-center justify-center mt-4">
-                                <div className="flex-grow h-px bg-gradient-to-l from-Text-Triarty via-Text-Triarty to-transparent"></div>
-                                <span className="px-4 text-[14px] text-Text-Secondary">or</span>
-                                <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
-                            </div>             
-                            <div className="text-[12px] text-center text-Text-Secondary">Don't have an account? <span className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline">Sign up</span></div>                           
+                <div className="text-xl font-medium text-Text-Primary text-center">Welcome Back!</div>
+                <div className="mt-6 grid gap-4">
+                    <TextField inValid={formik.errors?.email != undefined && (formik.touched?.email as boolean)}  errorMessage={formik.errors?.email} {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
+                    <div className="mb-4">
+                        <TextField errorMessage={formik.errors?.password} inValid={formik.errors?.password != undefined && (formik.touched?.password as boolean)} {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField> 
+                        <div className="w-full mt-2 flex justify-end items-center">
+                            <div className="text-[12px] cursor-pointer text-Primary-DeepTeal font-medium hover:opacity-85 hover:underline">Forgot password?</div>
                         </div>
+
                     </div>
-                </div>
-            </div>
+                    <ButtonSecondary ClassName="rounded-[20px]" disabled={!formik.isValid} onClick={() => {
+                        submit()  
+                    }}>
+                    {isLoading ?
+                        <div className="flex justify-center items-center w-full min-h-[18px]">
+                            <BeatLoader size={8} color="white"></BeatLoader>
+
+                        </div>
+                    :
+                    'Log in'
+                    }
+                    </ButtonSecondary>            
+                    <div className="flex items-center justify-center mt-4">
+                        <div className="flex-grow h-px bg-gradient-to-l from-Text-Triarty via-Text-Triarty to-transparent"></div>
+                        <span className="px-4 text-[14px] text-Text-Secondary">or</span>
+                        <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
+                    </div> 
+          
+                    <div className="text-[12px] text-center text-Text-Secondary">Don't have an account? <span className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline">Sign up</span></div>                           
+                </div>                
+            </AuthLayout>
         </>
     )
 }
