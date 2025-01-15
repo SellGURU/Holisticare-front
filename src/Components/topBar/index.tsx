@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
+import LogOutModal from "../LogOutModal";
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -162,10 +163,7 @@ export const TopBar:React.FC<TopBarProps> = ({
           </div>
         }
         
-        <div className="flex items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]">
-          <img src="/icons/topbar-logo2.png" alt="" />
-          Clinic Longevity 1
-        </div>
+        <LogOutModal></LogOutModal>
       </div>
     </div>
   );

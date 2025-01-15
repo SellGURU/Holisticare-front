@@ -25,15 +25,8 @@ axios.interceptors.response.use((response) => {
     }    
     return response;
 }, (error) => {
-    if (error.response) {
-        const { status, data } = error.response;
-  
-        // Handle 400 error specifically
-        if (status === 400 && data.detail) {
-          toast.error(data.detail);
-        }
-    }
-    if(error.response.status ==401 || error.response.data.detail =='Invalid token.'){
+
+    if((error.response.status ==401 && !error.response.data.detail.includes("User Not found")) || error.response.data.detail =='Invalid token.'){
         localStorage.clear()
         window.location.reload(); 
     }     
@@ -45,9 +38,9 @@ axios.interceptors.response.use((response) => {
         }
     }     
     // console.log(error.response.data.detail)
-    if(error.response.data.detail && error.response.data.detail !='Invalid token.'  && error.response.data.detail !='Not Found'){
-        toast.error(error.response.data.detail)
-    }
+    // if(error.response.data.detail && error.response.data.detail !='Invalid token.'  && error.response.data.detail !='Not Found'){
+    //     toast.error(error.response.data.detail)
+    // }
     if (error.response && error.response.data) {
         return Promise.reject(error.response.data);
     }

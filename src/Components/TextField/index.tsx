@@ -40,19 +40,20 @@ const TextField: React.FC<TextFieldProps> = ({
         <input
           type={getInputType()}
           className={`w-full h-[32px] rounded-[16px] mt-1 border placeholder:text-gray-400 text-[12px] px-3 outline-none ${
-            inValid ? "border-red-500" : "border-gray-50"
-          } shadow-300`}
+            inValid ? "border-red-500" : "border-gray-50"} 
+            ${type === 'password' ?'pr-8':''}
+            shadow-300`}
           {...props}
         />
         {type === "password" && (
           <div
             onClick={togglePassword}
-            className="absolute top-2 right-0 pr-3 flex items-center text-sm cursor-pointer"
+            className="absolute top-3 right-0 pr-3 flex items-center text-sm cursor-pointer"
           >
             {showPassword ? (
-                <img src="/icons/eyeOff.svg" alt="" />
+                <img src="/icons/eye-slash.svg" alt="" />
             ) : (
-                <img src="/icons/eyeOn.svg" alt="" />
+                <img src="/icons/eye.svg" alt="" />
 
             )}
           </div>

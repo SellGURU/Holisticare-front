@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/inter": "^5.1.0",
     "@fontsource/rozha-one": "^5.1.0",
+    "@react-oauth/google": "^0.12.1",
     "@react-sigma/core": "^4.0.3",
     "@react-sigma/layout-circular": "^4.0.3",
     "@tanstack/react-table": "^8.20.6",
