@@ -9,6 +9,7 @@ import SearchBox from "../SearchBox";
 import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import SvgIcon from "../../utils/svgIcon.tsx";
 import Table from "../table.tsx/index.tsx";
+import FilterModal from "../FilterModal/index.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -24,6 +25,27 @@ type ClientData = {
   weight: number;
   favorite?: boolean;
   // Add other properties as needed
+};
+type GenderFilter = {
+  male: boolean;
+  female: boolean;
+};
+
+type StatusFilter = {
+  normal: boolean;
+  atRisk: boolean;
+  critical: boolean;
+};
+
+type DateFilter = {
+  from: Date | null;
+  to: Date | null;
+};
+
+type Filters = {
+  gender: GenderFilter;
+  status: StatusFilter;
+  enrollDate: DateFilter;
 };
 const ClientList = () => {
   const [clientList, setClientList] = useState<ClientData[]>([]);
@@ -68,7 +90,68 @@ const ClientList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
+  const [, setFilters] = useState<Filters>({
+    gender: { male: false, female: false },
+    status: { normal: false, atRisk: false, critical: false },
+    enrollDate: { from: null, to: null },
+  });
+  const applyFilters = (filters: Filters) => {
+    setFilters(filters);
+    let filtered = [...clientList];
 
+    // Only apply gender filter if at least one gender is selected
+    if (filters.gender.male || filters.gender.female) {
+      filtered = filtered.filter(
+        (client) =>
+          (filters.gender.male && client.sex.toLowerCase() === "male") ||
+          (filters.gender.female && client.sex.toLowerCase() === "female")
+      );
+    }
+
+    // Only apply status filter if at least one status is selected
+    if (
+      filters.status.normal ||
+      filters.status.atRisk ||
+      filters.status.critical
+    ) {
+      filtered = filtered.filter(
+        (client) =>
+          (filters.status.normal && client.status === "Normal") ||
+          (filters.status.atRisk && client.status === "At Risk") ||
+          (filters.status.critical && client.status === "Critical")
+      );
+    }
+
+    // Apply date filter if dates are selected
+    if (filters.enrollDate.from || filters.enrollDate.to) {
+      filtered = filtered.filter((client) => {
+        const clientDate = new Date(client.enroll_date);
+        const fromDate = filters.enrollDate.from
+          ? new Date(filters.enrollDate.from)
+          : null;
+        const toDate = filters.enrollDate.to
+          ? new Date(filters.enrollDate.to)
+          : null;
+
+        return (
+          (!fromDate || clientDate >= fromDate) &&
+          (!toDate || clientDate <= toDate)
+        );
+      });
+    }
+
+    setFilteredClientList(filtered);
+  };
+  const clearFilters = () => {
+    setFilters({
+      gender: { male: false, female: false },
+      status: { normal: false, atRisk: false, critical: false },
+      enrollDate: { from: null, to: null },
+    });
+    setFilteredClientList(clientList);
+  };
+
+  const [showFilterModal, setshowFilterModal] = useState(false);
   return (
     <>
       {isLoading ? (
@@ -103,7 +186,7 @@ const ClientList = () => {
                   <img src="/icons/faviorte.svg" alt="" />
                   Your favorite list
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 relative">
                   <div className="flex text-Text-Primary text-sm font-medium gap-2 items-center ">
                     Sort by: <SelectBox onChange={handleFilterChange} />
                   </div>
@@ -152,9 +235,21 @@ const ClientList = () => {
                     </div>
                   )}
 
-                  <div className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4">
+                  <div
+                    onClick={() => setshowFilterModal(!showFilterModal)}
+                    className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4 cursor-pointer"
+                  >
                     <img src="/icons/filter.svg" alt="" />
                   </div>
+                  {showFilterModal && (
+                    <FilterModal
+                      onApplyFilters={applyFilters}
+                      onClearFilters={clearFilters}
+                      onClose={()=>{
+                        setshowFilterModal(false)
+                      }}
+                    />
+                  )}
                 </div>
               </div>
               {activeList == "grid" ? (
@@ -178,7 +273,7 @@ const ClientList = () => {
                   })}
                 </div>
               ) : (
-                <Table classData={clientList}></Table>
+                <Table classData={filteredClientList}></Table>
               )}
             </>
           ) : (

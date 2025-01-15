@@ -228,10 +228,7 @@ input[type="number"] {
   .dot:nth-child(7) { transform: rotate(270deg) translate(20px); animation-delay: 0.9s; }
   .dot:nth-child(8) { transform: rotate(315deg) translate(20px); animation-delay: 1.05s; }
   
-  @keyframes dotSpin {
-    0%, 100% { background-color: #ccc; }
-    50% { background-color: #4CAF50; }
-  }
+
 @layer utilities {
     .TextStyle-Button {
         @apply text-xs font-medium;
