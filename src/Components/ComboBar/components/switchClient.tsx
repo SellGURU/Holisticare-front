@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Application from "../../../api/app";
 import SearchBox from "../../SearchBox";
 import StatusMenu from "../../StatusMenu";
 import { ClientCard } from "../../../pages/driftAnaysis/ClientCard";
 import { ButtonPrimary } from "../../Button/ButtonPrimary";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 interface Patient {
   email: string;
   name: string;
@@ -17,7 +18,9 @@ interface Patient {
 }
 
 export const SwitchClient = () => {
-  const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
+  const { id } = useParams<{ id: string }>();
+  console.log(id)
+  const [activeMemberID, setActiveMemberID] = useState<any>(Number(id));
   
   const [activeStatus, setActiveStatus] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,7 +65,7 @@ export const SwitchClient = () => {
       try {
         const response = await Application.getPatients();
         setPatients(response.data.patients_list_data);
-        setActiveMemberID(response.data.patients_list_data[0].member_id);
+        // setActiveMemberID(response.data.patients_list_data[0].member_id);
       } catch (err) {
         console.log(err);
       }
@@ -76,7 +79,7 @@ export const SwitchClient = () => {
         patients.filter((el) => el.member_id == activeMemberID)[0]
       );
     }
-  }, [activeMemberID]);
+  }, [activeMemberID,id]);
   const status: Array<string> = [
     "All",
     "Need to check",

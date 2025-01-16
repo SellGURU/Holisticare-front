@@ -1,7 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Dispatch, SetStateAction } from "react";
-// import { useSelector } from "react-redux";
-// import { getStatusBgColorClass } from "@/utils/status";
-// import { Link } from "react-router-dom";
+
 interface ClientCardProps {
   index: number;
   picture?: string;
@@ -15,65 +14,21 @@ interface ClientCardProps {
   setCardActive: Dispatch<SetStateAction<null | number>>;
   isSwitch?:boolean,
 }
-// const getStatusBgColorClass = (
-//   status: string,
-//   currentStatus: string
-// ): string => {
-    
-//   if ( status && status.toLowerCase() === currentStatus.toLowerCase()) {
- 
-    
-//     switch (status?.toLowerCase()) {
-//       case "high":
-//         return "bg-red-status text-black";
-//       case "low":
-//         return "bg-brand-primary-color text-black";
-//       case "medium":
-//         return "bg-orange-status  text-black";
-//       case "excellent":
-//         return "bg-[#7F39FB] text-black";
-//       case "good":
-//         return "bg-[#03DAC5] text-black";
-//       case "ok":
-//         return "bg-[#FBAD37] text-black";
-//       case "needs focus":
-//         return "bg-[#FC5474] text-black";
-//       case "incompleted":
-//         return "bg-[#FC5474] text-white";
-//       case "critical":
-//         return "bg-[#FC5474] text-white";
-//       case "all":
-//         return "text-white bg-Primary-DeepTeal";
-//       case "needs checking":
-//         return "bg-[#FFBD59] text-black";
-//       case "stable":
-//         return "bg-[#06C78D] text-white";
-//       default:
-//         return "border border-light-blue-active  text-[8px]";
-//     }
-//   }
-//   return "border bg-backgroundColor-Main border-Gray-50 text-[8px] text-Text-Primary  ";
-// };
+
 export const ClientCard: React.FC<ClientCardProps> = ({
   name,
   email,
   picture,
-  status ="",
   tags,
   cardActive,
   memberID,
   setCardActive,
   isSwitch
 }) => {
-  // const theme = useSelector((state: any) => state.theme.value.name);
-  // console.log(memberID);
-console.log(status);
-
   return (
     <div
       onClick={() => {
         setCardActive(memberID);
-        // onClick(); // Call onClick when the card is clicked
       }} // onClick={() => setCardActive(index)}
       className={`${
         cardActive === memberID
@@ -122,21 +77,13 @@ console.log(status);
           </span>
         </div>
       </div>
-      {/* <Link to={`/information/${memberID}/Analysis`}> */}
         <div className={` ${isSwitch && 'hidden'} absolute right-1 bottom-1 flex flex-col gap-4`}>
           <div className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2">
             {" "}
             <img src="/icons/export.svg" alt="" />
           </div>
-          {/* <div className="cursor-pointer bg-black-third rounded-full p-2">
-          {" "}
-          <img
-src="/Themes/Aurora/icons/more-square.svg"        
-            alt=""
-          />
-        </div> */}
+
         </div>
-      {/* </Link> */}
     </div>
   );
 };

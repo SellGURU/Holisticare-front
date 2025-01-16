@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import useModalAutoClose from "../../hooks/UseModalAutoClose"
+import Auth from "../../api/auth"
 
 const LogOutModal = () => {
     const [visibleClinic,setVisibleClinic] = useState(false)
@@ -33,6 +34,7 @@ const LogOutModal = () => {
                          </div>
                          <div className="flex justify-center"> 
                             <div onClick={() => {
+                                Auth.logOut()
                                 localStorage.clear()
                                 window.location.reload()
                             }} className="flex gap-1 cursor-pointer">

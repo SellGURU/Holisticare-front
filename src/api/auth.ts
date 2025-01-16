@@ -48,6 +48,10 @@ class Auth extends Api {
       },
     });
   }
+
+  static logOut() {
+    return this.post("/auth/log_out")
+  }
 }
 
 export default Auth;

@@ -44,7 +44,7 @@ export const ComboBar = () => {
     }).then((res) => {
       setPatientInfo(res.data);
     });
-  }, []);
+  }, [id]);
   // useConstructor(() => {
   //   // setIsLoading(true);
   //   Application.getSummary(id as string).then((res) => {

@@ -187,7 +187,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
 
                           </div>
                           <div className="w-[70px] mr-36 flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-                            <div className="text-Primary-DeepTeal text-[10px]">{active.unit}</div>
+                            <div className="text-Primary-DeepTeal text-[10px]">{active?.unit}</div>
                             <div className="w-[16px]">
                               <img src="/icons/arrow-down-green.svg" alt="" />
                             </div>
