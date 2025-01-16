@@ -517,6 +517,14 @@ class Application extends Api {
     })
     return response
   }  
+
+  static ChangePassword = ({email,password}:{email:string,password:string}) => {
+    const response = this.post('/auth/forget_password/reset_password',{
+      email :email,
+      password:password
+    })
+    return response
+  }    
 }
 
 export default Application;

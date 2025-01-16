@@ -68,7 +68,7 @@ const SignUp = () => {
                         <TextField errorMessage={formik.errors?.password} inValid={formik.errors?.password != undefined && (formik.touched?.password as boolean)} {...formik.getFieldProps("password")} placeholder="Enter your password..." label="Password" type="password" ></TextField> 
 
                     </div>
-                    <ButtonSecondary ClassName="rounded-[20px]" disabled={!formik.isValid} onClick={() => {
+                    <ButtonSecondary ClassName="rounded-[20px]" disabled={!formik.isValid || formik.values.userName.length == 0} onClick={() => {
                         submit()  
                     }}>
                     {isLoading ?
@@ -80,7 +80,9 @@ const SignUp = () => {
                     'Sign up'
                     }
                     </ButtonSecondary>     
-                    <div className="text-[10px] text-Text-Secondary text-center mt-[-10px]">By signing up you agreed with our <span className="text-Primary-DeepTeal cursor-pointer hover:underline hover:opacity-90">Terms & Conditions.</span>  </div>       
+                    <div className="text-[10px] text-Text-Secondary text-center mt-[-10px]">By signing up you agreed with our <span className="text-Primary-DeepTeal cursor-pointer hover:underline hover:opacity-90" onClick={() => {
+                        window.open("https://holisticare.io/terms-of-service/")
+                    }}>Terms & Conditions.</span>  </div>       
                     <div className="flex items-center justify-center mt-4">
                         <div className="flex-grow h-px bg-gradient-to-l from-Text-Triarty via-Text-Triarty to-transparent"></div>
                         <span className="px-4 text-[14px] text-Text-Secondary">or</span>
