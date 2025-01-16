@@ -9,6 +9,7 @@ import { useState } from "react"
 import Auth from "../../api/auth"
 import { useApp } from "../../hooks"
 import YoupValidation from "../../validation"
+import AuthWithGoogle from "../../Components/AuthWithGoogle"
 
 const validationSchema = yup.object({
   email: YoupValidation("email"),
@@ -83,7 +84,9 @@ const SignUp = () => {
                         <span className="px-4 text-[14px] text-Text-Secondary">or</span>
                         <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
                     </div> 
-          
+                    <div>
+                        <AuthWithGoogle mode="register"></AuthWithGoogle>
+                    </div>          
                     <div className="text-[12px] text-center text-Text-Secondary">Already have an account?<span onClick={() => {
                         navigate('/login')
                     }} className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]">Log in</span></div>                           

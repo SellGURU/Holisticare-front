@@ -9,6 +9,7 @@ import { useState } from "react";
 import { BeatLoader} from "react-spinners";
 import AuthLayout from "../../layout/AuthLayout";
 import YoupValidation from "../../validation";
+import AuthWithGoogle from "../../Components/AuthWithGoogle";
 
 const validationSchema = yup.object({
   email: YoupValidation("email"),
@@ -83,7 +84,9 @@ const Login = () => {
                         <span className="px-4 text-[14px] text-Text-Secondary">or</span>
                         <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
                     </div> 
-          
+                    <div>
+                        <AuthWithGoogle mode="login"></AuthWithGoogle>
+                    </div>
                     <div className="text-[12px] text-center text-Text-Secondary">Don't have an account? <span onClick={() => {
                         navigate('/register')
                     }} className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]">Sign up</span></div>                           

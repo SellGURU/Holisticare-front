@@ -33,11 +33,12 @@ class Auth extends Api {
       },      
     });
   }
-  static signup( username:string,email: string, password: string){
+  static signup( username?:string,email?: string, password?: string,google_json?:any){
     const data = {
       user_name : username,
       user_mail: email,
       password: password,
+      google_json:google_json
       // clinic_membership_id: ""
     };
 
