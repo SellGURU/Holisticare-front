@@ -126,7 +126,7 @@ export const Notes = () => {
       </div>
     ) }
       <div
-        className="flex justify-center items-center h-[600px] overflow-y-scroll"
+        className="flex justify-center items-center h-[200px] overflow-y-scroll"
         style={{
           alignItems: data?.length > 0 ? "start" : "center",
         }}
