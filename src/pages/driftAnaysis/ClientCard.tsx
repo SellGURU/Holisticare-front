@@ -13,6 +13,7 @@ interface ClientCardProps {
   // onClick: () => void;
   memberID: number;
   setCardActive: Dispatch<SetStateAction<null | number>>;
+  isSwitch?:boolean,
 }
 // const getStatusBgColorClass = (
 //   status: string,
@@ -62,6 +63,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   cardActive,
   memberID,
   setCardActive,
+  isSwitch
 }) => {
   // const theme = useSelector((state: any) => state.theme.value.name);
   // console.log(memberID);
@@ -112,16 +114,16 @@ console.log(status);
       <div className="mt-3 flex justify-between items-center">
         <div className="flex flex-col  text-primary-text">
           {" "}
-          <span className="text-Text-Secondary text-[8px]">
+          <span className={`${isSwitch && 'hidden'} text-Text-Secondary text-[8px]`}>
             Email-address{" "}
           </span>
-          <span className="text-[10px]  font-normal">
+          <span className="text-[10px] text-Text-Secondary  font-normal">
             {email}
           </span>
         </div>
       </div>
       {/* <Link to={`/information/${memberID}/Analysis`}> */}
-        <div className=" absolute right-1 bottom-1 flex flex-col gap-4">
+        <div className={` ${isSwitch && 'hidden'} absolute right-1 bottom-1 flex flex-col gap-4`}>
           <div className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2">
             {" "}
             <img src="/icons/export.svg" alt="" />

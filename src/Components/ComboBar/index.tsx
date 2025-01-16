@@ -16,6 +16,7 @@ import { DataSyncing } from "./components/dataSyncing.tsx";
 import { Questionary } from "./components/Questionary.tsx";
 import { Notes } from "./components/notes.tsx";
 import { FilleHistory } from "./components/filleHistory.tsx";
+import { SwitchClient } from "./components/switchClient.tsx";
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
@@ -27,7 +28,7 @@ export const ComboBar = () => {
       url: "/icons/sidbar-menu/clipboard-text.svg",
     },
     { name: "Expert’s Note", url: "/icons/sidbar-menu/note-2.svg" },
-    { name: "Repeat", url: "/icons/sidbar-menu/repeat.svg" },
+    { name: "Change Client", url: "/icons/sidbar-menu/repeat.svg" },
     { name: "Timeline", url: "/icons/sidbar-menu/task-square.svg" },
     { name: "chat history", url: "/icons/sidbar-menu/timeline.svg" },
   ];
@@ -144,11 +145,13 @@ export const ComboBar = () => {
         return(
             <TimeLine/>
         )
-        case "chat history":
+      case "chat history":
             return(
                 <ChatModal memberId={id}             info={patientInfo}
                 ></ChatModal>
             )
+            case "Change Client":
+              return(<SwitchClient></SwitchClient>)
       default:
         return <div>No Content</div>;
     }
