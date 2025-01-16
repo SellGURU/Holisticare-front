@@ -232,8 +232,16 @@ useEffect(() => {
               <div className="w-full flex justify-between mb-3">
                 <div onClick={()=>{
                   setisFavorite(!isFavorite)
-                }} className={`flex items-center gap-1 ${isFavorite? 'text-Primary-DeepTeal' : 'text-Text-Secondary'} cursor-pointer text-sm`}>
-                  <img src="/icons/faviorte.svg" alt="" />
+                }} className={`flex items-center gap-1 ${isFavorite? 'text-yellow-400' : 'text-Text-Secondary'} cursor-pointer text-sm`}>
+                  {
+                    isFavorite ? (
+                      <img src="/icons/Icon_star.svg" alt="" />
+
+                    ):(
+                      <img src="/icons/faviorte.svg" alt="" />
+
+                    )
+                  }
                  
                   Your favorite list
                 </div>

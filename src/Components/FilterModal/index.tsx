@@ -87,9 +87,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
         {/* Gender Section */}
         {/* checked={gender.male}
                 onChange={(e) => setGender({ ...gender, male: e.target.checked })} */}
-        <div className="w-full flex items-start gap-12  ">
+        <div className="w-full flex items-start gap-[41px]  ">
           <h3 className="text-xs font-medium ">Gender</h3>
-          <div className="flex gap-10">
+          <div className="flex gap-[38px]">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
