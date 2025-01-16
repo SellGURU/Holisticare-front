@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState,useRef  } from "react";
 import { ButtonPrimary } from "../Button/ButtonPrimary";
 import DatePicker from 'react-datepicker';
@@ -28,28 +29,31 @@ type FilterModalProps = {
   onApplyFilters: (filters: Filters) => void;
   onClearFilters: () => void;
   onClose:()=>void;
+  filters:any
 };
 const FilterModal: React.FC<FilterModalProps> = ({
   onApplyFilters,
   onClearFilters,
-  onClose
+  onClose,
+  filters
 }) => {
   const [gender, setGender] = useState<GenderFilter>({
-    male: false,
-    female: false,
+    male: filters.gender.male,
+    female: filters.gender.female,
   });
   const [status, setStatus] = useState<StatusFilter>({
-    normal: false,
-    atRisk: false,
-    critical: false,
+    normal: filters.status.normal,
+    atRisk: filters.status.atRisk,
+    critical: filters.status.critical,
   });
   const [enrollDate, setEnrollDate] = useState<DateFilter>({
-    from: null,
-    to: null,
+    from: filters.enrollDate.from,
+    to: filters.enrollDate.to,
   });
 
   const handleApply = () => {
     onApplyFilters({ gender, status, enrollDate });
+    onClose()
   };
 
   const handleClear = () => {
@@ -57,6 +61,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     setStatus({ normal: false, atRisk: false, critical: false });
     setEnrollDate({ from: null, to: null });
     onClearFilters();
+    onClose()
   };
 
   const formatDate = (date: Date | null) => {

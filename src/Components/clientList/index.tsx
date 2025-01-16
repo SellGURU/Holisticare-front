@@ -92,7 +92,7 @@ const ClientList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
-  const [, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<Filters>({
     gender: { male: false, female: false },
     status: { normal: false, atRisk: false, critical: false },
     enrollDate: { from: null, to: null },
@@ -229,16 +229,16 @@ useEffect(() => {
                 </ButtonPrimary>
               </div>
               <div className="w-full h-[1px] bg-white my-3"></div>
-              <div className="w-full flex justify-between mb-3">
+              <div className="w-full select-none flex justify-between mb-3">
                 <div onClick={()=>{
                   setisFavorite(!isFavorite)
-                }} className={`flex items-center gap-1 ${isFavorite? 'text-yellow-400' : 'text-Text-Secondary'} cursor-pointer text-sm`}>
+                }} className={`flex items-center gap-1 text-Text-Secondary cursor-pointer text-sm`}>
                   {
                     isFavorite ? (
-                      <img src="/icons/Icon_star.svg" alt="" />
+                      <img className="w-4 h-4" src="/icons/Icon_star.svg" alt="" />
 
                     ):(
-                      <img src="/icons/faviorte.svg" alt="" />
+                      <img className="w-4 h-4" src="/icons/faviorte.svg" alt="" />
 
                     )
                   }
@@ -278,17 +278,27 @@ useEffect(() => {
                     </div>
                   </div>
                   {showSearch ? (
-                    <div onMouseLeave={() => setshowSearch(false)}>
+                    <div >
                       <SearchBox
+                        id="searchBar"
                         ClassName={`rounded-md`}
                         onSearch={handleSearch}
                         placeHolder="Search for Client ..."
+                        onBlur={() => {
+                          setshowSearch(false)
+                        }}
                       ></SearchBox>
                     </div>
                   ) : (
                     <div
-                      onClick={() => setshowSearch(true)}
-                      className="bg-backgroundColor-Secondary rounded-md px-4 py-2 flex justify-center items-center shadow-100"
+                      onClick={() => {
+                        setshowSearch(true)
+                        setTimeout(() => {
+                          document.getElementById("searchBar")?.focus()
+                          
+                        }, 200);
+                      }}
+                      className="bg-backgroundColor-Secondary cursor-pointer rounded-md px-4 py-2 flex justify-center items-center shadow-100"
                     >
                       <img src="/icons/search.svg" alt="" />
                     </div>
@@ -302,6 +312,7 @@ useEffect(() => {
                   </div>
                   {showFilterModal && (
                     <FilterModal
+                      filters={filters}
                       onApplyFilters={applyFilters}
                       onClearFilters={clearFilters}
                       onClose={() => {
