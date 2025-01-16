@@ -32,7 +32,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           styles={buildStyles({
             textColor: '#000',
             pathColor: 'url(#gradientColors)',
-            trailColor: '#6CC24A',
+            trailColor: '#fff',
             textSize: '24px',
           })}
         />

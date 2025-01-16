@@ -525,6 +525,10 @@ class Application extends Api {
     })
     return response
   }    
+  static deleteClinic = (data:any) => {
+    const response = this.post("/patients/delete_patient",data)
+    return response     
+  }  
 }
 
 export default Application;
