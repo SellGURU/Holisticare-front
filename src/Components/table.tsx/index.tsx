@@ -86,7 +86,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
                   <tr key={headerGroup.id} className="text-nowrap text-Text-Primary">
                     {headerGroup.headers.map((header,index) => (
                       <th key={header.id} className={`px-3 pt-5 pb-1 text-xs  font-medium cursor-pointer `}>
-                        <div className={`flex items-center  ${index == 0?'justify-start w-[15vw]':'justify-center  w-[80px]'} `}>
+                        <div className={`flex items-center  ${index == 0?'justify-start ':'justify-center '} `}>
                           <div
                             className="flex items-center justify-center"
                             onClick={header.column.getToggleSortingHandler()}

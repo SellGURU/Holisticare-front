@@ -10,6 +10,8 @@ import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
 import SvgIcon from "../../utils/svgIcon.tsx";
 import Table from "../table.tsx/index.tsx";
 import FilterModal from "../FilterModal/index.tsx";
+import { subscribe } from "../../utils/event.ts";
+import ConfirmModal from "./ConfirmModal.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -152,6 +154,52 @@ const ClientList = () => {
   };
 
   const [showFilterModal, setshowFilterModal] = useState(false);
+  const [removeId, setRemoveId] = useState();
+  const [removeName, setRemoveName] = useState("");
+  const [isOpenConfirm, setISOpenConfirm] = useState(false);
+  const [UserMail, setUserMail] = useState("");
+  const [actionType, setActionType] = useState<"Delete" | "Email" | "SMS">(
+    "Delete"
+  );
+  useEffect(() => {
+    const handleDelete = (value: any) => {
+      setRemoveId(value.detail.id);
+      setRemoveName(value.detail.name);
+      setActionType("Delete");
+      setISOpenConfirm(true);
+    };
+
+    const handleSendEmail = (value: any) => {
+      setRemoveId(value.detail.id);
+      setRemoveName(value.detail.name);
+      setUserMail(value.detail.email);
+      setActionType("Email");
+      setISOpenConfirm(true);
+    };
+
+    const handleSendSMS = (value: any) => {
+      setRemoveId(value.detail.id);
+      setRemoveName(value.detail.name);
+      setActionType("SMS");
+      setISOpenConfirm(true);
+    };
+
+    subscribe("confirmDelete", handleDelete);
+    subscribe("sendEmail", handleSendEmail);
+    subscribe("sendSMS", handleSendSMS);
+
+    return () => {
+      // Unsubscribe when the component unmounts or when you need to clean up
+    };
+  }, []);
+const [isFavorite, setisFavorite] = useState(false)
+useEffect(() => {
+  if (isFavorite) {
+    setFilteredClientList(clientList.filter(client => client.favorite));
+  } else {
+    setFilteredClientList(clientList);
+  }
+}, [isFavorite, clientList]);
   return (
     <>
       {isLoading ? (
@@ -182,8 +230,11 @@ const ClientList = () => {
               </div>
               <div className="w-full h-[1px] bg-white my-3"></div>
               <div className="w-full flex justify-between mb-3">
-                <div className="flex items-center gap-1 text-Text-Secondary text-sm">
+                <div onClick={()=>{
+                  setisFavorite(!isFavorite)
+                }} className={`flex items-center gap-1 ${isFavorite? 'text-Primary-DeepTeal' : 'text-Text-Secondary'} cursor-pointer text-sm`}>
                   <img src="/icons/faviorte.svg" alt="" />
+                 
                   Your favorite list
                 </div>
                 <div className="flex gap-3 relative">
@@ -245,8 +296,8 @@ const ClientList = () => {
                     <FilterModal
                       onApplyFilters={applyFilters}
                       onClearFilters={clearFilters}
-                      onClose={()=>{
-                        setshowFilterModal(false)
+                      onClose={() => {
+                        setshowFilterModal(false);
                       }}
                     />
                   )}
@@ -298,6 +349,30 @@ const ClientList = () => {
           )}
         </div>
       )}
+      <ConfirmModal
+        email={UserMail}
+        actionType={actionType}
+        clientName={removeName}
+        onConfirm={() => {
+          setISOpenConfirm(false);
+          if (actionType == "Delete") {
+            Application.deleteClinic({
+              member_id: removeId,
+            }).then(() => {
+              setClientList((prevList) =>
+                prevList.filter((client) => client.member_id !== removeId)
+              );
+              setFilteredClientList((prevList) =>
+                prevList.filter((client) => client.member_id !== removeId)
+              );
+            });
+          }
+        }}
+        isOpen={isOpenConfirm}
+        onClose={() => {
+          setISOpenConfirm(false);
+        }}
+      ></ConfirmModal>
     </>
   );
 };

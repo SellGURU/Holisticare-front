@@ -20,10 +20,10 @@ export const columns: ColumnDef<any>[] = [
         console.log(row);
         
       return (
-        <div className="">
+        <div className="w-[15vw]">
 
      
-        <Link to={`/report/${row.original.member_id}/${row.original.name}`} className={""}>
+        <Link to={`/report/${row.original.member_id}/${row.original.name}`} className={"w-fit"}>
           <div className="flex items-center justify-start gap-2 ">
             <img
               className="w-10 h-10 border rounded-full"
@@ -49,8 +49,8 @@ export const columns: ColumnDef<any>[] = [
     cell: ({ row }) => {
       return (
        
-        <div className="flex justify-center w-[60px] ">
-          {row.original?.member_id || 'N Data'}
+        <div className="flex justify-center ">
+          {row.original?.member_id || 'No Data'}
         </div>
       )
     }
@@ -64,7 +64,7 @@ export const columns: ColumnDef<any>[] = [
      
 
         <div className="">
-          {row.original.information?.age || 'No Data'}
+          {row.original?.age || '-'}
         </div>
       )
     }    
@@ -166,7 +166,7 @@ export const columns: ColumnDef<any>[] = [
       
       return (
        <div>
-<CircularProgressBar percentage={row.original.progress}></CircularProgressBar>       </div>
+<CircularProgressBar percentage={row.original?.progress}></CircularProgressBar>       </div>
       );
     },
   },
@@ -226,11 +226,19 @@ export const columns: ColumnDef<any>[] = [
     header: "Action",
     enableSorting: false,
    cell: ({ row }) => {
+    const handleInvitation = (type:string) => {
+        publish(`send${type}`, {
+          id: row.original.member_id,
+          name: row.original.name,
+          email: row.original.email
+        });
+    
+      };
       return (
         <div className="flex justify-center w-full gap-2">
-            <img src="/icons/sms-tracking.svg" alt="" className="cursor-pointer" />
+            <img onClick={() => handleInvitation('Email')} src="/icons/sms-tracking.svg" alt="" className="cursor-pointer" />
           <img onClick={() => {
-            publish("confirmDelete",{id:row.original.information.member_id,name:row.original.information.name})
+            publish("confirmDelete",{id:row.original.member_id,name:row.original.name})
             // const status = confirm("delete this member?")
             // if(status){
             //   Application.deleteClinic({

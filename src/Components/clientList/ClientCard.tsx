@@ -25,22 +25,24 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-  const [isFavorite, setIsFavorite] = useState(client.favorite);
     const handleToggleFavorite = async () => {
     try {
       // Call API to toggle favorite status
       await Application.addFavorite({
         member_id: client.member_id,
-        is_favorite: !isFavorite,
+        is_favorite: !client.favorite,
       });
 
       // Update the local state to reflect the change
-      setIsFavorite(!isFavorite);
+      client.favorite = !client.favorite; 
       setshowModal(false);
     } catch (error) {
       console.error("Error updating favorite status:", error);
     }
   };
+
+  console.log(client);
+  
   return (
     <>
       <div className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
@@ -72,7 +74,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
-              { isFavorite? "Remove from favorite" : "Add to favorite"}            </div>
+              { client.favorite? "Remove from favorite" : "Add to favorite"}            </div>
           </div>
         )}
         <div
@@ -94,7 +96,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               }
               alt=""
             />
-         {isFavorite && (
+         {client.favorite  && (
               <img
                 className="absolute bottom-0 right-0"
                 src="/icons/Icon_star.svg"
