@@ -14,45 +14,45 @@ interface ClientCardProps {
   memberID: number;
   setCardActive: Dispatch<SetStateAction<null | number>>;
 }
-const getStatusBgColorClass = (
-  status: string,
-  currentStatus: string
-): string => {
+// const getStatusBgColorClass = (
+//   status: string,
+//   currentStatus: string
+// ): string => {
     
-  if ( status && status.toLowerCase() === currentStatus.toLowerCase()) {
+//   if ( status && status.toLowerCase() === currentStatus.toLowerCase()) {
  
     
-    switch (status?.toLowerCase()) {
-      case "high":
-        return "bg-red-status text-black";
-      case "low":
-        return "bg-brand-primary-color text-black";
-      case "medium":
-        return "bg-orange-status  text-black";
-      case "excellent":
-        return "bg-[#7F39FB] text-black";
-      case "good":
-        return "bg-[#03DAC5] text-black";
-      case "ok":
-        return "bg-[#FBAD37] text-black";
-      case "needs focus":
-        return "bg-[#FC5474] text-black";
-      case "incompleted":
-        return "bg-[#FC5474] text-white";
-      case "critical":
-        return "bg-[#FC5474] text-white";
-      case "all":
-        return "text-white bg-Primary-DeepTeal";
-      case "needs checking":
-        return "bg-[#FFBD59] text-black";
-      case "stable":
-        return "bg-[#06C78D] text-white";
-      default:
-        return "border border-light-blue-active  text-[8px]";
-    }
-  }
-  return "border bg-backgroundColor-Main border-Gray-50 text-[8px] text-Text-Primary  ";
-};
+//     switch (status?.toLowerCase()) {
+//       case "high":
+//         return "bg-red-status text-black";
+//       case "low":
+//         return "bg-brand-primary-color text-black";
+//       case "medium":
+//         return "bg-orange-status  text-black";
+//       case "excellent":
+//         return "bg-[#7F39FB] text-black";
+//       case "good":
+//         return "bg-[#03DAC5] text-black";
+//       case "ok":
+//         return "bg-[#FBAD37] text-black";
+//       case "needs focus":
+//         return "bg-[#FC5474] text-black";
+//       case "incompleted":
+//         return "bg-[#FC5474] text-white";
+//       case "critical":
+//         return "bg-[#FC5474] text-white";
+//       case "all":
+//         return "text-white bg-Primary-DeepTeal";
+//       case "needs checking":
+//         return "bg-[#FFBD59] text-black";
+//       case "stable":
+//         return "bg-[#06C78D] text-white";
+//       default:
+//         return "border border-light-blue-active  text-[8px]";
+//     }
+//   }
+//   return "border bg-backgroundColor-Main border-Gray-50 text-[8px] text-Text-Primary  ";
+// };
 export const ClientCard: React.FC<ClientCardProps> = ({
   name,
   email,
@@ -101,16 +101,10 @@ console.log(status);
         </div>
         <div className="flex flex-col gap-1">
             {tags?.map((tag)=>(
-                <div
-          className={`text-Text-Primary  text-[8px] px-2 py-[2px] rounded-2xl
-           ${getStatusBgColorClass(
-            tag,
-            tag
-          )} 
-          `}
-        >
-          {tag}{" "}
-        </div>
+                <div className={`text-center rounded-full py-[2px] px-2.5 text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${tag === 'Needs checking ' ? 'bg-[#F9DEDC]' : tag == 'checked' ? 'bg-[#DEF7EC]' : 'bg-[#FFD8E4]'}`}>
+                <div className={` w-3 h-3 rounded-full  ${tag === 'Needs checking' ? 'bg-[#FFBD59]' : tag == 'checked' ? 'bg-[#06C78D]' : 'bg-[#FC5474]'}`}></div>
+                {tag}
+            </div>
             ))}
         </div>
         

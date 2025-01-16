@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import Accordion from '../../Accordion';
 export const Notes = () => {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<any>([]);
     const { id } = useParams<{ id: string }>();
     const [showAddNote, setShowAddNote] = useState(false);
     const [commentText, setCommentText] = useState("");
@@ -47,8 +47,8 @@ export const Notes = () => {
         </div>
       )}
     </div>
-    {showAddNote ? (
-      <div className="flex justify-center items-center">
+    {showAddNote && (
+      <div className="flex justify-center items-center mb-6">
         <div className="w-full ">
           <div className="text-[12px] font-medium text-Text-Primary ">
             Note
@@ -124,7 +124,7 @@ export const Notes = () => {
           </div>
         </div>
       </div>
-    ) : (
+    ) }
       <div
         className="flex justify-center items-center h-[600px] overflow-y-scroll"
         style={{
@@ -136,7 +136,7 @@ export const Notes = () => {
             <div className="w-full ">
               {data?.map((el: any) => {
                 return (
-                  <div className="w-full px-3 my-2">
+                  <div className="w-full  my-2">
                     <Accordion title={el.date}>
                       <div className="text-[12px] text-justify w-full">
                         {el.note}
@@ -156,7 +156,7 @@ export const Notes = () => {
           </div>
         )}
       </div>
-    )}
+    
   </div>
   )
 }

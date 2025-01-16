@@ -161,7 +161,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           <></>
           <div
             id="scrollContainer"
-            className="flex items-center overflow-x-auto hidden-scrollbar  justify-start  p-4 -mt-12 "
+            className="flex items-center overflow-x-auto hidden-scrollbar  justify-start min-h-[300px] -mt-16 p-4  "
           >
             {cardData.map((card, index: number) => (
               <div
