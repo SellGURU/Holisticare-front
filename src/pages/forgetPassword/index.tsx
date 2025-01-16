@@ -9,6 +9,7 @@ import VerificationInput from "react-verification-input";
 import './index.css';
 import Timer from "../../Components/Timer";
 import Application from "../../api/app";
+import { BeatLoader } from "react-spinners";
 
 const validationSchema = yup.object({
   email: yup.string().email("Enter a valid email").required("Email is required"),
@@ -22,6 +23,9 @@ const validationSchema2 = yup.object({
     .matches(/[0-9]/, "Password must contain at least one number")
     .matches(/[@$!%*?&#]/, "Password must contain at least one special character")
     .required("Password is required"),
+  confirm:yup.string()
+    .oneOf([yup.ref('password'), ''], 'Passwords must match')
+    .required('Confirm Password is required')
 });
 const ForgetPassword = () => {
     const [step,setStep] = useState(0)
@@ -34,6 +38,7 @@ const ForgetPassword = () => {
         validateOnBlur: true,
         onSubmit:() => {}
     });    
+    const [isLoading,setIsLoading] = useState(false)
     const formik2 = useFormik({
         initialValues: {
             password: "",
@@ -47,6 +52,7 @@ const ForgetPassword = () => {
     const [isCompleteCode,setIsCompleteCode] = useState(false)
     const navigate = useNavigate()
     const [codeValue,setCodeValue] = useState("")
+    const [passwordChanged,setPasswordChanged] = useState(false)
     const resolveStep = () => {
         if(step == 0) {
             return <>
@@ -58,14 +64,22 @@ const ForgetPassword = () => {
                         <TextField inValid={formik.errors?.email != undefined && (formik.touched?.email as boolean)}  errorMessage={formik.errors?.email} {...formik.getFieldProps("email")} placeholder="Enter your email address..." label="Email Address" type="email" ></TextField> 
                     </div>
                     <ButtonSecondary onClick={() => {
+                        setIsLoading(true)
                         Application.SendVerification({
                             email:formik.values.email
                         }).then(() => {
                             setStep(1)
-
+                        }).finally(() => {
+                            setIsLoading(false)
                         })
                     }} disabled={!formik.isValid || formik.values.email.length == 0} ClassName="rounded-[20px]" >
-                        Send Code
+                       {isLoading ?
+                        <div className="flex justify-center items-center w-full min-h-[18px]">
+                            <BeatLoader size={8} color="white"></BeatLoader>
+                        </div>
+                       :
+                        'Send Code'
+                       }
                     </ButtonSecondary>
 
                     <div className="flex justify-center items-center gap-1">
@@ -111,14 +125,24 @@ const ForgetPassword = () => {
                     }
                     <div className="mt-8 w-full grid">
                         <ButtonSecondary  onClick={() => {
+                            setIsLoading(true)
                             Application.varifyCode({
                                 email:formik.values.email,
                                 reset_code:codeValue
                             }).then(() => {
                                 setStep(2)
+                            }).finally(() => {
+                                setIsLoading(false)
                             })
                         }} disabled={codeValue.length<4} ClassName="rounded-[20px]" >
-                            Confirm Code
+                        {isLoading ?
+                            <div className="flex justify-center items-center w-full min-h-[18px]">
+                                <BeatLoader size={8} color="white"></BeatLoader>
+                            </div>
+                        :               
+                        'Confirm Code'
+                        }         
+                            
                         </ButtonSecondary>                    
 
                     </div>
@@ -138,10 +162,25 @@ const ForgetPassword = () => {
                         <div className="">
                             <TextField errorMessage={formik2.errors?.confirm} inValid={formik2.errors?.confirm != undefined && (formik2.touched?.confirm as boolean)} {...formik2.getFieldProps("confirm")} placeholder="Confirm password ...." label="Confirm Password" type="password" ></TextField>  
                         </div>     
-                        <ButtonSecondary onClick={() => {
-                            
+                        <ButtonSecondary disabled={!formik2.isValid || formik2.values.password.length ==0} onClick={() => {
+                            setIsLoading(true)
+                            Application.ChangePassword({
+                                email:formik.values.email,
+                                password:formik2.values.password
+                            }).then(() => {
+                                setPasswordChanged(true)
+                            }).finally(() => {
+                                setIsLoading(false)
+                            })
                         }} ClassName="rounded-[20px]" >
-                            Reset password
+                            {isLoading ?
+                                <div className="flex justify-center items-center w-full min-h-[18px]">
+                                    <BeatLoader size={8} color="white"></BeatLoader>
+                                </div>
+                            :               
+                            'Reset password'
+                            }                              
+                            
                         </ButtonSecondary>                
                     </div>
                 </>
@@ -152,19 +191,39 @@ const ForgetPassword = () => {
     return (
         <>
             <AuthLayout>
-                <div className="flex justify-center items-center mb-4">
-                    <img src="./icons/HolisticareLogo.svg" alt="" />
-                </div>
-                <div className="text-xl font-medium text-Text-Primary text-center">Forgot password?</div>
+                {passwordChanged ?
+                <>
+                    <div className="grid">
+                        <div className="flex justify-center items-center mb-4">
+                            <img src="./icons/HolisticareLogo.svg" alt="" />
+                        </div>         
+                        <div className="text-Text-Primary mb-8 font-medium text-center">
+                            Password has been successfully reset!
+                        </div>       
+                        <ButtonSecondary onClick={() => {
+                            navigate('/login')
+                        }} ClassName="rounded-[20px]" >
+                            Log in
+                        </ButtonSecondary>         
+                    </div>
+                </>
+                :
+                <>
+                    <div className="flex justify-center items-center mb-4">
+                        <img src="./icons/HolisticareLogo.svg" alt="" />
+                    </div>
+                    <div className="text-xl font-medium text-Text-Primary text-center">{step == 2?'Set a New Password':'Forgot password?'}</div>
 
-                <div className="flex justify-between gap-2 items-center mt-8">
-                    <div className={`w-1/3 h-1  rounded-[6px] ${step==0 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
-                    <div className={`w-1/3 h-1  rounded-[6px] ${step==1 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
-                    <div className={`w-1/3 h-1  rounded-[6px] ${step==2 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
-                </div>
-                <div>
-                    {resolveStep()}
-                </div>
+                    <div className="flex justify-between gap-2 items-center mt-8">
+                        <div className={`w-1/3 h-1  rounded-[6px] ${step==0 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
+                        <div className={`w-1/3 h-1  rounded-[6px] ${step==1 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
+                        <div className={`w-1/3 h-1  rounded-[6px] ${step==2 ? 'bg-Primary-DeepTeal':'bg-backgroundColor-Card'}`}></div>
+                    </div>
+                    <div>
+                        {resolveStep()}
+                    </div>
+                </>
+                }
             </AuthLayout>
         </>
     )
