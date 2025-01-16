@@ -19,16 +19,16 @@ const UploadTest:React.FC<UploadTestProps> = ({memberId,onGenderate}) => {
                 <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute">
 
                 </div>                                   
-                <div className="w-[560px] relative z-10">
+                <div className="w-[530px] relative z-10">
                     <div className="w-full flex justify-center text-Text-Primary font-medium mt-14">No Data Available Yet!</div>
 
                     <div className="text-[12px] text-Text-Primary  text-center mt-1 ">
-                        It looks like you haven’t uploaded any test results yet. To view your detailed insights, please upload your test results now.
+                        It looks like you haven’t uploaded any test results or completed any questionary yet. To view detailed insights, please upload your test results or complete the questionnaires now.
                     </div>
 
                     <div onClick={() => {
                         document.getElementById("uploadFile")?.click()
-                    }} className="w-[576px] shadow-100 border-spacing-9 mt-4 h-[160px] bg-white rounded-[12px] border border-dashed border-Primary-DeepTeal">
+                    }} className="w-full shadow-100 border-spacing-9 mt-4 h-[154px] bg-white rounded-[12px] border border-dashed border-Primary-DeepTeal">
                         <div className="w-full flex justify-center mt-6">
                             <img src="/icons/upload-test.svg" alt="" />
                         </div>
