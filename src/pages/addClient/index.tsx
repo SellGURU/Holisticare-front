@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import useModalAutoClose from "../../hooks/UseModalAutoClose"
 import MainTopBar from "../../Components/MainTopBar"
 import * as yup from "yup";
+import YoupValidation from "../../validation"
 
 const AddClient =() => {
     const formik = useFormik({
@@ -16,10 +17,13 @@ const AddClient =() => {
             lastName:'',
             email:'',
             age:30,
-            gender:'unset'
+            gender:'Male'
         },
         validationSchema:yup.object({
-            age:yup.number().min(12).max(60)
+            age:yup.number().min(12).max(60),
+            email:YoupValidation('email'),
+            firstName:yup.string().required(),
+            lastName:yup.string().required()
         }),
         onSubmit :() => {
             // Logic for submission
@@ -124,7 +128,7 @@ const AddClient =() => {
                                             <ButtonPrimary onClick={() => {
                                                 navigate('/report/'+memberId+"/"+formik.values.firstName+formik.values.lastName)
                                             }}>
-                                                <img src={"/icons/tick.svg"} className={"h-5 h-5"}/>
+                                                <img src={"/icons/tick.svg"} className={"h-5 "}/>
                                                 <div className="w-[140px]">
                                                 Develop Health Plan
                                                 </div>
@@ -167,7 +171,7 @@ const AddClient =() => {
                                         </div>
                                         <div className="w-[220px]">
                                             <TextField
-                                                                                        type="text"
+                                                type="text"
 
                                                 {...formik.getFieldProps("lastName")}
                                                 label="Last Name"
@@ -240,6 +244,8 @@ const AddClient =() => {
                                         {...formik.getFieldProps("email")}
                                         type="email"
                                         label="Email Address"
+                                        errorMessage={formik.errors.email}
+                                        inValid={formik.errors?.email != undefined && (formik.touched?.email as boolean)}
                                         placeholder="Enter client’s email address..."
                                     />
                                     <div>
@@ -251,7 +257,15 @@ const AddClient =() => {
                                                         {photo === '' ?
                                                             <img src="icons/upload-test.svg" alt=""/>
                                                             :
-                                                            <img className="w-[60px] h-[60px] rounded-full" src={photo} alt=""/>
+                                                            <div className="relative">
+                                                                <img className="w-[60px] h-[60px] rounded-full" src={photo} alt=""/>
+                                                                <div onClick={() => {
+                                                                    setPhoto("")
+                                                                }} className="bg-white border border-gray-50 absolute top-[-6px] cursor-pointer right-[-6px] rounded-full shadow-200">
+                                                                    <img className="" src="./icons/close.svg" alt="" />
+
+                                                                </div>
+                                                            </div>
                                                         }
                                                     </div>
                                                     <div className="text-[12px] text-Text-Primary">
@@ -272,7 +286,7 @@ const AddClient =() => {
                                     </div>
                                     <div className="w-full flex justify-center mt-4">
                                         <ButtonPrimary disabled={isLoading ||
-                                            !formik.isValid ||
+                                            !formik.isValid ||formik.values.email.length ==0 ||
                                             Object.values(formik.errors).some(error => error !== '')}
                                                        onClick={submit}>
                                             <img src="./icons/tick-square.svg" alt="" />

@@ -8,16 +8,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BeatLoader} from "react-spinners";
 import AuthLayout from "../../layout/AuthLayout";
+import YoupValidation from "../../validation";
 
 const validationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
-  password: yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(/[@$!%*?&#]/, "Password must contain at least one special character")
-    .required("Password is required"),
+  email: YoupValidation("email"),
+  password: YoupValidation("password"),
 });
 
 const Login = () => {
