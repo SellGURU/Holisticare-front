@@ -26,7 +26,7 @@ axios.interceptors.response.use((response) => {
     return response;
 }, (error) => {
 
-    if((error.response.status ==401 && !error.response.data.detail.includes("User Not found")) || error.response.data.detail =='Invalid token.'){
+    if((error.response.status ==401 && !window.location.href.includes("/login") &&!window.location.href.includes("/register") ) || error.response.data.detail =='Invalid token.'){
         localStorage.clear()
         window.location.reload(); 
     }     

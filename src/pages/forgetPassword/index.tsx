@@ -10,19 +10,14 @@ import './index.css';
 import Timer from "../../Components/Timer";
 import Application from "../../api/app";
 import { BeatLoader } from "react-spinners";
+import YoupValidation from "../../validation";
 
 const validationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
+  email: YoupValidation("email"),
 });
 
 const validationSchema2 = yup.object({
-  password: yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(/[@$!%*?&#]/, "Password must contain at least one special character")
-    .required("Password is required"),
+  password: YoupValidation("password"),
   confirm:yup.string()
     .oneOf([yup.ref('password'), ''], 'Passwords must match')
     .required('Confirm Password is required')

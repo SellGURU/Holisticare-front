@@ -8,16 +8,12 @@ import * as yup from "yup";
 import { useState } from "react"
 import Auth from "../../api/auth"
 import { useApp } from "../../hooks"
+import YoupValidation from "../../validation"
+import AuthWithGoogle from "../../Components/AuthWithGoogle"
 
 const validationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
-  password: yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(/[@$!%*?&#]/, "Password must contain at least one special character")
-    .required("Password is required"),
+  email: YoupValidation("email"),
+  password: YoupValidation("password"),
     userName: yup
     .string()
     .min(4, "Full name must be at least 4 characters")
@@ -88,7 +84,9 @@ const SignUp = () => {
                         <span className="px-4 text-[14px] text-Text-Secondary">or</span>
                         <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
                     </div> 
-          
+                    <div>
+                        <AuthWithGoogle mode="register"></AuthWithGoogle>
+                    </div>          
                     <div className="text-[12px] text-center text-Text-Secondary">Already have an account?<span onClick={() => {
                         navigate('/login')
                     }} className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]">Log in</span></div>                           

@@ -8,16 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BeatLoader} from "react-spinners";
 import AuthLayout from "../../layout/AuthLayout";
+import YoupValidation from "../../validation";
+import AuthWithGoogle from "../../Components/AuthWithGoogle";
 
 const validationSchema = yup.object({
-  email: yup.string().email("Enter a valid email").required("Email is required"),
-  password: yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
-    .matches(/[@$!%*?&#]/, "Password must contain at least one special character")
-    .required("Password is required"),
+  email: YoupValidation("email"),
+  password: YoupValidation("password"),
 });
 
 const Login = () => {
@@ -88,7 +84,9 @@ const Login = () => {
                         <span className="px-4 text-[14px] text-Text-Secondary">or</span>
                         <div className="flex-grow h-px bg-gradient-to-r from-Text-Triarty via-Text-Triarty to-transparent"></div>
                     </div> 
-          
+                    <div>
+                        <AuthWithGoogle mode="login"></AuthWithGoogle>
+                    </div>
                     <div className="text-[12px] text-center text-Text-Secondary">Don't have an account? <span onClick={() => {
                         navigate('/register')
                     }} className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]">Sign up</span></div>                           

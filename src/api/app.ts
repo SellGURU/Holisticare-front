@@ -528,7 +528,14 @@ class Application extends Api {
   static deleteClinic = (data:any) => {
     const response = this.post("/patients/delete_patient",data)
     return response     
-  }  
+  }
+  
+  static LoginWithGooglge = (data:any) => {
+    const response = this.post("/auth/google_login",{
+      google_json:data
+    })
+    return response
+  }
 }
 
 export default Application;
