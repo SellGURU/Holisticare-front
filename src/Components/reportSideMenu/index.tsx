@@ -110,9 +110,10 @@ const ReportSideMenu = () => {
                   key={index}
                   className={`${
                     index + 1 == activeImg ? "border-Primary-EmeraldGreen" : "border-gray-50"
-                  } border rounded-md relative overflow-hidden w-[146px] h-[56px] `}
+                  } border rounded-md relative cursor-pointer `}
                 >
                   <img className=" " src={`/images/report-sidemenu/${index + 1}.png`} alt="" />
+                  <div className="absolute bg-white w-4 h-4 border-[0.5px] border-Gray-50 rounded-[3px] shadow-200 text-xs text-center text-Primary-DeepTeal bottom-3 left-1">{index+1}</div>
                 </div>
               ))}
             </div>
