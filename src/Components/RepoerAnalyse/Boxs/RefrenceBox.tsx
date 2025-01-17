@@ -21,6 +21,18 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
   
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
+  const [activeUnit, setActiveUnit] = useState(data.unit);
+  const [isUnitOpen, setIsUnitOpen] = useState(false);
+  const units = ["mg/dL", "mmol/L"];
+
+  const handleToggle = () => {
+    setIsUnitOpen(!isUnitOpen);
+  };
+
+  const handleSelect = (unit: string) => {
+    setActiveUnit(unit);
+    setIsUnitOpen(false);
+  };
   return (
     <>
       <div id={data.name} className="w-full h-[188px] pt-3 px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]">
@@ -88,12 +100,42 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
           </div>
           <div className="flex justify-end items-center gap-2">
             <Legends></Legends>
-            <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-              <div className="text-Primary-DeepTeal text-[10px]">{data.unit}</div>
-              <div className="w-[16px]">
-                <img src="/icons/arrow-down-green.svg" alt="" />
-              </div>
-            </div>
+            <div className="relative z-50">
+                              <div
+                                onClick={handleToggle}
+                                className="w-[70px] cursor-pointer  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
+                              >
+                                <div className="text-Primary-DeepTeal text-[10px]">
+                                  {activeUnit}
+                                </div>
+                                <div className="w-[16px]">
+                                  <img
+                                    className={`${
+                                      isUnitOpen ? "rotate-180" : ""
+                                    }`}
+                                    src="/icons/arrow-down-green.svg"
+                                    alt=""
+                                  />
+                                </div>
+                              </div>
+                              {isUnitOpen && (
+                                <div className="absolute mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
+                                  {units.map((unit) => (
+                                    <div
+                                      key={unit}
+                                      onClick={() => handleSelect(unit)}
+                                      className={`p-2 text-[10px] ${
+                                        unit === activeUnit
+                                          ? "text-Primary-DeepTeal"
+                                          : "text-gray-500"
+                                      } cursor-pointer hover:bg-gray-100`}
+                                    >
+                                      {unit}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
             {isCheced && (
               <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                 <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>

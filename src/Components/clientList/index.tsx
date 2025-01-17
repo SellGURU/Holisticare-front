@@ -207,8 +207,7 @@ useEffect(() => {
           {" "}
           <div className="spinner">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="dot"></div>
-            ))}
+    <div key={i} className={`dot `}></div>            ))}
           </div>
         </div>
       ) : (

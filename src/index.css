@@ -218,7 +218,9 @@ input[type="number"] {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  
+  .spinner .dot:nth-child(1) {
+    background-color: #6CC24A;
+  }
   .dot:nth-child(1) { transform: rotate(0deg) translate(20px); animation-delay: 0s; }
   .dot:nth-child(2) { transform: rotate(45deg) translate(20px); animation-delay: 0.15s; }
   .dot:nth-child(3) { transform: rotate(90deg) translate(20px); animation-delay: 0.3s; }
@@ -228,7 +230,10 @@ input[type="number"] {
   .dot:nth-child(7) { transform: rotate(270deg) translate(20px); animation-delay: 0.9s; }
   .dot:nth-child(8) { transform: rotate(315deg) translate(20px); animation-delay: 1.05s; }
   
-
+  @keyframes dotSpin {
+    0% { transform: rotate(0deg) translate(20px); }
+    100% { transform: rotate(360deg) translate(20px); }
+  }
 @layer utilities {
     .TextStyle-Button {
         @apply text-xs font-medium;

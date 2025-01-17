@@ -15,12 +15,12 @@ interface DetiledAnalyseProps {
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
   console.log(data);
-  console.log(refrences)
+  console.log(refrences);
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
-    refrences?.biomarkers[0].name?refrences?.biomarkers[0].name:''
+    refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : ""
   );
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
@@ -41,12 +41,26 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     }
   });
   useEffect(() => {
-    if(refrences!= null) {
-      setActiveBOx(refrences?.biomarkers[0].name?refrences?.biomarkers[0].name:'')
-      setActive(refrences?.biomarkers[0])
+    if (refrences != null) {
+      setActiveBOx(
+        refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : ""
+      );
+      setActive(refrences?.biomarkers[0]);
     }
-  },[refrences])
-  const [showMoreInfo,setShowMoreInfo] = useState(false)
+  }, [refrences]);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
+  const [activeUnit, setActiveUnit] = useState(active.unit);
+  const [isUnitOpen, setIsUnitOpen] = useState(false);
+  const units = ["mg/dL", "mmol/L"];
+
+  const handleToggle = () => {
+    setIsUnitOpen(!isUnitOpen);
+  };
+
+  const handleSelect = (unit: string) => {
+    setActiveUnit(unit);
+    setIsUnitOpen(false);
+  };
   return (
     <>
       <div
@@ -63,11 +77,15 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             <div
               className="w-10 h-10 items-center rounded-full flex justify-center"
               style={{
-                background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1]+data.status[0]}%,#FBAD37 ${
-              data.status[1]+data.status[0]
-            }% ${data.status[1] + data.status[2]+data.status[0]}%,#FC5474 ${
-              data.status[2] +data.status[1] +data.status[0]
-            }% 100%)`,
+                background: `conic-gradient(#7F39FB 0% ${
+                  data.status[0]
+                }%,#06C78D ${data.status[0]}% ${
+                  data.status[1] + data.status[0]
+                }%,#FBAD37 ${data.status[1] + data.status[0]}% ${
+                  data.status[1] + data.status[2] + data.status[0]
+                }%,#FC5474 ${
+                  data.status[2] + data.status[1] + data.status[0]
+                }% 100%)`,
               }}
             >
               <div
@@ -91,7 +109,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   {data?.num_of_biomarkers} biomarkers
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
-                  {data?.out_of_ref} {data.out_of_ref > 1 ?'Needs Focus':'Need Focus'}{" "}
+                  {data?.out_of_ref}{" "}
+                  {data.out_of_ref > 1 ? "Needs Focus" : "Need Focus"}{" "}
                 </div>
               </div>
             </div>
@@ -135,8 +154,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                       >
                         <div className=" text-[12px]">{value.name}</div>
                         <img
-                          className="rotate-[-90deg]  w-4"
-                          src="./Themes/Aurora/icons/arrow-Combo-left.svg"
+                          className="h-4  w-4"
+                          src="/icons/arrow-right.svg"
                           alt=""
                         />
                       </div>
@@ -159,85 +178,150 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                       ></Toggle>
                     </div>
                   </div>
-                  {!isCheced ?
+                  {!isCheced ? (
                     <div className="w-full ">
                       <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
                         <div className="flex mb-[74px] mt-[-8px] justify-between items-center">
                           <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
                             Current Value
-                            <div onMouseEnter={() => {
-                              setShowMoreInfo(true)
-                            }} onMouseLeave={() => {
-                              setShowMoreInfo(false)
-                            }} className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal ">
+                            <div
+                              onMouseEnter={() => {
+                                setShowMoreInfo(true);
+                              }}
+                              onMouseLeave={() => {
+                                setShowMoreInfo(false);
+                              }}
+                              className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                            >
                               More Info
                               <img
                                 src="/icons/user-navbar/info-circle.svg"
                                 className="w-4  cursor-pointer h-4 ml-1"
                                 alt=""
                               />
-                              {showMoreInfo && active.more_info  &&
+                              {showMoreInfo && active.more_info && (
                                 <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                                   <div className="text-[9px] text-Text-Secondary text-justify">
                                     {active.more_info}
                                   </div>
                                 </div>
-                              }
-                            </div>                          
-
-                          </div>
-                          <div className="w-[70px] mr-36 flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-                            <div className="text-Primary-DeepTeal text-[10px]">{active?.unit}</div>
-                            <div className="w-[16px]">
-                              <img src="/icons/arrow-down-green.svg" alt="" />
+                              )}
                             </div>
-                          </div>                          
+                          </div>
+                          <div className="relative z-50">
+                              <div
+                                onClick={handleToggle}
+                                className="w-[70px] cursor-pointer  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
+                              >
+                                <div className="text-Primary-DeepTeal text-[10px]">
+                                  {activeUnit}
+                                </div>
+                                <div className="w-[16px]">
+                                  <img
+                                    className={`${
+                                      isUnitOpen ? "rotate-180" : ""
+                                    }`}
+                                    src="/icons/arrow-down-green.svg"
+                                    alt=""
+                                  />
+                                </div>
+                              </div>
+                              {isUnitOpen && (
+                                <div className="absolute mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
+                                  {units.map((unit) => (
+                                    <div
+                                      key={unit}
+                                      onClick={() => handleSelect(unit)}
+                                      className={`p-2 text-[10px] ${
+                                        unit === activeUnit
+                                          ? "text-Primary-DeepTeal"
+                                          : "text-gray-500"
+                                      } cursor-pointer hover:bg-gray-100`}
+                                    >
+                                      {unit}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
                         </div>
-                        {active &&
+                        {active && (
                           <StatusBarChart data={active}></StatusBarChart>
-                        }
+                        )}
                       </div>
                     </div>
-                  :
+                  ) : (
                     <div className="w-full">
                       <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
                         <div className="TextStyle-Headline-6 flex justify-between  pr-[140px] items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end items-center  mt-[-8px]  gap-2">
-                            <div className="w-[70px]  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-                              <div className="text-Primary-DeepTeal text-[10px]">{active.unit}</div>
+                            <div className="relative z-50">
+                              <div
+                                onClick={handleToggle}
+                                className="w-[70px] cursor-pointer  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
+                              >
+                                <div className="text-Primary-DeepTeal text-[10px]">
+                                  {activeUnit}
+                                </div>
+                                <div className="w-[16px]">
+                                  <img
+                                    className={`${
+                                      isUnitOpen ? "rotate-180" : ""
+                                    }`}
+                                    src="/icons/arrow-down-green.svg"
+                                    alt=""
+                                  />
+                                </div>
+                              </div>
+                              {isUnitOpen && (
+                                <div className="absolute mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
+                                  {units.map((unit) => (
+                                    <div
+                                      key={unit}
+                                      onClick={() => handleSelect(unit)}
+                                      className={`p-2 text-[10px] ${
+                                        unit === activeUnit
+                                          ? "text-Primary-DeepTeal"
+                                          : "text-gray-500"
+                                      } cursor-pointer hover:bg-gray-100`}
+                                    >
+                                      {unit}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                              <div className="text-Primary-DeepTeal text-[10px]">
+                                6 Month
+                              </div>
                               <div className="w-[16px]">
                                 <img src="/icons/arrow-down-green.svg" alt="" />
                               </div>
-                            </div>                              
-                            <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
-                              <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
-                              <div className="w-[16px]">
-                                <img
-                                  src="/icons/arrow-down-green.svg"
-                                  alt=""
-                                />
-                              </div>
-                            </div>       
-                                            
-
+                            </div>
                           </div>
                         </div>
                         <div className="mt-0 relative">
-                          {active &&
+                          {active && (
                             <StatusChart
                               mode={
-                                active.chart_bounds["Needs Focus"].length>1 && active.chart_bounds["Ok"].length>1 ?'multi':'line'
+                                active.chart_bounds["Needs Focus"].length > 1 &&
+                                active.chart_bounds["Ok"].length > 1
+                                  ? "multi"
+                                  : "line"
                               }
                               statusBar={active?.chart_bounds}
                               labels={[...active.date].reverse()}
                               dataPoints={[...active.values].reverse()}
                             ></StatusChart>
-                          }
+                          )}
                         </div>
                       </div>
                     </div>
-                  }
+                  )}
                 </div>
               )}
             </div>
