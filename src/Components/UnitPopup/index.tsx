@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const UnitPopUp  = ({active}:{active:any}) => {
-    const [activeUnit, setActiveUnit] = useState(active.unit);
+const UnitPopUp  = ({unit}:{unit:any}) => {
+    const [activeUnit, setActiveUnit] = useState(unit);
     const units = ["mg/dL", "mmol/L"];
     const [isUnitOpen, setIsUnitOpen] = useState(false);
     const handleToggle = () => {
@@ -40,7 +40,7 @@ const UnitPopUp  = ({active}:{active:any}) => {
             </div>
             </div>
             {isUnitOpen && (
-            <div ref={refrence} className="absolute select-none mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
+            <div ref={refrence} className="absolute select-none mt-1 w-[70px] bg-white border z-30 border-gray-200 rounded shadow-md">
                 {units.map((unit) => (
                 <div
                     key={unit}

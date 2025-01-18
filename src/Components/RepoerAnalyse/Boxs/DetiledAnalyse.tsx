@@ -199,7 +199,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             </div>
                           </div>
                           <div className="relative z-50 mr-36">
-                              <UnitPopUp active={active}></UnitPopUp>
+                              <UnitPopUp unit={active?.unit}></UnitPopUp>
                           </div>
 
                         </div>
@@ -215,7 +215,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                           Historical Data
                           <div className="flex justify-end items-center  mt-[-8px]  gap-2">
                             <div className="relative z-50 ">
-                              <UnitPopUp active={active}></UnitPopUp>
+                              <UnitPopUp unit={active?.unit}></UnitPopUp>
                             </div>
 
                             <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">

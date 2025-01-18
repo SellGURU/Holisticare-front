@@ -16,6 +16,7 @@ import { ClipLoader } from "react-spinners"
 import StatusChart from "../../../Components/RepoerAnalyse/StatusChart"
 import StatusBarChart from "../../../Components/RepoerAnalyse/Boxs/StatusBarChart"
 import Application from "../../../api/app"
+import UnitPopUp from "../../../Components/UnitPopup"
 interface CategoryOrderProps {
     isActionPlan?:boolean
     data:any
@@ -406,12 +407,9 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                                                         <div className="w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
                                                                             <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
                                                                                 Last Value
-                                                                                 <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-                                                                                    <div className="text-Primary-DeepTeal text-[10px]">{activeEl.unit}</div>
-                                                                                        <div className="w-[16px]">
-                                                                                        <img src="/icons/arrow-down-green.svg" alt="" />
-                                                                                        </div>
-                                                                                    </div>                             
+                                                                                <div className="relative">
+                                                                                    <UnitPopUp unit={activeEl.unit}></UnitPopUp>
+                                                                                </div>
                                                                             </div>
                                                                             <StatusBarChart data={activeEl}></StatusBarChart>
                                                                         </div>
@@ -421,12 +419,10 @@ const CategoryOrder:React.FC<CategoryOrderProps> = ({isActionPlan,data,setData})
                                                                             <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
                                                                                 Historical Data
                                                                                 <div className=" flex justify-end gap-2 items-center">
-                                                                                                                                                                     <div className="w-[70px] flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50">
-                                                                                    <div className="text-Primary-DeepTeal text-[10px]">{activeEl.unit}</div>
-                                                                                        <div className="w-[16px]">
-                                                                                        <img src="/icons/arrow-down-green.svg" alt="" />
-                                                                                        </div>
-                                                                                    </div> 
+                                                                                    <div className="relative">
+                                                                                        <UnitPopUp unit={activeEl.unit}></UnitPopUp>
+
+                                                                                    </div>
                                                                                     <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                                                                                         <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
                                                                                         <div className="w-[16px]">
