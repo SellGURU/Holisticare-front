@@ -14,6 +14,7 @@ import { DriftAnaysis } from "../pages/driftAnaysis";
 import AiKnowledge from "../pages/ai-knowledge/AiKnowledge.tsx";
 import SignUp from "../pages/signUp/index2.tsx";
 import ForgetPassword from "../pages/forgetPassword/index.tsx";
+import { Messages } from "../pages/messages/index.tsx";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             path: "/aiKnowledge",
             element: <AiKnowledge></AiKnowledge>,
           },
+          {
+            path: '/messages',
+            element: <Messages></Messages>
+          }
         ]
       },
       {

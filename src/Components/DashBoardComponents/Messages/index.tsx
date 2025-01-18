@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SvgIcon from '../../../utils/svgIcon';
 
 type Message = {
   id: number;
@@ -16,8 +17,10 @@ const messages: Message[] = [
   { id: 3, sender: 'Emil Thompson', content: 'There are many variations of messages that we can show you...', date: '2024/03/02', read: false },
   // Add more messages as needed
 ];
-
-const MessageList: React.FC = () => {
+interface MessageListProps{
+  isMessages?:boolean
+}
+const MessageList: React.FC<MessageListProps> = ({isMessages}) => {
   const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
 
@@ -32,7 +35,22 @@ const MessageList: React.FC = () => {
 
   return (
     <div className="w-full h-[664px] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
-      <h2 className="text-sm text-Text-Primary font-medium">Recently Messages</h2>
+      <div className='flex w-full justify-between'>
+      <h2 className="text-sm text-Text-Primary font-medium"> {isMessages ? 'Messages' : ' Recently Messages'}</h2>
+      {
+        isMessages &&(
+          <div className='flex items-center gap-1'>
+          <div className='cursor-pointer'>
+          <SvgIcon width='20px' height='20px' src='/icons/search.svg' color='#005F73'/>
+          </div>
+          
+           <img className='cursor-pointer' src="/icons/setting-2.svg" alt="" />
+         </div>
+        )
+      }
+     
+        </div>
+      
       <div className="w-full  shadow-200  flex mt-3"   >
         {['All', 'Read', 'Unread'].map((type) => (
           <div

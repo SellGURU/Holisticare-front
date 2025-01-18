@@ -536,6 +536,10 @@ class Application extends Api {
     })
     return response
   }
+  static messagesUsersList = () => {
+    const response = this.post("/messages/users_list",{})
+    return response
+  }
 }
 
 export default Application;
