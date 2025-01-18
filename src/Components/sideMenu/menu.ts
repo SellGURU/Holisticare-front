@@ -15,7 +15,7 @@ export const menus = [
         name: 'Dashboard',
         icon: 'sidemenu-menu-icon-dashboard',
         url: '/dashboard',
-        active:false
+        active:true
     },
     {
         name:'Client List',
