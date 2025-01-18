@@ -7,6 +7,7 @@ import { TopBar } from "../topBar";
 // import Data from "./data.json";
 import PlanManagerModal from "./sections/PLanManager";
 import Application from "../../api/app";
+import Circleloader from "../CircleLoader";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // interface Benchmark {
 //   Benchmark: string;
@@ -82,13 +83,7 @@ const GenerateNewActionPlan = () => {
     <>
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          {" "}
-          
-          <div className="spinner">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="dot"></div>
-            ))}
-          </div>
+          <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div>
         </div>
       )}
@@ -96,14 +91,10 @@ const GenerateNewActionPlan = () => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {" "}
           
-          <div className="spinner">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="dot"></div>
-            ))}
-          </div>
+          <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3">We are generating tailored methods aligned with your Holistic Plan
 
-. This may take a moment.</div>
+          . This may take a moment.</div>
         </div>
       )}
       <div className="w-full fixed top-0 ">

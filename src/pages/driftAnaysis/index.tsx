@@ -10,13 +10,13 @@ import Application from "../../api/app";
 // import ReportTable from "./ReportsTable";
 // import GenerateWithAiModal from "./GenerateWithAiModal";
 import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import { BeatLoader } from "react-spinners";
 import { subscribe } from "../../utils/event";
 // import ReportAnalyseView from "../RepoerAnalyse/ReportAnalyseView";
 // import { useSelector } from "react-redux";
 import { Action } from "./Action";
 // import AnalyseButton from "../../Components/AnalyseButton";
 import AiChat from "../../Components/AiChat";
+import Circleloader from "../../Components/CircleLoader";
 type menuItem = {
   name: string;
 };
@@ -214,7 +214,7 @@ console.log(searchQuery)
       <>
         {patients[0]?.member_id == 1 ? (
           <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
-            <BeatLoader size={10} color="#0CBC84"></BeatLoader>
+            <Circleloader></Circleloader>
           </div>
         ) : (
           <div className="w-[75%] flex flex-col gap-3">

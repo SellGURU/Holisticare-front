@@ -16,6 +16,7 @@ import { TopBar } from "../../Components/topBar";
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
 import { SlideOutPanel } from "../../Components/SlideOutPanel";
+import Circleloader from "../../Components/CircleLoader";
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
@@ -150,11 +151,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {" "}
           
-          <div className="spinner">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="dot"></div>
-            ))}
-          </div>
+            <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your Holistic Plan based on the selected method. This may take a moment.</div>
         </div>
       )}

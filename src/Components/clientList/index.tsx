@@ -12,6 +12,7 @@ import Table from "../table.tsx/index.tsx";
 import FilterModal from "../FilterModal/index.tsx";
 import { subscribe } from "../../utils/event.ts";
 import ConfirmModal from "./ConfirmModal.tsx";
+import Circleloader from "../CircleLoader/index.tsx";
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -89,7 +90,7 @@ const ClientList = () => {
     );
     setFilteredClientList(searchResult);
   };
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState("grid");
   const [filters, setFilters] = useState<Filters>({
@@ -204,11 +205,7 @@ useEffect(() => {
     <>
       {isLoading ? (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          {" "}
-          <div className="spinner">
-            {[...Array(8)].map((_, i) => (
-    <div key={i} className={`dot `}></div>            ))}
-          </div>
+          <Circleloader></Circleloader>
         </div>
       ) : (
         <div className="px-6 pt-8 ">
