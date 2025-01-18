@@ -15,7 +15,7 @@ export const menus = [
         name: 'Dashboard',
         icon: 'sidemenu-menu-icon-dashboard',
         url: '/dashboard',
-        active:false
+        active:true
     },
     {
         name:'Client List',
@@ -36,7 +36,8 @@ export const menus = [
     {
         name:'Messages',
         icon:'sidemenu-menu-icon-messages',
-        url:''
+        url:'/messages',
+       
     },    
     {
         name: "Knowledge Graph",
