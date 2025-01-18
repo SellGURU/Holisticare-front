@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Application from "../../api/app";
+import Application from '../../api/app';
 // import { PlanManagerModal } from "@/components";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { BeatLoader } from "react-spinners";
-import BenchmarkModal from "./components/BenchmarkModal";
-import TextBoxAi from "./components/TextBoxAi";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BeatLoader } from 'react-spinners';
+import BenchmarkModal from './components/BenchmarkModal';
+import TextBoxAi from './components/TextBoxAi';
 // import GenerateWithAiModal from "@/pages/aiStudio/GenerateWithAiModal";
 // import useModalAutoClose from "@/hooks/UseModalAutoClose";
 // import BioMarkerBox from "./BioMarkerBox";
-import CategoryOrder from "./components/CategoryOrder";
-import AnalyseButton from "../../Components/AnalyseButton";
-import ConfirmAnalyseModal from "./components/ConfirmAnalyseModal";
-import { TopBar } from "../../Components/topBar";
+import CategoryOrder from './components/CategoryOrder';
+import AnalyseButton from '../../Components/AnalyseButton';
+import ConfirmAnalyseModal from './components/ConfirmAnalyseModal';
+import { TopBar } from '../../Components/topBar';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
-import { ButtonPrimary } from "../../Components/Button/ButtonPrimary";
-import { SlideOutPanel } from "../../Components/SlideOutPanel";
-import Circleloader from "../../Components/CircleLoader";
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import { SlideOutPanel } from '../../Components/SlideOutPanel';
+import Circleloader from '../../Components/CircleLoader';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
@@ -45,42 +45,44 @@ interface GenerateNewPlanProps {
 const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const navigate = useNavigate();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [generateStep, setGenereStep] = useState("Client Goals");
+  const [generateStep, setGenereStep] = useState('Client Goals');
   const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(true);
-  const [isFinalLoading, setisFinalLoading] = useState(false)
-  const [showClientGoals,setSHowClientGoals] = useState(false)
-  const [showAnalyse,setSHowAnalyse] = useState(false)
+  const [isFinalLoading, setisFinalLoading] = useState(false);
+  const [showClientGoals, setSHowClientGoals] = useState(false);
+  const [showAnalyse, setSHowAnalyse] = useState(false);
   // const [Priorities3,setPriorities3] = useState<PrioritiesType>({})
   // const [Priorities6,setPriorities6] = useState<PrioritiesType>({})
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const resolveNextStep = () => {
-      Application.saveTreatmentPaln({
-        ...treatmentPlanData,
-        member_id:id,
-      });
-      
-      setisFinalLoading(true)
-      setTimeout(()=>{
-        setisFinalLoading(false)
-        navigate(`/report/${id}/a?section=Holistic Plan`)
-      },3000)
-      navigate(-1);
+    Application.saveTreatmentPaln({
+      ...treatmentPlanData,
+      member_id: id,
+    });
+
+    setisFinalLoading(true);
+    setTimeout(() => {
+      setisFinalLoading(false);
+      navigate(`/report/${id}/a?section=Holistic Plan`);
+    }, 3000);
+    navigate(-1);
   };
 
   // const [activeMenu,setActiveMenu] = useState('3 Month')
   const generatePaln = () => {
     setIsLoading(true);
     Application.generateTreatmentPlan({
-      member_id:id
-    }).then(res => {
-      setClientGools(res.data.client_goals)
-      setTratmentPlanData(res.data)
-      setGenereStep("Generate Plan")
-    }).finally(() =>{
-      setIsLoading(false)
+      member_id: id,
     })
+      .then((res) => {
+        setClientGools(res.data.client_goals);
+        setTratmentPlanData(res.data);
+        setGenereStep('Generate Plan');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   // const modalAiGenerateRef = useRef(null)
   // const resolveChangeTextFields =(value:string,index:number,key:string,doOrdos:string) => {
@@ -104,7 +106,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // }
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
-    generatePaln()
+    generatePaln();
   }, []);
   // const [isloadingGenerate,setIsLoadingGenerate] = useState(false)
   // const [showGenerateWithAi,setShowGenerateWithAi] = useState(false)
@@ -116,87 +118,92 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   // })
   const [isforceReload] = useState(false);
   const resolveNeedFocusText = () => {
-    return treatmentPlanData["need_focus_benchmarks_list"];
+    return treatmentPlanData['need_focus_benchmarks_list'];
     // return "scdc"
   };
   const resolveDescriptText = () => {
-    return treatmentPlanData["medical_summary"];
+    return treatmentPlanData['medical_summary'];
     // return "scdc"
   };
   const updateNeedFocus = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["need_focus_benchmarks_list"] =[value.toString()];
+      old['need_focus_benchmarks_list'] = [value.toString()];
       return old;
     });
   };
-  const updateClientConditionInsights =(value: any) => {
+  const updateClientConditionInsights = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["medical_summary"] = value;
+      old['medical_summary'] = value;
       return old;
     });
-  }
+  };
   const updateDescription = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
-      old["medical_summary"] = value?.toString();
+      old['medical_summary'] = value?.toString();
       return old;
     });
   };
   // const {themeISLight} = useContext(AppContext);
   return (
     <>
-          {isFinalLoading && (
+      {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          {" "}
-          
-            <Circleloader></Circleloader>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your Holistic Plan based on the selected method. This may take a moment.</div>
+          {' '}
+          <Circleloader></Circleloader>
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3">
+            We’re generating your Holistic Plan based on the selected method.
+            This may take a moment.
+          </div>
         </div>
       )}
 
-    <div className="fixed w-full top-0">
-      <TopBar></TopBar>
-    </div>
+      <div className="fixed w-full top-0">
+        <TopBar></TopBar>
+      </div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
         <div className="w-full px-4 py-6    relative   ">
           <div className=" flex mb-2 justify-between w-full">
             <div className="flex w-full items-center gap-3">
               <div
                 onClick={() => {
-                
-                    navigate(-1);
-                  
+                  navigate(-1);
                 }}
                 className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
               >
                 <img className="w-6 h-6" src="/icons/arrow-back.svg" />
               </div>
               <div className="TextStyle-Headline-5 text-Text-Primary">
-              Generate Holistic Plan
+                Generate Holistic Plan
               </div>
             </div>
-            
+
             <div className="w-full flex gap-2 justify-end items-center">
-              <ButtonPrimary onClick={() => {
-                setSHowAnalyse(true)
-              }} size="small">
+              <ButtonPrimary
+                onClick={() => {
+                  setSHowAnalyse(true);
+                }}
+                size="small"
+              >
                 <div className="w-full flex justify-between gap-2">
                   <img src="/icons/analyse.svg" alt="" />
                   Analysis
-
                 </div>
               </ButtonPrimary>
-              <ButtonPrimary onClick={() => {
-                setSHowClientGoals(true)
-              }} size="small">
+              <ButtonPrimary
+                onClick={() => {
+                  setSHowClientGoals(true);
+                }}
+                size="small"
+              >
                 {/* <img src="/icons/" alt="" /> */}
                 <div className="w-full flex justify-between gap-2">
                   <img src="/icons/chart.svg" alt="" />
                   Client Goals
                 </div>
-              </ButtonPrimary>              
+              </ButtonPrimary>
             </div>
             {/* <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">
               <div className="flex justify-center items-center gap-2">
@@ -276,11 +283,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             </div> */}
           </div>
           <div className=" h-[480px] pr-2 overflow-auto">
-            {generateStep == "Client Goals" && (
+            {generateStep == 'Client Goals' && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
                   <div className="w-full flex justify-center mt-3">
-                    <BeatLoader color={"white"} size={12}></BeatLoader>
+                    <BeatLoader color={'white'} size={12}></BeatLoader>
                   </div>
                 )}
 
@@ -301,14 +308,18 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 })}
               </div>
             )}
-            {generateStep == "Generate Plan" && (
-              <CategoryOrder setData={setTratmentPlanData} data={treatmentPlanData} isActionPlan={isActionPlan}></CategoryOrder>
+            {generateStep == 'Generate Plan' && (
+              <CategoryOrder
+                setData={setTratmentPlanData}
+                data={treatmentPlanData}
+                isActionPlan={isActionPlan}
+              ></CategoryOrder>
             )}
-            {generateStep == "Analysis" && (
+            {generateStep == 'Analysis' && (
               <div className="bg-white rounded-[16px] px-6 py-6  mt-2  border border-Gray-50  ">
                 {isLoading ? (
                   <div className="w-full flex justify-center mt-3">
-                    <BeatLoader color={"white"} size={12}></BeatLoader>
+                    <BeatLoader color={'white'} size={12}></BeatLoader>
                   </div>
                 ) : (
                   <div className="w-full border h-[256px] overflow-y-scroll p-6 bg-backgroundColor-Card border-Gray-50 rounded-[16px]">
@@ -334,7 +345,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                       </div>
                     </div>
                     <div>
-                      {treatmentPlanData["Client Condition Insights"] && (
+                      {treatmentPlanData['Client Condition Insights'] && (
                         <TextBoxAi
                           isUpchange={isforceReload}
                           isDescript
@@ -366,7 +377,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                         Biomarker List
                       </div>
                     </div>
-                    {treatmentPlanData["Needs Focus Biomarkers"].length > 0 && (
+                    {treatmentPlanData['Needs Focus Biomarkers'].length > 0 && (
                       <TextBoxAi
                         isUpchange={isforceReload}
                         isNeedFocus
@@ -419,16 +430,15 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               onClick={() => {
                 resolveNextStep();
               }}
-              
             >
               {isLoading ? (
                 <div className="w-full h-full flex justify-center items-center">
-                  <BeatLoader size={8} color={"white"}></BeatLoader>
+                  <BeatLoader size={8} color={'white'}></BeatLoader>
                 </div>
               ) : (
                 <div className=" min-w-[100px] flex items-center justify-center gap-1">
-                   <img src="/icons/tick-square.svg" alt="" />
-                    Save Changes
+                  <img src="/icons/tick-square.svg" alt="" />
+                  Save Changes
                 </div>
               )}
             </ButtonPrimary>
@@ -443,87 +453,95 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         onConfirm={() => {
           setShowConfirmModal(false);
         }}
-        clientName={""}
+        clientName={''}
       ></ConfirmAnalyseModal>
-
 
       <SlideOutPanel
         isOpen={showClientGoals}
-        onClose={() =>{
-          setSHowClientGoals(false)
+        onClose={() => {
+          setSHowClientGoals(false);
         }}
         headline="Client Goals"
       >
         <>
           <div>
-            {Object.keys(clientGools).map((el,index) => {
+            {Object.keys(clientGools).map((el, index) => {
               return (
                 <>
-                  <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" style={{borderTopLeftRadius:index!=0?'0px':'12px',borderTopRightRadius:index!=0?'0px':'12px'}}>{el}</div>
+                  <div
+                    className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]"
+                    style={{
+                      borderTopLeftRadius: index != 0 ? '0px' : '12px',
+                      borderTopRightRadius: index != 0 ? '0px' : '12px',
+                    }}
+                  >
+                    {el}
+                  </div>
                   <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
                     {clientGools[el]}
                   </div>
                 </>
-              )
+              );
             })}
           </div>
         </>
-      </SlideOutPanel>  
+      </SlideOutPanel>
 
       <SlideOutPanel
         isOpen={showAnalyse}
-        onClose={() =>{
-          setSHowAnalyse(false)
+        onClose={() => {
+          setSHowAnalyse(false);
         }}
         headline="Analysis"
       >
         <div>
-            <div className="flex mb-4 justify-between items-center">
-                <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
-                  <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">
-                    Quick Analysis
-                  </div>
-                </div>
-                <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
-                  <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">
-                    Comprehensive Analysis
-
-                  </div>
-                </div>                
+          <div className="flex mb-4 justify-between items-center">
+            <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+              <img src="/icons/stars.svg" alt="" />
+              <div className="mt-[2px]">Quick Analysis</div>
             </div>
-            <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none" >Client Condition Insight</div>
-            
-            {treatmentPlanData &&
-                      <TextBoxAi
-                        isUpchange={isforceReload}
-                        isNeedFocus
-                        label=""
-                        onChange={(e) => {
-                          updateClientConditionInsights(e);
-                        }}
-                        value={treatmentPlanData["medical_summary"]}/>  
-            }
+            <div className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
+              <img src="/icons/stars.svg" alt="" />
+              <div className="mt-[2px]">Comprehensive Analysis</div>
+            </div>
+          </div>
+          <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
+            Client Condition Insight
+          </div>
 
-            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none" >Needs Focus Biomarkers</div>
-            {treatmentPlanData &&
-              <div className="bg-backgroundColor-Card p-4 pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
-                      <TextBoxAi
-                        isUpchange={isforceReload}
-                        isNeedFocus
-                        label=""
-                        onChange={(e) => {
-                          updateNeedFocus(e);
-                        }}
-                        value={resolveNeedFocusText()}/>                
-                {/* <textarea  className="w-full h-[250px] hidden-scrollbar outline-none p-1 bg-backgroundColor-Card text-[12px]" onChange={(e) =>{
+          {treatmentPlanData && (
+            <TextBoxAi
+              isUpchange={isforceReload}
+              isNeedFocus
+              label=""
+              onChange={(e) => {
+                updateClientConditionInsights(e);
+              }}
+              value={treatmentPlanData['medical_summary']}
+            />
+          )}
+
+          <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
+            Needs Focus Biomarkers
+          </div>
+          {treatmentPlanData && (
+            <div className="bg-backgroundColor-Card p-4 pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
+              <TextBoxAi
+                isUpchange={isforceReload}
+                isNeedFocus
+                label=""
+                onChange={(e) => {
+                  updateNeedFocus(e);
+                }}
+                value={resolveNeedFocusText()}
+              />
+              {/* <textarea  className="w-full h-[250px] hidden-scrollbar outline-none p-1 bg-backgroundColor-Card text-[12px]" onChange={(e) =>{
                   updateNeedFocus(e.target.value);
                 }}  value={resolveNeedFocusText()} /> */}
-              </div>
-            }            
+            </div>
+          )}
         </div>
-      </SlideOutPanel>    
+      </SlideOutPanel>
     </>
   );
 };

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
+import { useState, useRef, useEffect } from 'react';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
-import TreatmentCard from "./TreatmentCard";
-import { ButtonPrimary } from "../Button/ButtonPrimary";
-import { SlideOutPanel } from "../SlideOutPanel";
-import { useNavigate, useParams } from "react-router-dom";
-import Application from "../../api/app";
+import TreatmentCard from './TreatmentCard';
+import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { SlideOutPanel } from '../SlideOutPanel';
+import { useNavigate, useParams } from 'react-router-dom';
+import Application from '../../api/app';
 type CardData = {
   id: number;
   date: string;
@@ -46,16 +46,16 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
-      case "Completed":
-        return "#55DD4A";
-      case "On Going":
-        return "#3C79D6";
-      case "Paused":
-        return "#E84040";
-      case "Upcoming":
-        return "#FFC123";
+      case 'Completed':
+        return '#55DD4A';
+      case 'On Going':
+        return '#3C79D6';
+      case 'Paused':
+        return '#E84040';
+      case 'Upcoming':
+        return '#FFC123';
       default:
-        return "#000000"; // Fallback color
+        return '#000000'; // Fallback color
     }
   };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
@@ -71,19 +71,19 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [cardData, setCardData] = useState<Array<any>>(initialCardData);
 
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(
-    null
+    null,
   );
-  const [aciveTreatmentPlan, setActiveTreatmentplan] = useState("Diet");
+  const [aciveTreatmentPlan, setActiveTreatmentplan] = useState('Diet');
   const [TreatMentPlanData, setTreatmentPlanData] =
     useState<any>(treatmentPlanData);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
-  const [clientSummary, setclientSummary] = useState('second')
-  const handleDeleteCard = (index: number,id:string) => {
+  const [clientSummary, setclientSummary] = useState('second');
+  const handleDeleteCard = (index: number, id: string) => {
     Application.deleteHolisticPlan({
       treatment_id: id,
-    })
+    });
     setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
     setShowModalIndex(null);
     setDeleteConfirmIndex(null);
@@ -91,7 +91,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const navigate = useNavigate();
   const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
-  const [activeTreatment, setActiveTreatmnet] = useState("");
+  const [activeTreatment, setActiveTreatmnet] = useState('');
   useEffect(() => {
     Application.showHistory({
       member_id: id,
@@ -101,7 +101,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
       }
       setTimeout(() => {
-        const container: any = document.getElementById("scrollContainer");
+        const container: any = document.getElementById('scrollContainer');
         if (container) {
           container.scrollLeft = container.scrollWidth; // Set scroll to the very end
         }
@@ -109,7 +109,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     });
   }, []);
   useEffect(() => {
-    if (activeTreatment != "") {
+    if (activeTreatment != '') {
       Application.getTreatmentPlanDetail({
         treatment_id: activeTreatment,
         member_id: id,
@@ -119,7 +119,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           setClientGools(res.data.client_goals);
         }
         setNeedFocusData(res.data.need_focus_benchmarks);
-        setclientSummary(res.data.medical_summary)
+        setclientSummary(res.data.medical_summary);
       });
     }
   }, [activeTreatment]);
@@ -134,8 +134,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div className="text-xs text-Text-Primary mt-2 mb-5">
               Start creating your Holistic Plan
-
-
             </div>
             <ButtonPrimary
               onClick={() => navigate(`/report/Generate-Holistic-Plan/${id}`)}
@@ -166,8 +164,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             {cardData.map((card, index: number) => (
               <div
                 key={card.id}
-                className={` ${card.state == "Upcoming" && "opacity-60"} ${
-                  index % 2 == 0 ? "mt-10 " : "mt-0"
+                className={` ${card.state == 'Upcoming' && 'opacity-60'} ${
+                  index % 2 == 0 ? 'mt-10 ' : 'mt-0'
                 } relative flex flex-col   items-center -ml-10  `}
               >
                 {index % 2 == 0 ? (
@@ -190,8 +188,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   }}
                   className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
                     activeTreatment == card.t_plan_id
-                      ? "border-Primary-EmeraldGreen"
-                      : "border-Gray-25"
+                      ? 'border-Primary-EmeraldGreen'
+                      : 'border-Gray-25'
                   }`}
                 >
                   <div className=" flex w-full justify-center items-center flex-col gap-2">
@@ -200,21 +198,19 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                         {index + 1 < 10 && 0}
                         {index + 1}
                       </div>
-                   { activeTreatment == card.t_plan_id && (
-                    <img
+                      {activeTreatment == card.t_plan_id && (
+                        <img
                           onClick={() => setShowModalIndex(index)}
                           className="-mr-5 ml-3 cursor-pointer"
                           src="/icons/dots.svg"
                           alt=""
                         />
-                   )}
-                        
-                  
+                      )}
                     </div>
 
                     <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
                       <img src="/icons/calendar-2.svg" alt="" />
-                      {card.formatted_date.split(",")[0]}
+                      {card.formatted_date.split(',')[0]}
                     </div>
                     <div
                       // style={{ backgroundColor: resolveStatusColor() }}
@@ -249,9 +245,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
-                         
-                            setDeleteConfirmIndex(index);
-                          
+
+                          setDeleteConfirmIndex(index);
                         }}
                         className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                       >
@@ -259,11 +254,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteCard(index,card.t_plan_id);
+                              handleDeleteCard(index, card.t_plan_id);
                             }}
                             className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
                           >
-                            Sure?{" "}
+                            Sure?{' '}
                           </div>
                         ) : (
                           <>
@@ -289,26 +284,26 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           </div>
           <div className="w-full flex justify-end gap-2 my-3">
             <ButtonPrimary size="small" onClick={() => setisAnalysisOpen(true)}>
-              {" "}
+              {' '}
               <img src="/icons/analyse.svg" alt="" /> Analysis
             </ButtonPrimary>
             <ButtonPrimary
               size="small"
               onClick={() => setisClientGoalOpen(true)}
             >
-              {" "}
+              {' '}
               <img src="/icons/chart.svg" alt="" /> Client Goals
             </ButtonPrimary>
           </div>
           <div className="w-full gap-2 flex justify-between items-center">
             <div
               onClick={() => {
-                setActiveTreatmentplan("Diet");
+                setActiveTreatmentplan('Diet');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Diet"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Diet'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -318,12 +313,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Mind");
+                setActiveTreatmentplan('Mind');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Mind"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Mind'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -333,12 +328,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Activity");
+                setActiveTreatmentplan('Activity');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Activity"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Activity'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -348,12 +343,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Supplement");
+                setActiveTreatmentplan('Supplement');
               }}
               className={` flex justify-center bg-white  cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Supplement"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Supplement'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -365,7 +360,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           {TreatMentPlanData.length > 0 && (
             <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
               {TreatMentPlanData?.filter(
-                (value: any) => value.category == aciveTreatmentPlan
+                (value: any) => value.category == aciveTreatmentPlan,
               )[0].data.map((el: any) => {
                 return <TreatmentCard data={el}></TreatmentCard>;
               })}
@@ -396,10 +391,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           </div>
           <div className="rounded-xl border border-Gray-50 mt-3">
             <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-            Client Condition Insights
+              Client Condition Insights
             </div>
             <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
-            {clientSummary}
+              {clientSummary}
             </div>
           </div>
         </>
@@ -416,8 +411,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]"
                   style={{
-                    borderTopLeftRadius: index != 0 ? "0px" : "12px",
-                    borderTopRightRadius: index != 0 ? "0px" : "12px",
+                    borderTopLeftRadius: index != 0 ? '0px' : '12px',
+                    borderTopRightRadius: index != 0 ? '0px' : '12px',
                   }}
                 >
                   {el}

@@ -1,7 +1,9 @@
 type ChartBounds = Record<string, [number, number][]>;
 
 // Helper function to find the minimum key
-const sortKeysWithValues = (chartBounds: ChartBounds): { key: string; value: [number, number] }[] => {
+const sortKeysWithValues = (
+  chartBounds: ChartBounds,
+): { key: string; value: [number, number] }[] => {
   // Create an array to store key-value pairs with starting values
   const rangesWithKeys: { key: string; value: [number, number] }[] = [];
 
@@ -17,17 +19,20 @@ const sortKeysWithValues = (chartBounds: ChartBounds): { key: string; value: [nu
 
   return rangesWithKeys; // Return sorted array of key-value pairs
 };
-const resolveMaxValue = (chartBounds: ChartBounds): { key: string; value: [number, number] } => {
+const resolveMaxValue = (
+  chartBounds: ChartBounds,
+): { key: string; value: [number, number] } => {
   let maxValue = -Infinity; // Start with a very small value
   let result: { key: string; value: [number, number] } = {
-    key:"",
-    value:[10,10]
+    key: '',
+    value: [10, 10],
   };
 
   // Iterate through each key and its ranges
   for (const [key, ranges] of Object.entries(chartBounds)) {
     for (const range of ranges) {
-      if (range[1] > maxValue) { // Compare the ending value of the interval
+      if (range[1] > maxValue) {
+        // Compare the ending value of the interval
         maxValue = range[1];
         result = { key, value: range };
       }
@@ -37,4 +42,4 @@ const resolveMaxValue = (chartBounds: ChartBounds): { key: string; value: [numbe
   return result; // Return the key and range with the maximum value
 };
 
-export {sortKeysWithValues,resolveMaxValue}
+export { sortKeysWithValues, resolveMaxValue };

@@ -1,4 +1,4 @@
-import resolveAnalyseIcon from "./resolveAnalyseIcon";
+import resolveAnalyseIcon from './resolveAnalyseIcon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface SummaryBoxProps {
@@ -17,26 +17,26 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
   //         return '#FC5474'
   //     }
   // }
-  console.log(data)
+  console.log(data);
   return (
     <>
       <div
         onClick={() => {
           document.getElementById(data.subcategory)?.scrollIntoView({
-            behavior: "smooth",
+            behavior: 'smooth',
           });
         }}
         className={`w-full flex cursor-pointer justify-start items-center ${
-          isActive ? "border " : ""
+          isActive ? 'border ' : ''
         } h-[64px] p-4 rounded-[6px] bg-white border-gray-50 shadow-100 `}
       >
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
           style={{
-            background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1]+data.status[0]}%,#FBAD37 ${
-              data.status[1]+data.status[0]
-            }% ${data.status[1] + data.status[2]+data.status[0]}%,#FC5474 ${
-              data.status[2] +data.status[1] +data.status[0]
+            background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1] + data.status[0]}%,#FBAD37 ${
+              data.status[1] + data.status[0]
+            }% ${data.status[1] + data.status[2] + data.status[0]}%,#FC5474 ${
+              data.status[2] + data.status[1] + data.status[0]
             }% 100%)`,
           }}
         >
@@ -57,17 +57,15 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
           </div>
           <div className="flex justify-start items-center">
             <div className=" text-Text-Secondary text-[10px]">
-              {" "}
+              {' '}
               <span className=" text-Text-Secondary">
                 {data.num_of_biomarkers}
-              </span>{" "}
-              {data.num_of_biomarkers > 1 ? 'Biomarkers' : 'Biomarker'} 
+              </span>{' '}
+              {data.num_of_biomarkers > 1 ? 'Biomarkers' : 'Biomarker'}
             </div>
             <div className=" text-Text-Secondary ml-2 text-[10px]">
-              <span className="text-Text-Secondary">
-                {data.out_of_ref}
-              </span>{" "}
-             {data.out_of_ref > 1 ?'Needs Focus':'Needs Focus'}{" "}
+              <span className="text-Text-Secondary">{data.out_of_ref}</span>{' '}
+              {data.out_of_ref > 1 ? 'Needs Focus' : 'Needs Focus'}{' '}
             </div>
           </div>
         </div>

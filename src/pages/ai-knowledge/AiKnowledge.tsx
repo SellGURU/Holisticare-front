@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SigmaContainer } from "@react-sigma/core";
-import { useLoadGraph, useRegisterEvents, useSigma } from "@react-sigma/core";
-import "@react-sigma/core/lib/react-sigma.min.css";
-import { useEffect, useState } from "react";
-import Graph from "graphology";
-import forceAtlas2 from "graphology-layout-forceatlas2";
+import { SigmaContainer } from '@react-sigma/core';
+import { useLoadGraph, useRegisterEvents, useSigma } from '@react-sigma/core';
+import '@react-sigma/core/lib/react-sigma.min.css';
+import { useEffect, useState } from 'react';
+import Graph from 'graphology';
+import forceAtlas2 from 'graphology-layout-forceatlas2';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
-import chroma from "chroma-js";
+import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
-import { useLayoutCircular } from "@react-sigma/layout-circular";
-import Application from "../../api/app.ts";
-import SearchBox from "../../Components/SearchBox/index.tsx";
-import Circleloader from "../../Components/CircleLoader/index.tsx";
+import { useLayoutCircular } from '@react-sigma/layout-circular';
+import Application from '../../api/app.ts';
+import SearchBox from '../../Components/SearchBox/index.tsx';
+import Circleloader from '../../Components/CircleLoader/index.tsx';
 
 interface LoadGraphProps {
   activeFilters: string[];
@@ -38,7 +37,7 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
       : graphData.nodes.filter(
           (node: any) =>
             activeFilters.includes(node.category1) ||
-            activeFilters.includes(node.category2)
+            activeFilters.includes(node.category2),
         );
 
     const nodeSet = new Set(nodesToAdd.map((node: any) => node.id));
@@ -58,11 +57,11 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
       if (nodeSet.has(edge.source) && nodeSet.has(edge.target)) {
         graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
           weight: edge.weight,
-          color: "#696969",
+          color: '#696969',
         });
       } else {
         console.warn(
-          `Missing nodes for edge: ${edge.source} -> ${edge.target}`
+          `Missing nodes for edge: ${edge.source} -> ${edge.target}`,
         );
       }
     });
@@ -80,7 +79,11 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
 
   return null;
 };
-const GraphEvents = ({setisLoading}:{setisLoading:(action:boolean)=>void}) => {
+const GraphEvents = ({
+  setisLoading,
+}: {
+  setisLoading: (action: boolean) => void;
+}) => {
   const registerEvents = useRegisterEvents();
   const sigma = useSigma();
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
@@ -90,14 +93,14 @@ const GraphEvents = ({setisLoading}:{setisLoading:(action:boolean)=>void}) => {
       downNode: (e: any) => {
         setDraggedNode(e.node);
         const graph = sigma.getGraph();
-        graph.setNodeAttribute(e.node, "highlighted", true);
+        graph.setNodeAttribute(e.node, 'highlighted', true);
         sigma.refresh();
       },
       mousemovebody: (e: any) => {
         if (!draggedNode) return;
         const pos = sigma.viewportToGraph(e);
-        sigma.getGraph().setNodeAttribute(draggedNode, "x", pos.x);
-        sigma.getGraph().setNodeAttribute(draggedNode, "y", pos.y);
+        sigma.getGraph().setNodeAttribute(draggedNode, 'x', pos.x);
+        sigma.getGraph().setNodeAttribute(draggedNode, 'y', pos.y);
         e.preventSigmaDefault();
         e.original.preventDefault();
         e.original.stopPropagation();
@@ -105,7 +108,7 @@ const GraphEvents = ({setisLoading}:{setisLoading:(action:boolean)=>void}) => {
       mouseup: () => {
         if (draggedNode) {
           const graph = sigma.getGraph();
-          graph.removeNodeAttribute(draggedNode, "highlighted");
+          graph.removeNodeAttribute(draggedNode, 'highlighted');
           setDraggedNode(null);
           sigma.refresh();
         }
@@ -152,7 +155,7 @@ const AiKnowledge = () => {
           ] as Array<string>);
         }
       } catch (error) {
-        console.error("Error fetching graph data:", error);
+        console.error('Error fetching graph data:', error);
       }
     };
 
@@ -163,7 +166,7 @@ const AiKnowledge = () => {
     setActiveFilters((prevFilters) =>
       prevFilters.includes(category)
         ? prevFilters.filter((filter) => filter !== category)
-        : [...prevFilters, category]
+        : [...prevFilters, category],
     );
   };
   const [sigmaSetting, setSigmaSetting] = useState<any>({});
@@ -172,10 +175,10 @@ const AiKnowledge = () => {
       setSigmaSetting({
         allowInvalidContainer: false,
         renderLabels: true,
-        labelColor: { color: "#000" },
+        labelColor: { color: '#000' },
         defaultDrawNodeHover: (context: any, data: any) => {
           const size = data.size || 10;
-          context.fillStyle = "#fff"; // Dark hover color
+          context.fillStyle = '#fff'; // Dark hover color
           context.beginPath();
           context.arc(data.x, data.y, size + 4, 0, Math.PI * 4, true);
           context.closePath();
@@ -204,22 +207,24 @@ const AiKnowledge = () => {
       <SigmaContainer
         settings={sigmaSetting}
         id="sigma-container"
-        className={" !bg-bg-color"}
+        className={' !bg-bg-color'}
         style={{ height: window.innerHeight - 50, width: window.innerWidth }}
       >
-        {isLoading && (
-          <Circleloader></Circleloader>
-        )}
+        {isLoading && <Circleloader></Circleloader>}
         <LoadGraph
           graphData={graphData}
           activeFilters={activeFilters}
           isInitialLoad={isInitialLoad}
         />
-        <GraphEvents  setisLoading={setisLoading}/>
+        <GraphEvents setisLoading={setisLoading} />
       </SigmaContainer>
 
       <div className="fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-text overflow-y-auto overscroll-y-auto  flex flex-col ">
-        <SearchBox ClassName="rounded-[12px]"   placeHolder="Search for document ..." onSearch={()=>{}}></SearchBox>
+        <SearchBox
+          ClassName="rounded-[12px]"
+          placeHolder="Search for document ..."
+          onSearch={() => {}}
+        ></SearchBox>
         <div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
           <div className="mb-4">
             <h3 className="text-lg text-light-secandary-text mb-2">
@@ -231,8 +236,8 @@ const AiKnowledge = () => {
                   return (
                     <>
                       <label
-                         onClick={() => {
-                            handleButtonClick(el)
+                        onClick={() => {
+                          handleButtonClick(el);
                         }}
                         htmlFor="contracts"
                         className="flex items-center space-x-2 cursor-pointer"
@@ -248,8 +253,8 @@ const AiKnowledge = () => {
                         <div
                           className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Primary-DeepTeal ${
                             activeFilters.includes(el)
-                              ? "bg-Primary-DeepTeal"
-                              : " bg-white "
+                              ? 'bg-Primary-DeepTeal'
+                              : ' bg-white '
                           }`}
                         >
                           {activeFilters.includes(el) && (
@@ -267,7 +272,7 @@ const AiKnowledge = () => {
                             </svg>
                           )}
                         </div>
-                        <span className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis ml-2 text-Text-Primary TextStyle-Headline-6" >
+                        <span className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis ml-2 text-Text-Primary TextStyle-Headline-6">
                           {el}
                         </span>
                       </label>
@@ -293,7 +298,7 @@ const AiKnowledge = () => {
                                         </div> */}
                     </>
                   );
-                }
+                },
               )}
             </div>
           </div>
@@ -301,10 +306,10 @@ const AiKnowledge = () => {
         </div>
         <button
           className={
-            "mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal "
+            'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
           }
         >
-          <img className={"w-5 h-5"} src={"/icons/add-blue.svg"} />
+          <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
           Add New Document
         </button>
       </div>

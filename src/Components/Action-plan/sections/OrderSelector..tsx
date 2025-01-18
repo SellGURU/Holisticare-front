@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface OrderSelectorProps {
   order: string;
@@ -9,18 +9,22 @@ const OrderSelector: React.FC<OrderSelectorProps> = ({ order, setOrder }) => {
   return (
     <div className="w-[270px] h-8 rounded-md border border-brand-primary-color flex items-center px-3 justify-between">
       <div
-        onClick={() => setOrder("Manual Order")}
+        onClick={() => setOrder('Manual Order')}
         className={`flex items-center gap-2 text-[10px] cursor-pointer ${
-          order === "Manual Order" ? "text-brand-primary-color" : "text-primary-text"
+          order === 'Manual Order'
+            ? 'text-brand-primary-color'
+            : 'text-primary-text'
         } `}
       >
         <img src="./Themes/Aurora/icons/edit4.svg" alt="Edit" />
         Manual Order
       </div>
       <div
-        onClick={() => setOrder("Original Order")}
+        onClick={() => setOrder('Original Order')}
         className={`flex items-center gap-2 text-[10px] cursor-pointer ${
-          order === "Original Order" ? "text-brand-primary-color" : "text-primary-text"
+          order === 'Original Order'
+            ? 'text-brand-primary-color'
+            : 'text-primary-text'
         } `}
       >
         <img src="./Themes/Aurora/icons/task-square.svg" alt="Task" />

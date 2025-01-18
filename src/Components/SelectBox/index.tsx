@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 type SelectBoxProps = {
   onChange: (value: string) => void;
@@ -23,7 +23,7 @@ const SelectBox: React.FC<SelectBoxProps> = ({ onChange }) => {
       </select>
       <img
         className={` w-3 h-3 object-contain opacity-80 absolute top-2 right-2 transition-transform duration-200 ${
-          isOpen ? "rotate-180" : ""
+          isOpen ? 'rotate-180' : ''
         }`}
         src="/icons/arow-down-drop.svg"
         alt=""

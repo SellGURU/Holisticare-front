@@ -11,7 +11,7 @@
 
 //     useModalAutoClose({
 //         refrence: showModalRefrence,
-       
+
 //         close: () => {
 //          onCancel()
 //         },
@@ -24,8 +24,7 @@
 //         <div className="flex justify-center gap-2 mt-4">
 //             <Button theme='Aurora-pro' onClick={onCancel} >Cancel</Button>
 //             <Button onClick={onConfirm} theme='Aurora'>Delete</Button>
-         
-         
+
 //         </div>
 //       </div>
 //     </div>

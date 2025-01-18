@@ -6,11 +6,19 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   const getPages = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
         pages.push(i);
       } else if (pages[pages.length - 1] !== '...') {
         pages.push('...');
@@ -38,10 +46,13 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             {page}
           </button>
         ) : (
-          <span key={index} className="px-3 w-[26px] h-[26px] py-1 text-secondary-text ">
+          <span
+            key={index}
+            className="px-3 w-[26px] h-[26px] py-1 text-secondary-text "
+          >
             {page}
           </span>
-        )
+        ),
       )}
       <button
         onClick={() => onPageChange(currentPage + 1)}

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type Step = {
   title: string;
@@ -11,75 +11,75 @@ type Section = {
 };
 const resolveStatusColor = (state: string) => {
   switch (state) {
-    case "Completed":
-      return "#55DD4A";
-    case "On Going":
-      return "#3C79D6";
-    case "Paused":
-      return "#E84040";
-    case "Upcoming":
-      return "#FFC123";
+    case 'Completed':
+      return '#55DD4A';
+    case 'On Going':
+      return '#3C79D6';
+    case 'Paused':
+      return '#E84040';
+    case 'Upcoming':
+      return '#FFC123';
     default:
-      return "#3C79D6"; // Fallback color
+      return '#3C79D6'; // Fallback color
   }
 };
 const steps: Section[] = [
   {
-    status: "On Going",
-  
+    status: 'On Going',
+
     steps: [
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
-      { title: "Step Title", explains: ["Explain 1", "Explain 2"] },
+      { title: 'Step Title', explains: ['Explain 1', 'Explain 2'] },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3", "Explain 4"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3', 'Explain 4'],
       },
-      { title: "Step Title", explains: ["Explain 1"] },
+      { title: 'Step Title', explains: ['Explain 1'] },
     ],
   },
   {
-    status: "Upcoming",
-   
+    status: 'Upcoming',
+
     steps: [
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
-      { title: "Step Title", explains: ["Explain 1", "Explain 2"] },
+      { title: 'Step Title', explains: ['Explain 1', 'Explain 2'] },
       {
-        title: "Step Title",
-        explains: ["Explain 1", "Explain 2", "Explain 3"],
+        title: 'Step Title',
+        explains: ['Explain 1', 'Explain 2', 'Explain 3'],
       },
     ],
   },
@@ -92,7 +92,6 @@ const TimelineStep: React.FC<{
   index: number;
 }> = ({ title, explains, status, index }) => (
   <>
-   
     <div className=" w-full  relative mt-2    mb-4 text-xs">
       <div className={` relative  w-full`}>
         <div
@@ -104,7 +103,7 @@ const TimelineStep: React.FC<{
 
         <div
           className={` absolute -mt-5 ${
-            index % 2 == 0 ? "ml-3" : "-ml-16"
+            index % 2 == 0 ? 'ml-3' : '-ml-16'
           } -z-[1] text-nowrap bg-Primary-DeepTeal rounded-lg px-4 text-white text-[10px]`}
         >
           {title}
@@ -112,7 +111,7 @@ const TimelineStep: React.FC<{
 
         <div
           className={`relative top-0 ${
-            index % 2 == 0 ? "-right-12 " : "-left-10 "
+            index % 2 == 0 ? '-right-12 ' : '-left-10 '
           }`}
         >
           {index % 2 == 0 ? (
@@ -124,12 +123,16 @@ const TimelineStep: React.FC<{
       </div>
       <div
         className={`flex flex-col absolute z-50  top-7 ${
-          index % 2 == 0 ? "-right-[90px] " : "-left-[90px] "
+          index % 2 == 0 ? '-right-[90px] ' : '-left-[90px] '
         }} `}
       >
         {explains.map((explain, index) => (
-          <div key={index} className=" flex items-center gap-1 text-[8px] text-Text-Secondary">
-            <div className="w-[3px] h-[3px] bg-Orange rounded-full"></div> {explain}
+          <div
+            key={index}
+            className=" flex items-center gap-1 text-[8px] text-Text-Secondary"
+          >
+            <div className="w-[3px] h-[3px] bg-Orange rounded-full"></div>{' '}
+            {explain}
           </div>
         ))}
       </div>
@@ -144,7 +147,7 @@ const TimeLine: React.FC = () => {
         <div key={index} className="flex flex-col items-center mb-6  relative ">
           <div
             className={`px-2.5 py-1 text-[10px] rounded-full text-Text-Primary  ${
-              section.status === "On Going" ? "bg-[#8ECAE6]" : "bg-[#F9DEDC]"
+              section.status === 'On Going' ? 'bg-[#8ECAE6]' : 'bg-[#F9DEDC]'
             } flex items-center gap-1`}
           >
             <div
@@ -153,13 +156,14 @@ const TimeLine: React.FC = () => {
             ></div>
             {section.status}
           </div>
-  
+
           {/* <div className='h-full bg-red-600 w-2 absolute left-[46%] top-6 '></div> */}
           <div className="relative ">
-          <div style={{backgroundColor : resolveStatusColor(section.status)}}
-      className={`absolute block  w-[3px] h-[120%] right-3 
+            <div
+              style={{ backgroundColor: resolveStatusColor(section.status) }}
+              className={`absolute block  w-[3px] h-[120%] right-3 
         ml-5  -z-[1]`}
-    ></div>
+            ></div>
             {section.steps.map((step, index) => (
               <TimelineStep
                 key={index}

@@ -7,17 +7,19 @@
 
 .dot {
   position: absolute;
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
   border-radius: 50%;
   animation: scale-animation 1.5s infinite ease-in-out;
 }
 
 @keyframes scale-animation {
-  0%, 20%, 100% {
+  0%,
+  20%,
+  100% {
     transform: scale(1);
   }
   50% {
     transform: scale(1.1);
-    background-color: #6CC24A;
+    background-color: #6cc24a;
   }
 }

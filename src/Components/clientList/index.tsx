@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
-import Application from "../../api/app";
-import ClientCard from "./ClientCard";
-import { useNavigate } from "react-router-dom";
-import SelectBox from "../SelectBox";
-import SearchBox from "../SearchBox";
-import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
-import SvgIcon from "../../utils/svgIcon.tsx";
-import Table from "../table.tsx/index.tsx";
-import FilterModal from "../FilterModal/index.tsx";
-import { subscribe } from "../../utils/event.ts";
-import ConfirmModal from "./ConfirmModal.tsx";
-import Circleloader from "../CircleLoader/index.tsx";
+import Application from '../../api/app';
+import ClientCard from './ClientCard';
+import { useNavigate } from 'react-router-dom';
+import SelectBox from '../SelectBox';
+import SearchBox from '../SearchBox';
+import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
+import SvgIcon from '../../utils/svgIcon.tsx';
+import Table from '../table.tsx/index.tsx';
+import FilterModal from '../FilterModal/index.tsx';
+import { subscribe } from '../../utils/event.ts';
+import ConfirmModal from './ConfirmModal.tsx';
+import Circleloader from '../CircleLoader/index.tsx';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -53,7 +53,7 @@ type Filters = {
 const ClientList = () => {
   const [clientList, setClientList] = useState<ClientData[]>([]);
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
-    []
+    [],
   );
   const navigate = useNavigate();
   const getPatients = () => {
@@ -74,25 +74,25 @@ const ClientList = () => {
 
   const handleFilterChange = (filter: string) => {
     let sortedList = [...clientList];
-    if (filter === "latest") {
+    if (filter === 'latest') {
       sortedList = sortedList.sort(
         (a, b) =>
-          new Date(b.enroll_date).getTime() - new Date(a.enroll_date).getTime()
+          new Date(b.enroll_date).getTime() - new Date(a.enroll_date).getTime(),
       );
-    } else if (filter === "lowerScores") {
+    } else if (filter === 'lowerScores') {
       sortedList = sortedList.sort((a, b) => a.score - b.score);
     }
     setFilteredClientList(sortedList);
   };
   const handleSearch = (searchTerm: string) => {
     const searchResult = clientList.filter((client) =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase())
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredClientList(searchResult);
   };
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
-  const [activeList, setActiveList] = useState("grid");
+  const [activeList, setActiveList] = useState('grid');
   const [filters, setFilters] = useState<Filters>({
     gender: { male: false, female: false },
     status: { normal: false, atRisk: false, critical: false },
@@ -106,8 +106,8 @@ const ClientList = () => {
     if (filters.gender.male || filters.gender.female) {
       filtered = filtered.filter(
         (client) =>
-          (filters.gender.male && client.sex.toLowerCase() === "male") ||
-          (filters.gender.female && client.sex.toLowerCase() === "female")
+          (filters.gender.male && client.sex.toLowerCase() === 'male') ||
+          (filters.gender.female && client.sex.toLowerCase() === 'female'),
       );
     }
 
@@ -119,9 +119,9 @@ const ClientList = () => {
     ) {
       filtered = filtered.filter(
         (client) =>
-          (filters.status.normal && client.status === "Normal") ||
-          (filters.status.atRisk && client.status === "At Risk") ||
-          (filters.status.critical && client.status === "Critical")
+          (filters.status.normal && client.status === 'Normal') ||
+          (filters.status.atRisk && client.status === 'At Risk') ||
+          (filters.status.critical && client.status === 'Critical'),
       );
     }
 
@@ -156,17 +156,17 @@ const ClientList = () => {
 
   const [showFilterModal, setshowFilterModal] = useState(false);
   const [removeId, setRemoveId] = useState();
-  const [removeName, setRemoveName] = useState("");
+  const [removeName, setRemoveName] = useState('');
   const [isOpenConfirm, setISOpenConfirm] = useState(false);
-  const [UserMail, setUserMail] = useState("");
-  const [actionType, setActionType] = useState<"Delete" | "Email" | "SMS">(
-    "Delete"
+  const [UserMail, setUserMail] = useState('');
+  const [actionType, setActionType] = useState<'Delete' | 'Email' | 'SMS'>(
+    'Delete',
   );
   useEffect(() => {
     const handleDelete = (value: any) => {
       setRemoveId(value.detail.id);
       setRemoveName(value.detail.name);
-      setActionType("Delete");
+      setActionType('Delete');
       setISOpenConfirm(true);
     };
 
@@ -174,33 +174,33 @@ const ClientList = () => {
       setRemoveId(value.detail.id);
       setRemoveName(value.detail.name);
       setUserMail(value.detail.email);
-      setActionType("Email");
+      setActionType('Email');
       setISOpenConfirm(true);
     };
 
     const handleSendSMS = (value: any) => {
       setRemoveId(value.detail.id);
       setRemoveName(value.detail.name);
-      setActionType("SMS");
+      setActionType('SMS');
       setISOpenConfirm(true);
     };
 
-    subscribe("confirmDelete", handleDelete);
-    subscribe("sendEmail", handleSendEmail);
-    subscribe("sendSMS", handleSendSMS);
+    subscribe('confirmDelete', handleDelete);
+    subscribe('sendEmail', handleSendEmail);
+    subscribe('sendSMS', handleSendSMS);
 
     return () => {
       // Unsubscribe when the component unmounts or when you need to clean up
     };
   }, []);
-const [isFavorite, setisFavorite] = useState(false)
-useEffect(() => {
-  if (isFavorite) {
-    setFilteredClientList(clientList.filter(client => client.favorite));
-  } else {
-    setFilteredClientList(clientList);
-  }
-}, [isFavorite, clientList]);
+  const [isFavorite, setisFavorite] = useState(false);
+  useEffect(() => {
+    if (isFavorite) {
+      setFilteredClientList(clientList.filter((client) => client.favorite));
+    } else {
+      setFilteredClientList(clientList);
+    }
+  }, [isFavorite, clientList]);
   return (
     <>
       {isLoading ? (
@@ -217,7 +217,7 @@ useEffect(() => {
                 </div>
                 <ButtonPrimary
                   onClick={() => {
-                    navigate("/addClient");
+                    navigate('/addClient');
                   }}
                 >
                   <img className="mr-1" src="/icons/user-add2.svg" alt="" />
@@ -226,19 +226,21 @@ useEffect(() => {
               </div>
               <div className="w-full h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex justify-between mb-3">
-                <div onClick={()=>{
-                  setisFavorite(!isFavorite)
-                }} className={`flex items-center gap-1 text-Text-Secondary cursor-pointer text-sm`}>
-                  {
-                    isFavorite ? (
-                      <img className="w-4 h-4" src="/icons/Icon_star.svg" alt="" />
-
-                    ):(
-                      <img className="w-4 h-4" src="/icons/faviorte.svg" alt="" />
-
-                    )
-                  }
-                 
+                <div
+                  onClick={() => {
+                    setisFavorite(!isFavorite);
+                  }}
+                  className={`flex items-center gap-1 text-Text-Secondary cursor-pointer text-sm`}
+                >
+                  {isFavorite ? (
+                    <img
+                      className="w-4 h-4"
+                      src="/icons/Icon_star.svg"
+                      alt=""
+                    />
+                  ) : (
+                    <img className="w-4 h-4" src="/icons/faviorte.svg" alt="" />
+                  )}
                   Your favorite list
                 </div>
                 <div className="flex gap-3 relative">
@@ -247,51 +249,50 @@ useEffect(() => {
                   </div>
                   <div className="flex w-[96px] h-[32px] rounded-md ">
                     <div
-                      onClick={() => setActiveList("grid")}
+                      onClick={() => setActiveList('grid')}
                       className={` ${
-                        activeList === "grid"
-                          ? "bg-Primary-DeepTeal"
-                          : "bg-white"
+                        activeList === 'grid'
+                          ? 'bg-Primary-DeepTeal'
+                          : 'bg-white'
                       }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer`}
                     >
                       <SvgIcon
                         src="/icons/grid-1.svg"
-                        color={activeList == "grid" ? "#FFF" : "#38383899"}
+                        color={activeList == 'grid' ? '#FFF' : '#38383899'}
                       />
                     </div>
                     <div
-                      onClick={() => setActiveList("list")}
+                      onClick={() => setActiveList('list')}
                       className={` ${
-                        activeList === "list"
-                          ? "bg-Primary-DeepTeal"
-                          : "bg-white"
+                        activeList === 'list'
+                          ? 'bg-Primary-DeepTeal'
+                          : 'bg-white'
                       } flex items-center w-full justify-center rounded-md rounded-l-none cursor-pointer`}
                     >
                       <SvgIcon
                         src="/icons/textalign-left.svg"
-                        color={activeList == "list" ? "#FFF" : "#38383899"}
+                        color={activeList == 'list' ? '#FFF' : '#38383899'}
                       />
                     </div>
                   </div>
                   {showSearch ? (
-                    <div >
+                    <div>
                       <SearchBox
                         id="searchBar"
                         ClassName={`rounded-md`}
                         onSearch={handleSearch}
                         placeHolder="Search for Client ..."
                         onBlur={() => {
-                          setshowSearch(false)
+                          setshowSearch(false);
                         }}
                       ></SearchBox>
                     </div>
                   ) : (
                     <div
                       onClick={() => {
-                        setshowSearch(true)
+                        setshowSearch(true);
                         setTimeout(() => {
-                          document.getElementById("searchBar")?.focus()
-                          
+                          document.getElementById('searchBar')?.focus();
                         }, 200);
                       }}
                       className="bg-backgroundColor-Secondary cursor-pointer rounded-md px-4 py-2 flex justify-center items-center shadow-100"
@@ -318,7 +319,7 @@ useEffect(() => {
                   )}
                 </div>
               </div>
-              {activeList == "grid" ? (
+              {activeList == 'grid' ? (
                 <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
                   {filteredClientList.map((client: any) => {
                     return (
@@ -352,7 +353,7 @@ useEffect(() => {
                   <div>
                     <ButtonPrimary
                       onClick={() => {
-                        navigate("/addClient");
+                        navigate('/addClient');
                       }}
                     >
                       <div className="w-[260px]">Add Client</div>
@@ -370,15 +371,15 @@ useEffect(() => {
         clientName={removeName}
         onConfirm={() => {
           setISOpenConfirm(false);
-          if (actionType == "Delete") {
+          if (actionType == 'Delete') {
             Application.deleteClinic({
               member_id: removeId,
             }).then(() => {
               setClientList((prevList) =>
-                prevList.filter((client) => client.member_id !== removeId)
+                prevList.filter((client) => client.member_id !== removeId),
               );
               setFilteredClientList((prevList) =>
-                prevList.filter((client) => client.member_id !== removeId)
+                prevList.filter((client) => client.member_id !== removeId),
               );
             });
           }

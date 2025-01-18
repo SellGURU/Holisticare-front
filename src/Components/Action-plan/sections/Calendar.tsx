@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import GenerateCalendar from "./generatecalendar";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import GenerateCalendar from './generatecalendar';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
 // import CalenderComponent from "../../calender/ComponentCalender";
 // import CalendarData from "@/api/--moch--/data/new/Calender.json";
 type CardData = {
@@ -13,28 +13,28 @@ type CardData = {
 export const Calendar = () => {
   const [cards] = useState<CardData[]>([
     {
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
+      title: 'Muscle Strengthening',
+      subtitle: 'Something short and simple here',
       progress: 15,
     },
     {
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
+      title: 'Muscle Strengthening',
+      subtitle: 'Something short and simple here',
       progress: 22,
     },
     {
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
+      title: 'Muscle Strengthening',
+      subtitle: 'Something short and simple here',
       progress: 66,
     },
     {
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
+      title: 'Muscle Strengthening',
+      subtitle: 'Something short and simple here',
       progress: 100,
     },
     {
-      title: "Muscle Strengthening",
-      subtitle: "Something short and simple here",
+      title: 'Muscle Strengthening',
+      subtitle: 'Something short and simple here',
       progress: 88,
     },
   ]);
@@ -48,7 +48,7 @@ export const Calendar = () => {
   //     Sunday: ["Activity 9"],
   //   });
   const navigate = useNavigate();
-  const [isGenerated, ] = useState(false);
+  const [isGenerated] = useState(false);
   const [generateMode, setgenerateMode] = useState(false);
   // const [calendarData] = useState(CalendarData);
   const [ActiveCard, setActiveCard] = useState(2);
@@ -91,7 +91,7 @@ export const Calendar = () => {
                     onClick={() => setActiveCard(index)}
                     key={index}
                     className={`bg-gray-100 dark:bg-black-secondary rounded-xl  lg:pb-6 px-3 pt-2 pb-4 min-w-[150px] w-[242px] h-fit  lg:h-[119px] border border-light-border-color dark:border-main-border cursor-pointer ${
-                      ActiveCard == index ? "opacity-100" : "opacity-30"
+                      ActiveCard == index ? 'opacity-100' : 'opacity-30'
                     }`}
                   >
                     <h5 className=" text-xs lg:text-sm font-bold text-light-primary-text dark:text-primary-text text-center">
@@ -117,21 +117,20 @@ export const Calendar = () => {
                   </div>
                 ))}
               </div>
-              {isGenerated ? (
-                null
+              {isGenerated ? null : (
                 // <CalenderComponent data={calendarData}></CalenderComponent>
 
-              ) : (
                 <div className=" h-[60%] flex flex-col  flex-grow items-center justify-center">
-                  <img className="" src="./images/ActionPlan/NoDocuments.svg" alt="" />
+                  <img
+                    className=""
+                    src="./images/ActionPlan/NoDocuments.svg"
+                    alt=""
+                  />
                   <div className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                     No Calendar Generated Yet
                   </div>
                   <div className="mt-3 w-[150px]">
-                    <ButtonPrimary
-                      onClick={() => setgenerateMode(true)}
-                     
-                    >
+                    <ButtonPrimary onClick={() => setgenerateMode(true)}>
                       Generate Calendar
                     </ButtonPrimary>
                   </div>

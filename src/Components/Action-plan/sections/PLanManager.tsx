@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // import { useSelector } from "react-redux";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
 // import { BeatLoader } from "react-spinners";
 // import OrderSelector from "./OrderSelector.";
 // import { TopBar } from "../../topBar";
@@ -27,8 +27,8 @@ import { ButtonPrimary } from "../../Button/ButtonPrimary";
 interface PlanManagerModalProps {
   setDataGenerate?: (data: any) => void;
   // onCompleteAction?: () => void;
-  onSave:(data:any) => void,
-  dataVal:any
+  onSave: (data: any) => void;
+  dataVal: any;
   isgenerate?: boolean;
   isNewGenerate?: boolean;
 }
@@ -36,19 +36,21 @@ interface PlanManagerModalProps {
 const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   isNewGenerate,
   dataVal,
-  onSave
+  onSave,
   // onCompleteAction,
 }) => {
-  const [categories] = useState(new Set(dataVal.interventions.map((el:any) => el.pillar)))
-  
+  const [categories] = useState(
+    new Set(dataVal.interventions.map((el: any) => el.pillar)),
+  );
+
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [buttonState, setButtonState] = useState("initial");
-  const [data,setdata] = useState<any>(dataVal);
+  const [buttonState, setButtonState] = useState('initial');
+  const [data, setdata] = useState<any>(dataVal);
   // const { id } = useParams<{ id: string }>();
-  const resolveDataFromCategory = (categoryName:string) => {
-    return data.interventions.filter((el:any) =>el.pillar == categoryName)
-  }
+  const resolveDataFromCategory = (categoryName: string) => {
+    return data.interventions.filter((el: any) => el.pillar == categoryName);
+  };
   // const [allData, setAllData] = useState(data);
   // const [categories,setCategories] = useState<Array<string>>([])
   // useEffect(() => {
@@ -62,9 +64,9 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   //   // SendToApi()
   // };
   useEffect(() => {
-    if (buttonState == "finish") {
+    if (buttonState == 'finish') {
       setTimeout(() => {
-        setButtonState("initial");
+        setButtonState('initial');
       }, 2000);
     }
   }, [buttonState]);
@@ -101,53 +103,48 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
   //     [key]: level,
   //   }));
   // };
-  const handleValueChange = (
-    keyVal: string,
-    name:string,
-    value: number
-  ) => {
-    setdata((prevState:any) => {
+  const handleValueChange = (keyVal: string, name: string, value: number) => {
+    setdata((prevState: any) => {
       const updatedData = { ...prevState };
-      const interventions = updatedData.interventions
+      const interventions = updatedData.interventions;
 
-      updatedData.interventions =interventions.map((el:any) => {
-        if(el.pillar == keyVal && el.name == name){
+      updatedData.interventions = interventions.map((el: any) => {
+        if (el.pillar == keyVal && el.name == name) {
           return {
             ...el,
-            level:value
-          }
-        }else {
-          return el
+            level: value,
+          };
+        } else {
+          return el;
         }
-      })
-      console.log(updatedData.interventions)
-      return updatedData
-    })
+      });
+      console.log(updatedData.interventions);
+      return updatedData;
+    });
   };
 
   const handleCheckBoxChangeParent = (
     keyVal: string,
-    name:string,
-    state: boolean
+    name: string,
+    state: boolean,
   ) => {
-
-    setdata((prevState:any) => {
+    setdata((prevState: any) => {
       const updatedData = { ...prevState };
-      const interventions = updatedData.interventions
+      const interventions = updatedData.interventions;
 
-      updatedData.interventions =interventions.map((el:any) => {
-        if(el.pillar == keyVal && el.name == name){
+      updatedData.interventions = interventions.map((el: any) => {
+        if (el.pillar == keyVal && el.name == name) {
           return {
             ...el,
-            selected:state
-          }
-        }else {
-          return el
+            selected: state,
+          };
+        } else {
+          return el;
         }
-      })
-      console.log(updatedData.interventions)
-      return updatedData
-    })
+      });
+      console.log(updatedData.interventions);
+      return updatedData;
+    });
     // setAllData((prevState) => {
     //   const updatedData = { ...prevState }; // Clone the current state
 
@@ -216,40 +213,42 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
           </div> */}
 
             <div className=" w-full flex justify-between flex-wrap  gap-3">
-
-              {
-                Array.from(categories).map((categoryName:any,index) => {
-                  return (
-                    <>
-                      <div
-                        key={index}
-                        className={`py-3 rounded-[24px] bg-white border border-Gray-50 shadow-100  relative select-none w-fit  min-w-[300px] max-w-[300px] h-[420px] overflow-auto overflow-x-hidden   `}
-                      >
-                        <div className="flex px-3 pb-1 justify-between items-center border-b  w-full ">
-                          <span className="flex items-center gap-2 TextStyle-Button text-Text-Primary">
-                            <div className="bg-backgroundColor-Main rounded-lg p-1 flex items-center justify-center">
-                              <div className={`w-4 h-4 `}>
-                                {categoryName == "DIET" && (
-                                  <img src={"/icons/diet.svg"} alt="" />
-                                )}
-                                {categoryName == "ACTIVITY" && (
-                                  <img src={"/icons/weight.svg"} alt="" />
-                                )}
-                                {categoryName == "MIND" && (
-                                  <img src={"/icons/mind.svg"} alt="" />
-                                )}
-                                {categoryName == "SUPPLEMENT" && (
-                                  <img src={"/icons/Supplement.svg"} alt="" />
-                                )}
-                              </div>
+              {Array.from(categories).map((categoryName: any, index) => {
+                return (
+                  <>
+                    <div
+                      key={index}
+                      className={`py-3 rounded-[24px] bg-white border border-Gray-50 shadow-100  relative select-none w-fit  min-w-[300px] max-w-[300px] h-[420px] overflow-auto overflow-x-hidden   `}
+                    >
+                      <div className="flex px-3 pb-1 justify-between items-center border-b  w-full ">
+                        <span className="flex items-center gap-2 TextStyle-Button text-Text-Primary">
+                          <div className="bg-backgroundColor-Main rounded-lg p-1 flex items-center justify-center">
+                            <div className={`w-4 h-4 `}>
+                              {categoryName == 'DIET' && (
+                                <img src={'/icons/diet.svg'} alt="" />
+                              )}
+                              {categoryName == 'ACTIVITY' && (
+                                <img src={'/icons/weight.svg'} alt="" />
+                              )}
+                              {categoryName == 'MIND' && (
+                                <img src={'/icons/mind.svg'} alt="" />
+                              )}
+                              {categoryName == 'SUPPLEMENT' && (
+                                <img src={'/icons/Supplement.svg'} alt="" />
+                              )}
                             </div>
-                            {categoryName}
-                          </span>
-                        </div>      
+                          </div>
+                          {categoryName}
+                        </span>
+                      </div>
 
-                        <ul className="mt-2">
-                          {resolveDataFromCategory(categoryName).map((area:any,areaIndex:number) => (
-                            <li key={areaIndex} className="flex flex-col px-2 my-2">
+                      <ul className="mt-2">
+                        {resolveDataFromCategory(categoryName).map(
+                          (area: any, areaIndex: number) => (
+                            <li
+                              key={areaIndex}
+                              className="flex flex-col px-2 my-2"
+                            >
                               <div className="flex items-center">
                                 {/* <img
                                   src="/icons/arrow-down-green.svg"
@@ -271,7 +270,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                       handleCheckBoxChangeParent(
                                         categoryName,
                                         area.name,
-                                        !area.selected
+                                        !area.selected,
                                       );
                                     }}
                                     className="hidden"
@@ -279,8 +278,8 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                   <div
                                     className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
                                       area.selected
-                                        ? "bg-Primary-DeepTeal"
-                                        : "bg-white"
+                                        ? 'bg-Primary-DeepTeal'
+                                        : 'bg-white'
                                     }`}
                                   >
                                     {area.selected && (
@@ -304,34 +303,35 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                   <span className="text-[10px] text-Text-Secondary mr-1">
                                     Level:
                                   </span>
-                                  <div className={`flex border rounded-[4px] border-Gray-50 bg-Gray-15 `}>
+                                  <div
+                                    className={`flex border rounded-[4px] border-Gray-50 bg-Gray-15 `}
+                                  >
                                     {Array.from(
                                       { length: isNewGenerate ? 0 : 2 },
                                       (_, i) => (
                                         <button
                                           key={i}
                                           onClick={() => {
-                                           if(area.selected){
-                                            setshowOrder(true);
-                                            handleValueChange(
-                                              categoryName,
-                                              area.name,
-                                              i + 1
-                                            );
-                                           }
-                                          
+                                            if (area.selected) {
+                                              setshowOrder(true);
+                                              handleValueChange(
+                                                categoryName,
+                                                area.name,
+                                                i + 1,
+                                              );
+                                            }
                                           }}
                                           className={`w-5 h-5 flex items-center justify-center text-sm ${!area.selected && 'text-[#B0B0B0]'}  ${
                                             area.level === i + 1
-                                              ? " text-Primary-DeepTeal"
-                                              :  "text-[#B0B0B0CC]" 
+                                              ? ' text-Primary-DeepTeal'
+                                              : 'text-[#B0B0B0CC]'
                                           }`}
                                         >
                                           {i + 1}
                                         </button>
-                                      )
+                                      ),
                                     )}
-                                  </div>                                  
+                                  </div>
                                 </label>
                               </div>
                               {/* {expanded[`${categoryName}-${areaIndex}`] && (
@@ -456,15 +456,13 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
                                 </ul>
                               )} */}
                             </li>
-                          ))}
-                        </ul>                                          
-                      </div>                    
-                    </>
-                  )
-                })
-              }
-
-
+                          ),
+                        )}
+                      </ul>
+                    </div>
+                  </>
+                );
+              })}
 
               {/* {Object.entries(allData).map(
                 ([categoryName, category], categoryIndex) => (
@@ -685,10 +683,10 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
             </div>
             <div className="mt-12 w-[192px]  mx-auto flex justify-center">
               <ButtonPrimary
-                   onClick={() => {
-                    onSave(data)
+                onClick={() => {
+                  onSave(data);
                   // navigate(-1)
-                  }}
+                }}
               >
                 <img src="/icons/tick-square.svg" alt="" />
                 Save Changes

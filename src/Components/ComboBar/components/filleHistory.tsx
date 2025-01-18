@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import Application from "../../../api/app";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import Application from '../../../api/app';
+import { useParams } from 'react-router-dom';
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
@@ -12,7 +12,7 @@ export const FilleHistory = () => {
         if (res.data) {
           setData(res.data);
         } else {
-          throw new Error("Unexpected data format");
+          throw new Error('Unexpected data format');
         }
       })
       .catch((err) => {
@@ -61,28 +61,40 @@ export const FilleHistory = () => {
                                 file_id: el.file_id,
                                 member_id: id,
                               }).then((res) => {
-                                const base64Data = res.data.replace(/^data:application\/pdf;base64,/, '');                                console.log(base64Data);
-                                
+                                const base64Data = res.data.replace(
+                                  /^data:application\/pdf;base64,/,
+                                  '',
+                                );
+                                console.log(base64Data);
+
                                 // Convert base64 string to a binary string
                                 const byteCharacters = atob(base64Data);
-                                
+
                                 // Create an array for each character's byte
-                                const byteNumbers = new Array(byteCharacters.length);
-                                for (let i = 0; i < byteCharacters.length; i++) {
+                                const byteNumbers = new Array(
+                                  byteCharacters.length,
+                                );
+                                for (
+                                  let i = 0;
+                                  i < byteCharacters.length;
+                                  i++
+                                ) {
                                   byteNumbers[i] = byteCharacters.charCodeAt(i);
                                 }
-                          
+
                                 // Convert the array to a Uint8Array
                                 const byteArray = new Uint8Array(byteNumbers);
-                          
+
                                 // Create a Blob from the Uint8Array
-                                const blob = new Blob([byteArray], { type: 'application/pdf' });
-                          
+                                const blob = new Blob([byteArray], {
+                                  type: 'application/pdf',
+                                });
+
                                 // Create a link element
                                 const link = document.createElement('a');
                                 link.href = window.URL.createObjectURL(blob);
                                 link.download = 'downloaded-file.pdf'; // Specify the file name
-                          
+
                                 // Append to the body, click and remove
                                 document.body.appendChild(link);
                                 link.click();

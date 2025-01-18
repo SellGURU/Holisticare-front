@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 interface AccordionProps {
   title: string;
@@ -47,35 +46,33 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
         data-isActive={isActive}
         onClick={handleClick}
         className={`flex justify-between bg-black-primary w-full min-h-[48px] h-[48px]  items-center border  border-Gray-50  px-4 py-2 cursor-pointer select-none bg-white ${
-          isActive ? "rounded-t-xl " : "rounded-xl"
+          isActive ? 'rounded-t-xl ' : 'rounded-xl'
         } `}
       >
         <div className="flex items-center gap-1">
           <h2 className={`text-Text-Primary font-medium text-xs xl:text-sm`}>
-            {title}{" "}
-            {time && (
-              <span className=" ml-2 text-xs">
-                {time}
-              </span>
-            )}{" "}
+            {title} {time && <span className=" ml-2 text-xs">{time}</span>}{' '}
           </h2>
           {/* <span className={`${theme}-graphicinfo-btn-number ${!number && "hidden"}`}>
                     ({number})
                 </span> */}
         </div>
-        <img className={`${isActive && "rotate-180"} transition-transform`} src="/icons/arrow-down.svg" alt="" />
+        <img
+          className={`${isActive && 'rotate-180'} transition-transform`}
+          src="/icons/arrow-down.svg"
+          alt=""
+        />
       </div>
       <div
         ref={contentRef}
         style={{ height }}
-        className={`transition-height duration-500 ease-in-out  rounded-xl  ${isActive ? "border border-Gray-50 rounded-t-none" : ""}`}
+        className={`transition-height duration-500 ease-in-out  rounded-xl  ${isActive ? 'border border-Gray-50 rounded-t-none' : ''}`}
         onTransitionEnd={handleTransitionEnd}
       >
         {isActive && (
           <div
             className={`w-full bg-black-background h-full max-h-[420px] overflow-auto flex   flex-col gap-4 p-6 `}
           >
-            
             {children}
           </div>
         )}

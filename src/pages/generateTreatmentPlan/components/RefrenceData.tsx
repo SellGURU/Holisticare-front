@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 interface ReferenceItem {
   [key: string]: {
     content: string;
@@ -27,18 +27,18 @@ const RefrenceModal: React.FC<ConfirmModalProps> = ({
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onClose]);
   if (!isOpen) return null;
   console.log(reference);
-  
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center  border   text-primary-text px-10 lg:px-0 bg-gray-400 bg-opacity-45">
@@ -47,7 +47,7 @@ const RefrenceModal: React.FC<ConfirmModalProps> = ({
           className="bg-backgroundColor-Card border border-Gray-50 shadow-200 z-50 dark:bg-black-secondary rounded-[16px] p-4 w-full max-w-[1260px] max-h-[463px] overflow-y-scroll overflow-x-hidden relative"
         >
           <div className="flex w-full   justify-between text-sm font-medium ">
-            Reference Documents{" "}
+            Reference Documents{' '}
             <button onClick={onClose}>
               <img className="Aurora-icons-close"></img>
             </button>

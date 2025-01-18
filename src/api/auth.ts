@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Api from "./api";
+import Api from './api';
 interface AuthResponse {
   data: {
     access_token: string;
-    permission:any
+    permission: any;
   };
 }
 // const mockUser = {
@@ -27,30 +27,35 @@ class Auth extends Api {
       password: password,
     };
 
-    return this.post("/auth/token", data,{
+    return this.post('/auth/token', data, {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },      
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
     });
   }
-  static signup( username?:string,email?: string, password?: string,google_json?:any){
+  static signup(
+    username?: string,
+    email?: string,
+    password?: string,
+    google_json?: any,
+  ) {
     const data = {
-      user_name : username,
+      user_name: username,
       user_mail: email,
       password: password,
-      google_json:google_json
+      google_json: google_json,
       // clinic_membership_id: ""
     };
 
-    return this.post("/auth/", data, {
+    return this.post('/auth/', data, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   }
 
   static logOut() {
-    return this.post("/auth/log_out")
+    return this.post('/auth/log_out');
   }
 }
 
