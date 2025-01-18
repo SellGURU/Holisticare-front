@@ -20,6 +20,14 @@ const initialTasksData: Task[] = [
     tasks: [
       { name: "Checking new files", isDone: false },
       { name: "Organize new clients profile", isDone: false },
+      { name: "Checking new files", isDone: false },
+      { name: "Organize new clients profile", isDone: false },
+      { name: "Checking new files", isDone: false },
+      { name: "Organize new clients profile", isDone: false },
+      { name: "Checking new files", isDone: false },
+      { name: "Organize new clients profile", isDone: false },
+      { name: "Checking new files", isDone: false },
+      { name: "Organize new clients profile", isDone: false },
     ],
   },
   {
@@ -50,7 +58,7 @@ const Reminder: React.FC = () => {
           Add Reminder
         </ButtonSecondary>
       </div>
-      <div className="max-h-[283px] overflow-y-auto">
+      <div className="max-h-[283px] overflow-y-auto pb-5">
         {tasksData.map((taskGroup, groupIndex) => (
           <div key={`${taskGroup.date}-${groupIndex}`} className="mb-4">
             <div
@@ -70,16 +78,20 @@ const Reminder: React.FC = () => {
                   />
                 )}
                 <span
-                  className={`text-sm font-medium ${
+                  className={`text-xs ${
                     taskGroup.dayLabel === "Today"
                       ? "text-Primary-EmeraldGreen"
-                      : "text-Text-Primary"
+                      : "text-Text-Secondary"
                   }`}
                 >
                   {taskGroup.dayLabel}
                 </span>
               </div>
-              <span className="text-xs text-gray-500">{taskGroup.date}</span>
+              <span  className={`text-xs ${
+                    taskGroup.dayLabel === "Today"
+                      ? "text-Text-Primary"
+                      : "text-Text-Secondary"
+                  }`}>{taskGroup.date}</span>
             </div>
             <ul className="space-y-2">
               {taskGroup.tasks.map((task, taskIndex) => (
@@ -118,7 +130,7 @@ const Reminder: React.FC = () => {
                         </svg>
                       )}
                     </div>
-                    <span className="text-sm">{task.name}</span>
+                    <span className="text-xs text-Text-primary">{task.name}</span>
                   </label>
                 </li>
               ))}
