@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CircularProgressBar from "../../charts/CircularProgressBar"; 
 interface Client {
     name: string;
     id: string;
@@ -71,7 +72,7 @@ const Clients = () => {
             <th className="pb-2 pl-10">ID</th>
             <th className="pb-2">Gender</th>
             <th className="pb-2 pl-1">Enroll Date</th>
-            <th className="pb-2">Progress</th>
+            <th className="pb-2 text-center">Progress</th>
           </tr>
         </thead>
         <tbody>
@@ -87,7 +88,7 @@ const Clients = () => {
               <td className="py-2 text-xs">{client.id}</td>
               <td className="py-2 pl-1 text-xs">{client.gender}</td>
               <td className="py-2 text-xs">{client.enrollDate}</td>
-              <td className="py-2 text-xs pl-2">{client.progress}%</td>
+              <td className="py-2 text-xs "> <CircularProgressBar percentage={client.progress}></CircularProgressBar></td>
             </tr>
           ))}
         </tbody>
