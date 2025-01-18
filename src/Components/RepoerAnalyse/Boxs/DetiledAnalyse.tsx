@@ -6,6 +6,7 @@ import Legends from "../Legends";
 import StatusBarChart from "./StatusBarChart";
 import resolveAnalyseIcon from "../resolveAnalyseIcon";
 import Toggle from "./Toggle";
+import UnitPopUp from "../../UnitPopup";
 
 interface DetiledAnalyseProps {
   data: any;
@@ -49,18 +50,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
-  const [activeUnit, setActiveUnit] = useState(active.unit);
-  const [isUnitOpen, setIsUnitOpen] = useState(false);
-  const units = ["mg/dL", "mmol/L"];
 
-  const handleToggle = () => {
-    setIsUnitOpen(!isUnitOpen);
-  };
-
-  const handleSelect = (unit: string) => {
-    setActiveUnit(unit);
-    setIsUnitOpen(false);
-  };
   return (
     <>
       <div
@@ -208,42 +198,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               )}
                             </div>
                           </div>
-                          <div className="relative z-50">
-                              <div
-                                onClick={handleToggle}
-                                className="w-[70px] cursor-pointer  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
-                              >
-                                <div className="text-Primary-DeepTeal text-[10px]">
-                                  {activeUnit}
-                                </div>
-                                <div className="w-[16px]">
-                                  <img
-                                    className={`${
-                                      isUnitOpen ? "rotate-180" : ""
-                                    }`}
-                                    src="/icons/arrow-down-green.svg"
-                                    alt=""
-                                  />
-                                </div>
-                              </div>
-                              {isUnitOpen && (
-                                <div className="absolute mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
-                                  {units.map((unit) => (
-                                    <div
-                                      key={unit}
-                                      onClick={() => handleSelect(unit)}
-                                      className={`p-2 text-[10px] ${
-                                        unit === activeUnit
-                                          ? "text-Primary-DeepTeal"
-                                          : "text-gray-500"
-                                      } cursor-pointer hover:bg-gray-100`}
-                                    >
-                                      {unit}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
+                          <div className="relative z-50 mr-36">
+                              <UnitPopUp active={active}></UnitPopUp>
+                          </div>
 
                         </div>
                         {active && (
@@ -257,41 +214,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className="TextStyle-Headline-6 flex justify-between  pr-[140px] items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end items-center  mt-[-8px]  gap-2">
-                            <div className="relative z-50">
-                              <div
-                                onClick={handleToggle}
-                                className="w-[70px] cursor-pointer  flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
-                              >
-                                <div className="text-Primary-DeepTeal text-[10px]">
-                                  {activeUnit}
-                                </div>
-                                <div className="w-[16px]">
-                                  <img
-                                    className={`${
-                                      isUnitOpen ? "rotate-180" : ""
-                                    }`}
-                                    src="/icons/arrow-down-green.svg"
-                                    alt=""
-                                  />
-                                </div>
-                              </div>
-                              {isUnitOpen && (
-                                <div className="absolute mt-1 w-[70px] bg-white border border-gray-200 rounded shadow-md">
-                                  {units.map((unit) => (
-                                    <div
-                                      key={unit}
-                                      onClick={() => handleSelect(unit)}
-                                      className={`p-2 text-[10px] ${
-                                        unit === activeUnit
-                                          ? "text-Primary-DeepTeal"
-                                          : "text-gray-500"
-                                      } cursor-pointer hover:bg-gray-100`}
-                                    >
-                                      {unit}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
+                            <div className="relative z-50 ">
+                              <UnitPopUp active={active}></UnitPopUp>
                             </div>
 
                             <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">

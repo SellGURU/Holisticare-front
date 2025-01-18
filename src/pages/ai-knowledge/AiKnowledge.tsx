@@ -12,6 +12,7 @@ import chroma from "chroma-js";
 import { useLayoutCircular } from "@react-sigma/layout-circular";
 import Application from "../../api/app.ts";
 import SearchBox from "../../Components/SearchBox/index.tsx";
+import Circleloader from "../../Components/CircleLoader/index.tsx";
 
 interface LoadGraphProps {
   activeFilters: string[];
@@ -207,24 +208,7 @@ const AiKnowledge = () => {
         style={{ height: window.innerHeight - 50, width: window.innerWidth }}
       >
         {isLoading && (
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "35%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 1000,
-              padding: "10px",
-              borderRadius: "5px",
-              textAlign: "center",
-            }}
-          >
-            <div className="spinner">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="dot"></div>
-              ))}
-            </div>
-          </div>
+          <Circleloader></Circleloader>
         )}
         <LoadGraph
           graphData={graphData}

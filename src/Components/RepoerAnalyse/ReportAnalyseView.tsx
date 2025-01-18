@@ -31,6 +31,7 @@ import { useLocation } from 'react-router-dom';
 // import { useConstructor } from "@/help"
 import { publish } from "../../utils/event"
 import InfoToltip from "../InfoToltip"
+import Circleloader from "../CircleLoader"
 interface ReportAnalyseViewprops {
     clientData?:any,
     memberID? : number | null
@@ -190,16 +191,8 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
     return (
         <>        
          {loading ? (
-
                 <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-                {" "}
-                
-                <div className="spinner">
-                    {[...Array(8)].map((_, i) => (
-                    <div key={i} className="dot"></div>
-                    ))}
-                </div>
-                {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
+                    <Circleloader></Circleloader>
                 </div>
                 ): (
                     <>
@@ -377,11 +370,7 @@ const ReportAnalyseView:React.FC<ReportAnalyseViewprops> = ({
                                         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
                                         {" "}
                                         
-                                        <div className="spinner">
-                                            {[...Array(8)].map((_, i) => (
-                                            <div key={i} className="dot"></div>
-                                            ))}
-                                        </div>
+                                        <Circleloader></Circleloader>
                                         <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re analyzing your test results to create a detailed health plan. This may take a moment.</div>
                                         </div>                                    
                                     </>
