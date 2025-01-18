@@ -1,90 +1,80 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ColumnDef } from "@tanstack/react-table";
-import { Link } from "react-router-dom";
-import { FiExternalLink } from "react-icons/fi";
-import Badge from "../badge";
+import { ColumnDef } from '@tanstack/react-table';
+import { Link } from 'react-router-dom';
+import { FiExternalLink } from 'react-icons/fi';
+import Badge from '../badge';
 // import { PiChatBold } from "react-icons/pi";
 // import { useSelector } from "react-redux";
 // import { Application } from "@/api";
-import { publish } from "../../utils/event";
-import CircularProgressBar from "../charts/CircularProgressBar";
-// eslint-disable-next-line react-refresh/only-export-components
+import { publish } from '../../utils/event';
+import CircularProgressBar from '../charts/CircularProgressBar';
 
 export const columns: ColumnDef<any>[] = [
   {
-    accessorKey: "name",
-    header: "Client Name",
+    accessorKey: 'name',
+    header: 'Client Name',
     enableSorting: false,
 
     cell: ({ row }) => {
-        console.log(row);
-        
+      console.log(row);
+
       return (
         <div className="w-[15vw]">
-
-     
-        <Link to={`/report/${row.original.member_id}/${row.original.name}`} className={"w-fit"}>
-          <div className="flex items-center justify-start gap-2 ">
-            <img
-              className="w-10 h-10 border rounded-full"
-              src={row.original?.picture!= ''?row.original?.picture:`https://ui-avatars.com/api/?name=${row.original.name}`}
-              alt={`${row.original?.name} image`}
-            />
-            <div className="font-semibold text-nowrap flex items-center gap-3">
+          <Link
+            to={`/report/${row.original.member_id}/${row.original.name}`}
+            className={'w-fit'}
+          >
+            <div className="flex items-center justify-start gap-2 ">
+              <img
+                className="w-10 h-10 border rounded-full"
+                src={
+                  row.original?.picture != ''
+                    ? row.original?.picture
+                    : `https://ui-avatars.com/api/?name=${row.original.name}`
+                }
+                alt={`${row.original?.name} image`}
+              />
+              <div className="font-semibold text-nowrap flex items-center gap-3">
                 {row.original?.name || 'No Data'}
                 <FiExternalLink />
               </div>
-            
-            
-          </div>
-        </Link>
+            </div>
+          </Link>
         </div>
       );
     },
   },
   {
-    accessorKey: "member_id",
-    header: "Member ID",
+    accessorKey: 'member_id',
+    header: 'Member ID',
     enableSorting: false,
     cell: ({ row }) => {
       return (
-       
         <div className="flex justify-center ">
           {row.original?.member_id || 'No Data'}
         </div>
-      )
-    }
+      );
+    },
   },
   {
-    accessorKey: "age",
-    header: "Age",
+    accessorKey: 'age',
+    header: 'Age',
     enableSorting: false,
     cell: ({ row }) => {
-      return (
-     
-
-        <div className="">
-          {row.original?.age || '-'}
-        </div>
-      )
-    }    
+      return <div className="">{row.original?.age || '-'}</div>;
+    },
   },
   {
-    accessorKey: "sex",
-    header: "Gender",
+    accessorKey: 'sex',
+    header: 'Gender',
     enableSorting: false,
     cell: ({ row }) => {
-      return (
-
-        <div className="">
-          {row.original?.sex || 'No Data'}
-        </div>
-      )
-    }    
+      return <div className="">{row.original?.sex || 'No Data'}</div>;
+    },
   },
   {
-    accessorKey: "weight",
-    header: "Weight",
+    accessorKey: 'weight',
+    header: 'Weight',
     enableSorting: false,
 
     cell: ({ row }) => {
@@ -96,10 +86,10 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: "height",
+    accessorKey: 'height',
     enableSorting: false,
 
-    header: "Height",
+    header: 'Height',
     cell: ({ row }) => {
       return (
         <div className="flex items-center justify-center">
@@ -109,64 +99,59 @@ export const columns: ColumnDef<any>[] = [
     },
   },
   {
-    accessorKey: "enroll_date",
-    header: "Enroll Date",
+    accessorKey: 'enroll_date',
+    header: 'Enroll Date',
     enableSorting: false,
     cell: ({ row }) => {
-      return (
-  
-
-        <div className="">
-          {row.original.enroll_date || "NO Data"}
-        </div>
-      )
-    }    
+      return <div className="">{row.original.enroll_date || 'NO Data'}</div>;
+    },
   },
   // {
   //   accessorKey: "information.last_followup",
   //   header: "Last Follow-Up",
   // },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: 'status',
+    header: 'Status',
     enableSorting: false,
-    
+
     cell: ({ row }) => {
-        console.log(row);
-        
+      console.log(row);
+
       return (
-        
         <div className="items-center justify-center  flex ">
-        <Badge  status={row.original.status || 'at-risk'}>
-          {row.original.status || 'No Data'}
-        </Badge>
+          <Badge status={row.original.status || 'at-risk'}>
+            {row.original.status || 'No Data'}
+          </Badge>
         </div>
       );
     },
   },
   {
-    accessorKey: "score",
-    header: "Score",
+    accessorKey: 'score',
+    header: 'Score',
     enableSorting: false,
 
     cell: ({ row }) => {
       return (
-       <div className="text-Text-Primary ">
-        {row.original.score} <span className="text-Text-Secondary">/10</span>
-       </div>
+        <div className="text-Text-Primary ">
+          {row.original.score} <span className="text-Text-Secondary">/10</span>
+        </div>
       );
     },
   },
   {
-    accessorKey: "information.progress",
-    header: "Progress",
+    accessorKey: 'information.progress',
+    header: 'Progress',
     enableSorting: false,
 
     cell: ({ row }) => {
-      
       return (
-       <div>
-<CircularProgressBar percentage={row.original?.progress}></CircularProgressBar>       </div>
+        <div>
+          <CircularProgressBar
+            percentage={row.original?.progress}
+          ></CircularProgressBar>{' '}
+        </div>
       );
     },
   },
@@ -222,31 +207,43 @@ export const columns: ColumnDef<any>[] = [
   // },
 
   {
-    accessorKey: "",
-    header: "Action",
+    accessorKey: '',
+    header: 'Action',
     enableSorting: false,
-   cell: ({ row }) => {
-    const handleInvitation = (type:string) => {
+    cell: ({ row }) => {
+      const handleInvitation = (type: string) => {
         publish(`send${type}`, {
           id: row.original.member_id,
           name: row.original.name,
-          email: row.original.email
+          email: row.original.email,
         });
-    
       };
       return (
         <div className="flex justify-center w-full gap-2">
-            <img onClick={() => handleInvitation('Email')} src="/icons/sms-tracking.svg" alt="" className="cursor-pointer" />
-          <img onClick={() => {
-            publish("confirmDelete",{id:row.original.member_id,name:row.original.name})
-            // const status = confirm("delete this member?")
-            // if(status){
-            //   Application.deleteClinic({
-            //     member_id:row.original.information.member_id
-            //   })
-            // }
-            // console.log(row.original.information.member_id)
-          }} className="cursor-pointer" src="/icons/delete-green.svg" alt="" />
+          <img
+            onClick={() => handleInvitation('Email')}
+            src="/icons/sms-tracking.svg"
+            alt=""
+            className="cursor-pointer"
+          />
+          <img
+            onClick={() => {
+              publish('confirmDelete', {
+                id: row.original.member_id,
+                name: row.original.name,
+              });
+              // const status = confirm("delete this member?")
+              // if(status){
+              //   Application.deleteClinic({
+              //     member_id:row.original.information.member_id
+              //   })
+              // }
+              // console.log(row.original.information.member_id)
+            }}
+            className="cursor-pointer"
+            src="/icons/delete-green.svg"
+            alt=""
+          />
         </div>
       );
     },

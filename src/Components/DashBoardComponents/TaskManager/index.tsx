@@ -1,54 +1,54 @@
-import React, { useState } from "react";
-import { ButtonSecondary } from "../../Button/ButtosSecondary";
+import React, { useState } from 'react';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 
 type Task = {
   id: number;
   title: string;
   date: string;
-  status: "To Do" | "In Progress";
-  priority: "Low" | "Medium" | "High";
+  status: 'To Do' | 'In Progress';
+  priority: 'Low' | 'Medium' | 'High';
   checked: boolean;
 };
 
 const initialTasks: Task[] = [
   {
     id: 1,
-    title: "Update sam meal plan",
-    date: "04/25/2024",
-    status: "In Progress",
-    priority: "High",
+    title: 'Update sam meal plan',
+    date: '04/25/2024',
+    status: 'In Progress',
+    priority: 'High',
     checked: false,
   },
   {
     id: 2,
-    title: "Checking new files",
-    date: "04/25/2024",
-    status: "To Do",
-    priority: "High",
+    title: 'Checking new files',
+    date: '04/25/2024',
+    status: 'To Do',
+    priority: 'High',
     checked: false,
   },
   {
     id: 3,
-    title: "Organize new clients profile",
-    date: "04/25/2024",
-    status: "In Progress",
-    priority: "Medium",
+    title: 'Organize new clients profile',
+    date: '04/25/2024',
+    status: 'In Progress',
+    priority: 'Medium',
     checked: false,
   },
   {
     id: 4,
-    title: "Update john nutrition plan",
-    date: "04/25/2024",
-    status: "To Do",
-    priority: "Low",
+    title: 'Update john nutrition plan',
+    date: '04/25/2024',
+    status: 'To Do',
+    priority: 'Low',
     checked: false,
   },
   {
     id: 5,
-    title: "Set exercise plan for Mike",
-    date: "04/25/2024",
-    status: "To Do",
-    priority: "Medium",
+    title: 'Set exercise plan for Mike',
+    date: '04/25/2024',
+    status: 'To Do',
+    priority: 'Medium',
     checked: false,
   },
   // Add more tasks as needed
@@ -71,8 +71,8 @@ const TaskManager: React.FC = () => {
   const handleCheckBoxChange = (id: number) => {
     setTasks(
       tasks.map((task) =>
-        task.id === id ? { ...task, checked: !task.checked } : task
-      )
+        task.id === id ? { ...task, checked: !task.checked } : task,
+      ),
     );
   };
   return (
@@ -83,13 +83,12 @@ const TaskManager: React.FC = () => {
           <div className="rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn">
             <img className="w-4 h-4" src="/icons/filter.svg" alt="" />
           </div>
-        <ButtonSecondary>
-          {" "}
-          <img src="/icons/add.svg" alt="" />
-          Add A New Task
-        </ButtonSecondary>
+          <ButtonSecondary>
+            {' '}
+            <img src="/icons/add.svg" alt="" />
+            Add A New Task
+          </ButtonSecondary>
         </div>
-       
       </div>
       <ul className="grid grid-cols-2 gap-3 mb-4 min-h-[191px]">
         {currentTasks.map((task) => (
@@ -102,7 +101,7 @@ const TaskManager: React.FC = () => {
                 className="flex items-center mb-2 cursor-pointer gap-2"
                 htmlFor={task.title}
               >
-                {" "}
+                {' '}
                 <input
                   type="checkbox"
                   id={task.title}
@@ -112,7 +111,7 @@ const TaskManager: React.FC = () => {
                 />
                 <div
                   className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                    task.checked ? "bg-Primary-DeepTeal" : "bg-white"
+                    task.checked ? 'bg-Primary-DeepTeal' : 'bg-white'
                   }`}
                 >
                   {task.checked && (
@@ -135,9 +134,9 @@ const TaskManager: React.FC = () => {
 
               <span
                 className={`text-xs rounded-2xl py-[2px] px-[9px] text-[8px] flex items-center gap-1 ${
-                  task.status === "In Progress"
-                    ? "bg-[#06C78D1A] bg-opacity-10 text-[#06C78D]"
-                    : "bg-[#4C88FF1A] text-[#4C88FF] bg-opacity-10"
+                  task.status === 'In Progress'
+                    ? 'bg-[#06C78D1A] bg-opacity-10 text-[#06C78D]'
+                    : 'bg-[#4C88FF1A] text-[#4C88FF] bg-opacity-10'
                 }`}
               >
                 {task.status}
@@ -155,11 +154,11 @@ const TaskManager: React.FC = () => {
 
               <span
                 className={`text-xs flex items-center gap-1 ${
-                  task.priority === "High"
-                    ? "text-[#FC5474]"
-                    : task.priority === "Medium"
-                    ? "text-[#FFBD59]"
-                    : "text-Text-Secondary"
+                  task.priority === 'High'
+                    ? 'text-[#FC5474]'
+                    : task.priority === 'Medium'
+                      ? 'text-[#FFBD59]'
+                      : 'text-Text-Secondary'
                 }`}
               >
                 <img
@@ -186,7 +185,7 @@ const TaskManager: React.FC = () => {
             key={number}
             onClick={() => handleClick(number)}
             className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A]  text-[9.75px] font-semibold cursor-pointer ${
-              currentPage === number ? "bg-[#005F73] text-white" : "bg-white"
+              currentPage === number ? 'bg-[#005F73] text-white' : 'bg-white'
             }`}
           >
             {number}

@@ -29,19 +29,19 @@ const ActivityMenu: React.FC<ActivityMenuProps> = ({
                 data-tooltip-content={menu.name}
                 className={` ${
                   activeMenu === menu.name
-                    ? "bg-Primary-DeepTeal text-white "
-                    : "bg-Secondary-SelverGray"
+                    ? 'bg-Primary-DeepTeal text-white '
+                    : 'bg-Secondary-SelverGray'
                 }  min-w-[105px] w-[105px] h-[20px] flex items-center  justify-center cursor-pointer border border-Gray-50 rounded-[16px]   `}
               >
                 {menu.name.length > 12
-                  ? menu.name.substring(0, 12) + " ..."
+                  ? menu.name.substring(0, 12) + ' ...'
                   : menu.name}
                 {menu.value && (
                   <div
                     className={`rounded-[16px]  w-4 h-4 text-[9px]  flex justify-center items-center ml-1 ${
                       activeMenu === menu.name
-                        ? "dark:bg-black-primary"
-                        : "dark:bg-main-border"
+                        ? 'dark:bg-black-primary'
+                        : 'dark:bg-main-border'
                     }`}
                   >
                     {menu.value}

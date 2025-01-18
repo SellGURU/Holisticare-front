@@ -1,46 +1,37 @@
 [
-    {
-        "category": "Cardiovascular and Respiratory Health",
-        "total_biomarkers": 2,
-        "total_needs_focus": 2,
-        "tags": [
-            "Need Focus",
-            "Client Goals"
-        ],
-        "checked": true
-    },
-    {
-        "category": "Organ Health and Function",
-        "total_biomarkers": 5,
-        "total_needs_focus": 1,
-        "tags": [
-            "Need Focus"
-        ],
-        "checked": true
-    },
-    {
-        "category": "Urinary Health",
-        "total_biomarkers": 0,
-        "total_needs_focus": 0,
-        "tags": [],
-        "checked": false
-    },
-    {
-        "category": "Metabolic and Nutritional Health",
-        "total_biomarkers": 4,
-        "total_needs_focus": 0,
-        "tags": [
-            "Client Goals"
-        ],
-        "checked": true
-    },
-    {
-        "category": "Immune, Inflammation, and Hormonal Health",
-        "total_biomarkers": 8,
-        "total_needs_focus": 1,
-        "tags": [
-            "Need Focus"
-        ],
-        "checked": true
-    }
+  {
+    "category": "Cardiovascular and Respiratory Health",
+    "total_biomarkers": 2,
+    "total_needs_focus": 2,
+    "tags": ["Need Focus", "Client Goals"],
+    "checked": true
+  },
+  {
+    "category": "Organ Health and Function",
+    "total_biomarkers": 5,
+    "total_needs_focus": 1,
+    "tags": ["Need Focus"],
+    "checked": true
+  },
+  {
+    "category": "Urinary Health",
+    "total_biomarkers": 0,
+    "total_needs_focus": 0,
+    "tags": [],
+    "checked": false
+  },
+  {
+    "category": "Metabolic and Nutritional Health",
+    "total_biomarkers": 4,
+    "total_needs_focus": 0,
+    "tags": ["Client Goals"],
+    "checked": true
+  },
+  {
+    "category": "Immune, Inflammation, and Hormonal Health",
+    "total_biomarkers": 8,
+    "total_needs_focus": 1,
+    "tags": ["Need Focus"],
+    "checked": true
+  }
 ]

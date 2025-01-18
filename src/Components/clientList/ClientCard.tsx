@@ -1,19 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import { useState, useRef } from "react";
-import { ButtonPrimary } from "../Button/ButtonPrimary.tsx";
-import Application from "../../api/app.ts";
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { useState, useRef } from 'react';
+import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
+import Application from '../../api/app.ts';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({
-  client,
-  ondelete,
-}) => {
+const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -25,7 +22,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-    const handleToggleFavorite = async () => {
+  const handleToggleFavorite = async () => {
     try {
       // Call API to toggle favorite status
       await Application.addFavorite({
@@ -34,15 +31,15 @@ const ClientCard: React.FC<ClientCardProps> = ({
       });
 
       // Update the local state to reflect the change
-      client.favorite = !client.favorite; 
+      client.favorite = !client.favorite;
       setshowModal(false);
     } catch (error) {
-      console.error("Error updating favorite status:", error);
+      console.error('Error updating favorite status:', error);
     }
   };
 
   console.log(client);
-  
+
   return (
     <>
       <div className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
@@ -70,11 +67,14 @@ const ClientCard: React.FC<ClientCardProps> = ({
               Send to Archieve
             </div>
             <div
-                           onClick={handleToggleFavorite}
+              onClick={handleToggleFavorite}
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
-              { client.favorite? "Remove from favorite" : "Add to favorite"}            </div>
+              {client.favorite
+                ? 'Remove from favorite'
+                : 'Add to favorite'}{' '}
+            </div>
           </div>
         )}
         <div
@@ -96,7 +96,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               }
               alt=""
             />
-         {client.favorite  && (
+            {client.favorite && (
               <img
                 className="absolute bottom-0 right-0"
                 src="/icons/Icon_star.svg"
@@ -109,7 +109,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               {client.name}
             </div>
             <div className="text-Text-Secondary text-[12px]">
-              {client.age} years{" "}
+              {client.age} years{' '}
             </div>
             <div className="text-Text-Secondary text-[12px]">
               ID: {client.member_id}
@@ -136,7 +136,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
             }}
             size="small"
           >
-            {" "}
+            {' '}
             {/* <img src="/icons/Assign.svg" alt="" /> */}
             Health Plan
           </ButtonPrimary>
@@ -144,7 +144,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
         <div className="w-full mt-2   flex justify-between">
           <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
             <div className="flex flex-col gap-1">
-              {" "}
+              {' '}
               <div className="text-[10px] text-Text-Secondary">Enroll Date</div>
               <div className="text-Text-Primary text-xs">
                 {client.enroll_date}

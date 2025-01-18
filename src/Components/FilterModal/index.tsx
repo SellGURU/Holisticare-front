@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState,useRef  } from "react";
-import { ButtonPrimary } from "../Button/ButtonPrimary";
+import { useState, useRef } from 'react';
+import { ButtonPrimary } from '../Button/ButtonPrimary';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 type GenderFilter = {
   male: boolean;
   female: boolean;
@@ -28,14 +28,14 @@ type Filters = {
 type FilterModalProps = {
   onApplyFilters: (filters: Filters) => void;
   onClearFilters: () => void;
-  onClose:()=>void;
-  filters:any
+  onClose: () => void;
+  filters: any;
 };
 const FilterModal: React.FC<FilterModalProps> = ({
   onApplyFilters,
   onClearFilters,
   onClose,
-  filters
+  filters,
 }) => {
   const [gender, setGender] = useState<GenderFilter>({
     male: filters.gender.male,
@@ -53,7 +53,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const handleApply = () => {
     onApplyFilters({ gender, status, enrollDate });
-    onClose()
+    onClose();
   };
 
   const handleClear = () => {
@@ -61,12 +61,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
     setStatus({ normal: false, atRisk: false, critical: false });
     setEnrollDate({ from: null, to: null });
     onClearFilters();
-    onClose()
+    onClose();
   };
 
   const formatDate = (date: Date | null) => {
     if (!date) return '';
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    };
     return date.toLocaleDateString(undefined, options);
   };
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +80,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
     close: onClose,
   });
   return (
-    <div ref={modalRef} className="absolute right-0 top-10 w-[400px] bg-white rounded-[16px] shadow-800 p-4 z-50 text-Text-Primary">
+    <div
+      ref={modalRef}
+      className="absolute right-0 top-10 w-[400px] bg-white rounded-[16px] shadow-800 p-4 z-50 text-Text-Primary"
+    >
       <div className="space-y-6">
         {/* Header */}
         {/* <div className="flex justify-between items-center border-b pb-4">
@@ -106,7 +113,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  gender.male ? "bg-Primary-DeepTeal" : "bg-white"
+                  gender.male ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
                 {gender.male && (
@@ -127,7 +134,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               <span className="text-xs text-Text-Secondary">Male</span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
-            <input
+              <input
                 type="checkbox"
                 checked={gender.female}
                 onChange={(e) =>
@@ -137,7 +144,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  gender.female ? "bg-Primary-DeepTeal" : "bg-white"
+                  gender.female ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
                 {gender.female && (
@@ -174,9 +181,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 }
                 className="hidden"
               />
-               <div
+              <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.normal ? "bg-Primary-DeepTeal" : "bg-white"
+                  status.normal ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
                 {status.normal && (
@@ -208,9 +215,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 }
                 className="hidden"
               />
-                <div
+              <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.atRisk ? "bg-Primary-DeepTeal" : "bg-white"
+                  status.atRisk ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
                 {status.atRisk && (
@@ -242,9 +249,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 }
                 className="hidden"
               />
-               <div
+              <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.critical ? "bg-Primary-DeepTeal" : "bg-white"
+                  status.critical ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
                 {status.critical && (
@@ -273,39 +280,43 @@ const FilterModal: React.FC<FilterModalProps> = ({
         <div className=" w-full flex items-center gap-7">
           <h3 className="text-xs font-medium text-nowrap">Enroll Date</h3>
           <div className="w-full flex  gap-3">
-      <div className="relative">
-        <DatePicker
-          selected={enrollDate.from}
-          onChange={(date) => setEnrollDate({ ...enrollDate, from: date })}
-          customInput={
-            <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
-              From {formatDate(enrollDate.from)} <img src="/icons/calendar-3.svg" alt="" />
-            </button>
-          }
-        />
-      </div>
+            <div className="relative">
+              <DatePicker
+                selected={enrollDate.from}
+                onChange={(date) =>
+                  setEnrollDate({ ...enrollDate, from: date })
+                }
+                customInput={
+                  <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                    From {formatDate(enrollDate.from)}{' '}
+                    <img src="/icons/calendar-3.svg" alt="" />
+                  </button>
+                }
+              />
+            </div>
 
-      <div className="relative">
-        <DatePicker
-          selected={enrollDate.to}
-          onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
-          customInput={
-            <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
-              To {formatDate(enrollDate.to)} <img src="/icons/calendar-3.svg" alt="" />
-            </button>
-          }
-        />
-      </div>
-    </div>
+            <div className="relative">
+              <DatePicker
+                selected={enrollDate.to}
+                onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
+                customInput={
+                  <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                    To {formatDate(enrollDate.to)}{' '}
+                    <img src="/icons/calendar-3.svg" alt="" />
+                  </button>
+                }
+              />
+            </div>
+          </div>
         </div>
 
         {/* Footer Buttons */}
         <div className=" w-full flex justify-center  gap-3 items-center ">
           <ButtonPrimary
             style={{
-              color: "#005F73",
-              backgroundColor: "#FDFDFD",
-              width: "100%",
+              color: '#005F73',
+              backgroundColor: '#FDFDFD',
+              width: '100%',
             }}
             ClassName="shadow-Btn"
             onClick={handleClear}
@@ -318,7 +329,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           >
             Clear
           </button> */}
-          <ButtonPrimary style={{ width: "100%" }} onClick={handleApply}>
+          <ButtonPrimary style={{ width: '100%' }} onClick={handleApply}>
             <img src="/icons/tick-square.svg" alt="" />
             Apply Filters
           </ButtonPrimary>

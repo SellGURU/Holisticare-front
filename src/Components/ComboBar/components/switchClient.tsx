@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
-import Application from "../../../api/app";
-import SearchBox from "../../SearchBox";
-import StatusMenu from "../../StatusMenu";
-import { ClientCard } from "../../../pages/driftAnaysis/ClientCard";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import Application from '../../../api/app';
+import SearchBox from '../../SearchBox';
+import StatusMenu from '../../StatusMenu';
+import { ClientCard } from '../../../pages/driftAnaysis/ClientCard';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import { useNavigate, useParams } from 'react-router-dom';
 interface Patient {
   email: string;
   name: string;
@@ -19,42 +19,42 @@ interface Patient {
 
 export const SwitchClient = () => {
   const { id } = useParams<{ id: string }>();
-  console.log(id)
+  console.log(id);
   const [activeMemberID, setActiveMemberID] = useState<any>(Number(id));
-  
-  const [activeStatus, setActiveStatus] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const [activeStatus, setActiveStatus] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [patients, setPatients] = useState<Patient[]>([
     {
-      email: "",
+      email: '',
       member_id: 1,
-      name: "",
-      status: "",
-      picture: "",
-      sex: "",
+      name: '',
+      status: '',
+      picture: '',
+      sex: '',
       age: 0,
       tags: [],
     },
   ]);
   const navigate = useNavigate();
   const resolvedFiltersData = () => {
-    if (searchQuery != "" && activeStatus != "All") {
+    if (searchQuery != '' && activeStatus != 'All') {
       return patients.filter(
         (el) =>
           el.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          el.status == activeStatus
+          el.status == activeStatus,
       );
     } else {
-      if (activeStatus != "All") {
+      if (activeStatus != 'All') {
         return patients.filter((el) => {
           return el.status == activeStatus;
         });
-      } else if (searchQuery != "") {
+      } else if (searchQuery != '') {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
         return patients.filter((el) =>
-          el.name.toUpperCase().includes(searchQuery.toUpperCase())
+          el.name.toUpperCase().includes(searchQuery.toUpperCase()),
         );
-      } else if (searchQuery == "" && activeStatus == "All") {
+      } else if (searchQuery == '' && activeStatus == 'All') {
         return patients;
       }
     }
@@ -76,20 +76,20 @@ export const SwitchClient = () => {
   useEffect(() => {
     if (activeMemberID != null) {
       setActivePatent(
-        patients.filter((el) => el.member_id == activeMemberID)[0]
+        patients.filter((el) => el.member_id == activeMemberID)[0],
       );
     }
-  }, [activeMemberID,id]);
+  }, [activeMemberID, id]);
   const status: Array<string> = [
-    "All",
-    "Need to check",
-    "Checked",
-    "Incomplete Data",
+    'All',
+    'Need to check',
+    'Checked',
+    'Incomplete Data',
   ];
   const handleSaveChanges = () => {
     if (activeMemberID !== null) {
       const activeClient = patients.find(
-        (client) => client.member_id === activeMemberID
+        (client) => client.member_id === activeMemberID,
       );
 
       if (activeClient) {
@@ -138,12 +138,10 @@ export const SwitchClient = () => {
         </>
       </div>
       <div className="w-full flex justify-center mt-6">
-
-    
-      <ButtonPrimary onClick={handleSaveChanges}>
-        <img src="/icons/tick-square.svg" alt="" />
-        Save Changes
-      </ButtonPrimary>
+        <ButtonPrimary onClick={handleSaveChanges}>
+          <img src="/icons/tick-square.svg" alt="" />
+          Save Changes
+        </ButtonPrimary>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { useSelector } from "react-redux";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -148,81 +148,86 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
   //   return days;
   // };
 
-const getCurrentMonthWithBuffer = () => {
-  const today = new Date();
+  const getCurrentMonthWithBuffer = () => {
+    const today = new Date();
 
-  // Get the first day and last day of the current month
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    // Get the first day and last day of the current month
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+    );
 
-  // Calculate the start date (3 days before the first day of the month)
-  const startDate:any = new Date(firstDayOfMonth);
-  // startDate.setDate(firstDayOfMonth.getDate() - 3);
+    // Calculate the start date (3 days before the first day of the month)
+    const startDate: any = new Date(firstDayOfMonth);
+    // startDate.setDate(firstDayOfMonth.getDate() - 3);
 
-  // Adjust the startDate to the nearest previous Sunday
-  while (startDate.getDay() !== 1) {
-    startDate.setDate(startDate.getDate() - 1);
-  }
+    // Adjust the startDate to the nearest previous Sunday
+    while (startDate.getDay() !== 1) {
+      startDate.setDate(startDate.getDate() - 1);
+    }
 
-  // Calculate the end date (3 days after the last day of the month)
-  const endDate:any = new Date(lastDayOfMonth);
-  // endDate.setDate(lastDayOfMonth.getDate() + 3);
+    // Calculate the end date (3 days after the last day of the month)
+    const endDate: any = new Date(lastDayOfMonth);
+    // endDate.setDate(lastDayOfMonth.getDate() + 3);
 
-  // Adjust the endDate to ensure the total number of days is a multiple of 7
-  while ((endDate - startDate+ (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24) % 7 !== 0) {
-    endDate.setDate(endDate.getDate() + 1);
-  }
+    // Adjust the endDate to ensure the total number of days is a multiple of 7
+    while (
+      ((endDate - startDate + 1000 * 60 * 60 * 24) / (1000 * 60 * 60 * 24)) %
+        7 !==
+      0
+    ) {
+      endDate.setDate(endDate.getDate() + 1);
+    }
 
-  const days = [];
+    const days = [];
 
-  // Loop through the dates from startDate to endDate
-  for (
-    let date = new Date(startDate);
-    date <= endDate;
-    date.setDate(date.getDate() + 1)
-  ) {
-    const dayNumber = date.getDate();
-    const dayName = date.toLocaleString("en-US", { weekday: "long" });
-    const monthName = date.toLocaleString("en-US", { month: "long" });
+    // Loop through the dates from startDate to endDate
+    for (
+      let date = new Date(startDate);
+      date <= endDate;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const dayNumber = date.getDate();
+      const dayName = date.toLocaleString('en-US', { weekday: 'long' });
+      const monthName = date.toLocaleString('en-US', { month: 'long' });
 
-    days.push({
-      dayNumber,
-      dayName,
-      monthName,
-      dateObject: new Date(date), // Create a new Date object to avoid mutation
-    });
-  }
+      days.push({
+        dayNumber,
+        dayName,
+        monthName,
+        dateObject: new Date(date), // Create a new Date object to avoid mutation
+      });
+    }
 
-  return days;
-};
-
-
-
+    return days;
+  };
 
   const [currenDay, setCurrentDay] = useState(0);
-  const [currenMonth, setCurrentMonth] = useState("");
+  const [currenMonth, setCurrentMonth] = useState('');
   useEffect(() => {
     // Get the current month's name when the component mounts
     const today = new Date();
-    const currentMonth = today.toLocaleString("en-US", { month: "long" });
+    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
     const monthName = today.getDate();
     setCurrentDay(monthName);
     setCurrentMonth(currentMonth);
   }, []); // Empty dependency array ensures this runs only once
-  const resolveIcon = (category:any)=>{
-    if(category== "Diet"){
-      return "/icons/diet.svg"
+  const resolveIcon = (category: any) => {
+    if (category == 'Diet') {
+      return '/icons/diet.svg';
     }
-    if(category == "Activity"){
-      return "/icons/weight.svg"
+    if (category == 'Activity') {
+      return '/icons/weight.svg';
     }
-    if(category == "Supplement"){
-      return "/icons/Supplement.svg"
+    if (category == 'Supplement') {
+      return '/icons/Supplement.svg';
     }
-    if(category == "Mind"){
-      return "/icons/mind.svg"
+    if (category == 'Mind') {
+      return '/icons/mind.svg';
     }
-  }
+  };
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   return (
@@ -245,11 +250,11 @@ const getCurrentMonthWithBuffer = () => {
             const activitiesForTheDay = data.filter(
               (el: any) =>
                 new Date(el.date).toDateString() ===
-                day.dateObject.toDateString()
+                day.dateObject.toDateString(),
             );
 
             const categories = Array.from(
-              new Set(activitiesForTheDay.map((a: any) => a.category))
+              new Set(activitiesForTheDay.map((a: any) => a.category)),
             );
 
             return (
@@ -257,55 +262,69 @@ const getCurrentMonthWithBuffer = () => {
                 key={index}
                 className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border border-Gray-100 rounded-lg ${
                   day.dayNumber === currenDay && day.monthName === currenMonth
-                    ? "dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary"
+                    ? 'dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary'
                     : currenMonth === day.monthName
-                    ? " bg-backgroundColor-Card"
-                    : " bg-backgroundColor-Main" 
+                      ? ' bg-backgroundColor-Card'
+                      : ' bg-backgroundColor-Main'
                 }`}
               >
                 <div
                   className={`${
                     day.dayNumber === currenDay && day.monthName === currenMonth
-                      ? "dtext-Text-Primary"
+                      ? 'dtext-Text-Primary'
                       : currenMonth !== day.monthName
-                      ? "text-Text-Secondary"
-                      : "text-Text-Primary"
+                        ? 'text-Text-Secondary'
+                        : 'text-Text-Primary'
                   } text-xs`}
                 >
                   {day.dayNumber}
                 </div>
                 <ul>
-  {categories.map((category: any) => (
-    <li className="mt-2" key={category}>
-      <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
-        <img src={resolveIcon(category)} alt="" />
-        {category}
-      </div>
-      {activitiesForTheDay
-        .filter((activity: any) => activity.category === category)
-        .map((activity: any, i: number) => {
-          const activityDate = new Date(activity.date);
-          const isPastDate = activityDate < today;          const opacityClass = !activity.status && isPastDate ? 'opacity-70' : 'opacity-100';
+                  {categories.map((category: any) => (
+                    <li className="mt-2" key={category}>
+                      <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
+                        <img src={resolveIcon(category)} alt="" />
+                        {category}
+                      </div>
+                      {activitiesForTheDay
+                        .filter(
+                          (activity: any) => activity.category === category,
+                        )
+                        .map((activity: any, i: number) => {
+                          const activityDate = new Date(activity.date);
+                          const isPastDate = activityDate < today;
+                          const opacityClass =
+                            !activity.status && isPastDate
+                              ? 'opacity-70'
+                              : 'opacity-100';
 
-          return (
-            <div
-              key={i}
-              className={`flex  gap-1 mt-1 ${opacityClass}`}
-            >
-              {activity.status ? (
-                <img className="w-3 h-3" src="/icons/activity-circle-done.svg" alt="" />
-              ) : (
-                <img className="w-3 h-3" src="/icons/acitivty-circle.svg" alt="" />
-              )}
-              <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
-                {activity.name}
-              </span>
-            </div>
-          );
-        })}
-    </li>
-  ))}
-</ul>
+                          return (
+                            <div
+                              key={i}
+                              className={`flex  gap-1 mt-1 ${opacityClass}`}
+                            >
+                              {activity.status ? (
+                                <img
+                                  className="w-3 h-3"
+                                  src="/icons/activity-circle-done.svg"
+                                  alt=""
+                                />
+                              ) : (
+                                <img
+                                  className="w-3 h-3"
+                                  src="/icons/acitivty-circle.svg"
+                                  alt=""
+                                />
+                              )}
+                              <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
+                                {activity.name}
+                              </span>
+                            </div>
+                          );
+                        })}
+                    </li>
+                  ))}
+                </ul>
               </div>
             );
           })}

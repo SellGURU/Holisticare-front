@@ -11,9 +11,9 @@ interface CircularProgressBarProps {
 
 const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   percentage,
-  size = 40, 
-  startColor = '#005F73', 
-  endColor = '#6CC24A', 
+  size = 40,
+  startColor = '#005F73',
+  endColor = '#6CC24A',
 }) => {
   return (
     <div className="flex items-center justify-center">

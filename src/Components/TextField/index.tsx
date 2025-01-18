@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   className?: string;
-  type: "text" | "password" | "email" | "phone" | "searchBox";
+  type: 'text' | 'password' | 'email' | 'phone' | 'searchBox';
   inValid?: boolean;
   errorMessage?: string;
 }
@@ -23,8 +23,8 @@ const TextField: React.FC<TextFieldProps> = ({
   };
 
   const getInputType = () => {
-    if (type === "password" && showPassword) {
-      return "text";
+    if (type === 'password' && showPassword) {
+      return 'text';
     }
     return type;
   };
@@ -40,26 +40,26 @@ const TextField: React.FC<TextFieldProps> = ({
         <input
           type={getInputType()}
           className={`w-full h-[32px] rounded-[16px] mt-1 border placeholder:text-gray-400 text-[12px] px-3 outline-none ${
-            inValid ? "border-red-500" : "border-gray-50"} 
-            ${type === 'password' ?'pr-8':''}
+            inValid ? 'border-red-500' : 'border-gray-50'
+          } 
+            ${type === 'password' ? 'pr-8' : ''}
             shadow-300`}
           {...props}
         />
-        {type === "password" && (
+        {type === 'password' && (
           <div
             onClick={togglePassword}
             className="absolute top-3 right-0 pr-3 flex items-center text-sm cursor-pointer"
           >
             {showPassword ? (
-                <img src="/icons/eye-slash.svg" alt="" />
+              <img src="/icons/eye-slash.svg" alt="" />
             ) : (
-                <img src="/icons/eye.svg" alt="" />
-
+              <img src="/icons/eye.svg" alt="" />
             )}
           </div>
         )}
       </div>
-      {inValid &&  (
+      {inValid && (
         <span className="text-red-500 text-[10px] mt-1">{errorMessage}</span>
       )}
     </div>

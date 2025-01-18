@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ActivityMenu from "../../Components/ActivityMenu";
-import SearchBox from "../../Components/SearchBox";
-import StatusMenu from "../../Components/StatusMenu";
-import { useEffect, useRef, useState } from "react";
-import { ClientCard } from "./ClientCard";
-import Application from "../../api/app";
+import ActivityMenu from '../../Components/ActivityMenu';
+import SearchBox from '../../Components/SearchBox';
+import StatusMenu from '../../Components/StatusMenu';
+import { useEffect, useRef, useState } from 'react';
+import { ClientCard } from './ClientCard';
+import Application from '../../api/app';
 // import { Button } from "symphony-ui";
 // import GenerateReportTable from "./GenerateReportTable";
 // import ReportTable from "./ReportsTable";
 // import GenerateWithAiModal from "./GenerateWithAiModal";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import { subscribe } from "../../utils/event";
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { subscribe } from '../../utils/event';
 // import ReportAnalyseView from "../RepoerAnalyse/ReportAnalyseView";
 // import { useSelector } from "react-redux";
-import { Action } from "./Action";
+import { Action } from './Action';
 // import AnalyseButton from "../../Components/AnalyseButton";
-import AiChat from "../../Components/AiChat";
-import Circleloader from "../../Components/CircleLoader";
+import AiChat from '../../Components/AiChat';
+import Circleloader from '../../Components/CircleLoader';
 type menuItem = {
   name: string;
 };
@@ -35,26 +35,26 @@ interface Patient {
 export const DriftAnaysis = () => {
   // const theme = useSelector((state: any) => state.theme.value.name);
 
-  const [activeMenu, setActiveMenu] = useState("Action");
+  const [activeMenu, setActiveMenu] = useState('Action');
   // const [isStateOpen, setIsStateOpen] = useState(true);
   // const [isAlertOpen, setIsAlertOpen] = useState(true);
   // const [isEngagementOpen, setIsEngagementOpen] = useState(true);
-  const [activeStatus, setActiveStatus] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeStatus, setActiveStatus] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [patients, setPatients] = useState<Patient[]>([
     {
-      email: "",
+      email: '',
       member_id: 1,
-      name: "",
-      status: "",
-      picture: "",
-      sex: "",
+      name: '',
+      status: '',
+      picture: '',
+      sex: '',
       age: 0,
       tags: [],
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
-//   const [, setOverviewData] = useState<any>(null);
+  //   const [, setOverviewData] = useState<any>(null);
 
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
@@ -62,9 +62,9 @@ export const DriftAnaysis = () => {
 
   const menus: Array<menuItem> = [
     // { name: "Overview" },
-    { name: "Action" },
+    { name: 'Action' },
 
-    { name: "Copilot" },
+    { name: 'Copilot' },
 
     // { name: "Generate Report" },
   ];
@@ -100,23 +100,23 @@ export const DriftAnaysis = () => {
   // },[patients,searchQuery,activeStatus])
 
   const resolvedFiltersData = () => {
-    if (searchQuery != "" && activeStatus != "All") {
+    if (searchQuery != '' && activeStatus != 'All') {
       return patients.filter(
         (el) =>
           el.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          el.status == activeStatus
+          el.status == activeStatus,
       );
     } else {
-      if (activeStatus != "All") {
+      if (activeStatus != 'All') {
         return patients.filter((el) => {
           return el.status == activeStatus;
         });
-      } else if (searchQuery != "") {
+      } else if (searchQuery != '') {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
         return patients.filter((el) =>
-          el.name.toUpperCase().includes(searchQuery.toUpperCase())
+          el.name.toUpperCase().includes(searchQuery.toUpperCase()),
         );
-      } else if (searchQuery == "" && activeStatus == "All") {
+      } else if (searchQuery == '' && activeStatus == 'All') {
         return patients;
       }
     }
@@ -136,44 +136,44 @@ export const DriftAnaysis = () => {
     };
     fetchData();
   }, []);
-//   useEffect(() => {
-//     if (activeMemberID != null) {
-//       Application.aiStudio_overview({
-//         member_id: activeMemberID,
-//       }).then((res) => {
-//         // setDescription(res.data.description)
-//         // setAlerts(res.data.alerts || {});
-//         // setRecommendations(res.data.recommendations || {});
-//         setOverviewData(res.data);
+  //   useEffect(() => {
+  //     if (activeMemberID != null) {
+  //       Application.aiStudio_overview({
+  //         member_id: activeMemberID,
+  //       }).then((res) => {
+  //         // setDescription(res.data.description)
+  //         // setAlerts(res.data.alerts || {});
+  //         // setRecommendations(res.data.recommendations || {});
+  //         setOverviewData(res.data);
 
-//         // console.log(res);
-//       });
-//     }
-//   }, [activeMemberID]);
+  //         // console.log(res);
+  //       });
+  //     }
+  //   }, [activeMemberID]);
   const [, setActivePatent] = useState(patients[0]);
   useEffect(() => {
     if (activeMemberID != null) {
       setActivePatent(
-        patients.filter((el) => el.member_id == activeMemberID)[0]
+        patients.filter((el) => el.member_id == activeMemberID)[0],
       );
     }
   }, [activeMemberID]);
   //   const [reloadData, setReloadData] = useState(false);
-//   const [, SetReportsData] = useState([]);
-//   useEffect(() => {
-//     if (activeMemberID != null) {
-//       Application.showReportList({
-//         member_id: activeMemberID,
-//       }).then((res) => {
-//         SetReportsData(res.data);
-//       });
-//     }
-//   }, [activeMemberID]);
+  //   const [, SetReportsData] = useState([]);
+  //   useEffect(() => {
+  //     if (activeMemberID != null) {
+  //       Application.showReportList({
+  //         member_id: activeMemberID,
+  //       }).then((res) => {
+  //         SetReportsData(res.data);
+  //       });
+  //     }
+  //   }, [activeMemberID]);
   const status: Array<string> = [
-    "All",
-    "Need to check",
-    "Checked",
-    "Incomplete Data",
+    'All',
+    'Need to check',
+    'Checked',
+    'Incomplete Data',
   ];
   //   const [isCreateReportMode, setisCreateReportMode] = useState(false);
   //   const [isEditMode, setEditMode] = useState(false);
@@ -187,7 +187,7 @@ export const DriftAnaysis = () => {
     },
   });
   const [, setShowGenerateButton] = useState(true);
-  subscribe("completeChanges", () => {
+  subscribe('completeChanges', () => {
     setShowGenerateButton(false);
   });
   // const renderRecommendations = () => {
@@ -208,7 +208,7 @@ export const DriftAnaysis = () => {
   //     return null;
   //   });
   // };
-console.log(searchQuery)
+  console.log(searchQuery);
   return (
     <div className=" w-full pl-6 pt-6 flex items-start overflow-hidden gap-3">
       <>
@@ -219,7 +219,7 @@ console.log(searchQuery)
         ) : (
           <div className="w-[75%] flex flex-col gap-3">
             <div className="w-full flex justify-between text-Text-Primary">
-              Drift Analysis 
+              Drift Analysis
               {/* <AnalyseButton text="Generate by AI" />{" "} */}
             </div>
             <div className="w-full flex items-center justify-between">
@@ -266,7 +266,7 @@ console.log(searchQuery)
                   </Button>
                 </div> */}
             </div>
-            {activeMenu === "Copilot" ? (
+            {activeMenu === 'Copilot' ? (
               <AiChat memberID={activeMemberID} />
             ) : (
               <Action memberID={activeMemberID}></Action>
@@ -276,7 +276,6 @@ console.log(searchQuery)
 
         <div className="flex flex-col gap-[10px] justify-center w-[26%]    ">
           <SearchBox
-          
             onSearch={(search) => setSearchQuery(search)}
             placeHolder="Search for client..."
           />

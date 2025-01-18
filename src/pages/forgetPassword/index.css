@@ -1,14 +1,13 @@
-.vari-character{
-    background-color: white;
-    width: 42px;
-    border: none;
-    border-radius: 6px;
-    max-width: 42px;
-    height: 60px;
+.vari-character {
+  background-color: white;
+  width: 42px;
+  border: none;
+  border-radius: 6px;
+  max-width: 42px;
+  height: 60px;
 }
 
-.vari-container{
-    display: flex;
-    justify-content: center;
-    
+.vari-container {
+  display: flex;
+  justify-content: center;
 }

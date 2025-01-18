@@ -1,12 +1,12 @@
-import Application from "../../../api/app";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import Application from '../../../api/app';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 interface Test {
-  "Benchmark areas": string;
-  "Test L1": string;
-  "Test L2": string;
+  'Benchmark areas': string;
+  'Test L1': string;
+  'Test L2': string;
   Result: string;
-  "Benchmark performance": string;
+  'Benchmark performance': string;
 }
 
 interface BenchmarkArea {
@@ -86,33 +86,34 @@ const BenchmarkModal: React.FC<BenchmarkModalProps> = ({ isOpen, onClose }) => {
                     <tr
                       key={`${area.Category}-${index}`}
                       className={`${
-                        test["Benchmark performance"] === "Needs Focus" ||
-                        test["Benchmark performance"] === "Needs focus"
-                          ? "bg-[#FBAD37] bg-opacity-25"
-                          : "bg-transparent"
+                        test['Benchmark performance'] === 'Needs Focus' ||
+                        test['Benchmark performance'] === 'Needs focus'
+                          ? 'bg-[#FBAD37] bg-opacity-25'
+                          : 'bg-transparent'
                       }`}
                     >
-                      <td className={`  border-b border-third-text border-opacity-30 text-center pl-4 py-3 border-r text-xs`}>
-                        {index === 0 ? area.Category : ""}
+                      <td
+                        className={`  border-b border-third-text border-opacity-30 text-center pl-4 py-3 border-r text-xs`}
+                      >
+                        {index === 0 ? area.Category : ''}
                       </td>
                       <td className="border-b border-third-text border-opacity-30 py-3 px-4 border-r text-center text-xs">
-                        {test["Test L1"]}
+                        {test['Test L1']}
                       </td>
                       <td className="border-b border-third-text border-opacity-30 py-3 px-4 border-r text-center text-xs ">
-                        {test["Test L2"]}
+                        {test['Test L2']}
                       </td>
                       <td className="border-b border-third-text text-center border-opacity-30 text-nowrap pl-4 py-3 border-r text-xs ">
-                        {test.Result || "-"}
+                        {test.Result || '-'}
                       </td>
                       <td className="border-b border-third-text border-opacity-30 text-center py-3 text-xs ">
-                        {test["Benchmark performance"] || "-"}
+                        {test['Benchmark performance'] || '-'}
                       </td>
                     </tr>
-                  ))
+                  )),
                 )}
             </tbody>
           </table>
-
         </div>
       </div>
     </div>

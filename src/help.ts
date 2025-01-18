@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useState } from 'react';
 
 const useConstructor = (callBack = () => {}) => {
   const [hasBeenCalled, setHasBeenCalled] = useState(false);
@@ -10,7 +10,7 @@ const useConstructor = (callBack = () => {}) => {
   setHasBeenCalled(true);
 };
 
-const blobToBase64 = (blob:any) => {
+const blobToBase64 = (blob: any) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
@@ -19,4 +19,4 @@ const blobToBase64 = (blob:any) => {
   });
 };
 
-export {useConstructor,blobToBase64}
+export { useConstructor, blobToBase64 };

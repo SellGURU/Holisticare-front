@@ -1,39 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PopUpChat } from "../popupChat";
-import { useEffect, useRef, useState } from "react";
-import useModalAutoClose from "../../hooks/UseModalAutoClose.ts";
-import { useParams } from "react-router-dom";
-import { SlideOutPanel } from "../SlideOutPanel";
-import { subscribe } from "../../utils/event.ts";
-import Application from "../../api/app.ts";
+import { PopUpChat } from '../popupChat';
+import { useEffect, useRef, useState } from 'react';
+import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
+import { useParams } from 'react-router-dom';
+import { SlideOutPanel } from '../SlideOutPanel';
+import { subscribe } from '../../utils/event.ts';
+import Application from '../../api/app.ts';
 
-import TimeLine from "./components/timeLine.tsx";
-import { ChatModal } from "./components/chatModal.tsx";
-import { ClientInfo } from "./components/clientInfo.tsx";
-import { DataSyncing } from "./components/dataSyncing.tsx";
-import { Questionary } from "./components/Questionary.tsx";
-import { Notes } from "./components/notes.tsx";
-import { FilleHistory } from "./components/filleHistory.tsx";
-import { SwitchClient } from "./components/switchClient.tsx";
+import TimeLine from './components/timeLine.tsx';
+import { ChatModal } from './components/chatModal.tsx';
+import { ClientInfo } from './components/clientInfo.tsx';
+import { DataSyncing } from './components/dataSyncing.tsx';
+import { Questionary } from './components/Questionary.tsx';
+import { Notes } from './components/notes.tsx';
+import { FilleHistory } from './components/filleHistory.tsx';
+import { SwitchClient } from './components/switchClient.tsx';
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
-    { name: "Client Info", url: "/images/sidbar-menu/info-circle.svg" },
-    { name: "Data Syncing", url: "/icons/sidbar-menu/messages.svg" },
-    { name: "File History", url: "/icons/sidbar-menu/cloud-change.svg" },
+    { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
+    { name: 'Data Syncing', url: '/icons/sidbar-menu/messages.svg' },
+    { name: 'File History', url: '/icons/sidbar-menu/cloud-change.svg' },
     {
-      name: "Questionary Tracking",
-      url: "/icons/sidbar-menu/clipboard-text.svg",
+      name: 'Questionary Tracking',
+      url: '/icons/sidbar-menu/clipboard-text.svg',
     },
-    { name: "Expert’s Note", url: "/icons/sidbar-menu/note-2.svg" },
-    { name: "Change Client", url: "/icons/sidbar-menu/repeat.svg" },
-    { name: "Timeline", url: "/icons/sidbar-menu/task-square.svg" },
-    { name: "chat history", url: "/icons/sidbar-menu/timeline.svg" },
+    { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
+    { name: 'Change Client', url: '/icons/sidbar-menu/repeat.svg' },
+    { name: 'Timeline', url: '/icons/sidbar-menu/task-square.svg' },
+    { name: 'chat history', url: '/icons/sidbar-menu/timeline.svg' },
   ];
   const [patientInfo, setPatientInfo] = useState({
-    name: "",
-    email: "",
-    picture: "",
+    name: '',
+    email: '',
+    picture: '',
   });
 
   useEffect(() => {
@@ -107,7 +107,7 @@ export const ComboBar = () => {
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const [updated, setUpdated] = useState(false);
-  subscribe("QuestionaryTrackingCall", () => {
+  subscribe('QuestionaryTrackingCall', () => {
     setUpdated(true);
   });
   const handleItemClick = (name: string) => {
@@ -117,39 +117,23 @@ export const ComboBar = () => {
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const renderModalContent = () => {
     switch (activeItem) {
-      case "Client Info":
-        return (
-         <ClientInfo></ClientInfo>
-        );
-      case "Data Syncing":
-        return (
-          <DataSyncing></DataSyncing>
-        );
-      case "File History":
-        return (
-         <FilleHistory></FilleHistory>
-        );
-      case "Questionary Tracking":
-        return (
-         
-          <Questionary></Questionary>
-        )
-      case "Expert’s Note":
-        return (
-<Notes></Notes>
-        );
+      case 'Client Info':
+        return <ClientInfo></ClientInfo>;
+      case 'Data Syncing':
+        return <DataSyncing></DataSyncing>;
+      case 'File History':
+        return <FilleHistory></FilleHistory>;
+      case 'Questionary Tracking':
+        return <Questionary></Questionary>;
+      case 'Expert’s Note':
+        return <Notes></Notes>;
       // Add more cases as needed
-     case "Timeline" :
-        return(
-            <TimeLine/>
-        )
-      case "chat history":
-            return(
-                <ChatModal memberId={id}             info={patientInfo}
-                ></ChatModal>
-            )
-            case "Change Client":
-              return(<SwitchClient></SwitchClient>)
+      case 'Timeline':
+        return <TimeLine />;
+      case 'chat history':
+        return <ChatModal memberId={id} info={patientInfo}></ChatModal>;
+      case 'Change Client':
+        return <SwitchClient></SwitchClient>;
       default:
         return <div>No Content</div>;
     }
@@ -161,61 +145,61 @@ export const ComboBar = () => {
         isOpen={isSlideOutPanel}
         isCombo={true}
         onClose={() => setIsSlideOutPanel(false)}
-        headline={activeItem || ""}
+        headline={activeItem || ''}
       >
         {renderModalContent()}
       </SlideOutPanel>
       <div
         className={
-          "w-[55px] flex justify-center items-center relative bg-white h-[500px] border-Boarder border rounded-xl p-5 "
+          'w-[55px] flex justify-center items-center relative bg-white h-[500px] border-Boarder border rounded-xl p-5 '
         }
       >
         <div
           className={
-            "absolute top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10"
+            'absolute top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10'
           }
         ></div>
-        <ul className={"flex items-center flex-col z-10 gap-3"}>
+        <ul className={'flex items-center flex-col z-10 gap-3'}>
           <li
-            key={"1"}
+            key={'1'}
             className={
-              "flex items-center justify-center border-2 rounded-full  w-10 h-10 "
+              'flex items-center justify-center border-2 rounded-full  w-10 h-10 '
             }
           >
             <img
               src={
-                patientInfo.picture != ""
+                patientInfo.picture != ''
                   ? patientInfo.picture
                   : `https://ui-avatars.com/api/?name=${patientInfo.name}`
               }
               onError={(e: any) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
               }}
-              className={"border-whiteavatar w-full h-full rounded-full"}
+              className={'border-whiteavatar w-full h-full rounded-full'}
             />
           </li>
           <li
-            key={"2"}
+            key={'2'}
             className={
-              "text-Text-Primary TextStyle-Headline-6 w-10 text-center"
+              'text-Text-Primary TextStyle-Headline-6 w-10 text-center'
             }
             style={{
-              whiteSpace: "",
-              textOverflow: "ellipsis",
-              overflow: "hidden",
+              whiteSpace: '',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
             }}
           >
             {patientInfo.name.substring(0, 20)}
           </li>
           <li
-            key={"line"}
-            className={"h-[2px] w-full px-[1px] bg-green-400"}
+            key={'line'}
+            className={'h-[2px] w-full px-[1px] bg-green-400'}
           ></li>
           {itemList.map((el, index) => (
             <li
-              key={index + "el"}
+              key={index + 'el'}
               onClick={() => {
-                if (el.name == "Questionary Tracking") {
+                if (el.name == 'Questionary Tracking') {
                   setIsSlideOutPanel(true);
                   setUpdated(false);
                 }
@@ -223,13 +207,13 @@ export const ComboBar = () => {
               }}
               className={`cursor-pointer rounded-full relative border w-8 h-8 flex items-center justify-center ${
                 updated &&
-                el.name == "Questionary Tracking" &&
-                "border-2 border-Orange"
+                el.name == 'Questionary Tracking' &&
+                'border-2 border-Orange'
               }`}
             >
-              <img src={el.url} className={"w-5 h-5"} />
+              <img src={el.url} className={'w-5 h-5'} />
               {
-                updated && el.name == "Questionary Tracking" && (
+                updated && el.name == 'Questionary Tracking' && (
                   <img
                     className="absolute top-[-4px]  right-[-3px]"
                     src="/icons/warning.svg"
@@ -243,25 +227,25 @@ export const ComboBar = () => {
           ))}
         </ul>
       </div>
-      <div className={"space-y-1"}>
+      <div className={'space-y-1'}>
         <div
           className={
-            "w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center"
+            'w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center'
           }
         >
-          <img src={"/icons/add.svg"} />
+          <img src={'/icons/add.svg'} />
         </div>
         <div
           ref={buttonRef}
           onClick={() => setToogleOpenChat(!toogleOpenChat)}
           className={
-            "w-8 shadow-200 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center"
+            'w-8 shadow-200 cursor-pointer h-8 rounded-md bg-white flex items-center justify-center'
           }
         >
           {toogleOpenChat ? (
-            <img src={"/icons/close.svg"} />
+            <img src={'/icons/close.svg'} />
           ) : (
-            <img src={"/icons/sidbar-menu/message-question.svg"} />
+            <img src={'/icons/sidbar-menu/message-question.svg'} />
           )}
         </div>
         <div ref={modalRef} className="w-full shadow-200">

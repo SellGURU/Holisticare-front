@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 // import AnalyseButton from "@/components/AnalyseButton";
 // import { Button } from "symphony-ui";
-import { ButtonPrimary } from "../../Button/ButtonPrimary";
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
 // import MiniAnallyseButton from "../../TreatmentPlan-V2/MiniAnalyseButon";
 // import RefrenceModal from "../../TreatmentPlan-V2/RefrenceData";
 // type Activity = {
@@ -86,8 +86,8 @@ import { ButtonPrimary } from "../../Button/ButtonPrimary";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
   value: any;
-  category:string
-  changeData:(value:any) => void
+  category: string;
+  changeData: (value: any) => void;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
@@ -95,27 +95,29 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   changeData,
 }) => {
   const resolveIcon = () => {
-    if (category == "Diet") {
-      return "/icons/diet.svg";
+    if (category == 'Diet') {
+      return '/icons/diet.svg';
     }
-    if (category == "Mind") {
-      return "/icons/mind.svg";
+    if (category == 'Mind') {
+      return '/icons/mind.svg';
     }
-    if (category == "Activity") {
-      return "/icons/weight.svg";
+    if (category == 'Activity') {
+      return '/icons/weight.svg';
     }
-    if (category== "Supplement") {
-      return "/icons/Supplement.svg";
+    if (category == 'Supplement') {
+      return '/icons/Supplement.svg';
     }
   };
 
   // const [showModal, setshowModal] = useState(false);
   const [editableValue, setEditableValue] = useState(value.instructions);
-  const [selectedDays, setSelectedDays] = useState<string[]>(value.repeat_days || []);
+  const [selectedDays, setSelectedDays] = useState<string[]>(
+    value.repeat_days || [],
+  );
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
   useEffect(() => {
@@ -124,10 +126,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   useEffect(() => {
     changeData({
       ...value,
-      instructions:editableValue,
-      repeat_days:[...selectedDays]
-    })
-  },[editableValue,selectedDays])
+      instructions: editableValue,
+      repeat_days: [...selectedDays],
+    });
+  }, [editableValue, selectedDays]);
   return (
     <>
       <div className="w-full bg-white border border-Gray-50 shadow-100  h-full rounded-[24px] px-6 p-3 lg:p-6">
@@ -153,179 +155,175 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               {value.reference && (
                 <div className="text-Text-Secondarytext-xs inline-flex gap-1 ">
                   Based on your:
-                  <span
-                    className=" text-Primary-EmeraldGreen flex items-center gap-2 cursor-pointer"
-                  >
-                    {value["Based on your:"]}
+                  <span className=" text-Primary-EmeraldGreen flex items-center gap-2 cursor-pointer">
+                    {value['Based on your:']}
                     <img src="/icons/export.svg" alt="" />
                   </span>
                 </div>
               )}
               <div className=" w-[200px] lg:w-[244px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50  inline-flex lg:ml-4">
-                {["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"].map(
+                {['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(
                   (day) => (
                     <div
                       key={day}
                       onClick={() => toggleDaySelection(day)}
                       className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
                         selectedDays.includes(day)
-                          ? "text-Primary-EmeraldGreen"
-                          : "text-Text-Primary"
+                          ? 'text-Primary-EmeraldGreen'
+                          : 'text-Text-Primary'
                       }`}
                     >
                       {day}
                     </div>
-                  )
+                  ),
                 )}
               </div>
             </div>
           </div>
           <div className="relative">
             <MiniAnallyseButton />
-
-          </div>          
+          </div>
         </div>
-
       </div>
-
     </>
   );
 };
 
 // import Data from "../calandar.json";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
 // import MainTopBar from "../../MainTopBar";
-import AnalyseButton from "../../AnalyseButton";
-import Application from "../../../api/app";
-import MiniAnallyseButton from "../../MiniAnalyseButton";
-import { TopBar } from "../../topBar";
+import AnalyseButton from '../../AnalyseButton';
+import Application from '../../../api/app';
+import MiniAnallyseButton from '../../MiniAnalyseButton';
+import { TopBar } from '../../topBar';
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
   const [isLoading, setisLoading] = useState(false);
-  const { id ,blackId} = useParams();
+  const { id, blackId } = useParams();
   useEffect(() => {
-    setisLoading(true)
+    setisLoading(true);
     Application.ActionPlanGenerateTask({
-      member_id:id,
-      blocks_id:blackId
+      member_id: id,
+      blocks_id: blackId,
     }).then((res) => {
-      setData(res.data)
-      setisLoading(false)
-    })
-  },[])  
-  const [data,setData] = useState<any>({});
-  
+      setData(res.data);
+      setisLoading(false);
+    });
+  }, []);
+  const [data, setData] = useState<any>({});
+
   const navigate = useNavigate();
   return (
     <>
-    {isLoading && (
-      <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-        {" "}
-        
-        <div className="spinner">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="dot"></div>
-          ))}
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {' '}
+          <div className="spinner">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="dot"></div>
+            ))}
+          </div>
+          {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
         </div>
-        {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
-      </div>
-    )}    
-    <div className="w-full fixed z-50 top-0 ">
+      )}
+      <div className="w-full fixed z-50 top-0 ">
         <TopBar></TopBar>
       </div>
-    <div className="w-full h-full px-3 lg:px-6">
-      
-      <div className="px-8 mb-2 pt-[80px] flex justify-between w-full">
-        <div className="flex items-center gap-3">
-          <div
-            onClick={() => {
-              navigate(-1);
-            }}
-            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
-          >
-            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+      <div className="w-full h-full px-3 lg:px-6">
+        <div className="px-8 mb-2 pt-[80px] flex justify-between w-full">
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => {
+                navigate(-1);
+              }}
+              className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
+            >
+              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+            </div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Generate Day to Day Activity
+            </div>
           </div>
-          <div className="TextStyle-Headline-5 text-Text-Primary">
-            Generate Day to Day Activity
+          <div className="relative">
+            <AnalyseButton text="Generate by AI"></AnalyseButton>
           </div>
         </div>
-        <div className="relative">
-          <AnalyseButton text="Generate by AI"></AnalyseButton>
-
-        </div>
-      </div>
-      <div className=" w-full rounded-2xl  p-3  lg:p-6">
-        <div className=" mx-auto p-">
-          {/* <div className="flex justify-between items-center mb-6">
+        <div className=" w-full rounded-2xl  p-3  lg:p-6">
+          <div className=" mx-auto p-">
+            {/* <div className="flex justify-between items-center mb-6">
             <div className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               {isDriftAnalysis ? "Action Edit" : " Action Plan Calendar"}
             </div> */}
-          {/* <AnalyseButton text="Generate by AI" /> */}
-          {/* </div> */}
-          <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll pr-3">
-            {/* {data.map((category: any, index: number) => (
+            {/* <AnalyseButton text="Generate by AI" /> */}
+            {/* </div> */}
+            <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll pr-3">
+              {/* {data.map((category: any, index: number) => (
               <BioMarkerRowSuggestions key={index} value={category} />
             ))} */}
-            {
-              Object.keys(data).map((key) => {
+              {Object.keys(data).map((key) => {
                 return (
                   <>
-                    {
-                      data[key].map((el:any,index:number) => {
-                        return (
-                          <>
-                            <BioMarkerRowSuggestions changeData={(value) => {
-                              const wrapper:any ={}
-                              const newData = data[key].map((vl:any,index2:number) => {
-                                if(index == index2){
-                                  return value
-                                }
-                                return vl
-                              })      
+                    {data[key].map((el: any, index: number) => {
+                      return (
+                        <>
+                          <BioMarkerRowSuggestions
+                            changeData={(value) => {
+                              const wrapper: any = {};
+                              const newData = data[key].map(
+                                (vl: any, index2: number) => {
+                                  if (index == index2) {
+                                    return value;
+                                  }
+                                  return vl;
+                                },
+                              );
 
-                              wrapper[key] =newData
-                              setData({...data,...wrapper})                    
-                            }} category={key} key={index} value={el} />
-                          </>
-                        )
-                      })
-                    }
+                              wrapper[key] = newData;
+                              setData({ ...data, ...wrapper });
+                            }}
+                            category={key}
+                            key={index}
+                            value={el}
+                          />
+                        </>
+                      );
+                    })}
                   </>
-                )
-              })
-            }
+                );
+              })}
+            </div>
+          </div>
+          <div className="w-[120px] mx-auto mt-4">
+            <ButtonPrimary
+              style={{ textWrap: 'nowrap' }}
+              onClick={() => {
+                setisLoading(true);
+                Application.ActionPlanSaveTask({
+                  blocks_id: blackId,
+                  member_id: id,
+                  tasks: data,
+                })
+                  .then(() => {
+                    navigate(-1);
+                  })
+                  .finally(() => {
+                    setisLoading(false);
+                  });
+                // navigate(-1)
+                // if (typeof onSave === "function") {
+                //   onSave();
+                // } else {
+                //   console.error("onSave is not a function");
+                // }
+              }}
+            >
+              <img src="/icons/tick-square.svg" alt="" />
+              Save Changes
+            </ButtonPrimary>
           </div>
         </div>
-        <div className="w-[120px] mx-auto mt-4">
-          <ButtonPrimary
-          style={{textWrap: 'nowrap'}}
-            onClick={() => {
-              setisLoading(true)
-              Application.ActionPlanSaveTask({
-                blocks_id:blackId,
-                member_id:id,
-                tasks:data
-              }).then(() => {
-                navigate(-1)
-              }).finally(() => {
-                setisLoading(false)
-              })
-              // navigate(-1)
-              // if (typeof onSave === "function") {
-              //   onSave();
-              // } else {
-              //   console.error("onSave is not a function");
-              // }
-            }}
-            
-          >
-            <img src="/icons/tick-square.svg" alt="" />
-            Save Changes
-          </ButtonPrimary>
-        </div>
       </div>
-    </div>
     </>
   );
 };
