@@ -1,7 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { SideMenu } from "../../Components"
-import MainTopBar from "../../Components/MainTopBar"
-// import { TopBar } from "../../Components/topBar"
+import { SideMenu ,MainTopBar} from "../../Components"
 
 const Home = () => {
     return (

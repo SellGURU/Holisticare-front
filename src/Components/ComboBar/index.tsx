@@ -6,9 +6,7 @@ import { useParams } from "react-router-dom";
 import { SlideOutPanel } from "../SlideOutPanel";
 import { subscribe } from "../../utils/event.ts";
 import Application from "../../api/app.ts";
-// import { useConstructor } from "../../help.ts";
-// import { useFormik } from "formik";
-// import Data from "./data.json";
+
 import TimeLine from "./components/timeLine.tsx";
 import { ChatModal } from "./components/chatModal.tsx";
 import { ClientInfo } from "./components/clientInfo.tsx";
