@@ -583,6 +583,10 @@ class Application extends Api {
   };
   static dashboardClients = () => {
     const response = this.post('/dashboard/clients/clients_list', {});
+    return response
+  }
+  static medicalAnalyse = (data: any) => {
+    const response = this.post('/treatment_plan/medical_summary_ai', data);
     return response;
   };
 }

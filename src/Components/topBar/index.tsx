@@ -21,12 +21,20 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
           <head>
           <title>${document.title}</title>
           <!-- Link to Tailwind CSS -->
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">         
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
           <style>
               @media print {
               body {
                   background-color: white !important;
+                  font-family:Inter
               }
+              .header,
+              .footer {
+                display: none;
+              }                  
               .bg-gray-100 {
                   background-color: #f3f4f6 !important; /* Tailwind Gray 100 */
               }
@@ -50,12 +58,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       </html>
       `);
     mywindow.document.close(); // necessary for IE >= 10
-    mywindow.onload = () => {
-      mywindow.focus(); // necessary for IE >= 10*/
+    // mywindow.onload = () => {
+    //   mywindow.focus(); // necessary for IE >= 10*/
 
-      mywindow.print();
-      mywindow.close();
-    };
+    //   mywindow.print();
+    //   mywindow.close();
+    // };
     // mywindow.print()
   };
   const resolveNav = () => {
@@ -122,6 +130,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
     }
   };
   const [openDownload, setOpenDownload] = useState(false);
+  const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   return (
     <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
@@ -178,7 +187,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                 </>
               )}
             </ButtonPrimary>
-            <div className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer ">
+            <div
+              onClick={() => {
+                setOpenShare(true);
+              }}
+              className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer "
+            >
               <img src="/icons/share.svg" alt="" />
               Share
             </div>
@@ -188,27 +202,36 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
         <LogOutModal></LogOutModal>
       </div>
       <SlideOutPanel
-        isOpen={openDownload}
-        headline="Select Sections to Download"
+        isOpen={openDownload || openShare}
+        headline={
+          openDownload
+            ? 'Select Sections to Download'
+            : 'Select Sections to Share'
+        }
         onClose={() => {
           setOpenDownload(false);
+          setOpenShare(false);
         }}
       >
         <>
           <DownloadModal
             onconfirm={() => {
-              setDownloadingState('downloading');
-              setOpenDownload(false);
-              setTimeout(() => {
-                printreport();
-                setDownloadingState('Downloaded');
+              if (openDownload) {
+                setDownloadingState('downloading');
+                setOpenDownload(false);
                 setTimeout(() => {
-                  setDownloadingState('download');
-                }, 2000);
-              }, 3000);
+                  printreport();
+                  setDownloadingState('Downloaded');
+                  setTimeout(() => {
+                    setDownloadingState('download');
+                  }, 200);
+                }, 300);
+              }
+              setOpenShare(false);
             }}
             onclose={() => {
               setOpenDownload(false);
+              setOpenShare(false);
             }}
           ></DownloadModal>
         </>
