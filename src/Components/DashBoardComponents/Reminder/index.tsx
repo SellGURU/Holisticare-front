@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { ButtonSecondary } from "../../Button/ButtosSecondary";
-import SvgIcon from "../../../utils/svgIcon";
+import React, { useState } from 'react';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import SvgIcon from '../../../utils/svgIcon';
 
 interface TaskItem {
   name: string;
@@ -15,27 +15,27 @@ interface Task {
 
 const initialTasksData: Task[] = [
   {
-    date: "2025-01-18",
-    dayLabel: "Today",
+    date: '2025-01-18',
+    dayLabel: 'Today',
     tasks: [
-      { name: "Checking new files", isDone: false },
-      { name: "Organize new clients profile", isDone: false },
-      { name: "Checking new files", isDone: false },
-      { name: "Organize new clients profile", isDone: false },
-      { name: "Checking new files", isDone: false },
-      { name: "Organize new clients profile", isDone: false },
-      { name: "Checking new files", isDone: false },
-      { name: "Organize new clients profile", isDone: false },
-      { name: "Checking new files", isDone: false },
-      { name: "Organize new clients profile", isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Organize new clients profile', isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Organize new clients profile', isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Organize new clients profile', isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Organize new clients profile', isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Organize new clients profile', isDone: false },
     ],
   },
   {
-    date: "2025-01-19",
-    dayLabel: "Tomorrow",
+    date: '2025-01-19',
+    dayLabel: 'Tomorrow',
     tasks: [
-      { name: "Checking new files", isDone: false },
-      { name: "Prepare meeting notes", isDone: false },
+      { name: 'Checking new files', isDone: false },
+      { name: 'Prepare meeting notes', isDone: false },
     ],
   },
 ];
@@ -45,7 +45,8 @@ const Reminder: React.FC = () => {
 
   const handleCheckboxChange = (groupIndex: number, taskIndex: number) => {
     const newTasksData = [...tasksData];
-    newTasksData[groupIndex].tasks[taskIndex].isDone = !newTasksData[groupIndex].tasks[taskIndex].isDone;
+    newTasksData[groupIndex].tasks[taskIndex].isDone =
+      !newTasksData[groupIndex].tasks[taskIndex].isDone;
     setTasksData(newTasksData);
   };
 
@@ -63,13 +64,13 @@ const Reminder: React.FC = () => {
           <div key={`${taskGroup.date}-${groupIndex}`} className="mb-4">
             <div
               className={`flex justify-between items-center mb-2 pb-2 border-b ${
-                taskGroup.dayLabel === "Today"
-                  ? "border-Primary-EmeraldGreen"
-                  : "border-Text-Secondary"
+                taskGroup.dayLabel === 'Today'
+                  ? 'border-Primary-EmeraldGreen'
+                  : 'border-Text-Secondary'
               }`}
             >
               <div className="flex items-center gap-1">
-                {taskGroup.dayLabel === "Today" && (
+                {taskGroup.dayLabel === 'Today' && (
                   <SvgIcon
                     src="/icons/calendar-2.svg"
                     width="16px"
@@ -79,19 +80,23 @@ const Reminder: React.FC = () => {
                 )}
                 <span
                   className={`text-xs ${
-                    taskGroup.dayLabel === "Today"
-                      ? "text-Primary-EmeraldGreen"
-                      : "text-Text-Secondary"
+                    taskGroup.dayLabel === 'Today'
+                      ? 'text-Primary-EmeraldGreen'
+                      : 'text-Text-Secondary'
                   }`}
                 >
                   {taskGroup.dayLabel}
                 </span>
               </div>
-              <span  className={`text-xs ${
-                    taskGroup.dayLabel === "Today"
-                      ? "text-Text-Primary"
-                      : "text-Text-Secondary"
-                  }`}>{taskGroup.date}</span>
+              <span
+                className={`text-xs ${
+                  taskGroup.dayLabel === 'Today'
+                    ? 'text-Text-Primary'
+                    : 'text-Text-Secondary'
+                }`}
+              >
+                {taskGroup.date}
+              </span>
             </div>
             <ul className="space-y-2">
               {taskGroup.tasks.map((task, taskIndex) => (
@@ -107,12 +112,14 @@ const Reminder: React.FC = () => {
                       id={`${taskGroup.date}-${task.name}-${taskIndex}`}
                       type="checkbox"
                       checked={task.isDone}
-                      onChange={() => handleCheckboxChange(groupIndex, taskIndex)}
+                      onChange={() =>
+                        handleCheckboxChange(groupIndex, taskIndex)
+                      }
                       className=" hidden"
                     />
                     <div
                       className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
-                        task.isDone ? "bg-Primary-DeepTeal" : "bg-white"
+                        task.isDone ? 'bg-Primary-DeepTeal' : 'bg-white'
                       }`}
                     >
                       {task.isDone && (
@@ -130,7 +137,9 @@ const Reminder: React.FC = () => {
                         </svg>
                       )}
                     </div>
-                    <span className="text-xs text-Text-primary">{task.name}</span>
+                    <span className="text-xs text-Text-primary">
+                      {task.name}
+                    </span>
                   </label>
                 </li>
               ))}
