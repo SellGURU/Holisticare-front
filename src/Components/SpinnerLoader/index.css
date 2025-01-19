@@ -1,0 +1,76 @@
+/* Container for the spinner */
+.spinnerLoader {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+/* Base style for each segment */
+.spinner-segment {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  animation: fade-spin 1.5s linear infinite;
+}
+
+/* Create 8 segments with rotation and individual delays */
+.spinner-segment::before {
+  content: '';
+  position: absolute;
+  width: 2.35px;
+  height: 4.47px;
+  top: 0;
+  left: 50%;
+  background-color: #ffffff; /* Teal color */
+  border-radius: 50%;
+  transform: translateX(-50%);
+  opacity: 1; /* Initial opacity */
+}
+
+/* Add rotation for each segment */
+.segment-1 {
+  transform: rotate(0deg);
+  animation-delay: 0s;
+}
+.segment-2 {
+  transform: rotate(45deg);
+  animation-delay: 0.1875s;
+}
+.segment-3 {
+  transform: rotate(90deg);
+  animation-delay: 0.375s;
+}
+.segment-4 {
+  transform: rotate(135deg);
+  animation-delay: 0.5625s;
+}
+.segment-5 {
+  transform: rotate(180deg);
+  animation-delay: 0.75s;
+}
+.segment-6 {
+  transform: rotate(225deg);
+  animation-delay: 0.9375s;
+}
+.segment-7 {
+  transform: rotate(270deg);
+  animation-delay: 1.125s;
+}
+.segment-8 {
+  transform: rotate(315deg);
+  animation-delay: 1.3125s;
+}
+
+/* Animation for fading opacity */
+@keyframes fade-spin {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}

@@ -2,6 +2,10 @@
 import { useNavigate } from 'react-router-dom';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
+import { SlideOutPanel } from '../SlideOutPanel';
+import DownloadModal from './downloadModal';
+import { useState } from 'react';
+import SpinnerLoader from '../SpinnerLoader';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -117,6 +121,8 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       ];
     }
   };
+  const [openDownload, setOpenDownload] = useState(false);
+  const [downloadingState, setDownloadingState] = useState('download');
   return (
     <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
@@ -147,9 +153,30 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       <div className="flex gap-10 ">
         {canDownload && (
           <div className="flex gap-3">
-            <ButtonPrimary size="small" onClick={printreport}>
-              <img src="/icons/download.svg" alt="" />
-              Download
+            <ButtonPrimary
+              size="small"
+              onClick={() => {
+                setOpenDownload(true);
+              }}
+            >
+              {downloadingState == 'download' && (
+                <>
+                  <img className="w-4 h-4" src="/icons/download.svg" alt="" />
+                  Download
+                </>
+              )}
+              {downloadingState == 'downloading' && (
+                <>
+                  <SpinnerLoader></SpinnerLoader>
+                  Downloading
+                </>
+              )}
+              {downloadingState == 'Downloaded' && (
+                <>
+                  <img src="/icons/tick.svg" className="w-4 h-4" alt="" />
+                  Downloaded
+                </>
+              )}
             </ButtonPrimary>
             <div className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer ">
               <img src="/icons/share.svg" alt="" />
@@ -160,6 +187,32 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
 
         <LogOutModal></LogOutModal>
       </div>
+      <SlideOutPanel
+        isOpen={openDownload}
+        headline="Select Sections to Download"
+        onClose={() => {
+          setOpenDownload(false);
+        }}
+      >
+        <>
+          <DownloadModal
+            onconfirm={() => {
+              setDownloadingState('downloading');
+              setOpenDownload(false);
+              setTimeout(() => {
+                printreport();
+                setDownloadingState('Downloaded');
+                setTimeout(() => {
+                  setDownloadingState('download');
+                }, 2000);
+              }, 3000);
+            }}
+            onclose={() => {
+              setOpenDownload(false);
+            }}
+          ></DownloadModal>
+        </>
+      </SlideOutPanel>
     </div>
   );
 };
