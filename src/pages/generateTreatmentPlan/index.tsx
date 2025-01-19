@@ -48,8 +48,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [generateStep, setGenereStep] = useState('Client Goals');
   const [clientGools, setClientGools]: any = useState({});
-  const [isAnalysingQuik,setAnalysingQuik] = useState(false)
-  const [isAnalysingComper,setAnalysingCompar] = useState(false)
+  const [isAnalysingQuik, setAnalysingQuik] = useState(false);
+  const [isAnalysingComper, setAnalysingCompar] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [isFinalLoading, setisFinalLoading] = useState(false);
@@ -499,70 +499,76 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       >
         <div>
           <div className="flex mb-4 justify-between items-center">
-            <div onClick={() => {
-              setAnalysingQuik(true)
-              Application.medicalAnalyse({
-                member_id:id,
-                mode:'quick'
-              }).then(res => {
-                setAnalysingQuik(false)
-                updateClientConditionInsights(res.data)
-              })
-            }} className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
-              {
-                isAnalysingQuik ?
+            <div
+              onClick={() => {
+                setAnalysingQuik(true);
+                Application.medicalAnalyse({
+                  member_id: id,
+                  mode: 'quick',
+                }).then((res) => {
+                  setAnalysingQuik(false);
+                  updateClientConditionInsights(res.data);
+                });
+              }}
+              className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
+            >
+              {isAnalysingQuik ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
                   <div className="mt-[2px]">Quick Analysis</div>
                 </>
-                :
+              ) : (
                 <>
-                <img src="/icons/stars.svg" alt="" />
-                <div className="mt-[2px]">Quick Analysis</div>
+                  <img src="/icons/stars.svg" alt="" />
+                  <div className="mt-[2px]">Quick Analysis</div>
                 </>
-              }
+              )}
             </div>
-            <div onClick={() => {
-              setAnalysingCompar(true)
-              Application.medicalAnalyse({
-                member_id:id,
-                mode:'comprehensive'
-              }).then(res => {
-                setAnalysingCompar(false)
-                updateClientConditionInsights(res.data)
-              })              
-            }} className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50">
-              {
-                isAnalysingComper ?
+            <div
+              onClick={() => {
+                setAnalysingCompar(true);
+                Application.medicalAnalyse({
+                  member_id: id,
+                  mode: 'comprehensive',
+                }).then((res) => {
+                  setAnalysingCompar(false);
+                  updateClientConditionInsights(res.data);
+                });
+              }}
+              className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
+            >
+              {isAnalysingComper ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
                   <div className="mt-[2px]">Comprehensive Analysis</div>
                 </>
-                :
+              ) : (
                 <>
                   <img src="/icons/stars.svg" alt="" />
                   <div className="mt-[2px]">Comprehensive Analysis</div>
                 </>
-              }              
+              )}
             </div>
           </div>
-            <>
-              <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
-                Client Condition Insight
-              </div>
+          <>
+            <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
+              Client Condition Insight
+            </div>
 
-              {treatmentPlanData && (
-                <TextBoxAi
-                  isUpchange={isforceReload ||isAnalysingQuik || isAnalysingComper}
-                  isNeedFocus
-                  label=""
-                  onChange={(e) => {
-                    updateClientConditionInsights(e);
-                  }}
-                  value={treatmentPlanData['medical_summary']}
-                />
-              )}
-            </>
+            {treatmentPlanData && (
+              <TextBoxAi
+                isUpchange={
+                  isforceReload || isAnalysingQuik || isAnalysingComper
+                }
+                isNeedFocus
+                label=""
+                onChange={(e) => {
+                  updateClientConditionInsights(e);
+                }}
+                value={treatmentPlanData['medical_summary']}
+              />
+            )}
+          </>
 
           <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
             Needs Focus Biomarkers

@@ -557,10 +557,10 @@ class Application extends Api {
     return response;
   };
 
-  static medicalAnalyse = (data:any) => {
-    const response = this.post('/treatment_plan/medical_summary_ai',data)
-    return response
-  }
+  static medicalAnalyse = (data: any) => {
+    const response = this.post('/treatment_plan/medical_summary_ai', data);
+    return response;
+  };
 }
 
 export default Application;
