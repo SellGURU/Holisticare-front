@@ -54,7 +54,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   };
   return (
     <>
-      <div className="fixed inset-0 z-10 flex items-center justify-center bg-white bg-opacity-80">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400 bg-opacity-45">
         <div
           ref={modalRef}
           className={` bg-white relative text-primary-text p-6 rounded-[16px] shadow-200 w-[428px]`}
@@ -85,8 +85,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               onClick={() => {
                 onClose();
               }}
-            >
-              Close
+            > <div className="w-[60px]">Close</div>
+              
             </ButtonPrimary>
 
             <ButtonPrimary

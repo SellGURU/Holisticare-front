@@ -49,12 +49,12 @@ export const FilleHistory = () => {
                         <div className="w-[70px] text-center">
                           {el.date_uploaded}
                         </div>
-                        <div className="flex items-center justify-end gap-1">
-                          <img
+                        <div className="flex w-[55px] justify-center gap-1">
+                          {/* <img
                             className="cursor-pointer"
                             src="/icons/eye-green.svg"
                             alt=""
-                          />
+                          /> */}
                           <img
                             onClick={() => {
                               Application.downloadFille({
@@ -101,7 +101,7 @@ export const FilleHistory = () => {
                                 document.body.removeChild(link);
                               });
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer -mt-[3px]"
                             src="/icons/import.svg"
                             alt=""
                           />

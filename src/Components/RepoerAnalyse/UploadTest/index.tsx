@@ -48,6 +48,7 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
             <input
               type="file"
               ref={fileInputRef}
+              accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
               multiple
               onChange={(e: any) => {
                 const fileList = Array.from(e.target.files);

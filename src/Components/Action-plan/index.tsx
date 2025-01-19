@@ -100,6 +100,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = () => {
                     onDelete={(id: number) => {
                       Application.deleteActionCard({ id: el.id });
                       setCardData(CardData.filter((card) => card.id !== id));
+                      setActiveAction(CardData[0]);
                     }}
                     key={i}
                     el={el}

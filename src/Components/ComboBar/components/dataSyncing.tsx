@@ -45,7 +45,7 @@ export const DataSyncing = () => {
                           {el.Data}
                         </div>
                         <div className="w-[30px] text-right">
-                          {el['Last Sync']} aa
+                          {el['Last Sync']}
                         </div>
                         <div className="text-[8px] ">
                           <div

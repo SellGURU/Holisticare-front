@@ -61,11 +61,15 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const [DeleteConfirm, setDeleteConfirm] = useState(false);
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
-  const isDisabled = el.status === 'Completed';
+  const isDisabled = el.state === 'Completed';
 
   return (
     <div
-      onClick={() => onClick()}
+      onClick={() =>{
+        if (!isDisabled){
+          onClick()
+        }
+        }}
       className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
         isDisabled ? 'opacity-45 cursor-not-allowed' : ''
       }`}
@@ -85,15 +89,15 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           {index < 10 && 0}
           {index}
         </div>
-        <div className="relative py-3">
-          <img
-            ref={showModalButtonRefrence}
-            onClick={(e) => {
+        <div   onClick={(e) => {
               e.stopPropagation();
               if (!isDisabled) {
                 setshowModal(!showModal);
               }
-            }}
+            }} className="relative py-3">
+          <img
+            ref={showModalButtonRefrence}
+          
             className=" cursor-pointer"
             src="/icons/dots.svg"
             alt=""
@@ -112,7 +116,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
               >
-                <img src="icons/targeting-green.svg" alt="" />
+                <img src="/icons/targeting-green.svg" alt="" />
                 Targeting
               </div>
               {/* <div
@@ -140,7 +144,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
               >
-                <img src="icons/edit-green.svg" alt="" />
+                <img src="/icons/edit-green.svg" alt="" />
                 Edit
               </div>
               <div
@@ -158,6 +162,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                       e.stopPropagation();
                       if (!isDisabled) {
                         onDelete(el.id);
+                        setshowModal(false);
                       }
                     }}
                     className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
@@ -166,7 +171,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                   </div>
                 ) : (
                   <>
-                    <img src="icons/delete-green.svg" alt="" />
+                    <img src="/icons/delete-green.svg" alt="" />
                     Remove
                   </>
                 )}

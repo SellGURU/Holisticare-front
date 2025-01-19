@@ -7,7 +7,7 @@ import Badge from '../badge';
 // import { useSelector } from "react-redux";
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
-import CircularProgressBar from '../charts/CircularProgressBar';
+// import CircularProgressBar from '../charts/CircularProgressBar';
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -72,32 +72,32 @@ export const columns: ColumnDef<any>[] = [
       return <div className="">{row.original?.sex || 'No Data'}</div>;
     },
   },
-  {
-    accessorKey: 'weight',
-    header: 'Weight',
-    enableSorting: false,
+  // {
+  //   accessorKey: 'weight',
+  //   header: 'Weight',
+  //   enableSorting: false,
 
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center justify-center">
-          {row.original?.weight || 'No Data'}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'height',
-    enableSorting: false,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex items-center justify-center">
+  //         {row.original?.weight || 'No Data'}
+  //       </div>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: 'height',
+  //   enableSorting: false,
 
-    header: 'Height',
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center justify-center">
-          {row.original?.height || 'No Data'}
-        </div>
-      );
-    },
-  },
+  //   header: 'Height',
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="flex items-center justify-center">
+  //         {row.original?.height || 'No Data'}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: 'enroll_date',
     header: 'Enroll Date',
@@ -127,34 +127,34 @@ export const columns: ColumnDef<any>[] = [
       );
     },
   },
-  {
-    accessorKey: 'score',
-    header: 'Score',
-    enableSorting: false,
+  // {
+  //   accessorKey: 'score',
+  //   header: 'Score',
+  //   enableSorting: false,
 
-    cell: ({ row }) => {
-      return (
-        <div className="text-Text-Primary ">
-          {row.original.score} <span className="text-Text-Secondary">/10</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'information.progress',
-    header: 'Progress',
-    enableSorting: false,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="text-Text-Primary ">
+  //         {row.original.score} <span className="text-Text-Secondary">/10</span>
+  //       </div>
+  //     );
+  //   },
+  // },
+  // {
+  //   accessorKey: 'information.progress',
+  //   header: 'Progress',
+  //   enableSorting: false,
 
-    cell: ({ row }) => {
-      return (
-        <div>
-          <CircularProgressBar
-            percentage={row.original?.progress}
-          ></CircularProgressBar>{' '}
-        </div>
-      );
-    },
-  },
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div>
+  //         <CircularProgressBar
+  //           percentage={row.original?.progress}
+  //         ></CircularProgressBar>{' '}
+  //       </div>
+  //     );
+  //   },
+  // },
   // {
   //   accessorKey: "information.heart_rate",
   //   header: "Heart Rate",
