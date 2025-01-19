@@ -1,19 +1,51 @@
+import { useState, useEffect } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
-
+import Application from '../../../api/app';
 interface Employee {
-  name: string;
+  picture: string;
+  user_name: string;
   role: string;
-  avatar: string; // URL to the avatar image
 }
-const employeesData: Employee[] = [
-  { name: 'Sarah Thompson', role: 'Doctor', avatar: '/path/to/avatar1.jpg' },
-  { name: 'John Doe', role: 'Admin', avatar: '/path/to/avatar2.jpg' },
-  { name: 'Emi Thompson', role: 'Admin', avatar: '/path/to/avatar3.jpg' },
-  { name: 'Sarah Jonas', role: 'Admin', avatar: '/path/to/avatar4.jpg' },
-  { name: 'David Smith', role: 'Admin', avatar: '/path/to/avatar5.jpg' },
+
+const mockEmployees: Employee[] = [
+  {
+    picture: '',
+    user_name: 'Sarah Thompson',
+    role: 'Doctor',
+  },
+  {
+    picture: '',
+    user_name: 'John Doe',
+    role: 'Admin',
+  },
+  {
+    picture: '',
+    user_name: 'Emi Thompson',
+    role: 'Admin',
+  },
+  {
+    picture: '',
+    user_name: 'Sarah Jonas',
+    role: 'Admin',
+  },
+  {
+    picture: '',
+    user_name: 'David Smith',
+    role: 'Admin',
+  },
 ];
 
 const Employes: React.FC = () => {
+  const [Employees] = useState(mockEmployees);
+  useEffect(() => {
+    Application.dashboardStaff()
+      .then((Response) => {
+        console.log(Response);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
   return (
     <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4">
       <div className="flex justify-between items-center mb-4">
@@ -22,16 +54,21 @@ const Employes: React.FC = () => {
         <ButtonPrimary size="small">view all</ButtonPrimary>
       </div>
       <ul className="space-y-3 max-h-[283px] overflow-auto">
-        {employeesData.map((employee, index) => (
+        {Employees.map((employee, index) => (
           <li key={index} className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src={`https://ui-avatars.com/api/?name=${employee.name}`}
-                alt={`${employee.name}'s avatar`}
+                src={
+                  employee.picture ||
+                  `https://ui-avatars.com/api/?name=${employee.user_name}`
+                }
+                alt={`${employee.user_name}'s avatar`}
                 className="w-10 h-10 rounded-full mr-3"
               />
               <div>
-                <p className="text-[10px] text-[#383838]">{employee.name}</p>
+                <p className="text-[10px] text-[#383838]">
+                  {employee.user_name}
+                </p>
                 <p className="text-[10px] text-[#888888]">{employee.role}</p>
               </div>
             </div>

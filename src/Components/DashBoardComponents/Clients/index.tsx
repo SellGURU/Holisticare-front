@@ -1,51 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CircularProgressBar from '../../charts/CircularProgressBar';
+import Application from '../../../api/app';
 interface Client {
+  picture: string;
   name: string;
-  id: string;
-  gender: string;
+  ID: number;
   enrollDate: string;
   progress: number;
-  avatar: string; // URL or path to the avatar image
+  gender: string;
 }
+
+const mockClients: Client[] = [
+  {
+    picture: '',
+    name: 'David Smith',
+    ID: 21548461651,
+    gender: 'Male',
+    enrollDate: '2024-04-25',
+    progress: 87,
+  },
+  {
+    picture: '',
+    name: 'Leslie Alexander',
+    ID: 21548461652,
+    gender: 'Female',
+    enrollDate: '2024-04-25',
+    progress: 90,
+  },
+  {
+    picture: '',
+    name: 'Robert Garcia',
+    ID: 21548461653,
+    gender: 'Male',
+    enrollDate: '2024-04-25',
+    progress: 75,
+  },
+  {
+    picture: '',
+    name: 'Sarah Thompson',
+    ID: 21548461654,
+    gender: 'Female',
+    enrollDate: '2024-04-25',
+    progress: 80,
+  },
+];
+
 const Clients = () => {
-  const initialClients: Client[] = [
-    {
-      name: 'David Smith',
-      id: '021548461651',
-      gender: 'Male',
-      enrollDate: '04/25/2024',
-      progress: 87,
-      avatar: '/path/to/avatar1.jpg',
-    },
-    {
-      name: 'Leslie Alexander',
-      id: '021548461651',
-      gender: 'Female',
-      enrollDate: '04/25/2024',
-      progress: 87,
-      avatar: '/path/to/avatar2.jpg',
-    },
-    {
-      name: 'Robert Garcia',
-      id: '021548461651',
-      gender: 'Male',
-      enrollDate: '04/25/2024',
-      progress: 87,
-      avatar: '/path/to/avatar3.jpg',
-    },
-    {
-      name: 'Sarah Thompson',
-      id: '021548461651',
-      gender: 'Female',
-      enrollDate: '04/25/2024',
-      progress: 87,
-      avatar: '/path/to/avatar4.jpg',
-    },
-  ];
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 3;
-  const [clients] = useState(initialClients);
+  const [clients] = useState(mockClients);
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentClients = clients.slice(indexOfFirstTask, indexOfLastTask);
@@ -56,7 +59,15 @@ const Clients = () => {
   }
 
   const handleClick = (pageNumber: number) => setCurrentPage(pageNumber);
-
+  useEffect(() => {
+    Application.dashboardClients()
+      .then((Response) => {
+        console.log(Response);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
   return (
     <>
       <div className="w-full h-[320px] relative overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
@@ -80,20 +91,22 @@ const Clients = () => {
           </thead>
           <tbody>
             {currentClients.map((client) => (
-              <tr key={client.id} className="border-b">
+              <tr key={client.ID} className="border-b">
                 <td className="py-2 flex items-center">
                   <img
-                    src={`https://ui-avatars.com/api/?name=${client.name}`}
+                    src={
+                      client.picture ||
+                      `https://ui-avatars.com/api/?name=${client.name}`
+                    }
                     alt={`${client.name}'s avatar`}
                     className="w-8 h-8 rounded-full mr-2"
                   />
                   <span className="text-xs">{client.name}</span>
                 </td>
-                <td className="py-2 text-xs">{client.id}</td>
+                <td className="py-2 text-xs">{client.ID}</td>
                 <td className="py-2 pl-1 text-xs">{client.gender}</td>
                 <td className="py-2 text-xs">{client.enrollDate}</td>
-                <td className="py-2 text-xs ">
-                  {' '}
+                <td className="py-2 text-xs">
                   <CircularProgressBar
                     percentage={client.progress}
                   ></CircularProgressBar>
@@ -102,7 +115,7 @@ const Clients = () => {
             ))}
           </tbody>
         </table>
-        <div className=" absolute bottom-5 flex justify-center items-center  w-full">
+        <div className="absolute bottom-5 flex justify-center items-center w-full">
           <button
             onClick={() => handleClick(currentPage - 1)}
             disabled={currentPage === 1}
@@ -114,7 +127,7 @@ const Clients = () => {
             <button
               key={number}
               onClick={() => handleClick(number)}
-              className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A]  text-[9.75px] font-semibold cursor-pointer ${
+              className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
                 currentPage === number ? 'bg-[#005F73] text-white' : 'bg-white'
               }`}
             >

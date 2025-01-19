@@ -1,82 +1,102 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
-
+import Application from '../../../api/app';
+// Define the new Task type
 type Task = {
-  id: number;
+  task_id: string;
   title: string;
   date: string;
-  status: 'To Do' | 'In Progress';
-  priority: 'Low' | 'Medium' | 'High';
+  status: string;
+  priority: string;
   checked: boolean;
 };
 
-const initialTasks: Task[] = [
+const mockTasks = [
   {
-    id: 1,
+    task_id: '1',
     title: 'Update sam meal plan',
-    date: '04/25/2024',
+    date: '2024-04-25',
     status: 'In Progress',
     priority: 'High',
     checked: false,
   },
   {
-    id: 2,
+    task_id: '2',
     title: 'Checking new files',
-    date: '04/25/2024',
+    date: '2024-04-25',
     status: 'To Do',
     priority: 'High',
     checked: false,
   },
   {
-    id: 3,
+    task_id: '3',
     title: 'Organize new clients profile',
-    date: '04/25/2024',
+    date: '2024-04-25',
     status: 'In Progress',
     priority: 'Medium',
     checked: false,
   },
   {
-    id: 4,
+    task_id: '4',
     title: 'Update john nutrition plan',
-    date: '04/25/2024',
+    date: '2024-04-25',
     status: 'To Do',
     priority: 'Low',
     checked: false,
   },
   {
-    id: 5,
+    task_id: '5',
     title: 'Set exercise plan for Mike',
-    date: '04/25/2024',
+    date: '2024-04-25',
     status: 'To Do',
     priority: 'Medium',
     checked: false,
   },
   // Add more tasks as needed
 ];
-const TaskManager: React.FC = () => {
-  const [tasks, setTasks] = useState(initialTasks);
+
+const TaskManager = () => {
+  const [tasks] = useState<Task[]>(mockTasks);
+
+  useEffect(() => {
+    // Fetch the tasks when the component mounts
+    Application.dashboardTasks()
+      .then((response) => {
+        console.log(response);
+
+        // Assuming response.data contains the list of tasks
+        // setTasks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
+
+  const [currentTasks, setCurrentTasks] = useState(tasks);
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 3;
 
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+  const paginatedTasks = currentTasks.slice(indexOfFirstTask, indexOfLastTask);
 
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(tasks.length / tasksPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(currentTasks.length / tasksPerPage); i++) {
     pageNumbers.push(i);
   }
 
   const handleClick = (pageNumber: number) => setCurrentPage(pageNumber);
-  const handleCheckBoxChange = (id: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, checked: !task.checked } : task,
+
+  const handleCheckBoxChange = (task_id: string) => {
+    setCurrentTasks(
+      currentTasks.map((task) =>
+        task.task_id === task_id ? { ...task, checked: !task.checked } : task,
       ),
     );
   };
+
   return (
-    <div className=" w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+    <div className="w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm font-medium">Tasks</h2>
         <div className="flex items-center gap-3">
@@ -84,33 +104,31 @@ const TaskManager: React.FC = () => {
             <img className="w-4 h-4" src="/icons/filter.svg" alt="" />
           </div>
           <ButtonSecondary>
-            {' '}
             <img src="/icons/add.svg" alt="" />
             Add A New Task
           </ButtonSecondary>
         </div>
       </div>
       <ul className="grid grid-cols-2 gap-3 mb-4 min-h-[191px]">
-        {currentTasks.map((task) => (
+        {paginatedTasks.map((task) => (
           <li
-            key={task.id}
-            className="bg-backgroundColor-Card shadow-100  p-2 rounded-2xl h-fit"
+            key={task.task_id}
+            className="bg-backgroundColor-Card shadow-100 p-2 rounded-2xl h-fit"
           >
             <div className="w-full flex items-center justify-between">
               <label
                 className="flex items-center mb-2 cursor-pointer gap-2"
                 htmlFor={task.title}
               >
-                {' '}
                 <input
                   type="checkbox"
                   id={task.title}
                   checked={task.checked}
-                  onChange={() => handleCheckBoxChange(task.id)}
+                  onChange={() => handleCheckBoxChange(task.task_id)}
                   className="hidden"
                 />
                 <div
-                  className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
+                  className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
                     task.checked ? 'bg-Primary-DeepTeal' : 'bg-white'
                   }`}
                 >
@@ -172,7 +190,7 @@ const TaskManager: React.FC = () => {
           </li>
         ))}
       </ul>
-      <div className="flex justify-center items-center  w-full">
+      <div className="flex justify-center items-center w-full">
         <button
           onClick={() => handleClick(currentPage - 1)}
           disabled={currentPage === 1}
@@ -184,7 +202,7 @@ const TaskManager: React.FC = () => {
           <button
             key={number}
             onClick={() => handleClick(number)}
-            className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A]  text-[9.75px] font-semibold cursor-pointer ${
+            className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
               currentPage === number ? 'bg-[#005F73] text-white' : 'bg-white'
             }`}
           >

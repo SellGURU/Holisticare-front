@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   NumberBoxes,
   MessageList,
@@ -6,8 +7,21 @@ import {
   Employes,
   TaskManager,
 } from '../../Components/DashBoardComponents';
+import Application from '../../api/app';
 
 const DashBoard = () => {
+  // const [reports, setreports] = useState()
+
+  useEffect(() => {
+    Application.clientsStats()
+      .then((Response) => {
+        console.log(Response);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
+
   return (
     <>
       <div className="px-6 py-10">

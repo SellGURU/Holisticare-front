@@ -552,8 +552,37 @@ class Application extends Api {
     });
     return response;
   };
+  static dashboardTasks = () => {
+    const response = this.post('/dashboard/tasks/tasks_list', {});
+    return response;
+  };
+  static dashboardAddTask = (data: any) => {
+    const response = this.post('tasks', data);
+    return response;
+  };
+
   static messagesUsersList = () => {
     const response = this.post('/messages/users_list', {});
+    return response;
+  };
+  static sendMessage = (data: any) => {
+    const response = this.post('/messages/chat_window/send_message', data);
+    return response;
+  };
+  static clientsStats = () => {
+    const response = this.post('/dashboard/clinic/clients_statistics', {});
+    return response;
+  };
+  static dashboardReminders = () => {
+    const response = this.post('/dashboard/reminder/reminders_list', {});
+    return response;
+  };
+  static dashboardStaff = () => {
+    const response = this.post(' /dashboard/staff/staff_list', {});
+    return response;
+  };
+  static dashboardClients = () => {
+    const response = this.post('/dashboard/clients/clients_list', {});
     return response;
   };
 }

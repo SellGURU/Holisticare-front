@@ -1,55 +1,60 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SvgIcon from '../../../utils/svgIcon';
-
-interface TaskItem {
-  name: string;
-  isDone: boolean;
-}
-
-interface Task {
+import Application from '../../../api/app';
+type ReminderItem = {
+  reminder_id: string;
+  title: string;
   date: string;
-  dayLabel: string;
-  tasks: TaskItem[];
-}
+  checked: boolean;
+};
 
-const initialTasksData: Task[] = [
+const mockReminders = [
   {
+    reminder_id: '1',
+    title: 'Team meeting',
     date: '2025-01-18',
-    dayLabel: 'Today',
-    tasks: [
-      { name: 'Checking new files', isDone: false },
-      { name: 'Organize new clients profile', isDone: false },
-      { name: 'Checking new files', isDone: false },
-      { name: 'Organize new clients profile', isDone: false },
-      { name: 'Checking new files', isDone: false },
-      { name: 'Organize new clients profile', isDone: false },
-      { name: 'Checking new files', isDone: false },
-      { name: 'Organize new clients profile', isDone: false },
-      { name: 'Checking new files', isDone: false },
-      { name: 'Organize new clients profile', isDone: false },
-    ],
+    checked: false,
   },
   {
+    reminder_id: '2',
+    title: 'Doctor Appointment',
     date: '2025-01-19',
-    dayLabel: 'Tomorrow',
-    tasks: [
-      { name: 'Checking new files', isDone: false },
-      { name: 'Prepare meeting notes', isDone: false },
-    ],
+    checked: false,
   },
+  // Add more reminders as needed
 ];
+const Reminder = () => {
+  const [reminders] = useState<ReminderItem[]>(mockReminders);
 
-const Reminder: React.FC = () => {
-  const [tasksData, setTasksData] = useState<Task[]>(initialTasksData);
+  useEffect(() => {
+    Application.dashboardReminders()
+      .then((Response) => {
+        console.log(Response);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
+  const [reminderList, setReminderList] = useState(reminders);
 
-  const handleCheckboxChange = (groupIndex: number, taskIndex: number) => {
-    const newTasksData = [...tasksData];
-    newTasksData[groupIndex].tasks[taskIndex].isDone =
-      !newTasksData[groupIndex].tasks[taskIndex].isDone;
-    setTasksData(newTasksData);
+  const handleCheckboxChange = (reminder_id: string) => {
+    setReminderList(
+      reminderList.map((reminder) =>
+        reminder.reminder_id === reminder_id
+          ? { ...reminder, checked: !reminder.checked }
+          : reminder,
+      ),
+    );
   };
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
 
+  const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
+  const todayStr = formatDate(today);
+  const tomorrowStr = formatDate(tomorrow);
   return (
     <div className="w-full h-[328px] overflow-hidden bg-white rounded-2xl shadow-200 p-4">
       <div className="flex justify-between items-center mb-4">
@@ -60,69 +65,59 @@ const Reminder: React.FC = () => {
         </ButtonSecondary>
       </div>
       <div className="max-h-[283px] overflow-y-auto pb-5">
-        {tasksData.map((taskGroup, groupIndex) => (
-          <div key={`${taskGroup.date}-${groupIndex}`} className="mb-4">
-            <div
-              className={`flex justify-between items-center mb-2 pb-2 border-b ${
-                taskGroup.dayLabel === 'Today'
-                  ? 'border-Primary-EmeraldGreen'
-                  : 'border-Text-Secondary'
-              }`}
-            >
-              <div className="flex items-center gap-1">
-                {taskGroup.dayLabel === 'Today' && (
-                  <SvgIcon
-                    src="/icons/calendar-2.svg"
-                    width="16px"
-                    height="16px"
-                    color="#6CC24A"
-                  />
-                )}
+        {reminderList.map((reminder) => {
+          let dayLabel = '';
+          if (reminder.date === todayStr) {
+            dayLabel = 'Today';
+          } else if (reminder.date === tomorrowStr) {
+            dayLabel = 'Tomorrow';
+          }
+
+          return (
+            <div key={reminder.reminder_id} className="mb-4">
+              <div
+                className={`flex justify-between items-center mb-2 pb-2 border-b ${dayLabel === 'Today' ? 'border-Primary-EmeraldGreen' : 'border-Text-Secondary'}`}
+              >
+                <div className="flex items-center gap-1">
+                  {dayLabel === 'Today' && (
+                    <SvgIcon
+                      color="#6CC24A"
+                      src="/icons/calendar-2.svg"
+                      width="16px"
+                      height="16px"
+                    />
+                  )}
+                  <span
+                    className={`text-xs ${dayLabel === 'Today' ? 'text-Primary-EmeraldGreen' : 'text-Text-Secondary'}`}
+                  >
+                    {dayLabel || reminder.title}
+                  </span>
+                </div>
                 <span
-                  className={`text-xs ${
-                    taskGroup.dayLabel === 'Today'
-                      ? 'text-Primary-EmeraldGreen'
-                      : 'text-Text-Secondary'
-                  }`}
+                  className={`text-xs ${dayLabel === 'Today' ? 'text-Text-Primary' : 'text-Text-Secondary'}`}
                 >
-                  {taskGroup.dayLabel}
+                  {reminder.date}
                 </span>
               </div>
-              <span
-                className={`text-xs ${
-                  taskGroup.dayLabel === 'Today'
-                    ? 'text-Text-Primary'
-                    : 'text-Text-Secondary'
-                }`}
-              >
-                {taskGroup.date}
-              </span>
-            </div>
-            <ul className="space-y-2">
-              {taskGroup.tasks.map((task, taskIndex) => (
-                <li
-                  key={`${taskGroup.date}-${task.name}-${taskIndex}`}
-                  className="flex items-center my-3 bg-backgroundColor-Card shadow-drop rounded-[16px] p-2"
-                >
+              <ul className="space-y-2">
+                <li className="flex items-center my-3 bg-backgroundColor-Card shadow-drop rounded-[16px] p-2">
                   <label
-                    htmlFor={`${taskGroup.date}-${task.name}-${taskIndex}`}
+                    htmlFor={reminder.reminder_id}
                     className="flex items-center gap-2"
                   >
                     <input
-                      id={`${taskGroup.date}-${task.name}-${taskIndex}`}
+                      id={reminder.reminder_id}
                       type="checkbox"
-                      checked={task.isDone}
+                      checked={reminder.checked}
                       onChange={() =>
-                        handleCheckboxChange(groupIndex, taskIndex)
+                        handleCheckboxChange(reminder.reminder_id)
                       }
-                      className=" hidden"
+                      className="hidden"
                     />
                     <div
-                      className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
-                        task.isDone ? 'bg-Primary-DeepTeal' : 'bg-white'
-                      }`}
+                      className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${reminder.checked ? 'bg-Primary-DeepTeal' : 'bg-white'}`}
                     >
-                      {task.isDone && (
+                      {reminder.checked && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-3 w-3 text-white"
@@ -138,14 +133,14 @@ const Reminder: React.FC = () => {
                       )}
                     </div>
                     <span className="text-xs text-Text-primary">
-                      {task.name}
+                      {reminder.title}
                     </span>
                   </label>
                 </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
