@@ -47,28 +47,67 @@ const PrintReport: React.FC<PrintReportProps> = ({
     <>
       <div
         className=" w-full relative min-h-full"
-        style={{ pageBreakAfter: 'always',height:'auto', backgroundColor: '#E9F0F2' }}
+        style={{
+          pageBreakAfter: 'always',
+          height: 'auto',
+          backgroundColor: '#E9F0F2',
+        }}
       >
-        <div className="w-full flex justify-center " style={{paddingTop:'500px'}}>
-          <div className='ml-20'>
-            <div className="text-white uppercase text-center " style={{ fontSize: 42,color:'#383838' }}>
+        <div
+          className="w-full flex justify-center "
+          style={{ paddingTop: '500px' }}
+        >
+          <div className="ml-20">
+            <div
+              className="text-white uppercase text-center "
+              style={{ fontSize: 42, color: '#383838' }}
+            >
               Comprehensive
             </div>
-            <div className="text-white uppercase  text-center" style={{ fontSize: 42,color:'#383838' }}>
+            <div
+              className="text-white uppercase  text-center"
+              style={{ fontSize: 42, color: '#383838' }}
+            >
               Health Plan
             </div>
           </div>
         </div>
-        <div className='flex justify-end mt-2 items-center'>
-          <div className='' style={{backgroundColor:'#B0B0B0',width:'500px' ,height:'2px'}}></div>
-
+        <div className="flex justify-end mt-2 items-center">
+          <div
+            className=""
+            style={{
+              backgroundColor: '#B0B0B0',
+              width: '500px',
+              height: '2px',
+            }}
+          ></div>
         </div>
-        <div className='absolute left-10 top-0'>
-          <div className='rounded-full rounded-t-none ' style={{backgroundColor:'#005F73',width:'12px',height:'200px',marginLeft:'95px'}}></div>
-          <img className='mt-6' style={{width:'200px'}} src="/icons/poweredBy.svg" alt="" />
-          <div className='rounded-full mt-6 rounded-b-none ' style={{backgroundColor:'#005F73',width:'12px',height:'680px',marginLeft:'95px'}}></div>
+        <div className="absolute left-10 top-0">
+          <div
+            className="rounded-full rounded-t-none "
+            style={{
+              backgroundColor: '#005F73',
+              width: '12px',
+              height: '200px',
+              marginLeft: '95px',
+            }}
+          ></div>
+          <img
+            className="mt-6"
+            style={{ width: '200px' }}
+            src="/icons/poweredBy.svg"
+            alt=""
+          />
+          <div
+            className="rounded-full mt-6 rounded-b-none "
+            style={{
+              backgroundColor: '#005F73',
+              width: '12px',
+              height: '680px',
+              marginLeft: '95px',
+            }}
+          ></div>
         </div>
-
       </div>
       <div>
         <div className="mt-4">
