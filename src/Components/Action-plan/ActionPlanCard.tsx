@@ -65,11 +65,11 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
 
   return (
     <div
-      onClick={() =>{
-        if (!isDisabled){
-          onClick()
+      onClick={() => {
+        if (!isDisabled) {
+          onClick();
         }
-        }}
+      }}
       className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
         isDisabled ? 'opacity-45 cursor-not-allowed' : ''
       }`}
@@ -89,15 +89,17 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           {index < 10 && 0}
           {index}
         </div>
-        <div   onClick={(e) => {
-              e.stopPropagation();
-              if (!isDisabled) {
-                setshowModal(!showModal);
-              }
-            }} className="relative py-3">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isDisabled) {
+              setshowModal(!showModal);
+            }
+          }}
+          className="relative py-3"
+        >
           <img
             ref={showModalButtonRefrence}
-          
             className=" cursor-pointer"
             src="/icons/dots.svg"
             alt=""

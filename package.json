@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "echo \"No test specified\" && exit 1",
+    "test": "yarn format",
     "format": "prettier --write .",
     "preview": "vite preview",
     "prepare": "husky install"
