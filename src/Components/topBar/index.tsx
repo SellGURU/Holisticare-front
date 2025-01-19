@@ -21,12 +21,20 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
           <head>
           <title>${document.title}</title>
           <!-- Link to Tailwind CSS -->
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">         
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
           <style>
               @media print {
               body {
                   background-color: white !important;
+                  font-family:Inter
               }
+              .header,
+              .footer {
+                display: none;
+              }                  
               .bg-gray-100 {
                   background-color: #f3f4f6 !important; /* Tailwind Gray 100 */
               }
@@ -50,12 +58,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       </html>
       `);
     mywindow.document.close(); // necessary for IE >= 10
-    mywindow.onload = () => {
-      mywindow.focus(); // necessary for IE >= 10*/
+    // mywindow.onload = () => {
+    //   mywindow.focus(); // necessary for IE >= 10*/
 
-      mywindow.print();
-      mywindow.close();
-    };
+    //   mywindow.print();
+    //   mywindow.close();
+    // };
     // mywindow.print()
   };
   const resolveNav = () => {
@@ -216,8 +224,8 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                   setDownloadingState('Downloaded');
                   setTimeout(() => {
                     setDownloadingState('download');
-                  }, 2000);
-                }, 3000);
+                  }, 200);
+                }, 300);
               }
               setOpenShare(false);
             }}
