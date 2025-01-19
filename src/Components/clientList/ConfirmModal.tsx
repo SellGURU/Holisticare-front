@@ -85,8 +85,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               onClick={() => {
                 onClose();
               }}
-            > <div className="w-[60px]">Close</div>
-              
+            >
+              {' '}
+              <div className="w-[60px]">Close</div>
             </ButtonPrimary>
 
             <ButtonPrimary
