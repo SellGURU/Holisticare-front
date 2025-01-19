@@ -556,6 +556,11 @@ class Application extends Api {
     const response = this.post('/messages/users_list', {});
     return response;
   };
+
+  static medicalAnalyse = (data:any) => {
+    const response = this.post('/treatment_plan/medical_summary_ai',data)
+    return response
+  }
 }
 
 export default Application;

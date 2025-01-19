@@ -122,7 +122,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
     }
   };
   const [openDownload, setOpenDownload] = useState(false);
-  const [openShare,setOpenShare] = useState(false)
+  const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   return (
     <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
@@ -179,9 +179,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                 </>
               )}
             </ButtonPrimary>
-            <div onClick={() => {
-              setOpenShare(true)
-            }} className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer ">
+            <div
+              onClick={() => {
+                setOpenShare(true);
+              }}
+              className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer "
+            >
               <img src="/icons/share.svg" alt="" />
               Share
             </div>
@@ -192,16 +195,20 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       </div>
       <SlideOutPanel
         isOpen={openDownload || openShare}
-        headline={openDownload?"Select Sections to Download":"Select Sections to Share"}
+        headline={
+          openDownload
+            ? 'Select Sections to Download'
+            : 'Select Sections to Share'
+        }
         onClose={() => {
           setOpenDownload(false);
-          setOpenShare(false)
+          setOpenShare(false);
         }}
       >
         <>
           <DownloadModal
             onconfirm={() => {
-              if(openDownload) {
+              if (openDownload) {
                 setDownloadingState('downloading');
                 setOpenDownload(false);
                 setTimeout(() => {
@@ -211,13 +218,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                     setDownloadingState('download');
                   }, 2000);
                 }, 3000);
-
               }
-              setOpenShare(false)
+              setOpenShare(false);
             }}
             onclose={() => {
               setOpenDownload(false);
-              setOpenShare(false)
+              setOpenShare(false);
             }}
           ></DownloadModal>
         </>
