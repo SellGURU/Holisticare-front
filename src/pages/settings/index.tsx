@@ -1,0 +1,39 @@
+import React, { useState } from 'react';
+import Sidebar from './components/SideBar';
+import SearchBox from '../../Components/SearchBox';
+// import Content from './Content';
+import Overview from './components/overView';
+const Setting: React.FC = () => {
+  const [activeMenu, setActiveMenu] = useState('Overview');
+  const renderContent = () => {
+    switch (activeMenu) {
+      case 'Overview':
+        return <Overview></Overview>;
+      case 'Update Your Profile':
+      // return <UpdateProfileContent />;
+      case 'Change Password':
+      // return <ChangePasswordContent />;
+      // Add other cases as needed...
+      default:
+        return <div></div>;
+    }
+  };
+  return (
+    <div className="w-full h-screen px-6 pt-8">
+      <div className="flex w-full justify-between ">
+        <div className="text-2xl text-Text-Primary">Setting</div>
+        <SearchBox
+          ClassName="rounded-lg"
+          placeHolder="Search in Setting ..."
+          onSearch={() => {}}
+        ></SearchBox>
+      </div>
+      <div className="flex h-screen w-full gap-8 ">
+        <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+        <div className="mt-10 w-full">{renderContent()}</div>
+      </div>
+    </div>
+  );
+};
+
+export default Setting;

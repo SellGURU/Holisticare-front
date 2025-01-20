@@ -15,7 +15,7 @@ import AiKnowledge from '../pages/ai-knowledge/AiKnowledge.tsx';
 import SignUp from '../pages/signUp/index2.tsx';
 import ForgetPassword from '../pages/forgetPassword/index.tsx';
 import { Messages } from '../pages/messages/index.tsx';
-
+import Setting from '../pages/settings/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -44,6 +44,10 @@ const router = createBrowserRouter([
           {
             path: '/messages',
             element: <Messages></Messages>,
+          },
+          {
+            path: '/setting',
+            element: <Setting></Setting>,
           },
         ],
       },
