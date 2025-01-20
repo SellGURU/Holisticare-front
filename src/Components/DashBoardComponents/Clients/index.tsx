@@ -5,12 +5,10 @@ interface Client {
   picture: string;
   name: string;
   ID: number;
-  ["Enroll Date"]: string;
+  ['Enroll Date']: string;
   progress: number;
   Gender: string;
 }
-
-
 
 const Clients = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +27,7 @@ const Clients = () => {
   useEffect(() => {
     Application.dashboardClients()
       .then((Response) => {
-        setClients(Response.data.client_list)
+        setClients(Response.data.client_list);
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);

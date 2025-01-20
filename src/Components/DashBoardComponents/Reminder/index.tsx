@@ -9,13 +9,12 @@ type ReminderItem = {
   checked: boolean;
 };
 
-
 const Reminder = () => {
-
   useEffect(() => {
     Application.dashboardReminders()
       .then((Response) => {
-        setReminderList(Response.data)      })
+        setReminderList(Response.data);
+      })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
       });

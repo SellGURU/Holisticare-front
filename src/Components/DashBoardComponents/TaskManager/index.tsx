@@ -17,10 +17,10 @@ type Filters = {
   progress: { inProgress: boolean; toDo: boolean };
   date: { from: Date | null; to: Date | null };
 };
- interface TaskManagerProps{
-  Filters:Filters
- }
-const TaskManager : React.FC<TaskManagerProps> = ({Filters}) => {
+interface TaskManagerProps {
+  Filters: Filters;
+}
+const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
@@ -91,37 +91,35 @@ const TaskManager : React.FC<TaskManagerProps> = ({Filters}) => {
 
     setCurrentTasks(filteredTasks);
   }, [filters, tasks]);
-const [showFilter, setshowFilter] = useState(false)
+  const [showFilter, setshowFilter] = useState(false);
   return (
     <div className="w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4 relative">
         <h2 className="text-sm font-medium">Tasks</h2>
         <div className="flex items-center gap-3">
-          <div onClick={()=>setshowFilter(!showFilter)} className=" cursor-pointer rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn relative">
+          <div
+            onClick={() => setshowFilter(!showFilter)}
+            className=" cursor-pointer rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn relative"
+          >
             <img className="w-4 h-4" src="/icons/filter.svg" alt="" />
-          
           </div>
-            {
-              showFilter && (
-               
-                <AddFilter
-                  filters={filters}
-                  onApply={(newFilters) => setFilters(newFilters)}
-                  onClear={() =>
-                    setFilters({
-                      priority: { high: false, medium: false, low: false },
-                      progress: { inProgress: false, toDo: false },
-                      date: { from: null, to: null },
-                    })
-                  }
-                  onClose={()=>{
-                    setshowFilter(false)
-                  }}
-                />
-        
-              )
-            }
-           
+          {showFilter && (
+            <AddFilter
+              filters={filters}
+              onApply={(newFilters) => setFilters(newFilters)}
+              onClear={() =>
+                setFilters({
+                  priority: { high: false, medium: false, low: false },
+                  progress: { inProgress: false, toDo: false },
+                  date: { from: null, to: null },
+                })
+              }
+              onClose={() => {
+                setshowFilter(false);
+              }}
+            />
+          )}
+
           <ButtonSecondary>
             <img src="/icons/add.svg" alt="" />
             Add A New Task

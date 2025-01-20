@@ -570,11 +570,11 @@ class Application extends Api {
     return response;
   };
   static clientsStats = () => {
-    const response = this.post('/dashboard/clinic/clients_statistics',{});
+    const response = this.post('/dashboard/clinic/clients_statistics', {});
     return response;
   };
   static dashboardReminders = () => {
-    const response = this.post('/dashboard/reminder/reminders_list',{});
+    const response = this.post('/dashboard/reminder/reminders_list', {});
     return response;
   };
   static dashboardStaff = () => {
@@ -583,8 +583,8 @@ class Application extends Api {
   };
   static dashboardClients = () => {
     const response = this.post('/dashboard/clients/clients_list', {});
-    return response
-  }
+    return response;
+  };
   static medicalAnalyse = (data: any) => {
     const response = this.post('/treatment_plan/medical_summary_ai', data);
     return response;

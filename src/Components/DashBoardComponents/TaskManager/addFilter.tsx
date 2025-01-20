@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
@@ -14,10 +14,15 @@ type AddFilterProps = {
   filters: Filters;
   onApply: (filters: Filters) => void;
   onClear: () => void;
-  onClose:()=>void,
+  onClose: () => void;
 };
 
-const AddFilter: React.FC<AddFilterProps> = ({ filters, onApply, onClear ,onClose}) => {
+const AddFilter: React.FC<AddFilterProps> = ({
+  filters,
+  onApply,
+  onClear,
+  onClose,
+}) => {
   const [localFilters, setLocalFilters] = useState<Filters>(filters);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,15 +31,23 @@ const AddFilter: React.FC<AddFilterProps> = ({ filters, onApply, onClear ,onClos
     close: onClose,
   });
   return (
-    <div ref={modalRef} className="bg-white shadow-800 h-[264px] z-50  w-[400px] rounded-2xl p-4 text-Text-Primary absolute top-12 right-[180px]">
+    <div
+      ref={modalRef}
+      className="bg-white shadow-800 h-[264px] z-50  w-[400px] rounded-2xl p-4 text-Text-Primary absolute top-12 right-[180px]"
+    >
       <div className="w-full flex items-center justify-between border-b  text-base font-medium pb-2 mb-6">
         Add Filter
-        <img onClick={()=>onClose()} className='cursor-pointer' src="/icons/close-circle.svg" alt="" />
+        <img
+          onClick={() => onClose()}
+          className="cursor-pointer"
+          src="/icons/close-circle.svg"
+          alt=""
+        />
       </div>
       <div className="">
-        <div className='flex w-full  gap-12'>
+        <div className="flex w-full  gap-12">
           <h3 className="text-xs font-medium">Priority</h3>
-          <div className='flex gap-6'>
+          <div className="flex gap-6">
             <Checkbox
               checked={localFilters.priority.high}
               onChange={(e) =>
@@ -73,47 +86,48 @@ const AddFilter: React.FC<AddFilterProps> = ({ filters, onApply, onClear ,onClos
             />
           </div>
         </div>
-        <div className=' my-6 flex w-full gap-[38px] '>
+        <div className=" my-6 flex w-full gap-[38px] ">
           <h3 className="text-xs font-medium">Progress</h3>
-          <div className='flex gap-[46px] '>
-            <label className='flex'>
-            <Checkbox
+          <div className="flex gap-[46px] ">
+            <label className="flex">
+              <Checkbox
                 checked={localFilters.progress.inProgress}
                 onChange={(e) =>
-                    setLocalFilters({
-                      ...localFilters,
-                      progress: {
-                        ...localFilters.progress,
-                        inProgress: e.target.checked,
-                      },
-                    })
-                  }
-              
-            />
+                  setLocalFilters({
+                    ...localFilters,
+                    progress: {
+                      ...localFilters.progress,
+                      inProgress: e.target.checked,
+                    },
+                  })
+                }
+              />
               <div className="px-2.5 py-[2px] rounded-full bg-[#06C78D1A] bg-opacity-10 text-[#06C78D] text-[10px]">
-              In Progress
+                In Progress
               </div>
             </label>
-            <label className='flex'>
-            <Checkbox
+            <label className="flex">
+              <Checkbox
                 checked={localFilters.progress.toDo}
                 onChange={(e) =>
-                    setLocalFilters({
-                      ...localFilters,
-                      progress: { ...localFilters.progress, toDo: e.target.checked },
-                    })
-                  }
-              
-            />
-               <div className="px-2.5 py-[2px] rounded-full bg-[#4C88FF1A] bg-opacity-10 text-[#4C88FF] text-[10px]">
-               To do
+                  setLocalFilters({
+                    ...localFilters,
+                    progress: {
+                      ...localFilters.progress,
+                      toDo: e.target.checked,
+                    },
+                  })
+                }
+              />
+              <div className="px-2.5 py-[2px] rounded-full bg-[#4C88FF1A] bg-opacity-10 text-[#4C88FF] text-[10px]">
+                To do
               </div>
             </label>
           </div>
         </div>
-        <div className='flex w-full justify-between items-center'>
+        <div className="flex w-full justify-between items-center">
           <h3 className="text-xs font-medium">Deadline</h3>
-          <div className='flex gap-4'>
+          <div className="flex gap-4">
             <DatePicker
               selected={localFilters.date.from}
               onChange={(date) =>
@@ -154,9 +168,23 @@ const AddFilter: React.FC<AddFilterProps> = ({ filters, onApply, onClear ,onClos
         </div>
       </div>
       <div className="flex justify-center mt-8 gap-3">
-        <ButtonSecondary style={{backgroundColor: 'white' , borderColor: "#005F73" , color: "#005F73", borderRadius:"16px" , width:'176px'}} onClick={() => onClear()}>Clear all</ButtonSecondary>
-        <ButtonSecondary style={{width:'176px'}} onClick={() => onApply(localFilters)}>
-            <img className='w-3 h-3' src="/icons/tick-square.svg" alt="" />
+        <ButtonSecondary
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#005F73',
+            color: '#005F73',
+            borderRadius: '16px',
+            width: '176px',
+          }}
+          onClick={() => onClear()}
+        >
+          Clear all
+        </ButtonSecondary>
+        <ButtonSecondary
+          style={{ width: '176px' }}
+          onClick={() => onApply(localFilters)}
+        >
+          <img className="w-3 h-3" src="/icons/tick-square.svg" alt="" />
           Apply Filters
         </ButtonSecondary>
       </div>

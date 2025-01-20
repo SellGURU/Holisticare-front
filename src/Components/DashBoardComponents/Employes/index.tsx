@@ -40,7 +40,7 @@ const Employes: React.FC = () => {
   useEffect(() => {
     Application.dashboardStaff()
       .then((Response) => {
-        setEmployees(Response.data)
+        setEmployees(Response.data);
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);

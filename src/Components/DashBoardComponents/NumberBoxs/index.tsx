@@ -1,16 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
+import Application from '../../../api/app';
 import NumberBox from '../../NumberBox';
 interface NumberBoxesProps {
   reports: Array<any>;
 }
 
 const NumberBoxes: React.FC<NumberBoxesProps> = ({ reports }) => {
-  const resolveValue = (key: string) => {
-    if (reports.length > 0) {
-      return reports.filter((e) => e.key == key)[0].value;
-    }
-    return 0;
-  };
+  console.log(reports);
+
+  // const resolveValue = (key: string) => {
+  //   if (reports.length > 0) {
+  //     return reports.filter((e) => e.key == key)[0].value;
+  //   }
+  //   return 0;
+  // };
+  const [Enrollment, setEnrollment] = useState(0);
+  const [Incomplete, setIncomplete] = useState(0);
+  const [NeedCheck, setNeedCheck] = useState(0);
+  const [Checked, setChecked] = useState(0);
+  // const [Enrollment, setEnrollment] = useState(0)
+  useEffect(() => {
+    Application.clientsStats()
+      .then((Response) => {
+        setEnrollment(Response.data['Total Enrollment']);
+        setIncomplete(Response.data['Incomplete Client Data']);
+        setNeedCheck(Response.data['Client Needs Check']);
+        setChecked(Response.data['Client Checked']);
+      })
+      .catch((error) => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
   return (
     <>
       <div
@@ -20,25 +41,29 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ reports }) => {
       >
         <NumberBox
           mode="added"
-          value={resolveValue('Total Enrollment')}
+          // value={resolveValue('Total Enrollment')}
+          value={Enrollment}
           title="Total Enrollment"
           icon={'/icons/profile-tick.svg'}
         />
         <NumberBox
           mode="increase"
-          value={resolveValue('Incomplete Client Data')}
+          // value={resolveValue('Incomplete Client Data')}
+          value={Incomplete}
           title="Incomplete Client Data"
           icon={'icons/profile-delete.svg'}
         />
         <NumberBox
           mode="reduction"
-          value={resolveValue('Client Needs Check')}
+          // value={resolveValue('Client Needs Check')}
+          value={NeedCheck}
           title="Client Need Checking"
           icon={'icons/profile-check.svg'}
         />
         <NumberBox
           mode="increase"
-          value={resolveValue('Client Checked')}
+          // value={resolveValue('Client Checked')}
+          value={Checked}
           title="Clients Checked"
           icon={'/icons/profile-tick.svg'}
         />
