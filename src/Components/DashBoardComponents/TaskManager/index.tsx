@@ -1,71 +1,32 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
+import AddFilter from './addFilter';
 // Define the new Task type
 type Task = {
   task_id: string;
   title: string;
   date: string;
-  status: string;
+  progress: string;
   priority: string;
   checked: boolean;
 };
 
-const mockTasks = [
-  {
-    task_id: '1',
-    title: 'Update sam meal plan',
-    date: '2024-04-25',
-    status: 'In Progress',
-    priority: 'High',
-    checked: false,
-  },
-  {
-    task_id: '2',
-    title: 'Checking new files',
-    date: '2024-04-25',
-    status: 'To Do',
-    priority: 'High',
-    checked: false,
-  },
-  {
-    task_id: '3',
-    title: 'Organize new clients profile',
-    date: '2024-04-25',
-    status: 'In Progress',
-    priority: 'Medium',
-    checked: false,
-  },
-  {
-    task_id: '4',
-    title: 'Update john nutrition plan',
-    date: '2024-04-25',
-    status: 'To Do',
-    priority: 'Low',
-    checked: false,
-  },
-  {
-    task_id: '5',
-    title: 'Set exercise plan for Mike',
-    date: '2024-04-25',
-    status: 'To Do',
-    priority: 'Medium',
-    checked: false,
-  },
-  // Add more tasks as needed
-];
-
-const TaskManager = () => {
-  const [tasks] = useState<Task[]>(mockTasks);
+type Filters = {
+  priority: { high: boolean; medium: boolean; low: boolean };
+  progress: { inProgress: boolean; toDo: boolean };
+  date: { from: Date | null; to: Date | null };
+};
+ interface TaskManagerProps{
+  Filters:Filters
+ }
+const TaskManager : React.FC<TaskManagerProps> = ({Filters}) => {
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
-    // Fetch the tasks when the component mounts
     Application.dashboardTasks()
       .then((response) => {
-        console.log(response);
-
-        // Assuming response.data contains the list of tasks
-        // setTasks(response.data);
+        setTasks(response.data);
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
@@ -94,15 +55,73 @@ const TaskManager = () => {
       ),
     );
   };
+  const [filters, setFilters] = useState<Filters>(Filters);
+  useEffect(() => {
+    let filteredTasks = tasks;
 
+    if (
+      filters.priority.high ||
+      filters.priority.medium ||
+      filters.priority.low
+    ) {
+      filteredTasks = filteredTasks.filter(
+        (task) =>
+          (filters.priority.high && task.priority === 'High') ||
+          (filters.priority.medium && task.priority === 'Medium') ||
+          (filters.priority.low && task.priority === 'Low'),
+      );
+    }
+
+    if (filters.progress.inProgress || filters.progress.toDo) {
+      filteredTasks = filteredTasks.filter(
+        (task) =>
+          (filters.progress.inProgress && task.progress === 'In Progress') ||
+          (filters.progress.toDo && task.progress === 'To Do'),
+      );
+    }
+
+    if (filters.date.from && filters.date.to) {
+      filteredTasks = filteredTasks.filter((task) => {
+        const taskDate = new Date(task.date);
+        const fromDate = filters.date.from!;
+        const toDate = filters.date.to!;
+        return taskDate >= fromDate && taskDate <= toDate;
+      });
+    }
+
+    setCurrentTasks(filteredTasks);
+  }, [filters, tasks]);
+const [showFilter, setshowFilter] = useState(false)
   return (
     <div className="w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 relative">
         <h2 className="text-sm font-medium">Tasks</h2>
         <div className="flex items-center gap-3">
-          <div className="rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn">
+          <div onClick={()=>setshowFilter(!showFilter)} className=" cursor-pointer rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn relative">
             <img className="w-4 h-4" src="/icons/filter.svg" alt="" />
+          
           </div>
+            {
+              showFilter && (
+               
+                <AddFilter
+                  filters={filters}
+                  onApply={(newFilters) => setFilters(newFilters)}
+                  onClear={() =>
+                    setFilters({
+                      priority: { high: false, medium: false, low: false },
+                      progress: { inProgress: false, toDo: false },
+                      date: { from: null, to: null },
+                    })
+                  }
+                  onClose={()=>{
+                    setshowFilter(false)
+                  }}
+                />
+        
+              )
+            }
+           
           <ButtonSecondary>
             <img src="/icons/add.svg" alt="" />
             Add A New Task
@@ -152,12 +171,12 @@ const TaskManager = () => {
 
               <span
                 className={`text-xs rounded-2xl py-[2px] px-[9px] text-[8px] flex items-center gap-1 ${
-                  task.status === 'In Progress'
+                  task.progress === 'In Progress'
                     ? 'bg-[#06C78D1A] bg-opacity-10 text-[#06C78D]'
                     : 'bg-[#4C88FF1A] text-[#4C88FF] bg-opacity-10'
                 }`}
               >
-                {task.status}
+                {task.progress}
                 <img
                   className="w-2 h-2 object-contain"
                   src="/icons/arow-down-drop.svg"

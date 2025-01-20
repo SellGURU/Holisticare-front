@@ -9,34 +9,18 @@ type ReminderItem = {
   checked: boolean;
 };
 
-const mockReminders = [
-  {
-    reminder_id: '1',
-    title: 'Team meeting',
-    date: '2025-01-18',
-    checked: false,
-  },
-  {
-    reminder_id: '2',
-    title: 'Doctor Appointment',
-    date: '2025-01-19',
-    checked: false,
-  },
-  // Add more reminders as needed
-];
+
 const Reminder = () => {
-  const [reminders] = useState<ReminderItem[]>(mockReminders);
 
   useEffect(() => {
     Application.dashboardReminders()
       .then((Response) => {
-        console.log(Response);
-      })
+        setReminderList(Response.data)      })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
       });
   }, []);
-  const [reminderList, setReminderList] = useState(reminders);
+  const [reminderList, setReminderList] = useState<ReminderItem[]>([]);
 
   const handleCheckboxChange = (reminder_id: string) => {
     setReminderList(

@@ -570,15 +570,15 @@ class Application extends Api {
     return response;
   };
   static clientsStats = () => {
-    const response = this.post('/dashboard/clinic/clients_statistics', {});
+    const response = this.post('/dashboard/clinic/clients_statistics',{});
     return response;
   };
   static dashboardReminders = () => {
-    const response = this.post('/dashboard/reminder/reminders_list', {});
+    const response = this.post('/dashboard/reminder/reminders_list',{});
     return response;
   };
   static dashboardStaff = () => {
-    const response = this.post(' /dashboard/staff/staff_list', {});
+    const response = this.post('/dashboard/staff/staff_list', {});
     return response;
   };
   static dashboardClients = () => {

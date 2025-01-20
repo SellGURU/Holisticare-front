@@ -5,50 +5,17 @@ interface Client {
   picture: string;
   name: string;
   ID: number;
-  enrollDate: string;
+  ["Enroll Date"]: string;
   progress: number;
-  gender: string;
+  Gender: string;
 }
 
-const mockClients: Client[] = [
-  {
-    picture: '',
-    name: 'David Smith',
-    ID: 21548461651,
-    gender: 'Male',
-    enrollDate: '2024-04-25',
-    progress: 87,
-  },
-  {
-    picture: '',
-    name: 'Leslie Alexander',
-    ID: 21548461652,
-    gender: 'Female',
-    enrollDate: '2024-04-25',
-    progress: 90,
-  },
-  {
-    picture: '',
-    name: 'Robert Garcia',
-    ID: 21548461653,
-    gender: 'Male',
-    enrollDate: '2024-04-25',
-    progress: 75,
-  },
-  {
-    picture: '',
-    name: 'Sarah Thompson',
-    ID: 21548461654,
-    gender: 'Female',
-    enrollDate: '2024-04-25',
-    progress: 80,
-  },
-];
+
 
 const Clients = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 3;
-  const [clients] = useState(mockClients);
+  const [clients, setClients] = useState<Client[]>([]);
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentClients = clients.slice(indexOfFirstTask, indexOfLastTask);
@@ -62,7 +29,7 @@ const Clients = () => {
   useEffect(() => {
     Application.dashboardClients()
       .then((Response) => {
-        console.log(Response);
+        setClients(Response.data.client_list)
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
@@ -104,8 +71,8 @@ const Clients = () => {
                   <span className="text-xs">{client.name}</span>
                 </td>
                 <td className="py-2 text-xs">{client.ID}</td>
-                <td className="py-2 pl-1 text-xs">{client.gender}</td>
-                <td className="py-2 text-xs">{client.enrollDate}</td>
+                <td className="py-2 pl-1 text-xs">{client.Gender}</td>
+                <td className="py-2 text-xs">{client['Enroll Date']}</td>
                 <td className="py-2 text-xs">
                   <CircularProgressBar
                     percentage={client.progress}

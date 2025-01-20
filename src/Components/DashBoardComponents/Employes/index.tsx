@@ -36,11 +36,11 @@ const mockEmployees: Employee[] = [
 ];
 
 const Employes: React.FC = () => {
-  const [Employees] = useState(mockEmployees);
+  const [Employees, setEmployees] = useState<Employee[]>(mockEmployees);
   useEffect(() => {
     Application.dashboardStaff()
       .then((Response) => {
-        console.log(Response);
+        setEmployees(Response.data)
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
