@@ -10,7 +10,8 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
     <>
       <a
         href={'#' + data.subcategory}
-        className={`w-full  no-split flex cursor-pointer justify-start items-center h-16 p-4 rounded-md bg-light-min-color `}
+        className={`w-full  no-split flex cursor-pointer justify-start items-center h-16 p-4 rounded-md bg-white border border-gray-50  `}
+        style={{ boxShadow: '0px 8px 8px -4px #18274B14' }}
       >
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
@@ -23,7 +24,7 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
           }}
         >
           <div
-            className="w-8 h-8 bg-gray-700 flex justify-center  items-center  rounded-full"
+            className="w-8 h-8 bg-white flex justify-center  items-center  rounded-full"
             // style={{backgroundColor}}
           >
             <img
@@ -34,21 +35,22 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
           </div>
         </div>
         <div className="ml-2">
-          <div className="text-light-primary-text dark:text-[#FFFFFFDE] text-sm">
+          <div className=" text-sm" style={{ color: '#383838' }}>
             {data.subcategory}
           </div>
-          <div className="flex justify-start items-center">
-            <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-sm">
+          <div
+            className="flex justify-start items-center"
+            style={{ color: '#888888' }}
+          >
+            <div className="  text-xs">
               {' '}
-              <span className=" text-black dark:text-white">
+              <span className=" text-xs" style={{ color: '#888888' }}>
                 {data.num_of_biomarkers}
               </span>{' '}
               biomarkers
             </div>
-            <div className=" text-light-secandary-text dark:text-[#FFFFFF99] ml-2 text-sm">
-              <span className="dark:text-white text-black">
-                {data.out_of_ref}
-              </span>{' '}
+            <div className=" ml-2 text-xs" style={{ color: '#888888' }}>
+              <span className="">{data.out_of_ref}</span>{' '}
               {data.out_of_ref > 1 ? 'Needs Focus' : 'Need Focus'}{' '}
             </div>
           </div>
