@@ -24,51 +24,99 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
   };
   return (
     <>
-      <div className="w-full relative flex">
-        <div
-          className={`absolute -top-7  z-10`}
-          style={{
-            left: (data.values[0] / maxVal.value[1]) * 100 - 0.5 + '%',
-          }}
-        >
-          <div className="text-xs text-light-primary-text dark:text-[#FFFFFFDE] ]">
-            {data.values[0]}
-          </div>
-          <div
-            className=" h-3 ml-1 bg-gray-500 dark:bg-white"
-            style={{ width: '2px' }}
-          ></div>
-          {/* <div className="w-1 h-2  rotate-45 bg-black dark:bg-white"></div> */}
+    <div className="w-full relative flex">
+      <div
+        className={`absolute hidden top-[-26px]  z-10`}
+        style={{
+          left: (data.values[0] / maxVal.value[1]) * 100 + '%',
+          top:'-26px'
+        }}
+      >
+        <div className="text-[10px] text-Primary-DeepTeal" style={{fontSize:'10px',color:'#005F73'}}>
+          {data.values[0]}
         </div>
-        {sortKeysWithValues(data.chart_bounds).map((el, index: number) => {
-          return (
-            <>
-              <div
-                className={` relative  h-2 ${index == sortKeysWithValues(data.chart_bounds).length - 1 && 'rounded-r-2'} ${index == 0 && 'rounded-l-2'}`}
+        <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal" style={{
+          width:'3px',
+          height:'8px',
+          marginLeft:'2.5px',
+          background:'#005F73'
+        }}></div>
+        <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal" style={{background:'#005F73'}}></div>
+      </div>
+      {sortKeysWithValues(data.chart_bounds).map((el, index: number) => {
+        return (
+          <>
+            <div
+              className={` relative border-l-2 border-white  ${index == sortKeysWithValues(data.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+              style={{
+                width:
+                  100 / sortKeysWithValues(data.chart_bounds).length + '%',
+                height:'8px',
+                borderTopLeftRadius:index == 0 ?'8px':'0px',
+                borderBottomLeftRadius:index == 0 ?'8px':'0px',
+                borderTopRightRadius:index == sortKeysWithValues(data.chart_bounds).length - 1 ?'8px':'0px',
+                borderBottomRightRadius:index == sortKeysWithValues(data.chart_bounds).length - 1 ?'8px':'0px',
+                backgroundColor: resolveColor(el.key),
+              }}
+            >
+              <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]" 
                 style={{
-                  width:
-                    ((el.value[1] - el.value[0]) / maxVal.value[1]) * 100 + '%',
-                  backgroundColor: resolveColor(el.key),
+                  color:'#005F73',
+                  left:'4px',
+                  top:'-35px',
+                  fontSize:'10px'
                 }}
               >
-                {index == 0 && (
-                  <div className="absolute -left-2 top-3 text-light-primary-text dark:text-[#FFFFFF61] text-xs">
-                    {el.value[0]}
+                  {
+                    <div className='text-center'>
+                    <div>
+                      {el.key}
+                    </div>
+                    <div>
+                    {""+
+                    '(' +
+                    el.value[0] +
+                    ' - ' +
+                    el.value[1] +')'}
+
+                    </div>
+                    </div>
+                    }
+              </div>
+              {data.values[0] >= el.value[0] &&
+                el.value[1] >= data.values[0] && (
+                  <div
+                    className={`absolute  top-[2px]  z-10`}
+                    style={{
+                      top:'2px',
+                      left:
+                        ((data.values[0] - el.value[0]) /
+                          (el.value[1] - el.value[0])) *
+                          100 +
+                        '%',
+                    }}
+                  >
+                    <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal" style={{background:'#005F73'}}></div>
+                    <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal" style={{background:'#005F73',width:'3px',height:'8px',marginLeft:'2.5px'}}></div>
+                    <div style={{
+                      fontSize:'10px',
+                      gap:'2px',
+                      marginLeft:'-24px',
+                      color:'#005F73'
+                    }} className="text-[10px] flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
+                      <span className="opacity-40">You: </span>
+                      {data.values[0]} <span>{data.unit}</span>
+                    </div>
                   </div>
                 )}
+            </div>
+          </>
+        );
+      })}    
 
-                <div
-                  style={{ top: index % 2 != 0 ? '-14px' : '12px' }}
-                  className="absolute -right-2  text-light-primary-text dark:text-[#FFFFFF61] text-xs"
-                >
-                  {el.value[1]}
-                </div>
-              </div>
-            </>
-          );
-        })}
-      </div>
-      <div className="pr-3 absolute right-0 top-0 ">
+    </div>
+
+      {/* <div className="pr-3 absolute right-0 top-0 ">
         {sortKeysWithValues(data.chart_bounds).map((el) => {
           return (
             <>
@@ -84,7 +132,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
             </>
           );
         })}
-      </div>
+      </div> */}
     </>
   );
 };
