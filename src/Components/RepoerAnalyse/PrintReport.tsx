@@ -43,7 +43,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     }
     return './images/report/treatment/apple.svg';
   };
-  console.log(resolveCategories())
+  console.log(resolveCategories());
   return (
     <>
       <div
@@ -370,12 +370,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       </div>
 
-      <div className="" style={{ 
-        pageBreakAfter: 'always' ,
-        backgroundColor: '#E9F0F2',
-        minHeight: '100vh',
-        padding: '24px 24px',        
-        }}>
+      <div
+        className=""
+        style={{
+          pageBreakAfter: 'always',
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
+      >
         <div
           className="flex justify-between items-center"
           style={{ marginTop: '16px' }}
@@ -390,7 +393,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           <div className="" style={{ color: '#888888', fontSize: '10px' }}>
             {referenceData.detailed_analysis_note}
           </div>
-        </div>          
+        </div>
 
         {/* <div className="w-full mt-4 grid gap-8 grid-cols-1">
                     {resolveBioMarkers().map((el) => {
@@ -404,11 +407,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
         <div className="mt-6">
           {resolveCategories().map((el: any) => {
             return (
-              <div className='py-6'  style={{
-                pageBreakInside:'avoid',
-                pageBreakBefore:'auto',
-                pageBreakAfter:'auto',
-              }}>
+              <div
+                className="py-6"
+                style={{
+                  pageBreakInside: 'avoid',
+                  pageBreakBefore: 'auto',
+                  pageBreakAfter: 'auto',
+                }}
+              >
                 <DetiledAnalyse
                   refrences={
                     resolveSubCategories().filter(
