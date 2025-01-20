@@ -50,6 +50,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         style={{
           pageBreakAfter: 'always',
           height: 'auto',
+          overflow: 'hidden',
           backgroundColor: '#E9F0F2',
         }}
       >
@@ -107,6 +108,117 @@ const PrintReport: React.FC<PrintReportProps> = ({
               marginLeft: '95px',
             }}
           ></div>
+        </div>
+        <div className="absolute bottom-4 right-4">
+          <div className="text-sm " style={{ color: '#888888' }}>
+            Powered by:{' '}
+            <span className="" style={{ color: '#383838' }}>
+              HolistiCare.io
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        className=" w-full relative min-h-full"
+        style={{
+          pageBreakAfter: 'always',
+          height: '100vh',
+          overflow: 'hidden',
+          backgroundColor: '#005F73',
+        }}
+      >
+        <div className="text-3xl  ml-14 mt-32 text-white font-medium">
+          Table of Content
+        </div>
+        <div
+          className="mt-16 pt-16"
+          style={{
+            backgroundColor: '#337f8f',
+            height: '100vh',
+            width: '90%',
+            marginRight: '146px',
+          }}
+        >
+          <div
+            className="px-12  py-20"
+            style={{
+              backgroundColor: '#F7F7F7',
+              height: '100vh',
+              width: '92%',
+              marginRight: '146px',
+            }}
+          >
+            <div className="flex justify-start gap-4 items-center">
+              <div
+                className="text-xl"
+                style={{ color: '#005F73', fontWeight: '500' }}
+              >
+                Section 01
+              </div>
+              <div
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '500' }}
+              >
+                Client Summary
+              </div>
+            </div>
+            <div className="flex justify-start gap-4 mt-5 items-center">
+              <div
+                className="text-xl"
+                style={{ color: '#005F73', fontWeight: '500' }}
+              >
+                Section 02
+              </div>
+              <div
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '500' }}
+              >
+                Needs Focus Biomarkers
+              </div>
+            </div>
+            <div className="flex justify-start gap-4 mt-5 items-center">
+              <div
+                className="text-xl"
+                style={{ color: '#005F73', fontWeight: '500' }}
+              >
+                Section 03
+              </div>
+              <div
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '500' }}
+              >
+                Detailed Analysis{' '}
+              </div>
+            </div>
+            <div className="flex justify-start gap-4 mt-5 items-center">
+              <div
+                className="text-xl"
+                style={{ color: '#005F73', fontWeight: '500' }}
+              >
+                Section 04
+              </div>
+              <div
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '500' }}
+              >
+                Holistic Plan
+              </div>
+            </div>
+            <div className="flex justify-start gap-4 mt-5 items-center">
+              <div
+                className="text-xl"
+                style={{ color: '#005F73', fontWeight: '500' }}
+              >
+                Section 05
+              </div>
+              <div
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '500' }}
+              >
+                Action Plan
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div>
