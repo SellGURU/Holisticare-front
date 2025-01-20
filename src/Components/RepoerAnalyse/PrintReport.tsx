@@ -229,29 +229,34 @@ const PrintReport: React.FC<PrintReportProps> = ({
           padding: '24px 24px',
         }}
       >
-        <div className="flex justify-between items-center" style={{marginTop: '16px' }}>
+        <div
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
+        >
           <div
             className="text-sm"
-            style={{ color: '#383838', fontWeight: '500'}}
+            style={{ color: '#383838', fontWeight: '500' }}
           >
             Client Summary
           </div>
-          <div className='' style={{color:'#888888',fontSize:'10px'}}>
-            Total of {ClientSummaryBoxs.total_subcategory} biomarkers in {ClientSummaryBoxs.total_category} Categories
+          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
+            Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
+            {ClientSummaryBoxs.total_category} Categories
           </div>
         </div>
-        <div className='flex justify-start items-center mt-4 gap-3'>
-          <div  style={{fontSize:'10px',color:'#888888'}}>
-            Mark Spencer
-          </div>
-          <div className='' style={{fontSize:'10px',color:'#888888'}}>
+        <div className="flex justify-start items-center mt-4 gap-3">
+          <div style={{ fontSize: '10px', color: '#888888' }}>Mark Spencer</div>
+          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
             <div>Gender: Male </div>
           </div>
-          <div className='' style={{fontSize:'10px',color:'#888888'}}>
+          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
             <div>Age: 40</div>
-          </div>          
+          </div>
         </div>
-        <div style={{ color: '#888888',fontSize:'10px' }} className="text-justify mt-4">
+        <div
+          style={{ color: '#888888', fontSize: '10px' }}
+          className="text-justify mt-4"
+        >
           {ClientSummaryBoxs?.client_summary}
         </div>
         <div className="w-full flex justify-end items-center gap-4 mt-4">
@@ -333,13 +338,25 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       <div
         className="my-10  "
-        style={{ pageBreakAfter: 'always' ,backgroundColor: '#E9F0F2',minHeight:'100vh',padding: '24px 24px'}}
+        style={{
+          pageBreakAfter: 'always',
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
       >
-        <div className='flex justify-between items-center'>
-          <div id="Out of Reference" className=" text-sm font-medium" style={{color:'#383838'}}>
+        <div className="flex justify-between items-center">
+          <div
+            id="Out of Reference"
+            className=" text-sm font-medium"
+            style={{ color: '#383838' }}
+          >
             Needs Focus Biomarkers
           </div>
-          <div className="  text-xs" style={{color:'#888888',fontSize:'10px'}}>
+          <div
+            className="  text-xs"
+            style={{ color: '#888888', fontSize: '10px' }}
+          >
             {referenceData.total_biomarker_note}
           </div>
         </div>
