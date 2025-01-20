@@ -43,6 +43,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     }
     return './images/report/treatment/apple.svg';
   };
+  console.log(resolveCategories());
   return (
     <>
       <div
@@ -230,12 +231,33 @@ const PrintReport: React.FC<PrintReportProps> = ({
         }}
       >
         <div
-          className=""
-          style={{ color: '#383838', fontWeight: '500', marginTop: '16px' }}
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
         >
-          Client Summary
+          <div
+            className="text-sm"
+            style={{ color: '#383838', fontWeight: '500' }}
+          >
+            Client Summary
+          </div>
+          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
+            Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
+            {ClientSummaryBoxs.total_category} Categories
+          </div>
         </div>
-        <div style={{ color: '#888888' }} className="text-justify mt-4">
+        <div className="flex justify-start items-center mt-4 gap-3">
+          <div style={{ fontSize: '10px', color: '#888888' }}>Mark Spencer</div>
+          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
+            <div>Gender: Male </div>
+          </div>
+          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
+            <div>Age: 40</div>
+          </div>
+        </div>
+        <div
+          style={{ color: '#888888', fontSize: '10px' }}
+          className="text-justify mt-4"
+        >
           {ClientSummaryBoxs?.client_summary}
         </div>
         <div className="w-full flex justify-end items-center gap-4 mt-4">
@@ -250,7 +272,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#383838', fontSize: '12px' }}
+              style={{ color: '#888888', fontSize: '12px' }}
               className="font-medium"
             >
               Excellent{' '}
@@ -267,7 +289,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#383838', fontSize: '12px' }}
+              style={{ color: '#888888', fontSize: '12px' }}
               className="font-medium"
             >
               Good{' '}
@@ -284,7 +306,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#383838', fontSize: '12px' }}
+              style={{ color: '#888888', fontSize: '12px' }}
               className="font-medium"
             >
               Ok{' '}
@@ -301,7 +323,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#383838', fontSize: '12px' }}
+              style={{ color: '#888888', fontSize: '12px' }}
               className="font-medium"
             >
               Needs focus{' '}
@@ -316,14 +338,26 @@ const PrintReport: React.FC<PrintReportProps> = ({
       </div>
 
       <div
-        className="my-10 text-light-primary-text dark:text-primary-text "
-        style={{ pageBreakAfter: 'always' }}
+        className="my-10  "
+        style={{
+          pageBreakAfter: 'always',
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
       >
-        <div>
-          <div id="Out of Reference" className=" text-xl font-medium">
+        <div className="flex justify-between items-center mt-4">
+          <div
+            id="Out of Reference"
+            className=" text-sm font-medium"
+            style={{ color: '#383838' }}
+          >
             Needs Focus Biomarkers
           </div>
-          <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-xs">
+          <div
+            className="  text-xs"
+            style={{ color: '#888888', fontSize: '10px' }}
+          >
             {referenceData.total_biomarker_note}
           </div>
         </div>
@@ -336,18 +370,31 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       </div>
 
-      <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-        <div>
+      <div
+        className=""
+        style={{
+          pageBreakAfter: 'always',
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
+      >
+        <div
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
+        >
           <div
+            className="text-sm"
             id="Detailed analysis"
-            className=" text-light-primary-text dark:text-[#FFFFFFDE] text-xl font-medium"
+            style={{ color: '#383838', fontWeight: '500' }}
           >
             Detailed Analysis
           </div>
-          <div className=" text-light-primary-text dark:text-[#FFFFFF99] text-xs">
+          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
             {referenceData.detailed_analysis_note}
           </div>
         </div>
+
         {/* <div className="w-full mt-4 grid gap-8 grid-cols-1">
                     {resolveBioMarkers().map((el) => {
                         return (
@@ -359,9 +406,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
         <div className="mt-6">
           {resolveCategories().map((el: any) => {
-            console.log(el);
             return (
-              <>
+              <div
+                className="py-6"
+                style={{
+                  pageBreakInside: 'avoid',
+                  pageBreakBefore: 'auto',
+                  pageBreakAfter: 'auto',
+                }}
+              >
                 <DetiledAnalyse
                   refrences={
                     resolveSubCategories().filter(
@@ -370,7 +423,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   }
                   data={el}
                 ></DetiledAnalyse>
-              </>
+              </div>
               // <DetiledAnalyse refrences={resolveSubCategories().filter(val =>val.subcategory == el.subcategory )[0]} data={el}></DetiledAnalyse>
             );
           })}

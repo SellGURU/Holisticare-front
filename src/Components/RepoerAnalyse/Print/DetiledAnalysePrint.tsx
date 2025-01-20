@@ -11,12 +11,12 @@ interface DetiledAnalyseProps {
 }
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
-  // console.log(data)
+  console.log(refrences);
 
   return (
-    <>
+    <div className="bg-white" style={{ borderRadius: '16px', padding: '12px' }}>
       <div
-        className={`w-full  no-split flex cursor-pointer justify-start items-center h-16 p-4 rounded-md bg-light-min-color `}
+        className={`w-full  no-split flex cursor-pointer justify-start items-center h-16 rounded-md `}
       >
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
@@ -29,8 +29,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
           }}
         >
           <div
-            className="w-8 h-8 bg-gray-700 flex justify-center  items-center  rounded-full"
+            className="w-8 h-8  flex justify-center  items-center  rounded-full"
             // style={{backgroundColor}}
+            style={{ backgroundColor: 'white' }}
           >
             <img
               className="w-5 h-5"
@@ -42,42 +43,60 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
         <div className="ml-2">
           <div
             id={data.subcategory}
-            className="text-light-primary-text dark:text-[#FFFFFFDE] text-sm"
+            style={{ color: '#005F73', fontSize: '12px' }}
+            className=" text-sm"
           >
             {data?.subcategory}
           </div>
-          <div className="flex justify-start items-center">
-            <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-sm">
+          <div
+            className="flex justify-start items-center "
+            style={{ color: '#B0B0B0', fontSize: '10px' }}
+          >
+            <div className=" ">
               {' '}
-              <span className=" text-black dark:text-white">
-                {data?.num_of_biomarkers}
-              </span>{' '}
-              biomarkers
+              <span className=" ">{data?.num_of_biomarkers}</span> biomarkers
             </div>
-            <div className=" text-light-secandary-text dark:text-[#FFFFFF99] ml-2 text-sm">
-              <span className="dark:text-white text-black">
-                {data?.out_of_ref}
-              </span>{' '}
+            <div className="  ml-2 ">
+              <span className="">{data?.out_of_ref}</span>{' '}
               {data?.out_of_ref > 1 ? 'Needs Focus' : 'Need Focus'}{' '}
             </div>
           </div>
         </div>
       </div>
-      <div className="w-full mt-4 grid gap-8 grid-cols-1">
-        <div className="text-xs text-gray-800">{data?.description}</div>
-        {refrences?.biomarkers.map((el: any) => {
+      <div className="w-full mt-0 grid gap-1 grid-cols-1">
+        <div
+          className="text-xs "
+          style={{ color: '#383838', marginBottom: '12px' }}
+        >
+          Description
+        </div>
+        <div
+          className="text-xs "
+          style={{ color: '#888888', marginBottom: '12px' }}
+        >
+          {data?.description}
+        </div>
+        {refrences?.biomarkers.slice(0, 4).map((el: any) => {
           return (
-            <>
+            <div
+              style={{
+                pageBreakInside: 'avoid',
+                pageBreakBefore: 'auto',
+                pageBreakAfter: 'auto',
+              }}
+            >
               <BiomarkersPrint data={el}></BiomarkersPrint>
-              <div className="text-xs text-justify text-gray-700">
+              <div
+                className="text-xs text-justify text-gray-700 py-2"
+                style={{ color: '#888888', fontSize: '10px' }}
+              >
                 {el?.more_info}
               </div>
-              <hr />
-            </>
+            </div>
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 
