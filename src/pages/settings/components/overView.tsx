@@ -52,7 +52,7 @@ export const OverView = () => {
             <div className="flex flex-col gap-1 ml-3 justify-end">
               <div className="text-lg text-Text-Primary">Clinic name</div>
               <input
-                className="bg-white border border-Boarder h-10 rounded-lg p-2 text-Text-Triarty text-lg"
+                className="bg-white border outline-none border-Boarder h-10 rounded-lg p-2 text-Text-Triarty text-lg"
                 placeholder="Sample clinic name"
                 type="text"
               />
