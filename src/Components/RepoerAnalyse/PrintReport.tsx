@@ -43,6 +43,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     }
     return './images/report/treatment/apple.svg';
   };
+  console.log(resolveCategories())
   return (
     <>
       <div
@@ -345,7 +346,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           padding: '24px 24px',
         }}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-4">
           <div
             id="Out of Reference"
             className=" text-sm font-medium"
@@ -369,18 +370,28 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       </div>
 
-      <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-        <div>
+      <div className="" style={{ 
+        pageBreakAfter: 'always' ,
+        backgroundColor: '#E9F0F2',
+        minHeight: '100vh',
+        padding: '24px 24px',        
+        }}>
+        <div
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
+        >
           <div
+            className="text-sm"
             id="Detailed analysis"
-            className=" text-light-primary-text dark:text-[#FFFFFFDE] text-xl font-medium"
+            style={{ color: '#383838', fontWeight: '500' }}
           >
             Detailed Analysis
           </div>
-          <div className=" text-light-primary-text dark:text-[#FFFFFF99] text-xs">
+          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
             {referenceData.detailed_analysis_note}
           </div>
-        </div>
+        </div>          
+
         {/* <div className="w-full mt-4 grid gap-8 grid-cols-1">
                     {resolveBioMarkers().map((el) => {
                         return (
@@ -392,9 +403,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
         <div className="mt-6">
           {resolveCategories().map((el: any) => {
-            console.log(el);
             return (
-              <>
+              <div className='py-6'  style={{
+                pageBreakInside:'avoid',
+                pageBreakBefore:'auto',
+                pageBreakAfter:'auto',
+              }}>
                 <DetiledAnalyse
                   refrences={
                     resolveSubCategories().filter(
@@ -403,7 +417,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   }
                   data={el}
                 ></DetiledAnalyse>
-              </>
+              </div>
               // <DetiledAnalyse refrences={resolveSubCategories().filter(val =>val.subcategory == el.subcategory )[0]} data={el}></DetiledAnalyse>
             );
           })}

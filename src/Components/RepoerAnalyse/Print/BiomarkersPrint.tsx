@@ -9,7 +9,7 @@ const BiomarkersPrint: React.FC<BiomarkersPrintProps> = ({ data }) => {
   return (
     <>
       <div
-        className="w-full no-split relative  border bg-white rounded-md px-4 border-l-4 py-2"
+        className="w-full no-split relative  border bg-white rounded-md px-4  py-2"
         style={{
           borderRadius: '16px',
           boxShadow: '0px 4px 4px -2px #18274B14',
