@@ -221,81 +221,100 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
         </div>
       </div>
-      <div>
-        <div className="mt-4">
-          <div className=" text-light-primary-text dark:text-[#FFFFFFDE] flex items-center text-xl font-medium">
-            Client Information
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <div className="w-full mt-1 flex gap-1 justify-center">
-            <div className="w-1/2 bg-gray-100 px-2 py-1 text-gray-700 font-medium rounded-md ">
-              Full Name:
-            </div>
-            <div className="w-1/2 px-2 py-1 text-gray-900 border-b border-b-gray-100  rounded-md ">
-              Leslie Alexander
-            </div>
-          </div>
-          <div className="w-full mt-1 gap-1 flex justify-center">
-            <div className="w-1/2 bg-gray-100 px-2 py-1 text-gray-700 font-medium rounded-md ">
-              Age:
-            </div>
-            <div className="w-1/2 px-2 py-1 text-gray-900 border-b border-b-gray-100  rounded-md">
-              48 Years
-            </div>
-          </div>
-          <div className="w-full mt-1 flex gap-1 justify-center">
-            <div className="w-1/2 bg-gray-100 px-2 py-1 text-gray-700 font-medium rounded-md ">
-              Sex:
-            </div>
-            <div className="w-1/2 px-2 py-1 text-gray-900 border-b border-b-gray-100  rounded-md">
-              Female
-            </div>
-          </div>
-          <div className="w-full mt-1 flex gap-1 justify-center">
-            <div className="w-1/2 bg-gray-100 px-2 py-1 text-gray-700 font-medium rounded-md ">
-              Height:
-            </div>
-            <div className="w-1/2 px-2 py-1 text-gray-900 border-b border-b-gray-100  rounded-md">
-              180 cm
-            </div>
-          </div>
-          <div className="w-full mt-1 flex gap-1 justify-center">
-            <div className="w-1/2 bg-gray-100 px-2 py-1 text-gray-700 font-medium rounded-md ">
-              Weight:
-            </div>
-            <div className="w-1/2 px-2 py-1 text-gray-900  border-b border-b-gray-100 rounded-md">
-              75 kg
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="mt-4">
-        <div className=" text-light-primary-text dark:text-[#FFFFFFDE] flex items-center text-xl font-medium">
+      <div
+        className=""
+        style={{
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
+      >
+        <div
+          className=""
+          style={{ color: '#383838', fontWeight: '500', marginTop: '16px' }}
+        >
           Client Summary
         </div>
-        {ClientSummaryBoxs && (
-          <div className=" text-light-secandary-text dark:text-[#FFFFFF99] text-xs">
-            Total of {ClientSummaryBoxs.total_subcategory} groups in{' '}
-            {ClientSummaryBoxs.total_category} category
+        <div style={{ color: '#888888' }} className="text-justify mt-4">
+          {ClientSummaryBoxs?.client_summary}
+        </div>
+        <div className="w-full flex justify-end items-center gap-4 mt-4">
+          <div className="flex justify-start gap-1 items-center">
+            <div
+              className=""
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#7F39FB',
+                borderRadius: '100%',
+              }}
+            ></div>
+            <div
+              style={{ color: '#383838', fontSize: '12px' }}
+              className="font-medium"
+            >
+              Excellent{' '}
+            </div>
           </div>
-        )}
+          <div className="flex justify-start gap-1 items-center">
+            <div
+              className=""
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#06C78D',
+                borderRadius: '100%',
+              }}
+            ></div>
+            <div
+              style={{ color: '#383838', fontSize: '12px' }}
+              className="font-medium"
+            >
+              Good{' '}
+            </div>
+          </div>
+          <div className="flex justify-start gap-1 items-center">
+            <div
+              className=""
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#FBAD37',
+                borderRadius: '100%',
+              }}
+            ></div>
+            <div
+              style={{ color: '#383838', fontSize: '12px' }}
+              className="font-medium"
+            >
+              Ok{' '}
+            </div>
+          </div>
+          <div className="flex justify-start gap-1 items-center">
+            <div
+              className=""
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#FC5474',
+                borderRadius: '100%',
+              }}
+            ></div>
+            <div
+              style={{ color: '#383838', fontSize: '12px' }}
+              className="font-medium"
+            >
+              Needs focus{' '}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          {resolveCategories().map((el: any) => {
+            return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
+          })}
+        </div>
       </div>
-      <div
-        className=" text-light-secandary-text dark:text-[#FFFFFF99] text-justify text-xs mt-4"
-        style={{ lineHeight: '24px' }}
-      >
-        {ClientSummaryBoxs?.client_summary}
-      </div>
-      <div
-        className="w-full mt-4 grid gap-4 grid-cols-2"
-        style={{ pageBreakAfter: 'always' }}
-      >
-        {resolveCategories().map((el: any) => {
-          return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
-        })}
-      </div>
+
       <div
         className="my-10 text-light-primary-text dark:text-primary-text "
         style={{ pageBreakAfter: 'always' }}
