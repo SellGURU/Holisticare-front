@@ -22,7 +22,7 @@ const BiomarkersPrint: React.FC<BiomarkersPrintProps> = ({ data }) => {
           <div className=" flex justify-start items-center">
             <div
               className="text-base font-medium"
-              style={{ fontSize: '12px', color: '#383838' }}
+              style={{ fontSize: '14px', color: '#383838' }}
             >
               {data.name}
             </div>
@@ -51,7 +51,7 @@ const BiomarkersPrint: React.FC<BiomarkersPrintProps> = ({ data }) => {
             </div>
           </div>
         </div>
-        <div className="w-full  mt-8">
+        <div className="w-full  mt-10">
           <StatusBarChartPrint data={data}></StatusBarChartPrint>
         </div>
       </div>

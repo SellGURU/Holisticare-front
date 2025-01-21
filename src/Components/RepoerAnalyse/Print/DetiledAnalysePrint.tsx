@@ -43,14 +43,14 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
         <div className="ml-2">
           <div
             id={data.subcategory}
-            style={{ color: '#005F73', fontSize: '12px' }}
+            style={{ color: '#005F73', fontSize: '14px' }}
             className=" text-sm"
           >
             {data?.subcategory}
           </div>
           <div
             className="flex justify-start items-center "
-            style={{ color: '#B0B0B0', fontSize: '10px' }}
+            style={{ color: '#B0B0B0', fontSize: '12px' }}
           >
             <div className=" ">
               {' '}
@@ -65,18 +65,18 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
       </div>
       <div className="w-full mt-0 grid gap-1 grid-cols-1">
         <div
-          className="text-xs "
+          className="text-sm "
           style={{ color: '#383838', marginBottom: '12px' }}
         >
           Description
         </div>
         <div
-          className="text-xs "
+          className="text-sm "
           style={{ color: '#888888', marginBottom: '12px' }}
         >
           {data?.description}
         </div>
-        {refrences?.biomarkers.slice(0, 4).map((el: any) => {
+        {refrences?.biomarkers.map((el: any) => {
           return (
             <div
               style={{
@@ -88,7 +88,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               <BiomarkersPrint data={el}></BiomarkersPrint>
               <div
                 className="text-xs text-justify text-gray-700 py-2"
-                style={{ color: '#888888', fontSize: '10px' }}
+                style={{ color: '#888888', fontSize: '12px' }}
               >
                 {el?.more_info}
               </div>

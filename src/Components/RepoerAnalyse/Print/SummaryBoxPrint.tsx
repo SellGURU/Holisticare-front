@@ -38,18 +38,18 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
           </div>
         </div>
         <div className="ml-2">
-          <div className=" text-xs" style={{ color: '#005F73' }}>
+          <div className=" text-sm" style={{ color: '#005F73' }}>
             {data.subcategory}
           </div>
           <div
             className="flex justify-start items-center"
-            style={{ color: '#888888' }}
+            style={{ color: '#383838 ' }}
           >
             <div className="  text-xs" style={{ fontSize: '10px' }}>
               {' '}
               <span
                 className=" text-xs"
-                style={{ color: '#888888', fontSize: '10px' }}
+                style={{ color: '#383838 ', fontSize: '10px' }}
               >
                 {data.num_of_biomarkers}
               </span>{' '}
@@ -57,7 +57,7 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
             </div>
             <div
               className=" ml-2 text-xs"
-              style={{ color: '#888888', fontSize: '10px' }}
+              style={{ color: '#383838 ', fontSize: '10px' }}
             >
               <span className="">{data.out_of_ref}</span>{' '}
               {data.out_of_ref > 1 ? 'Needs Focus' : 'Need Focus'}{' '}
