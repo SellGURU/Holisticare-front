@@ -30,22 +30,22 @@ const PrintReport: React.FC<PrintReportProps> = ({
 }) => {
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
-      return './images/report/treatment/apple.svg';
+      return '/icons/TreatmentPlan/IconApple.svg';
     }
     if (category == 'Activity') {
-      return './images/report/treatment/weight.svg';
+      return '/icons/TreatmentPlan/IconActivity.svg';
     }
     if (category == 'Supplement') {
-      return './images/report/treatment/pil.svg';
+      return '/icons/TreatmentPlan/IconSupplement.svg';
     }
     if (category == 'Mind') {
-      return './images/report/treatment/mental-disorder.svg';
+      return '/icons/TreatmentPlan/Iconmind.svg';
     }
-    return './images/report/treatment/apple.svg';
+    return '/icons/TreatmentPlan/IconApple.svg';
   };
   console.log(resolveCategories());
   return (
-    <>
+    <div style={{ backgroundColor: '#E9F0F2' }}>
       <div
         className=" w-full relative min-h-full"
         style={{
@@ -430,27 +430,79 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       </div>
 
-      <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-        <div className="w-full mb-3 flex items-center justify-between">
+      <div
+        className=" "
+        style={{
+          backgroundColor: '#E9F0F2',
+          minHeight: '100vh',
+          padding: '24px 24px',
+        }}
+      >
+        <div
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
+        >
           <div
-            id="Treatment Plan"
-            className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium"
+            className="text-sm"
+            style={{ color: '#383838', fontWeight: '500' }}
           >
-            Treatment Plan{' '}
+            Holistic Plan
+          </div>
+        </div>
+
+        <div
+          className="w-full mb-4 h-9 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
+          style={{ borderRadius: '12px' }}
+        >
+          <div className="text-xs" style={{ color: '#005F73' }}>
+            Plan 04{' '}
+          </div>
+          <div className="flex justify-end items-center">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: '#4C88FF' }}
+            ></div>
+            <div
+              className="ml-1"
+              style={{ fontSize: '10px', color: '#383838' }}
+            >
+              On Going
+            </div>
+            <div
+              style={{
+                backgroundColor: '#E5E5E5',
+                marginLeft: '24px',
+                padding: '2.5px 8px',
+                borderRadius: '12px',
+              }}
+            >
+              <div style={{ fontSize: '10px', color: '#005F73' }}>
+                2024/29/09
+              </div>
+            </div>
           </div>
         </div>
         {TreatMentPlanData.map((el) => {
           return (
             <>
               <div className="no-split">
-                <div className="text-base flex bg-blue-200 rounded-md w-full justify-start items-center gap-1">
-                  <div className="w-8 h-8 dark:bg-[#333333] bg-light-overlay flex justify-center items-center rounded-[8px]">
+                <div
+                  className="text-xs flex bg-white text-center rounded-md w-full justify-center items-center py-1 gap-1"
+                  style={{
+                    width: '193px',
+                    borderRadius: '8px',
+                    borderBottomLeftRadius: '0px',
+                    borderBottomRightRadius: '0px',
+                    color: '#005F73',
+                  }}
+                >
+                  <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
                     <img src={resolveTreatmentPlanIcon(el.category)} alt="" />
                   </div>
                   {el.category}
                 </div>
 
-                <div className="w-full flex flex-wrap gap-6  bg-slate-500 p-4 rounded-sm mt-4">
+                <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-4">
                   {el.data.map((el2: any) => {
                     return <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>;
                   })}
@@ -587,7 +639,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
