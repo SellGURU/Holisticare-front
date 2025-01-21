@@ -59,7 +59,7 @@ export const OverView = () => {
             </div>
             <img
               className="w-6 h-6 cursor-pointer absolute right-5"
-              src="/public/icons/edit.svg"
+              src="/icons/edit.svg"
               alt=""
             />
           </div>
