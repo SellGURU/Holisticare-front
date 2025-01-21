@@ -62,7 +62,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       mywindow.focus(); // necessary for IE >= 10*/
 
       mywindow.print();
-      mywindow.close();
+      // mywindow.close();
     };
     // mywindow.print()
   };
