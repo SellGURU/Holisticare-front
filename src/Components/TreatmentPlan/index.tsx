@@ -7,6 +7,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+
 type CardData = {
   id: number;
   date: string;
@@ -39,10 +40,12 @@ const initialCardData: CardData[] = [
 
 interface TreatmentPlanProps {
   treatmentPlanData: any;
+  setPrintActionPlan: (value: any) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   treatmentPlanData,
+  setPrintActionPlan,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -97,6 +100,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       member_id: id,
     }).then((res) => {
       setCardData(res.data);
+      setPrintActionPlan(res.data);
       if (res.data.length > 0) {
         setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
       }

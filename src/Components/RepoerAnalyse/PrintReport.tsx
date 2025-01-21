@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // import RefrenceBox from "./Boxs/RefrenceBox"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { subscribe } from '../../utils/event';
 import BiomarkersPrint from './Print/BiomarkersPrint';
 import CalenderPrint from './Print/CalenderPrint';
@@ -19,6 +19,7 @@ interface PrintReportProps {
   resolveBioMarkers: () => Array<any>;
   resolveCategories: () => Array<any>;
   resolveSubCategories: () => Array<any>;
+  helthPlan: any;
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({
@@ -31,6 +32,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
   resolveBioMarkers,
   referenceData,
   resolveCategories,
+  helthPlan,
 }) => {
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
@@ -47,6 +49,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
     }
     return '/icons/TreatmentPlan/IconApple.svg';
   };
+  useEffect(() => {
+    console.log(helthPlan);
+  }, [helthPlan]);
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -70,9 +75,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
     },
   ]);
   subscribe('downloadCalled', (data) => {
-    console.log(data.detail);
     setPrintOptions(data.detail);
   });
+
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <div
@@ -624,7 +629,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
 
           <div
-            className="w-full mb-4 h-10  hidden justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
+            className="w-full mb-4 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
             style={{ borderRadius: '12px' }}
           >
             <div className="text-sm" style={{ color: '#005F73' }}>
@@ -703,14 +708,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           </div>
           <div
-            className="w-full mb-4 hidden  py-2 px-4 bg-white border border-green-400 mt-4"
+            className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
             style={{ borderRadius: '12px' }}
           >
             <div className="text-sm" style={{ color: '#005F73' }}>
-              Building Endurance and Resilience
+              {helthPlan[helthPlan.length - 1]?.t_title}
             </div>
             <div className="text-xs" style={{ color: '#383838' }}>
-              This block focusing on enhancing client’s endurance and resilience
+              {helthPlan[helthPlan.length - 1]?.description}
             </div>
             <div className="flex justify-between items-center">
               <div className="mt-2">
@@ -718,7 +723,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   <div style={{ color: '#383838', fontSize: '12px' }}>
                     Progress
                   </div>
-                  <div style={{ color: '#005F73', fontSize: '12px' }}>95%</div>
+                  <div style={{ color: '#005F73', fontSize: '12px' }}>
+                    {helthPlan[helthPlan.length - 1]?.percent
+                      ? helthPlan[helthPlan.length - 1]?.percent
+                      : '100%'}
+                  </div>
                 </div>
                 <div>
                   <div
@@ -751,7 +760,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   className="ml-1"
                   style={{ fontSize: '12px', color: '#383838' }}
                 >
-                  On Going
+                  {helthPlan[helthPlan.length - 1]?.state}
                 </div>
                 <div
                   style={{
@@ -765,7 +774,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     className="flex justify-center gap-1 items-center"
                     style={{ fontSize: '12px', color: '#005F73' }}
                   >
-                    <img src="/icons/timerprint.svg" alt="" />1 month
+                    <img src="/icons/timerprint.svg" alt="" />
+                    {helthPlan[helthPlan.length - 1]?.date_text}
                   </div>
                 </div>
               </div>
