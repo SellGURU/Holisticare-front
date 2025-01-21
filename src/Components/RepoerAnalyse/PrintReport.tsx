@@ -707,7 +707,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Action Plan
             </div>
           </div>
-          {helthPlan &&
+          {helthPlan && (
             <div
               className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
               style={{ borderRadius: '12px' }}
@@ -782,7 +782,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </div>
               </div>
             </div>
-          }
+          )}
           {caldenderData != null && caldenderData.length > 0 && (
             <CalenderPrint data={caldenderData}></CalenderPrint>
           )}
