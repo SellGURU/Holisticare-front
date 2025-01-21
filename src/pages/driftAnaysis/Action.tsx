@@ -12,33 +12,11 @@ interface RoadMapOption {
   description: string;
   action: string;
 }
-interface ActionPlan {
-  value: string;
-  days: string[];
-}
 
-interface Category {
-  name: string;
-  icon: string;
-  actions: ActionPlan[];
-}
 interface MessageOption extends RoadMapOption {
   isDone?: boolean;
 }
-const initialCategories: Category[] = [
-  {
-    name: 'Diet',
-    icon: '/icons/diet.svg',
-    actions: [
-      {
-        value:
-          'Omeprazole (Oral Pill) 40 MG/ Ingredient: omeprazole/ Instructions: 1qam',
-        days: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed'],
-      },
-    ],
-  },
-  // Add more categories as needed
-];
+
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
@@ -141,21 +119,24 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [Description, setDescription] = useState('');
   const [recommendation, setRecommendation] = useState('');
   const [reference, setReference] = useState('');
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
 
-  const toggleDay = (
+  const toggleDaySelection = (
     categoryIndex: number,
     actionIndex: number,
     day: string,
   ) => {
-    const newCategories = [...categories];
-    const action = newCategories[categoryIndex].actions[actionIndex];
-    if (action.days.includes(day)) {
-      action.days = action.days.filter((d) => d !== day);
-    } else {
-      action.days.push(day);
-    }
-    setCategories(newCategories);
+    setData((prevData: any) => {
+      const newData = { ...prevData };
+      const action = newData[Object.keys(newData)[categoryIndex]][actionIndex];
+      if (action.repeat_days.includes(day)) {
+        action.repeat_days = action.repeat_days.filter(
+          (d: string) => d !== day,
+        );
+      } else {
+        action.repeat_days.push(day);
+      }
+      return newData;
+    });
   };
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
     new Set(),
@@ -170,6 +151,9 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     }
     setExpandedCategories(newExpandedCategories);
   };
+  const [data, setData] = useState({});
+  console.log(data);
+
   return (
     <>
       {showModal && (
@@ -184,24 +168,36 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               <MiniAnallyseButton />
             </div>
           </div>
-          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3">
-            {categories.map((category, categoryIndex) => (
-              <div key={categoryIndex}>
-                <div className="w-full flex justify-between items-start">
-                  <div className="flex items-center mb-2 gap-2">
-                    <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2">
-                      <img
-                        src={category.icon}
-                        alt={category.name}
-                        className="w-4 h-4"
-                      />
+          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto">
+            {Object.entries(data).map(
+              ([categoryName, actions], categoryIndex) => (
+                <div key={categoryIndex}>
+                  <div
+                    onClick={() => toggleExpand(categoryIndex)}
+                    className="w-full flex justify-between items-start my-4"
+                  >
+                    <div className="flex items-center mb-2 gap-2">
+                      <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2 ">
+                        {categoryName == 'Diet' && (
+                          <img src={'/icons/diet.svg'} alt="" />
+                        )}
+                        {categoryName == 'Activity' && (
+                          <img src={'/icons/weight.svg'} alt="" />
+                        )}
+                        {categoryName == 'Mind' && (
+                          <img src={'/icons/mind.svg'} alt="" />
+                        )}
+                        {categoryName == 'Supplement' && (
+                          <img src={'/icons/Supplement.svg'} alt="" />
+                        )}
+                      </div>
+                      <h3 className="text-xs text-Text-Primary">
+                        {categoryName}
+                      </h3>
+
+                      <MiniAnallyseButton />
                     </div>
-                    <h3 className="text-xs text-Text-Primary">
-                      {category.name}
-                    </h3>
-                    <MiniAnallyseButton />
-                  </div>
-                  <button onClick={() => toggleExpand(categoryIndex)}>
+
                     <img
                       src="/icons/arrow-down.svg"
                       alt=""
@@ -211,38 +207,49 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                           : 'rotate-0'
                       }`}
                     />
-                  </button>
-                </div>
-                {expandedCategories.has(categoryIndex) &&
-                  category.actions.map((action, actionIndex) => (
-                    <div
-                      key={actionIndex}
-                      className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary"
-                    >
-                      <p>{action.value}</p>
-                      <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
-                        {['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(
-                          (day) => (
+                  </div>
+                  {expandedCategories.has(categoryIndex) &&
+                    (actions as any[]).map((action, actionIndex) => (
+                      <div
+                        key={actionIndex}
+                        className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
+                      >
+                        <p className="font-semibold">{action.name}</p>
+                        <p>{action.instructions}</p>
+                        <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
+                          {[
+                            'Sat',
+                            'Sun',
+                            'Mon',
+                            'Tue',
+                            'Wed',
+                            'Thu',
+                            'Fri',
+                          ].map((day) => (
                             <div
                               key={day}
                               onClick={() =>
-                                toggleDay(categoryIndex, actionIndex, day)
+                                toggleDaySelection(
+                                  categoryIndex,
+                                  actionIndex,
+                                  day,
+                                )
                               }
                               className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
-                                action.days.includes(day)
+                                action.repeat_days.includes(day)
                                   ? 'text-Primary-EmeraldGreen'
                                   : 'text-Text-Primary'
                               }`}
                             >
                               {day}
                             </div>
-                          ),
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </div>
-            ))}
+                    ))}
+                </div>
+              ),
+            )}
           </div>
           <div className="w-full flex justify-center mt-5">
             <ButtonPrimary>
@@ -292,7 +299,12 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             <div className={`flex flex-col gap-2 pr-3 mt-2`}>
               {RoadMapData.map((option) => (
                 <AccordionCard
-                  onClick={() => setshowModal(true)}
+                  onClick={() => {
+                    Application.driftAction({ member_id: memberID })
+                      .then((res) => setData(res.data))
+                      .catch((err) => console.log(err))
+                      .finally(() => setshowModal(true));
+                  }}
                   onDelete={() => handleOptionDelete(option.id)}
                   key={option.id}
                   title={option.id}

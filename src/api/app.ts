@@ -589,6 +589,10 @@ class Application extends Api {
     const response = this.post('/treatment_plan/medical_summary_ai', data);
     return response;
   };
+  static driftAction = (data: any) => {
+    const response = this.post('/drift_analysis/action_plan', data);
+    return response;
+  };
 }
 
 export default Application;
