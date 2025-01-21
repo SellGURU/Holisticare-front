@@ -707,80 +707,82 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Action Plan
             </div>
           </div>
-          <div
-            className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
-            style={{ borderRadius: '12px' }}
-          >
-            <div className="text-sm" style={{ color: '#005F73' }}>
-              {helthPlan[helthPlan.length - 1]?.t_title}
-            </div>
-            <div className="text-xs" style={{ color: '#383838' }}>
-              {helthPlan[helthPlan.length - 1]?.description}
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="mt-2">
-                <div className="flex justify-between items-center">
-                  <div style={{ color: '#383838', fontSize: '12px' }}>
-                    Progress
+          {helthPlan &&
+            <div
+              className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
+              style={{ borderRadius: '12px' }}
+            >
+              <div className="text-sm" style={{ color: '#005F73' }}>
+                {helthPlan[helthPlan.length - 1]?.t_title}
+              </div>
+              <div className="text-xs" style={{ color: '#383838' }}>
+                {helthPlan[helthPlan.length - 1]?.description}
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="mt-2">
+                  <div className="flex justify-between items-center">
+                    <div style={{ color: '#383838', fontSize: '12px' }}>
+                      Progress
+                    </div>
+                    <div style={{ color: '#005F73', fontSize: '12px' }}>
+                      {helthPlan[helthPlan.length - 1]?.percent
+                        ? helthPlan[helthPlan.length - 1]?.percent
+                        : '100%'}
+                    </div>
                   </div>
-                  <div style={{ color: '#005F73', fontSize: '12px' }}>
-                    {helthPlan[helthPlan.length - 1]?.percent
-                      ? helthPlan[helthPlan.length - 1]?.percent
-                      : '100%'}
+                  <div>
+                    <div
+                      className="relative"
+                      style={{
+                        width: '250px',
+                        height: '8px',
+                        borderRadius: '12px',
+                        background: '#E5E5E5',
+                      }}
+                    >
+                      <div
+                        className="absolute left-0  "
+                        style={{
+                          height: '6px',
+                          backgroundColor: '#6CC24A',
+                          borderRadius: '12px',
+                          width: '95%',
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
-                <div>
+                <div className="flex justify-end items-center">
                   <div
-                    className="relative"
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: '#4C88FF' }}
+                  ></div>
+                  <div
+                    className="ml-1"
+                    style={{ fontSize: '12px', color: '#383838' }}
+                  >
+                    {helthPlan[helthPlan.length - 1]?.state}
+                  </div>
+                  <div
                     style={{
-                      width: '250px',
-                      height: '8px',
+                      backgroundColor: '#E5E5E5',
+                      marginLeft: '24px',
+                      padding: '2.5px 12px',
                       borderRadius: '12px',
-                      background: '#E5E5E5',
                     }}
                   >
                     <div
-                      className="absolute left-0  "
-                      style={{
-                        height: '6px',
-                        backgroundColor: '#6CC24A',
-                        borderRadius: '12px',
-                        width: '95%',
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end items-center">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: '#4C88FF' }}
-                ></div>
-                <div
-                  className="ml-1"
-                  style={{ fontSize: '12px', color: '#383838' }}
-                >
-                  {helthPlan[helthPlan.length - 1]?.state}
-                </div>
-                <div
-                  style={{
-                    backgroundColor: '#E5E5E5',
-                    marginLeft: '24px',
-                    padding: '2.5px 12px',
-                    borderRadius: '12px',
-                  }}
-                >
-                  <div
-                    className="flex justify-center gap-1 items-center"
-                    style={{ fontSize: '12px', color: '#005F73' }}
-                  >
-                    <img src="/icons/timerprint.svg" alt="" />
-                    {helthPlan[helthPlan.length - 1]?.date_text}
+                      className="flex justify-center gap-1 items-center"
+                      style={{ fontSize: '12px', color: '#005F73' }}
+                    >
+                      <img src="/icons/timerprint.svg" alt="" />
+                      {helthPlan[helthPlan.length - 1]?.date_text}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          }
           {caldenderData != null && caldenderData.length > 0 && (
             <CalenderPrint data={caldenderData}></CalenderPrint>
           )}
