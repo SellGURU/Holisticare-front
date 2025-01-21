@@ -120,12 +120,18 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [recommendation, setRecommendation] = useState('');
   const [reference, setReference] = useState('');
 
-  const toggleDaySelection = (categoryIndex: number, actionIndex: number, day: string) => {
+  const toggleDaySelection = (
+    categoryIndex: number,
+    actionIndex: number,
+    day: string,
+  ) => {
     setData((prevData: any) => {
       const newData = { ...prevData };
       const action = newData[Object.keys(newData)[categoryIndex]][actionIndex];
       if (action.repeat_days.includes(day)) {
-        action.repeat_days = action.repeat_days.filter((d: string) => d !== day);
+        action.repeat_days = action.repeat_days.filter(
+          (d: string) => d !== day,
+        );
       } else {
         action.repeat_days.push(day);
       }
@@ -147,97 +153,111 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   };
   const [data, setData] = useState({});
   console.log(data);
-  
+
   return (
     <>
       {showModal && (
-     <SlideOutPanel
-     headline="Edit Action Plan"
-     isOpen={showModal}
-     onClose={() => setshowModal(false)}
-   >
-     <div className="w-full flex justify-between items-center text-Text-Primary text-xs font-medium">
-       Ordering
-       <div className="w-8 h-8">
-         <MiniAnallyseButton />
-       </div>
-     </div>
-     <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto">
-       {Object.entries(data).map(([categoryName, actions], categoryIndex) => (
-         <div key={categoryIndex}>
-           <div onClick={() => toggleExpand(categoryIndex)} className="w-full flex justify-between items-start my-4">
-             <div className="flex items-center mb-2 gap-2">
-               <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2 ">
-               {categoryName == 'Diet' && (
-                                <img src={'/icons/diet.svg'} alt="" />
-                              )}
-                              {categoryName == 'Activity' && (
-                                <img src={'/icons/weight.svg'} alt="" />
-                              )}
-                              {categoryName == 'Mind' && (
-                                <img src={'/icons/mind.svg'} alt="" />
-                              )}
-                              {categoryName == 'Supplement' && (
-                                <img src={'/icons/Supplement.svg'} alt="" />
-                              )}
-               </div>
-               <h3 className="text-xs text-Text-Primary">
-                 {categoryName}
-               </h3>
-              
-               <MiniAnallyseButton />
+        <SlideOutPanel
+          headline="Edit Action Plan"
+          isOpen={showModal}
+          onClose={() => setshowModal(false)}
+        >
+          <div className="w-full flex justify-between items-center text-Text-Primary text-xs font-medium">
+            Ordering
+            <div className="w-8 h-8">
+              <MiniAnallyseButton />
+            </div>
+          </div>
+          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto">
+            {Object.entries(data).map(
+              ([categoryName, actions], categoryIndex) => (
+                <div key={categoryIndex}>
+                  <div
+                    onClick={() => toggleExpand(categoryIndex)}
+                    className="w-full flex justify-between items-start my-4"
+                  >
+                    <div className="flex items-center mb-2 gap-2">
+                      <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2 ">
+                        {categoryName == 'Diet' && (
+                          <img src={'/icons/diet.svg'} alt="" />
+                        )}
+                        {categoryName == 'Activity' && (
+                          <img src={'/icons/weight.svg'} alt="" />
+                        )}
+                        {categoryName == 'Mind' && (
+                          <img src={'/icons/mind.svg'} alt="" />
+                        )}
+                        {categoryName == 'Supplement' && (
+                          <img src={'/icons/Supplement.svg'} alt="" />
+                        )}
+                      </div>
+                      <h3 className="text-xs text-Text-Primary">
+                        {categoryName}
+                      </h3>
 
-             </div>
-          
-               <img
-                 src="/icons/arrow-down.svg"
-                 alt=""
-                 className={`transition-transform duration-200 ${
-                   expandedCategories.has(categoryIndex)
-                     ? 'rotate-180'
-                     : 'rotate-0'
-                 }`}
-               />
-            
-           </div>
-           {expandedCategories.has(categoryIndex) &&
-             (actions as any[]).map((action, actionIndex) => (
-               <div
-                 key={actionIndex}
-                 className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
-               >
-                 <p className="font-semibold">{action.name}</p>
-                 <p>{action.instructions}</p>
-                 <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
-                   {['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map(
-                     (day) => (
-                       <div
-                         key={day}
-                         onClick={() => toggleDaySelection(categoryIndex, actionIndex, day)}
+                      <MiniAnallyseButton />
+                    </div>
 
-                         className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
-                           action.repeat_days.includes(day)
-                             ? 'text-Primary-EmeraldGreen'
-                             : 'text-Text-Primary'
-                         }`}
-                       >
-                         {day}
-                       </div>
-                     ),
-                   )}
-                 </div>
-               </div>
-             ))}
-         </div>
-       ))}
-     </div>
-     <div className="w-full flex justify-center mt-5">
-       <ButtonPrimary>
-         <img src="/icons/tick-square.svg" alt="" />
-         Save Changes
-       </ButtonPrimary>
-     </div>
-   </SlideOutPanel>
+                    <img
+                      src="/icons/arrow-down.svg"
+                      alt=""
+                      className={`transition-transform duration-200 ${
+                        expandedCategories.has(categoryIndex)
+                          ? 'rotate-180'
+                          : 'rotate-0'
+                      }`}
+                    />
+                  </div>
+                  {expandedCategories.has(categoryIndex) &&
+                    (actions as any[]).map((action, actionIndex) => (
+                      <div
+                        key={actionIndex}
+                        className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
+                      >
+                        <p className="font-semibold">{action.name}</p>
+                        <p>{action.instructions}</p>
+                        <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
+                          {[
+                            'Sat',
+                            'Sun',
+                            'Mon',
+                            'Tue',
+                            'Wed',
+                            'Thu',
+                            'Fri',
+                          ].map((day) => (
+                            <div
+                              key={day}
+                              onClick={() =>
+                                toggleDaySelection(
+                                  categoryIndex,
+                                  actionIndex,
+                                  day,
+                                )
+                              }
+                              className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
+                                action.repeat_days.includes(day)
+                                  ? 'text-Primary-EmeraldGreen'
+                                  : 'text-Text-Primary'
+                              }`}
+                            >
+                              {day}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ),
+            )}
+          </div>
+          <div className="w-full flex justify-center mt-5">
+            <ButtonPrimary>
+              <img src="/icons/tick-square.svg" alt="" />
+              Save Changes
+            </ButtonPrimary>
+          </div>
+        </SlideOutPanel>
       )}
       <div className="w-full flex flex-col gap-2 ">
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
