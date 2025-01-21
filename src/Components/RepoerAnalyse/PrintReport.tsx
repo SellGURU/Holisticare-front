@@ -368,6 +368,123 @@ const PrintReport: React.FC<PrintReportProps> = ({
               return <BiomarkersPrint data={el}></BiomarkersPrint>;
             })}
         </div>
+        <div className="w-full mb-3 mt-4 flex items-center justify-between">
+          <div className=" text-sm font-medium" style={{ color: '#383838' }}>
+            Concerning Result
+          </div>
+        </div>
+        <div className="px-2">
+          <div className="w-full  bg-white rounded-md py-3 px-2 flex justify-between items-center">
+            <div
+              className="text-gray-700 font-medium "
+              style={{ width: 200, fontSize: 10, color: '#383838' }}
+            >
+              Name
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Result
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Units
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Lab Ref Range
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Baseline
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Optimal Range
+            </div>
+            <div
+              className="text-gray-700 font-medium "
+              style={{ fontSize: 10, color: '#383838' }}
+            >
+              Changes
+            </div>
+          </div>
+          {ResolveConceringData().map((el) => {
+            return (
+              <>
+                <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
+                  <div
+                    className="text-xs text-gray-800"
+                    style={{ fontSize: 9, color: '#005F73' }}
+                  >
+                    {el.subcategory}
+                  </div>
+                </div>
+                {el.biomarkers.map((val: any) => {
+                  return (
+                    <div className="w-full  bg-white  py-3 px-2 flex justify-between items-center">
+                      <div
+                        className=" text-gray-800"
+                        style={{
+                          fontSize: '8px',
+                          color: '#383838',
+                          width: 200,
+                        }}
+                      >
+                        {val.name}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val.Result}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val.Units}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val['Lab Ref Range']}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val.Baseline}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val['Optimal Range']}
+                      </div>
+                      <div
+                        className=" text-gray-800"
+                        style={{ fontSize: '8px', color: '#383838' }}
+                      >
+                        {val.Changes}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            );
+          })}
+        </div>
       </div>
 
       <div
@@ -531,121 +648,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
         )}
       </div>
 
-      <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-        <div className="w-full mb-3 flex items-center justify-between">
-          <div className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">
-            Concerning Result
-          </div>
-        </div>
-        <div className="px-2">
-          <div className="w-full  bg-gray-100 rounded-md py-3 px-2 flex justify-between items-center">
-            <div
-              className="text-gray-700 font-medium "
-              style={{ width: 200, fontSize: 10 }}
-            >
-              Name
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Result
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Units
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Lab Ref Range
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Baseline
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Optimal Range
-            </div>
-            <div
-              className="text-gray-700 font-medium "
-              style={{ fontSize: 10 }}
-            >
-              Changes
-            </div>
-          </div>
-          {ResolveConceringData().map((el) => {
-            return (
-              <>
-                <div className="w-full border bg-gray-50 border-gray-200 mt-3 rounded-md py-3 px-2 flex justify-between items-center">
-                  <div
-                    className="text-xs text-gray-800"
-                    style={{ fontSize: 9 }}
-                  >
-                    {el.subcategory}
-                  </div>
-                </div>
-                {el.biomarkers.map((val: any) => {
-                  return (
-                    <div className="w-full border  border-gray-200 mt-3 rounded-md py-3 px-2 flex justify-between items-center">
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px', width: 200 }}
-                      >
-                        {val.name}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val.Result}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val.Units}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val['Lab Ref Range']}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val.Baseline}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val['Optimal Range']}
-                      </div>
-                      <div
-                        className=" text-gray-800"
-                        style={{ fontSize: '8px' }}
-                      >
-                        {val.Changes}
-                      </div>
-                    </div>
-                  );
-                })}
-              </>
-            );
-          })}
-        </div>
-      </div>
+      {/* <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
+
+      </div> */}
     </div>
   );
 };

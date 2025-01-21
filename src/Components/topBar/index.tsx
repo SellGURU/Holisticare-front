@@ -28,7 +28,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
           <style>
               @media print {
               body {
-                  background-color: white !important;
+                  background-color: #E9F0F2 !important;
                   font-family:Inter
               }
               .header,
@@ -58,12 +58,12 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       </html>
       `);
     mywindow.document.close(); // necessary for IE >= 10
-    // mywindow.onload = () => {
-    //   mywindow.focus(); // necessary for IE >= 10*/
+    mywindow.onload = () => {
+      mywindow.focus(); // necessary for IE >= 10*/
 
-    //   mywindow.print();
-    //   mywindow.close();
-    // };
+      mywindow.print();
+      mywindow.close();
+    };
     // mywindow.print()
   };
   const resolveNav = () => {
