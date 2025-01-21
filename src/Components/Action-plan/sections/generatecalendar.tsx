@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Circleloader from '../../CircleLoader';
 // import AnalyseButton from "@/components/AnalyseButton";
 // import { Button } from "symphony-ui";
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
@@ -217,15 +218,9 @@ const GenerateCalendar: React.FC = () => {
   return (
     <>
       {isLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          {' '}
-          <div className="spinner">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="dot"></div>
-            ))}
-          </div>
-          {/* <div className="text-Text-Primary TextStyle-Body-1 mt-3">We’re generating your action plan based on the selected method. This may take a moment.</div> */}
-        </div>
+         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+         <Circleloader></Circleloader>
+       </div>
       )}
       <div className="w-full fixed z-50 top-0 ">
         <TopBar></TopBar>
