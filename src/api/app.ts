@@ -569,6 +569,10 @@ class Application extends Api {
     const response = this.post('/messages/chat_window/send_message', data);
     return response;
   };
+  static userMessagesList = (data: any) => {
+    const response = this.post('/messages/chat_window/messages_list', data);
+    return response;
+  };
   static clientsStats = () => {
     const response = this.post('/dashboard/clinic/clients_statistics', {});
     return response;
