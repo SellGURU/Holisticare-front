@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
-import { PlanModal } from './planMOdal';
+import { PlanModal } from './planModal';
 
 export const OverView = () => {
   const handleFileClick = () => {

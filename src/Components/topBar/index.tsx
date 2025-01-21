@@ -23,13 +23,13 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
           <!-- Link to Tailwind CSS -->
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">         
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
           <style>
               @media print {
               body {
                   background-color: #E9F0F2 !important;
-                  font-family:Inter
+                  font-family: 'Inter', sans-serif !important; /* Use Inter font for printing */
               }
               .header,
               .footer {
@@ -62,7 +62,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       mywindow.focus(); // necessary for IE >= 10*/
 
       mywindow.print();
-      mywindow.close();
+      // mywindow.close();
     };
     // mywindow.print()
   };

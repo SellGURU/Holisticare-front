@@ -34,7 +34,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
         >
           <div
             className="text-[10px] text-Primary-DeepTeal"
-            style={{ fontSize: '10px', color: '#005F73' }}
+            style={{ fontSize: '12px', color: '#005F73' }}
           >
             {data.values[0]}
           </div>
@@ -75,16 +75,15 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                 }}
               >
                 <div
-                  className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]"
+                  className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] text-[10px]"
                   style={{
-                    color: '#005F73',
                     left: '4px',
-                    top: '-35px',
-                    fontSize: '10px',
+                    top: '-40px',
+                    fontSize: '12px',
                   }}
                 >
                   {
-                    <div className="text-center">
+                    <div className="text-center" style={{ color: '#888888' }}>
                       <div>{el.key}</div>
                       <div>
                         {'' + '(' + el.value[0] + ' - ' + el.value[1] + ')'}
@@ -106,7 +105,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       }}
                     >
                       <div
-                        className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"
+                        className="w-2 h-2 rounded-full rotate-45 bg-Primary-DeepTeal"
                         style={{ background: '#005F73' }}
                       ></div>
                       <div
@@ -120,7 +119,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       ></div>
                       <div
                         style={{
-                          fontSize: '10px',
+                          fontSize: '12px',
                           gap: '2px',
                           marginLeft: '-24px',
                           color: '#005F73',

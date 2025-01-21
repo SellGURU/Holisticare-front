@@ -235,27 +235,39 @@ const PrintReport: React.FC<PrintReportProps> = ({
           style={{ marginTop: '16px' }}
         >
           <div
-            className="text-sm"
-            style={{ color: '#383838', fontWeight: '500' }}
+            className="text-lg"
+            style={{ color: '#005F73', fontWeight: '600' }}
           >
             Client Summary
           </div>
-          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
+          <div className="" style={{ color: '#383838', fontSize: '14px' }}>
             Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
             {ClientSummaryBoxs.total_category} Categories
           </div>
         </div>
         <div className="flex justify-start items-center mt-4 gap-3">
-          <div style={{ fontSize: '10px', color: '#888888' }}>Mark Spencer</div>
-          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
-            <div>Gender: Male </div>
+          <div style={{ fontSize: '14px', color: '#383838', fontWeight: 500 }}>
+            Mark Spencer
           </div>
-          <div className="" style={{ fontSize: '10px', color: '#888888' }}>
-            <div>Age: 40</div>
+          <div className="flex justify-center items-center gap-1">
+            <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div>Gender: Male </div>
+            </div>
+            <div
+              className=""
+              style={{
+                width: '1px',
+                height: '12px',
+                backgroundColor: '#383838',
+              }}
+            ></div>
+            <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div>Age: 40</div>
+            </div>
           </div>
         </div>
         <div
-          style={{ color: '#888888', fontSize: '10px' }}
+          style={{ color: '#383838', fontSize: '14px' }}
           className="text-justify mt-4"
         >
           {ClientSummaryBoxs?.client_summary}
@@ -272,7 +284,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#888888', fontSize: '12px' }}
+              style={{ color: '#383838', fontSize: '12px' }}
               className="font-medium"
             >
               Excellent{' '}
@@ -289,7 +301,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#888888', fontSize: '12px' }}
+              style={{ color: '#383838', fontSize: '12px' }}
               className="font-medium"
             >
               Good{' '}
@@ -306,7 +318,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#888888', fontSize: '12px' }}
+              style={{ color: '#383838', fontSize: '12px' }}
               className="font-medium"
             >
               Ok{' '}
@@ -323,7 +335,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               }}
             ></div>
             <div
-              style={{ color: '#888888', fontSize: '12px' }}
+              style={{ color: '#383838', fontSize: '12px' }}
               className="font-medium"
             >
               Needs focus{' '}
@@ -349,14 +361,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
         <div className="flex justify-between items-center mt-4">
           <div
             id="Out of Reference"
-            className=" text-sm font-medium"
-            style={{ color: '#383838' }}
+            className="text-lg"
+            style={{ color: '#005F73', fontWeight: '600' }}
           >
             Needs Focus Biomarkers
           </div>
           <div
             className="  text-xs"
-            style={{ color: '#888888', fontSize: '10px' }}
+            style={{ color: '#383838', fontSize: '14px' }}
           >
             {referenceData.total_biomarker_note}
           </div>
@@ -369,51 +381,54 @@ const PrintReport: React.FC<PrintReportProps> = ({
             })}
         </div>
         <div className="w-full mb-3 mt-4 flex items-center justify-between">
-          <div className=" text-sm font-medium" style={{ color: '#383838' }}>
+          <div
+            className="text-lg"
+            style={{ color: '#005F73', fontWeight: '600' }}
+          >
             Concerning Result
           </div>
         </div>
         <div className="px-2">
-          <div className="w-full  bg-white rounded-md py-3 px-2 flex justify-between items-center">
+          <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
             <div
               className="text-gray-700 font-medium "
-              style={{ width: 200, fontSize: 10, color: '#383838' }}
+              style={{ width: 200, fontSize: 12, color: '#383838' }}
             >
               Name
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Result
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Units
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Lab Ref Range
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Baseline
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Optimal Range
             </div>
             <div
               className="text-gray-700 font-medium "
-              style={{ fontSize: 10, color: '#383838' }}
+              style={{ fontSize: 12, color: '#383838' }}
             >
               Changes
             </div>
@@ -423,58 +438,61 @@ const PrintReport: React.FC<PrintReportProps> = ({
               <>
                 <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
                   <div
-                    className="text-xs text-gray-800"
+                    className="text-xs flex justify-start gap-2 items-center text-gray-800"
                     style={{ fontSize: 9, color: '#005F73' }}
                   >
+                    <div>
+                      <img src="/icons/arrow-square-down.svg" alt="" />
+                    </div>
                     {el.subcategory}
                   </div>
                 </div>
                 {el.biomarkers.map((val: any) => {
                   return (
-                    <div className="w-full  bg-white  py-3 px-2 flex justify-between items-center">
+                    <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
                       <div
                         className=" text-gray-800"
                         style={{
-                          fontSize: '8px',
+                          fontSize: '10px',
                           color: '#383838',
-                          width: 200,
+                          width: 170,
                         }}
                       >
                         {val.name}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val.Result}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val.Units}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val['Lab Ref Range']}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val.Baseline}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val['Optimal Range']}
                       </div>
                       <div
                         className=" text-gray-800"
-                        style={{ fontSize: '8px', color: '#383838' }}
+                        style={{ fontSize: '10px', color: '#383838' }}
                       >
                         {val.Changes}
                       </div>
@@ -501,13 +519,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
           style={{ marginTop: '16px' }}
         >
           <div
-            className="text-sm"
+            className="text-lg"
             id="Detailed analysis"
-            style={{ color: '#383838', fontWeight: '500' }}
+            style={{ color: '#005F73', fontWeight: '600' }}
           >
             Detailed Analysis
           </div>
-          <div className="" style={{ color: '#888888', fontSize: '10px' }}>
+          <div className="" style={{ color: '#383838', fontSize: '14px' }}>
             {referenceData.detailed_analysis_note}
           </div>
         </div>
@@ -526,11 +544,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
             return (
               <div
                 className="py-6"
-                style={{
-                  pageBreakInside: 'avoid',
-                  pageBreakBefore: 'auto',
-                  pageBreakAfter: 'auto',
-                }}
+                // style={{
+                //   pageBreakInside: 'avoid',
+                //   pageBreakBefore: 'auto',
+                //   pageBreakAfter: 'auto',
+                // }}
               >
                 <DetiledAnalyse
                   refrences={
@@ -560,18 +578,18 @@ const PrintReport: React.FC<PrintReportProps> = ({
           style={{ marginTop: '16px' }}
         >
           <div
-            className="text-sm"
-            style={{ color: '#383838', fontWeight: '500' }}
+            className="text-xl"
+            style={{ color: '#005F73', fontWeight: '600' }}
           >
             Holistic Plan
           </div>
         </div>
 
         <div
-          className="w-full mb-4 h-9 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
+          className="w-full mb-4 h-10 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
           style={{ borderRadius: '12px' }}
         >
-          <div className="text-xs" style={{ color: '#005F73' }}>
+          <div className="text-sm" style={{ color: '#005F73' }}>
             Plan 04{' '}
           </div>
           <div className="flex justify-end items-center">
@@ -581,7 +599,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             ></div>
             <div
               className="ml-1"
-              style={{ fontSize: '10px', color: '#383838' }}
+              style={{ fontSize: '12px', color: '#383838' }}
             >
               On Going
             </div>
@@ -589,11 +607,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               style={{
                 backgroundColor: '#E5E5E5',
                 marginLeft: '24px',
-                padding: '2.5px 8px',
+                padding: '2.5px 12px',
                 borderRadius: '12px',
               }}
             >
-              <div style={{ fontSize: '10px', color: '#005F73' }}>
+              <div style={{ fontSize: '12px', color: '#005F73' }}>
                 2024/29/09
               </div>
             </div>
@@ -604,7 +622,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <>
               <div className="no-split">
                 <div
-                  className="text-xs flex bg-white text-center rounded-md w-full justify-center items-center py-1 gap-1"
+                  className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
                   style={{
                     width: '193px',
                     borderRadius: '8px',
@@ -619,7 +637,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   {el.category}
                 </div>
 
-                <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-4">
+                <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2">
                   {el.data.map((el2: any) => {
                     return <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>;
                   })}
@@ -636,13 +654,81 @@ const PrintReport: React.FC<PrintReportProps> = ({
           style={{ marginTop: '16px' }}
         >
           <div
-            className="text-sm"
-            style={{ color: '#383838', fontWeight: '500' }}
+            className="text-xl"
+            style={{ color: '#005F73', fontWeight: '600' }}
           >
             Action Plan
           </div>
         </div>
-
+        <div
+          className="w-full mb-4   py-2 px-4 bg-white border border-green-400 mt-4"
+          style={{ borderRadius: '12px' }}
+        >
+          <div className="text-sm" style={{ color: '#005F73' }}>
+            Building Endurance and Resilience
+          </div>
+          <div className="text-xs" style={{ color: '#383838' }}>
+            This block focusing on enhancing client’s endurance and resilience
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="mt-2">
+              <div className="flex justify-between items-center">
+                <div style={{ color: '#383838', fontSize: '12px' }}>
+                  Progress
+                </div>
+                <div style={{ color: '#005F73', fontSize: '12px' }}>95%</div>
+              </div>
+              <div>
+                <div
+                  className="relative"
+                  style={{
+                    width: '250px',
+                    height: '8px',
+                    borderRadius: '12px',
+                    background: '#E5E5E5',
+                  }}
+                >
+                  <div
+                    className="absolute left-0  "
+                    style={{
+                      height: '6px',
+                      backgroundColor: '#6CC24A',
+                      borderRadius: '12px',
+                      width: '95%',
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end items-center">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: '#4C88FF' }}
+              ></div>
+              <div
+                className="ml-1"
+                style={{ fontSize: '12px', color: '#383838' }}
+              >
+                On Going
+              </div>
+              <div
+                style={{
+                  backgroundColor: '#E5E5E5',
+                  marginLeft: '24px',
+                  padding: '2.5px 12px',
+                  borderRadius: '12px',
+                }}
+              >
+                <div
+                  className="flex justify-center gap-1 items-center"
+                  style={{ fontSize: '12px', color: '#005F73' }}
+                >
+                  <img src="/icons/timerprint.svg" alt="" />1 month
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         {caldenderData != null && caldenderData.length > 0 && (
           <CalenderPrint data={caldenderData}></CalenderPrint>
         )}

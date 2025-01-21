@@ -123,9 +123,9 @@ const CalenderPrint: React.FC<CalenderPrint> = ({ data }) => {
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   return (
-    <div className="w-full py-4 rounded-lg relative">
+    <div className="w-full py-2 rounded-lg relative">
       <div
-        className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1 mb-2 py-3"
+        className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-0 mb-0 py-3"
         style={{ gap: '30px' }}
       >
         {getCurrentMonthWithBuffer()
@@ -133,7 +133,7 @@ const CalenderPrint: React.FC<CalenderPrint> = ({ data }) => {
           .map((day, index) => (
             <div
               key={index}
-              style={{ color: '#888888', fontSize: '10px' }}
+              style={{ color: '#888888', fontSize: '12px' }}
               className="text-xs font-medium text-center text-Text-Primary"
             >
               {day.dayName.slice(0, 3)}
