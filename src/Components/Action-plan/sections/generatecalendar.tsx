@@ -218,9 +218,9 @@ const GenerateCalendar: React.FC = () => {
   return (
     <>
       {isLoading && (
-         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-         <Circleloader></Circleloader>
-       </div>
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
       )}
       <div className="w-full fixed z-50 top-0 ">
         <TopBar></TopBar>
