@@ -440,6 +440,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
             {isHaveReport && (
               <div className="hidden print:block" id="printDiv">
                 <PrintReport
+                  usrInfoData={userInfoData}
                   ResolveConceringData={ResolveConceringData}
                   caldenderData={caldenderData}
                   TreatMentPlanData={TreatMentPlanData}

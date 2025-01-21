@@ -25,7 +25,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       checked: true,
     },
     {
-      name: 'Treatment Plan',
+      name: 'Holistic Plan',
       checked: true,
     },
     {
