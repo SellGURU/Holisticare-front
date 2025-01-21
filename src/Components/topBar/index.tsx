@@ -6,6 +6,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import DownloadModal from './downloadModal';
 import { useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
+import { publish } from '../../utils/event';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -62,7 +63,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       mywindow.focus(); // necessary for IE >= 10*/
 
       mywindow.print();
-      mywindow.close();
+      // mywindow.close();
     };
     // mywindow.print()
   };
@@ -215,9 +216,10 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
       >
         <>
           <DownloadModal
-            onconfirm={() => {
+            onconfirm={(settingsData) => {
               if (openDownload) {
                 setDownloadingState('downloading');
+                publish('downloadCalled', settingsData);
                 setOpenDownload(false);
                 setTimeout(() => {
                   printreport();

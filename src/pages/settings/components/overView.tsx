@@ -1,5 +1,6 @@
-import React from 'react';
+import { useState } from 'react';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { PlanModal } from './planModal';
 
 export const OverView = () => {
   const handleFileClick = () => {
@@ -11,6 +12,7 @@ export const OverView = () => {
       console.log('Selected file:', file.name);
     }
   };
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
@@ -106,7 +108,10 @@ export const OverView = () => {
               the remaining days.
             </p>
             <div className="mt-4 w-full flex justify-center gap-8 ">
-              <button className="text-Primary-DeepTeal text-xs font-medium">
+              <button
+                onClick={() => setShowModal(true)}
+                className="text-Primary-DeepTeal text-xs font-medium"
+              >
                 Downgrade Subscription
               </button>
 
@@ -127,6 +132,14 @@ export const OverView = () => {
           </div>
         </div>
       </div>
+      {showModal && (
+        <PlanModal
+          onCancel={() => {
+            setShowModal(false);
+          }}
+          onConfirm={() => setShowModal(false)}
+        ></PlanModal>
+      )}
     </>
   );
 };
