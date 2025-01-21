@@ -513,12 +513,19 @@ const PrintReport: React.FC<PrintReportProps> = ({
         })}
       </div>
 
-      <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-        <div className="w-full mb-3 flex items-center justify-between">
-          <div className="text-light-primary-text dark:text-[#FFFFFFDE] text-[24px] font-medium">
-            Action Plan{' '}
+      <div className="" style={{ pageBreakAfter: 'always', padding: '24px' }}>
+        <div
+          className="flex justify-between items-center"
+          style={{ marginTop: '16px' }}
+        >
+          <div
+            className="text-sm"
+            style={{ color: '#383838', fontWeight: '500' }}
+          >
+            Action Plan
           </div>
         </div>
+
         {caldenderData != null && caldenderData.length > 0 && (
           <CalenderPrint data={caldenderData}></CalenderPrint>
         )}
