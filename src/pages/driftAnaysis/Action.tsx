@@ -54,11 +54,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     );
   };
   const handleOptionDelete = (id: string) => {
-    SetRoadMapData((prevData:any) => prevData.options.filter((option:any) => option.id !== id));
+    SetRoadMapData((prevData: any) =>
+      prevData.options.filter((option: any) => option.id !== id),
+    );
   };
   //   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
- 
+
   const [showModal, setshowModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +74,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
           SetRoadMapData(response.data.RoadMap);
-        
+
           setMessagesData(response.data.Message.options);
         } else {
           throw new Error('Invalid data structure');
@@ -253,13 +255,14 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             src=""
             alt=""
           /> */}
-            <MiniAnallyseButton onResolve={(val)=>{
-              Application.generateAi({
-                input_dict : RoadMapData,
-                ai_generation_mode:val
-              }).then((res)=>console.log(res)
-              )
-            }}></MiniAnallyseButton>
+            <MiniAnallyseButton
+              onResolve={(val) => {
+                Application.generateAi({
+                  input_dict: RoadMapData,
+                  ai_generation_mode: val,
+                }).then((res) => console.log(res));
+              }}
+            ></MiniAnallyseButton>
           </div>
           {isRoadCompleted ? (
             <div className="flex flex-col  items-center justify-center">
@@ -273,7 +276,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </div>
           ) : (
             <div className={`flex flex-col gap-2 pr-3 mt-2`}>
-              {RoadMapData.options?.map((option:any) => (
+              {RoadMapData.options?.map((option: any) => (
                 <AccordionCard
                   onClick={() => {
                     Application.driftAction({ member_id: memberID })
@@ -286,7 +289,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   title={option.id}
                   description={option.description}
                   buttonText={option.action}
-                 
                 />
               ))}
             </div>
@@ -340,7 +342,6 @@ interface AccordionCardProps {
   onClick: () => void;
   onDelete: () => void;
   buttonText: string;
-
 }
 const AccordionCard: React.FC<AccordionCardProps> = ({
   title,
@@ -348,10 +349,7 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
   onClick,
   onDelete,
   buttonText,
-
 }) => {
-
-  
   return (
     <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex justify-between items-center text-Text-Primary">
       <div className="flex gap-3 items-center">

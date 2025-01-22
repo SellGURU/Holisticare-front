@@ -20,6 +20,7 @@ interface PrintReportProps {
   resolveCategories: () => Array<any>;
   resolveSubCategories: () => Array<any>;
   helthPlan: any;
+  ActionPlan: any;
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({
@@ -33,6 +34,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
   referenceData,
   resolveCategories,
   helthPlan,
+  ActionPlan,
 }) => {
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
@@ -389,9 +391,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
         <div
-          className="my-10  "
+          className=" "
           style={{
-            pageBreakAfter: 'always',
+            // pageBreakAfter: 'always',
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
@@ -627,39 +629,40 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Holistic Plan
             </div>
           </div>
-
-          <div
-            className="w-full mb-4 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
-            style={{ borderRadius: '12px' }}
-          >
-            <div className="text-sm" style={{ color: '#005F73' }}>
-              Plan 04{' '}
-            </div>
-            <div className="flex justify-end items-center">
-              <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#4C88FF' }}
-              ></div>
-              <div
-                className="ml-1"
-                style={{ fontSize: '12px', color: '#383838' }}
-              >
-                On Going
+          {helthPlan && (
+            <div
+              className="w-full mb-4 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
+              style={{ borderRadius: '12px' }}
+            >
+              <div className="text-sm" style={{ color: '#005F73' }}>
+                {helthPlan[helthPlan.length - 1]?.t_title}
               </div>
-              <div
-                style={{
-                  backgroundColor: '#E5E5E5',
-                  marginLeft: '24px',
-                  padding: '2.5px 12px',
-                  borderRadius: '12px',
-                }}
-              >
-                <div style={{ fontSize: '12px', color: '#005F73' }}>
-                  2024/29/09
+              <div className="flex justify-end items-center">
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: '#4C88FF' }}
+                ></div>
+                <div
+                  className="ml-1"
+                  style={{ fontSize: '12px', color: '#383838' }}
+                >
+                  {helthPlan[helthPlan.length - 1]?.state}
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#E5E5E5',
+                    marginLeft: '24px',
+                    padding: '2.5px 12px',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '12px', color: '#005F73' }}>
+                    {helthPlan[helthPlan.length - 1]?.date_text}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           {TreatMentPlanData.map((el) => {
             return (
               <>
@@ -707,16 +710,16 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Action Plan
             </div>
           </div>
-          {helthPlan && (
+          {ActionPlan && (
             <div
               className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
               style={{ borderRadius: '12px' }}
             >
               <div className="text-sm" style={{ color: '#005F73' }}>
-                {helthPlan[helthPlan.length - 1]?.t_title}
+                {ActionPlan[ActionPlan.length - 1]?.title}
               </div>
               <div className="text-xs" style={{ color: '#383838' }}>
-                {helthPlan[helthPlan.length - 1]?.description}
+                {ActionPlan[ActionPlan.length - 1]?.description}
               </div>
               <div className="flex justify-between items-center">
                 <div className="mt-2">
@@ -725,8 +728,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       Progress
                     </div>
                     <div style={{ color: '#005F73', fontSize: '12px' }}>
-                      {helthPlan[helthPlan.length - 1]?.percent
-                        ? helthPlan[helthPlan.length - 1]?.percent
+                      {ActionPlan[ActionPlan.length - 1]?.progress
+                        ? ActionPlan[helthPlan.length - 1]?.progress
                         : '100%'}
                     </div>
                   </div>
@@ -746,7 +749,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           height: '6px',
                           backgroundColor: '#6CC24A',
                           borderRadius: '12px',
-                          width: '95%',
+                          width: ActionPlan[ActionPlan.length - 1]?.percent
+                            ? ActionPlan[ActionPlan.length - 1]?.percent + '%'
+                            : '100%',
                         }}
                       ></div>
                     </div>
@@ -761,7 +766,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     className="ml-1"
                     style={{ fontSize: '12px', color: '#383838' }}
                   >
-                    {helthPlan[helthPlan.length - 1]?.state}
+                    {ActionPlan[ActionPlan.length - 1]?.state}
                   </div>
                   <div
                     style={{
@@ -776,7 +781,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       style={{ fontSize: '12px', color: '#005F73' }}
                     >
                       <img src="/icons/timerprint.svg" alt="" />
-                      {helthPlan[helthPlan.length - 1]?.date_text}
+                      {ActionPlan[ActionPlan.length - 1]?.to_date}
                     </div>
                   </div>
                 </div>

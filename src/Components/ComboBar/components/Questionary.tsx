@@ -86,18 +86,27 @@ export const Questionary = () => {
                             <img src="/icons/eye-green.svg" alt="" />
                           ) : (
                             // Render this if action is not "Complete"
-                            <img className='cursor-pointer' onClick={()=>{
-                              Application.questionaryLink({})
-                              .then((res) => {
-                                const url = res.data['Personal Information'];
-                                if (url) {
-                                  window.open(url, '_blank');
-                                }
-                              })
-                              .catch((err) => {
-                                console.error('Error fetching the link:', err);
-                              });
-                          }} src="/icons/Fiilout-Form.svg" alt="" />
+                            <img
+                              className="cursor-pointer"
+                              onClick={() => {
+                                Application.questionaryLink({})
+                                  .then((res) => {
+                                    const url =
+                                      res.data['Personal Information'];
+                                    if (url) {
+                                      window.open(url, '_blank');
+                                    }
+                                  })
+                                  .catch((err) => {
+                                    console.error(
+                                      'Error fetching the link:',
+                                      err,
+                                    );
+                                  });
+                              }}
+                              src="/icons/Fiilout-Form.svg"
+                              alt=""
+                            />
                           )}
                         </div>
                       </div>
@@ -119,18 +128,22 @@ export const Questionary = () => {
               <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
                 For more accurate results, please complete the questionnaire
               </p>
-              <ButtonPrimary onClick={()=>{
+              <ButtonPrimary
+                onClick={() => {
                   Application.questionaryLink({})
-                  .then((res) => {
-                    const url = res.data['Personal Information'];
-                    if (url) {
-                      window.open(url, '_blank');
-                    }
-                  })
-                  .catch((err) => {
-                    console.error('Error fetching the link:', err);
-                  });
-              }}>Complete Questionary</ButtonPrimary>
+                    .then((res) => {
+                      const url = res.data['Personal Information'];
+                      if (url) {
+                        window.open(url, '_blank');
+                      }
+                    })
+                    .catch((err) => {
+                      console.error('Error fetching the link:', err);
+                    });
+                }}
+              >
+                Complete Questionary
+              </ButtonPrimary>
             </div>
           )}
         </>

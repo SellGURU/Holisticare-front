@@ -17,9 +17,12 @@ import Application from '../../api/app';
 // };
 interface ActionPlanProps {
   calenderDataUper: any;
+  setActionPrintData: (data: any) => void;
 }
 
-export const ActionPlan: React.FC<ActionPlanProps> = () => {
+export const ActionPlan: React.FC<ActionPlanProps> = ({
+  setActionPrintData,
+}) => {
   const { id } = useParams<{ id: string }>();
   // const [calendarData,setCalender] = useState(calenderDataUper);
 
@@ -69,6 +72,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = () => {
   useEffect(() => {
     Application.ActionPlanBlockList({ member_id: id }).then((res) => {
       setCardData(res.data);
+      setActionPrintData(res.data);
       setActiveAction(
         res.data.length > 0 ? res.data[res.data.length - 1] : null,
       );
