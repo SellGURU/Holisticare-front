@@ -78,7 +78,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               <FiExternalLink></FiExternalLink>
             </div>
           </div>
-          <div className="flex gap-2 justify-end items-center">
+          <div className=" gap-2 hidden justify-end items-center">
             <div className="text-Text-Primary TextStyle-Button ">
               Historical Chart
             </div>

@@ -155,7 +155,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               {refrences?.biomarkers.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
-                  <div className="absolute cursor-pointer top-4 right-4">
+                  <div className="absolute hidden cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
                       <div className="TextStyle-Headline-6  text-Text-Primary">
                         Historical Chart
@@ -198,7 +198,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               )}
                             </div>
                           </div>
-                          <div className="relative z-50 mr-36">
+                          <div className="relative z-50 mr-0">
                             <UnitPopUp unit={active?.unit}></UnitPopUp>
                           </div>
                         </div>
