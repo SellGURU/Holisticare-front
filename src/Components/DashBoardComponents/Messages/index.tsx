@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type Message = {
   Username: string;
@@ -48,7 +48,14 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
+  useEffect(() => {
+    if (id != undefined) {
+      setExpandedMessage(parseInt(id));
+    }
+  }, [id]);
   const messagesUsersList = () => {
     Application.messagesUsersList()
       .then((res) => {
@@ -62,7 +69,6 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     setIsLoading(true);
     messagesUsersList();
   }, []);
-  console.log(messages);
 
   const filteredMessages = messages.filter((message) =>
     filter === 'All'
@@ -77,8 +83,8 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   //     return colors[Math.floor(Math.random() * colors.length)];
   //   };
 
-  const handleClick = (id: string) => {
-    navigate(`?id=${id}`);
+  const handleClick = (id: string, username: string) => {
+    navigate(`?id=${id}&username=${username}`);
   };
 
   return (
@@ -88,7 +94,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="w-full h-[664px] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+        <div className="w-full h-[90%] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
               {' '}
@@ -127,7 +133,6 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
           </div>
           <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll">
             {filteredMessages.map((message) => {
-              //   const color = getRandomColor();
               return (
                 <li
                   key={message.user_id}
@@ -137,7 +142,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                         ? null
                         : message.user_id,
                     );
-                    handleClick(message.user_id.toString());
+                    if (expandedMessage === message.user_id) {
+                      navigate(``);
+                    } else {
+                      handleClick(message.user_id.toString(), message.Username);
+                    }
                   }}
                   className={`mb-5 cursor-pointer ${expandedMessage === message.user_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}
                 >

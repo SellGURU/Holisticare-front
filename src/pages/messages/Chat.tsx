@@ -12,25 +12,22 @@ type Message = {
   sender_id: number;
   replied_message_id: number | null;
 };
+type SendMessage = {
+  conversation_id?: number;
+  receiver_id: number;
+  message_text: string;
+  replied_conv_id?: number;
+};
 
 const AiChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
+  const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  //   const formatDate = (date: Date) => {
-  //     const day = date.getDate();
-  //     const month = date.toLocaleString("default", { month: "long" });
-  //     const year = date.getFullYear();
-  //     return `${day} ${month} ${year}`;
-  //   };
-
-  //   const [chatStartDate] = useState<string>(formatDate(new Date()));
-
-  // const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-  console.log('id => ', id);
+  const usernameParams = searchParams.get('username');
   const userMessagesList = (user_id: number) => {
     Application.userMessagesList({ user_id: user_id })
       .then((res) => {
@@ -44,60 +41,41 @@ const AiChat = () => {
     if (id != undefined) {
       setIsLoading(true);
       userMessagesList(parseInt(id));
+    } else {
+      setIsLoading(false);
     }
   }, [id]);
-  console.log(messages);
-  // useEffect(() => {
-  //   setMemberId(memberID);
-  // }, [memberID]);
   useEffect(() => {
-    if (id != undefined) {
+    if (id != undefined && usernameParams != undefined) {
       setMemberId(id);
+      setUsername(usernameParams);
+    } else {
+      setMemberId(null);
+      setUsername(null);
+      setMessages([]);
     }
-  }, [id]);
-  const [conversationId, setConversationId] = useState<number>(1);
-  useEffect(() => console.log(conversationId), [conversationId]);
+  }, [id, usernameParams]);
+  // const [conversationId, setConversationId] = useState<number>(1);
   const [selectedBenchMarks, setSelectedBenchMarks] = useState<Array<string>>(
     [],
   );
   const handleSend = async () => {
-    // if (input.trim() && memberId !== null) {
-    //   const newMessage: Message = {
-    //     id: messages.length + 1,
-    //     sender: 'user',
-    //     text: input,
-    //     time: new Date().toLocaleTimeString('en-US', {
-    //       hour: '2-digit',
-    //       minute: '2-digit',
-    //     }),
-    //   };
-    //   setMessages([...messages, newMessage]);
-    //   setInput('');
-    //   try {
-    //     const res = await Application.aiStudio_copilotChat({
-    //       text: newMessage.text,
-    //       member_id: memberId,
-    //       conversation_id: conversationId,
-    //       search: selectedBenchMarks.length > 0 ? true : false,
-    //       benchmark_areas: selectedBenchMarks,
-    //     });
-    //     console.log(res);
-    //     const data = await res.data;
-    //     setConversationId(data.current_conversation_id);
-    //     const aiMessage: Message = {
-    //       id: messages.length + 2,
-    //       sender: 'ai',
-    //       text: data.answer,
-    //       time: new Date().toLocaleTimeString('en-US', {
-    //         hour: '2-digit',
-    //         minute: '2-digit',
-    //       }),
-    //     };
-    //     setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // }
+    if (input.trim() && memberId !== null) {
+      const newMessage: SendMessage = {
+        message_text: input,
+        receiver_id: memberId,
+      };
+      // setMessages([...messages, newMessage]);
+      setInput('');
+      try {
+        const res = await Application.sendMessage(newMessage);
+        const data = await res.data;
+        userMessagesList(parseInt(memberId));
+        // setConversationId(data.current_conversation_id);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const formatText = (text: string) => {
@@ -120,37 +98,14 @@ const AiChat = () => {
     ));
   };
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  // const scrollToBottom = () => {
-  //   // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  //   const objDiv: any = document.getElementById('aiChat');
-  //   objDiv.scrollTop = objDiv.scrollHeight;
-  // };
-  // useEffect(() => {
-  //   scrollToBottom();
-  // }, [messages]);
-  // useEffect(() => {
-  //   Application.getListChats({
-  //     member_id: memberId,
-  //   }).then((res) => {
-  //     const resolve = res.data.messages.flatMap((mes: any, index: number) => {
-  //       const request: Message = {
-  //         id: 1,
-  //         sender: 'user',
-  //         text: mes.request,
-  //         time: mes.entrytime,
-  //       };
-  //       const response: Message = {
-  //         id: index,
-  //         sender: 'ai',
-  //         text: mes.response,
-  //         time: mes.entrytime,
-  //       };
-  //       return [request, response];
-  //     });
-  //     setMessages(resolve);
-  //     // console.log(resolve)
-  //   });
-  // }, [memberId]);
+  const scrollToBottom = () => {
+    // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const objDiv: any = document.getElementById('userChat');
+    objDiv.scrollTop = objDiv.scrollHeight;
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   return (
     <>
       {isLoading ? (
@@ -158,38 +113,42 @@ const AiChat = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="w-full  mx-auto bg-white shadow-200 min-h-[545px]  rounded-[16px] relative flex flex-col  ">
+        <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
           <div className="px-4 py-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]">
             <div className="flex items-center gap-2 ">
               <div className="min-w-10 h-10   rounded-full bg-blue-300   flex items-center justify-center mr-3 opacity-35">
-                S
+                {username?.substring(0, 1).toUpperCase()}
               </div>
               <div>
                 <div className="text-sm font-medium text-[#383838]">
-                  Sara Thompson
+                  {username}
                 </div>
-                <div className="text-[10px] text-Text-Secondary">Ofline</div>
+                <div className="text-[10px] text-Text-Secondary">Offline</div>
               </div>
             </div>
           </div>
           <div
-            id="aiChat"
-            className="p-4 space-y-4 max-h-[380px] overflow-y-scroll"
+            id="userChat"
+            className="p-4 space-y-4 h-[85%] overflow-y-scroll"
           >
-            {/* {messages.map((message, index: number) => (
+            {messages.map((message, index: number) => (
               <>
-                {message.sender == 'ai' ? (
+                {message.sender_id === memberId ? (
                   <>
                     {index == messages.length - 1 && (
                       <div ref={messagesEndRef}></div>
                     )}
                     <div className="flex justify-start items-start gap-1">
                       <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                        <img src="/icons/layer1.svg" alt="" />
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${username}`}
+                          alt=""
+                          className="rounded-full"
+                        />
                       </div>
                       <div>
                         <div className="text-Text-Primary font-medium text-[12px]">
-                          AI-Copilot{' '}
+                          {username}{' '}
                           <span className="text-Text-Primary ml-1">
                             {message.time}
                           </span>
@@ -198,7 +157,7 @@ const AiChat = () => {
                           className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
                           style={{ lineHeight: '26px' }}
                         >
-                          {formatText(message.text)}
+                          {formatText(message.message_text)}
                         </div>
                       </div>
                     </div>
@@ -208,19 +167,19 @@ const AiChat = () => {
                     <div className="flex justify-end items-start gap-1">
                       <div className="flex flex-col items-end">
                         <div className="text-Text-Primary text-[12px]">
-                          Coach{' '}
+                          Me{' '}
                           <span className="text-Text-Primary dark:text-[#FFFFFF99] ml-1">
                             {message.time}
                           </span>
                         </div>
                         <div className="max-w-[500px] bg-[#005F7340] bg-opacity-25  p-4 text-justify mt-1 border-Gray-50 border text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
-                          {formatText(message.text)}
+                          {formatText(message.message_text)}
                         </div>
                       </div>
                       <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                         <img
                           className="rounded-full"
-                          src={`https://ui-avatars.com/api/?name=${'Coach'}`}
+                          src={`https://ui-avatars.com/api/?name=${username}`}
                           alt=""
                         />
                       </div>
@@ -231,18 +190,7 @@ const AiChat = () => {
                   </>
                 )}
               </>
-              // <div key={msg.id} className={` relative flex ${msg.sender === 'user' ? 'justify-start' : 'justify-end'}`}>
-              //   <div className="flex flex-col items-center space-x-2 max-w-[383px]">
-              //   <div className='text-primary-text flex items-center gap-3 '>{msg.sender === "ai" ? 'ai-coilot' : 'nima'}
-              //   <span className="text-xs  text-gray-400">{msg.time}</span></div>
-
-              //     <div className={`rounded-[20px] p-3 bg-black-secondary text-primary-text`}>
-              //       <p>{msg.text}</p>
-              //     </div>
-
-              //   </div>
-              // </div>
-            ))} */}
+            ))}
           </div>
           <div className="px-2">
             <InputMentions
@@ -254,22 +202,6 @@ const AiChat = () => {
               value={input}
             ></InputMentions>
           </div>
-
-          {/* <div className="p-4 border-t border-gray-700 flex space-x-2">
-        <input
-          type="text"
-          className="flex-1 p-2 bg-gray-700 rounded-lg outline-none"
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button
-          className="bg-blue-600 px-4 py-2 rounded-lg"
-          onClick={handleSend}
-        >
-          Send
-        </button>
-      </div> */}
         </div>
       )}
     </>
