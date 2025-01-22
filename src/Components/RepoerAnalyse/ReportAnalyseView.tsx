@@ -104,6 +104,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
   const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
+  const [ActionPlanPrint, setActionPlanPrint] = useState(null);
   useEffect(() => {
     if (ClientSummaryBoxs != null && referenceData != null) {
       setLoading(false);
@@ -405,6 +406,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                 {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
               </div>
               <TreatmentPlan
+                setPrintActionPlan={(value) => {
+                  setActionPlanPrint(value);
+                }}
                 treatmentPlanData={TreatMentPlanData}
               ></TreatmentPlan>
             </div>
@@ -440,6 +444,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
             {isHaveReport && (
               <div className="hidden print:block" id="printDiv">
                 <PrintReport
+                  helthPlan={ActionPlanPrint}
                   usrInfoData={userInfoData}
                   ResolveConceringData={ResolveConceringData}
                   caldenderData={caldenderData}
