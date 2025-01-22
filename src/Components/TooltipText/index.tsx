@@ -1,7 +1,7 @@
 import { Tooltip } from 'react-tooltip';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 
-interface TooltipTextProps {
+interface TooltipTextProps extends React.ButtonHTMLAttributes<HTMLDivElement> {
   tooltipValue: string;
   children: ReactElement;
 }

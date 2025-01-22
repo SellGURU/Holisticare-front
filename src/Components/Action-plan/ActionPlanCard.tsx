@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { useNavigate, useParams } from 'react-router-dom';
+import TooltipText from '../TooltipText';
 // import ConfirmModal from "./sections/ConfirmModal";
 
 // type CardData = {
@@ -109,7 +110,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               ref={showModalRefrence}
               className="absolute top-5 right-0 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
             >
-              <div
+              {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
@@ -120,7 +121,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               >
                 <img src="/icons/targeting-green.svg" alt="" />
                 Targeting
-              </div>
+              </div> */}
               {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -183,7 +184,13 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
       </div>
       <div className="mt-2 flex flex-col items-center justify-center gap-[6px]">
-        <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5>
+        <TooltipText
+          tooltipValue={el.title}
+          className="w-[80%] text-center TextStyle-Headline-6 text-Text-Primary"
+        >
+          {/* <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5> */}
+          {el.title}
+        </TooltipText>
         <h6 className="TextStyle-Body-3 text-nowrap overflow-hidden text-ellipsis w-[80%] text-Text-Secondary">
           {el.description}
         </h6>

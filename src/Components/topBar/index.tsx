@@ -136,7 +136,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
   return (
     <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
-        <img src="/icons/home.svg" alt="" />
+        <img onClick={()=>navigate("/")} src="/icons/home.svg" alt="" />
         {resolveNav().map((el, index: number) => {
           return (
             <>

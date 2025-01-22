@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // import RefrenceBox from "./Boxs/RefrenceBox"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { subscribe } from '../../utils/event';
 import BiomarkersPrint from './Print/BiomarkersPrint';
 import CalenderPrint from './Print/CalenderPrint';
@@ -19,6 +19,8 @@ interface PrintReportProps {
   resolveBioMarkers: () => Array<any>;
   resolveCategories: () => Array<any>;
   resolveSubCategories: () => Array<any>;
+  helthPlan: any;
+  ActionPlan: any;
 }
 
 const PrintReport: React.FC<PrintReportProps> = ({
@@ -31,6 +33,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
   resolveBioMarkers,
   referenceData,
   resolveCategories,
+  helthPlan,
+  ActionPlan,
 }) => {
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
@@ -47,6 +51,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
     }
     return '/icons/TreatmentPlan/IconApple.svg';
   };
+  useEffect(() => {
+    console.log(helthPlan);
+  }, [helthPlan]);
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -70,9 +77,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
     },
   ]);
   subscribe('downloadCalled', (data) => {
-    console.log(data.detail);
     setPrintOptions(data.detail);
   });
+
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <div
@@ -384,9 +391,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
         <div
-          className="my-10  "
+          className=" "
           style={{
-            pageBreakAfter: 'always',
+            // pageBreakAfter: 'always',
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
@@ -622,39 +629,40 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Holistic Plan
             </div>
           </div>
-
-          <div
-            className="w-full mb-4 h-10  hidden justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
-            style={{ borderRadius: '12px' }}
-          >
-            <div className="text-sm" style={{ color: '#005F73' }}>
-              Plan 04{' '}
-            </div>
-            <div className="flex justify-end items-center">
-              <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#4C88FF' }}
-              ></div>
-              <div
-                className="ml-1"
-                style={{ fontSize: '12px', color: '#383838' }}
-              >
-                On Going
+          {helthPlan && (
+            <div
+              className="w-full mb-4 flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
+              style={{ borderRadius: '12px' }}
+            >
+              <div className="text-sm" style={{ color: '#005F73' }}>
+                {helthPlan[helthPlan.length - 1]?.t_title}
               </div>
-              <div
-                style={{
-                  backgroundColor: '#E5E5E5',
-                  marginLeft: '24px',
-                  padding: '2.5px 12px',
-                  borderRadius: '12px',
-                }}
-              >
-                <div style={{ fontSize: '12px', color: '#005F73' }}>
-                  2024/29/09
+              <div className="flex justify-end items-center">
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: '#4C88FF' }}
+                ></div>
+                <div
+                  className="ml-1"
+                  style={{ fontSize: '12px', color: '#383838' }}
+                >
+                  {helthPlan[helthPlan.length - 1]?.state}
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#E5E5E5',
+                    marginLeft: '24px',
+                    padding: '2.5px 12px',
+                    borderRadius: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '12px', color: '#005F73' }}>
+                    {helthPlan[helthPlan.length - 1]?.date_text}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           {TreatMentPlanData.map((el) => {
             return (
               <>
@@ -702,75 +710,84 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Action Plan
             </div>
           </div>
-          <div
-            className="w-full mb-4 hidden  py-2 px-4 bg-white border border-green-400 mt-4"
-            style={{ borderRadius: '12px' }}
-          >
-            <div className="text-sm" style={{ color: '#005F73' }}>
-              Building Endurance and Resilience
-            </div>
-            <div className="text-xs" style={{ color: '#383838' }}>
-              This block focusing on enhancing client’s endurance and resilience
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="mt-2">
-                <div className="flex justify-between items-center">
-                  <div style={{ color: '#383838', fontSize: '12px' }}>
-                    Progress
+          {ActionPlan && (
+            <div
+              className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
+              style={{ borderRadius: '12px' }}
+            >
+              <div className="text-sm" style={{ color: '#005F73' }}>
+                {ActionPlan[ActionPlan.length - 1]?.title}
+              </div>
+              <div className="text-xs" style={{ color: '#383838' }}>
+                {ActionPlan[ActionPlan.length - 1]?.description}
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="mt-2">
+                  <div className="flex justify-between items-center">
+                    <div style={{ color: '#383838', fontSize: '12px' }}>
+                      Progress
+                    </div>
+                    <div style={{ color: '#005F73', fontSize: '12px' }}>
+                      {ActionPlan[ActionPlan.length - 1]?.progress
+                        ? ActionPlan[helthPlan.length - 1]?.progress + '%'
+                        : '100%'}
+                    </div>
                   </div>
-                  <div style={{ color: '#005F73', fontSize: '12px' }}>95%</div>
+                  <div>
+                    <div
+                      className="relative"
+                      style={{
+                        width: '250px',
+                        height: '8px',
+                        borderRadius: '12px',
+                        background: '#E5E5E5',
+                      }}
+                    >
+                      <div
+                        className="absolute left-0  "
+                        style={{
+                          height: '6px',
+                          backgroundColor: '#6CC24A',
+                          borderRadius: '12px',
+                          width: ActionPlan[ActionPlan.length - 1]?.progress
+                            ? ActionPlan[ActionPlan.length - 1]?.progress + '%'
+                            : '100%',
+                        }}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
-                <div>
+                <div className="flex justify-end items-center">
                   <div
-                    className="relative"
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: '#4C88FF' }}
+                  ></div>
+                  <div
+                    className="ml-1"
+                    style={{ fontSize: '12px', color: '#383838' }}
+                  >
+                    {ActionPlan[ActionPlan.length - 1]?.state}
+                  </div>
+                  <div
                     style={{
-                      width: '250px',
-                      height: '8px',
+                      backgroundColor: '#E5E5E5',
+                      marginLeft: '24px',
+                      padding: '2.5px 12px',
                       borderRadius: '12px',
-                      background: '#E5E5E5',
                     }}
                   >
                     <div
-                      className="absolute left-0  "
-                      style={{
-                        height: '6px',
-                        backgroundColor: '#6CC24A',
-                        borderRadius: '12px',
-                        width: '95%',
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end items-center">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: '#4C88FF' }}
-                ></div>
-                <div
-                  className="ml-1"
-                  style={{ fontSize: '12px', color: '#383838' }}
-                >
-                  On Going
-                </div>
-                <div
-                  style={{
-                    backgroundColor: '#E5E5E5',
-                    marginLeft: '24px',
-                    padding: '2.5px 12px',
-                    borderRadius: '12px',
-                  }}
-                >
-                  <div
-                    className="flex justify-center gap-1 items-center"
-                    style={{ fontSize: '12px', color: '#005F73' }}
-                  >
-                    <img src="/icons/timerprint.svg" alt="" />1 month
+                      className="flex justify-center gap-1 items-center"
+                      style={{ fontSize: '12px', color: '#005F73' }}
+                    >
+                      <img src="/icons/timerprint.svg" alt="" />
+                      {ActionPlan[ActionPlan.length - 1]?.to_date}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           {caldenderData != null && caldenderData.length > 0 && (
             <CalenderPrint data={caldenderData}></CalenderPrint>
           )}

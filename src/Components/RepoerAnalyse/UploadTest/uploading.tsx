@@ -6,9 +6,11 @@ interface UploadingProps {
   file: any;
   memberId: string;
   onSuccess: (file: any) => void;
+  onCancel: () => void;
+
 }
 
-const Uploading: React.FC<UploadingProps> = ({ file, memberId, onSuccess }) => {
+const Uploading: React.FC<UploadingProps> = ({ file, memberId, onSuccess , onCancel}) => {
   const convertToBase64 = (file: File): Promise<any> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -83,6 +85,7 @@ const Uploading: React.FC<UploadingProps> = ({ file, memberId, onSuccess }) => {
             </div>
           </div>
           <img
+       
             className="cursor-pointer w-6 h-6"
             src="/icons/delete.svg"
             alt=""
@@ -103,7 +106,7 @@ const Uploading: React.FC<UploadingProps> = ({ file, memberId, onSuccess }) => {
               </div>
             </div>
 
-            <img className="cursor-pointer" src="/icons/close.svg" alt="" />
+            <img  onClick={onCancel} className="cursor-pointer" src="/icons/close.svg" alt="" />
           </div>
           <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
             <div

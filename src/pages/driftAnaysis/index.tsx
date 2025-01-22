@@ -218,7 +218,7 @@ export const DriftAnaysis = () => {
           </div>
         ) : (
           <div className="w-[75%] flex flex-col gap-3">
-            <div className="w-full flex justify-between text-Text-Primary">
+            <div className="w-full flex justify-between font-medium text-Text-Primary">
               Drift Analysis
               {/* <AnalyseButton text="Generate by AI" />{" "} */}
             </div>

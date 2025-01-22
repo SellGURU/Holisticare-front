@@ -23,6 +23,19 @@ export const FilleHistory = () => {
         // setIsLoading(false);
       });
   }, [id]);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    return `${day} ${month} ${year}`;
+  };
   return (
     <div className=" w-full">
       <div className="px-2">
@@ -47,7 +60,7 @@ export const FilleHistory = () => {
                           {el.file_name}
                         </div>
                         <div className="w-[70px] text-center">
-                          {el.date_uploaded}
+                        {formatDate(el.date_uploaded)}
                         </div>
                         <div className="flex w-[55px] justify-center gap-1">
                           {/* <img

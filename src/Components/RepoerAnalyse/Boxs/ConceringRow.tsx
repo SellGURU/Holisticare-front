@@ -18,7 +18,7 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-          className={`${isOpen ? '-rotate-90' : ''} rotate-90 cursor-pointer`}
+          className={`${isOpen ? '-rotate-90' : 'rotate-90'}  cursor-pointer transition-transform`}
         >
           <img className="w-6 h-6" src="/icons/arrow-right.svg" alt="" />
         </div>

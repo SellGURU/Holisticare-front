@@ -159,7 +159,7 @@ class Application extends Api {
     return response;
   }
   static aiStudio_patients() {
-    const response = this.get('/drift_analysis/patients ');
+    const response = this.get('/drift_analysis/patients');
     return response;
   }
   static aiStudio_copilotChat(data: any) {
@@ -595,6 +595,15 @@ class Application extends Api {
   };
   static driftAction = (data: any) => {
     const response = this.post('/drift_analysis/action_plan', data);
+    return response;
+  };
+  static generateAi = (data: any) => {
+    const response = this.post('/action_plan/generate_by_ai', data);
+    return response;
+  };
+  static questionaryLink = (data: any) => {
+    const response = this.post(
+      '/health_profile/questionary_tracking/send_link',data);
     return response;
   };
 }

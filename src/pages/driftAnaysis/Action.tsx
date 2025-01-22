@@ -4,6 +4,9 @@ import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Application from '../../api/app';
+import { BeatLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface ActionProps {
   memberID: number | null;
 }
@@ -20,38 +23,7 @@ interface MessageOption extends RoadMapOption {
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
-  const [RoadMapData, SetRoadMapData] = useState<RoadMapOption[]>([
-    // {
-    //   id: 1,
-    //   title: "Option 1",
-    //   description:
-    //     "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
-    // },
-    // {
-    //   id: 2,
-    //   title: "Option 2",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 3,
-    //   title: "Option 3",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 4,
-    //   title: "Option 4",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 5,
-    //   title: "Option 5",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-  ]);
+  const [RoadMapData, SetRoadMapData] = useState<any>({});
   const [MessagesData, setMessagesData] = useState<MessageOption[]>([
     // {
     //   id: 1,
@@ -85,10 +57,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     );
   };
   const handleOptionDelete = (id: string) => {
-    SetRoadMapData((prevData) => prevData.filter((option) => option.id !== id));
+    SetRoadMapData((prevData: any) =>
+      prevData.options.filter((option: any) => option.id !== id),
+    );
   };
   //   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
+
   const [showModal, setshowModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -101,8 +76,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           setDescription(response.data.State.description);
           setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
-          SetRoadMapData(response.data.RoadMap.options);
-          SetRoadMapData(response.data.RoadMap.options);
+          SetRoadMapData(response.data.RoadMap);
+
           setMessagesData(response.data.Message.options);
         } else {
           throw new Error('Invalid data structure');
@@ -152,8 +127,14 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     setExpandedCategories(newExpandedCategories);
   };
   const [data, setData] = useState({});
-  console.log(data);
-
+  console.log(RoadMapData);
+  const [isLoading, setisLoading] = useState(false);
+  const [blockID, setblockID] = useState();
+  const [buttonLoading, setbuttonLoading] = useState(false);
+  const [isloadingAi, setisloadingAi] = useState(false);
+  const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
   return (
     <>
       {showModal && (
@@ -165,15 +146,27 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           <div className="w-full flex justify-between items-center text-Text-Primary text-xs font-medium">
             Ordering
             <div className="w-8 h-8">
-              <MiniAnallyseButton />
+              <MiniAnallyseButton
+                isLoading={isloadingAi}
+                onResolve={(val) => {
+                  setisloadingAi(true);
+                  Application.generateAi({
+                    input_dict: data,
+                    ai_generation_mode: val,
+                  })
+                    .then((res) => setData({ ...res.data }))
+                    .finally(() => setisloadingAi(false));
+                }}
+              />
             </div>
           </div>
-          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto">
+          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
+           
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
-                <div key={categoryIndex}>
+                <div className='max-h-[]' key={categoryIndex}>
                   <div
-                    onClick={() => toggleExpand(categoryIndex)}
+                  
                     className="w-full flex justify-between items-start my-4"
                   >
                     <div className="flex items-center mb-2 gap-2">
@@ -195,10 +188,41 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         {categoryName}
                       </h3>
 
-                      <MiniAnallyseButton />
+                      <MiniAnallyseButton
+                      openFromRight
+                        isLoading={categoryLoadingStates[categoryName]}
+                        onResolve={(val) => {
+                          setCategoryLoadingStates((prev) => ({
+                            ...prev,
+                            [categoryName]: true,
+                          }));
+
+                          const categoryData = {
+                            [categoryName]: actions,
+                          };
+
+                          Application.generateAi({
+                            input_dict: categoryData,
+                            ai_generation_mode: val,
+                          })
+                            .then((res) => {
+                              setData((prevData) => ({
+                                ...prevData,
+                                [categoryName]: res.data[categoryName],
+                              }));
+                            })
+                            .finally(() =>
+                              setCategoryLoadingStates((prev) => ({
+                                ...prev,
+                                [categoryName]: false,
+                              })),
+                            );
+                        }}
+                      />
                     </div>
 
                     <img
+                      onClick={() => toggleExpand(categoryIndex)}
                       src="/icons/arrow-down.svg"
                       alt=""
                       className={`transition-transform duration-200 ${
@@ -214,7 +238,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         key={actionIndex}
                         className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
                       >
-                        <p className="font-semibold">{action.name}</p>
                         <p>{action.instructions}</p>
                         <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
                           {[
@@ -250,11 +273,31 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 </div>
               ),
             )}
+            
           </div>
           <div className="w-full flex justify-center mt-5">
-            <ButtonPrimary>
-              <img src="/icons/tick-square.svg" alt="" />
-              Save Changes
+            <ButtonPrimary
+              onClick={() => {
+                setbuttonLoading(true);
+                Application.ActionPlanSaveTask({
+                  member_id: memberID,
+                  blocks_id: blockID,
+                  tasks: data,
+                })
+                  .then(() => toast.success('Tasks saved successfully!'))
+                  .finally(() => setbuttonLoading(false));
+              }}
+            >
+              {buttonLoading ? (
+                <div className="">
+                  <BeatLoader size={5} color="#ffffff"></BeatLoader>
+                </div>
+              ) : (
+                <>
+                  <img src="/icons/tick-square.svg" alt="" />
+                  Save Changes
+                </>
+              )}
             </ButtonPrimary>
           </div>
         </SlideOutPanel>
@@ -270,7 +313,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </a>
           )}
         </div>
-        <div className="w-full  max-h-[260px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  h-[220px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
           <div className="w-full flex justify-between items-center">
             <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               Road Map
@@ -283,7 +326,20 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             src=""
             alt=""
           /> */}
-            <MiniAnallyseButton></MiniAnallyseButton>
+            <MiniAnallyseButton
+              isLoading={isLoading}
+              onResolve={(val) => {
+                setisLoading(true);
+                Application.generateAi({
+                  input_dict: {
+                    RoadMap: RoadMapData,
+                  },
+                  ai_generation_mode: val,
+                })
+                  .then((res) => SetRoadMapData(res.data.RoadMap))
+                  .finally(() => setisLoading(false));
+              }}
+            ></MiniAnallyseButton>
           </div>
           {isRoadCompleted ? (
             <div className="flex flex-col  items-center justify-center">
@@ -297,11 +353,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </div>
           ) : (
             <div className={`flex flex-col gap-2 pr-3 mt-2`}>
-              {RoadMapData.map((option) => (
+              {RoadMapData.options?.map((option: any) => (
                 <AccordionCard
                   onClick={() => {
                     Application.driftAction({ member_id: memberID })
-                      .then((res) => setData(res.data))
+                      .then((res) => {
+                        setData(res.data.plan), setblockID(res.data.block_id);
+                      })
                       .catch((err) => console.log(err))
                       .finally(() => setshowModal(true));
                   }}
