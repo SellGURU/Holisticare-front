@@ -327,7 +327,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                   id="Concerning Result"
                   className="  TextStyle-Headline-4 text-Text-Primary"
                 >
-                  Concerning Result
+                  Conclusion
                 </div>
                 <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                   {/* Total of 30 Treatment in 4 category */}

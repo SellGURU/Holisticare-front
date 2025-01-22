@@ -23,7 +23,7 @@ const LogOutModal = () => {
           }}
           className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
         >
-          <img src="/icons/topbar-logo2.png" alt="" />
+          <img src="/icons/topbar-logo2.svg" alt="" />
           Clinic Longevity 1
         </div>
       </div>
@@ -34,7 +34,9 @@ const LogOutModal = () => {
             className="absolute right-0  w-[180px] h-[128px] border top-10 border-gray-50  shadow-200 bg-white rounded-[6px]"
           >
             <div className="flex justify-center items-center mt-2">
-              <div className="w-10 h-10 rounded-full border-2 border-Primary-DeepTeal"></div>
+              <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
+              <img className='w-full h-full object-contain' src="/icons/topbar-logo2.svg" alt="" />
+              </div>
             </div>
             <div className="text-[10px] mt-1 text-center text-Text-Primary">
               Clinic Longevity 1

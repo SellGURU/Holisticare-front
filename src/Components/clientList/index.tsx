@@ -13,6 +13,7 @@ import FilterModal from '../FilterModal/index.tsx';
 import { subscribe } from '../../utils/event.ts';
 import ConfirmModal from './ConfirmModal.tsx';
 import Circleloader from '../CircleLoader/index.tsx';
+import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -215,14 +216,14 @@ const ClientList = () => {
                 <div className="text-Text-Primary font-medium opacity-[87%]">
                   Clients List
                 </div>
-                <ButtonPrimary
+                <ButtonSecondary
                   onClick={() => {
                     navigate('/addClient');
                   }}
                 >
                   <img className="mr-1" src="/icons/user-add2.svg" alt="" />
                   Add Client
-                </ButtonPrimary>
+                </ButtonSecondary>
               </div>
               <div className="w-full h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex justify-between mb-3">

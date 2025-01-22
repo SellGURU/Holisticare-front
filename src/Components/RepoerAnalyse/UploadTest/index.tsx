@@ -14,6 +14,13 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
   const fileInputRef = useRef<any>(null);
   const [files, setFiles] = useState<Array<any>>([]);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
+  const handleDeleteFile = (fileToDelete: any) => {
+    setFiles(files.filter((file) => file !== fileToDelete));
+  };
+  const handleCancelUpload = (fileToCancel: any) => {
+    setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
+  };
+
   return (
     <>
       <div className="w-[93%] rounded-[16px] h-[89vh] top-4 flex justify-center  absolute left-0">
@@ -98,6 +105,7 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
                       </div>
                     </div>
                     <img
+                      onClick={() => handleDeleteFile(el)}
                       className="w-6 h-6 cursor-pointer"
                       src="/icons/delete.svg"
                       alt=""
@@ -116,6 +124,10 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
                       // setFiles([...files,file])
                       // setFiles((prevFiles) => [...prevFiles, file]);
                     }}
+                    onCancel={() => handleCancelUpload(el)}
+                   
+
+
                   ></Uploading>
                 </>
               );
@@ -125,7 +137,7 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
           <div className="flex justify-center items-center w-full">
             <div className="h-[1px] bg-Text-Triarty w-[180px] relative"></div>
             <div className=" text-Text-Primary text-[10px] ">
-              <div className=" px-3">Alternatively</div>
+              <div className=" px-3">Additionally</div>
             </div>
             <div className="h-[1px] bg-Text-Triarty w-[180px] relative"></div>
           </div>
