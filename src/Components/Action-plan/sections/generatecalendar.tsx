@@ -95,6 +95,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   category,
   changeData,
 }) => {
+ useEffect(()=> console.log(value),
+  [value])
+  
   const resolveIcon = () => {
     if (category == 'Diet') {
       return '/icons/diet.svg';
@@ -121,6 +124,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
+useEffect(()=>{setEditableValue(value.instructions)},[value])
   useEffect(() => {
     value.days = selectedDays;
   }, [selectedDays, value]);
@@ -212,7 +216,9 @@ const GenerateCalendar: React.FC = () => {
       setisLoading(false);
     });
   }, []);
-  const [data, setData] = useState<any>({});
+  const [data,setData] = useState<any>({});
+useEffect(()=>{console.log(data);
+} , [data])
 
   const navigate = useNavigate();
   return (
@@ -241,7 +247,13 @@ const GenerateCalendar: React.FC = () => {
             </div>
           </div>
           <div className="relative">
-            <AnalyseButton text="Generate by AI"></AnalyseButton>
+            <AnalyseButton  onAnalyse={(val)=>{
+              Application.generateAi({
+                input_dict : data,
+                ai_generation_mode:val
+              }).then((res)=>setData({...res.data})
+              )
+            }} text="Generate by AI"></AnalyseButton>
           </div>
         </div>
         <div className=" w-full rounded-2xl  p-3  lg:p-6">
@@ -258,11 +270,12 @@ const GenerateCalendar: React.FC = () => {
             ))} */}
               {Object.keys(data).map((key) => {
                 return (
-                  <>
+                <div key={key}>
                     {data[key].map((el: any, index: number) => {
                       return (
-                        <>
+                      
                           <BioMarkerRowSuggestions
+                          key={`${key}-${index}`}
                             changeData={(value) => {
                               const wrapper: any = {};
                               const newData = data[key].map(
@@ -278,13 +291,13 @@ const GenerateCalendar: React.FC = () => {
                               setData({ ...data, ...wrapper });
                             }}
                             category={key}
-                            key={index}
+                          
                             value={el}
                           />
-                        </>
+                      
                       );
                     })}
-                  </>
+                 </div>
                 );
               })}
             </div>

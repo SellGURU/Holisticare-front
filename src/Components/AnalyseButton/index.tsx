@@ -8,10 +8,10 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 interface AnalyseButtonProps {
   text: string;
-  onAnalyse?: () => void;
+  onAnalyse?: (value: string) => void;
 }
 
-const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text }) => {
+const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse}) => {
   const [isloadingGenerate] = useState(false);
   const [showAiReport, setShowAiReport] = useState(false);
   const modalAiGenerateRef = useRef(null);
@@ -50,11 +50,16 @@ const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text }) => {
           <GenerateWithAiModal
             isBenchMark={false}
             isLimite={false}
-            onSuccess={(_val: any) => {
+            onSuccess={(val: any) => {
               setShowAiReport(false);
               // setPramt(val)
               // beGenerateWithAi(val)
-            }}
+              if(onAnalyse){
+                onAnalyse(val)
+              }
+            }
+           
+          }
             refEl={modalAiGenerateRef}
           ></GenerateWithAiModal>
         </div>
