@@ -159,7 +159,7 @@ class Application extends Api {
     return response;
   }
   static aiStudio_patients() {
-    const response = this.get('/drift_analysis/patients ');
+    const response = this.get('/drift_analysis/patients');
     return response;
   }
   static aiStudio_copilotChat(data: any) {
@@ -599,9 +599,7 @@ class Application extends Api {
   };
   static questionaryLink = (data: any) => {
     const response = this.post(
-      '/health_profile/questionary_tracking/send_link',
-      data,
-    );
+      '/health_profile/questionary_tracking/send_link',data);
     return response;
   };
 }

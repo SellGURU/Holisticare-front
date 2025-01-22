@@ -48,7 +48,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
           src="/icons/close.svg"
         />
       </div>
-      <div className="p-3 pt-1 overflow-y-auto">{children}</div>
+      <div className="p-3 pt-1 overf">{children}</div>
     </div>
   );
 };
