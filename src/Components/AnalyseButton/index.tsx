@@ -12,8 +12,11 @@ interface AnalyseButtonProps {
   isLoading?: boolean;
 }
 
-const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse, isLoading}) => {
-
+const AnalyseButton: React.FC<AnalyseButtonProps> = ({
+  text,
+  onAnalyse,
+  isLoading,
+}) => {
   const [showAiReport, setShowAiReport] = useState(false);
   const modalAiGenerateRef = useRef(null);
   useModalAutoClose({
@@ -55,12 +58,10 @@ const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse, isLoadi
               setShowAiReport(false);
               // setPramt(val)
               // beGenerateWithAi(val)
-              if(onAnalyse){
-                onAnalyse(val)
+              if (onAnalyse) {
+                onAnalyse(val);
               }
-            }
-           
-          }
+            }}
             refEl={modalAiGenerateRef}
           ></GenerateWithAiModal>
         </div>
