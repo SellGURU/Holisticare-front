@@ -161,14 +161,10 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </div>
           </div>
           <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
-           
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
-                <div className='max-h-[]' key={categoryIndex}>
-                  <div
-                  
-                    className="w-full flex justify-between items-start my-4"
-                  >
+                <div className="max-h-[]" key={categoryIndex}>
+                  <div className="w-full flex justify-between items-start my-4">
                     <div className="flex items-center mb-2 gap-2">
                       <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2 ">
                         {categoryName == 'Diet' && (
@@ -189,7 +185,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                       </h3>
 
                       <MiniAnallyseButton
-                      openFromRight
+                        openFromRight
                         isLoading={categoryLoadingStates[categoryName]}
                         onResolve={(val) => {
                           setCategoryLoadingStates((prev) => ({
@@ -273,7 +269,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 </div>
               ),
             )}
-            
           </div>
           <div className="w-full flex justify-center mt-5">
             <ButtonPrimary

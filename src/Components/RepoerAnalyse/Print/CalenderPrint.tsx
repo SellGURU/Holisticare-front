@@ -193,7 +193,11 @@ const CalenderPrint: React.FC<CalenderPrint> = ({ data }) => {
                       style={{ fontSize: '8px', color: '#005F73' }}
                       className="font-semibold text-[10px] text-[#383838] flex items-center gap-1"
                     >
-                      <img src={resolveIcon(category)} alt="" />
+                      <img
+                        className="w-2 "
+                        src={resolveIcon(category)}
+                        alt=""
+                      />
                       {category}
                     </div>
                     {activitiesForTheDay

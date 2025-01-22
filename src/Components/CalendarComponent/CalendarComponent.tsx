@@ -283,7 +283,11 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                   {categories.map((category: any) => (
                     <li className="mt-2" key={category}>
                       <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
-                        <img src={resolveIcon(category)} alt="" />
+                        <img
+                          className="w-3"
+                          src={resolveIcon(category)}
+                          alt=""
+                        />
                         {category}
                       </div>
                       {activitiesForTheDay

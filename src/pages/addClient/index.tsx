@@ -380,7 +380,6 @@ const AddClient = () => {
                       </div>
                     ) : (
                       <>
-                        
                         <img src="./icons/tick-square.svg" alt="" />
                         Add Client
                       </>

@@ -35,7 +35,11 @@ const LogOutModal = () => {
           >
             <div className="flex justify-center items-center mt-2">
               <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
-              <img className='w-full h-full object-contain' src="/icons/topbar-logo2.svg" alt="" />
+                <img
+                  className="w-full h-full object-contain"
+                  src="/icons/topbar-logo2.svg"
+                  alt=""
+                />
               </div>
             </div>
             <div className="text-[10px] mt-1 text-center text-Text-Primary">
