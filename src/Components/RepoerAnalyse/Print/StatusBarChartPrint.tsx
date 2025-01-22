@@ -56,7 +56,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
           return (
             <>
               <div
-                className={` relative border-l-2 border-white  ${index == sortKeysWithValues(data.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+                className={` relative border-l-2 overflow-visible border-white  ${index == sortKeysWithValues(data.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
                 style={{
                   width:
                     100 / sortKeysWithValues(data.chart_bounds).length + '%',
@@ -92,7 +92,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                   }
                 </div>
                 {data.values[0] >= el.value[0] &&
-                  el.value[1] >= data.values[0] && (
+                  el.value[1] > data.values[0] && (
                     <div
                       className={`absolute  top-[2px]  z-10`}
                       style={{
@@ -124,7 +124,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                           marginLeft: '-24px',
                           color: '#005F73',
                         }}
-                        className="text-[10px] flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
+                        className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
                       >
                         <span className="opacity-40">You: </span>
                         {data.values[0]} <span>{data.unit}</span>
