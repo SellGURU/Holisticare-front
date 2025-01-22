@@ -283,7 +283,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             src=""
             alt=""
           /> */}
-            <MiniAnallyseButton></MiniAnallyseButton>
+            <MiniAnallyseButton onResolve={(val)=>{
+              Application.generateAi({
+                input_dict : RoadMapData,
+                ai_generation_mode:val
+              }).then((res)=>console.log(res)
+              )
+            }}></MiniAnallyseButton>
           </div>
           {isRoadCompleted ? (
             <div className="flex flex-col  items-center justify-center">
@@ -310,6 +316,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   title={option.id}
                   description={option.description}
                   buttonText={option.action}
+                 
                 />
               ))}
             </div>
@@ -363,6 +370,7 @@ interface AccordionCardProps {
   onClick: () => void;
   onDelete: () => void;
   buttonText: string;
+
 }
 const AccordionCard: React.FC<AccordionCardProps> = ({
   title,
@@ -370,7 +378,10 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
   onClick,
   onDelete,
   buttonText,
+
 }) => {
+
+  
   return (
     <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex justify-between items-center text-Text-Primary">
       <div className="flex gap-3 items-center">

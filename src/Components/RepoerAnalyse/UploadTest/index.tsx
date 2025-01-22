@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import Application from '../../../api/app';
 
 interface UploadTestProps {
   memberId: any;
@@ -129,7 +130,21 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
             <div className="h-[1px] bg-Text-Triarty w-[180px] relative"></div>
           </div>
           <div className="w-full mt-6 flex justify-center">
-            <div className="text-Primary-DeepTeal cursor-pointer text-[12px] underline">
+            <div
+              onClick={() => {
+                Application.questionaryLink({})
+                  .then((res) => {
+                    const url = res.data['Personal Information'];
+                    if (url) {
+                      window.open(url, '_blank');
+                    }
+                  })
+                  .catch((err) => {
+                    console.error('Error fetching the link:', err);
+                  });
+              }}
+              className="text-Primary-DeepTeal cursor-pointer text-[12px] underline"
+            >
               Complete Questionnaire
             </div>
           </div>
