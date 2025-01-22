@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { useNavigate, useParams } from 'react-router-dom';
+import TooltipText from '../TooltipText';
 // import ConfirmModal from "./sections/ConfirmModal";
 
 // type CardData = {
@@ -183,7 +184,13 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
       </div>
       <div className="mt-2 flex flex-col items-center justify-center gap-[6px]">
-        <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5>
+        <TooltipText
+          tooltipValue={el.title}
+          className="w-[80%] text-center TextStyle-Headline-6 text-Text-Primary"
+        >
+          {/* <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5> */}
+          {el.title}
+        </TooltipText>
         <h6 className="TextStyle-Body-3 text-nowrap overflow-hidden text-ellipsis w-[80%] text-Text-Secondary">
           {el.description}
         </h6>
