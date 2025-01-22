@@ -9,7 +9,7 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import MainTopBar from '../../Components/MainTopBar';
 import * as yup from 'yup';
 import YoupValidation from '../../validation';
-
+import Circleloader from '../../Components/CircleLoader';
 const AddClient = () => {
   const formik = useFormik({
     initialValues: {
@@ -101,6 +101,10 @@ const AddClient = () => {
 
   return (
     <>
+     {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>)}
       <div className="w-full sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
@@ -347,6 +351,7 @@ const AddClient = () => {
                     </div>
                     <input
                       type="file"
+                      accept=".jpeg, .jpg, .png"
                       onChange={(e: any) => {
                         const file = e.target.files[0];
                         convertToBase64(file).then((res) => {

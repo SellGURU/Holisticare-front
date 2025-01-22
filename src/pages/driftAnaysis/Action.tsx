@@ -20,38 +20,7 @@ interface MessageOption extends RoadMapOption {
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
-  const [RoadMapData, SetRoadMapData] = useState<RoadMapOption[]>([
-    // {
-    //   id: 1,
-    //   title: "Option 1",
-    //   description:
-    //     "Considering the patient's current condition and limited resources while traveling, it would be best to adjust her exercise program and provide an alternative plan tailored to her situation.",
-    // },
-    // {
-    //   id: 2,
-    //   title: "Option 2",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 3,
-    //   title: "Option 3",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 4,
-    //   title: "Option 4",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-    // {
-    //   id: 5,
-    //   title: "Option 5",
-    //   description:
-    //     "The client is currently traveling and has forgotten to bring their prescription medications, with no access to replacements in the destination country. It is recommended to create an alternative plan for the 10-day travel period.",
-    // },
-  ]);
+  const [RoadMapData, SetRoadMapData] = useState<any>({});
   const [MessagesData, setMessagesData] = useState<MessageOption[]>([
     // {
     //   id: 1,
@@ -85,10 +54,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     );
   };
   const handleOptionDelete = (id: string) => {
-    SetRoadMapData((prevData) => prevData.filter((option) => option.id !== id));
+    SetRoadMapData((prevData:any) => prevData.options.filter((option:any) => option.id !== id));
   };
   //   const navigate = useNavigate();
   // const { id } = useParams<{ id: string }>();
+ 
   const [showModal, setshowModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
@@ -101,8 +71,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           setDescription(response.data.State.description);
           setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
-          SetRoadMapData(response.data.RoadMap.options);
-          SetRoadMapData(response.data.RoadMap.options);
+          SetRoadMapData(response.data.RoadMap);
+        
           setMessagesData(response.data.Message.options);
         } else {
           throw new Error('Invalid data structure');
@@ -152,7 +122,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     setExpandedCategories(newExpandedCategories);
   };
   const [data, setData] = useState({});
-  console.log(data);
+  console.log(RoadMapData);
 
   return (
     <>
@@ -303,7 +273,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </div>
           ) : (
             <div className={`flex flex-col gap-2 pr-3 mt-2`}>
-              {RoadMapData.map((option) => (
+              {RoadMapData.options?.map((option:any) => (
                 <AccordionCard
                   onClick={() => {
                     Application.driftAction({ member_id: memberID })
