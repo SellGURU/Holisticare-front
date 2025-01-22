@@ -125,6 +125,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   };
   const [data, setData] = useState({});
   console.log(RoadMapData);
+  const [isLoading, setisLoading] = useState(false);
 
   return (
     <>
@@ -256,11 +257,17 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             alt=""
           /> */}
             <MiniAnallyseButton
+              isLoading={isLoading}
               onResolve={(val) => {
+                setisLoading(true);
                 Application.generateAi({
-                  input_dict: RoadMapData,
+                  input_dict: {
+                    RoadMap: RoadMapData,
+                  },
                   ai_generation_mode: val,
-                }).then((res) => console.log(res));
+                })
+                  .then((res) => SetRoadMapData(res.data.RoadMap))
+                  .finally(() => setisLoading(false));
               }}
             ></MiniAnallyseButton>
           </div>

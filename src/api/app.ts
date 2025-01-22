@@ -599,9 +599,7 @@ class Application extends Api {
   };
   static questionaryLink = (data: any) => {
     const response = this.post(
-      '/health_profile/questionary_tracking/send_link',
-      data,
-    );
+      '/health_profile/questionary_tracking/send_link',data);
     return response;
   };
 }
