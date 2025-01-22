@@ -9,10 +9,11 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 interface AnalyseButtonProps {
   text: string;
   onAnalyse?: (value: string) => void;
+  isLoading?: boolean;
 }
 
-const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse}) => {
-  const [isloadingGenerate] = useState(false);
+const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse, isLoading}) => {
+
   const [showAiReport, setShowAiReport] = useState(false);
   const modalAiGenerateRef = useRef(null);
   useModalAutoClose({
@@ -34,7 +35,7 @@ const AnalyseButton: React.FC<AnalyseButtonProps> = ({ text , onAnalyse}) => {
           // setShowGenerateWithAi(true)
         }}
       >
-        {isloadingGenerate ? (
+        {isLoading ? (
           <div className="px-3 w-full flex justify-center items-center">
             <BeatLoader size={8} color="#fff"></BeatLoader>
           </div>
