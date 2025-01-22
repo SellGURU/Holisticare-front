@@ -53,7 +53,7 @@ const SummaryBoxPrint: React.FC<SummaryBoxPrintProps> = ({ data }) => {
               >
                 {data.num_of_biomarkers}
               </span>{' '}
-              biomarkers
+              Biomarkers
             </div>
             <div
               className=" ml-2 text-xs"

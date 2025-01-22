@@ -125,9 +125,6 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
                       // setFiles((prevFiles) => [...prevFiles, file]);
                     }}
                     onCancel={() => handleCancelUpload(el)}
-                   
-
-
                   ></Uploading>
                 </>
               );

@@ -98,19 +98,19 @@ const PrintReport: React.FC<PrintReportProps> = ({
           <div className="ml-20">
             <div
               className="text-white uppercase text-center "
-              style={{ fontSize: 42, color: '#383838' }}
+              style={{ fontSize: 42, color: '#383838', letterSpacing: '8px' }}
             >
               Comprehensive
             </div>
             <div
               className="text-white uppercase  text-center"
-              style={{ fontSize: 42, color: '#383838' }}
+              style={{ fontSize: 42, color: '#383838', letterSpacing: '8px' }}
             >
               Health Plan
             </div>
           </div>
         </div>
-        <div className="flex justify-end mt-2 items-center">
+        <div className=" justify-end mt-2 hidden items-center">
           <div
             className=""
             style={{
@@ -279,7 +279,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
             <div className="" style={{ color: '#383838', fontSize: '14px' }}>
               Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
-              {ClientSummaryBoxs.total_category} Categories
+              {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
           <div className="flex justify-start items-center mt-4 gap-3">
@@ -426,7 +426,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               className="text-lg"
               style={{ color: '#005F73', fontWeight: '600' }}
             >
-              Concerning Result
+              Conclusion
             </div>
           </div>
           <div className="px-2">
@@ -438,38 +438,38 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Name
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Result
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Units
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Lab Ref Range
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Baseline
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Optimal Range
               </div>
               <div
-                className="text-gray-700 font-medium "
-                style={{ fontSize: 12, color: '#383838' }}
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
               >
                 Changes
               </div>
@@ -496,44 +496,68 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           style={{
                             fontSize: '10px',
                             color: '#383838',
-                            width: 170,
+                            width: 200,
                           }}
                         >
                           {val.name}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val.Result}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val.Units}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val['Lab Ref Range']}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val.Baseline}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val['Optimal Range']}
                         </div>
                         <div
-                          className=" text-gray-800"
-                          style={{ fontSize: '10px', color: '#383838' }}
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
                         >
                           {val.Changes}
                         </div>
@@ -656,7 +680,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     borderRadius: '12px',
                   }}
                 >
-                  <div style={{ fontSize: '12px', color: '#005F73' }}>
+                  <div
+                    className="flex justify-center gap-1 items-center"
+                    style={{ fontSize: '12px', color: '#005F73' }}
+                  >
+                    <img src="/icons/timerprint.svg" alt="" />
                     {helthPlan[helthPlan.length - 1]?.date_text}
                   </div>
                 </div>
@@ -683,7 +711,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     {el.category}
                   </div>
 
-                  <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2">
+                  <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none">
                     {el.data.map((el2: any) => {
                       return (
                         <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
@@ -715,7 +743,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               className="w-full mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
               style={{ borderRadius: '12px' }}
             >
-              <div className="text-sm" style={{ color: '#005F73' }}>
+              <div className="text-sm mb-2" style={{ color: '#005F73' }}>
                 {ActionPlan[ActionPlan.length - 1]?.title}
               </div>
               <div className="text-xs" style={{ color: '#383838' }}>

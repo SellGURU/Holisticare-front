@@ -369,7 +369,7 @@ class Application extends Api {
     return response;
   }
   static getCaldenderdata(data: any) {
-    const response = this.post('/overview/calendar', data);
+    const response = this.post('/overview/report_calendar', data);
     return response;
   }
 

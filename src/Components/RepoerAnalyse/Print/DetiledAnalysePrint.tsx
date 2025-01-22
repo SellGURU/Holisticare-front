@@ -54,7 +54,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
           >
             <div className=" ">
               {' '}
-              <span className=" ">{data?.num_of_biomarkers}</span> biomarkers
+              <span className=" ">{data?.num_of_biomarkers}</span> Biomarkers
             </div>
             <div className="  ml-2 ">
               <span className="">{data?.out_of_ref}</span>{' '}
