@@ -95,6 +95,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   category,
   changeData,
 }) => {
+  useEffect(() => console.log(value), [value]);
+
   const resolveIcon = () => {
     if (category == 'Diet') {
       return '/icons/diet.svg';
@@ -122,6 +124,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     );
   };
   useEffect(() => {
+    setEditableValue(value.instructions);
+  }, [value]);
+  useEffect(() => {
     value.days = selectedDays;
   }, [selectedDays, value]);
   useEffect(() => {
@@ -131,6 +136,27 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       repeat_days: [...selectedDays],
     });
   }, [editableValue, selectedDays]);
+  const handleApiResponse = (response: any) => {
+    try {
+      // Get the category from the first key in the response
+      const category = Object.keys(response)[0];
+      if (category && response[category] && response[category].length > 0) {
+        const data = response[category][0];
+
+        changeData({
+          instructions: data.instructions,
+          name: data.name,
+          reference: data.reference,
+          repeat_days: data.repeat_days,
+          based_on: data.based_on,
+          category: category, // Adding category to track what type of data it is
+        });
+      }
+    } catch (error) {
+      console.error('Error updating component data:', error);
+    }
+  };
+  const [isLoadingAi, setIsLoadingAi] = useState(false);
   return (
     <>
       <div className="w-full bg-white border border-Gray-50 shadow-100  h-full rounded-[24px] px-6 p-3 lg:p-6">
@@ -182,7 +208,21 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="relative">
-            <MiniAnallyseButton />
+            <MiniAnallyseButton
+              isLoading={isLoadingAi}
+              onResolve={(val) => {
+                setIsLoadingAi(true);
+
+                Application.generateAi({
+                  input_dict: value,
+                  ai_generation_mode: val,
+                })
+                  .then((res: any) => {
+                    handleApiResponse(res.data);
+                  })
+                  .finally(() => setIsLoadingAi(false));
+              }}
+            />
           </div>
         </div>
       </div>
@@ -213,8 +253,12 @@ const GenerateCalendar: React.FC = () => {
     });
   }, []);
   const [data, setData] = useState<any>({});
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   const navigate = useNavigate();
+  const [isAiLoading, setisAiLoading] = useState(false);
   return (
     <>
       {isLoading && (
@@ -241,7 +285,19 @@ const GenerateCalendar: React.FC = () => {
             </div>
           </div>
           <div className="relative">
-            <AnalyseButton text="Generate by AI"></AnalyseButton>
+            <AnalyseButton
+              isLoading={isAiLoading}
+              onAnalyse={(val) => {
+                setisAiLoading(true);
+                Application.generateAi({
+                  input_dict: data,
+                  ai_generation_mode: val,
+                })
+                  .then((res) => setData({ ...res.data }))
+                  .finally(() => setisAiLoading(false));
+              }}
+              text="Generate by AI"
+            ></AnalyseButton>
           </div>
         </div>
         <div className=" w-full rounded-2xl  p-3  lg:p-6">
@@ -258,33 +314,31 @@ const GenerateCalendar: React.FC = () => {
             ))} */}
               {Object.keys(data).map((key) => {
                 return (
-                  <>
+                  <div key={key}>
                     {data[key].map((el: any, index: number) => {
                       return (
-                        <>
-                          <BioMarkerRowSuggestions
-                            changeData={(value) => {
-                              const wrapper: any = {};
-                              const newData = data[key].map(
-                                (vl: any, index2: number) => {
-                                  if (index == index2) {
-                                    return value;
-                                  }
-                                  return vl;
-                                },
-                              );
+                        <BioMarkerRowSuggestions
+                          key={`${key}-${index}`}
+                          changeData={(value) => {
+                            const wrapper: any = {};
+                            const newData = data[key].map(
+                              (vl: any, index2: number) => {
+                                if (index == index2) {
+                                  return value;
+                                }
+                                return vl;
+                              },
+                            );
 
-                              wrapper[key] = newData;
-                              setData({ ...data, ...wrapper });
-                            }}
-                            category={key}
-                            key={index}
-                            value={el}
-                          />
-                        </>
+                            wrapper[key] = newData;
+                            setData({ ...data, ...wrapper });
+                          }}
+                          category={key}
+                          value={el}
+                        />
                       );
                     })}
-                  </>
+                  </div>
                 );
               })}
             </div>
