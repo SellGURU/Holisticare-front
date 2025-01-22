@@ -59,6 +59,7 @@ const AiChat = () => {
   const [selectedBenchMarks, setSelectedBenchMarks] = useState<Array<string>>(
     [],
   );
+  console.log(selectedBenchMarks);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const newMessage: SendMessage = {
@@ -70,6 +71,7 @@ const AiChat = () => {
       try {
         const res = await Application.sendMessage(newMessage);
         const data = await res.data;
+        console.log(data);
         userMessagesList(parseInt(memberId));
         // setConversationId(data.current_conversation_id);
       } catch (err) {
