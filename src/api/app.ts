@@ -159,7 +159,7 @@ class Application extends Api {
     return response;
   }
   static aiStudio_patients() {
-    const response = this.get('/drift_analysis/patients ');
+    const response = this.get('/drift_analysis/patients');
     return response;
   }
   static aiStudio_copilotChat(data: any) {

@@ -131,7 +131,10 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [isLoading, setisLoading] = useState(false);
   const [blockID, setblockID] = useState();
   const [buttonLoading, setbuttonLoading] = useState(false);
-
+  const [isloadingAi, setisloadingAi] = useState(false);
+  const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
   return (
     <>
       {showModal && (
@@ -143,15 +146,27 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           <div className="w-full flex justify-between items-center text-Text-Primary text-xs font-medium">
             Ordering
             <div className="w-8 h-8">
-              <MiniAnallyseButton />
+              <MiniAnallyseButton
+                isLoading={isloadingAi}
+                onResolve={(val) => {
+                  setisloadingAi(true);
+                  Application.generateAi({
+                    input_dict: data,
+                    ai_generation_mode: val,
+                  })
+                    .then((res) => setData({ ...res.data }))
+                    .finally(() => setisloadingAi(false));
+                }}
+              />
             </div>
           </div>
-          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto">
+          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
+           
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
-                <div key={categoryIndex}>
+                <div className='max-h-[]' key={categoryIndex}>
                   <div
-                    onClick={() => toggleExpand(categoryIndex)}
+                  
                     className="w-full flex justify-between items-start my-4"
                   >
                     <div className="flex items-center mb-2 gap-2">
@@ -173,10 +188,41 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         {categoryName}
                       </h3>
 
-                      <MiniAnallyseButton />
+                      <MiniAnallyseButton
+                      openFromRight
+                        isLoading={categoryLoadingStates[categoryName]}
+                        onResolve={(val) => {
+                          setCategoryLoadingStates((prev) => ({
+                            ...prev,
+                            [categoryName]: true,
+                          }));
+
+                          const categoryData = {
+                            [categoryName]: actions,
+                          };
+
+                          Application.generateAi({
+                            input_dict: categoryData,
+                            ai_generation_mode: val,
+                          })
+                            .then((res) => {
+                              setData((prevData) => ({
+                                ...prevData,
+                                [categoryName]: res.data[categoryName],
+                              }));
+                            })
+                            .finally(() =>
+                              setCategoryLoadingStates((prev) => ({
+                                ...prev,
+                                [categoryName]: false,
+                              })),
+                            );
+                        }}
+                      />
                     </div>
 
                     <img
+                      onClick={() => toggleExpand(categoryIndex)}
                       src="/icons/arrow-down.svg"
                       alt=""
                       className={`transition-transform duration-200 ${
@@ -192,7 +238,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         key={actionIndex}
                         className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
                       >
-                        <p className="font-semibold">{action.name}</p>
                         <p>{action.instructions}</p>
                         <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
                           {[
@@ -228,6 +273,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 </div>
               ),
             )}
+            
           </div>
           <div className="w-full flex justify-center mt-5">
             <ButtonPrimary
@@ -238,8 +284,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   blocks_id: blockID,
                   tasks: data,
                 })
-                  .then(() => 
-                    toast.success('Tasks saved successfully!'))
+                  .then(() => toast.success('Tasks saved successfully!'))
                   .finally(() => setbuttonLoading(false));
               }}
             >

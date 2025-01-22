@@ -9,11 +9,13 @@ interface MiniAnallyseButtonProps {
   disabled?: boolean;
   onResolve?: (value: string) => void;
   isLoading?: boolean;
+  openFromRight?:boolean
 }
 const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> = ({
   disabled,
   isLoading,
   onResolve,
+  openFromRight
 }) => {
   //  const [isLoading ,] = useState(false)
   const [showAiReport, setShowAiReport] = useState(false);
@@ -57,7 +59,7 @@ const MiniAnallyseButton: React.FC<MiniAnallyseButtonProps> = ({
           </>
         )}
         {showAiReport && (
-          <div className="absolute z-30 right-[-0px] top-10 ">
+          <div className={`absolute z-30 ${openFromRight ? '-left-5' :'right-[-0px]'}  top-10 `}>
             <GenerateWithAiModal
               isBenchMark={false}
               isLimite={false}
