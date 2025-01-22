@@ -729,7 +729,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     </div>
                     <div style={{ color: '#005F73', fontSize: '12px' }}>
                       {ActionPlan[ActionPlan.length - 1]?.progress
-                        ? ActionPlan[helthPlan.length - 1]?.progress + "%"
+                        ? ActionPlan[helthPlan.length - 1]?.progress + '%'
                         : '100%'}
                     </div>
                   </div>
