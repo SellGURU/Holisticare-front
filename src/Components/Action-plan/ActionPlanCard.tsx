@@ -109,7 +109,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               ref={showModalRefrence}
               className="absolute top-5 right-0 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
             >
-              <div
+              {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
@@ -120,7 +120,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               >
                 <img src="/icons/targeting-green.svg" alt="" />
                 Targeting
-              </div>
+              </div> */}
               {/* <div
                 onClick={(e) => {
                   e.stopPropagation();

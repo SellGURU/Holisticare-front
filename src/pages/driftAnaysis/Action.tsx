@@ -240,7 +240,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </a>
           )}
         </div>
-        <div className="w-full  max-h-[260px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  h-[220px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
           <div className="w-full flex justify-between items-center">
             <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               Road Map

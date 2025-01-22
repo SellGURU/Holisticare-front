@@ -234,18 +234,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       ref={showModalRefrence}
                       className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
                     >
-                      <div
+                      {/* <div
                         onClick={(e) => {
                           e.stopPropagation();
-                          //   if (!isDisabled) {
-                          //     navigate(`/action-plan/edit/${id}`);
-                          //   }
+                            if () {
+                              navigate(`/action-plan/edit/${id}`);
+                            }
                         }}
                         className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                       >
                         <img src="/icons/edit-green.svg" alt="" />
                         Edit
-                      </div>
+                      </div> */}
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
@@ -379,8 +379,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         headline="Analysis"
       >
         <>
-          <div className="rounded-xl border border-Gray-50">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+          <div className="rounded-xl border border-t-0 border-Gray-50">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Needs Focus Benchmarks
             </div>
             <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
@@ -393,8 +393,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               })}
             </ul>
           </div>
-          <div className="rounded-xl border border-Gray-50 mt-3">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Client Condition Insights
             </div>
             <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
