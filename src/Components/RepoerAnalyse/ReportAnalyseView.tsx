@@ -104,7 +104,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
   const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
+
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
+  const [HelthPrint, setHelthPlanPrint] = useState(null);
   useEffect(() => {
     if (ClientSummaryBoxs != null && referenceData != null) {
       setLoading(false);
@@ -439,12 +441,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
               >
                 Action Plan
               </div>
-              <ActionPlan calenderDataUper={caldenderData}></ActionPlan>
+              <ActionPlan
+                setActionPrintData={(values: any) => {
+                  setHelthPlanPrint(values);
+                }}
+                calenderDataUper={caldenderData}
+              ></ActionPlan>
             </div>
             {isHaveReport && (
               <div className="hidden print:block" id="printDiv">
                 <PrintReport
                   helthPlan={ActionPlanPrint}
+                  ActionPlan={HelthPrint}
                   usrInfoData={userInfoData}
                   ResolveConceringData={ResolveConceringData}
                   caldenderData={caldenderData}
