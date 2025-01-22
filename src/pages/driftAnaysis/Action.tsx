@@ -4,6 +4,9 @@ import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Application from '../../api/app';
+import { BeatLoader } from 'react-spinners';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface ActionProps {
   memberID: number | null;
 }
@@ -126,6 +129,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [data, setData] = useState({});
   console.log(RoadMapData);
   const [isLoading, setisLoading] = useState(false);
+  const [blockID, setblockID] = useState();
+  const [buttonLoading, setbuttonLoading] = useState(false);
 
   return (
     <>
@@ -225,9 +230,29 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             )}
           </div>
           <div className="w-full flex justify-center mt-5">
-            <ButtonPrimary>
-              <img src="/icons/tick-square.svg" alt="" />
-              Save Changes
+            <ButtonPrimary
+              onClick={() => {
+                setbuttonLoading(true);
+                Application.ActionPlanSaveTask({
+                  member_id: memberID,
+                  blocks_id: blockID,
+                  tasks: data,
+                })
+                  .then(() => 
+                    toast.success('Tasks saved successfully!'))
+                  .finally(() => setbuttonLoading(false));
+              }}
+            >
+              {buttonLoading ? (
+                <div className="">
+                  <BeatLoader size={5} color="#ffffff"></BeatLoader>
+                </div>
+              ) : (
+                <>
+                  <img src="/icons/tick-square.svg" alt="" />
+                  Save Changes
+                </>
+              )}
             </ButtonPrimary>
           </div>
         </SlideOutPanel>
@@ -287,7 +312,9 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 <AccordionCard
                   onClick={() => {
                     Application.driftAction({ member_id: memberID })
-                      .then((res) => setData(res.data))
+                      .then((res) => {
+                        setData(res.data.plan), setblockID(res.data.block_id);
+                      })
                       .catch((err) => console.log(err))
                       .finally(() => setshowModal(true));
                   }}
