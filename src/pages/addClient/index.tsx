@@ -101,10 +101,11 @@ const AddClient = () => {
 
   return (
     <>
-     {isLoading && (
+      {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
-        </div>)}
+        </div>
+      )}
       <div className="w-full sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>

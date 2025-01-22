@@ -60,7 +60,7 @@ export const menus = [
     name: 'Setting',
     icon: 'sidemenu-menu-icon-setting',
     url: '/setting',
-    active:true
+    active: true,
   },
   {
     name: 'info-circle',

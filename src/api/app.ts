@@ -598,7 +598,10 @@ class Application extends Api {
     return response;
   };
   static questionaryLink = (data: any) => {
-    const response = this.post('/health_profile/questionary_tracking/send_link', data);
+    const response = this.post(
+      '/health_profile/questionary_tracking/send_link',
+      data,
+    );
     return response;
   };
 }
