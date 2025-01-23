@@ -40,6 +40,8 @@ const Uploading: React.FC<UploadingProps> = ({
   const [isFailed, setIsFailed] = useState(false);
   const [progress, setProgress] = useState(0);
   useEffect(() => {
+    let isCancelled = false;
+
     convertToBase64(file).then((res) => {
       Application.addLabReport(
         {
@@ -50,27 +52,47 @@ const Uploading: React.FC<UploadingProps> = ({
           },
         },
         (progressEvent: any) => {
+          if (isCancelled) return;
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total,
           );
           setProgress(percentCompleted);
         },
       )
-        .then(() => {
-          onSuccess(file);
+        .then((response) => {
+          if (isCancelled) return;
+          const fileWithId = {
+            ...file,
+            id: response.data,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+          };
+          onSuccess(fileWithId);
           setIsCompleted(true);
-          // setFiles([...files,file])
         })
         .catch(() => {
+          if (isCancelled) return;
           setIsFailed(true);
           setIsCompleted(true);
         });
     });
     return () => {
-      setIsCompleted(false);
-      setProgress(0);
+      isCancelled = true;
     };
   }, []);
+  const handleDeleteFile = (fileToDelete: any) => {
+    console.log(fileToDelete);
+    
+    Application.deleteLapReport({file_id: fileToDelete.id })
+      .then(() => {
+        onCancel();
+      })
+      .catch((err) => {
+        console.error('Error deleting the file:', err);
+      });
+  };
+
   return (
     <>
       {isCompleted ? (
@@ -89,6 +111,8 @@ const Uploading: React.FC<UploadingProps> = ({
             </div>
           </div>
           <img
+                      onClick={() => handleDeleteFile(file)}
+
             className="cursor-pointer w-6 h-6"
             src="/icons/delete.svg"
             alt=""

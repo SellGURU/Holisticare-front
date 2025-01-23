@@ -15,11 +15,20 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
   const [files, setFiles] = useState<Array<any>>([]);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   const handleDeleteFile = (fileToDelete: any) => {
-    setFiles(files.filter((file) => file !== fileToDelete));
+    console.log(fileToDelete);
+    
+    Application.deleteLapReport({file_id: fileToDelete.id })
+      .then(() => {
+        setFiles(files.filter((file) => file !== fileToDelete));
+      })
+      .catch((err) => {
+        console.error('Error deleting the file:', err);
+      });
   };
   const handleCancelUpload = (fileToCancel: any) => {
     setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
   };
+console.log(files);
 
   return (
     <>
@@ -105,11 +114,11 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
                       </div>
                     </div>
                     <img
-                      onClick={() => handleDeleteFile(el)}
-                      className="w-6 h-6 cursor-pointer"
-                      src="/icons/delete.svg"
-                      alt=""
-                    />
+                    onClick={() => handleDeleteFile(el)}
+                    className="w-6 h-6 cursor-pointer"
+                    src="/icons/delete.svg"
+                    alt=""
+                  />
                   </div>
                 </>
               );
@@ -120,12 +129,14 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
                   <Uploading
                     memberId={memberId}
                     file={el}
-                    onSuccess={(_file) => {
-                      // setFiles([...files,file])
-                      // setFiles((prevFiles) => [...prevFiles, file]);
+                    onSuccess={(fileWithId) => {
+                      setFiles((prevFiles) => [...prevFiles, fileWithId]);
+                      setUploadingFiles((prevUploadingFiles) =>
+                        prevUploadingFiles.filter((file) => file !== el)
+                      );
                     }}
                     onCancel={() => handleCancelUpload(el)}
-                  ></Uploading>
+                    ></Uploading>
                 </>
               );
             })}
