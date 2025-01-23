@@ -381,7 +381,6 @@ const AddClient = () => {
                         
                     ) : (
                       <>
-                        
                         <img src="./icons/tick-square.svg" alt="" />
                         Add Client
                    

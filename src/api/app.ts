@@ -369,7 +369,7 @@ class Application extends Api {
     return response;
   }
   static getCaldenderdata(data: any) {
-    const response = this.post('/overview/calendar', data);
+    const response = this.post('/overview/report_calendar', data);
     return response;
   }
 
@@ -599,7 +599,9 @@ class Application extends Api {
   };
   static questionaryLink = (data: any) => {
     const response = this.post(
-      '/health_profile/questionary_tracking/send_link',data);
+      '/health_profile/questionary_tracking/send_link',
+      data,
+    );
     return response;
   };
 }
