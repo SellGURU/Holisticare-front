@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
+import { publish } from '../../../utils/event';
 
 interface UploadTestProps {
   memberId: any;
@@ -152,16 +153,17 @@ console.log(files);
           <div className="w-full mt-6 flex justify-center">
             <div
               onClick={() => {
-                Application.questionaryLink({})
-                  .then((res) => {
-                    const url = res.data['Personal Information'];
-                    if (url) {
-                      window.open(url, '_blank');
-                    }
-                  })
-                  .catch((err) => {
-                    console.error('Error fetching the link:', err);
-                  });
+                publish('QuestionaryTrackingCall', {});
+                // Application.questionaryLink({})
+                //   .then((res) => {
+                //     const url = res.data['Personal Information'];
+                //     if (url) {
+                //       window.open(url, '_blank');
+                //     }
+                //   })
+                //   .catch((err) => {
+                //     console.error('Error fetching the link:', err);
+                //   });
               }}
               className="text-Primary-DeepTeal cursor-pointer text-[12px] underline"
             >

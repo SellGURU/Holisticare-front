@@ -108,7 +108,8 @@ export const ComboBar = () => {
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const [updated, setUpdated] = useState(false);
   subscribe('QuestionaryTrackingCall', () => {
-    setUpdated(true);
+    // setUpdated(true);
+    handleItemClick('Questionary Tracking');
   });
   const handleItemClick = (name: string) => {
     setActiveItem(name);
