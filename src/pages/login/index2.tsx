@@ -97,7 +97,11 @@ const Login = () => {
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
-            disabled={!formik.isValid}
+            disabled={
+              !formik.isValid ||
+              formik.values.email.length == 0 ||
+              Object.values(formik.errors).some((error) => error !== '')
+            }
             onClick={() => {
               submit();
             }}
