@@ -314,7 +314,7 @@ const GenerateCalendar: React.FC = () => {
             ))} */}
               {Object.keys(data).map((key) => {
                 return (
-                  <div key={key}>
+                  <div className="grid gap-3" key={key}>
                     {data[key].map((el: any, index: number) => {
                       return (
                         <BioMarkerRowSuggestions

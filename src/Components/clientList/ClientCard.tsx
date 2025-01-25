@@ -83,7 +83,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           }}
           className="flex"
         >
-          <div className="w-[72px] h-[72px]  rounded-full object-cover relative">
+          <div className="w-[72px] h-[72px] border border-Primary-DeepTeal  rounded-full object-cover relative">
             <img
               className="w-full h-full rounded-full"
               onError={(e: any) => {

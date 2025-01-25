@@ -9,7 +9,7 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import MainTopBar from '../../Components/MainTopBar';
 import * as yup from 'yup';
 import YoupValidation from '../../validation';
-import { BeatLoader } from 'react-spinners';
+import SpinnerLoader from '../../Components/SpinnerLoader';
 const AddClient = () => {
   const formik = useFormik({
     initialValues: {
@@ -375,13 +375,15 @@ const AddClient = () => {
                     onClick={submit}
                   >
                     {isLoading ? (
-                      <div className="">
-                        <BeatLoader size={5} color="#ffffff"></BeatLoader>
-                      </div>
+                      <> <SpinnerLoader></SpinnerLoader>
+                           Add Client
+                      </>
+                        
                     ) : (
                       <>
                         <img src="./icons/tick-square.svg" alt="" />
                         Add Client
+                   
                       </>
                     )}
                   </ButtonPrimary>
