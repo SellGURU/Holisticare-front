@@ -14,32 +14,6 @@ type Message = {
   unread_count: number;
 };
 
-// const messages: Message[] = [
-//   {
-//     id: 1,
-//     sender: 'Sarah Thompson',
-//     content: 'There are many variations of messages that we can show you...',
-//     date: '2024/03/02',
-//     read: false,
-//   },
-//   {
-//     id: 2,
-//     sender: 'John Doe',
-//     content:
-//       'There are many variations of messages that we can show you  There are many variations of messages that we can show youThere are many variations of messages that we can show youThere are many variations of messages that we can show youThere are many variations of messages that we can show youThere are many variations of messages that we can show you',
-//     date: '2024/03/02',
-//     read: true,
-//   },
-
-//   {
-//     id: 3,
-//     sender: 'Emil Thompson',
-//     content: 'There are many variations of messages that we can show you...',
-//     date: '2024/03/02',
-//     read: false,
-//   },
-//   // Add more messages as needed
-// ];
 interface MessageListProps {
   isMessages?: boolean;
 }
@@ -83,8 +57,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   //     return colors[Math.floor(Math.random() * colors.length)];
   //   };
 
-  const handleClick = (id: string, username: string) => {
+  const handleClickMessage = (id: string, username: string) => {
     navigate(`?id=${id}&username=${username}`);
+  };
+  const handleClickAgainMessage = () => {
+    navigate(``);
   };
 
   return (
@@ -143,9 +120,12 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                         : message.user_id,
                     );
                     if (expandedMessage === message.user_id) {
-                      navigate(``);
+                      handleClickAgainMessage();
                     } else {
-                      handleClick(message.user_id.toString(), message.Username);
+                      handleClickMessage(
+                        message.user_id.toString(),
+                        message.Username,
+                      );
                     }
                   }}
                   className={`mb-5 cursor-pointer ${expandedMessage === message.user_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}

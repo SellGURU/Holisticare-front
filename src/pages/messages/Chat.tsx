@@ -193,6 +193,11 @@ const AiChat = () => {
                 )}
               </>
             ))}
+            {messages.length === 0 && (
+              <div className="flex items-center justify-center w-full h-full text-[28px] text-Text-Secondary">
+                No items have been selected to display the chat.
+              </div>
+            )}
           </div>
           <div className="px-2">
             <InputMentions
