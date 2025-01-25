@@ -3,12 +3,15 @@ import Sidebar from './components/SideBar';
 import SearchBox from '../../Components/SearchBox';
 // import Content from './Content';
 import Overview from './components/overView';
+import { Zappier } from './components/Zappier';
 const Setting: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Overview');
   const renderContent = () => {
     switch (activeMenu) {
       case 'Overview':
         return <Overview></Overview>;
+        case 'Zapier':
+        return <Zappier></Zappier>;
       case 'Update Your Profile':
       // return <UpdateProfileContent />;
       case 'Change Password':
