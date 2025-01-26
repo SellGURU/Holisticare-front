@@ -103,7 +103,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           alt=""
         />
         <input
-          className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Secondary"
+          className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Primary"
           type="text"
           placeholder="Write message here ..."
           value={value}
