@@ -9,10 +9,10 @@ import Badge from '../badge';
 import { publish } from '../../utils/event';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
-export const columns: ColumnDef<any>[] = [
+export const columns = (dataLength: number): ColumnDef<any>[] => [
   {
     accessorKey: 'name',
-    header: 'Client Name',
+    header: () => `Client Name (${dataLength})`,
     enableSorting: false,
 
     cell: ({ row }) => {
@@ -34,7 +34,7 @@ export const columns: ColumnDef<any>[] = [
                 }
                 alt={`${row.original?.name} image`}
               />
-              <div className="font-semibold text-nowrap flex items-center gap-3">
+              <div className="font-meidum text-xs text-Text-Primary text-nowrap flex items-center gap-3">
                 {row.original?.name || 'No Data'}
                 <FiExternalLink />
               </div>
@@ -50,7 +50,7 @@ export const columns: ColumnDef<any>[] = [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="flex justify-center ">
+        <div className="flex justify-center text-xs text-Text-Secondary ">
           {row.original?.member_id || 'No Data'}
         </div>
       );
@@ -59,9 +59,9 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'age',
     header: 'Age',
-    enableSorting: false,
+    enableSorting: true,
     cell: ({ row }) => {
-      return <div className="">{row.original?.age || '-'}</div>;
+      return <div className="text-xs text-Text-Secondary ">{row.original?.age || '-'}</div>;
     },
   },
   {
@@ -69,7 +69,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'Gender',
     enableSorting: false,
     cell: ({ row }) => {
-      return <div className="">{row.original?.sex || 'No Data'}</div>;
+      return <div className="text-xs text-Text-Secondary ">{row.original?.sex || 'No Data'}</div>;
     },
   },
   // {
@@ -101,9 +101,9 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'enroll_date',
     header: 'Enroll Date',
-    enableSorting: false,
+    enableSorting: true,
     cell: ({ row }) => {
-      return <div className="">{row.original.enroll_date || 'NO Data'}</div>;
+      return <div className="text-xs text-Text-Secondary ">{row.original.enroll_date || 'NO Data'}</div>;
     },
   },
   // {
@@ -119,7 +119,7 @@ export const columns: ColumnDef<any>[] = [
       console.log(row);
 
       return (
-        <div className="items-center justify-center  flex ">
+        <div className="items-center justify-center text-xs text-Text-Secondary   flex ">
           <Badge status={row.original.status || 'at-risk'}>
             {row.original.status || 'No Data'}
           </Badge>

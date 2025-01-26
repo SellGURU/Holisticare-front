@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 type SelectBoxProps = {
   onChange: (value: string) => void;
 };
@@ -8,9 +7,9 @@ const SelectBox: React.FC<SelectBoxProps> = ({ onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative inline-block w-[120px]">
+    <div className="relative inline-block w-[120px] font-normal">
       <select
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
         onBlur={() => setIsOpen(false)}
         onChange={(e) => {
           onChange(e.target.value);

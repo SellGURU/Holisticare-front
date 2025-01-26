@@ -45,8 +45,8 @@ const Table: React.FC<TableProps> = ({ classData }) => {
 
   const table = useReactTable({
     data,
-    columns,
-    state: {
+    columns: columns(data.length),
+        state: {
       globalFilter,
       pagination: {
         pageIndex: currentPage,
@@ -81,16 +81,16 @@ const Table: React.FC<TableProps> = ({ classData }) => {
             <table
               className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
             >
-              <thead className="text-xs text-Text-Primary">
+              <thead className="text-xs text-Text-Primary ">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr
                     key={headerGroup.id}
-                    className="text-nowrap text-Text-Primary"
+                    className="text-nowrap text-Text-Primary "
                   >
                     {headerGroup.headers.map((header, index) => (
                       <th
                         key={header.id}
-                        className={`px-3 pt-5 pb-1 text-xs  font-medium cursor-pointer `}
+                        className={`px-3 pt-5 pb-3 text-xs   font-medium cursor-pointer `}
                       >
                         <div
                           className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
@@ -118,10 +118,10 @@ const Table: React.FC<TableProps> = ({ classData }) => {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr className="text-Text-Primary space-y-7 " key={row.id}>
+                  <tr className="text-Text-Primary space-y-7  " key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td
-                        className={`px-3 py-3 text-center text-nowrap text-xs`}
+                        className={`px-3 py-3 text-center text-nowrap text-xs  `}
                         key={cell.id}
                       >
                         {flexRender(

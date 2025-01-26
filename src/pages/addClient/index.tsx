@@ -10,6 +10,7 @@ import MainTopBar from '../../Components/MainTopBar';
 import * as yup from 'yup';
 import YoupValidation from '../../validation';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import SvgIcon from '../../utils/svgIcon';
 const AddClient = () => {
   const formik = useFormik({
     initialValues: {
@@ -17,7 +18,7 @@ const AddClient = () => {
       lastName: '',
       email: '',
       age: 30,
-      gender: 'Male',
+      gender: 'unset',
     },
     validationSchema: yup.object({
       age: yup.number().min(12).max(60),
@@ -115,18 +116,19 @@ const AddClient = () => {
             <div className="w-full flex justify-center items-center h-[80vh]">
               <div className="w-[440px] h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
                 <div className="w-full flex justify-center mt-8">
-                  <img
-                    src="/icons/tick-circle.svg"
+                  <SvgIcon color='#6CC24A' src='/icons/tick-circle.svg' width='64px' height='64px'/>
+                  {/* <img
+                    src="/public/icons/tick-circle.svg"
                     className="w-[64px] h-[64px]"
                     alt=""
-                  />
+                  /> */}
                 </div>
                 <div className="mt-4">
                   <div className="text-center font-medium text-[14px] text-Text-Primary">
                     The client has been successfully saved!
                   </div>
                   <div className="flex justify-center">
-                    <div className="text-justify w-[373px] TextStyle-Headline-6 text-Text-Primary mt-2">
+                    <div className="text-justify w-[373px] text-xs text-Text-Primary mt-2">
                       To set up their profile or monitor their progress, please
                       navigate to the client’s health profile. Here, you can
                       view detailed insights and track all updates to ensure
@@ -265,7 +267,7 @@ const AddClient = () => {
                         onClick={() =>
                           formik.setFieldValue('age', formik.values.age - 1)
                         }
-                        className="w-[66px] h-[28px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border"
+                        className="w-[66px] h-[28px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
                       >
                         -
                       </div>
@@ -284,7 +286,7 @@ const AddClient = () => {
                         onClick={() =>
                           formik.setFieldValue('age', formik.values.age + 1)
                         }
-                        className="w-[66px] flex justify-center text-Primary-DeepTeal cursor-pointer items-center h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border"
+                        className="w-[66px] flex justify-center text-Primary-DeepTeal cursor-pointer items-center h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border text-[24px]"
                       >
                         +
                       </div>
