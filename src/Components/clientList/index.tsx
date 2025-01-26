@@ -217,6 +217,7 @@ const ClientList = () => {
                   Clients List
                 </div>
                 <ButtonSecondary
+                style={{borderRadius:'20px'}}
                   onClick={() => {
                     navigate('/addClient');
                   }}
