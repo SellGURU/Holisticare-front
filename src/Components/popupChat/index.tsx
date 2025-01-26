@@ -111,12 +111,12 @@ export const PopUpChat = ({
           >
             {MessageData.map((MessageDatum) => {
               console.log(MessageDatum);
-              
+
               if (MessageDatum.sender == 'user') {
                 return (
                   <>
                     <UserMsg
-                    time= {MessageDatum.time}
+                      time={MessageDatum.time}
                       info={info}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
@@ -126,7 +126,11 @@ export const PopUpChat = ({
               } else {
                 return (
                   <>
-                    <BotMsg  time= {MessageDatum.time} msg={MessageDatum.text} key={MessageDatum.id} />
+                    <BotMsg
+                      time={MessageDatum.time}
+                      msg={MessageDatum.text}
+                      key={MessageDatum.id}
+                    />
                   </>
                 );
               }

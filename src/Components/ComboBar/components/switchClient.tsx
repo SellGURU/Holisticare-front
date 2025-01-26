@@ -101,7 +101,7 @@ export const SwitchClient = () => {
   return (
     <div className="flex flex-col gap-[10px] justify-center w-full    ">
       <SearchBox
-      isHaveBorder
+        isHaveBorder
         onSearch={(search) => setSearchQuery(search)}
         placeHolder="Search for client..."
       />

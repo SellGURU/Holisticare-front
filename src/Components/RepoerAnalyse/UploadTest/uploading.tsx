@@ -83,8 +83,8 @@ const Uploading: React.FC<UploadingProps> = ({
   }, [file, memberId, onSuccess]);
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
-    
-    Application.deleteLapReport({file_id: fileToDelete.id })
+
+    Application.deleteLapReport({ file_id: fileToDelete.id })
       .then(() => {
         onCancel();
       })
@@ -111,8 +111,7 @@ const Uploading: React.FC<UploadingProps> = ({
             </div>
           </div>
           <img
-                      onClick={() => handleDeleteFile(file)}
-
+            onClick={() => handleDeleteFile(file)}
             className="cursor-pointer w-6 h-6"
             src="/icons/delete.svg"
             alt=""

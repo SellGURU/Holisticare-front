@@ -10,7 +10,7 @@ const Setting: React.FC = () => {
     switch (activeMenu) {
       case 'Overview':
         return <Overview></Overview>;
-        case 'Zapier':
+      case 'Zapier':
         return <Zappier></Zappier>;
       case 'Update Your Profile':
       // return <UpdateProfileContent />;
@@ -32,10 +32,10 @@ const Setting: React.FC = () => {
         ></SearchBox>
       </div>
       <div className="flex h-screen w-full gap-8 ">
-        <div className='fixed  '>
-        <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+        <div className="fixed  ">
+          <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
         </div>
-       
+
         <div className="mt-10 w-full pl-[200px]">{renderContent()}</div>
       </div>
     </div>

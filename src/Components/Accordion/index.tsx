@@ -58,8 +58,8 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
                     ({number})
                 </span> */}
         </div>
-        <div   className={`${isActive && 'rotate-180'} transition-transform`}>
-                <SvgIcon src='/icons/arrow-down.svg' color='#383838'/>
+        <div className={`${isActive && 'rotate-180'} transition-transform`}>
+          <SvgIcon src="/icons/arrow-down.svg" color="#383838" />
         </div>
         {/* <img
           className={`${isActive && 'rotate-180'} transition-transform`}

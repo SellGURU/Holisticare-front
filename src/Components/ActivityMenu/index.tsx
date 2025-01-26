@@ -22,7 +22,6 @@ const ActivityMenu: React.FC<ActivityMenuProps> = ({
           return (
             <>
               <div
-           
                 onClick={() => {
                   onChangeMenuAction(menu.name);
                 }}

@@ -78,7 +78,6 @@ export const Notes = () => {
                   height: '24px',
                   border: '1px solid',
                   borderColor: '#005F73',
-                
                 }}
               >
                 <div className="w-[100px] text-xs text-Primary-DeepTeal">

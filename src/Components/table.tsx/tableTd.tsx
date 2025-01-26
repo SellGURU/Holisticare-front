@@ -61,7 +61,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Age',
     enableSorting: true,
     cell: ({ row }) => {
-      return <div className="text-xs text-Text-Secondary ">{row.original?.age || '-'}</div>;
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original?.age || '-'}
+        </div>
+      );
     },
   },
   {
@@ -69,7 +73,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Gender',
     enableSorting: false,
     cell: ({ row }) => {
-      return <div className="text-xs text-Text-Secondary ">{row.original?.sex || 'No Data'}</div>;
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original?.sex || 'No Data'}
+        </div>
+      );
     },
   },
   // {
@@ -103,7 +111,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Enroll Date',
     enableSorting: true,
     cell: ({ row }) => {
-      return <div className="text-xs text-Text-Secondary ">{row.original.enroll_date || 'NO Data'}</div>;
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original.enroll_date || 'NO Data'}
+        </div>
+      );
     },
   },
   // {

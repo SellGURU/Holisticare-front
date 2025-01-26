@@ -46,7 +46,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
   const table = useReactTable({
     data,
     columns: columns(data.length),
-        state: {
+    state: {
       globalFilter,
       pagination: {
         pageIndex: currentPage,
