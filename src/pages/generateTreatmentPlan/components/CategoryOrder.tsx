@@ -182,8 +182,8 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
     if (name == 'Urinary Health') {
       return '/icons/biomarkers/Urine.svg';
     }
-    if (name == 'Metabolic and Nutritional Health') {
-      return '/icons/biomarkers/metabolism.svg';
+    if (name == 'Metabolic Health') {
+      return '/icons/biomarkers/intestine.svg';
     }
     if (name == 'Immune, Inflammation, and Hormonal Health') {
       return '/icons/biomarkers/Inflammation.svg';

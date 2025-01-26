@@ -7,6 +7,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 
 type CardData = {
   id: number;
@@ -69,6 +70,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     buttonRefrence: showModalButtonRefrence,
     close: () => {
       setShowModalIndex(null);
+      setDeleteConfirmIndex(null);
     },
   });
   const [cardData, setCardData] = useState<Array<any>>(initialCardData);
@@ -127,6 +129,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
     }
   }, [activeTreatment]);
+  console.log(deleteConfirmIndex);
+
   return (
     <>
       {cardData.length < 1 ? (
@@ -139,11 +143,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             <div className="text-xs text-Text-Primary mt-2 mb-5">
               Start creating your Holistic Plan
             </div>
-            <ButtonPrimary
+            <ButtonSecondary
               onClick={() => navigate(`/report/Generate-Holistic-Plan/${id}`)}
             >
               <img src="/icons/tick-square.svg" alt="" /> Generate New
-            </ButtonPrimary>
+            </ButtonSecondary>
           </div>
         </div>
       ) : (
@@ -232,37 +236,47 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {showModalIndex === index && (
                     <div
                       ref={showModalRefrence}
-                      className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+                      className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
                     >
-                      {/* <div
+                      <div
                         onClick={(e) => {
                           e.stopPropagation();
-                            if () {
-                              navigate(`/action-plan/edit/${id}`);
-                            }
+
+                          navigate(`/action-plan/edit/${id}`);
                         }}
                         className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                       >
                         <img src="/icons/edit-green.svg" alt="" />
                         Edit
-                      </div> */}
+                      </div>
                       <div
                         onClick={(e) => {
                           e.stopPropagation();
-
                           setDeleteConfirmIndex(index);
                         }}
-                        className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                        className="flex w-full items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                       >
                         {deleteConfirmIndex === index ? (
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteCard(index, card.t_plan_id);
-                            }}
-                            className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
-                          >
+                          <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
                             Sure?{' '}
+                            <div className="flex items-center w-full justify-end gap-[2px]">
+                              <img
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteCard(index, card.t_plan_id);
+                                }}
+                                src="/icons/confirm-tick-circle.svg"
+                                alt=""
+                              />
+                              <img
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeleteConfirmIndex(null);
+                                }}
+                                src="/icons/cansel-close-circle.svg"
+                                alt=""
+                              />
+                            </div>
                           </div>
                         ) : (
                           <>
