@@ -176,13 +176,17 @@ const AddFilter: React.FC<AddFilterProps> = ({
             borderRadius: '16px',
             width: '176px',
           }}
-          onClick={() => onClear()}
+          onClick={() => {
+            onClear();
+          }}
         >
           Clear all
         </ButtonSecondary>
         <ButtonSecondary
           style={{ width: '176px' }}
-          onClick={() => onApply(localFilters)}
+          onClick={() => {
+            onApply(localFilters), onclose;
+          }}
         >
           <img className="w-3 h-3" src="/icons/tick-square.svg" alt="" />
           Apply Filters

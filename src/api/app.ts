@@ -603,14 +603,13 @@ class Application extends Api {
   };
   static questionaryLink = (data: any) => {
     const response = this.post(
-      '/health_profile/questionary_tracking/send_link',data,
+      '/health_profile/questionary_tracking/send_link',
+      data,
     );
     return response;
   };
   static deleteLapReport = (data: any) => {
-    const response = this.post(
-      '/patients/delete_lab_report',data,
-    );
+    const response = this.post('/patients/delete_lab_report', data);
     return response;
   };
 }

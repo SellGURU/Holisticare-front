@@ -83,13 +83,15 @@ const SideMenu = () => {
                           onClick={() => {
                             changeMenu(menu);
                           }}
-                          style={{
-                            //   borderImage:
-                            //     "linear-gradient(to right, #005F73 , #6CC24A ) 1",
-
-                            borderRadius: '16px',
-                          }}
-                          className={`  border  border-Primary-EmeraldGreen w-full flex flex-col items-center text-center text-[8px]  h-sm:text-[9px] rounded-[16px]  text-white font-semibold py-2 px-4 ${
+                          // style={{
+                          //   background: `
+                          //   linear-gradient(transparent, transparent) padding-box,
+                          //   linear-gradient(to right, #005F73, #6CC24A) border-box
+                          //   `,
+                          //   border: "1px solid transparent",
+                          //   borderRadius: "16px",
+                          // }}
+                          className={`w-full flex border rounded-[20px] border-Primary-DeepTeal flex-col items-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-2 px-4 ${
                             activeMenu.name === menu.name
                               ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
                               : ''

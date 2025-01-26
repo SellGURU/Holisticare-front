@@ -14,7 +14,6 @@ import { subscribe } from '../../utils/event.ts';
 import ConfirmModal from './ConfirmModal.tsx';
 import Circleloader from '../CircleLoader/index.tsx';
 import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
-import { Clients } from '../DashBoardComponents/index.ts';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -218,6 +217,7 @@ const ClientList = () => {
                   Clients List
                 </div>
                 <ButtonSecondary
+                  style={{ borderRadius: '20px' }}
                   onClick={() => {
                     navigate('/addClient');
                   }}

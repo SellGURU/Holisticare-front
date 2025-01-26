@@ -106,14 +106,17 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
           {showFilter && (
             <AddFilter
               filters={filters}
-              onApply={(newFilters) => setFilters(newFilters)}
-              onClear={() =>
+              onApply={(newFilters) => {
+                setFilters(newFilters), setshowFilter(false);
+              }}
+              onClear={() => {
                 setFilters({
                   priority: { high: false, medium: false, low: false },
                   progress: { inProgress: false, toDo: false },
                   date: { from: null, to: null },
-                })
-              }
+                });
+                setshowFilter(false);
+              }}
               onClose={() => {
                 setshowFilter(false);
               }}

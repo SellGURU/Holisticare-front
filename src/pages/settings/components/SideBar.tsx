@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useSearchParams } from 'react-router-dom';
 type SidebarProps = {
   activeMenu: string;
   setActiveMenu: (menu: string) => void;
@@ -24,9 +24,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
     ],
     Archive: ['Surveys', 'Previous Clients'],
   };
-
+  const [, setSearchParams] = useSearchParams();
+  const handleMenuClick = (item: string) => {
+    setActiveMenu(item);
+    setSearchParams({ section: item.replace(/\s+/g, '-').toLowerCase() });
+  };
   return (
-    <div className="w-[180px] bg-transparent pt-5">
+    <div className="w-[180px] bg-transparent pt-5 ">
       <div className="space-y-8">
         {Object.entries(menuItems).map(([category, subItems]) => (
           <div key={category}>
@@ -40,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
                       ? 'text-Primary-DeepTeal font-medium'
                       : 'text-Text-Secondary'
                   }`}
-                  onClick={() => setActiveMenu(item)}
+                  onClick={() => handleMenuClick(item)}
                 >
                   {activeMenu === item && (
                     <img alt="" src="/icons/arrow-right-small.svg" />

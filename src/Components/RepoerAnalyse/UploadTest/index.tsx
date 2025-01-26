@@ -17,8 +17,8 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
-    
-    Application.deleteLapReport({file_id: fileToDelete.id })
+
+    Application.deleteLapReport({ file_id: fileToDelete.id })
       .then(() => {
         setFiles(files.filter((file) => file !== fileToDelete));
       })
@@ -29,7 +29,7 @@ const UploadTest: React.FC<UploadTestProps> = ({ memberId, onGenderate }) => {
   const handleCancelUpload = (fileToCancel: any) => {
     setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
   };
-console.log(files);
+  console.log(files);
 
   return (
     <>
@@ -115,11 +115,11 @@ console.log(files);
                       </div>
                     </div>
                     <img
-                    onClick={() => handleDeleteFile(el)}
-                    className="w-6 h-6 cursor-pointer"
-                    src="/icons/delete.svg"
-                    alt=""
-                  />
+                      onClick={() => handleDeleteFile(el)}
+                      className="w-6 h-6 cursor-pointer"
+                      src="/icons/delete.svg"
+                      alt=""
+                    />
                   </div>
                 </>
               );
@@ -133,11 +133,11 @@ console.log(files);
                     onSuccess={(fileWithId) => {
                       setFiles((prevFiles) => [...prevFiles, fileWithId]);
                       setUploadingFiles((prevUploadingFiles) =>
-                        prevUploadingFiles.filter((file) => file !== el)
+                        prevUploadingFiles.filter((file) => file !== el),
                       );
                     }}
                     onCancel={() => handleCancelUpload(el)}
-                    ></Uploading>
+                  ></Uploading>
                 </>
               );
             })}
@@ -170,8 +170,8 @@ console.log(files);
               Complete Questionnaire
             </div>
           </div>
-          {upLoadingFiles.length > 0 && (
-            <div className="flex justify-center mt-1">
+          {files.length > 0 && (
+            <div className="flex justify-center mt-5">
               <ButtonSecondary
                 onClick={() => {
                   onGenderate();

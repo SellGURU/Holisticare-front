@@ -288,10 +288,6 @@ input[type='number'] {
   display: none; /* For Chrome, Safari, and Edge */
 }
 
-.shadow-chat-input {
-  box-shadow: 4px 0px 12px 0px #cacad740;
-}
-
 ::-webkit-scrollbar {
   width: var(--sb-size);
 }
