@@ -131,7 +131,7 @@ const ForgetPassword = () => {
           </div>
           <div className="mt-8">
             <VerificationInput
-            placeholder=''
+              placeholder=""
               value={codeValue}
               onChange={(val) => {
                 setCodeValue(val);

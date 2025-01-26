@@ -116,7 +116,12 @@ const AddClient = () => {
             <div className="w-full flex justify-center items-center h-[80vh]">
               <div className="w-[440px] h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
                 <div className="w-full flex justify-center mt-8">
-                  <SvgIcon color='#6CC24A' src='/icons/tick-circle.svg' width='64px' height='64px'/>
+                  <SvgIcon
+                    color="#6CC24A"
+                    src="/icons/tick-circle.svg"
+                    width="64px"
+                    height="64px"
+                  />
                   {/* <img
                     src="/public/icons/tick-circle.svg"
                     className="w-[64px] h-[64px]"
@@ -377,15 +382,15 @@ const AddClient = () => {
                     onClick={submit}
                   >
                     {isLoading ? (
-                      <> <SpinnerLoader></SpinnerLoader>
-                           Add Client
+                      <>
+                        {' '}
+                        <SpinnerLoader></SpinnerLoader>
+                        Add Client
                       </>
-                        
                     ) : (
                       <>
                         <img src="./icons/tick-square.svg" alt="" />
                         Add Client
-                   
                       </>
                     )}
                   </ButtonPrimary>

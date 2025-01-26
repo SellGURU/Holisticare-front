@@ -56,13 +56,13 @@ const SignUp = () => {
         setIsLoading(false);
       });
   };
-  const [showPasswordModal, setshowPasswordModal] = useState(false)
+  const [showPasswordModal, setshowPasswordModal] = useState(false);
   const passwordModalRef = useRef<HTMLDivElement | null>(null);
   const closeBtn = useRef<HTMLImageElement | null>(null);
   useModalAutoClose({
-    refrence : passwordModalRef,
-    buttonRefrence:closeBtn,
-    close: ()=>setshowPasswordModal(false)
+    refrence: passwordModalRef,
+    buttonRefrence: closeBtn,
+    close: () => setshowPasswordModal(false),
   });
   return (
     <>
@@ -75,12 +75,10 @@ const SignUp = () => {
         </div>
         <div className="mt-6 grid gap-4">
           <TextField
-      
             inValid={
               formik.errors?.userName != undefined &&
               (formik.touched?.userName as boolean)
             }
-            
             errorMessage={formik.errors?.userName}
             {...formik.getFieldProps('userName')}
             placeholder="Enter your full name..."
@@ -110,19 +108,28 @@ const SignUp = () => {
               label="Password"
               type="password"
             ></TextField>
-            <img ref={closeBtn} onClick={()=>setshowPasswordModal(true)} className='w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain' src="/icons/user-navbar/info-circle.svg" alt="" />
-            {
-              showPasswordModal && (
-                <div ref={passwordModalRef} className='absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200'>
-                  <ul className='space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none'>
-                    <li>At least 8 characters.(Use Uppercase & Lowercase letters, Numbers and Special characters)</li>
-                    <li>Avoid using personal information or patterns.</li>
-                  </ul>
-                </div>
-                
-              )
-            }
-             </div>
+            <img
+              ref={closeBtn}
+              onClick={() => setshowPasswordModal(true)}
+              className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
+              src="/icons/user-navbar/info-circle.svg"
+              alt=""
+            />
+            {showPasswordModal && (
+              <div
+                ref={passwordModalRef}
+                className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
+              >
+                <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
+                  <li>
+                    At least 8 characters.(Use Uppercase & Lowercase letters,
+                    Numbers and Special characters)
+                  </li>
+                  <li>Avoid using personal information or patterns.</li>
+                </ul>
+              </div>
+            )}
+          </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
             disabled={!formik.isValid || formik.values.userName.length == 0}
