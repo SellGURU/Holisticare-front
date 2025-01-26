@@ -1,4 +1,3 @@
-import React from 'react';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 
 export const Zappier = () => {
