@@ -1,4 +1,4 @@
-export const BotMsg = ({ msg }: { msg: string }) => {
+export const BotMsg = ({ msg, time }: { msg: string, time?:string }) => {
   return (
     <div className={'flex items-start justify-start gap-1'}>
       <div>
@@ -8,10 +8,13 @@ export const BotMsg = ({ msg }: { msg: string }) => {
         />
       </div>
       <div className={'pt-2'}>
-        <div className={'flex gap-1'}>
+        <div className={'flex items-start gap-1'}>
+      
+
           <h1 className={'text-Text-Primary TextStyle-Headline-6 '}>
             AI Copilot
           </h1>
+          <p className={"text-xs text-Text-Secondary"}>{time}</p>
           {/* <p className={"TextStyle-Body-2 text-Text-Primary"}>11:46</p> */}
         </div>
         <div
