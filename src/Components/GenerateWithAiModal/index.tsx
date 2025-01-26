@@ -101,7 +101,7 @@ const GenerateWithAiModal: React.FC<GenerateWithAiModalProps> = ({
                   onSuccess(askAi);
                 }}
                 className="w-[16px] cursor-pointer"
-                src="/Themes/Aurora/icons/send.svg"
+                src="/public/icons/send.svg"
                 alt=""
               />
             </>

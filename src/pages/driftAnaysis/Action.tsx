@@ -160,7 +160,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               />
             </div>
           </div>
-          <div className="bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
+          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>

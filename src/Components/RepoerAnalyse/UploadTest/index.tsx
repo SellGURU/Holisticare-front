@@ -170,7 +170,7 @@ console.log(files);
               Complete Questionnaire
             </div>
           </div>
-          {upLoadingFiles.length > 0 && (
+          {files.length > 0 && (
             <div className="flex justify-center mt-1">
               <ButtonSecondary
                 onClick={() => {
