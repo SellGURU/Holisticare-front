@@ -1,5 +1,7 @@
-import { MessageList } from '../../Components/DashBoardComponents';
-import AiChat from './Chat';
+import {
+  MessageList,
+  MessagesChatBox,
+} from '../../Components/DashBoardComponents';
 
 export const Messages = () => {
   return (
@@ -7,7 +9,7 @@ export const Messages = () => {
       <div className="w-[315px] h-full">
         <MessageList isMessages></MessageList>
       </div>
-      <AiChat></AiChat>
+      <MessagesChatBox></MessagesChatBox>
     </div>
   );
 };

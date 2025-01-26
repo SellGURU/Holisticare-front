@@ -5,6 +5,7 @@ import Clients from './Clients';
 import Reminder from './Reminder';
 import Employes from './Employes';
 import TaskManager from './TaskManager';
+import MessagesChatBox from './MessagesChatBox';
 export {
   NumberBoxes,
   Employes,
@@ -13,4 +14,5 @@ export {
   Clients,
   Reminder,
   TaskManager,
+  MessagesChatBox,
 };

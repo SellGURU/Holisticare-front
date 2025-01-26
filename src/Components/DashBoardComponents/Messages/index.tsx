@@ -101,11 +101,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                     <div>
                       <SearchBox
                         id="searchBar"
-                        ClassName={`rounded-md w-full min-w-[100%]`}
+                        ClassName={`rounded-md w-full !min-w-[120%]`}
                         onSearch={handleSearch}
                         placeHolder="Search for users ..."
                         onBlur={() => {
-                          setshowSearch(false);
+                          // setshowSearch(false);
                         }}
                       ></SearchBox>
                     </div>
