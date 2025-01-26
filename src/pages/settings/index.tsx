@@ -22,8 +22,8 @@ const Setting: React.FC = () => {
     }
   };
   return (
-    <div className="w-full h-screen px-6 pt-8">
-      <div className="flex w-full justify-between ">
+    <div className="w-full h-screen px-6 pt-8 relative overflow-hidden">
+      <div className="flex justify-between">
         <div className="text-2xl text-Text-Primary">Setting</div>
         <SearchBox
           ClassName="rounded-lg"
@@ -32,8 +32,11 @@ const Setting: React.FC = () => {
         ></SearchBox>
       </div>
       <div className="flex h-screen w-full gap-8 ">
+        <div className='fixed  '>
         <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-        <div className="mt-10 w-full">{renderContent()}</div>
+        </div>
+       
+        <div className="mt-10 w-full pl-[200px]">{renderContent()}</div>
       </div>
     </div>
   );
