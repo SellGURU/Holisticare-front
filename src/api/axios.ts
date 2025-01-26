@@ -44,7 +44,7 @@ axios.interceptors.response.use(
       localStorage.clear();
       window.location.reload();
     }
-    if (error.response.data.detail) {
+    if (error.response.data.detail && error.response.status != 406) {
       if (
         error.response.data.detail &&
         error.response.data.detail.toLowerCase().includes('successfully')

@@ -83,6 +83,11 @@ const ForgetPassword = () => {
                   .then(() => {
                     setStep(1);
                   })
+                  .catch((res) => {
+                    if (res.detail) {
+                      formik.setFieldError('email', res.detail);
+                    }
+                  })
                   .finally(() => {
                     setIsLoading(false);
                   });
