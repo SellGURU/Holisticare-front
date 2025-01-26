@@ -146,7 +146,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                     navigate(el.url);
                   }
                 }}
-                className={`TextStyle-Button text-[#445A74] ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
+                className={`TextStyle-Button ${index== 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
               >
                 {el.name}
               </div>

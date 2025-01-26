@@ -5,17 +5,19 @@ interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   onSearch: (searchTerm: any) => void;
   placeHolder: string;
   ClassName?: string;
+  isHaveBorder ? : boolean
 }
 
 const SearchBox: React.FC<SearchBoxProps> = ({
   onSearch,
   placeHolder,
   ClassName,
+  isHaveBorder,
   ...props
 }) => {
   return (
     <div
-      className={`relative flex justify-start items-center  min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary shadow-200 py-[10px] px-4  ${ClassName}`}
+      className={`relative flex justify-start items-center   min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${ isHaveBorder? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
     >
       <img src="/icons/search.svg" alt="Search" className="w-4 h-4" />
       <input

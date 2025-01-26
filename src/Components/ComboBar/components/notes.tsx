@@ -12,8 +12,8 @@ export const Notes = () => {
     // setIsLoading(true);
     Application.getNotes({ member_id: id })
       .then((res) => {
-        if (res.data.notes) {
-          setData(res.data.notes);
+        if (res.data) {
+          setData(res.data);
         } else {
           throw new Error('Unexpected data format');
         }
@@ -26,6 +26,14 @@ export const Notes = () => {
         // setIsLoading(false);
       });
   }, [id]);
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      day: 'numeric',
+      month: 'long',
+    });
+  };
   return (
     <div className=" w-full ">
       <div className="w-full flex justify-between px-3.5 py-3">
@@ -61,14 +69,19 @@ export const Notes = () => {
             />
             <div className="flex justify-between items-center mt-2">
               <ButtonPrimary
-                ClassName="bg-backgroundColor-Main"
+                ClassName="bg-backgroundColor-Card shadow-Btn"
                 onClick={() => {
                   setShowAddNote(false);
                   setCommentText('');
                 }}
-                style={{ height: '24px' }}
+                style={{
+                  height: '24px',
+                  border: '1px solid',
+                  borderColor: '#005F73',
+                
+                }}
               >
-                <div className="w-[100px] text-xx text-Text-Primary">
+                <div className="w-[100px] text-xs text-Primary-DeepTeal">
                   Cancel
                 </div>
               </ButtonPrimary>
@@ -137,7 +150,7 @@ export const Notes = () => {
               {data?.map((el: any) => {
                 return (
                   <div className="w-full  my-2">
-                    <Accordion title={el.date}>
+                    <Accordion title={formatDate(el.date)}>
                       <div className="text-[12px] text-justify w-full">
                         {el.note}
                       </div>

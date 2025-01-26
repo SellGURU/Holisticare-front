@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import SvgIcon from '../../utils/svgIcon';
 
 interface AccordionProps {
   title: string;
@@ -57,11 +58,14 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
                     ({number})
                 </span> */}
         </div>
-        <img
+        <div   className={`${isActive && 'rotate-180'} transition-transform`}>
+                <SvgIcon src='/icons/arrow-down.svg' color='#383838'/>
+        </div>
+        {/* <img
           className={`${isActive && 'rotate-180'} transition-transform`}
           src="/icons/arrow-down.svg"
           alt=""
-        />
+        /> */}
       </div>
       <div
         ref={contentRef}

@@ -171,7 +171,7 @@ console.log(files);
             </div>
           </div>
           {files.length > 0 && (
-            <div className="flex justify-center mt-1">
+            <div className="flex justify-center mt-5">
               <ButtonSecondary
                 onClick={() => {
                   onGenderate();
