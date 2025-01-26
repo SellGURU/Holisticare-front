@@ -49,7 +49,7 @@ export const DataSyncing = () => {
                         </div>
                         <div className="text-[8px] ">
                           <div
-                            className={`rounded-full  px-2.5 py-1 text-Text-Primary flex justify-end items-center gap-1 ${
+                            className={`rounded-full select-none  px-2.5 py-1 text-Text-Primary flex justify-end items-center gap-1 ${
                               el['State'] == 'Connected'
                                 ? 'bg-[#DEF7EC]'
                                 : 'bg-[#F9DEDC]'

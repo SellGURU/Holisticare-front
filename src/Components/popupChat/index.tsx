@@ -105,15 +105,18 @@ export const PopUpChat = ({
             'w-[315px] h-[438px] bg-white border border-Gray-50 z-50 p-4 pb-0 absolute bottom-0 right-16 rounded-2xl space-y-6'
           }
         >
-          <h1 className={'TextStyle-Headline-6'}>Copilot</h1>
+          <h1 className={'TextStyle-Headline-6 text-Text-Primary'}>Copilot</h1>
           <div
             className={'w-[283px] h-[293px] overflow-y-auto overscroll-y-auto'}
           >
             {MessageData.map((MessageDatum) => {
+              console.log(MessageDatum);
+
               if (MessageDatum.sender == 'user') {
                 return (
                   <>
                     <UserMsg
+                      time={MessageDatum.time}
                       info={info}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
@@ -123,7 +126,11 @@ export const PopUpChat = ({
               } else {
                 return (
                   <>
-                    <BotMsg msg={MessageDatum.text} key={MessageDatum.id} />
+                    <BotMsg
+                      time={MessageDatum.time}
+                      msg={MessageDatum.text}
+                      key={MessageDatum.id}
+                    />
                   </>
                 );
               }

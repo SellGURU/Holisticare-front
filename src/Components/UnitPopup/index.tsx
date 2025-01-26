@@ -23,6 +23,7 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
   return (
     <>
       <div
+        ref={refrence}
         onClick={handleToggle}
         className="w-[70px] cursor-pointer select-none flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
       >
@@ -36,10 +37,7 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
         </div>
       </div>
       {isUnitOpen && (
-        <div
-          ref={refrence}
-          className="absolute select-none mt-1 w-[70px] bg-white border z-30 border-gray-200 rounded shadow-md"
-        >
+        <div className="absolute select-none mt-1 w-[70px] bg-white border z-30 border-gray-200 rounded shadow-md">
           {units.map((unit) => (
             <div
               key={unit}

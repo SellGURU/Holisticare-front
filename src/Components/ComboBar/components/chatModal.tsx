@@ -107,6 +107,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
                 return (
                   <>
                     <UserMsg
+                      time={MessageDatum.time}
                       info={info}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
@@ -116,7 +117,11 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
               } else {
                 return (
                   <>
-                    <BotMsg msg={MessageDatum.text} key={MessageDatum.id} />
+                    <BotMsg
+                      time={MessageDatum.time}
+                      msg={MessageDatum.text}
+                      key={MessageDatum.id}
+                    />
                   </>
                 );
               }

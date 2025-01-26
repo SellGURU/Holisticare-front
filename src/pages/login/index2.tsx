@@ -39,11 +39,12 @@ const Login = () => {
       })
       .catch((res) => {
         if (res.detail) {
-          if (res.detail == 'Account not found. Check your email again.') {
+          if (res.detail.includes('email')) {
             formik.setFieldError('email', res.detail);
-          }
-          if (res.detail == 'Incorrect password. Please try again.') {
+          } else if (res.detail.includes('password')) {
             formik.setFieldError('password', res.detail);
+          } else {
+            formik.setFieldError('email', res.detail);
           }
         }
       })
