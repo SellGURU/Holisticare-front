@@ -3,6 +3,7 @@ import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import SearchBox from '../../SearchBox';
 
 type Message = {
   Username: string;
@@ -22,7 +23,9 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showSearch, setshowSearch] = useState(false);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   useEffect(() => {
@@ -34,6 +37,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     Application.messagesUsersList()
       .then((res) => {
         setMessages(res.data);
+        setMessagesSearched(res.data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -44,7 +48,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     messagesUsersList();
   }, []);
 
-  const filteredMessages = messages.filter((message) =>
+  const filteredMessages = messagesSearched.filter((message) =>
     filter === 'All'
       ? true
       : filter === 'Read'
@@ -63,6 +67,17 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   const handleClickAgainMessage = () => {
     navigate(``);
   };
+  const handleSearch = (searchTerm: string) => {
+    if (!searchTerm) {
+      setMessagesSearched(messages);
+      return;
+    }
+
+    const searchResult = messages.filter((message) =>
+      message.Username.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setMessagesSearched(searchResult);
+  };
 
   return (
     <>
@@ -73,26 +88,54 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
       ) : (
         <div className="w-full h-[90%] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
           <div className="flex w-full justify-between">
-            <h2 className="text-sm text-Text-Primary font-medium">
-              {' '}
-              {isMessages ? 'Messages' : ' Recently Messages'}
-            </h2>
+            {!showSearch && (
+              <h2 className="text-sm text-Text-Primary font-medium">
+                {' '}
+                {isMessages ? 'Messages' : ' Recently Messages'}
+              </h2>
+            )}
             {isMessages && (
               <div className="flex items-center gap-1">
                 <div className="cursor-pointer">
-                  <SvgIcon
-                    width="20px"
-                    height="20px"
-                    src="/icons/search.svg"
-                    color="#005F73"
-                  />
+                  {showSearch ? (
+                    <div>
+                      <SearchBox
+                        id="searchBar"
+                        ClassName={`rounded-md w-full min-w-[100%]`}
+                        onSearch={handleSearch}
+                        placeHolder="Search for users ..."
+                        onBlur={() => {
+                          setshowSearch(false);
+                        }}
+                      ></SearchBox>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        setshowSearch(true);
+                        setTimeout(() => {
+                          document.getElementById('searchBar')?.focus();
+                        }, 200);
+                      }}
+                      className="cursor-pointer flex justify-center items-center"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/search.svg"
+                        color="#005F73"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                <img
-                  className="cursor-pointer"
-                  src="/icons/setting-2.svg"
-                  alt=""
-                />
+                {!showSearch && (
+                  <img
+                    className="cursor-pointer"
+                    src="/icons/setting-2.svg"
+                    alt=""
+                  />
+                )}
               </div>
             )}
           </div>

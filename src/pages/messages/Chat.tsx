@@ -31,7 +31,7 @@ const AiChat = () => {
   const userMessagesList = (user_id: number) => {
     Application.userMessagesList({ user_id: user_id })
       .then((res) => {
-        setMessages(res.data);
+        setMessages(res.data.reverse());
       })
       .finally(() => {
         setIsLoading(false);
@@ -116,19 +116,21 @@ const AiChat = () => {
         </div>
       ) : (
         <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
-          <div className="px-4 py-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]">
-            <div className="flex items-center gap-2 ">
-              <div className="min-w-10 h-10   rounded-full bg-blue-300   flex items-center justify-center mr-3 opacity-35">
-                {username?.substring(0, 1).toUpperCase()}
-              </div>
-              <div>
-                <div className="text-sm font-medium text-[#383838]">
-                  {username}
+          {messages.length !== 0 && (
+            <div className="px-4 py-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]">
+              <div className="flex items-center gap-2 ">
+                <div className="min-w-10 h-10   rounded-full bg-blue-300   flex items-center justify-center mr-3 opacity-35">
+                  {username?.substring(0, 1).toUpperCase()}
                 </div>
-                <div className="text-[10px] text-Text-Secondary">Offline</div>
+                <div>
+                  <div className="text-sm font-medium text-[#383838]">
+                    {username}
+                  </div>
+                  <div className="text-[10px] text-Text-Secondary">Offline</div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <div
             id="userChat"
             className="p-4 space-y-4 h-[85%] overflow-y-scroll"
@@ -199,16 +201,18 @@ const AiChat = () => {
               </div>
             )}
           </div>
-          <div className="px-2">
-            <InputMentions
-              changeBenchMarks={(val: Array<string>) => {
-                setSelectedBenchMarks(val);
-              }}
-              onChange={setInput}
-              onSubmit={handleSend}
-              value={input}
-            ></InputMentions>
-          </div>
+          {messages.length !== 0 && (
+            <div className="px-2">
+              <InputMentions
+                changeBenchMarks={(val: Array<string>) => {
+                  setSelectedBenchMarks(val);
+                }}
+                onChange={setInput}
+                onSubmit={handleSend}
+                value={input}
+              ></InputMentions>
+            </div>
+          )}
         </div>
       )}
     </>
