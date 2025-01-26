@@ -11,7 +11,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({ data }) => {
       <div className=" text-Text-Secondary text-xs absolute top-16 ">
         <span className="text-Text-Primary text-xs">Notes:</span> {data.Notes}
       </div>
-      <div className="text-xs font-medium text-Primary-DeepTeal absolute top-[150px]">
+      <div className="text-xs font-medium text-Primary-DeepTeal absolute top-[150px] select-none">
         {' '}
         {data.Based}
       </div>
