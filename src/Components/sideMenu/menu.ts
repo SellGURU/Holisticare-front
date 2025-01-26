@@ -34,6 +34,7 @@ export const menus = [
     name: 'Messages',
     icon: 'sidemenu-menu-icon-messages',
     url: '/messages',
+    active: true,
   },
   {
     name: 'Knowledge Graph',
