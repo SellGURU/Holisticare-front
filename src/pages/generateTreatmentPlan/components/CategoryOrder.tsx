@@ -86,7 +86,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   useEffect(() => {
     if (activeBio) {
       const selectedCategory = data['result_tab'].find(
-        (el: any) => el.category === activeBio.category
+        (el: any) => el.category === activeBio.category,
       );
 
       if (
@@ -152,7 +152,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   {categoryOrderData.map((el, index) => {
                     console.log(el);
                     console.log(activeBio.category);
-                    
+
                     return (
                       <>
                         <BioMarkerBox
@@ -161,7 +161,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             setActiveBio(el);
                             const old = active;
                             setActive('');
-                        
+
                             setTimeout(() => {
                               setActive(old);
                             }, 10);
@@ -337,8 +337,6 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     <>
                       <div className="w-full flex gap-2   rounded-[16px]  min-h-[30px] ">
                         {
-                          
-                          
                           <>
                             <div className="w-[220px] min-w-[220px]">
                               {data['result_tab']
@@ -348,7 +346,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                 )[0]
                                 .subcategories.map((value: any) => {
                                   console.log(data['result_tab']);
-                                  
+
                                   return (
                                     <>
                                       {value.biomarkers.map((resol: any) => {

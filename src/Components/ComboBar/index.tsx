@@ -219,7 +219,7 @@ export const ComboBar = () => {
                   'border-2 border-Orange'
                 }`}
               >
-                <SvgIcon src={el.url} width='16' height='16' color='#005F73'/>
+                <SvgIcon src={el.url} width="16" height="16" color="#005F73" />
                 {/* <img src={el.url} className={'w-5 h-5 object-cover'} /> */}
                 {
                   updated && el.name == 'Questionary Tracking' && (

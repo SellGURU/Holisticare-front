@@ -56,10 +56,12 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
         </div>
         <h1 className={'text-xs text-Text-Primary'}>{title} </h1>
         <div className="flex justify-start items-center">
-          <div className={`size-[15px] flex items-center justify-center rounded-full bg-opacity-10 ${mode==='reduction' ? " bg-[#FC5474]" : "bg-[#005F73]"}`}>
-          <img src={'/icons/' + resolveIcon()} alt="" />
+          <div
+            className={`size-[15px] flex items-center justify-center rounded-full bg-opacity-10 ${mode === 'reduction' ? ' bg-[#FC5474]' : 'bg-[#005F73]'}`}
+          >
+            <img src={'/icons/' + resolveIcon()} alt="" />
           </div>
-         
+
           <div className={'text-[10px] text-Text-Secondary ml-1'}>
             {resolveModeText()}
           </div>

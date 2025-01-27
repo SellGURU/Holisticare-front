@@ -30,15 +30,14 @@ const TextField: React.FC<TextFieldProps> = ({
     return type;
   };
 
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
-  
+
     if (type === 'email') {
       // Remove only leading spaces for email type
       const trimmedValue = value.replace(/^\s+/, '');
       // Alternatively, you can use: const trimmedValue = value.trimStart();
-  
+
       // Only proceed if trimming changed the value
       if (trimmedValue !== value) {
         const newEvent = {
@@ -48,7 +47,7 @@ const TextField: React.FC<TextFieldProps> = ({
             value: trimmedValue,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-  
+
         if (onChange) {
           onChange(newEvent);
         }
@@ -61,7 +60,7 @@ const TextField: React.FC<TextFieldProps> = ({
         return; // Do not call onChange, effectively preventing the change
       }
     }
-  
+
     // If no modifications are needed, call the original onChange handler
     if (onChange) {
       onChange(event);
@@ -77,14 +76,13 @@ const TextField: React.FC<TextFieldProps> = ({
       )}
       <div className="relative">
         <input
-        
           type={getInputType()}
           className={`w-full h-[32px] rounded-[16px] mt-1 border placeholder:text-gray-400 text-[12px] px-3 outline-none ${
             inValid ? 'border-red-500' : 'border-gray-50'
           } 
             ${type === 'password' ? 'pr-8' : ''}
             shadow-300`}
-              {...props}
+          {...props}
           onChange={handleChange}
         />
         {type === 'password' && (
