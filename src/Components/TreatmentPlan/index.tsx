@@ -238,7 +238,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       ref={showModalRefrence}
                       className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
                     >
-                      <div
+                      {/* <div
                         onClick={(e) => {
                           e.stopPropagation();
 
@@ -248,7 +248,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       >
                         <img src="/icons/edit-green.svg" alt="" />
                         Edit
-                      </div>
+                      </div> */}
                       <div
                         onClick={(e) => {
                           e.stopPropagation();

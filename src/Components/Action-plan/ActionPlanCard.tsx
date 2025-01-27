@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { useNavigate, useParams } from 'react-router-dom';
+// import { useNavigate, useParams } from 'react-router-dom';
 import TooltipText from '../TooltipText';
 // import ConfirmModal from "./sections/ConfirmModal";
 
@@ -30,8 +30,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   isActive,
 }) => {
   // const { status, title, subtitle, progress, time, cardID } = el;
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  // const navigate = useNavigate();
+  // const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
     switch (el.state) {
@@ -138,7 +138,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 />
                 Calendar
               </div> */}
-              <div
+              {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
@@ -149,7 +149,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               >
                 <img src="/icons/edit-green.svg" alt="" />
                 Edit
-              </div>
+              </div> */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
