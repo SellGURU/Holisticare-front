@@ -210,9 +210,8 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
           </li>
         ))}
       </ul>
-      {
-        tasks.length > 1 && (
-          <div className="flex justify-center items-center w-full">
+      {tasks.length > 1 && (
+        <div className="flex justify-center items-center w-full">
           <button
             onClick={() => handleClick(currentPage - 1)}
             disabled={currentPage === 1}
@@ -266,9 +265,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
             <img className="rotate-180" src="/icons/First.svg" alt="" />
           </button>
         </div>
-        )
-      }
-    
+      )}
     </div>
   );
 };

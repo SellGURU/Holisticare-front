@@ -24,8 +24,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [messagesSearched, setMessagesSearched] =
-    useState<Message[]>([]);
+  const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showSearch, setshowSearch] = useState(false);
   const [searchParams] = useSearchParams();

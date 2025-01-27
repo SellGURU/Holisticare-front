@@ -43,7 +43,6 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
     new Set(dataVal.interventions.map((el: any) => el.pillar)),
   );
   console.log(dataVal);
-  
 
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const [expanded, setExpanded] = useState<Record<string, boolean>>({});

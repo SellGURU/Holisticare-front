@@ -161,30 +161,29 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               >
                 {DeleteConfirm ? (
                   <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
-                            Sure?{' '}
-                            <div className="flex items-center w-full justify-end gap-[2px]">
-                              <img
-                               onClick={(e) => {
-                                e.stopPropagation();
-                                if (!isDisabled) {
-                                  onDelete(el.id);
-                                  setshowModal(false);
-                                }
-                              }}
-                                src="/icons/confirm-tick-circle.svg"
-                                alt=""
-                              />
-                              <img
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setshowModal(false);
-                                }}
-                                src="/icons/cansel-close-circle.svg"
-                                alt=""
-                              />
-                            </div>
-                          </div>
-                 
+                    Sure?{' '}
+                    <div className="flex items-center w-full justify-end gap-[2px]">
+                      <img
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isDisabled) {
+                            onDelete(el.id);
+                            setshowModal(false);
+                          }
+                        }}
+                        src="/icons/confirm-tick-circle.svg"
+                        alt=""
+                      />
+                      <img
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setshowModal(false);
+                        }}
+                        src="/icons/cansel-close-circle.svg"
+                        alt=""
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <img src="/icons/delete-green.svg" alt="" />
