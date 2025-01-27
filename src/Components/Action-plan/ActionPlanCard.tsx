@@ -160,18 +160,31 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
               >
                 {DeleteConfirm ? (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!isDisabled) {
-                        onDelete(el.id);
-                        setshowModal(false);
-                      }
-                    }}
-                    className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
-                  >
-                    Sure?{' '}
-                  </div>
+                  <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
+                            Sure?{' '}
+                            <div className="flex items-center w-full justify-end gap-[2px]">
+                              <img
+                               onClick={(e) => {
+                                e.stopPropagation();
+                                if (!isDisabled) {
+                                  onDelete(el.id);
+                                  setshowModal(false);
+                                }
+                              }}
+                                src="/icons/confirm-tick-circle.svg"
+                                alt=""
+                              />
+                              <img
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setshowModal(false);
+                                }}
+                                src="/icons/cansel-close-circle.svg"
+                                alt=""
+                              />
+                            </div>
+                          </div>
+                 
                 ) : (
                   <>
                     <img src="/icons/delete-green.svg" alt="" />
