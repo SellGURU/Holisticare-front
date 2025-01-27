@@ -562,7 +562,7 @@ class Application extends Api {
   };
 
   static messagesUsersList = () => {
-    const response = this.post('/messages/users_list', {});
+    const response = this.post('/messages/client_list', {});
     return response;
   };
   static sendMessage = (data: any) => {

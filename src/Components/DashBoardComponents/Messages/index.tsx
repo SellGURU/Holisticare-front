@@ -86,7 +86,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="w-full h-[90%] overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+        <div className="w-full h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
           <div className="flex w-full justify-between">
             {!showSearch && (
               <h2 className="text-sm text-Text-Primary font-medium">
@@ -180,7 +180,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                     <div className="border-b border-Boarder pb-2">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
-                          <div className="text-[10px] text-Text-Primary">
+                          <div className="text-[10px] font-medium text-Text-Primary">
                             {message.Username}
                           </div>
                           {expandedMessage === message.user_id && (

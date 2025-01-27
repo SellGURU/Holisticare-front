@@ -21,7 +21,7 @@ const DashBoard = () => {
     <>
       <div className="px-6 py-10">
         <NumberBoxes reports={[]}></NumberBoxes>
-        <div className="w-full mt-4 grid gap-4 grid-cols-4">
+        <div className="w-full  mt-4 grid gap-4 grid-cols-4">
           <MessageList />
           <div className="col-span-2 grid gap-4">
             <TaskManager Filters={filters} />

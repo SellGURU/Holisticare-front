@@ -33,6 +33,8 @@ const Clients = () => {
         console.error('Error fetching tasks:', error);
       });
   }, []);
+  console.log(currentClients);
+
   return (
     <>
       <div className="w-full h-[320px] relative overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
@@ -41,12 +43,12 @@ const Clients = () => {
             Recently added Clients
           </h2>
           <div className="text-xs font-medium text-Text-Secondary">
-            Last update:2025/1/18
+            Last update: 2025/1/18
           </div>
         </div>
         <table className="w-full table-auto mt-6 ">
           <thead>
-            <tr className="text-left text-xs font-medium text-Text-Secondary border-b border-[#005F731A]">
+            <tr className="text-left text-xs font-medium text-Text-Primary border-b border-[#005F731A]">
               <th className="pb-2">Name</th>
               <th className="pb-2 pl-10">ID</th>
               <th className="pb-2">Gender</th>
@@ -56,16 +58,19 @@ const Clients = () => {
           </thead>
           <tbody>
             {currentClients.map((client) => (
-              <tr key={client.ID} className="border-b">
-                <td className="py-2 flex items-center">
-                  <img
-                    src={
-                      client.picture ||
-                      `https://ui-avatars.com/api/?name=${client.name}`
-                    }
-                    alt={`${client.name}'s avatar`}
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
+              <tr key={client.ID} className="border-b text-Text-Secondary">
+                <td className="py-2 flex items-center ">
+                  <div className="rounded-full border border-Primary-EmeraldGreen p-[2px] mr-2 w-8 h-8 flex items-center justify-center">
+                    <img
+                      src={
+                        client.picture ||
+                        `https://ui-avatars.com/api/?name=${client.name}`
+                      }
+                      alt={`${client.name}'s avatar`}
+                      className="rounded-full"
+                    />
+                  </div>
+
                   <span className="text-xs">{client.name}</span>
                 </td>
                 <td className="py-2 text-xs">{client.ID}</td>
@@ -73,7 +78,9 @@ const Clients = () => {
                 <td className="py-2 text-xs">{client['Enroll Date']}</td>
                 <td className="py-2 text-xs">
                   <CircularProgressBar
-                    percentage={client.progress}
+                    startColor="#E742EB"
+                    endColor="#3D70F1"
+                    percentage={client.progress || 0}
                   ></CircularProgressBar>
                 </td>
               </tr>
@@ -88,17 +95,44 @@ const Clients = () => {
           >
             <img src="/icons/First.svg" alt="" />
           </button>
-          {pageNumbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => handleClick(number)}
-              className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
-                currentPage === number ? 'bg-[#005F73] text-white' : 'bg-white'
-              }`}
-            >
-              {number}
-            </button>
-          ))}
+
+          {pageNumbers.map((number) => {
+            if (pageNumbers.length <= 3) {
+              return (
+                <button
+                  key={number}
+                  onClick={() => handleClick(number)}
+                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
+                    currentPage === number
+                      ? 'bg-[#005F73] text-white'
+                      : 'bg-white'
+                  }`}
+                >
+                  {number}
+                </button>
+              );
+            } else if (
+              number === currentPage ||
+              number === currentPage - 1 ||
+              number === currentPage + 1
+            ) {
+              return (
+                <button
+                  key={number}
+                  onClick={() => handleClick(number)}
+                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
+                    currentPage === number
+                      ? 'bg-[#005F73] text-white'
+                      : 'bg-white'
+                  }`}
+                >
+                  {number}
+                </button>
+              );
+            }
+            return null;
+          })}
+
           <button
             onClick={() => handleClick(currentPage + 1)}
             disabled={currentPage === pageNumbers.length}

@@ -51,7 +51,7 @@ const Employes: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Employes</h2>
 
-        <ButtonPrimary size="small">view all</ButtonPrimary>
+        <ButtonPrimary size="small">view all <img src="/icons/arrow-right-white.svg" alt="" /></ButtonPrimary>
       </div>
       <ul className="space-y-3 max-h-[283px] overflow-auto">
         {Employees.map((employee, index) => (
