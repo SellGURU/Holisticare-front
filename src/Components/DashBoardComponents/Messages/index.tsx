@@ -18,12 +18,14 @@ type Message = {
 interface MessageListProps {
   isMessages?: boolean;
 }
+
 const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
+  const [messagesSearched, setMessagesSearched] =
+    useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showSearch, setshowSearch] = useState(false);
   const [searchParams] = useSearchParams();
@@ -55,12 +57,15 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
         ? message.is_read
         : !message.is_read,
   );
-  //   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
+  const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
 
-  //   const getRandomColor = () => {
-  //     return colors[Math.floor(Math.random() * colors.length)];
-  //   };
-
+  const getColorForUsername = (username: string): string => {
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
   const handleClickMessage = (id: string, username: string) => {
     navigate(`?id=${id}&username=${username}`);
   };
@@ -78,7 +83,13 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     );
     setMessagesSearched(searchResult);
   };
-
+  const hexToRGBA = (hex: string, opacity: number = 1) => {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
   return (
     <>
       {isLoading ? (
@@ -174,7 +185,19 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                   className={`mb-5 cursor-pointer ${expandedMessage === message.user_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}
                 >
                   <div className="flex justify-between ">
-                    <div className="min-w-10 h-10   rounded-full bg-blue-300   flex items-center justify-center mr-3 opacity-35">
+                    <div
+                      style={{
+                        backgroundColor: hexToRGBA(
+                          getColorForUsername(message.Username),
+                          0.2,
+                        ),
+                        color: hexToRGBA(
+                          getColorForUsername(message.Username),
+                          0.87,
+                        ),
+                      }}
+                      className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 "
+                    >
                       {message.Username.charAt(0)}
                     </div>
                     <div className="border-b border-Boarder pb-2">
