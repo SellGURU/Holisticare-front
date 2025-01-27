@@ -15,6 +15,7 @@ import { Questionary } from './components/Questionary.tsx';
 import { Notes } from './components/notes.tsx';
 import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
+import SvgIcon from '../../utils/svgIcon.tsx';
 // import { Tooltip } from 'react-tooltip';
 
 export const ComboBar = () => {
@@ -218,7 +219,8 @@ export const ComboBar = () => {
                   'border-2 border-Orange'
                 }`}
               >
-                <img src={el.url} className={'w-5 h-5 object-cover'} />
+                <SvgIcon src={el.url} width='16' height='16' color='#005F73'/>
+                {/* <img src={el.url} className={'w-5 h-5 object-cover'} /> */}
                 {
                   updated && el.name == 'Questionary Tracking' && (
                     <img
