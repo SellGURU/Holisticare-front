@@ -38,11 +38,12 @@ axios.interceptors.response.use(
     if (
       (error.response.status == 401 &&
         !window.location.href.includes('/login') &&
-        !window.location.href.includes('/register')) ||
+        !window.location.href.includes('/register') &&
+        !window.location.href.includes('/share')) ||
       error.response.data.detail == 'Invalid token.'
     ) {
       localStorage.clear();
-      window.location.reload();
+      // window.location.reload();
     }
     if (error.response.data.detail && error.response.status != 406) {
       if (

@@ -217,6 +217,8 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
         <>
           <DownloadModal
             onconfirm={(settingsData) => {
+              const locationAddress = window.location.pathname;
+              const routeData = locationAddress.split('/');
               if (openDownload) {
                 setDownloadingState('downloading');
                 publish('downloadCalled', settingsData);
@@ -228,6 +230,8 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                     setDownloadingState('download');
                   }, 200);
                 }, 300);
+              } else {
+                window.open('/share/' + routeData[2] + '/' + routeData[3]);
               }
               setOpenShare(false);
             }}
