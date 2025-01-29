@@ -285,7 +285,7 @@ export const DriftAnaysis = () => {
             onChange={(value) => setActiveStatus(value)}
           />
 
-          <div className="flex flex-col pr-1  max-h-[500px] w-full overflow-auto">
+          <div className="flex flex-col pr-1  max-h-[560px] w-full overflow-auto">
             {resolvedFiltersData().map((client, i) => {
               console.log(client);
 
