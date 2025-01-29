@@ -27,7 +27,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   setCardActive,
   isSwitch,
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div
       onClick={() => {
@@ -86,9 +86,12 @@ export const ClientCard: React.FC<ClientCardProps> = ({
       <div
         className={` ${isSwitch && 'hidden'} absolute right-1 bottom-1 flex flex-col gap-4`}
       >
-        <div onClick={()=>navigate(`/report/${memberID}/${name}`)} className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2">
+        <div
+          onClick={() => navigate(`/report/${memberID}/${name}`)}
+          className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2"
+        >
           {' '}
-          <SvgIcon src='/icons/export.svg' color='#005F73' />
+          <SvgIcon src="/icons/export.svg" color="#005F73" />
           {/* <img src="/icons/export.svg" alt="" /> */}
         </div>
       </div>
