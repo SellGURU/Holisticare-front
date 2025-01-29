@@ -28,11 +28,11 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="  mt-2 flex  space- bg-white border-light-border-color dark:bg-black-primary px-2   rounded-md">
+    <div className="  mt-2 flex  space- bg-white px-2   rounded-md">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="text-light-primary-text dark:text-primary-text disabled:opacity-50 px-3 dark:border-none rounded-l-lg rounded  border border-lite-main-border"
+        className="text-[#005F73] disabled:opacity-50 px-3  "
       >
         &lt;
       </button>
@@ -41,23 +41,23 @@ const Pagination: React.FC<PaginationProps> = ({
           <button
             key={index}
             onClick={() => onPageChange(page)}
-            className={`   px-3 h-[26px] w-[26px] dark:border-none dark:border-x rounded-sm  border border-lite-main-border text-[12px] text-light-primary-text dark:text-primary-text  dark:border-x-main-border py-1  ${page === currentPage ? 'bg-light-btn-pagination-active darK:bg-main-border dark:bg-dark-btn-active ' : ' dark:bg-black-primary'}`}
+            className={`   px-3 h-[24px] w-[31px] text-Text-Primary  rounded-sm  border-x border-Gray-50 flex items-center justify-center text-[12px]  py-1  ${page === currentPage ? 'bg-backgroundColor-Main ' : 'bg-white'}`}
           >
-            {page}
+            {page} 
           </button>
         ) : (
           <span
             key={index}
-            className="px-3 w-[26px] h-[26px] py-1 text-secondary-text "
+            className="px-3 w-[26px] h-[26px] py-1  "
           >
-            {page}
+            {page} 
           </span>
         ),
       )}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="text-light-primary-text dark:text-primary-text disabled:opacity-50 px-3 dark:border-none  rounded-r-lg rounded  border border-lite-main-border"
+        className="text-[#005F73] disabled:opacity-50 px-3 "
       >
         &gt;
       </button>

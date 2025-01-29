@@ -93,7 +93,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
   }, [filters, tasks]);
   const [showFilter, setshowFilter] = useState(false);
   return (
-    <div className="w-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+    <div className="w-full min-h-[328px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4 relative">
         <h2 className="text-sm font-medium">Tasks</h2>
         <div className="flex items-center gap-3">
