@@ -213,81 +213,94 @@ const AiKnowledge = () => {
 
     { name: 'Holistic Plan' },
     { name: 'Action Plan' },
-    
 
     // { name: "Generate Report" },
   ];
-  const modalRef = useRef(null)
-  const btnRef = useRef(null)
-  const [showDoc, setShowDoc] = useState(false)
-useModalAutoClose({
-  refrence : modalRef,
-  buttonRefrence : btnRef,
-  close: ()=>setShowDoc(false)
-})
+  const modalRef = useRef(null);
+  const btnRef = useRef(null);
+  const [showDoc, setShowDoc] = useState(false);
+  useModalAutoClose({
+    refrence: modalRef,
+    buttonRefrence: btnRef,
+    close: () => setShowDoc(false),
+  });
   return (
     <div className="relative text-primary-text md:flex justify-center w-full h-[90vh] md:h-[80vh] pt-5 md:pt-0 ">
       <div className=" w-full flex md:hidden items-center justify-start gap-2 text-sm font-medium text-Text-Primary">
         <img src="/icons/command-square.svg" alt="" />
         AI Knowledge
       </div>
-      <div className='pt-5 md:hidden '>
-      <ActivityMenu
-        activeMenu={activeMenu}
-        menus={menus}
-        onChangeMenuAction={(menu) => setActiveMenu(menu)}
-      ></ActivityMenu>
+      <div className="pt-5 md:hidden ">
+        <ActivityMenu
+          activeMenu={activeMenu}
+          menus={menus}
+          onChangeMenuAction={(menu) => setActiveMenu(menu)}
+        ></ActivityMenu>
       </div>
-    <div className=' w-full flex  justify-center items-start'>
-    <SigmaContainer
-        settings={sigmaSetting}
-        id="sigma-container"
-        className={' !bg-bg-color'}
-        style={{ height: window.innerHeight - 50, width: window.innerWidth }}
-      >
-        {isLoading && <Circleloader></Circleloader>}
-        <LoadGraph
-          graphData={graphData}
-          activeFilters={activeFilters}
-          isInitialLoad={isInitialLoad}
-        />
-        <GraphEvents setisLoading={setisLoading} />
-      </SigmaContainer>
-    </div>
-    
-    <div className='w-full absolute bottom-3 flex md:hidden justify-center '>
-      <ButtonSecondary onClick={()=>setShowDoc(true)} style={{width:'344px'}}> <img src="/icons/additem.svg" alt="" /> Nodes & Documents</ButtonSecondary>
-    </div>
-    {
-      showDoc ? (
-        <div className='fixed w-full inset-0 flex items-center justify-center bg-[#4E4E4E66] bg-opacity-40 backdrop-blur-[4px] px-4'>
-        <div ref={modalRef} className="bg-white h-[80vh] w-full   border-[2px] border-Gray-50 rounded-2xl p-4 shadow-600">
-          <div className=' mb-4  flex justify-between items-center text-Primary-DeepTeal text-sm font-medium'>
-          Nodes & Documents
-          <img ref={btnRef} onClick={()=>setShowDoc(false)}  src="/icons/close.svg" alt="" />
-          </div>
-          <SearchBox
-          isHaveBorder
-            ClassName="rounded-[12px]"
-            placeHolder="Search for document ..."
-            onSearch={() => {}}
-          ></SearchBox>
-            <button
-            className={
-              'mt-3 w-full border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
-            }
+      <div className=" w-full flex  justify-center items-start">
+        <SigmaContainer
+          settings={sigmaSetting}
+          id="sigma-container"
+          className={' !bg-bg-color'}
+          style={{ height: window.innerHeight - 50, width: window.innerWidth }}
+        >
+          {isLoading && <Circleloader></Circleloader>}
+          <LoadGraph
+            graphData={graphData}
+            activeFilters={activeFilters}
+            isInitialLoad={isInitialLoad}
+          />
+          <GraphEvents setisLoading={setisLoading} />
+        </SigmaContainer>
+      </div>
+
+      <div className="w-full absolute bottom-3 flex md:hidden justify-center ">
+        <ButtonSecondary
+          onClick={() => setShowDoc(true)}
+          style={{ width: '344px' }}
+        >
+          {' '}
+          <img src="/icons/additem.svg" alt="" /> Nodes & Documents
+        </ButtonSecondary>
+      </div>
+      {showDoc ? (
+        <div className="fixed w-full inset-0 flex items-center justify-center bg-[#4E4E4E66] bg-opacity-40 backdrop-blur-[4px] px-4">
+          <div
+            ref={modalRef}
+            className="bg-white h-[80vh] w-full   border-[2px] border-Gray-50 rounded-2xl p-4 shadow-600"
           >
-            <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
-            Add New Document
-          </button>
-          <div className="overflow-y-auto h-[75%]   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
-            <div className="mb-4">
-              <h3 className="text-lg text-light-secandary-text mb-2">
-                Documents
-              </h3>
-              <div className="">
-                {[...new Set(graphData?.nodes.map((e: any) => e.category2))].map(
-                  (el: any) => {
+            <div className=" mb-4  flex justify-between items-center text-Primary-DeepTeal text-sm font-medium">
+              Nodes & Documents
+              <img
+                ref={btnRef}
+                onClick={() => setShowDoc(false)}
+                src="/icons/close.svg"
+                alt=""
+              />
+            </div>
+            <SearchBox
+              isHaveBorder
+              ClassName="rounded-[12px]"
+              placeHolder="Search for document ..."
+              onSearch={() => {}}
+            ></SearchBox>
+            <button
+              className={
+                'mt-3 w-full border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
+              }
+            >
+              <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
+              Add New Document
+            </button>
+            <div className="overflow-y-auto h-[75%]   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
+              <div className="mb-4">
+                <h3 className="text-lg text-light-secandary-text mb-2">
+                  Documents
+                </h3>
+                <div className="">
+                  {[
+                    ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+                  ].map((el: any) => {
                     return (
                       <>
                         <label
@@ -331,7 +344,7 @@ useModalAutoClose({
                             {el}
                           </span>
                         </label>
-  
+
                         {/* <div className="flex mb-2 justify-start items-center">
                                               <input checked={activeFilters.includes(el)} onChange={() => {
                                                   handleButtonClick(el)
@@ -353,30 +366,28 @@ useModalAutoClose({
                                           </div> */}
                       </>
                     );
-                  },
-                )}
+                  })}
+                </div>
               </div>
             </div>
-            
           </div>
-        
         </div>
-      </div>
-      ):(
+      ) : (
         <div className=" hidden fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-text overflow-y-auto overscroll-y-auto  md:flex flex-col ">
-        <SearchBox
-          ClassName="rounded-[12px]"
-          placeHolder="Search for document ..."
-          onSearch={() => {}}
-        ></SearchBox>
-        <div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
-          <div className="mb-4">
-            <h3 className="text-lg text-light-secandary-text mb-2">
-              Documents
-            </h3>
-            <div className="ml-4">
-              {[...new Set(graphData?.nodes.map((e: any) => e.category2))].map(
-                (el: any) => {
+          <SearchBox
+            ClassName="rounded-[12px]"
+            placeHolder="Search for document ..."
+            onSearch={() => {}}
+          ></SearchBox>
+          <div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
+            <div className="mb-4">
+              <h3 className="text-lg text-light-secandary-text mb-2">
+                Documents
+              </h3>
+              <div className="ml-4">
+                {[
+                  ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+                ].map((el: any) => {
                   return (
                     <>
                       <label
@@ -442,25 +453,21 @@ useModalAutoClose({
                                         </div> */}
                     </>
                   );
-                },
-              )}
+                })}
+              </div>
             </div>
+            <div></div>
           </div>
-          <div></div>
+          <button
+            className={
+              'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
+            }
+          >
+            <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
+            Add New Document
+          </button>
         </div>
-        <button
-          className={
-            'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
-          }
-        >
-          <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
-          Add New Document
-        </button>
-      </div>
-      )
-    }
-   
-
+      )}
     </div>
   );
 };
