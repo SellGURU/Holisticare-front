@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { ActionPlanCard } from './ActionPlanCard';
 import { useNavigate, useParams } from 'react-router-dom';
 import CalenderComponent from '../CalendarComponent/CalendarComponent';
 // import CalendarData from "../../api/--moch--/data/new/Calender.json";
 import Application from '../../api/app';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
 
 // type CardData = {
 //   cardID: number;
@@ -139,14 +139,14 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                     <div className="TextStyle-Body-2 text-Text-Primary mt-2 mb-3">
                       Start creating your action plan
                     </div>
-                    <ButtonPrimary
+                    <ButtonSecondary
                       onClick={() => {
                         navigate(`/action-plan/edit/${id}/${activeAction.id}`);
                       }}
                     >
                       <img src="/icons/tick.svg" alt="" />
                       Generate Day to Day Activity
-                    </ButtonPrimary>
+                    </ButtonSecondary>
                   </div>
                 )}
               </div>
@@ -163,7 +163,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                     Start creating your action plan
                   </div>
                   <div className=" mt-6 flex w-full justify-center">
-                    <ButtonPrimary
+                    <ButtonSecondary
                       ClassName="py-[6px] px-6"
                       onClick={() => {
                         navigate('/report/Generate-Action-Plan/' + id);
@@ -171,7 +171,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                     >
                       <img src="/icons/tick.svg" alt="" />
                       Generate New
-                    </ButtonPrimary>
+                    </ButtonSecondary>
                   </div>
                 </div>
               </div>

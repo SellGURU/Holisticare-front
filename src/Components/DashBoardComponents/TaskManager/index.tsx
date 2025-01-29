@@ -210,33 +210,62 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
           </li>
         ))}
       </ul>
-      <div className="flex justify-center items-center w-full">
-        <button
-          onClick={() => handleClick(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] p-2 border-opacity-10 flex items-center justify-center cursor-pointer"
-        >
-          <img src="/icons/First.svg" alt="" />
-        </button>
-        {pageNumbers.map((number) => (
+      {tasks.length > 1 && (
+        <div className="flex justify-center items-center w-full">
           <button
-            key={number}
-            onClick={() => handleClick(number)}
-            className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
-              currentPage === number ? 'bg-[#005F73] text-white' : 'bg-white'
-            }`}
+            onClick={() => handleClick(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] p-2 border-opacity-10 flex items-center justify-center cursor-pointer"
           >
-            {number}
+            <img src="/icons/First.svg" alt="" />
           </button>
-        ))}
-        <button
-          onClick={() => handleClick(currentPage + 1)}
-          disabled={currentPage === pageNumbers.length}
-          className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] border-opacity-10 p-2 flex items-center justify-center cursor-pointer"
-        >
-          <img className="rotate-180" src="/icons/First.svg" alt="" />
-        </button>
-      </div>
+
+          {pageNumbers.map((number) => {
+            if (pageNumbers.length <= 3) {
+              return (
+                <button
+                  key={number}
+                  onClick={() => handleClick(number)}
+                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
+                    currentPage === number
+                      ? 'bg-[#005F73] text-white'
+                      : 'bg-white'
+                  }`}
+                >
+                  {number}
+                </button>
+              );
+            } else if (
+              number === currentPage ||
+              number === currentPage - 1 ||
+              number === currentPage + 1
+            ) {
+              return (
+                <button
+                  key={number}
+                  onClick={() => handleClick(number)}
+                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
+                    currentPage === number
+                      ? 'bg-[#005F73] text-white'
+                      : 'bg-white'
+                  }`}
+                >
+                  {number}
+                </button>
+              );
+            }
+            return null;
+          })}
+
+          <button
+            onClick={() => handleClick(currentPage + 1)}
+            disabled={currentPage === pageNumbers.length}
+            className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] border-opacity-10 p-2 flex items-center justify-center cursor-pointer"
+          >
+            <img className="rotate-180" src="/icons/First.svg" alt="" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

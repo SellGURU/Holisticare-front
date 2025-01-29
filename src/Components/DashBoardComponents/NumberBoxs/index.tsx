@@ -44,7 +44,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ reports }) => {
           // value={resolveValue('Total Enrollment')}
           value={Enrollment}
           title="Total Enrollment"
-          icon={'/icons/profile-tick.svg'}
+          icon={'/icons/profile-add.svg'}
         />
         <NumberBox
           mode="increase"

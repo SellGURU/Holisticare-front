@@ -30,9 +30,9 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           value={percentage}
           text={`${percentage}%`}
           styles={buildStyles({
-            textColor: '#000',
+            textColor: '#888888',
             pathColor: 'url(#gradientColors)',
-            trailColor: '#fff',
+            trailColor: '#B0B0B0',
             textSize: '24px',
           })}
         />

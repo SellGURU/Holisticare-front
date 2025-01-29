@@ -20,10 +20,10 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
   };
   const resolveIcon = () => {
     if (mode == 'increase') {
-      return 'incress.svg';
+      return 'increase.svg';
     }
     if (mode == 'added') {
-      return 'Add.svg';
+      return 'Added.svg';
     }
     return 'dicress.svg';
   };
@@ -56,7 +56,12 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
         </div>
         <h1 className={'text-xs text-Text-Primary'}>{title} </h1>
         <div className="flex justify-start items-center">
-          <img src={'./Themes/Aurora/icons/' + resolveIcon()} alt="" />
+          <div
+            className={`size-[15px] flex items-center justify-center rounded-full bg-opacity-10 ${mode === 'reduction' ? ' bg-[#FC5474]' : 'bg-[#005F73]'}`}
+          >
+            <img src={'/icons/' + resolveIcon()} alt="" />
+          </div>
+
           <div className={'text-[10px] text-Text-Secondary ml-1'}>
             {resolveModeText()}
           </div>

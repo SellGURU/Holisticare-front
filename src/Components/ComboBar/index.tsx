@@ -15,20 +15,23 @@ import { Questionary } from './components/Questionary.tsx';
 import { Notes } from './components/notes.tsx';
 import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
+import SvgIcon from '../../utils/svgIcon.tsx';
+// import { Tooltip } from 'react-tooltip';
+
 export const ComboBar = () => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
-    { name: 'Data Syncing', url: '/icons/sidbar-menu/messages.svg' },
-    { name: 'File History', url: '/icons/sidbar-menu/cloud-change.svg' },
+    { name: 'Data Syncing', url: '/icons/sidbar-menu/cloud-change.svg' },
+    { name: 'File History', url: '/icons/sidbar-menu/directbox-notif.svg' },
     {
       name: 'Questionary Tracking',
-      url: '/icons/sidbar-menu/clipboard-text.svg',
+      url: '/icons/sidbar-menu/task-square.svg',
     },
     { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
+    { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
+    { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
     { name: 'Change Client', url: '/icons/sidbar-menu/repeat.svg' },
-    { name: 'Timeline', url: '/icons/sidbar-menu/task-square.svg' },
-    { name: 'Client’s Chat History', url: '/icons/sidbar-menu/timeline.svg' },
   ];
   const [patientInfo, setPatientInfo] = useState({
     name: '',
@@ -197,37 +200,45 @@ export const ComboBar = () => {
             className={'h-[2px] w-full px-[1px] bg-green-400'}
           ></li>
           {itemList.map((el, index) => (
-            <li
-              key={index + 'el'}
-              onClick={() => {
-                if (el.name == 'Questionary Tracking') {
-                  setIsSlideOutPanel(true);
-                  setUpdated(false);
+            <>
+              <li
+                title={el.name}
+                // data-tooltip-id="tooltip"
+                // data-tooltip-content={el.name}
+                key={index}
+                onClick={() => {
+                  if (el.name == 'Questionary Tracking') {
+                    setIsSlideOutPanel(true);
+                    setUpdated(false);
+                  }
+                  handleItemClick(el.name);
+                }}
+                className={`cursor-pointer rounded-full relative border w-8 h-8 flex items-center justify-center ${
+                  updated &&
+                  el.name == 'Questionary Tracking' &&
+                  'border-2 border-Orange'
+                }`}
+              >
+                <SvgIcon src={el.url} width="16" height="16" color="#005F73" />
+                {/* <img src={el.url} className={'w-5 h-5 object-cover'} /> */}
+                {
+                  updated && el.name == 'Questionary Tracking' && (
+                    <img
+                      className="absolute top-[-4px]  right-[-3px]"
+                      src="/icons/warning.svg"
+                      alt=""
+                    />
+                  )
+                  // <div className="w-[12px] h-[12px] bg-[#FFBD59] rounded-full absolute top-[-4px]  right-[-3px]">
+                  // </div>
                 }
-                handleItemClick(el.name);
-              }}
-              className={`cursor-pointer rounded-full relative border w-8 h-8 flex items-center justify-center ${
-                updated &&
-                el.name == 'Questionary Tracking' &&
-                'border-2 border-Orange'
-              }`}
-            >
-              <img src={el.url} className={'w-5 h-5'} />
-              {
-                updated && el.name == 'Questionary Tracking' && (
-                  <img
-                    className="absolute top-[-4px]  right-[-3px]"
-                    src="/icons/warning.svg"
-                    alt=""
-                  />
-                )
-                // <div className="w-[12px] h-[12px] bg-[#FFBD59] rounded-full absolute top-[-4px]  right-[-3px]">
-                // </div>
-              }
-            </li>
+              </li>
+            </>
           ))}
         </ul>
+        {/* <Tooltip id="tooltip" place="left" /> */}
       </div>
+
       <div className={'space-y-1'}>
         <div
           className={
