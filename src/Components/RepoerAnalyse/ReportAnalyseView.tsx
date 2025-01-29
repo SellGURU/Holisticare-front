@@ -35,9 +35,13 @@ import Circleloader from '../CircleLoader';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
+  isShare?: boolean;
 }
 
-const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
+const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
+  memberID,
+  isShare,
+}) => {
   const { id } = useParams<{ id: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
   const [loading, setLoading] = useState(true);
@@ -83,10 +87,51 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
       setUserInfoData(res.data);
     });
   };
+  const fetchShareData = () => {
+    Application.getClientSummaryOutofrefsShare({
+      member_id: resolvedMemberID,
+    }).then((res) => {
+      setReferenceData(res.data);
+    });
+    Application.getClientSummaryCategoriesShare({
+      member_id: resolvedMemberID,
+    }).then((res) => {
+      setClientSummaryBoxs(res.data);
+      setISGenerateLoading(false);
+      if (res.data.categories.length == 0) {
+        setIsHaveReport(false);
+      } else {
+        setIsHaveReport(true);
+      }
+    });
+    Application.getConceringResultsShare({ member_id: resolvedMemberID }).then(
+      (res) => {
+        setConcerningResult(res.data.table);
+      },
+    );
+    Application.getOverviewtplanShare({ member_id: resolvedMemberID }).then(
+      (res) => {
+        setTreatmentPlanData(res.data);
+      },
+    );
+    Application.getCaldenderdataShare({ member_id: resolvedMemberID }).then(
+      (res) => {
+        setCalenderData(res.data);
+      },
+    );
+    Application.getPatientsInfoShare({
+      member_id: resolvedMemberID,
+    }).then((res) => {
+      setUserInfoData(res.data);
+    });
+  };
   useEffect(() => {
     setLoading(true);
-    if (resolvedMemberID != 123) {
+    if (resolvedMemberID != 123 && !isShare) {
       fetchData();
+    }
+    if (isShare) {
+      fetchShareData();
     }
   }, [resolvedMemberID]);
 
@@ -284,7 +329,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                       </>
                     )}
                   </div>
-                  <InfoToltip></InfoToltip>
+                  <InfoToltip isShare={isShare}></InfoToltip>
                 </div>
                 <div
                   className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
@@ -404,10 +449,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                 >
                   Holistic Plan
                 </div>
-                <InfoToltip mode="Treatment"></InfoToltip>
+                <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip>
                 {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
               </div>
               <TreatmentPlan
+                isShare={isShare}
                 setPrintActionPlan={(value) => {
                   setActionPlanPrint(value);
                 }}
@@ -442,6 +488,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                 Action Plan
               </div>
               <ActionPlan
+                isShare={isShare}
                 setActionPrintData={(values: any) => {
                   setHelthPlanPrint(values);
                 }}
@@ -480,6 +527,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({ memberID }) => {
                   </>
                 ) : (
                   <UploadTest
+                    isShare={isShare}
                     onGenderate={() => {
                       setISGenerateLoading(true);
                       setTimeout(() => {
