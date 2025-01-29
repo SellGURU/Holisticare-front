@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
     <>
-      <div className="w-full h-screen overflow-hidden flex justify-between items-start">
+      <div className="w-full h-screen overflow-auto flex justify-between items-start">
         <div className="hidden lg:block w-[50%] h-screen">
           <img
             src="./images/loginImage.png"
