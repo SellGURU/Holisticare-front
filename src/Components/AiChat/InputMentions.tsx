@@ -97,11 +97,11 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   return (
     <>
       <div className="w-[98%]  bg-[#E9F0F2]  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
-        <img
+        {/* <img
           className="cursor-default"
           src="/icons/attach-svgrepo-com 1.svg"
           alt=""
-        />
+        /> */}
         <input
           className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Primary"
           type="text"
@@ -124,11 +124,11 @@ const InputMentions: React.FC<InputMentionsProps> = ({
                     }}
                 ></div>             */}
         <div className="flex items-center gap-2">
-          <img
+          {/* <img
             className="cursor-pointer"
             src="/icons/smiley-o-svgrepo-com 1.svg"
             alt=""
-          />
+          /> */}
           <img
             className="cursor-pointer"
             onClick={onSubmit}

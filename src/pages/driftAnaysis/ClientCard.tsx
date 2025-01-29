@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Dispatch, SetStateAction } from 'react';
+import SvgIcon from '../../utils/svgIcon';
 
 interface ClientCardProps {
   index: number;
@@ -85,7 +86,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
       >
         <div className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2">
           {' '}
-          <img src="/icons/export.svg" alt="" />
+          <SvgIcon src='/icons/export.svg' color='#005F73' />
+          {/* <img src="/icons/export.svg" alt="" /> */}
         </div>
       </div>
     </div>
