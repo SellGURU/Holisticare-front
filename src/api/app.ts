@@ -352,6 +352,40 @@ class Application extends Api {
     const response = this.post('/overview/client_summary_outofrefs', data);
     return response;
   }
+
+  // share
+  static getClientSummaryOutofrefsShare(data: any) {
+    const response = this.post(
+      '/overview/share_report/detailed_analysis',
+      data,
+    );
+    return response;
+  }
+  static getClientSummaryCategoriesShare(data: any) {
+    const response = this.post('/overview/share_report/client_summary', data);
+    return response;
+  }
+  static getConceringResultsShare(data: any) {
+    const response = this.post(
+      '/overview/share_report/concerning_results',
+      data,
+    );
+    return response;
+  }
+
+  static getOverviewtplanShare(data: any) {
+    const response = this.post('/overview/share_report/holistic_plan', data);
+    return response;
+  }
+  static getCaldenderdataShare(data: any) {
+    const response = this.post('/overview/share_report/calendar', data);
+    return response;
+  }
+  static getPatientsInfoShare(data: any) {
+    const response = this.post('/overview/share_report/patient_data', data);
+    return response;
+  }
+  // endShare
   static getConceringResults(data: any) {
     const response = this.post('/overview/concerning_results', data);
     return response;

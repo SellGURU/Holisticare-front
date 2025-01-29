@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { DashBoard, Home, Report } from '../pages';
+import { DashBoard, Home, Report, Share } from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
 import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
@@ -81,6 +81,10 @@ const router = createBrowserRouter([
         element: <AddClient></AddClient>,
       },
     ],
+  },
+  {
+    path: '/share/:id/:name',
+    element: <Share></Share>,
   },
   {
     path: '/login',

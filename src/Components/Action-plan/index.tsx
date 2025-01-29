@@ -18,10 +18,13 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 interface ActionPlanProps {
   calenderDataUper: any;
   setActionPrintData: (data: any) => void;
+  isShare?: boolean;
 }
 
 export const ActionPlan: React.FC<ActionPlanProps> = ({
   setActionPrintData,
+  isShare,
+  calenderDataUper,
 }) => {
   const { id } = useParams<{ id: string }>();
   // const [calendarData,setCalender] = useState(calenderDataUper);
@@ -70,111 +73,131 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   });
   // const [isCalenDarGenerated,setISCalenderGenerated] = useState(false);
   useEffect(() => {
-    Application.ActionPlanBlockList({ member_id: id }).then((res) => {
-      setCardData(res.data);
-      setActionPrintData(res.data);
-      setActiveAction(
-        res.data.length > 0 ? res.data[res.data.length - 1] : null,
-      );
-      setTimeout(() => {
-        const container: any = document.getElementById('actionList');
-        if (container) {
-          container.scrollLeft = container.scrollWidth; // Set scroll to the very end
-        }
-      }, 500);
-    });
+    if (!isShare) {
+      Application.ActionPlanBlockList({ member_id: id }).then((res) => {
+        setCardData(res.data);
+        setActionPrintData(res.data);
+        setActiveAction(
+          res.data.length > 0 ? res.data[res.data.length - 1] : null,
+        );
+        setTimeout(() => {
+          const container: any = document.getElementById('actionList');
+          if (container) {
+            container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+          }
+        }, 500);
+      });
+    }
   }, []);
   return (
     <>
       <div className="flex flex-col gap-3 w-full">
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
-          {CardData.length > 0 ? (
+          {isShare ? (
             <>
-              <div
-                id="actionList"
-                className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  "
-              >
-                {CardData.map((el, i) => (
-                  <ActionPlanCard
-                    isActive={activeAction.id == el.id}
-                    onClick={() => {
-                      // setCalender(el.calendar)
-                      setActiveAction(el);
-                    }}
-                    onDelete={(id: number) => {
-                      Application.deleteActionCard({ id: el.id });
-                      setCardData(CardData.filter((card) => card.id !== id));
-                      setActiveAction(CardData[0]);
-                    }}
-                    key={i}
-                    el={el}
-                    index={i + 1}
-                  />
-                ))}
-                <div
-                  onClick={() => {
-                    navigate('/report/Generate-Action-Plan/' + id);
-                  }}
-                  className=" min-w-[218px] w-[218px] min-h-[258px] h-[258px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
-                >
-                  <div className="flex flex-col  TextStyle-Subtitle-2 ">
-                    <img className="" src="/icons/add-blue.svg" alt="" />
-                    Add New
-                  </div>
-                </div>
-              </div>
-              <div className="mt-2">
-                {activeAction != null && activeAction?.calendar?.length > 0 ? (
-                  <>
-                    <CalenderComponent
-                      data={activeAction.calendar}
-                    ></CalenderComponent>
-                  </>
-                ) : (
-                  <div className="w-full flex flex-col items-center">
-                    <img src="/icons/NoCalendar.svg" alt="" />
-                    <div className="TextStyle-Headline-4 text-Text-Primary -mt-12">
-                      No Calendar Generated Yet
-                    </div>
-                    <div className="TextStyle-Body-2 text-Text-Primary mt-2 mb-3">
-                      Start creating your action plan
-                    </div>
-                    <ButtonSecondary
-                      onClick={() => {
-                        navigate(`/action-plan/edit/${id}/${activeAction.id}`);
-                      }}
-                    >
-                      <img src="/icons/tick.svg" alt="" />
-                      Generate Day to Day Activity
-                    </ButtonSecondary>
-                  </div>
-                )}
-              </div>
+              {' '}
+              {calenderDataUper.length > 0 && (
+                <CalenderComponent data={calenderDataUper}></CalenderComponent>
+              )}
             </>
           ) : (
             <>
-              <div className=" h-[440px] flex justify-center items-center w-[242px]">
-                <div>
-                  <img src="/icons/EmptyState.svg" alt="" />
-                  <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
-                    No Action Plan Generated Yet
-                  </h5>
-                  <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
-                    Start creating your action plan
+              {CardData.length > 0 ? (
+                <>
+                  <div
+                    id="actionList"
+                    className="flex items-center h-[330px] w-full overflow-x-auto hidden-scrollbar gap-3  justify-start  p-4 mt-4  "
+                  >
+                    <>
+                      {CardData.map((el, i) => (
+                        <ActionPlanCard
+                          isActive={activeAction.id == el.id}
+                          onClick={() => {
+                            // setCalender(el.calendar)
+                            setActiveAction(el);
+                          }}
+                          onDelete={(id: number) => {
+                            Application.deleteActionCard({ id: el.id });
+                            setCardData(
+                              CardData.filter((card) => card.id !== id),
+                            );
+                            setActiveAction(CardData[0]);
+                          }}
+                          key={i}
+                          el={el}
+                          index={i + 1}
+                        />
+                      ))}
+                      <div
+                        onClick={() => {
+                          navigate('/report/Generate-Action-Plan/' + id);
+                        }}
+                        className=" min-w-[218px] w-[218px] min-h-[258px] h-[258px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                      >
+                        <div className="flex flex-col  TextStyle-Subtitle-2 ">
+                          <img className="" src="/icons/add-blue.svg" alt="" />
+                          Add New
+                        </div>
+                      </div>
+                    </>
                   </div>
-                  <div className=" mt-6 flex w-full justify-center">
-                    <ButtonSecondary
-                      ClassName="py-[6px] px-6"
-                      onClick={() => {
-                        navigate('/report/Generate-Action-Plan/' + id);
-                      }}
-                    >
-                      <img src="/icons/tick.svg" alt="" />
-                      Generate New
-                    </ButtonSecondary>
+                  <div className="mt-2">
+                    {activeAction != null &&
+                    activeAction?.calendar?.length > 0 ? (
+                      <>
+                        <CalenderComponent
+                          data={activeAction.calendar}
+                        ></CalenderComponent>
+                      </>
+                    ) : (
+                      <div className="w-full flex flex-col items-center">
+                        <img src="/icons/NoCalendar.svg" alt="" />
+                        <div className="TextStyle-Headline-4 text-Text-Primary -mt-12">
+                          No Calendar Generated Yet
+                        </div>
+                        <div className="TextStyle-Body-2 text-Text-Primary mt-2 mb-3">
+                          Start creating your action plan
+                        </div>
+                        <ButtonSecondary
+                          onClick={() => {
+                            navigate(
+                              `/action-plan/edit/${id}/${activeAction.id}`,
+                            );
+                          }}
+                        >
+                          <img src="/icons/tick.svg" alt="" />
+                          Generate Day to Day Activity
+                        </ButtonSecondary>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
+                </>
+              ) : (
+                <>
+                  <div className=" h-[440px] flex justify-center items-center w-[242px]">
+                    <div>
+                      <img src="/icons/EmptyState.svg" alt="" />
+                      <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                        No Action Plan Generated Yet
+                      </h5>
+                      <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
+                        Start creating your action plan
+                      </div>
+                      <div className=" mt-6 flex w-full justify-center">
+                        <ButtonSecondary
+                          ClassName="py-[6px] px-6"
+                          onClick={() => {
+                            navigate('/report/Generate-Action-Plan/' + id);
+                          }}
+                        >
+                          <img src="/icons/tick.svg" alt="" />
+                          Generate New
+                        </ButtonSecondary>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
