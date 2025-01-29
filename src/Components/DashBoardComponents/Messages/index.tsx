@@ -6,12 +6,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import SearchBox from '../../SearchBox';
 
 type Message = {
-  Username: string;
-  User_picture: string;
-  user_id: number;
+  name: string;
+  patient_picture: string;
+  member_id: number;
   Date: string;
   message: string;
-  is_read: boolean;
+  sender_type: string;
+  unread: boolean;
   unread_count: number;
 };
 
@@ -53,8 +54,8 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     filter === 'All'
       ? true
       : filter === 'Read'
-        ? message.is_read
-        : !message.is_read,
+        ? message.unread
+        : !message.unread,
   );
   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
 
@@ -78,7 +79,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     }
 
     const searchResult = messages.filter((message) =>
-      message.Username.toLowerCase().includes(searchTerm.toLowerCase()),
+      message.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setMessagesSearched(searchResult);
   };
@@ -115,7 +116,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                         onSearch={handleSearch}
                         placeHolder="Search for users ..."
                         onBlur={() => {
-                          // setshowSearch(false);
+                          setshowSearch(false);
                         }}
                       ></SearchBox>
                     </div>
@@ -165,54 +166,54 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
             {filteredMessages.map((message) => {
               return (
                 <li
-                  key={message.user_id}
+                  key={message.member_id}
                   onClick={() => {
                     setExpandedMessage(
-                      expandedMessage === message.user_id
+                      expandedMessage === message.member_id
                         ? null
-                        : message.user_id,
+                        : message.member_id,
                     );
-                    if (expandedMessage === message.user_id) {
+                    if (expandedMessage === message.member_id) {
                       handleClickAgainMessage();
                     } else {
                       handleClickMessage(
-                        message.user_id.toString(),
-                        message.Username,
+                        message.member_id.toString(),
+                        message.name,
                       );
                     }
                   }}
-                  className={`mb-5 cursor-pointer ${expandedMessage === message.user_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}
+                  className={`mb-5 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}
                 >
                   <div className="flex justify-between ">
                     <div
                       style={{
                         backgroundColor: hexToRGBA(
-                          getColorForUsername(message.Username),
+                          getColorForUsername(message.name),
                           0.2,
                         ),
                         color: hexToRGBA(
-                          getColorForUsername(message.Username),
+                          getColorForUsername(message.name),
                           0.87,
                         ),
                       }}
                       className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 "
                     >
-                      {message.Username.charAt(0)}
+                      {message.name.charAt(0)}
                     </div>
                     <div className="border-b border-Boarder pb-2">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
                           <div className="text-[10px] font-medium text-Text-Primary">
-                            {message.Username}
+                            {message.name}
                           </div>
-                          {expandedMessage === message.user_id && (
+                          {expandedMessage === message.member_id && (
                             <div className="text-[8px] text-Text-Secondary mt-1">
                               {message.Date}
                             </div>
                           )}
                         </div>
 
-                        {expandedMessage === message.user_id ? (
+                        {expandedMessage === message.member_id ? (
                           <div className="flex items-center gap-1">
                             <img
                               className="w-4 h-4 object-contain"
@@ -233,7 +234,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                       </div>
                       <div
                         className={`text-[10px] text-Text-Secondary   ${
-                          expandedMessage === message.user_id
+                          expandedMessage === message.member_id
                             ? ''
                             : 'line-clamp-2'
                         } `}

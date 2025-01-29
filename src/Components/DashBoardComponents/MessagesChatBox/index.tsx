@@ -11,6 +11,7 @@ type Message = {
   message_text: string;
   sender_id: number;
   replied_message_id: number | null;
+  sender_type: string;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -28,8 +29,8 @@ const MessagesChatBox = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const usernameParams = searchParams.get('username');
-  const userMessagesList = (user_id: number) => {
-    Application.userMessagesList({ user_id: user_id })
+  const userMessagesList = (member_id: number) => {
+    Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
       })
