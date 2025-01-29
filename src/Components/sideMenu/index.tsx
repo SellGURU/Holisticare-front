@@ -24,7 +24,7 @@ const SideMenu = () => {
 
   return (
     <>
-      <div className="w-[84px] flex justify-center bg-white h-screen border-Boarder border border-t-0 ">
+      <div className=" w-[250px] md:w-[84px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 ">
         <div className=" w-full mt-4 relative ">
           <div className="px-4">
             {/* <div
@@ -51,7 +51,7 @@ const SideMenu = () => {
                         changeMenu(menu);
                       }
                     }}
-                    className={`h-[48px] max-h-[48px] 2xl:h-[50px] 2xl:max-h-[50px] py-1 w-full flex flex-col justify-center items-center   text-Primary-EmeraldGreen  ${
+                    className={`h-[48px] max-h-[48px] 2xl:h-[50px] pl-6 md:pl-0 2xl:max-h-[50px] py-1 w-full flex flex-row md:flex-col md:justify-center items-center gap-x-2 text-xs  text-Primary-EmeraldGreen  ${
                       activeMenu.name === menu.name
                         ? 'border-Primary-EmeraldGreen border-r-2 bg-white shadow-drop'
                         : ''
@@ -65,8 +65,10 @@ const SideMenu = () => {
                       }`}
                     />
                     <div
-                      className={`${
-                        activeMenu.name === menu.name ? '' : 'hidden'
+                      className={`  ${
+                        activeMenu.name === menu.name
+                          ? 'text-Primary-EmeraldGreen'
+                          : ' text-Text-Secondary block md:hidden'
                       }`}
                     >
                       {menu.name}
@@ -91,7 +93,7 @@ const SideMenu = () => {
                           //   border: "1px solid transparent",
                           //   borderRadius: "16px",
                           // }}
-                          className={`w-full flex border rounded-[20px] border-Primary-DeepTeal flex-col items-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-2 px-4 ${
+                          className={`w-full flex border rounded-[20px] my-2 border-Primary-DeepTeal flex-row md:flex-col items-center gap-x-2 justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-2 px-4 ${
                             activeMenu.name === menu.name
                               ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
                               : ''
@@ -110,6 +112,15 @@ const SideMenu = () => {
                               alt=""
                             />
                           )}
+                          <div
+                            className={` text-xs font-medium block md:hidden ${
+                              activeMenu.name === menu.name
+                                ? 'text-white'
+                                : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block md:hidden'
+                            }`}
+                          >
+                            {menu.name}
+                          </div>
                           {/* <div className={`${graph.icon} ${activeMenu.name === graph.name ? 'text-white' : 'text-red-500'}`} /> */}
                           {/* { activeMenu.name === graph.name && graph.name} */}
                         </div>
