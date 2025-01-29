@@ -95,9 +95,15 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
             <>
-              {' '}
-              {calenderDataUper.length > 0 && (
-                <CalenderComponent data={calenderDataUper}></CalenderComponent>
+              {calenderDataUper && (
+                <>
+                  {' '}
+                  {calenderDataUper.length > 0 && (
+                    <CalenderComponent
+                      data={calenderDataUper}
+                    ></CalenderComponent>
+                  )}
+                </>
               )}
             </>
           ) : (

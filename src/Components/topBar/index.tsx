@@ -231,7 +231,14 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                   }, 200);
                 }, 300);
               } else {
-                window.open('/share/' + routeData[2] + '/' + routeData[3]);
+                window.open(
+                  '/share/' +
+                    routeData[2] +
+                    '/' +
+                    routeData[3] +
+                    '?setting=' +
+                    JSON.stringify(settingsData),
+                );
               }
               setOpenShare(false);
             }}
