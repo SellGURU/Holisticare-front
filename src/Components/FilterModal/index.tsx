@@ -82,7 +82,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="absolute right-0 top-10 w-[400px] bg-white rounded-[16px] shadow-800 p-4 z-50 text-Text-Primary"
+      className="absolute right-0 xs:right-6 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[300px] md:w-[400px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
     >
       <div className="space-y-6">
         {/* Header */}
@@ -99,9 +99,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
         {/* Gender Section */}
         {/* checked={gender.male}
                 onChange={(e) => setGender({ ...gender, male: e.target.checked })} */}
-        <div className="w-full flex items-start gap-[41px]  ">
-          <h3 className="text-xs font-medium ">Gender</h3>
-          <div className="flex gap-[38px]">
+        <div className="w-full flex flex-col md:flex-row items-start gap-[15px] md:gap-[41px]  ">
+          <h3 className=" text-[10px] md:text-xs font-medium ">Gender</h3>
+          <div className="flex gap-5 md:gap-[38px]">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -131,7 +131,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   </svg>
                 )}
               </div>
-              <span className="text-xs text-Text-Secondary">Male</span>
+              <span className="text-[10px] md:text-xs text-Text-Secondary">Male</span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -168,10 +168,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </div>
 
         {/* Status Section */}
-        <div className="w-full flex items-start gap-12">
+        <div className="w-full flex flex-col md:flex-row items-start gap-[15px] md:gap-12">
           <h3 className="text-xs font-medium">Status</h3>
-          <div className="flex w-full justify-between">
-            <label className="flex items-center space-x-2 cursor-pointer">
+          <div className="flex w-full flex-wrap gap-4 md:gap-0 justify-between">
+            <label className="flex  items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="normal"
@@ -277,8 +277,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </div>
 
         {/* Enroll Date Section */}
-        <div className=" w-full flex items-center gap-7">
-          <h3 className="text-xs font-medium text-nowrap">Enroll Date</h3>
+        <div className=" w-full flex flex-col md:flex-row items-start md:items-center gap-[15px] md:gap-7">
+          <h3 className="text-xs font-medium  text-nowrap">Enroll Date</h3>
           <div className="w-full flex  gap-3">
             <div className="relative">
               <DatePicker
@@ -287,7 +287,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   setEnrollDate({ ...enrollDate, from: date })
                 }
                 customInput={
-                  <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[100px] xs:w-[115px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     From {formatDate(enrollDate.from)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
@@ -300,7 +300,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 selected={enrollDate.to}
                 onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
                 customInput={
-                  <button className=" w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[100px] xs:w-[115px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     To {formatDate(enrollDate.to)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
@@ -329,7 +329,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           >
             Clear
           </button> */}
-          <ButtonPrimary style={{ width: '100%' }} onClick={handleApply}>
+          <ButtonPrimary style={{ width: '100%'}} ClassName='text-nowrap'  onClick={handleApply}>
             <img src="/icons/tick-square.svg" alt="" />
             Apply Filters
           </ButtonPrimary>
