@@ -107,15 +107,15 @@ const AddClient = () => {
           <Circleloader></Circleloader>
         </div>
       )} */}
-      <div className="w-full sticky z-50 top-0 ">
+      <div className="w-full hidden md:block sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
-      <div className="w-full p-8">
+      <div className="w-full  p-3 xs:p-4 sm:p-6  md:p-8">
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
-              <div className="w-[440px] h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
-                <div className="w-full flex justify-center mt-8">
+              <div className=" w-[300px] md:w-[440px] h-[256px] md:h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
+                <div className="w-full flex justify-center mt-4 md:mt-8">
                   <SvgIcon
                     color="#6CC24A"
                     src="/icons/tick-circle.svg"
@@ -129,19 +129,20 @@ const AddClient = () => {
                   /> */}
                 </div>
                 <div className="mt-4">
-                  <div className="text-center font-medium text-[14px] text-Text-Primary">
+                  <div className="text-center font-medium text-xs md:text-[14px] text-Text-Primary">
                     The client has been successfully saved!
                   </div>
                   <div className="flex justify-center">
-                    <div className="text-justify w-[373px] text-xs text-Text-Primary mt-2">
+                    <div className="text-justify w-[250px] md:w-[373px] text-[10px] md:text-xs text-Text-Primary mt-2">
                       To set up their profile or monitor their progress, please
                       navigate to the client’s health profile. Here, you can
                       view detailed insights and track all updates to ensure
                       their wellness journey is progressing smoothly.
                     </div>
                   </div>
-                  <div className="flex gap-1 w-full justify-between items-center px-8 mt-4">
+                  <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
+                    size='small'
                       onClick={() => {
                         setIsAdded(false);
                         formik.resetForm();
@@ -149,10 +150,11 @@ const AddClient = () => {
                       }}
                       outLine
                     >
-                      <img src={'/icons/add-blue.svg'} className={'h-5 h-5'} />
-                      <div className="w-[140px]">Add Another Client</div>
+                      <img src={'/icons/add-blue.svg'} className={'md:w-5 md:h-5 h-4 w-4'} />
+                      <div className=" text-nowrap text-[10px] md:text-xs md:w-[140px] ">Add Another Client</div>
                     </ButtonPrimary>
                     <ButtonPrimary
+                    size='small'
                       onClick={() => {
                         navigate(
                           '/report/' +
@@ -163,8 +165,8 @@ const AddClient = () => {
                         );
                       }}
                     >
-                      <img src={'/icons/tick.svg'} className={'h-5 '} />
-                      <div className="w-[140px]">Develop Health Plan</div>
+                      <img src={'/icons/tick.svg'} className={' md:w-5 md:h-5  h-4 w-4'} />
+                      <div className=" text-nowrap text-[10px] md:text-xs   md:w-[140px]">Develop Health Plan</div>
                     </ButtonPrimary>
                   </div>
                 </div>
@@ -189,10 +191,10 @@ const AddClient = () => {
               </div>
             </div>
 
-            <div className="flex justify-center w-full">
-              <div className="max-w-[460px] w-full grid gap-4">
-                <div className="w-full flex justify-between items-start h-[50px] overflow-visible">
-                  <div className="w-[220px]">
+            <div className="flex justify-center w-full overflow-hidden">
+              <div className="max-w-[460px] h-full max-h-[460px] overflow-x-hidden overflow-y-auto w-full grid gap-4">
+                <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:h-[50px] overflow-hidden md:overflow-visible">
+                  <div className=" w-full md:w-[220px]">
                     <TextField
                       type="text"
                       {...formik.getFieldProps('firstName')}
@@ -201,7 +203,7 @@ const AddClient = () => {
                       placeholder="Enter client’s first name..."
                     />
                   </div>
-                  <div className="w-[220px]">
+                  <div className=" w-full md:w-[220px]">
                     <TextField
                       type="text"
                       {...formik.getFieldProps('lastName')}
@@ -210,15 +212,15 @@ const AddClient = () => {
                     />
                   </div>
                 </div>
-                <div className="w-full flex justify-between items-start h-[50px] overflow-visible">
-                  <div className="relative h-[28px] overflow-visible">
+                <div className="w-full flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
+                  <div className="relative md:h-[28px] overflow-visible">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Gender
                     </label>
                     <div
                       ref={selectButRef}
-                      onClick={() => setShowSelect(true)}
-                      className={`w-[219px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
+                      onClick={() => setShowSelect(!showSelect)}
+                      className={` w-[260px] xs:w-[344px] md:w-[219px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
                     >
                       {formik.values.gender !== 'unset' ? (
                         <div className="text-[12px] text-Text-Primary">
@@ -263,7 +265,7 @@ const AddClient = () => {
                       </div>
                     )}
                   </div>
-                  <div>
+                  <div className='w-full md:w-auto'>
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Age
                     </label>
@@ -272,11 +274,11 @@ const AddClient = () => {
                         onClick={() =>
                           formik.setFieldValue('age', formik.values.age - 1)
                         }
-                        className="w-[66px] h-[28px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
+                        className=" w-full md:w-[66px] h-[28px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
                       >
                         -
                       </div>
-                      <div className="w-[88px] h-[28px] bg-backgroundColor-Card border border-gray-50">
+                      <div className=" w-full md:w-[88px] h-[28px] bg-backgroundColor-Card border border-gray-50">
                         <input
                           {...formik.getFieldProps('age')}
                           value={Number(formik.values.age)}
@@ -291,7 +293,7 @@ const AddClient = () => {
                         onClick={() =>
                           formik.setFieldValue('age', formik.values.age + 1)
                         }
-                        className="w-[66px] flex justify-center text-Primary-DeepTeal cursor-pointer items-center h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border text-[24px]"
+                        className=" w-full md:w-[66px] flex justify-center text-Primary-DeepTeal cursor-pointer items-center h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border text-[24px]"
                       >
                         +
                       </div>

@@ -74,7 +74,7 @@ const Home = () => {
               Clinic Longevity 1
             </div>
             <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
-              Clinic.Longevity@gmail.com
+              Clinic.Longevity@gmail.com aaaaaa
             </div>
             <div className="px-4">
               <div className="w-full h-[0.5px] my-2  bg-[#E2F1F8]"></div>
