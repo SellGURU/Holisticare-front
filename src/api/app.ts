@@ -354,35 +354,35 @@ class Application extends Api {
   }
 
   // share
-  static getClientSummaryOutofrefsShare(data: any) {
+  static getClientSummaryOutofrefsShare(data: any,key:any) {
     const response = this.post(
-      '/overview/share_report/detailed_analysis',
+      '/overview/share_report/detailed_analysis?unique_key='+key,
       data,
     );
     return response;
   }
-  static getClientSummaryCategoriesShare(data: any) {
-    const response = this.post('/overview/share_report/client_summary', data);
+  static getClientSummaryCategoriesShare(data: any,key:any) {
+    const response = this.post('/overview/share_report/client_summary?unique_key='+key, data);
     return response;
   }
-  static getConceringResultsShare(data: any) {
+  static getConceringResultsShare(data: any,key:any) {
     const response = this.post(
-      '/overview/share_report/concerning_results',
+      '/overview/share_report/concerning_results?unique_key='+key,
       data,
     );
     return response;
   }
 
-  static getOverviewtplanShare(data: any) {
-    const response = this.post('/overview/share_report/holistic_plan', data);
+  static getOverviewtplanShare(data: any,key:any) {
+    const response = this.post('/overview/share_report/holistic_plan?unique_key='+key, data);
     return response;
   }
-  static getCaldenderdataShare(data: any) {
-    const response = this.post('/overview/share_report/calendar', data);
+  static getCaldenderdataShare(data: any,key:any) {
+    const response = this.post('/overview/share_report/calendar?unique_key='+key, data);
     return response;
   }
-  static getPatientsInfoShare(data: any) {
-    const response = this.post('/overview/share_report/patient_data', data);
+  static getPatientsInfoShare(data: any,key:any) {
+    const response = this.post('/overview/share_report/patient_data?unique_key='+key, data);
     return response;
   }
   // endShare
@@ -646,6 +646,13 @@ class Application extends Api {
     const response = this.post('/patients/delete_lab_report', data);
     return response;
   };
+
+  static getMemberId = (key:string) => {
+    const response = this.post("/overview/get_member_id",{
+       unique_key:key
+    })
+    return response
+  }
 }
 
 export default Application;
