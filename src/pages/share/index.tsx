@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react';
 import Application from '../../api/app';
 
 const Share = () => {
-  const { id } = useParams<{ id: string}>();
-  const [memberId,setMemberId] = useState<string>("123")
+  const { id } = useParams<{ id: string }>();
+  const [memberId, setMemberId] = useState<string>('123');
   useEffect(() => {
     Application.getMemberId(id as string).then((res) => {
-      setMemberId(res.data.member_id)
-    })
-  },[])
+      setMemberId(res.data.member_id);
+    });
+  }, []);
 
   return (
     <>
@@ -21,8 +21,11 @@ const Share = () => {
         </div>
 
         <div className="w-full pl-[200px] fixed">
-          
-          <ReportAnalyseView memberID={Number(memberId)} uniqKey={id} isShare></ReportAnalyseView>
+          <ReportAnalyseView
+            memberID={Number(memberId)}
+            uniqKey={id}
+            isShare
+          ></ReportAnalyseView>
         </div>
       </div>
     </>

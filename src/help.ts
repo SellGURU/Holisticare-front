@@ -19,14 +19,16 @@ const blobToBase64 = (blob: any) => {
   });
 };
 
-const resolveAccesssUser = (access:Array<any>) => {
-  let keyText = ""
-  access.filter((el) =>el.checked == true).forEach((el) => {
-    keyText= keyText+decodeNameAndKey(el.name)
-  })
-  return keyText
-}
-const decodeAccessUser =(key:string) => {
+const resolveAccesssUser = (access: Array<any>) => {
+  let keyText = '';
+  access
+    .filter((el) => el.checked == true)
+    .forEach((el) => {
+      keyText = keyText + decodeNameAndKey(el.name);
+    });
+  return keyText;
+};
+const decodeAccessUser = (key: string) => {
   const data = [
     { name: 'Client Summary', checked: true },
     { name: 'Needs Focus Biomarker', checked: true },
@@ -35,37 +37,34 @@ const decodeAccessUser =(key:string) => {
     { name: 'Action Plan', checked: true },
   ];
 
-  return data.map(item => {
-    if(
-    item.checked && isAccessNameAndKey(key,item.name)
-    ){
-      return{...item,checked:true}
-    }else {
-      return {...item,checked:false}
+  return data.map((item) => {
+    if (item.checked && isAccessNameAndKey(key, item.name)) {
+      return { ...item, checked: true };
+    } else {
+      return { ...item, checked: false };
     }
   });
+};
 
-}
+const decodeNameAndKey = (name: string) => {
+  if (name == 'Client Summary') {
+    return 'ZXCV';
+  }
+  if (name == 'Needs Focus Biomarker') {
+    return 'MNBB';
+  }
+  if (name == 'Detailed Analysis') {
+    return 'ASDF';
+  }
+  if (name == 'Holistic Plan') {
+    return 'LKJH';
+  }
+  if (name == 'Action Plan') {
+    return 'RTYU';
+  }
+};
+const isAccessNameAndKey = (key: string, name: string) => {
+  return key.includes(decodeNameAndKey(name) as string);
+};
 
-const decodeNameAndKey =(name:string) => {
-  if(name == 'Client Summary'){
-    return "ZXCV"
-  }
-  if(name == 'Needs Focus Biomarker'){
-    return "MNBB"
-  }
-  if(name == 'Detailed Analysis'){
-    return "ASDF"
-  }
-  if(name == 'Holistic Plan'){
-    return "LKJH"
-  }
-  if(name == 'Action Plan'){
-    return "RTYU"
-  }    
-}
-const isAccessNameAndKey = (key:string,name:string) => {
-  return key.includes(decodeNameAndKey(name) as string)
-}
-
-export { useConstructor, blobToBase64 ,resolveAccesssUser,decodeAccessUser};
+export { useConstructor, blobToBase64, resolveAccesssUser, decodeAccessUser };

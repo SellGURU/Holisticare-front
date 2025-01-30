@@ -234,16 +234,15 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                 }, 300);
               } else {
                 Application.getPatientsInfo({
-                  member_id: routeData[2] ,
+                  member_id: routeData[2],
                 }).then((res) => {
-                    window.open(
-                      '/share/' +
-                        res.data.unique_key +
-                        '/' +
-                        resolveAccesssUser(settingsData),
-                    );
-
-                })
+                  window.open(
+                    '/share/' +
+                      res.data.unique_key +
+                      '/' +
+                      resolveAccesssUser(settingsData),
+                  );
+                });
               }
               setOpenShare(false);
             }}
