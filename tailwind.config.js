@@ -3,6 +3,14 @@ export default {
   darkMode: false,
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      'xs': '375px',  // Add xs breakpoint
+      'sm': '640px',  // Default Tailwind breakpoints
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       fontFamily: {
         inter: ['Inter', 'sans-serif'],

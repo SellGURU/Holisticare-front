@@ -232,7 +232,7 @@ const ClientList = () => {
                   onClick={() => {
                     setisFavorite(!isFavorite);
                   }}
-                  className={`flex items-center gap-1 text-Text-Secondary cursor-pointer text-sm`}
+                  className={` hidden  md:flex items-center gap-1 text-Text-Secondary cursor-pointer text-sm`}
                 >
                   {isFavorite ? (
                     <img
@@ -245,11 +245,11 @@ const ClientList = () => {
                   )}
                   Your favorite list
                 </div>
-                <div className="flex gap-3 relative">
-                  <div className="flex text-Text-Primary text-sm font-medium gap-2 items-center ">
+                <div className=" w-full flex gap-3 relative">
+                  <div className="flex text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
                     Sort by: <SelectBox onChange={handleFilterChange} />
                   </div>
-                  <div className="flex w-[96px] h-[32px] rounded-md ">
+                  <div className=" hidden md:flex w-[96px] h-[32px] rounded-md ">
                     <div
                       onClick={() => setActiveList('grid')}
                       className={` ${
@@ -277,6 +277,7 @@ const ClientList = () => {
                       />
                     </div>
                   </div>
+                  <div className='w-full flex justify-end gap-3 items-center'>
                   {showSearch ? (
                     <div>
                       <SearchBox
@@ -308,6 +309,7 @@ const ClientList = () => {
                     className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4 cursor-pointer"
                   >
                     <img src="/icons/filter.svg" alt="" />
+                  </div>
                   </div>
                   {showFilterModal && (
                     <FilterModal

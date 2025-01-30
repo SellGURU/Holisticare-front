@@ -42,7 +42,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
 
   return (
     <>
-      <div className="min-w-[315px]   w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
+      <div className="min-w-[315px] w-[344px]  md:w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
         {showModal && (
           <div
             ref={showModalRefrence}
@@ -83,7 +83,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           }}
           className="flex"
         >
-          <div className="w-[72px] h-[72px] border border-Primary-DeepTeal  rounded-full object-cover relative">
+          <div className=" size-[64px] md:size-[72px] border border-Primary-DeepTeal  rounded-full  relative">
             <img
               className="w-full h-full rounded-full"
               onError={(e: any) => {
@@ -105,15 +105,22 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             )}
           </div>
           <div className="pl-2 grid grid-cols-1 gap-1 ">
-            <div className="text-Text-Primary text-[14px] font-medium">
+            <div className="text-Text-Primary text-[14px] font-medium text-nowrap">
               {client.name}
             </div>
             <div className="text-Text-Secondary text-[12px]">
               {client.age} years{' '}
             </div>
-            <div className="text-Text-Secondary text-[12px]">
+            <div className="text-Text-Secondary text-[12px] text-nowrap">
               ID: {client.member_id}
             </div>
+          </div>
+          <div className="flex flex-col justify-end ml-4">
+            <ButtonPrimary  ClassName='px-1 ml-3' size="small">
+              <div className="text-[10px] flex justify-center gap-1 text-nowrap">
+                <img src="/icons/arrow-circle-down.svg" alt="" />
+                 Show More</div>
+            </ButtonPrimary>
           </div>
         </div>
         <div
@@ -125,8 +132,8 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
         >
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
-
-        <div className="mt-2 flex justify-end items-center">
+          <div>
+        <div className="mt-2 h md:flex justify-end items-center">
           {/* <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div> */}
@@ -141,7 +148,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             Health Plan
           </ButtonPrimary>
         </div>
-        <div className="w-full mt-2   flex justify-between">
+        <div className="w-full mt-2  hiddn md:flex justify-between">
           <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
             <div className="flex flex-col gap-1">
               {' '}
@@ -203,6 +210,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
               amount of KPI 01
             </div> */}
           </div>
+        </div>
         </div>
       </div>
     </>

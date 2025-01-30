@@ -58,7 +58,7 @@ const Home = () => {
           md:left-0
         `}
       >
-        <SideMenu />
+        <SideMenu onClose={()=>isMobileView && setIsMobileMenuOpen(false)} />
       </div>
 
       <div className="w-full md:pl-[84px] pt-0 pb-2 h-[100vh] overflow-y-scroll">
