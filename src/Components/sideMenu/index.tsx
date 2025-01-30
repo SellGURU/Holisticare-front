@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { menus } from './menu';
-const SideMenu = () => {
+interface sideMenuProps{
+  onClose:()=>void
+}
+const SideMenu: React.FC<sideMenuProps> = ({onClose}) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,11 +23,12 @@ const SideMenu = () => {
   const changeMenu = (menu: any) => {
     setActiveMenu(menu);
     navigate(menu.url);
+    onClose()
   };
 
   return (
     <>
-      <div className=" w-[250px] md:w-[84px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 ">
+      <div className=" w-[180px] xs:w-[250px] md:w-[84px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 ">
         <div className=" w-full mt-4 relative ">
           <div className="px-4">
             {/* <div
@@ -42,7 +46,7 @@ const SideMenu = () => {
             </div>
           </div>
           <div className="w-full">
-            <div className="mt-3">
+            <div className="mt-3 h-[380px] md:h-full overflow-y-auto">
               {menus.map((menu) => (
                 <>
                   <div
@@ -113,7 +117,7 @@ const SideMenu = () => {
                             />
                           )}
                           <div
-                            className={` text-xs font-medium block md:hidden ${
+                            className={` text-[8px] xs:text-[10px] md:text-xs font-medium block md:hidden ${
                               activeMenu.name === menu.name
                                 ? 'text-white'
                                 : ' bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent block md:hidden'
@@ -150,7 +154,7 @@ const SideMenu = () => {
                             </div>                                                                                                                 */}
             </div>
           </div>
-          <div className=" absolute bottom-3  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+          <div className=" absolute bottom-0 md:bottom-3  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
             Powered by
             <img src="/icons/poweredBy.svg" alt="" />
           </div>

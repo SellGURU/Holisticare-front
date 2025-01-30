@@ -254,7 +254,7 @@ const AiKnowledge = () => {
         </SigmaContainer>
       </div>
 
-      <div className="w-full absolute bottom-3 flex md:hidden justify-center ">
+      <div className="w-full absolute bottom-6 flex md:hidden justify-center ">
         <ButtonSecondary
           onClick={() => setShowDoc(true)}
           style={{ width: '344px' }}
@@ -292,7 +292,7 @@ const AiKnowledge = () => {
               <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
               Add New Document
             </button>
-            <div className="overflow-y-auto h-[75%]   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
+            <div className="overflow-y-auto h-[68%]   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
               <div className="mb-4">
                 <h3 className="text-lg text-light-secandary-text mb-2">
                   Documents
