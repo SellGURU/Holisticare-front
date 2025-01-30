@@ -63,14 +63,14 @@ export const menus = [
     url: '/setting',
     active: true,
   },
-  {
-    name: 'info-circle',
-    icon: 'info-circle',
-    url: '/',
-  },
-  {
-    name: 'Setting',
-    icon: 'setting',
-    url: '/setting',
-  },
+  // {
+  //   name: 'info-circle',
+  //   icon: 'info-circle',
+  //   url: '/',
+  // },
+  // {
+  //   name: 'Setting',
+  //   icon: 'setting',
+  //   url: '/setting',
+  // },
 ];

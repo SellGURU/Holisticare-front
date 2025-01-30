@@ -301,6 +301,11 @@ input[type='number'] {
   background: var(--sb-thumb-color);
   border-radius: 8px;
 }
+@media (max-width: 640px) {
+  .max-sm-absolute {
+    position: absolute;
+  }
+}
 
 @supports not selector(::-webkit-scrollbar) {
   body {
