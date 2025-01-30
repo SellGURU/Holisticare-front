@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { menus } from './menu';
-interface sideMenuProps{
-  onClose:()=>void
+interface sideMenuProps {
+  onClose: () => void;
 }
-const SideMenu: React.FC<sideMenuProps> = ({onClose}) => {
+const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,7 +23,7 @@ const SideMenu: React.FC<sideMenuProps> = ({onClose}) => {
   const changeMenu = (menu: any) => {
     setActiveMenu(menu);
     navigate(menu.url);
-    onClose()
+    onClose();
   };
 
   return (

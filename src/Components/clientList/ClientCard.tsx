@@ -116,10 +116,19 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             </div>
           </div>
           <div className="flex flex-col justify-end ml-4">
-            <ButtonPrimary onClick={()=>setIsExpanded(!isExpanded)}  ClassName='px-1 ml-3' size="small">
+            <ButtonPrimary
+              onClick={() => setIsExpanded(!isExpanded)}
+              ClassName="px-1 ml-3"
+              size="small"
+            >
               <div className="text-[10px] flex justify-center gap-1 text-nowrap">
-                <img className={`${isExpanded && 'rotate-180'}`} src="/icons/arrow-circle-down.svg" alt="" />
-                {isExpanded ? 'Show Less' : 'Show More'}</div>
+                <img
+                  className={`${isExpanded && 'rotate-180'}`}
+                  src="/icons/arrow-circle-down.svg"
+                  alt=""
+                />
+                {isExpanded ? 'Show Less' : 'Show More'}
+              </div>
             </ButtonPrimary>
           </div>
         </div>
@@ -132,37 +141,35 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
         >
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
-          <div>
-        <div className="mt-2 h md:flex justify-end items-center">
-          {/* <div className="text-Text-Secondary text-[10px] font-medium">
+        <div>
+          <div className="mt-2 h md:flex justify-end items-center">
+            {/* <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div> */}
-          <ButtonPrimary
-            onClick={() => {
-              navigate(`/report/${client.member_id}/${client.name}`);
-            }}
-            size="small"
-          >
-            {' '}
-            {/* <img src="/icons/Assign.svg" alt="" /> */}
-            <div className='text-[10px] sm:text-xs'>
-            Health Plan
-
-            </div>
-          </ButtonPrimary>
-        </div>
-        {
-          isExpanded && (
+            <ButtonPrimary
+              onClick={() => {
+                navigate(`/report/${client.member_id}/${client.name}`);
+              }}
+              size="small"
+            >
+              {' '}
+              {/* <img src="/icons/Assign.svg" alt="" /> */}
+              <div className="text-[10px] sm:text-xs">Health Plan</div>
+            </ButtonPrimary>
+          </div>
+          {isExpanded && (
             <div className="w-full mt-2 flex justify-between">
-            <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
-              <div className="flex flex-col gap-1">
-                {' '}
-                <div className=" text-[8px] sm:text-[10px] text-Text-Secondary">Enroll Date</div>
-                <div className="text-Text-Primary text-[10px] sm:text-xs">
-                  {client.enroll_date}
+              <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
+                <div className="flex flex-col gap-1">
+                  {' '}
+                  <div className=" text-[8px] sm:text-[10px] text-Text-Secondary">
+                    Enroll Date
+                  </div>
+                  <div className="text-Text-Primary text-[10px] sm:text-xs">
+                    {client.enroll_date}
+                  </div>
                 </div>
-              </div>
-              {/* <div className="flex flex-col gap-1">
+                {/* <div className="flex flex-col gap-1">
                 {" "}
                 <div className="text-[10px] text-Text-Secondary text-nowrap">
                   Last Follow-up
@@ -171,9 +178,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
                   {client.last_followup}
                 </div>
               </div> */}
-            </div>
-            <div className=" w-full flex flex-col justify-between  pl-3 py-1">
-              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+              </div>
+              <div className=" w-full flex flex-col justify-between  pl-3 py-1">
+                {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
                 <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                   <img src="/icons/client-card/Status.svg" alt="" />
                   Status
@@ -186,39 +193,37 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
                 }
              
               </div> */}
-              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
                 <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                   <img src="/icons/client-card/Weight.svg" alt="" />
                   Weight
                 </div>
                 {client.weight}
               </div> */}
-              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
                 <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                   <img src="/icons/client-card/Height.svg" alt="" />
                   Height
                 </div>
                 180 CM
               </div> */}
-              <div className="flex w-full justify-between text-Text-Primary text-[10px] sm:text-xs capitalize">
-                <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px]">
-                  <img src="/icons/client-card/Gender-man.svg" alt="" />
-                  Gender
+                <div className="flex w-full justify-between text-Text-Primary text-[10px] sm:text-xs capitalize">
+                  <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px]">
+                    <img src="/icons/client-card/Gender-man.svg" alt="" />
+                    Gender
+                  </div>
+                  {client.sex}
                 </div>
-                {client.sex}
-              </div>
-              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
                 <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
                   <img src="/icons/client-card/Status.svg" alt="" />
                   KPI 01{" "}
                 </div>
                 amount of KPI 01
               </div> */}
+              </div>
             </div>
-          </div>
-          )
-        }
-  
+          )}
         </div>
       </div>
     </>

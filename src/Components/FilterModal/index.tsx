@@ -131,7 +131,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   </svg>
                 )}
               </div>
-              <span className="text-[10px] md:text-xs text-Text-Secondary">Male</span>
+              <span className="text-[10px] md:text-xs text-Text-Secondary">
+                Male
+              </span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -329,7 +331,11 @@ const FilterModal: React.FC<FilterModalProps> = ({
           >
             Clear
           </button> */}
-          <ButtonPrimary style={{ width: '100%'}} ClassName='text-nowrap'  onClick={handleApply}>
+          <ButtonPrimary
+            style={{ width: '100%' }}
+            ClassName="text-nowrap"
+            onClick={handleApply}
+          >
             <img src="/icons/tick-square.svg" alt="" />
             Apply Filters
           </ButtonPrimary>
