@@ -61,6 +61,7 @@ export default {
         700: '0px 8px 22px -6px #18274B1F, 0px 14px 64px -4px #18274B1F ',
         800: '0px 8px 28px -6px #18274B1F, 0px 18px 88px -4px #18274B24 ',
         input: '0px 0px 4px 0px #18274B1F',
+        loginBox: '0px 0px 16px 0px #00000029',
       },
       screens: {
         'h-sm': { raw: '(min-height: 720px)' },

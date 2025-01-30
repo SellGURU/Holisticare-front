@@ -43,7 +43,7 @@ axios.interceptors.response.use(
       error.response.data.detail == 'Invalid token.'
     ) {
       localStorage.clear();
-      // window.location.reload();
+      window.location.reload();
     }
     if (error.response.data.detail && error.response.status != 406) {
       if (
