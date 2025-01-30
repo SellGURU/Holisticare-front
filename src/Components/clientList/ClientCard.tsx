@@ -38,11 +38,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
     }
   };
 
-  console.log(client);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <>
-      <div className="min-w-[315px] w-[344px]  md:w-[333px] p-4  bg-white shadow-200 rounded-[16px] relative ">
+      <div className="sm:min-w-[315px] w-full  xs:w-[344px]  md:w-[333px] p-2 sm:p-4  bg-white shadow-200 rounded-[16px] relative ">
         {showModal && (
           <div
             ref={showModalRefrence}
@@ -83,9 +83,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           }}
           className="flex"
         >
-          <div className=" size-[64px] md:size-[72px] border border-Primary-DeepTeal  rounded-full  relative">
+          <div className=" size-[48px]  xs:size-[64px] md:size-[72px] border border-Primary-DeepTeal  rounded-full  relative">
             <img
-              className="w-full h-full rounded-full"
+              className="w-full h-full rounded-full object-cover"
               onError={(e: any) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${client.name}`; // Set fallback image
               }}
@@ -105,21 +105,21 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             )}
           </div>
           <div className="pl-2 grid grid-cols-1 gap-1 ">
-            <div className="text-Text-Primary text-[14px] font-medium text-nowrap">
+            <div className="text-Text-Primary text-xs sm:text-[14px] font-medium text-nowrap">
               {client.name}
             </div>
-            <div className="text-Text-Secondary text-[12px]">
+            <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
               {client.age} years{' '}
             </div>
-            <div className="text-Text-Secondary text-[12px] text-nowrap">
+            <div className="text-Text-Secondary text-[10px] sm:text-[12px] text-nowrap">
               ID: {client.member_id}
             </div>
           </div>
           <div className="flex flex-col justify-end ml-4">
-            <ButtonPrimary  ClassName='px-1 ml-3' size="small">
+            <ButtonPrimary onClick={()=>setIsExpanded(!isExpanded)}  ClassName='px-1 ml-3' size="small">
               <div className="text-[10px] flex justify-center gap-1 text-nowrap">
-                <img src="/icons/arrow-circle-down.svg" alt="" />
-                 Show More</div>
+                <img className={`${isExpanded && 'rotate-180'}`} src="/icons/arrow-circle-down.svg" alt="" />
+                {isExpanded ? 'Show Less' : 'Show More'}</div>
             </ButtonPrimary>
           </div>
         </div>
@@ -145,72 +145,80 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           >
             {' '}
             {/* <img src="/icons/Assign.svg" alt="" /> */}
+            <div className='text-[10px] sm:text-xs'>
             Health Plan
+
+            </div>
           </ButtonPrimary>
         </div>
-        <div className="w-full mt-2  hiddn md:flex justify-between">
-          <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
-            <div className="flex flex-col gap-1">
-              {' '}
-              <div className="text-[10px] text-Text-Secondary">Enroll Date</div>
-              <div className="text-Text-Primary text-xs">
-                {client.enroll_date}
+        {
+          isExpanded && (
+            <div className="w-full mt-2 flex justify-between">
+            <div className="flex  flex-col justify-between border-r border-Gray-50 pr-3 py-1">
+              <div className="flex flex-col gap-1">
+                {' '}
+                <div className=" text-[8px] sm:text-[10px] text-Text-Secondary">Enroll Date</div>
+                <div className="text-Text-Primary text-[10px] sm:text-xs">
+                  {client.enroll_date}
+                </div>
               </div>
+              {/* <div className="flex flex-col gap-1">
+                {" "}
+                <div className="text-[10px] text-Text-Secondary text-nowrap">
+                  Last Follow-up
+                </div>
+                <div className="text-Text-Primary text-xs">
+                  {client.last_followup}
+                </div>
+              </div> */}
             </div>
-            {/* <div className="flex flex-col gap-1">
-              {" "}
-              <div className="text-[10px] text-Text-Secondary text-nowrap">
-                Last Follow-up
+            <div className=" w-full flex flex-col justify-between  pl-3 py-1">
+              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
+                  <img src="/icons/client-card/Status.svg" alt="" />
+                  Status
+                </div>
+                {
+                  client.status !== null && (
+                      <div className="bg-[#FF8082] rounded-2xl px-[9px] py-1">   {client.status}</div>
+  
+                  )
+                }
+             
+              </div> */}
+              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
+                  <img src="/icons/client-card/Weight.svg" alt="" />
+                  Weight
+                </div>
+                {client.weight}
+              </div> */}
+              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
+                  <img src="/icons/client-card/Height.svg" alt="" />
+                  Height
+                </div>
+                180 CM
+              </div> */}
+              <div className="flex w-full justify-between text-Text-Primary text-[10px] sm:text-xs capitalize">
+                <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px]">
+                  <img src="/icons/client-card/Gender-man.svg" alt="" />
+                  Gender
+                </div>
+                {client.sex}
               </div>
-              <div className="text-Text-Primary text-xs">
-                {client.last_followup}
-              </div>
-            </div> */}
-          </div>
-          <div className=" w-full flex flex-col justify-between  pl-3 py-1">
-            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
-              <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
-                <img src="/icons/client-card/Status.svg" alt="" />
-                Status
-              </div>
-              {
-                client.status !== null && (
-                    <div className="bg-[#FF8082] rounded-2xl px-[9px] py-1">   {client.status}</div>
-
-                )
-              }
-           
-            </div> */}
-            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
-              <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
-                <img src="/icons/client-card/Weight.svg" alt="" />
-                Weight
-              </div>
-              {client.weight}
-            </div> */}
-            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
-              <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
-                <img src="/icons/client-card/Height.svg" alt="" />
-                Height
-              </div>
-              180 CM
-            </div> */}
-            <div className="flex w-full justify-between text-Text-Primary text-xs capitalize">
-              <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
-                <img src="/icons/client-card/Gender-man.svg" alt="" />
-                Gender
-              </div>
-              {client.sex}
+              {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
+                <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
+                  <img src="/icons/client-card/Status.svg" alt="" />
+                  KPI 01{" "}
+                </div>
+                amount of KPI 01
+              </div> */}
             </div>
-            {/* <div className="flex w-full justify-between text-Text-Primary text-xs">
-              <div className="flex items-center gap-1 text-Text-Secondary text-[10px]">
-                <img src="/icons/client-card/Status.svg" alt="" />
-                KPI 01{" "}
-              </div>
-              amount of KPI 01
-            </div> */}
           </div>
-        </div>
+          )
+        }
+  
         </div>
       </div>
     </>

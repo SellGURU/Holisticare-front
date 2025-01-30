@@ -209,7 +209,7 @@ const ClientList = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="px-6 pt-8 ">
+        <div className=" sm:px-6 pt-8 ">
           {clientList.length > 0 ? (
             <>
               <div className="w-full flex justify-between items-center">
@@ -245,8 +245,9 @@ const ClientList = () => {
                   )}
                   Your favorite list
                 </div>
-                <div className=" w-full flex gap-3 relative">
-                  <div className="flex text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
+                <div className=' w-full sm:w-auto'>
+                <div className=" w-full flex gap-3 relative ">
+                  <div className=" w-full flex text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
                     Sort by: <SelectBox onChange={handleFilterChange} />
                   </div>
                   <div className=" hidden md:flex w-[96px] h-[32px] rounded-md ">
@@ -256,7 +257,7 @@ const ClientList = () => {
                         activeList === 'grid'
                           ? 'bg-Primary-DeepTeal'
                           : 'bg-white'
-                      }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer`}
+                      }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer sm:min-w-12`}
                     >
                       <SvgIcon
                         src="/icons/grid-1.svg"
@@ -269,7 +270,7 @@ const ClientList = () => {
                         activeList === 'list'
                           ? 'bg-Primary-DeepTeal'
                           : 'bg-white'
-                      } flex items-center w-full justify-center rounded-md rounded-l-none cursor-pointer`}
+                      } flex items-center w-full justify-center rounded-md rounded-l-none cursor-pointer sm:min-w-12`}
                     >
                       <SvgIcon
                         src="/icons/textalign-left.svg"
@@ -277,12 +278,13 @@ const ClientList = () => {
                       />
                     </div>
                   </div>
-                  <div className='w-full flex justify-end gap-3 items-center'>
+                  <div className='w-full relative  flex  justify-end gap-[6px] sm:gap-3 items-center'>
                   {showSearch ? (
-                    <div>
+                    <div className='   max-sm-absolute  w-full top-8  z-50 min-w-[260px] xs:w-[360px] rounded-2xl'>
                       <SearchBox
+                      style={{width:'100%'}}
                         id="searchBar"
-                        ClassName={`rounded-md`}
+                        ClassName={`w-full rounded-2xl sm:rounded-md`}
                         onSearch={handleSearch}
                         placeHolder="Search for Client ..."
                         onBlur={() => {
@@ -298,17 +300,17 @@ const ClientList = () => {
                           document.getElementById('searchBar')?.focus();
                         }, 200);
                       }}
-                      className="bg-backgroundColor-Secondary cursor-pointer rounded-md px-4 py-2 flex justify-center items-center shadow-100"
+                      className="bg-backgroundColor-Secondary cursor-pointer rounded-md px-[6px] xs:px-4 py-[6px] sm:py-2 flex justify-center items-center shadow-100 "
                     >
-                      <img src="/icons/search.svg" alt="" />
+                      <img className='min-h-4 min-w-4' src="/icons/search.svg" alt="" />
                     </div>
                   )}
 
                   <div
                     onClick={() => setshowFilterModal(!showFilterModal)}
-                    className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4 cursor-pointer"
+                    className="rounded-md relative bg-backgroundColor-Secondary shadow-100 py-[6px] sm:py-2 px-[6px] xs:px-4 cursor-pointer "
                   >
-                    <img src="/icons/filter.svg" alt="" />
+                    <img className='min-h-4 min-w-4' src="/icons/filter.svg" alt="" />
                   </div>
                   </div>
                   {showFilterModal && (
@@ -322,9 +324,10 @@ const ClientList = () => {
                     />
                   )}
                 </div>
+                </div>
               </div>
               {activeList == 'grid' ? (
-                <div className=" w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap">
+                <div className={` w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap ${showSearch && 'mt-10'}`}>
                   {filteredClientList.map((client: any) => {
                     return (
                       <ClientCard
