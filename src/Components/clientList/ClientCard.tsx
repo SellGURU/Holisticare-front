@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
 import Application from '../../api/app.ts';
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -38,8 +38,17 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
     }
   };
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(window.innerWidth > 768);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsExpanded(window.innerWidth > 768);
+    };
 
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <>
       <div className="sm:min-w-[315px] w-full  xs:w-[344px]  md:w-[333px] p-2 sm:p-4  bg-white shadow-200 rounded-[16px] relative ">
@@ -115,7 +124,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
               ID: {client.member_id}
             </div>
           </div>
-          <div className="flex flex-col justify-end ml-4">
+          <div className="flex md:hidden flex-col justify-end ml-4">
             <ButtonPrimary
               onClick={() => setIsExpanded(!isExpanded)}
               ClassName="px-1 ml-3"
