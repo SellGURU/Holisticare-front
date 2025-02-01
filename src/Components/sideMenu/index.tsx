@@ -46,7 +46,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             </div>
           </div>
           <div className="w-full">
-            <div className="mt-3 h-[380px] md:h-full overflow-y-auto">
+            <div className="mt-3 h-fit md:h-full overflow-y-auto" style={{height:window.innerHeight-100+"px"}}>
               {menus.map((menu) => (
                 <>
                   <div
@@ -133,6 +133,10 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                   )}
                 </>
               ))}
+              <div className=" md:hidden  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+                Powered by
+                <img src="/icons/poweredBy.svg" alt="" />
+              </div>              
               {/* <div className="py-3 flex justify-center">
                                 <img src="./icons/side-menu/dashboard.svg" alt="" />
                             </div>
@@ -154,7 +158,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                             </div>                                                                                                                 */}
             </div>
           </div>
-          <div className=" absolute bottom-0 md:bottom-3  text-[8px] text-Text-Primary font-medium flex flex-col w-full items-center gap-2">
+          <div className=" hidden  absolute bottom-0 md:bottom-3  text-[8px] text-Text-Primary font-medium md:flex flex-col w-full items-center gap-2">
             Powered by
             <img src="/icons/poweredBy.svg" alt="" />
           </div>
