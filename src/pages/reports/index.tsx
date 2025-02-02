@@ -4,16 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
 import SearchBox from '../../Components/SearchBox';
 import FilterModal from '../../Components/FilterModal';
-import Table from '../../Components/table.tsx';
+import TablePaginationInside from '../../Components/TablePaginationInside';
 
 const Reports = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState<
-    { name: string; gender: string; age: number }[]
-  >([{ name: 'Amir', gender: 'Men', age: 21 }]);
+    { No: number; name: string; gender: string; age: number }[]
+  >([{ No: 1, name: 'Amir', gender: 'Men', age: 21 }]);
   const [reportsFiltered, setReportsFiltered] = useState<
-    { name: string; gender: string; age: number }[]
-  >([{ name: 'Amir', gender: 'Men', age: 21 }]);
+    { No: number; name: string; gender: string; age: number }[]
+  >([{ No: 1, name: 'Amir', gender: 'Men', age: 21 }]);
   const [activeList, setActiveList] = useState<string>('list');
   const [showSearch, setshowSearch] = useState<boolean>(false);
   const [showFilterModal, setshowFilterModal] = useState(false);
@@ -32,6 +32,7 @@ const Reports = () => {
         <ButtonSecondary
           style={{ borderRadius: '20px' }}
           onClick={() => {
+            setReports(reports);
             navigate('/reports');
           }}
         >
@@ -115,7 +116,7 @@ const Reports = () => {
           </div>
         </div>
       </div>
-      {activeList === 'list' ? <Table classData={reportsFiltered}></Table> : ''}
+      {activeList === 'list' ? <TablePaginationInside classData={reportsFiltered}></TablePaginationInside> : ''}
     </div>
   );
 };
