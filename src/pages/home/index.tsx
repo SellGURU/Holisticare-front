@@ -59,7 +59,7 @@ const Home = () => {
         <>
           <div
             ref={refrence}
-            className="absolute right-2  w-[132px] h-[128px] border top-14 border-gray-50  shadow-200 bg-white rounded-[6px] z-[60]"
+            className="absolute right-2  w-[132px] h-[138px] border top-14 border-gray-50  shadow-200 bg-white rounded-[6px] z-[60]"
           >
             <div className="flex justify-center items-center mt-2">
               <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
