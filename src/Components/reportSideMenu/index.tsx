@@ -1,14 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { subscribe } from '../../utils/event'; // Adjust the import path as needed
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
+import { decodeAccessUser } from '../../help';
 interface ReportSideMenuProps {
   onClose: () => void;
+  isShare?: boolean;
 }
-const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
+const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
+  onClose,
+  isShare,
+}) => {
   const menuItems = [
     'Client Summary',
-    'Needs Focus Biomarkers',
+    'Needs Focus Biomarker',
     'Detailed Analysis',
     // "Concerning Result",
     'Holistic Plan',
@@ -20,7 +27,43 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
   const [activeImg, setactiveImg] = useState(1);
   const [disableClicks, setDisableClicks] = useState(false);
   const location = useLocation();
-
+  const [accessManager, setAccessManager] = useState<Array<any>>([
+    {
+      name: 'Client Summary',
+      checked: true,
+    },
+    {
+      name: 'Needs Focus Biomarker',
+      checked: true,
+    },
+    {
+      name: 'Detailed Analysis',
+      checked: true,
+    },
+    {
+      name: 'Holistic Plan',
+      checked: true,
+    },
+    {
+      name: 'Action Plan',
+      checked: true,
+    },
+  ]);
+  const resolveSteps = () => {
+    if (!isShare) {
+      return menuItems;
+    } else {
+      console.log(
+        accessManager.filter((val) => val.name == 'Action Plan')[0].checked,
+      );
+      return menuItems.filter(
+        (el) =>
+          accessManager.filter((val) => val.name == el)[0]?.checked == true,
+      );
+      // return menuItems.filter((el) => accessManager.filter((val) =>val.name == el)[0].checked ==true)
+    }
+  };
+  const { name } = useParams<{ name: string }>();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const handleNoReportAvailable = () => {
@@ -55,6 +98,11 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
       behavior: 'instant',
     });
   };
+  useEffect(() => {
+    if (isShare) {
+      setAccessManager(decodeAccessUser(name as string));
+    }
+  }, [name]);
   return (
     <div className="h-full max-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 relative">
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
@@ -88,7 +136,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
         </div>
         <div className="mt-2 flex flex-col gap-1">
           {ActiveLayer === 'menu' &&
-            menuItems.map((item, index) => (
+            resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
                   if (!disableClicks) {
@@ -107,7 +155,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
             ))}
           {ActiveLayer === 'layer' && (
             <div className="flex flex-col gap-2">
-              {menuItems.map((item, index) => (
+              {resolveSteps().map((item, index) => (
                 <div
                   onClick={() => {
                     if (!disableClicks) {

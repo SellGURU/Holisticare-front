@@ -202,7 +202,10 @@ const AddClient = () => {
             </div>
 
             <div className="flex justify-center w-full overflow-auto">
-              <div style={{height:window.innerHeight-100+"px"}}   className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0">
+              <div
+                style={{ height: window.innerHeight - 100 + 'px' }}
+                className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
+              >
                 <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
                   <div className=" w-full md:w-[220px]">
                     <TextField

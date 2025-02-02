@@ -57,46 +57,46 @@ const Home = () => {
           Clinic Longevity 1
         </div>
         {visibleClinic && (
-   <>
-   <div
-     ref={refrence}
-     className="absolute right-2  w-[132px] h-fit border top-14 border-gray-50  shadow-200 bg-white rounded-[6px] z-[60]"
-   >
-     <div className="flex justify-center items-center mt-2">
-       <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
-         <img
-           className="w-full h-full object-contain"
-           src="/icons/topbar-logo2.svg"
-           alt=""
-         />
-       </div>
-     </div>
-     <div className="text-[10px] mt-1 text-center text-Text-Primary">
-       Clinic Longevity 1
-     </div>
-     <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
-       Clinic.Longevity@gmail.com aaaaaa
-     </div>
-     <div className="px-4">
-       <div className="w-full h-[0.5px] my-2  bg-[#E2F1F8]"></div>
-     </div>
-     <div className="flex justify-center">
-       <div
-         onClick={() => {
-           Auth.logOut();
-           localStorage.clear();
-           window.location.reload();
-         }}
-         className="flex gap-1 cursor-pointer"
-       >
-         <img src="./icons/logout.svg" alt="" />
-         <div className="text-[12px] font-medium text-Primary-DeepTeal">
-           Log out
-         </div>
-       </div>
-     </div>
-   </div>
- </>
+          <>
+            <div
+              ref={refrence}
+              className="absolute right-2  w-[132px] h-fit border top-14 border-gray-50  shadow-200 bg-white rounded-[6px] z-[60]"
+            >
+              <div className="flex justify-center items-center mt-2">
+                <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
+                  <img
+                    className="w-full h-full object-contain"
+                    src="/icons/topbar-logo2.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div className="text-[10px] mt-1 text-center text-Text-Primary">
+                Clinic Longevity 1
+              </div>
+              <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
+                Clinic.Longevity@gmail.com aaaaaa
+              </div>
+              <div className="px-4">
+                <div className="w-full h-[0.5px] my-2  bg-[#E2F1F8]"></div>
+              </div>
+              <div className="flex justify-center">
+                <div
+                  onClick={() => {
+                    Auth.logOut();
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                  className="flex gap-1 cursor-pointer"
+                >
+                  <img src="./icons/logout.svg" alt="" />
+                  <div className="text-[12px] font-medium text-Primary-DeepTeal">
+                    Log out
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
       <div className=" hidden md:block w-full sticky z-50 top-0 ">

@@ -404,7 +404,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 <div className="my-[200px] min-h-[400px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
-                      id="Needs Focus Biomarkers"
+                      id="Needs Focus Biomarker"
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
                     >
                       Needs Focus Biomarkers

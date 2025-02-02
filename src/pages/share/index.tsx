@@ -17,7 +17,7 @@ const Share = () => {
     <>
       <div className="bg-bg-color min-h-screen w-full h-full">
         <div className="fixed z-10 left-4 top-16">
-          <ReportSideMenu></ReportSideMenu>
+          <ReportSideMenu isShare onClose={() => {}}></ReportSideMenu>
         </div>
 
         <div className="w-full pl-[200px] fixed">
