@@ -52,7 +52,9 @@ const Report = () => {
           md:left-4
         `}
       >
-        <ReportSideMenu onClose={()=>isMobileView && setIsMobileMenuOpen(false)}></ReportSideMenu>
+        <ReportSideMenu
+          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+        ></ReportSideMenu>
       </div>
 
       <div className="w-full pl-[200px] fixed">

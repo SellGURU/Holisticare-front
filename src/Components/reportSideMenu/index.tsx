@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { subscribe } from '../../utils/event'; // Adjust the import path as needed
 import { useLocation, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
-interface ReportSideMenuProps{
-  onClose: ()=>void
+interface ReportSideMenuProps {
+  onClose: () => void;
 }
-const ReportSideMenu : React.FC<ReportSideMenuProps> = ({onClose}) => {
+const ReportSideMenu: React.FC<ReportSideMenuProps> = ({ onClose }) => {
   const menuItems = [
     'Client Summary',
     'Needs Focus Biomarkers',
@@ -54,7 +54,6 @@ const ReportSideMenu : React.FC<ReportSideMenuProps> = ({onClose}) => {
     document.getElementById(item)?.scrollIntoView({
       behavior: 'instant',
     });
-
   };
   return (
     <div className="h-full max-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 relative">
@@ -76,12 +75,17 @@ const ReportSideMenu : React.FC<ReportSideMenuProps> = ({onClose}) => {
           />
         </div>
       </div>
-      <div onClick={()=>onClose()} className='size-8 rounded-md bg-white shadow-100 py-2 px-4 flex items-center justify-center md:hidden absolute right-3 top-3 cursor-pointer'>
-        <SvgIcon src='/icons/close.svg' color='#005F73'/>
+      <div
+        onClick={() => onClose()}
+        className="size-8 rounded-md bg-white shadow-100 py-2 px-4 flex items-center justify-center md:hidden absolute right-3 top-3 cursor-pointer"
+      >
+        <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
       <div className="mt-6">
-        <div className="TextStyle-Headline-6 text-left hidden md:block">Sections</div>
+        <div className="TextStyle-Headline-6 text-left hidden md:block">
+          Sections
+        </div>
         <div className="mt-2 flex flex-col gap-1">
           {ActiveLayer === 'menu' &&
             menuItems.map((item, index) => (
