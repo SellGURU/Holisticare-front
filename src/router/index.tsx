@@ -17,6 +17,7 @@ import ForgetPassword from '../pages/forgetPassword/index.tsx';
 import Messages from '../pages/messages/index.tsx';
 import Setting from '../pages/settings/index.tsx';
 import Reports from '../pages/reports/index.tsx';
+import { Client } from '../pages/driftAnaysis/Client.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
             path: '/drift-analysis',
             element: <DriftAnaysis></DriftAnaysis>,
           },
+         
           {
             path: '/aiKnowledge',
             element: <AiKnowledge></AiKnowledge>,
@@ -55,6 +57,10 @@ const router = createBrowserRouter([
             element: <Reports></Reports>,
           },
         ],
+      },
+      {
+        path:'/drift-analysis/client/:name/:id',
+        element: <Client></Client>
       },
       {
         path: '/report/:id/:name',

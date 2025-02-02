@@ -7,6 +7,8 @@ import DownloadModal from './downloadModal';
 import { useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
 import { publish } from '../../utils/event';
+import { resolveAccesssUser } from '../../help';
+import Application from '../../api/app';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -231,14 +233,33 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                   }, 200);
                 }, 300);
               } else {
-                window.open(
-                  '/share/' +
-                    routeData[2] +
-                    '/' +
-                    routeData[3] +
-                    '?setting=' +
-                    JSON.stringify(settingsData),
-                );
+                Application.getPatientsInfo({
+                  member_id: routeData[2],
+                }).then(async (res) => {
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: 'Holisticare',
+                        url:
+                          `https://holisticare.vercel.app` +
+                          '/share/' +
+                          res.data.unique_key +
+                          '/' +
+                          resolveAccesssUser(settingsData),
+                      });
+                    } catch (error) {
+                      console.error('Error sharing:', error);
+                    }
+                  } else {
+                    alert('Sharing not supported in this browser.');
+                  }
+                  // window.open(
+                  //   '/share/' +
+                  //     res.data.unique_key +
+                  //     '/' +
+                  //     resolveAccesssUser(settingsData),
+                  // );
+                });
               }
               setOpenShare(false);
             }}

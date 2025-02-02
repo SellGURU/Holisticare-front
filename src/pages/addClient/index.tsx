@@ -142,7 +142,7 @@ const AddClient = () => {
                   </div>
                   <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
-                    size='small'
+                      size="small"
                       onClick={() => {
                         setIsAdded(false);
                         formik.resetForm();
@@ -150,11 +150,16 @@ const AddClient = () => {
                       }}
                       outLine
                     >
-                      <img src={'/icons/add-blue.svg'} className={'md:w-5 md:h-5 h-4 w-4'} />
-                      <div className=" text-nowrap text-[10px] md:text-xs md:w-[140px] ">Add Another Client</div>
+                      <img
+                        src={'/icons/add-blue.svg'}
+                        className={'md:w-5 md:h-5 h-4 w-4'}
+                      />
+                      <div className=" text-nowrap text-[10px] md:text-xs md:w-[140px] ">
+                        Add Another Client
+                      </div>
                     </ButtonPrimary>
                     <ButtonPrimary
-                    size='small'
+                      size="small"
                       onClick={() => {
                         navigate(
                           '/report/' +
@@ -165,8 +170,13 @@ const AddClient = () => {
                         );
                       }}
                     >
-                      <img src={'/icons/tick.svg'} className={' md:w-5 md:h-5  h-4 w-4'} />
-                      <div className=" text-nowrap text-[10px] md:text-xs   md:w-[140px]">Develop Health Plan</div>
+                      <img
+                        src={'/icons/tick.svg'}
+                        className={' md:w-5 md:h-5  h-4 w-4'}
+                      />
+                      <div className=" text-nowrap text-[10px] md:text-xs   md:w-[140px]">
+                        Develop Health Plan
+                      </div>
                     </ButtonPrimary>
                   </div>
                 </div>
@@ -191,9 +201,12 @@ const AddClient = () => {
               </div>
             </div>
 
-            <div className="flex justify-center w-full overflow-hidden">
-              <div className="max-w-[460px] h-full max-h-[460px] overflow-x-hidden overflow-y-auto w-full grid gap-4">
-                <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:h-[50px] overflow-hidden md:overflow-visible">
+            <div className="flex justify-center w-full overflow-auto">
+              <div
+                style={{ height: window.innerHeight - 100 + 'px' }}
+                className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
+              >
+                <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
                   <div className=" w-full md:w-[220px]">
                     <TextField
                       type="text"
@@ -213,14 +226,14 @@ const AddClient = () => {
                   </div>
                 </div>
                 <div className="w-full flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
-                  <div className="relative md:h-[28px] overflow-visible">
+                  <div className=" w-full relative md:h-[28px] overflow-visible mb-4">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Gender
                     </label>
                     <div
                       ref={selectButRef}
                       onClick={() => setShowSelect(!showSelect)}
-                      className={` w-[260px] xs:w-[344px] md:w-[219px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
+                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
                     >
                       {formik.values.gender !== 'unset' ? (
                         <div className="text-[12px] text-Text-Primary">
@@ -265,7 +278,7 @@ const AddClient = () => {
                       </div>
                     )}
                   </div>
-                  <div className='w-full md:w-auto'>
+                  <div className="w-full md:w-auto">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Age
                     </label>
@@ -274,11 +287,11 @@ const AddClient = () => {
                         onClick={() =>
                           formik.setFieldValue('age', formik.values.age - 1)
                         }
-                        className=" w-full md:w-[66px] h-[28px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
+                        className=" w-full md:w-[66px] h-[32px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
                       >
                         -
                       </div>
-                      <div className=" w-full md:w-[88px] h-[28px] bg-backgroundColor-Card border border-gray-50">
+                      <div className=" w-full md:w-[88px] h-[32px] bg-backgroundColor-Card border border-gray-50">
                         <input
                           {...formik.getFieldProps('age')}
                           value={Number(formik.values.age)}
@@ -373,7 +386,7 @@ const AddClient = () => {
                     />
                   </div>
                 </div>
-                <div className="w-full flex justify-center mt-4">
+                <div className="w-full h-fit flex justify-center mt-4">
                   <ButtonPrimary
                     disabled={
                       isLoading ||

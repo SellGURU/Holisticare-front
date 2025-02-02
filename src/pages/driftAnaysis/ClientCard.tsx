@@ -60,7 +60,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         <div className="flex flex-col gap-1">
           {tags?.map((tag) => (
             <div
-              className={`text-center rounded-full py-[2px] px-2.5 text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${tag === 'Needs checking ' ? 'bg-[#F9DEDC]' : tag == 'checked' ? 'bg-[#DEF7EC]' : 'bg-[#FFD8E4]'}`}
+              className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${tag === 'Needs checking ' ? 'bg-[#F9DEDC]' : tag == 'checked' ? 'bg-[#DEF7EC]' : 'bg-[#FFD8E4]'}`}
             >
               <div
                 className={` w-3 h-3 rounded-full  ${tag === 'Needs checking' ? 'bg-[#FFBD59]' : tag == 'checked' ? 'bg-[#06C78D]' : 'bg-[#FC5474]'}`}

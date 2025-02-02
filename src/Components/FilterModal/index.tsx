@@ -82,7 +82,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="absolute right-0 xs:right-6 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[300px] md:w-[400px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
+      className="absolute right-0 xs:right-7 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[330px] md:w-[400px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
     >
       <div className="space-y-6">
         {/* Header */}
@@ -131,7 +131,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   </svg>
                 )}
               </div>
-              <span className="text-[10px] md:text-xs text-Text-Secondary">Male</span>
+              <span className="text-[10px] md:text-xs text-Text-Secondary">
+                Male
+              </span>
             </label>
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
@@ -287,7 +289,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   setEnrollDate({ ...enrollDate, from: date })
                 }
                 customInput={
-                  <button className=" w-[100px] xs:w-[115px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[110px] xs:w-[125px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     From {formatDate(enrollDate.from)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
@@ -300,7 +302,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 selected={enrollDate.to}
                 onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
                 customInput={
-                  <button className=" w-[100px] xs:w-[115px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[110px] xs:w-[125px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     To {formatDate(enrollDate.to)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
@@ -329,7 +331,11 @@ const FilterModal: React.FC<FilterModalProps> = ({
           >
             Clear
           </button> */}
-          <ButtonPrimary style={{ width: '100%'}} ClassName='text-nowrap'  onClick={handleApply}>
+          <ButtonPrimary
+            style={{ width: '100%' }}
+            ClassName="text-nowrap"
+            onClick={handleApply}
+          >
             <img src="/icons/tick-square.svg" alt="" />
             Apply Filters
           </ButtonPrimary>

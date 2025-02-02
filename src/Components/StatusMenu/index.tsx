@@ -49,7 +49,7 @@ const StatusMenu: React.FC<StatusMenuProps> = ({
 }) => {
   return (
     <>
-      <div className="rounded-[16px]  w-full text-backgroundColor-Main shadow-200   bg-white border border-Gray-50  flex items-center justify-start gap-1 px-1.5  text-[8px] text-primary-text">
+      <div className="rounded-[16px]  w-full overflow-x-auto hidden-scrollbar text-backgroundColor-Main shadow-200   bg-white border border-Gray-50  flex items-center justify-start gap-1 px-1.5  text-[8px] text-primary-text">
         {status &&
           status.map((state, index) => {
             return (

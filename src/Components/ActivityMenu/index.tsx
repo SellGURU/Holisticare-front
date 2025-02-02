@@ -17,7 +17,7 @@ const ActivityMenu: React.FC<ActivityMenuProps> = ({
 }) => {
   return (
     <>
-      <div className="flex  max-w-[680px] overflow-x-auto pb-1 gap-1 bg-backgroundColor-Main px-2 py-1 rounded-[24px] border border-Gray-50 text-Text-Primary text-[8px] sm:text-[10px] md:text-xs justify-between ">
+      <div className="flex w-full max-w-[680px]  overflow-x-auto pb-1 gap-1 bg-backgroundColor-Main px-2 py-1 rounded-[24px] border border-Gray-50 text-Text-Primary text-[8px] sm:text-[10px] md:text-xs justify-between ">
         {menus.map((menu) => {
           return (
             <>
