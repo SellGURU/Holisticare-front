@@ -44,7 +44,7 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
   };
   return (
     <>
-      <div className="flex justify-start items-center gap-2">
+      <div className="flex justify-start items-center gap-2 w-full lg:w-[unset]">
         <label className="flex items-center cursor-pointer">
           <input
             type="checkbox"
@@ -84,27 +84,27 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
           }}
           className={` ${
             isActive ? 'border-Primary-EmeraldGreen' : ' border-Gray-50'
-          }  bg-backgroundColor-Card w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[64px] rounded-[16px] border `}
+          }  bg-backgroundColor-Card w-[100%] lg:w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[64px] rounded-[16px] border `}
         >
-          <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
+          <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
             <img className="" src={resolveIcon(data.category)} alt="" />
           </div>
           <div>
             <div className="flex">
               <div className="text-xs text-Text-Primary">{resolveTitle()}</div>
               {data.tags.length > 0 && (
-                <div className="ml-8">
+                <div className="ml-8 hidden lg:block">
                   <Tag value={data.tags[0]}></Tag>
                 </div>
               )}
             </div>
             <div className="flex justify-between items-center">
-              <div className=" text-Text-Secondary text-[10px]">
-                <span className="text-[12px] text-Text-Primary">
+              <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                <span className="text-[8px] lg:text-[12px] text-Text-Primary">
                   {data.num_biomarkers}
                 </span>{' '}
                 Total Biomarkers{' '}
-                <span className="ml-2 text-[12px] text-Text-Primary">
+                <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
                   {data.needs_focus_count}
                 </span>{' '}
                 Needs Focus
@@ -115,6 +115,11 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
                 </div>
               )}
             </div>
+            {data.tags.length > 0 && (
+              <div className="mt-1 block lg:hidden">
+                <Tag value={data.tags[0]}></Tag>
+              </div>
+            )}
           </div>
         </div>
       </div>

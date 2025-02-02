@@ -163,13 +163,26 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         </div>
       )}
 
-      <div className="fixed w-full top-0">
+      <div className="fixed w-full top-0 hidden lg:flex">
         <TopBar></TopBar>
+      </div>
+      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6">
+        <div
+          onClick={() => {
+            navigate(-1);
+          }}
+          className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
+        >
+          <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+        </div>
+        <div className="TextStyle-Headline-5 text-Text-Primary">
+          Generate Holistic Plan
+        </div>
       </div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
         <div className="w-full px-4 py-6    relative   ">
           <div className=" flex mb-2 justify-between w-full">
-            <div className="flex w-full items-center gap-3">
+            <div className="hidden lg:flex w-full items-center gap-3">
               <div
                 onClick={() => {
                   navigate(-1);
@@ -183,14 +196,15 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div>
 
-            <div className="w-full flex gap-2 justify-end items-center">
+            <div className="w-full flex gap-2 justify-center lg:justify-end items-center">
               <ButtonPrimary
                 onClick={() => {
                   setSHowAnalyse(true);
                 }}
-                size="small"
+                size="normal"
+                ClassName="w-[50%] lg:w-[unset]"
               >
-                <div className="w-full flex justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2">
                   <img src="/icons/analyse.svg" alt="" />
                   Analysis
                 </div>
@@ -199,10 +213,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   setSHowClientGoals(true);
                 }}
-                size="small"
+                size="normal"
+                ClassName="w-[50%] lg:w-[unset]"
               >
                 {/* <img src="/icons/" alt="" /> */}
-                <div className="w-full flex justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2">
                   <img src="/icons/chart.svg" alt="" />
                   Client Goals
                 </div>
