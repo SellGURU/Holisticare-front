@@ -160,7 +160,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               />
             </div>
           </div>
-          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
+          <div className=" hidden md:block w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>
@@ -297,7 +297,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         </SlideOutPanel>
       )}
-      <div className="w-full flex flex-col gap-2 ">
+      <div style={{height:window.innerHeight - 100 + "px"}} className=" overflow-auto w-full h-fit  flex flex-col gap-2 ">
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
           <div className="text-sm font-medium">State</div>
           <p className="text-xs text-justify my-2">{Description}</p>
