@@ -30,12 +30,16 @@ const Report = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const sideMenuRef = useRef(null);
+  const [showCombo, setshowCombo] = useState(false)
 
   return (
     <div className="w-full h-full">
-      <div className=" hidden md:block w-full sticky z-50 top-0 ">
-        <TopBar canDownload></TopBar>
+      <div className="  w-full sticky z-50 top-0 ">
+        <TopBar showCombo={showCombo} setShowCombo={
+          ()=>setshowCombo(!showCombo)
+        } canDownload></TopBar>
       </div>
+      <div></div>
       <div
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="fixed z-[60]  top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2"
@@ -57,12 +61,13 @@ const Report = () => {
         ></ReportSideMenu>
       </div>
 
-      <div className="w-full pl-[200px] fixed">
+      <div className="w-full md:pl-[200px] fixed">
         <ReportAnalyseView></ReportAnalyseView>
       </div>
 
       <div
-        className={`fixed top-20 right-6 h-[80vh] hidden md:flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'} `}
+        className={`fixed top-10 duration-300 ease-in-out transition-all md:top-20 md:right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-right-[120px]' : 'right-0'}
+        `}
       >
         <ComboBar></ComboBar>
       </div>

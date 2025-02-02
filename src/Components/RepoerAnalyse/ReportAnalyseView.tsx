@@ -303,7 +303,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden `}
+            className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] md:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden `}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (

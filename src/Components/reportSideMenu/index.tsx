@@ -104,7 +104,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     }
   }, [name]);
   return (
-    <div className="h-full max-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 relative">
+    <div className="h-fit min-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white border border-gray-50 rounded-[12px] p-4 shadow-100 relative">
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() => !disableClicks && setActiveLayer('layer')}
@@ -130,7 +130,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
-      <div className="mt-6">
+      <div className="mt-6 max-h-[312px] overflow-y-auto">
         <div className="TextStyle-Headline-6 text-left hidden md:block">
           Sections
         </div>

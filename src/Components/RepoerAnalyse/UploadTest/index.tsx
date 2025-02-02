@@ -38,9 +38,9 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
   return (
     <>
-      <div className="w-[93%] rounded-[16px] h-[89vh] top-4 flex justify-center  absolute left-0">
+      <div className=" w-full md:w-[93%] rounded-[16px] h-[89vh] top-4 flex justify-center  absolute left-0">
         <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute"></div>
-        <div className="w-[530px] relative z-10">
+        <div className=" w-[344px] md:w-[530px] relative z-10">
           <div className="w-full flex justify-center text-Text-Primary font-medium mt-14">
             No Data Available Yet!
           </div>
@@ -102,7 +102,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
               />
             </div>
 
-            <div className="text-Text-Primary text-[12px] mt-2 w-[470px]">
+            <div className="text-Text-Primary text-[12px] text-justify mt-2 w-[300px] md:w-[470px]">
               {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
             </div>
             <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
@@ -177,9 +177,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Complete Questionnaire
               </div>
             </div>
-            {files.length > 0 && (
+          
               <div className="flex justify-center mt-5">
                 <ButtonSecondary
+                disabled={files.length == 0}
                   onClick={() => {
                     onGenderate();
                   }}
@@ -188,7 +189,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
                   Develop Health Plan
                 </ButtonSecondary>
               </div>
-            )}
+           
           </div>
         </div>
       </div>

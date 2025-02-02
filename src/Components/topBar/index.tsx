@@ -13,9 +13,15 @@ import Application from '../../api/app';
 
 interface TopBarProps {
   canDownload?: boolean;
+  showCombo?: boolean;
+  setShowCombo?: () => void;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
+export const TopBar: React.FC<TopBarProps> = ({
+  canDownload,
+  setShowCombo,
+  showCombo,
+}) => {
   const navigate = useNavigate();
   const printreport = () => {
     const mywindow: any = window.open('', 'PRINT', 'height=300,width=800');
@@ -136,7 +142,7 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   return (
-    <div className="w-full flex items-center justify-between bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
+    <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
         <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
         {resolveNav().map((el, index: number) => {
@@ -162,7 +168,30 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
         {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
         <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
-      <div className="flex gap-10 ">
+      <div className="flex md:hidden items-center gap-4">
+        <img
+          onClick={() => {
+            setOpenDownload(true);
+          }}
+          src="/icons/document-download.svg"
+          alt=""
+        />
+        <img
+          onClick={() => {
+            setOpenShare(true);
+          }}
+          src="/icons/link-2.svg"
+          alt=""
+        />
+        <img
+          onClick={setShowCombo}
+          src={
+            showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'
+          }
+          alt=""
+        />
+      </div>
+      <div className=" hidden md:flex gap-10 ">
         {canDownload && (
           <div className="flex gap-3">
             <ButtonPrimary

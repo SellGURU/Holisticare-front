@@ -155,19 +155,19 @@ export const ComboBar = () => {
       </SlideOutPanel>
       <div
         className={
-          'w-[55px] flex justify-center items-center relative bg-white h-[500px] border-Boarder border rounded-xl p-5 '
+          'w-[55px] flex justify-center items-center relative bg-white h-fit md:h-[500px] border-Boarder border rounded-xl p-5 '
         }
       >
         <div
           className={
-            'absolute top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10'
+            'absolute hidden md:block top-0 left-0 bg-Primary-DeepTeal h-[49px] rounded-xl w-full z-10'
           }
         ></div>
         <ul className={'flex items-center flex-col z-10 gap-3'}>
           <li
             key={'1'}
             className={
-              'flex items-center justify-center border-2 rounded-full  w-10 h-10 '
+              'hidden md:flex items-center justify-center border-2 rounded-full  w-10 h-10 '
             }
           >
             <img
@@ -179,13 +179,13 @@ export const ComboBar = () => {
               onError={(e: any) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
               }}
-              className={'border-whiteavatar w-full h-full rounded-full'}
+              className={' hidden md:block border-whiteavatar w-full h-full rounded-full'}
             />
           </li>
           <li
             key={'2'}
             className={
-              'text-Text-Primary TextStyle-Headline-6 w-10 text-center'
+              'text-Text-Primary TextStyle-Headline-6 w-10 text-center hidden md:block'
             }
             style={{
               whiteSpace: '',
@@ -197,7 +197,7 @@ export const ComboBar = () => {
           </li>
           <li
             key={'line'}
-            className={'h-[2px] w-full px-[1px] bg-green-400'}
+            className={'h-[2px] w-full px-[1px] bg-green-400 hidden md:block'}
           ></li>
           {itemList.map((el, index) => (
             <>
@@ -239,7 +239,7 @@ export const ComboBar = () => {
         {/* <Tooltip id="tooltip" place="left" /> */}
       </div>
 
-      <div className={'space-y-1'}>
+      <div className={' hidden md:block space-y-1'}>
         <div
           className={
             'w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center'
