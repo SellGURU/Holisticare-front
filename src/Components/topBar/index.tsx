@@ -239,15 +239,20 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                   if (navigator.share) {
                     try {
                       await navigator.share({
-                        title: "Holisticare",
-                        url: `https://holisticare.vercel.app`+'/share/' +res.data.unique_key +'/' +resolveAccesssUser(settingsData),
+                        title: 'Holisticare',
+                        url:
+                          `https://holisticare.vercel.app` +
+                          '/share/' +
+                          res.data.unique_key +
+                          '/' +
+                          resolveAccesssUser(settingsData),
                       });
                     } catch (error) {
-                      console.error("Error sharing:", error);
+                      console.error('Error sharing:', error);
                     }
                   } else {
-                    alert("Sharing not supported in this browser.");
-                  }                  
+                    alert('Sharing not supported in this browser.');
+                  }
                   // window.open(
                   //   '/share/' +
                   //     res.data.unique_key +
