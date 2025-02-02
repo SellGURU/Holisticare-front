@@ -235,13 +235,25 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
               } else {
                 Application.getPatientsInfo({
                   member_id: routeData[2],
-                }).then((res) => {
-                  window.open(
-                    '/share/' +
-                      res.data.unique_key +
-                      '/' +
-                      resolveAccesssUser(settingsData),
-                  );
+                }).then(async (res) => {
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: "Holisticare",
+                        url: `https://holisticare.vercel.app`+'/share/' +res.data.unique_key +'/' +resolveAccesssUser(settingsData),
+                      });
+                    } catch (error) {
+                      console.error("Error sharing:", error);
+                    }
+                  } else {
+                    alert("Sharing not supported in this browser.");
+                  }                  
+                  // window.open(
+                  //   '/share/' +
+                  //     res.data.unique_key +
+                  //     '/' +
+                  //     resolveAccesssUser(settingsData),
+                  // );
                 });
               }
               setOpenShare(false);
