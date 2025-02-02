@@ -280,9 +280,9 @@ const ClientList = () => {
                     </div>
                     <div className="w-full relative  flex  justify-end gap-[6px] sm:gap-3 items-center">
                       {showSearch ? (
-                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[260px] xs:w-[360px] rounded-2xl">
+                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[300px] xs:min-w-[360px] rounded-2xl">
                           <SearchBox
-                            style={{ width: '100%' }}
+                            style={{ width:'100%'}}
                             id="searchBar"
                             ClassName={`w-full rounded-2xl sm:rounded-md`}
                             onSearch={handleSearch}
@@ -321,6 +321,7 @@ const ClientList = () => {
                         />
                       </div>
                     </div>
+                 
                     {showFilterModal && (
                       <FilterModal
                         filters={filters}
@@ -331,6 +332,8 @@ const ClientList = () => {
                         }}
                       />
                     )}
+           
+                  
                   </div>
                 </div>
               </div>
