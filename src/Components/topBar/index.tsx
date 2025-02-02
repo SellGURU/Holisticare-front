@@ -7,6 +7,8 @@ import DownloadModal from './downloadModal';
 import { useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
 import { publish } from '../../utils/event';
+import { resolveAccesssUser } from '../../help';
+import Application from '../../api/app';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -231,14 +233,16 @@ export const TopBar: React.FC<TopBarProps> = ({ canDownload }) => {
                   }, 200);
                 }, 300);
               } else {
-                window.open(
-                  '/share/' +
-                    routeData[2] +
-                    '/' +
-                    routeData[3] +
-                    '?setting=' +
-                    JSON.stringify(settingsData),
-                );
+                Application.getPatientsInfo({
+                  member_id: routeData[2],
+                }).then((res) => {
+                  window.open(
+                    '/share/' +
+                      res.data.unique_key +
+                      '/' +
+                      resolveAccesssUser(settingsData),
+                  );
+                });
               }
               setOpenShare(false);
             }}

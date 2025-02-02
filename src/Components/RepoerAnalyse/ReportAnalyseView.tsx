@@ -32,17 +32,20 @@ import { useLocation } from 'react-router-dom';
 import { publish } from '../../utils/event';
 import InfoToltip from '../InfoToltip';
 import Circleloader from '../CircleLoader';
+import { decodeAccessUser } from '../../help';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
   isShare?: boolean;
+  uniqKey?: string;
 }
 
 const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   memberID,
   isShare,
+  uniqKey,
 }) => {
-  const { id } = useParams<{ id: string }>();
+  const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
   const [loading, setLoading] = useState(true);
   const [caldenderData, setCalenderData] = useState<any>(null);
@@ -88,14 +91,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     });
   };
   const fetchShareData = () => {
-    Application.getClientSummaryOutofrefsShare({
-      member_id: resolvedMemberID,
-    }).then((res) => {
+    Application.getClientSummaryOutofrefsShare(
+      {
+        member_id: memberID,
+      },
+      uniqKey,
+    ).then((res) => {
       setReferenceData(res.data);
     });
-    Application.getClientSummaryCategoriesShare({
-      member_id: resolvedMemberID,
-    }).then((res) => {
+    Application.getClientSummaryCategoriesShare(
+      {
+        member_id: memberID,
+      },
+      uniqKey,
+    ).then((res) => {
       setClientSummaryBoxs(res.data);
       setISGenerateLoading(false);
       if (res.data.categories.length == 0) {
@@ -104,37 +113,75 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setIsHaveReport(true);
       }
     });
-    Application.getConceringResultsShare({ member_id: resolvedMemberID }).then(
-      (res) => {
-        setConcerningResult(res.data.table);
+    Application.getConceringResultsShare(
+      {
+        member_id: memberID,
       },
-    );
-    Application.getOverviewtplanShare({ member_id: resolvedMemberID }).then(
-      (res) => {
-        setTreatmentPlanData(res.data);
+      uniqKey,
+    ).then((res) => {
+      setConcerningResult(res.data.table);
+    });
+    Application.getOverviewtplanShare(
+      {
+        member_id: memberID,
       },
-    );
-    Application.getCaldenderdataShare({ member_id: resolvedMemberID }).then(
-      (res) => {
-        setCalenderData(res.data);
+      uniqKey,
+    ).then((res) => {
+      setTreatmentPlanData(res.data);
+    });
+    Application.getCaldenderdataShare(
+      {
+        member_id: memberID,
       },
-    );
-    Application.getPatientsInfoShare({
-      member_id: resolvedMemberID,
-    }).then((res) => {
+      uniqKey,
+    ).then((res) => {
+      setCalenderData(res.data);
+    });
+    Application.getPatientsInfoShare(
+      {
+        member_id: memberID,
+      },
+      uniqKey,
+    ).then((res) => {
       setUserInfoData(res.data);
     });
   };
+  const [accessManager, setAccessManager] = useState<Array<any>>([
+    {
+      name: 'Client Summary',
+      checked: true,
+    },
+    {
+      name: 'Needs Focus Biomarker',
+      checked: true,
+    },
+    {
+      name: 'Detailed Analysis',
+      checked: true,
+    },
+    {
+      name: 'Holistic Plan',
+      checked: true,
+    },
+    {
+      name: 'Action Plan',
+      checked: true,
+    },
+  ]);
   useEffect(() => {
     setLoading(true);
     if (resolvedMemberID != 123 && !isShare) {
       fetchData();
     }
-    if (isShare) {
+    if (isShare && memberID != 123) {
       fetchShareData();
     }
-  }, [resolvedMemberID]);
-
+  }, [resolvedMemberID, memberID]);
+  useEffect(() => {
+    if (isShare) {
+      setAccessManager(decodeAccessUser(name as string));
+    }
+  }, [name]);
   useEffect(() => {
     if (resolvedMemberID == 123 || !isHaveReport) {
       setReferenceData(referencedataMoch);
@@ -258,208 +305,226 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             }}
             className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden `}
           >
-            <div className="flex gap-14 ">
-              <div className="min-w-[430px] w-[330px] relative min-h-[750px]">
-                <div>
-                  <div
-                    id="Client Summary"
-                    className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
-                  >
-                    Client Summary
-                    <div className="ml-4">
-                      <Legends isGray></Legends>
+            {accessManager.filter((el) => el.name == 'Client Summary')[0]
+              .checked == true && (
+              <div className="flex gap-14 ">
+                <div className="min-w-[430px] w-[330px] relative min-h-[750px]">
+                  <div>
+                    <div
+                      id="Client Summary"
+                      className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
+                    >
+                      Client Summary
+                      <div className="ml-4">
+                        <Legends isGray></Legends>
+                      </div>
+                    </div>
+                    {ClientSummaryBoxs && (
+                      <div className="text-Text-Secondary text-[12px]">
+                        Total of {ClientSummaryBoxs.total_subcategory}{' '}
+                        biomarkers in {ClientSummaryBoxs.total_category}{' '}
+                        categories
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <img className="" src="/human.png" alt="" />
+                    <div>
+                      {resolveCategories().map((el: any, index: number) => {
+                        return (
+                          <>
+                            <Point
+                              key={index}
+                              name={el.subcategory}
+                              status={resolveStatusArray(el.status)}
+                              onClick={() => {
+                                // setSummaryBOxCategory(el.name)
+                                document
+                                  .getElementById(el.subcategory)
+                                  ?.scrollIntoView({
+                                    behavior: 'smooth',
+                                  });
+                              }}
+                              top={resolvePosition(el.position).top}
+                              left={resolvePosition(el.position).left}
+                            ></Point>
+                          </>
+                        );
+                      })}
                     </div>
                   </div>
-                  {ClientSummaryBoxs && (
-                    <div className="text-Text-Secondary text-[12px]">
-                      Total of {ClientSummaryBoxs.total_subcategory} biomarkers
-                      in {ClientSummaryBoxs.total_category} categories
-                    </div>
-                  )}
                 </div>
-                <div className="relative">
-                  <img className="" src="/human.png" alt="" />
-                  <div>
-                    {resolveCategories().map((el: any, index: number) => {
-                      return (
+
+                <div className="flex-grow w-full mt-0 ">
+                  <div className="w-full flex justify-between items-center">
+                    <div className="flex justify-start items-center">
+                      <div className="text-[14px] font-medium text-Text-Primary">
+                        {userInfoData?.name}
+                      </div>
+                      {userInfoData && (
                         <>
-                          <Point
-                            key={index}
-                            name={el.subcategory}
-                            status={resolveStatusArray(el.status)}
-                            onClick={() => {
-                              // setSummaryBOxCategory(el.name)
-                              document
-                                .getElementById(el.subcategory)
-                                ?.scrollIntoView({
-                                  behavior: 'smooth',
-                                });
-                            }}
-                            top={resolvePosition(el.position).top}
-                            left={resolvePosition(el.position).left}
-                          ></Point>
+                          {userInfoData.sex && (
+                            <>
+                              <div className="text-[12px] text-Text-Secondary ml-3">
+                                Gender: {userInfoData.sex}{' '}
+                              </div>
+                              <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
+                            </>
+                          )}
+                          {userInfoData.age && (
+                            <div className="text-[12px] text-Text-Secondary ">
+                              Age: {userInfoData.age}
+                            </div>
+                          )}
                         </>
+                      )}
+                    </div>
+                    <InfoToltip isShare={isShare}></InfoToltip>
+                  </div>
+                  <div
+                    className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
+                    style={{ lineHeight: '24px' }}
+                  >
+                    {ClientSummaryBoxs?.client_summary}
+                  </div>
+                  <div className="w-full mt-4 grid gap-4 grid-cols-2">
+                    {resolveCategories().map((el: any) => {
+                      return (
+                        <SummaryBox isActive={false} data={el}></SummaryBox>
                       );
                     })}
                   </div>
                 </div>
               </div>
+            )}
 
-              <div className="flex-grow w-full mt-0 ">
-                <div className="w-full flex justify-between items-center">
-                  <div className="flex justify-start items-center">
-                    <div className="text-[14px] font-medium text-Text-Primary">
-                      {userInfoData?.name}
+            {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+              .checked == true && (
+              <>
+                <div className="my-[200px] min-h-[400px] text-light-primary-text dark:text-primary-text ">
+                  <div>
+                    <div
+                      id="Needs Focus Biomarkers"
+                      className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
+                    >
+                      Needs Focus Biomarkers
                     </div>
-                    {userInfoData && (
-                      <>
-                        {userInfoData.sex && (
-                          <>
-                            <div className="text-[12px] text-Text-Secondary ml-3">
-                              Gender: {userInfoData.sex}{' '}
-                            </div>
-                            <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
-                          </>
-                        )}
-                        {userInfoData.age && (
-                          <div className="text-[12px] text-Text-Secondary ">
-                            Age: {userInfoData.age}
-                          </div>
-                        )}
-                      </>
-                    )}
+                    <div className=" text-Text-Secondary text-[12px]">
+                      {referenceData.total_biomarker_note}
+                    </div>
                   </div>
-                  <InfoToltip isShare={isShare}></InfoToltip>
+                  <div className="w-full mt-4 grid gap-4 grid-cols-2">
+                    {resolveBioMarkers()
+                      .filter((val) => val.outofref == true)
+                      .map((el) => {
+                        return <RefrenceBox data={el}></RefrenceBox>;
+                      })}
+                  </div>
+
+                  {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
-                <div
-                  className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
-                  style={{ lineHeight: '24px' }}
-                >
-                  {ClientSummaryBoxs?.client_summary}
+                <div className="my-10 min-h-[400px]">
+                  <div className="w-full mb-3 flex items-center justify-between">
+                    <div
+                      id="Concerning Result"
+                      className="  TextStyle-Headline-4 text-Text-Primary"
+                    >
+                      Conclusion
+                    </div>
+                    <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
+                      {/* Total of 30 Treatment in 4 category */}
+                    </div>
+                    {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+                  </div>
+                  <div>
+                    <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center">
+                      <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
+                        Name
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
+                        Result
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
+                        Units
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
+                        Lab Ref Range
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                        Baseline
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
+                        Optimal Range
+                      </div>
+                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                        Changes
+                      </div>
+                    </div>
+                    {ResolveConceringData().map((el: any) => {
+                      return (
+                        <>
+                          <ConceringRow data={el}></ConceringRow>
+                        </>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="w-full mt-4 grid gap-4 grid-cols-2">
+              </>
+            )}
+
+            {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
+              .checked == true && (
+              <div className="my-[200px] min-h-[650px]">
+                <div>
+                  <div
+                    id="Detailed Analysis"
+                    className="sectionScrollEl text-Text-Primary TextStyle-Headline-4"
+                  >
+                    Detailed Analysis
+                  </div>
+                  <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
+                    {referenceData.detailed_analysis_note}
+                  </div>
+                </div>
+
+                <div className="mt-6">
                   {resolveCategories().map((el: any) => {
-                    return <SummaryBox isActive={false} data={el}></SummaryBox>;
+                    return (
+                      <DetiledAnalyse
+                        refrences={
+                          resolveSubCategories().filter(
+                            (val) => val.subcategory == el.subcategory,
+                          )[0]
+                        }
+                        data={el}
+                      ></DetiledAnalyse>
+                    );
                   })}
                 </div>
               </div>
-            </div>
-            <div className="my-[200px] min-h-[400px] text-light-primary-text dark:text-primary-text ">
-              <div>
-                <div
-                  id="Needs Focus Biomarkers"
-                  className="sectionScrollEl text-Text-Primary TextStyle-Headline-4 "
-                >
-                  Needs Focus Biomarkers
-                </div>
-                <div className=" text-Text-Secondary text-[12px]">
-                  {referenceData.total_biomarker_note}
-                </div>
-              </div>
-              <div className="w-full mt-4 grid gap-4 grid-cols-2">
-                {resolveBioMarkers()
-                  .filter((val) => val.outofref == true)
-                  .map((el) => {
-                    return <RefrenceBox data={el}></RefrenceBox>;
-                  })}
-              </div>
-
-              {/* <CustomCanvasChart></CustomCanvasChart> */}
-            </div>
-            <div className="my-10 min-h-[400px]">
-              <div className="w-full mb-3 flex items-center justify-between">
-                <div
-                  id="Concerning Result"
-                  className="  TextStyle-Headline-4 text-Text-Primary"
-                >
-                  Conclusion
-                </div>
-                <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-                  {/* Total of 30 Treatment in 4 category */}
-                </div>
-                {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-              </div>
-              <div>
-                <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center">
-                  <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
-                    Name
+            )}
+            {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
+              .checked == true && (
+              <div className="my-[200px] min-h-[650px]">
+                <div className="w-full flex items-center justify-between">
+                  <div
+                    id="Holistic Plan"
+                    className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
+                  >
+                    Holistic Plan
                   </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
-                    Result
-                  </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
-                    Units
-                  </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
-                    Lab Ref Range
-                  </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                    Baseline
-                  </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
-                    Optimal Range
-                  </div>
-                  <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                    Changes
-                  </div>
+                  <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip>
+                  {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
-                {ResolveConceringData().map((el: any) => {
-                  return (
-                    <>
-                      <ConceringRow data={el}></ConceringRow>
-                    </>
-                  );
-                })}
+                <TreatmentPlan
+                  isShare={isShare}
+                  setPrintActionPlan={(value) => {
+                    setActionPlanPrint(value);
+                  }}
+                  treatmentPlanData={TreatMentPlanData}
+                ></TreatmentPlan>
               </div>
-            </div>
-            <div className="my-[200px] min-h-[650px]">
-              <div>
-                <div
-                  id="Detailed Analysis"
-                  className="sectionScrollEl text-Text-Primary TextStyle-Headline-4"
-                >
-                  Detailed Analysis
-                </div>
-                <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                  {referenceData.detailed_analysis_note}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                {resolveCategories().map((el: any) => {
-                  return (
-                    <DetiledAnalyse
-                      refrences={
-                        resolveSubCategories().filter(
-                          (val) => val.subcategory == el.subcategory,
-                        )[0]
-                      }
-                      data={el}
-                    ></DetiledAnalyse>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="my-[200px] min-h-[650px]">
-              <div className="w-full flex items-center justify-between">
-                <div
-                  id="Holistic Plan"
-                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary"
-                >
-                  Holistic Plan
-                </div>
-                <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip>
-                {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-              </div>
-              <TreatmentPlan
-                isShare={isShare}
-                setPrintActionPlan={(value) => {
-                  setActionPlanPrint(value);
-                }}
-                treatmentPlanData={TreatMentPlanData}
-              ></TreatmentPlan>
-            </div>
+            )}
 
             <div className="my-10 hidden">
               <div className="w-full mb-3 flex items-center justify-between">
@@ -480,21 +545,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
               )}
             </div>
-            <div id="Action Plan" className="my-[200px]  min-h-[650px]">
-              <div
-                id="Action Plan"
-                className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
-              >
-                Action Plan
+            {accessManager.filter((el) => el.name == 'Action Plan')[0]
+              .checked == true && (
+              <div id="Action Plan" className="my-[200px]  min-h-[650px]">
+                <div
+                  id="Action Plan"
+                  className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
+                >
+                  Action Plan
+                </div>
+                <ActionPlan
+                  isShare={isShare}
+                  setActionPrintData={(values: any) => {
+                    setHelthPlanPrint(values);
+                  }}
+                  calenderDataUper={caldenderData}
+                ></ActionPlan>
               </div>
-              <ActionPlan
-                isShare={isShare}
-                setActionPrintData={(values: any) => {
-                  setHelthPlanPrint(values);
-                }}
-                calenderDataUper={caldenderData}
-              ></ActionPlan>
-            </div>
+            )}
             {isHaveReport && (
               <div className="hidden print:block" id="printDiv">
                 <PrintReport
