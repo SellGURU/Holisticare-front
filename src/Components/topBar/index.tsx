@@ -142,7 +142,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   return (
-    <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
+    <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
         <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
         {resolveNav().map((el, index: number) => {
@@ -168,7 +168,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
         <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
-      <div className="flex md:hidden items-center gap-4">
+      <div className="flex md:hidden items-center gap-2 xs:gap-4">
         <img
           onClick={() => {
             setOpenDownload(true);
