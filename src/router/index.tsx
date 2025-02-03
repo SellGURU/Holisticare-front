@@ -38,7 +38,7 @@ const router = createBrowserRouter([
             path: '/drift-analysis',
             element: <DriftAnaysis></DriftAnaysis>,
           },
-         
+
           {
             path: '/aiKnowledge',
             element: <AiKnowledge></AiKnowledge>,
@@ -54,8 +54,8 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path:'/drift-analysis/client/:name/:id',
-        element: <Client></Client>
+        path: '/drift-analysis/client/:name/:id',
+        element: <Client></Client>,
       },
       {
         path: '/report/:id/:name',

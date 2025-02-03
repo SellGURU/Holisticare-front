@@ -179,7 +179,9 @@ export const ComboBar = () => {
               onError={(e: any) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${patientInfo.name}`; // Set fallback image
               }}
-              className={' hidden md:block border-whiteavatar w-full h-full rounded-full'}
+              className={
+                ' hidden md:block border-whiteavatar w-full h-full rounded-full'
+              }
             />
           </li>
           <li

@@ -100,7 +100,7 @@ const Uploading: React.FC<UploadingProps> = ({
           className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'} flex justify-between`}
         >
           <div className="flex justify-start gap-2">
-            <img className='object-contain' src="/images/Pdf.png" alt="" />
+            <img className="object-contain" src="/images/Pdf.png" alt="" />
             <div>
               <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                 {file.name}

@@ -185,9 +185,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         />
         <img
           onClick={setShowCombo}
-          src={
-            showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'
-          }
+          src={showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'}
           alt=""
         />
       </div>

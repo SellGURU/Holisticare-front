@@ -30,14 +30,16 @@ const Report = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const sideMenuRef = useRef(null);
-  const [showCombo, setshowCombo] = useState(false)
+  const [showCombo, setshowCombo] = useState(false);
 
   return (
     <div className="w-full h-full">
       <div className="  w-full sticky z-50 top-0 ">
-        <TopBar showCombo={showCombo} setShowCombo={
-          ()=>setshowCombo(!showCombo)
-        } canDownload></TopBar>
+        <TopBar
+          showCombo={showCombo}
+          setShowCombo={() => setshowCombo(!showCombo)}
+          canDownload
+        ></TopBar>
       </div>
       <div></div>
       <div

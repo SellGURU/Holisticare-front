@@ -40,7 +40,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
     <>
       <div className=" w-full md:w-[93%] rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center  absolute left-0">
         <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute"></div>
-        <div style={{height: window.innerHeight - 60 + "px"}} className=" w-[260px] h-fit overflow-auto  xs:w-[344px] md:w-[530px] relative z-10 px-2">
+        <div
+          style={{ height: window.innerHeight - 60 + 'px' }}
+          className=" w-[260px] h-fit overflow-auto  xs:w-[344px] md:w-[530px] relative z-10 px-2"
+        >
           <div className="w-full flex justify-center text-Text-Primary font-medium mt-5 md:mt-14">
             No Data Available Yet!
           </div>
@@ -111,7 +114,11 @@ const UploadTest: React.FC<UploadTestProps> = ({
                   <>
                     <div className="w-full flex justify-between items-center px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ">
                       <div className="flex justify-start gap-2">
-                        <img className='object-contain' src="/images/Pdf.png" alt="" />
+                        <img
+                          className="object-contain"
+                          src="/images/Pdf.png"
+                          alt=""
+                        />
                         <div>
                           <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                             {el.name}
@@ -177,19 +184,18 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Complete Questionnaire
               </div>
             </div>
-          
-              <div className="flex justify-center mt-5">
-                <ButtonSecondary
+
+            <div className="flex justify-center mt-5">
+              <ButtonSecondary
                 disabled={files.length == 0}
-                  onClick={() => {
-                    onGenderate();
-                  }}
-                >
-                  <img src="/icons/tick-square.svg" alt="" />
-                  Develop Health Plan
-                </ButtonSecondary>
-              </div>
-           
+                onClick={() => {
+                  onGenderate();
+                }}
+              >
+                <img src="/icons/tick-square.svg" alt="" />
+                Develop Health Plan
+              </ButtonSecondary>
+            </div>
           </div>
         </div>
       </div>
