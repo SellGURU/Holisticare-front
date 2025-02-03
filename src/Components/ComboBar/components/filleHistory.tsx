@@ -49,7 +49,7 @@ export const FilleHistory = () => {
   return (
     <div className=" w-full">
       <div className="px-2">
-        <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+        <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>File Name</div>
           <div>Upload Date</div>
           <div>Action</div>
@@ -58,11 +58,11 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
+              <div className="flex justify-center w-full items-start overflow-auto h-[350px] md:h-[240px]">
                 <div className="w-full mt-2">
                   {data?.map((el: any) => {
                     return (
-                      <div className=" bg-white border border-Gray-50 mb-1 p-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
+                      <div className=" bg-white border border-Gray-50 mb-1 p-1 md:p-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
                         <div
                           className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
                           title={el.file_name}

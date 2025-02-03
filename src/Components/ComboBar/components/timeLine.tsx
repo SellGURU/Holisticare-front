@@ -142,7 +142,7 @@ const TimelineStep: React.FC<{
 
 const TimeLine: React.FC = () => {
   return (
-    <div className="flex flex-col items-center  text-xs max-h-[600px] overflow-auto ">
+    <div className="flex flex-col items-center  text-xs max-h-[530px] md:max-h-[600px] overflow-auto ">
       {steps.map((section, index) => (
         <div key={index} className="flex flex-col items-center mb-6  relative ">
           <div

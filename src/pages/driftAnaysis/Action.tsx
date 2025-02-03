@@ -135,6 +135,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+  console.log(MessagesData);
+
   return (
     <>
       {showModal && (
@@ -160,7 +162,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               />
             </div>
           </div>
-          <div className=" hidden md:block w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[500px] overflow-auto   ">
+          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[350px] md:max-h-[500px] overflow-auto   ">
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>
@@ -235,7 +237,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         className="bg-white p-2 rounded-xl border border-Gray-50 text-[10px] text-Text-Primary mb-3"
                       >
                         <p>{action.instructions}</p>
-                        <div className="mt-2 w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex">
+                        <div className="mt-2 w-[170px] xs:w-[200px] lg:w-[224px] h-[32px] border rounded-[4px] text-[10px] md:text-xs bg-white border-Gray-50 inline-flex">
                           {[
                             'Sat',
                             'Sun',
@@ -298,8 +300,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         </SlideOutPanel>
       )}
       <div
-        style={{ height: window.innerHeight - 100 + 'px' }}
-        className=" overflow-auto w-full h-fit  flex flex-col gap-2 "
+        style={{ height: window.innerHeight }}
+        className=" overflow-auto w-full h-fit pb-[200px] md:pb-0 flex flex-col gap-2 "
       >
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
           <div className="text-sm font-medium">State</div>
@@ -311,7 +313,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </a>
           )}
         </div>
-        <div className="w-full  h-[220px] overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
           <div className="w-full flex justify-between items-center">
             <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               Road Map
@@ -365,13 +367,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   key={option.id}
                   title={option.id}
                   description={option.description}
-                  buttonText={option.action}
+                  buttonText={'Procced'}
                 />
               ))}
             </div>
           )}
         </div>
-        <div className="w-full h-full max-h-[156px] overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  md:max-h-[156px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
           <div className="w-full flex justify-between items-center">
             <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               Messages{' '}
@@ -386,7 +388,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           /> */}
           </div>
           <div
-            className={`flex flex-col gap-3 pr-3 mt-5  max-h-[220px] overflow-auto `}
+            className={`flex flex-col gap-3 pr-3 mt-5  md:max-h-[220px] overflow-auto `}
           >
             {MessagesData.map((option) =>
               option.isDone ? (
@@ -403,7 +405,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   description={option.description}
                   onClick={() => handleMarkAsDone(option.id)}
                   onDelete={() => handleDelete(option.id)}
-                  buttonText={option.action}
+                  buttonText={'Apporve'}
                 />
               ),
             )}
@@ -428,15 +430,34 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
   buttonText,
 }) => {
   return (
-    <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex justify-between items-center text-Text-Primary">
-      <div className="flex gap-3 items-center">
-        <h6 className="text-xs font-medium">{title}</h6>
-        <div className="border-l border-Secondary-SelverGray pl-4 pr-4 text-xs font-normal text-justify max-w-[810px] ">
+    <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex flex-col md:flex-row justify-between items-center text-Text-Primary">
+      <div className="flex flex-col md:flex-row gap-3 md:items-center">
+        <div className="flex md:hidden w-full justify-between items-center">
+          <h6 className="text-xs font-medium">{title}</h6>
+          <div className="flex items-center gap-3">
+            <ButtonPrimary size="small" onClick={onClick}>
+              {' '}
+              <div className="text-[10px]">{buttonText}</div>
+            </ButtonPrimary>
+
+            <img
+              onClick={onDelete}
+              className="w-4 h-4 cursor-pointer"
+              src="/icons/close.svg"
+              alt=""
+            />
+          </div>
+        </div>
+        <h6 className="text-xs font-medium hidden md:block">{title}</h6>
+        <div className="md:border-l border-Secondary-SelverGray pl-4 pr-4 text-xs font-normal text-justify max-w-[810px] ">
           {description}
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <ButtonPrimary onClick={onClick}> {buttonText}</ButtonPrimary>
+      <div className=" hidden md:flex items-center gap-3">
+        <ButtonPrimary size="small" onClick={onClick}>
+          {' '}
+          {buttonText}
+        </ButtonPrimary>
 
         <img
           onClick={onDelete}

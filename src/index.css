@@ -212,7 +212,7 @@ input[type='number'] {
     @apply text-[16px] font-medium;
   }
   .TextStyle-Headline-5 {
-    @apply text-[14px] font-medium;
+    @apply text-xs md:text-[14px] font-medium;
   }
   .TextStyle-Headline-6 {
     @apply text-[12px] font-medium;

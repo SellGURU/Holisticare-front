@@ -13,7 +13,7 @@ interface DetiledAnalyseProps {
   refrences: any;
 }
 
-const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
+const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
   console.log(data);
   console.log(refrences);
@@ -50,22 +50,28 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
-
+  console.log(active);
+  const [isBiomarkerOpen, setIsBiomarkerOpen] = useState<boolean[]>([]);
+  const handleBiomarkerToggle = (index: number) => {
+    const newIsBiomarkerOpen = [...isBiomarkerOpen];
+    newIsBiomarkerOpen[index] = !newIsBiomarkerOpen[index];
+    setIsBiomarkerOpen(newIsBiomarkerOpen);
+  };
   return (
     <>
       <div
         id={data.subcategory}
-        className="w-full mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[6px] "
+        className="w-full mb-4 py-4 px-3 xs:px-6 bg-white border border-Gray-50 shadow-100 rounded-[6px] "
       >
         <div
-          onClick={() => {
-            setIsOpen(!isOpen);
-          }}
+          //   onClick={() => {
+          //     setIsOpen(!isOpen);
+          //   }}
           className="flex cursor-pointer items-center justify-between"
         >
           <div className="flex items-center ">
             <div
-              className="w-10 h-10 items-center rounded-full flex justify-center"
+              className="md:w-10 md:h-10 w-8 h-8 items-center rounded-full flex justify-center"
               style={{
                 background: `conic-gradient(#7F39FB 0% ${
                   data.status[0]
@@ -79,7 +85,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               }}
             >
               <div
-                className="w-[35px] h-[35px]  flex justify-center bg-white items-center  rounded-full"
+                className="md:w-[35px] md:h-[35px] size-7  flex justify-center bg-white items-center  rounded-full"
                 style={{}}
               >
                 <img
@@ -123,10 +129,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
               Description
             </div>
-            <div className=" h-[30px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
+            <div className=" md:h-[30px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
               {data.description}
             </div>
-            <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
+            <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
                 {refrences?.biomarkers.map((value: any) => {
                   return (
@@ -170,42 +176,76 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   </div>
                   {!isCheced ? (
                     <div className="w-full ">
-                      <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
-                        <div className="flex mb-[74px] mt-[-8px] justify-between items-center">
-                          <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
-                            Current Value
+                      {refrences.biomarkers.map(
+                        (biomarker: any, index: number) => (
+                          <div
+                            key={index}
+                            className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                          >
                             <div
-                              onMouseEnter={() => {
-                                setShowMoreInfo(true);
-                              }}
-                              onMouseLeave={() => {
-                                setShowMoreInfo(false);
-                              }}
-                              className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                              onClick={() => handleBiomarkerToggle(index)}
+                              className="w-full flex justify-between items-center text-sm text-Text-Primary"
                             >
-                              More Info
+                              {biomarker.name}
                               <img
-                                src="/icons/user-navbar/info-circle.svg"
-                                className="w-4  cursor-pointer h-4 ml-1"
+                                className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
+                                src="/icons/arrow-down.svg"
                                 alt=""
                               />
-                              {showMoreInfo && active.more_info && (
-                                <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
-                                  <div className="text-[9px] text-Text-Secondary text-justify">
-                                    {active.more_info}
+                            </div>
+                            {isBiomarkerOpen[index] && (
+                              <div
+                                key={index}
+                                className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
+                              >
+                                <div className="w-full">
+                                  <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
+                                    {/* {biomarker.name} */}
+                                    <div
+                                      onMouseEnter={() => {
+                                        setShowMoreInfo(true);
+                                      }}
+                                      onMouseLeave={() => {
+                                        setShowMoreInfo(false);
+                                      }}
+                                      className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                    >
+                                      More Info
+                                      <img
+                                        src="/icons/user-navbar/info-circle.svg"
+                                        className="w-4  cursor-pointer h-4 ml-1"
+                                        alt=""
+                                      />
+                                      {showMoreInfo && biomarker.more_info && (
+                                        <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
+                                          <div className="text-[9px] text-Text-Secondary text-justify">
+                                            {biomarker.more_info}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
+                                    Current Value
+                                    <div className=" z-50 mr-0">
+                                      <UnitPopUp
+                                        unit={biomarker?.unit}
+                                      ></UnitPopUp>
+                                    </div>
+                                  </div>
+                                  <div className="mt-10">
+                                    {biomarker && (
+                                      <StatusBarChart
+                                        data={biomarker}
+                                      ></StatusBarChart>
+                                    )}
                                   </div>
                                 </div>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
-                          <div className="relative z-50 mr-0">
-                            <UnitPopUp unit={active?.unit}></UnitPopUp>
-                          </div>
-                        </div>
-                        {active && (
-                          <StatusBarChart data={active}></StatusBarChart>
-                        )}
-                      </div>
+                        ),
+                      )}
                     </div>
                   ) : (
                     <div className="w-full">
@@ -255,4 +295,4 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   );
 };
 
-export default DetiledAnalyse;
+export default DetiledAcordin;
