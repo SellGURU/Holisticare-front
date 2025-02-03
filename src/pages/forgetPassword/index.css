@@ -10,4 +10,5 @@
 .vari-container {
   display: flex;
   justify-content: center;
+  width: unset;
 }
