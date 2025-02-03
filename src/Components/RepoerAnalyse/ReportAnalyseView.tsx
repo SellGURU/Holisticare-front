@@ -34,6 +34,7 @@ import InfoToltip from '../InfoToltip';
 import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
 import { AccordionItem } from './Boxs/Accordion';
+import DetiledAcordin from './Boxs/detailedAcordin';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -497,7 +498,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                 </div>
 
-                <div className="mt-6">
+                <div className="mt-6 hidden md:block">
                   {resolveCategories().map((el: any) => {
                     return (
                       <DetiledAnalyse
@@ -508,6 +509,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         }
                         data={el}
                       ></DetiledAnalyse>
+                    );
+                  })}
+                </div>
+                <div className="mt-6 block md:hidden">
+                  {resolveCategories().map((el: any) => {
+                    return (
+                      <DetiledAcordin
+                        refrences={
+                          resolveSubCategories().filter(
+                            (val) => val.subcategory == el.subcategory,
+                          )[0]
+                        }
+                        data={el}
+                      ></DetiledAcordin>
                     );
                   })}
                 </div>
