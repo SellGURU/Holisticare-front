@@ -27,10 +27,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
     <>
       <div
         id={data.name}
-        className="w-full h-[188px] pt-3 px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]"
+        className="w-full h-[208px] md:h-[188px] pt-3 px-2 md:px-4 border bg-white border-gray-50 shadow-100 rounded-[6px]"
       >
         <div className="flex justify-between items-center">
-          <div className="text-Text-Primary TextStyle-Headline-5  items-center cursor-default gap-2 flex justify-start  ">
+          <div className="text-Text-Primary text-xs md:text-sm font-medium  md:items-center cursor-default gap-4 md:gap-2 flex flex-col md:flex-row justify-start  ">
             <div
               {...(isLongName && {
                 'data-tooltip-id': 'name',
@@ -41,7 +41,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               {data.name}
             </div>
             {isLongName && <Tooltip className="z-30" id="name" />}
+              <div className='flex items-center gap-6'>
 
+           
             <div
               onMouseEnter={() => {
                 setShowMoreInfo(true);
@@ -49,7 +51,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               onMouseLeave={() => {
                 setShowMoreInfo(false);
               }}
-              className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+              className="flex relative justify-start ml-2 items-center cursor-pointer text-[10px] md:text-xs font-medium text-Primary-DeepTeal "
             >
               More Info
               <img
@@ -58,7 +60,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 alt=""
               />
               {showMoreInfo && data.more_info && (
-                <div className="absolute p-2 left-6 top-4 bg-white w-[320px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                <div className="absolute p-2 left-6 top-4 w-[220px] bg-white md:w-[320px] z-[60] h-auto rounded-[16px] border border-gray-50 shadow-100">
                   <div className="text-[9px] text-Text-Secondary">
                     {data.more_info}
                   </div>
@@ -72,14 +74,15 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 });
                 publish('openDetiledCard', { id: data.subcategory });
               }}
-              className="text-Primary-DeepTeal flex justify-center items-center gap-1 text-[12px] cursor-pointer"
+              className="text-Primary-DeepTeal  flex justify-center items-center gap-1 text-[10px] md:text-[12px] cursor-pointer"
             >
               Group
               <FiExternalLink></FiExternalLink>
             </div>
+            </div>
           </div>
           <div className=" gap-2 hidden justify-end items-center">
-            <div className="text-Text-Primary TextStyle-Button ">
+            <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
               Historical Chart
             </div>
             <Toggle
@@ -90,8 +93,8 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
             ></Toggle>
           </div>
         </div>
-        <div className="mt-[20px] flex justify-between">
-          <div className="text-Text-Primary TextStyle-Headline-6">
+        <div className="mt-[20px] flex items-center justify-between">
+          <div className="text-Text-Primary font-medium text-[10px] md:text-xs">
             Current Value
           </div>
           <div className="flex justify-end items-center gap-2">
