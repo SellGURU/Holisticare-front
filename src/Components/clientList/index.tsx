@@ -209,10 +209,10 @@ const ClientList = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className=" sm:px-6 pt-8 ">
+        <div style={{height: window.innerHeight - 60 + "px"}} className=" sm:px-6 pt-8  ">
           {clientList.length > 0 ? (
             <>
-              <div className="w-full flex justify-between items-center">
+              <div className="w-full  flex justify-between items-center">
                 <div className="text-Text-Primary font-medium opacity-[87%]">
                   Clients List
                 </div>
@@ -337,7 +337,7 @@ const ClientList = () => {
               </div>
               {activeList == 'grid' ? (
                 <div
-                  className={` w-full flex md:items-start md:justify-start justify-center items-center pb-[100px] gap-[18px] flex-wrap ${showSearch && 'mt-10'}`}
+                  className={` w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[100px]  gap-[18px] flex-wrap ${showSearch && 'mt-10'}`}
                 >
                   {filteredClientList.map((client: any) => {
                     return (
