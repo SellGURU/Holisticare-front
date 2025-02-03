@@ -28,7 +28,7 @@ export const Questionary = () => {
   return (
     <div className=" w-full">
       <div className="px-2">
-        <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+        <div className="w-full text-[10px] md:text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>Questionary Name</div>
           <div>State</div>
           <div>Action</div>
@@ -41,14 +41,14 @@ export const Questionary = () => {
                 <div className="w-full mt-2">
                   {data?.map((el: any) => {
                     return (
-                      <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
-                        <div className="text-[10px]  text-Text-Primary">
+                      <div className=" bg-white border border-Gray-50 mb-1 px-2 xs:px-3 md:px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
+                        <div className=" text-[9px] xs:text-[10px]  text-Text-Primary">
                           {el.Data}
                         </div>
 
                         <div className="text-[8px] ">
                           <div
-                            className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
+                            className={`rounded-full px-1.5  xs:px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
                               el['State'] == 'Complete'
                                 ? 'bg-[#DEF7EC]'
                                 : 'bg-[#F9DEDC]'

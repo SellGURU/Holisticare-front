@@ -80,7 +80,7 @@ export const Notes = () => {
                   borderColor: '#005F73',
                 }}
               >
-                <div className="w-[100px] text-xs text-Primary-DeepTeal">
+                <div className=" w-[60px] md:w-[100px] text-xs text-Primary-DeepTeal">
                   Cancel
                 </div>
               </ButtonPrimary>
@@ -131,7 +131,7 @@ export const Notes = () => {
                 //   }}
                 style={{ height: '24px' }}
               >
-                <div className="w-[100px] text-xs">Save Note</div>
+                <div className=" w-[60px] md:w-[100px] text-xs">Save Note</div>
               </ButtonPrimary>
             </div>
           </div>

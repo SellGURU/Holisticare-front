@@ -138,7 +138,7 @@ export const SwitchClient = () => {
           })}
         </>
       </div>
-      <div className="w-full flex justify-center mt-6">
+      <div className="w-full flex justify-center mt-3 md:mt-6">
         <ButtonPrimary onClick={handleSaveChanges}>
           <img src="/icons/tick-square.svg" alt="" />
           Save Changes
