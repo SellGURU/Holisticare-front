@@ -33,6 +33,7 @@ import { publish } from '../../utils/event';
 import InfoToltip from '../InfoToltip';
 import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
+import { AccordionItem } from './Boxs/Accordion';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -303,12 +304,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[200px]  pr-28 h-[98vh] md:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden `}
+            className={`pt-[20px] scroll-container relative pb-[200px]  md:pr-28 h-[98vh] md:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-scroll md:overflow-x-hidden  px-5 md:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
-              <div className="flex gap-14 ">
-                <div className="min-w-[430px] w-[330px] relative min-h-[750px]">
+              <div className="flex flex-col md:flex-row gap-6 md:gap-14 ">
+                <div className="  min-w-[430px] w-full md:w-[330px] relative md:min-h-[750px]">
                   <div>
                     <div
                       id="Client Summary"
@@ -327,7 +328,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       </div>
                     )}
                   </div>
-                  <div className="relative">
+                  <div className="relative hidden md:block">
                     <img className="" src="/human.png" alt="" />
                     <div>
                       {resolveCategories().map((el: any, index: number) => {
@@ -387,7 +388,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     {ClientSummaryBoxs?.client_summary}
                   </div>
-                  <div className="w-full mt-4 grid gap-4 grid-cols-2">
+                  <div className="w-full mt-4 grid gap-4 grid-cols-1 md:grid-cols-2">
                     {resolveCategories().map((el: any) => {
                       return (
                         <SummaryBox isActive={false} data={el}></SummaryBox>
@@ -401,7 +402,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
               .checked == true && (
               <>
-                <div className="my-[200px] min-h-[400px] text-light-primary-text dark:text-primary-text ">
+                <div className=" my-[200px] md:min-h-[400px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
                       id="Needs Focus Biomarker"
@@ -413,7 +414,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {referenceData.total_biomarker_note}
                     </div>
                   </div>
-                  <div className="w-full mt-4 grid gap-4 grid-cols-2">
+                  <div className="w-full mt-4 grid gap-4 md:grid-cols-2">
                     {resolveBioMarkers()
                       .filter((val) => val.outofref == true)
                       .map((el) => {
@@ -436,7 +437,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                   </div>
-                  <div>
+                  <div className=" hidden md:block">
                     <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center">
                       <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
                         Name
@@ -464,6 +465,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       return (
                         <>
                           <ConceringRow data={el}></ConceringRow>
+                        </>
+                      );
+                    })}
+                  </div>
+                  <div className="flex md:hidden flex-col gap-3">
+                    {ResolveConceringData().map((el: any) => {
+                      return (
+                        <>
+                          <AccordionItem data={el}></AccordionItem>
                         </>
                       );
                     })}

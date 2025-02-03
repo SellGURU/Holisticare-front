@@ -127,7 +127,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
-              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 ">
+              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
                 {refrences?.biomarkers.map((value: any) => {
                   return (
                     <>

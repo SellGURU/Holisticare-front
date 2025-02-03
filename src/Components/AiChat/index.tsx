@@ -143,7 +143,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
     });
   }, [memberId]);
   return (
-    <div className="w-full  mx-auto bg-white shadow-200 min-h-[545px]  rounded-[16px] relative flex flex-col p-4 ">
+    <div className="w-full  mx-auto bg-white shadow-200 h-[480px] md:min-h-[545px]  rounded-[16px] relative flex flex-col p-4 ">
       <div className="text-Text-Primary text-sm font-medium">State</div>
       <div className="p-4 text-center text-primary-text text-xs">
         {messages.length > 1 && chatStartDate}
