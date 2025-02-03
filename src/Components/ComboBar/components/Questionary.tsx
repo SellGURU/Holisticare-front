@@ -155,7 +155,7 @@ export const Questionary = () => {
   return (
     <div className=" w-full">
       <div className="px-2">
-        <div className="w-full text-[12px] px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+        <div className="w-full text-[10px] md:text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>Questionary Name</div>
           <div>State</div>
           <div>Action</div>
