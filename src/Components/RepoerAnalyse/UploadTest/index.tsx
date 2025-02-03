@@ -38,14 +38,17 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
   return (
     <>
-      <div className="w-[93%] rounded-[16px] h-[89vh] top-4 flex justify-center  absolute left-0">
+      <div className=" w-full md:w-[93%] rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center  absolute left-0">
         <div className="w-full h-full opacity-95 rounded-[12px] bg-gray-50 absolute"></div>
-        <div className="w-[530px] relative z-10">
-          <div className="w-full flex justify-center text-Text-Primary font-medium mt-14">
+        <div
+          style={{ height: window.innerHeight - 60 + 'px' }}
+          className=" w-[260px] h-fit overflow-auto  xs:w-[344px] md:w-[530px] relative z-10 px-2"
+        >
+          <div className="w-full flex justify-center text-Text-Primary font-medium mt-5 md:mt-14">
             No Data Available Yet!
           </div>
           <div className={isShare ? 'opacity-20' : ''}>
-            <div className="text-[12px] text-Text-Primary  text-center mt-1 ">
+            <div className=" text-[10px] xs:text-[12px] text-Text-Primary  text-center mt-1 ">
               It looks like you haven’t uploaded any test results or completed
               any questionary yet. To view detailed insights, please upload your
               test results or complete the questionnaires now.
@@ -102,7 +105,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
               />
             </div>
 
-            <div className="text-Text-Primary text-[12px] mt-2 w-[470px]">
+            <div className="text-Text-Primary text-[12px] text-justify mt-2 w-[220px] xs:w-[300px] md:w-[470px]">
               {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
             </div>
             <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
@@ -111,12 +114,16 @@ const UploadTest: React.FC<UploadTestProps> = ({
                   <>
                     <div className="w-full flex justify-between items-center px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ">
                       <div className="flex justify-start gap-2">
-                        <img src="/images/Pdf.png" alt="" />
+                        <img
+                          className="object-contain"
+                          src="/images/Pdf.png"
+                          alt=""
+                        />
                         <div>
-                          <div className="text-[12px] text-Text-Primary font-[600]">
+                          <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                             {el.name}
                           </div>
-                          <div className="text-[12px] text-Text-Secondary">
+                          <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
                             {(el.size / 1024).toFixed(2)} KB
                           </div>
                         </div>
@@ -177,18 +184,18 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Complete Questionnaire
               </div>
             </div>
-            {files.length > 0 && (
-              <div className="flex justify-center mt-5">
-                <ButtonSecondary
-                  onClick={() => {
-                    onGenderate();
-                  }}
-                >
-                  <img src="/icons/tick-square.svg" alt="" />
-                  Develop Health Plan
-                </ButtonSecondary>
-              </div>
-            )}
+
+            <div className="flex justify-center mt-5">
+              <ButtonSecondary
+                disabled={files.length == 0}
+                onClick={() => {
+                  onGenderate();
+                }}
+              >
+                <img src="/icons/tick-square.svg" alt="" />
+                Develop Health Plan
+              </ButtonSecondary>
+            </div>
           </div>
         </div>
       </div>

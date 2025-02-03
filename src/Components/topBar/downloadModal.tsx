@@ -133,7 +133,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           size="small"
           outLine
         >
-          <div className="w-[110px]">Cancel</div>
+          <div className=" w-[60px] xs:w-[110px]">Cancel</div>
         </ButtonPrimary>
         <ButtonPrimary
           onClick={() => {
@@ -141,7 +141,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           }}
           size="small"
         >
-          <div className="w-[110px]">Confirm</div>
+          <div className=" w-[60px] xs:w-[110px]">Confirm</div>
         </ButtonPrimary>
       </div>
     </>

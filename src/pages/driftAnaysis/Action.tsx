@@ -297,7 +297,10 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         </SlideOutPanel>
       )}
-      <div style={{height:window.innerHeight - 100 + "px"}} className=" overflow-auto w-full h-fit  flex flex-col gap-2 ">
+      <div
+        style={{ height: window.innerHeight - 100 + 'px' }}
+        className=" overflow-auto w-full h-fit  flex flex-col gap-2 "
+      >
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
           <div className="text-sm font-medium">State</div>
           <p className="text-xs text-justify my-2">{Description}</p>

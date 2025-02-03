@@ -215,16 +215,16 @@ export const DriftAnaysis = () => {
   const itemsPerPage = 4;
   const totalPages = Math.ceil(resolvedFiltersData().length / itemsPerPage);
 
-  const handlePageChange = (page:number) => {
+  const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const paginatedData = resolvedFiltersData().slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
-  const navigate = useNavigate()
-  const handleClientCardClick = (memberId: number,name:string) => {
+  const navigate = useNavigate();
+  const handleClientCardClick = (memberId: number, name: string) => {
     if (window.innerWidth <= 640) {
       navigate(`/drift-analysis/client/${name}/${memberId}`);
     } else {
@@ -233,7 +233,10 @@ export const DriftAnaysis = () => {
   };
 
   return (
-    <div style={{height:window.innerHeight - 70 + "px"}} className=" w-full  md:pl-6 pt-6 px-2 flex flex-col md:flex-row items-start overflow-auto md:overflow-hidden gap-3">
+    <div
+      style={{ height: window.innerHeight - 70 + 'px' }}
+      className=" w-full  md:pl-6 pt-6 px-2 flex flex-col md:flex-row items-start overflow-auto md:overflow-hidden gap-3"
+    >
       <>
         {patients[0]?.member_id == 1 ? (
           <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
@@ -241,25 +244,25 @@ export const DriftAnaysis = () => {
           </div>
         ) : (
           <>
-          <div className=" w-full md:w-[75%] flex flex-col gap-3">
-            <div className="w-full font-medium text-Text-Primary">
-              Drift Analysis
-              {/* <AnalyseButton text="Generate by AI" />{" "} */}
-              <p className=' mt-1 text-xs text-Text-Secondary block md:hidden'>
-              Select a client to view their drift analysis.
-              </p>
-            </div>
-            <div className="w-full flex items-center justify-center">
-              {/* <div className="w-[171px]"></div> */}
-              <div className=" hidden md:flex justify-center  ">
-                <ActivityMenu
-                  activeMenu={activeMenu}
-                  menus={menus}
-                  onChangeMenuAction={(menu) => setActiveMenu(menu)}
-                />
+            <div className=" w-full md:w-[75%] flex flex-col gap-3">
+              <div className="w-full font-medium text-Text-Primary">
+                Drift Analysis
+                {/* <AnalyseButton text="Generate by AI" />{" "} */}
+                <p className=" mt-1 text-xs text-Text-Secondary block md:hidden">
+                  Select a client to view their drift analysis.
+                </p>
               </div>
+              <div className="w-full flex items-center justify-center">
+                {/* <div className="w-[171px]"></div> */}
+                <div className=" hidden md:flex justify-center  ">
+                  <ActivityMenu
+                    activeMenu={activeMenu}
+                    menus={menus}
+                    onChangeMenuAction={(menu) => setActiveMenu(menu)}
+                  />
+                </div>
 
-              {/* <div className="flex justify-end invisible items-center gap-2">
+                {/* <div className="flex justify-end invisible items-center gap-2">
                   <Button
                     onClick={() => {
                       Application.getManualData().then((res) => {
@@ -292,66 +295,64 @@ export const DriftAnaysis = () => {
                     />
                   </Button>
                 </div> */}
+              </div>
+              <div className="hidden md:block">
+                {activeMenu === 'Copilot' ? (
+                  <AiChat memberID={activeMemberID} />
+                ) : (
+                  <Action memberID={activeMemberID}></Action>
+                )}
+              </div>
             </div>
-            <div className='hidden md:block'>
-            {activeMenu === 'Copilot' ? (
-              <AiChat memberID={activeMemberID} />
-            ) : (
-              <Action memberID={activeMemberID}></Action>
-            )}
-            </div>
-          
-          </div>
-          <div className="flex flex-col gap-[10px] justify-center  w-full md:w-[26%]    ">
-          <div className='flex md:flex-col gap-3 flex-col-reverse '>
-          <SearchBox
-            onSearch={(search) => setSearchQuery(search)}
-            placeHolder="Search for client..."
-          />
-          <StatusMenu
-            status={status}
-            activeStatus={activeStatus as any}
-            onChange={(value) => setActiveStatus(value)}
-          />
-          </div>
-       
-
-          <div  className="flex flex-col pr-1 h-full  md:max-h-[560px] w-[102%] overflow-auto">
-            {paginatedData.map((client, i) => {
-              console.log(client);
-
-              return (
-                <ClientCard
-                  index={i}
-                  key={i}
-                  name={client.name}
-                  email={client.email}
-                  picture={client.picture}
-                  memberID={client.member_id}
-                  setCardActive={() => handleClientCardClick(client.member_id,client.name)}
-                  // onClick={() => {
-                  //   setcardActive(i + 1); // Update the active card index
-                  //   setActiveMemberID(client.member_id); // Set active member ID
-                  // }}
-                  status={client.status}
-                  cardActive={activeMemberID}
-                  tags={client.tags}
+            <div className="flex flex-col gap-[10px] justify-center  w-full md:w-[26%]    ">
+              <div className="flex md:flex-col gap-3 flex-col-reverse ">
+                <SearchBox
+                  onSearch={(search) => setSearchQuery(search)}
+                  placeHolder="Search for client..."
                 />
-              );
-            })}
-          </div>
-          <div className='w-full flex md:hidden justify-center'>
-          <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-          </div>
-        </div>
+                <StatusMenu
+                  status={status}
+                  activeStatus={activeStatus as any}
+                  onChange={(value) => setActiveStatus(value)}
+                />
+              </div>
+
+              <div className="flex flex-col pr-1 h-full  md:max-h-[560px] w-[102%] overflow-auto">
+                {paginatedData.map((client, i) => {
+                  console.log(client);
+
+                  return (
+                    <ClientCard
+                      index={i}
+                      key={i}
+                      name={client.name}
+                      email={client.email}
+                      picture={client.picture}
+                      memberID={client.member_id}
+                      setCardActive={() =>
+                        handleClientCardClick(client.member_id, client.name)
+                      }
+                      // onClick={() => {
+                      //   setcardActive(i + 1); // Update the active card index
+                      //   setActiveMemberID(client.member_id); // Set active member ID
+                      // }}
+                      status={client.status}
+                      cardActive={activeMemberID}
+                      tags={client.tags}
+                    />
+                  );
+                })}
+              </div>
+              <div className="w-full flex md:hidden justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            </div>
           </>
         )}
-
- 
       </>
     </div>
   );
