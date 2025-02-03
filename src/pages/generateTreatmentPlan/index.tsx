@@ -151,7 +151,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   };
   // const {themeISLight} = useContext(AppContext);
   return (
-    <>
+    <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
       {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -166,7 +166,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       <div className="fixed w-full top-0 hidden lg:flex">
         <TopBar></TopBar>
       </div>
-      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6">
+      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[999]">
         <div
           onClick={() => {
             navigate(-1);
@@ -180,7 +180,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         </div>
       </div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
-        <div className="w-full px-4 py-6    relative   ">
+        <div className="w-full px-4 py-6 relative h-full lg:h-[unset]">
           <div className=" flex mb-2 justify-between w-full">
             <div className="hidden lg:flex w-full items-center gap-3">
               <div
@@ -201,8 +201,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   setSHowAnalyse(true);
                 }}
-                size="normal"
-                ClassName="w-[50%] lg:w-[unset]"
+                size="small"
+                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
                 <div className="w-full flex justify-center lg:justify-between gap-2">
                   <img src="/icons/analyse.svg" alt="" />
@@ -213,8 +213,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   setSHowClientGoals(true);
                 }}
-                size="normal"
-                ClassName="w-[50%] lg:w-[unset]"
+                size="small"
+                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
                 {/* <img src="/icons/" alt="" /> */}
                 <div className="w-full flex justify-center lg:justify-between gap-2">
@@ -300,7 +300,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div> */}
           </div>
-          <div className=" h-[480px] pr-2 overflow-auto">
+          <div className="h-full lg:h-[480px] pr-2 lg:overflow-auto">
             {generateStep == 'Client Goals' && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
@@ -606,7 +606,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           )}
         </div>
       </SlideOutPanel>
-    </>
+    </div>
   );
 };
 
