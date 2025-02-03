@@ -136,7 +136,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     [key: string]: boolean;
   }>({});
   console.log(MessagesData);
-  
+
   return (
     <>
       {showModal && (
@@ -300,7 +300,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         </SlideOutPanel>
       )}
       <div
-        style={{ height: window.innerHeight}}
+        style={{ height: window.innerHeight }}
         className=" overflow-auto w-full h-fit pb-[200px] md:pb-0 flex flex-col gap-2 "
       >
         <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
@@ -367,7 +367,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   key={option.id}
                   title={option.id}
                   description={option.description}
-                  buttonText={"Procced"}
+                  buttonText={'Procced'}
                 />
               ))}
             </div>
@@ -405,7 +405,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   description={option.description}
                   onClick={() => handleMarkAsDone(option.id)}
                   onDelete={() => handleDelete(option.id)}
-                  buttonText={"Apporve"}
+                  buttonText={'Apporve'}
                 />
               ),
             )}
@@ -432,27 +432,32 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
   return (
     <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex flex-col md:flex-row justify-between items-center text-Text-Primary">
       <div className="flex flex-col md:flex-row gap-3 md:items-center">
-        <div className='flex md:hidden w-full justify-between items-center'>
-        <h6 className="text-xs font-medium">{title}</h6>
-        <div className="flex items-center gap-3">
-        <ButtonPrimary size='small' onClick={onClick}> <div className='text-[10px]'>{buttonText}</div></ButtonPrimary>
+        <div className="flex md:hidden w-full justify-between items-center">
+          <h6 className="text-xs font-medium">{title}</h6>
+          <div className="flex items-center gap-3">
+            <ButtonPrimary size="small" onClick={onClick}>
+              {' '}
+              <div className="text-[10px]">{buttonText}</div>
+            </ButtonPrimary>
 
-        <img
-          onClick={onDelete}
-          className="w-4 h-4 cursor-pointer"
-          src="/icons/close.svg"
-          alt=""
-        />
-      </div>
-
+            <img
+              onClick={onDelete}
+              className="w-4 h-4 cursor-pointer"
+              src="/icons/close.svg"
+              alt=""
+            />
+          </div>
         </div>
-           <h6 className="text-xs font-medium hidden md:block">{title}</h6>
+        <h6 className="text-xs font-medium hidden md:block">{title}</h6>
         <div className="md:border-l border-Secondary-SelverGray pl-4 pr-4 text-xs font-normal text-justify max-w-[810px] ">
           {description}
         </div>
       </div>
       <div className=" hidden md:flex items-center gap-3">
-        <ButtonPrimary size="small" onClick={onClick}> {buttonText}</ButtonPrimary>
+        <ButtonPrimary size="small" onClick={onClick}>
+          {' '}
+          {buttonText}
+        </ButtonPrimary>
 
         <img
           onClick={onDelete}

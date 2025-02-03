@@ -31,9 +31,11 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({ data }) => {
               className="bg-backgroundColor-Card rounded-2xl border border-Gray-50  p-2 xs:p-3 my-2"
             >
               <div className="flex justify-between items-center">
-                <div className='flex gap-2 '>
-                    <div className='w-[6px] h-[56px] bg-Green rounded'></div>
-                  <h4 className=" text-xs xs:text-sm font-medium ">{biomarker.name}</h4>
+                <div className="flex gap-2 ">
+                  <div className="w-[6px] h-[56px] bg-Green rounded"></div>
+                  <h4 className=" text-xs xs:text-sm font-medium ">
+                    {biomarker.name}
+                  </h4>
                 </div>
                 <div className="text-right flex items-start gap-[2px]">
                   <span className=" text-lg xs:text-xl font-meidum text-[#06C78D]">
@@ -46,19 +48,19 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({ data }) => {
               </div>
               <div className="flex justify-between mt-2 text-[8px] xs:text-[10px] border-t border-[#E9F0F2] pt-[6px]">
                 <div>
-                  <p className=' text-Text-Secondary'>Lab Ref Range</p>
+                  <p className=" text-Text-Secondary">Lab Ref Range</p>
                   <p>{biomarker['Lab Ref Range']}</p>
                 </div>
                 <div>
-                  <p className=' text-Text-Secondary'>Optimal Range</p>
+                  <p className=" text-Text-Secondary">Optimal Range</p>
                   <p>{biomarker['Optimal Range']}</p>
                 </div>
                 <div>
-                  <p className=' text-Text-Secondary'>Baseline</p>
+                  <p className=" text-Text-Secondary">Baseline</p>
                   <p>{biomarker.Baseline}</p>
                 </div>
                 <div>
-                  <p className=' text-Text-Secondary'>Changes</p>
+                  <p className=" text-Text-Secondary">Changes</p>
                   <p>{biomarker.Changes}</p>
                 </div>
               </div>

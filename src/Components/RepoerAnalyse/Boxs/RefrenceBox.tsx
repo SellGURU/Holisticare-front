@@ -41,44 +41,42 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               {data.name}
             </div>
             {isLongName && <Tooltip className="z-30" id="name" />}
-              <div className='flex items-center gap-6'>
-
-           
-            <div
-              onMouseEnter={() => {
-                setShowMoreInfo(true);
-              }}
-              onMouseLeave={() => {
-                setShowMoreInfo(false);
-              }}
-              className="flex relative justify-start ml-2 items-center cursor-pointer text-[10px] md:text-xs font-medium text-Primary-DeepTeal "
-            >
-              More Info
-              <img
-                src="/icons/user-navbar/info-circle.svg"
-                className="w-4  cursor-pointer h-4 ml-1"
-                alt=""
-              />
-              {showMoreInfo && data.more_info && (
-                <div className="absolute p-2 left-6 top-4 w-[220px] bg-white md:w-[320px] z-[60] h-auto rounded-[16px] border border-gray-50 shadow-100">
-                  <div className="text-[9px] text-Text-Secondary">
-                    {data.more_info}
+            <div className="flex items-center gap-6">
+              <div
+                onMouseEnter={() => {
+                  setShowMoreInfo(true);
+                }}
+                onMouseLeave={() => {
+                  setShowMoreInfo(false);
+                }}
+                className="flex relative justify-start ml-2 items-center cursor-pointer text-[10px] md:text-xs font-medium text-Primary-DeepTeal "
+              >
+                More Info
+                <img
+                  src="/icons/user-navbar/info-circle.svg"
+                  className="w-4  cursor-pointer h-4 ml-1"
+                  alt=""
+                />
+                {showMoreInfo && data.more_info && (
+                  <div className="absolute p-2 left-6 top-4 w-[220px] bg-white md:w-[320px] z-[60] h-auto rounded-[16px] border border-gray-50 shadow-100">
+                    <div className="text-[9px] text-Text-Secondary">
+                      {data.more_info}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-            <div
-              onClick={() => {
-                document.getElementById(data.subcategory)?.scrollIntoView({
-                  behavior: 'smooth',
-                });
-                publish('openDetiledCard', { id: data.subcategory });
-              }}
-              className="text-Primary-DeepTeal  flex justify-center items-center gap-1 text-[10px] md:text-[12px] cursor-pointer"
-            >
-              Group
-              <FiExternalLink></FiExternalLink>
-            </div>
+                )}
+              </div>
+              <div
+                onClick={() => {
+                  document.getElementById(data.subcategory)?.scrollIntoView({
+                    behavior: 'smooth',
+                  });
+                  publish('openDetiledCard', { id: data.subcategory });
+                }}
+                className="text-Primary-DeepTeal  flex justify-center items-center gap-1 text-[10px] md:text-[12px] cursor-pointer"
+              >
+                Group
+                <FiExternalLink></FiExternalLink>
+              </div>
             </div>
           </div>
           <div className=" gap-2 hidden justify-end items-center">

@@ -7,7 +7,7 @@ interface ConceringRowProps {
 
 const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(true);
-console.log(data);
+  console.log(data);
 
   return (
     <>
