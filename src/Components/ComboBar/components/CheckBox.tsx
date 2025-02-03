@@ -6,7 +6,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked, ...props }) => {
     <>
       <input type="checkbox" checked={checked} className="hidden" />
       <div
-        className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
+        className={`w-3 h-3 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
           checked ? 'bg-Primary-DeepTeal' : 'bg-white'
         }`}
         {...props}

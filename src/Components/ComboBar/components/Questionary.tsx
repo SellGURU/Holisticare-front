@@ -43,7 +43,7 @@ export const Questionary = () => {
   };
 
   const resolveForm = (type: string) => {
-    if (type == 'short_answer') {
+    if (type == 'short_answer' || type == 'paragraph') {
       return (
         <>
           <textarea
@@ -162,10 +162,16 @@ export const Questionary = () => {
         </div>
         {tryComplete ? (
           <>
-            <div className="bg-white relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
+            <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
               <div className="flex justify-between items-center">
                 <div className="text-xs text-Text-Primary">Profile Data</div>
-                <ButtonSecondary ClassName="rounded-full" size="small">
+                <ButtonSecondary
+                  onClick={() => {
+                    setTryComplete(false);
+                  }}
+                  ClassName="rounded-full"
+                  size="small"
+                >
                   <img
                     className="w-[16px]"
                     src="/icons/tick-square.svg"
@@ -180,7 +186,7 @@ export const Questionary = () => {
                     {questionsFormData.questions[activeCard - 1].question}
                   </div>
                 </div>
-                <div className="bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] min-h-[50px]">
+                <div className="bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px] overflow-y-auto max-h-[100px]">
                   {resolveForm(questionsData.questions[activeCard - 1].type)}
                 </div>
               </div>
@@ -189,7 +195,9 @@ export const Questionary = () => {
                 <div className="flex justify-center items-center gap-3">
                   <div
                     onClick={() => {
-                      setActiveCard(activeCard - 1);
+                      if (activeCard > 1) {
+                        setActiveCard(activeCard - 1);
+                      }
                     }}
                     className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
                   >
@@ -199,12 +207,14 @@ export const Questionary = () => {
                       alt=""
                     />
                   </div>
-                  <div className="text-[10px] text-Text-Secondary">
+                  <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
                     {activeCard} /{questionsFormData.questions.length}
                   </div>
                   <div
                     onClick={() => {
-                      setActiveCard(activeCard + 1);
+                      if (activeCard < questionsFormData.questions.length) {
+                        setActiveCard(activeCard + 1);
+                      }
                     }}
                     className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
                   >
@@ -315,17 +325,18 @@ export const Questionary = () => {
                 </p>
                 <ButtonPrimary
                   onClick={() => {
-                    setTryComplete(true);
-                    // Application.questionaryLink({})
-                    //   .then((res) => {
-                    //     const url = res.data['Personal Information'];
-                    //     if (url) {
-                    //       window.open(url, '_blank');
-                    //     }
-                    //   })
-                    //   .catch((err) => {
-                    //     console.error('Error fetching the link:', err);
-                    //   });
+                    // setTryComplete(true);
+                    Application.questionaryLink({})
+                      .then((res) => {
+                        const url = res.data['Personal Information'];
+                        setTryComplete(true);
+                        if (url) {
+                          window.open(url);
+                        }
+                      })
+                      .catch((err) => {
+                        console.error('Error fetching the link:', err);
+                      });
                   }}
                 >
                   Complete Questionary
