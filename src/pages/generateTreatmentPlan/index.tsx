@@ -151,7 +151,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   };
   // const {themeISLight} = useContext(AppContext);
   return (
-    <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
+    <div className="h-[100vh] overflow-auto">
       {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -163,7 +163,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         </div>
       )}
 
-      <div className="fixed w-full top-0 hidden lg:flex">
+      <div className="fixed w-full top-0 hidden lg:flex z-[9]">
         <TopBar></TopBar>
       </div>
       <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[9]">
@@ -179,8 +179,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           Generate Holistic Plan
         </div>
       </div>
-      <div className="w-full flex justify-center px-4  pt-[80px]">
-        <div className="w-full px-4 py-6 relative h-full lg:h-[unset]">
+      <div className="w-full flex justify-center px-4 pt-[40px] lg:pt-[30px]">
+        <div className="w-full px-4 py-6 relative h-full">
           <div className=" flex mb-2 justify-between w-full">
             <div className="hidden lg:flex w-full items-center gap-3">
               <div
@@ -300,7 +300,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div> */}
           </div>
-          <div className="h-full lg:h-[480px] pr-2 lg:overflow-auto">
+          <div className="h-full pr-2">
             {generateStep == 'Client Goals' && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (

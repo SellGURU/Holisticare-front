@@ -189,7 +189,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   })}
                 </div>
               </div>
-              <div className="bg-white rounded-[16px]  shadow-100 p-6  mt-2  border border-Gray-25  ">
+              <div className="bg-white rounded-[16px]  shadow-100 py-6 px-2 md:px-6 lg:px-6  mt-2  border border-Gray-25  ">
                 <div className="w-full flex justify-center">
                   <Toggle
                     active={active}
@@ -272,7 +272,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   )}
                 </div>
 
-                <div className="w-full px-6 py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
+                <div className="w-full lg:px-6 lg:py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
                   {active == 'Suggestion' ? (
                     <>
                       {data['suggestion_tab'].filter(
