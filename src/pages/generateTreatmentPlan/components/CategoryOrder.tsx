@@ -338,7 +338,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       <div className="w-full flex flex-col-reverse lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
                         {
                           <>
-                            <div className="w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:min-w-[220px]">
+                            <div className="w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
                               {data['result_tab']
                                 .filter(
                                   (el: any) =>

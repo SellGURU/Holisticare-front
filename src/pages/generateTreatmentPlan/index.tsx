@@ -18,6 +18,7 @@ import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Circleloader from '../../Components/CircleLoader';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import SvgIcon from '../../utils/svgIcon';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
@@ -201,11 +202,18 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   setSHowAnalyse(true);
                 }}
-                size="small"
-                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
+                outLine
+                // size="small"
+                // ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
-                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
-                  <img src="/icons/analyse.svg" alt="" />
+                <div className="w-full items-center flex justify-center lg:justify-between gap-1 text-nowrap">
+                  <SvgIcon
+                    width="16px"
+                    height="16px"
+                    src="/icons/analyse.svg"
+                    color={'#005F73'}
+                  />
+                  {/* <img src="/icons/analyse.svg" alt="" /> */}
                   Analysis
                 </div>
               </ButtonPrimary>
@@ -213,14 +221,38 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   setSHowClientGoals(true);
                 }}
-                size="small"
-                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
+                outLine
+                // size="small"
+                // ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
                 {/* <img src="/icons/" alt="" /> */}
-                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
-                  <img src="/icons/chart.svg" alt="" />
+                <div className="w-full flex justify-center items-center lg:justify-between gap-1 text-nowrap">
+                  <SvgIcon
+                    width="16px"
+                    height="16px"
+                    src="/icons/chart.svg"
+                    color={'#005F73'}
+                  />
+                  {/* <img src="/icons/chart.svg" alt="" /> */}
                   Client Goals
                 </div>
+              </ButtonPrimary>
+              <ButtonPrimary
+                disabled={isLoading}
+                onClick={() => {
+                  resolveNextStep();
+                }}
+              >
+                {isLoading ? (
+                  <div className="w-full h-full min-h-[21px] flex justify-center items-center">
+                    <BeatLoader size={8} color={'white'}></BeatLoader>
+                  </div>
+                ) : (
+                  <div className=" min-w-[100px] flex items-center justify-center gap-1">
+                    <img className="w-4" src="/icons/tick-square.svg" alt="" />
+                    Save Changes
+                  </div>
+                )}
               </ButtonPrimary>
             </div>
             {/* <div className="  mb-4 w-full h-[56px] flex justify-evenly border  bg-backgroundColor-Card border-Gray-50 rounded-[16px] mt-4 shadow-100">
@@ -443,7 +475,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div className="w-[100px]">Back</div>
               </ButtonSecondary>
             )} */}
-            <ButtonPrimary
+            {/* <ButtonPrimary
               disabled={isLoading}
               onClick={() => {
                 resolveNextStep();
@@ -459,7 +491,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   Save Changes
                 </div>
               )}
-            </ButtonPrimary>
+            </ButtonPrimary> */}
           </div>
         </div>
       </div>
