@@ -198,9 +198,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   ></Toggle>
                 </div>
 
-                <div className="w-full flex justify-between pr-4">
+                <div className="w-full flex justify-between lg:pr-4">
                   <div className="flex justify-start items-center">
-                    <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
+                    <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
                       <img
                         className=""
                         src={resolveIcon(activeBio?.category)}
@@ -210,17 +210,17 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     <div>
                       <div className="ml-2">
                         <div className="flex">
-                          <div className=" text-Text-Primary text-[14px] ">
+                          <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
                             {activeBio?.category}
                           </div>
                         </div>
                         <div className="flex justify-between items-center">
-                          <div className=" text-Text-Secondary text-[10px]">
-                            <span className="text-[12px] text-Text-Primary">
+                          <div className=" text-Text-Secondary text-[8px] md:text-[10px] lg:text-[10px]">
+                            <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
                               {activeBio?.num_biomarkers}
                             </span>{' '}
                             Total Biomarkers{' '}
-                            <span className="ml-2 text-[12px]  text-Text-Primary">
+                            <span className="ml-2 text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
                               {activeBio?.needs_focus_count}
                             </span>{' '}
                             Needs Focus
@@ -335,10 +335,10 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     </>
                   ) : (
                     <>
-                      <div className="w-full flex gap-2   rounded-[16px]  min-h-[30px] ">
+                      <div className="w-full flex flex-col-reverse lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
                         {
                           <>
-                            <div className="w-[220px] min-w-[220px]">
+                            <div className="w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:min-w-[220px]">
                               {data['result_tab']
                                 .filter(
                                   (el: any) =>
@@ -375,7 +375,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                 })}
                             </div>
                             {activeEl != null && (
-                              <div className="w-full h-[32px] p-6 bg-white border border-gray-50  rounded-[6px] min-h-[312px]">
+                              <div className="w-full h-[32px] p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                                 <div className=" text-Text-Primary text-[14px] font-[500]">
                                   {activeEl.subcategory}
                                 </div>
@@ -387,9 +387,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                     {activeEl.description}
                                   </div>
                                 </div>
-                                <div className="flex w-full justify-center gap-4 mt-4">
+                                <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
                                   <div>
-                                    <div className="w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                    <div className="w-full lg:w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
                                       <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
                                         Last Value
                                         <div className="relative">
@@ -404,7 +404,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                     </div>
                                   </div>
                                   <div>
-                                    <div className="w-[500px]  p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                    <div className="w-full lg:w-[500px] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
                                       <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
                                         Historical Data
                                         <div className=" flex justify-end gap-2 items-center">

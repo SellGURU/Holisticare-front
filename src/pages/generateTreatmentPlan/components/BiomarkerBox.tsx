@@ -84,7 +84,7 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
           }}
           className={` ${
             isActive ? 'border-Primary-EmeraldGreen' : ' border-Gray-50'
-          }  bg-backgroundColor-Card w-[100%] lg:w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[64px] rounded-[16px] border `}
+          }  bg-backgroundColor-Card w-[100%] lg:w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[unset] lg:h-[64px] rounded-[16px] border `}
         >
           <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
             <img className="" src={resolveIcon(data.category)} alt="" />

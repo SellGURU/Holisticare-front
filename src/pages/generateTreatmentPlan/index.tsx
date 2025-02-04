@@ -166,7 +166,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       <div className="fixed w-full top-0 hidden lg:flex">
         <TopBar></TopBar>
       </div>
-      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[999]">
+      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[9]">
         <div
           onClick={() => {
             navigate(-1);
@@ -204,7 +204,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 size="small"
                 ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
-                <div className="w-full flex justify-center lg:justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
                   <img src="/icons/analyse.svg" alt="" />
                   Analysis
                 </div>
@@ -217,7 +217,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
                 {/* <img src="/icons/" alt="" /> */}
-                <div className="w-full flex justify-center lg:justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
                   <img src="/icons/chart.svg" alt="" />
                   Client Goals
                 </div>
@@ -530,12 +530,12 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               {isAnalysingQuik ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
-                  <div className="mt-[2px]">Quick Analysis</div>
+                  <div className="mt-[2px] text-nowrap">Quick Analysis</div>
                 </>
               ) : (
                 <>
                   <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">Quick Analysis</div>
+                  <div className="mt-[2px] text-nowrap">Quick Analysis</div>
                 </>
               )}
             </div>
@@ -555,12 +555,16 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               {isAnalysingComper ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
-                  <div className="mt-[2px]">Comprehensive Analysis</div>
+                  <div className="mt-[2px] text-nowrap">
+                    Comprehensive Analysis
+                  </div>
                 </>
               ) : (
                 <>
                   <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">Comprehensive Analysis</div>
+                  <div className="mt-[2px] text-nowrap">
+                    Comprehensive Analysis
+                  </div>
                 </>
               )}
             </div>
