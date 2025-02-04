@@ -36,6 +36,10 @@ export const TopBar: React.FC<TopBarProps> = ({
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
           <style>
               @media print {
+                @page {
+                    size: A4;
+                    margin: 0;
+                }      
               body {
                   background-color: #E9F0F2 !important;
                   font-family: 'Inter', sans-serif !important; /* Use Inter font for printing */
@@ -259,6 +263,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                     setDownloadingState('download');
                   }, 200);
                 }, 300);
+                setOpenShare(false);
               } else {
                 Application.getPatientsInfo({
                   member_id: routeData[2],
@@ -273,6 +278,8 @@ export const TopBar: React.FC<TopBarProps> = ({
                           res.data.unique_key +
                           '/' +
                           resolveAccesssUser(settingsData),
+                      }).finally(() => {
+                        setOpenShare(false);
                       });
                     } catch (error) {
                       console.error('Error sharing:', error);
@@ -288,7 +295,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                   // );
                 });
               }
-              setOpenShare(false);
+              
             }}
             onclose={() => {
               setOpenDownload(false);
