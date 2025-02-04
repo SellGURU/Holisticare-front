@@ -237,7 +237,7 @@ export const DriftAnaysis = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 640);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -315,7 +315,12 @@ export const DriftAnaysis = () => {
                 )}
               </div>
             </div>
-            <div style={{height: !isMobile ? window.innerHeight - 100 + 'px' : ''}} className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%] overflow-hidden md:overflow-y-auto    ">
+            <div
+              style={{
+                height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+              }}
+              className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%] overflow-hidden md:overflow-y-auto    "
+            >
               <div className="flex md:flex-col gap-3 flex-col-reverse ">
                 <SearchBox
                   onSearch={(search) => setSearchQuery(search)}

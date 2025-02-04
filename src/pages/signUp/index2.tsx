@@ -165,7 +165,7 @@ const SignUp = () => {
             <AuthWithGoogle mode="register"></AuthWithGoogle>
           </div>
           <div className="text-[12px] text-center text-Text-Secondary">
-            Already have an account? 
+            Already have an account?
             <span
               onClick={() => {
                 navigate('/login');
