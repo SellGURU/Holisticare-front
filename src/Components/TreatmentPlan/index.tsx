@@ -237,7 +237,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   Start creating your Holistic Plan
                 </div>
                 <ButtonSecondary
-                ClassName='w-full md:w-fit'
+                  ClassName="w-full md:w-fit"
                   onClick={() =>
                     navigate(`/report/Generate-Holistic-Plan/${id}`)
                   }
@@ -401,7 +401,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               </div>
               <div className="w-full flex justify-center md:justify-end gap-2 my-3">
                 <ButtonPrimary
-                ClassName='w-full md:w-fit'
+                  ClassName="w-full md:w-fit"
                   size="small"
                   onClick={() => setisAnalysisOpen(true)}
                 >
@@ -409,7 +409,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <img src="/icons/analyse.svg" alt="" /> Analysis
                 </ButtonPrimary>
                 <ButtonPrimary
-                   ClassName='w-full md:w-fit'
+                  ClassName="w-full md:w-fit"
                   size="small"
                   onClick={() => setisClientGoalOpen(true)}
                 >
