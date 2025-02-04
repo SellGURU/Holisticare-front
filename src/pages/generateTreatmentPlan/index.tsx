@@ -151,7 +151,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   };
   // const {themeISLight} = useContext(AppContext);
   return (
-    <>
+    <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
       {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -163,13 +163,26 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         </div>
       )}
 
-      <div className="fixed w-full top-0">
+      <div className="fixed w-full top-0 hidden lg:flex">
         <TopBar></TopBar>
       </div>
+      <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[9]">
+        <div
+          onClick={() => {
+            navigate(-1);
+          }}
+          className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
+        >
+          <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+        </div>
+        <div className="TextStyle-Headline-5 text-Text-Primary">
+          Generate Holistic Plan
+        </div>
+      </div>
       <div className="w-full flex justify-center px-4  pt-[80px]">
-        <div className="w-full px-4 py-6    relative   ">
+        <div className="w-full px-4 py-6 relative h-full lg:h-[unset]">
           <div className=" flex mb-2 justify-between w-full">
-            <div className="flex w-full items-center gap-3">
+            <div className="hidden lg:flex w-full items-center gap-3">
               <div
                 onClick={() => {
                   navigate(-1);
@@ -183,14 +196,15 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div>
 
-            <div className="w-full flex gap-2 justify-end items-center">
+            <div className="w-full flex gap-2 justify-center lg:justify-end items-center">
               <ButtonPrimary
                 onClick={() => {
                   setSHowAnalyse(true);
                 }}
                 size="small"
+                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
-                <div className="w-full flex justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
                   <img src="/icons/analyse.svg" alt="" />
                   Analysis
                 </div>
@@ -200,9 +214,10 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   setSHowClientGoals(true);
                 }}
                 size="small"
+                ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
                 {/* <img src="/icons/" alt="" /> */}
-                <div className="w-full flex justify-between gap-2">
+                <div className="w-full flex justify-center lg:justify-between gap-2 text-nowrap">
                   <img src="/icons/chart.svg" alt="" />
                   Client Goals
                 </div>
@@ -285,7 +300,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div> */}
           </div>
-          <div className=" h-[480px] pr-2 overflow-auto">
+          <div className="h-full lg:h-[480px] pr-2 lg:overflow-auto">
             {generateStep == 'Client Goals' && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
@@ -515,12 +530,12 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               {isAnalysingQuik ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
-                  <div className="mt-[2px]">Quick Analysis</div>
+                  <div className="mt-[2px] text-nowrap">Quick Analysis</div>
                 </>
               ) : (
                 <>
                   <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">Quick Analysis</div>
+                  <div className="mt-[2px] text-nowrap">Quick Analysis</div>
                 </>
               )}
             </div>
@@ -540,12 +555,16 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               {isAnalysingComper ? (
                 <>
                   <SpinnerLoader></SpinnerLoader>
-                  <div className="mt-[2px]">Comprehensive Analysis</div>
+                  <div className="mt-[2px] text-nowrap">
+                    Comprehensive Analysis
+                  </div>
                 </>
               ) : (
                 <>
                   <img src="/icons/stars.svg" alt="" />
-                  <div className="mt-[2px]">Comprehensive Analysis</div>
+                  <div className="mt-[2px] text-nowrap">
+                    Comprehensive Analysis
+                  </div>
                 </>
               )}
             </div>
@@ -591,7 +610,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
           )}
         </div>
       </SlideOutPanel>
-    </>
+    </div>
   );
 };
 

@@ -1,12 +1,12 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import PlanCard from './sections/PlanCard';
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TopBar } from '../topBar';
+import PlanCard from './sections/PlanCard';
 
 // import Data from "./data.json";
-import PlanManagerModal from './sections/PLanManager';
 import Application from '../../api/app';
 import Circleloader from '../CircleLoader';
+import PlanManagerModal from './sections/PLanManager';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // interface Benchmark {
 //   Benchmark: string;
@@ -78,7 +78,7 @@ const GenerateNewActionPlan = () => {
   };
 
   return (
-    <>
+    <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
@@ -98,10 +98,10 @@ const GenerateNewActionPlan = () => {
           </div>
         </div>
       )}
-      <div className="w-full fixed top-0 ">
+      <div className="w-full fixed top-0 hidden lg:flex">
         <TopBar></TopBar>
       </div>
-      <div className="px-8 mb-2 pt-[80px]">
+      <div className="px-8 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] w-full lg:w-[unset]">
         <div className="flex items-center gap-3">
           <div
             onClick={() => {
@@ -111,7 +111,7 @@ const GenerateNewActionPlan = () => {
                 navigate(-1);
               }
             }}
-            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
+            className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
           >
             <img className="w-6 h-6" src="/icons/arrow-back.svg" />
           </div>
@@ -175,7 +175,7 @@ const GenerateNewActionPlan = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
