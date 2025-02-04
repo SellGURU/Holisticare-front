@@ -90,14 +90,25 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
   }, [MessageData]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   return (
-    <div className="w-full">
+    <div className="w-full h-full ">
       {MessageData.length < 1 ? (
-        <div className="w-full  flex flex-col items-center justify-center h-[250px]  gap-2">
-          <img src="/images/direct.svg" alt="" />
-          <div className="text-Text-Primary text-xs">No History Available</div>
+        <div className='relative h-[85vh]'>
+          {' '}
+          <div className="w-full  flex flex-col items-center justify-center h-[250px]  gap-2">
+            <img src="/images/direct.svg" alt="" />
+            <div className="text-Text-Primary text-xs">
+              No History Available
+            </div>
+          </div>
+          <div className="w-full absolute bottom-0 flex justify-center">
+            <InputChat
+              onChange={(event) => setInput(event.target.value)}
+              sendHandler={handleSend}
+            />
+          </div>
         </div>
       ) : (
-        <div className={' h-full  space-y-6'}>
+        <div className={'   flex flex-col justify-between'}>
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
           <div
             className={'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto'}

@@ -87,14 +87,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
   const [clientSummary, setclientSummary] = useState('second');
-  const handleDeleteCard = (index: number, id: string) => {
-    Application.deleteHolisticPlan({
-      treatment_id: id,
-    });
-    setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
-    setShowModalIndex(null);
-    setDeleteConfirmIndex(null);
-  };
+
   const navigate = useNavigate();
   const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
@@ -133,7 +126,28 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
     }
   }, [activeTreatment]);
-
+  const handleDeleteCard = (index: number, id: string) => {
+    if (index === cardData.length - 1) {
+      Application.deleteHolisticPlan({
+        treatment_id: id,
+      });
+  
+      setCardData((prevCardData) => {
+        const newCardData = prevCardData.filter((_, i) => i !== index);
+        if (index > 0) {
+          setActiveTreatmnet(newCardData[index - 1].t_plan_id);
+        } else if (newCardData.length > 0) {
+          setActiveTreatmnet(newCardData[0].t_plan_id);
+        } else {
+          setActiveTreatmnet('');
+        }
+        return newCardData;
+      });
+  
+      setShowModalIndex(null);
+      setDeleteConfirmIndex(null);
+    }
+  };
   return (
     <>
       {isShare ? (
@@ -287,7 +301,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {activeTreatment == card.t_plan_id && (
+                          {activeTreatment == card.t_plan_id && index=== cardData.length -1 && (
                             <img
                               onClick={() => setShowModalIndex(index)}
                               className="-mr-5 ml-3 cursor-pointer"
