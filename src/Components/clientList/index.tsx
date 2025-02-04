@@ -209,7 +209,10 @@ const ClientList = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div style={{height: window.innerHeight - 60 + "px"}} className=" sm:px-6 pt-8  ">
+        <div
+          style={{ height: window.innerHeight - 60 + 'px' }}
+          className=" sm:px-6 pt-8  "
+        >
           {clientList.length > 0 ? (
             <>
               <div className="w-full  flex justify-between items-center">

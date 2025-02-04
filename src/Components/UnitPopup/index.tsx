@@ -6,9 +6,9 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
   const [activeUnit, setActiveUnit] = useState(unit);
   const units = ['mg/dL', 'mmol/L'];
   const [isUnitOpen, setIsUnitOpen] = useState(false);
-  const handleToggle = () => {
-    setIsUnitOpen(!isUnitOpen);
-  };
+  // const handleToggle = () => {
+  //   setIsUnitOpen(!isUnitOpen);
+  // };
   const handleSelect = (unit: string) => {
     setActiveUnit(unit);
     setIsUnitOpen(false);
@@ -24,8 +24,8 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
     <>
       <div
         ref={refrence}
-        onClick={handleToggle}
-        className="w-[70px] cursor-pointer select-none flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
+        // onClick={handleToggle}
+        className="w-[70px] cursor-pointer opacity-50 select-none flex justify-between items-center p-2 h-[32px] rounded-[6px]  bg-backgroundColor-Main border-gray-50"
       >
         <div className="text-Primary-DeepTeal text-[10px]">{activeUnit}</div>
         <div className="w-[16px]">

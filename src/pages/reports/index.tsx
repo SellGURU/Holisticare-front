@@ -116,7 +116,13 @@ const Reports = () => {
           </div>
         </div>
       </div>
-      {activeList === 'list' ? <TablePaginationInside classData={reportsFiltered}></TablePaginationInside> : ''}
+      {activeList === 'list' ? (
+        <TablePaginationInside
+          classData={reportsFiltered}
+        ></TablePaginationInside>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

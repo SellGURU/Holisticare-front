@@ -170,7 +170,7 @@ const SignUp = () => {
               onClick={() => {
                 navigate('/login');
               }}
-              className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]"
+              className="text-Primary-DeepTeal  font-medium hover:opacity-85 cursor-pointer hover:underline ml-[6px]"
             >
               Log in
             </span>

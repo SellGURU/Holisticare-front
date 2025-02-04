@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormik } from 'formik';
+
 import Application from '../../api/app';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import TextField from '../../Components/TextField';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import MainTopBar from '../../Components/MainTopBar';
@@ -99,7 +100,16 @@ const AddClient = () => {
         setisLoading(false);
       });
   };
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <>
       {/* {isLoading && (
@@ -203,7 +213,9 @@ const AddClient = () => {
 
             <div className="flex justify-center w-full overflow-auto">
               <div
-                style={{ height: window.innerHeight - 100 + 'px' }}
+                style={{
+                  height: isMobile ? window.innerHeight - 100 + 'px' : '',
+                }}
                 className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
               >
                 <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
