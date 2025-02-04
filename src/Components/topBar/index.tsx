@@ -270,17 +270,19 @@ export const TopBar: React.FC<TopBarProps> = ({
                 }).then(async (res) => {
                   if (navigator.share) {
                     try {
-                      await navigator.share({
-                        title: 'Holisticare',
-                        url:
-                          `https://holisticare.vercel.app` +
-                          '/share/' +
-                          res.data.unique_key +
-                          '/' +
-                          resolveAccesssUser(settingsData),
-                      }).finally(() => {
-                        setOpenShare(false);
-                      });
+                      await navigator
+                        .share({
+                          title: 'Holisticare',
+                          url:
+                            `https://holisticare.vercel.app` +
+                            '/share/' +
+                            res.data.unique_key +
+                            '/' +
+                            resolveAccesssUser(settingsData),
+                        })
+                        .finally(() => {
+                          setOpenShare(false);
+                        });
                     } catch (error) {
                       console.error('Error sharing:', error);
                     }
@@ -295,7 +297,6 @@ export const TopBar: React.FC<TopBarProps> = ({
                   // );
                 });
               }
-              
             }}
             onclose={() => {
               setOpenDownload(false);
