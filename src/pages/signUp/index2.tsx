@@ -165,12 +165,12 @@ const SignUp = () => {
             <AuthWithGoogle mode="register"></AuthWithGoogle>
           </div>
           <div className="text-[12px] text-center text-Text-Secondary">
-            Already have an account?
+            Already have an account? 
             <span
               onClick={() => {
                 navigate('/login');
               }}
-              className="text-Primary-DeepTeal font-medium hover:opacity-85 cursor-pointer hover:underline ml-[2px]"
+              className="text-Primary-DeepTeal  font-medium hover:opacity-85 cursor-pointer hover:underline ml-[6px]"
             >
               Log in
             </span>
