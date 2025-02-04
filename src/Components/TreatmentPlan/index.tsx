@@ -237,6 +237,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   Start creating your Holistic Plan
                 </div>
                 <ButtonSecondary
+                ClassName='w-full md:w-fit'
                   onClick={() =>
                     navigate(`/report/Generate-Holistic-Plan/${id}`)
                   }
@@ -397,8 +398,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="w-full flex justify-end gap-2 my-3">
+              <div className="w-full flex justify-center md:justify-end gap-2 my-3">
                 <ButtonPrimary
+                ClassName='w-full md:w-fit'
                   size="small"
                   onClick={() => setisAnalysisOpen(true)}
                 >
@@ -406,6 +408,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <img src="/icons/analyse.svg" alt="" /> Analysis
                 </ButtonPrimary>
                 <ButtonPrimary
+                   ClassName='w-full md:w-fit'
                   size="small"
                   onClick={() => setisClientGoalOpen(true)}
                 >
@@ -413,12 +416,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <img src="/icons/chart.svg" alt="" /> Client Goals
                 </ButtonPrimary>
               </div>
-              <div className="w-full gap-2 flex justify-between items-center">
+              <div className="w-full gap-1 md:gap-2 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden ">
                 <div
                   onClick={() => {
                     setActiveTreatmentplan('Diet');
                   }}
-                  className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] min-w-[83px] gap-2 shadow-100 border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Diet'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -433,7 +436,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Mind');
                   }}
-                  className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[83px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Mind'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -448,7 +451,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Activity');
                   }}
-                  className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 border min-w-[83px] rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Activity'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -463,7 +466,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Supplement');
                   }}
-                  className={` flex justify-center bg-white  cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[83px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Supplement'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -476,7 +479,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
               </div>
               {TreatMentPlanData.length > 0 && (
-                <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+                <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0].data.map((el: any) => {
