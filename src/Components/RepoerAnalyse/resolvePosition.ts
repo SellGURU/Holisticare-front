@@ -112,6 +112,48 @@ const resolvePosition = (name: string) => {
         left: 160,
       },
     },
+    {
+      name: 'torso',
+      position: {
+        top: 210,
+        left: 140,
+      },
+    },
+    {
+      name: 'torso1',
+      position: {
+        top: 215,
+        left: 145,
+      },
+    },
+    {
+      name: 'torso2',
+      position: {
+        top: 218,
+        left: 150,
+      },
+    },
+    {
+      name: 'lower abdomen',
+      position: {
+        top: 270,
+        left: 172,
+      },
+    },
+    {
+      name: 'lower abdomen1',
+      position: {
+        top: 273,
+        left: 163,
+      },
+    },
+    {
+      name: 'lower abdomen2',
+      position: {
+        top: 275,
+        left: 176,
+      },
+    },
   ];
   return positions.filter((el) => el.name == name).length > 0
     ? positions.filter((el) => el.name == name)[0].position

@@ -92,7 +92,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
   return (
     <div className="w-full h-full ">
       {MessageData.length < 1 ? (
-        <div className='relative h-[85vh]'>
+        <div className="relative h-[85vh]">
           {' '}
           <div className="w-full  flex flex-col items-center justify-center h-[250px]  gap-2">
             <img src="/images/direct.svg" alt="" />
