@@ -654,6 +654,23 @@ class Application extends Api {
     );
     return response;
   };
+  static getGoogleFormEmty = () => {
+    const response = this.post('/empty_personal_info_form', {});
+    return response;
+  };
+  static setGoogleFormEmty = ({
+    member_id,
+    data,
+  }: {
+    member_id: number;
+    data: any;
+  }) => {
+    const response = this.post('/submit_personal_info_form', {
+      member_id: member_id,
+      response: data,
+    });
+    return response;
+  };
   static deleteLapReport = (data: any) => {
     const response = this.post('/patients/delete_lab_report', data);
     return response;
