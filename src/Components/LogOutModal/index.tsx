@@ -49,6 +49,11 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence }) => {
               localStorage.clear();
               window.location.reload();
             }}
+            onTouchEnd={() => {
+              Auth.logOut();
+              localStorage.clear();
+              window.location.reload();
+            }}
             className="flex gap-1 cursor-pointer"
           >
             <img src="./icons/logout.svg" alt="" />

@@ -113,7 +113,14 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
               />
             )}
           </div>
-          <div className="pl-2 grid grid-cols-1 gap-1 ">
+          <div
+            onClick={() => {
+              if (window.innerWidth < 768) {
+                navigate(`/report/${client.member_id}/${client.name}`);
+              }
+            }}
+            className="pl-2 grid grid-cols-1 gap-1 "
+          >
             <div className="text-Text-Primary text-xs sm:text-[14px] font-medium text-nowrap">
               {client.name}
             </div>
@@ -151,7 +158,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
         <div>
-          <div className="mt-2 h md:flex justify-end items-center">
+          <div className="mt-2 hidden  md:flex justify-end items-center">
             {/* <div className="text-Text-Secondary text-[10px] font-medium">
             Plan not started. Assign a trainer to start.
           </div> */}
