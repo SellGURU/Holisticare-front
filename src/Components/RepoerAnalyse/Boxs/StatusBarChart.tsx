@@ -57,7 +57,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                 <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
                   <TooltipText
                     tooltipValue={
-                      el.key +
+                      data.chart_bounds[el.key].label +
                       ' ' +
                       '(' +
                       el.value[0] +
@@ -67,7 +67,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                     }
                   >
                     <>
-                      {el.key +
+                      {data.chart_bounds[el.key].label +
                         ' ' +
                         '(' +
                         el.value[0] +
