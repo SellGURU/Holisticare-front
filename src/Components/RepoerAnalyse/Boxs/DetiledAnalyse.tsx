@@ -65,16 +65,16 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
       return '#7F39FB';
     }
     return '#FBAD37';
-  };  
-  const resolveCurrentStatusColor = (value:any,statusBar:any) => {
-    let resolvedColor =""
+  };
+  const resolveCurrentStatusColor = (value: any, statusBar: any) => {
+    let resolvedColor = '';
     sortKeysWithValues(statusBar).forEach((el) => {
       if (value >= el.value[0] && value < el.value[1]) {
         resolvedColor = resolveColor(el.key);
       }
     });
-    return resolvedColor
-  }
+    return resolvedColor;
+  };
   return (
     <>
       <div
@@ -166,10 +166,17 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             : 'border-Gray-50'
                         }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
                       >
-                        <div className='flex justify-start items-center gap-2'>
+                        <div className="flex justify-start items-center gap-2">
                           <div className=" text-[12px]">{value.name}</div>
-                          <div className='w-3 h-3 rounded-full ' style={{backgroundColor:resolveCurrentStatusColor(value.values[0],value.chart_bounds)}}></div>
-
+                          <div
+                            className="w-3 h-3 rounded-full "
+                            style={{
+                              backgroundColor: resolveCurrentStatusColor(
+                                value.values[0],
+                                value.chart_bounds,
+                              ),
+                            }}
+                          ></div>
                         </div>
                         <img
                           className="h-4  w-4"
