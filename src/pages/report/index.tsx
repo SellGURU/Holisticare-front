@@ -14,10 +14,10 @@ const Report = () => {
     setIsVisibleCombo(true);
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1280);
   useEffect(() => {
     const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
+      const isMobile = window.innerWidth < 1280;
       setIsMobileView(isMobile);
 
       // If switching to desktop view, close mobile menu
@@ -54,8 +54,8 @@ const Report = () => {
         
           ${isMobileView && !isMobileMenuOpen ? '-left-[178px]' : 'left-0'}
           
-          transition-all z-[80] fixed top-20 md:top-16  duration-300 ease-in-out
-          md:left-4
+          transition-all z-[80] fixed top-20 xl:top-16  duration-300 ease-in-out
+          xl:left-4
         `}
       >
         <ReportSideMenu
@@ -63,12 +63,12 @@ const Report = () => {
         ></ReportSideMenu>
       </div>
 
-      <div className="w-full md:pl-[200px] fixed">
+      <div className="w-full xl:pl-[200px] fixed">
         <ReportAnalyseView></ReportAnalyseView>
       </div>
 
       <div
-        className={`fixed top-10 duration-300 ease-in-out transition-all md:top-20 md:right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-right-[120px]' : 'right-0'}
+        className={`fixed top-10 duration-300 ease-in-out transition-all xl:top-20 xl:right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-right-[120px]' : 'right-0'}
         `}
       >
         <ComboBar></ComboBar>
