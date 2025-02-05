@@ -17,16 +17,19 @@ import StatusChart from '../../../Components/RepoerAnalyse/StatusChart';
 import StatusBarChart from '../../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 import Application from '../../../api/app';
 import UnitPopUp from '../../../Components/UnitPopup';
+import SvgIcon from '../../../utils/svgIcon';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
   setData: (data: any) => void;
+  memberId: string | undefined;
 }
 
 const CategoryOrder: React.FC<CategoryOrderProps> = ({
   isActionPlan,
   data,
   setData,
+  memberId,
 }) => {
   const [isLoading] = useState(false);
   const [active, setActive] = useState<string>('Suggestion');
@@ -100,6 +103,33 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
       }
     }
   }, [activeBio, data['result_tab']]);
+
+  const handleDownloadTreatmentCsv = async () => {
+    if (memberId !== null && memberId !== undefined) {
+      const Props: { member_id: number } = {
+        member_id: parseInt(memberId),
+      };
+      try {
+        const res = await Application.downloadTreatmentCsv(Props);
+        const base64Data = res.data;
+        const binaryData = atob(base64Data);
+        const byteArray = new Uint8Array(binaryData.length);
+        for (let i = 0; i < binaryData.length; i++) {
+          byteArray[i] = binaryData.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'analysis.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
 
   return (
     <>
@@ -229,47 +259,65 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       </div>
                     </div>
                   </div>
-                  {active == 'Suggestion' && (
-                    <div className="w-[32px] relative  h-[32px]">
-                      <MiniAnallyseButton
-                        isLoading={isLoadingAi}
-                        onResolve={(value: string) => {
-                          setISLoadingAi(true);
-                          Application.UpdateTreatmentPlanWithAi({
-                            treatment_category: activeBio.category,
-                            suggestion_tab_list: data['suggestion_tab'].filter(
-                              (el: any) => el.category == activeBio.category,
-                            )[0].suggestions,
-                            ai_generation_mode: value,
-                          })
-                            .then((res) => {
-                              if (res.data) {
-                                setData((pre: any) => {
-                                  const old = { ...pre };
-                                  console.log(old['suggestion_tab']);
-                                  old['suggestion_tab'] = [
-                                    ...old['suggestion_tab'].filter(
-                                      (el: any) =>
-                                        el.category != activeBio.category,
-                                    ),
-                                    res.data,
-                                  ];
-                                  return old;
-                                });
-                                const old = active;
-                                setActive('');
-                                setTimeout(() => {
-                                  setActive(old);
-                                }, 10);
-                              }
-                            })
-                            .finally(() => {
-                              setISLoadingAi(false);
-                            });
-                        }}
-                      ></MiniAnallyseButton>
+                  <div className="flex gap-8 items-center">
+                    <div
+                      className="flex gap-2 items-center cursor-pointer"
+                      onClick={handleDownloadTreatmentCsv}
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/TreatmentPlan/tick-square.svg"
+                        color={'#005F73'}
+                      />
+                      <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Primary-DeepTeal">
+                        Download CSV analysis
+                      </span>
                     </div>
-                  )}
+                    {active == 'Suggestion' && (
+                      <div className="w-[32px] relative  h-[32px]">
+                        <MiniAnallyseButton
+                          isLoading={isLoadingAi}
+                          onResolve={(value: string) => {
+                            setISLoadingAi(true);
+                            Application.UpdateTreatmentPlanWithAi({
+                              treatment_category: activeBio.category,
+                              suggestion_tab_list: data[
+                                'suggestion_tab'
+                              ].filter(
+                                (el: any) => el.category == activeBio.category,
+                              )[0].suggestions,
+                              ai_generation_mode: value,
+                            })
+                              .then((res) => {
+                                if (res.data) {
+                                  setData((pre: any) => {
+                                    const old = { ...pre };
+                                    console.log(old['suggestion_tab']);
+                                    old['suggestion_tab'] = [
+                                      ...old['suggestion_tab'].filter(
+                                        (el: any) =>
+                                          el.category != activeBio.category,
+                                      ),
+                                      res.data,
+                                    ];
+                                    return old;
+                                  });
+                                  const old = active;
+                                  setActive('');
+                                  setTimeout(() => {
+                                    setActive(old);
+                                  }, 10);
+                                }
+                              })
+                              .finally(() => {
+                                setISLoadingAi(false);
+                              });
+                          }}
+                        ></MiniAnallyseButton>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="w-full lg:px-6 lg:py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">

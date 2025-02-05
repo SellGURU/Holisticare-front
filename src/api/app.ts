@@ -675,11 +675,14 @@ class Application extends Api {
     const response = this.post('/patients/delete_lab_report', data);
     return response;
   };
-
   static getMemberId = (key: string) => {
     const response = this.post('/overview/get_member_id', {
       unique_key: key,
     });
+    return response;
+  };
+  static downloadTreatmentCsv = (data: any) => {
+    const response = this.post('/patients/download_treatment_csv', data);
     return response;
   };
 }

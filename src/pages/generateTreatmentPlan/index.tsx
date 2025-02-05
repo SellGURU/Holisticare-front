@@ -363,6 +363,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 setData={setTratmentPlanData}
                 data={treatmentPlanData}
                 isActionPlan={isActionPlan}
+                memberId={id}
               ></CategoryOrder>
             )}
             {generateStep == 'Analysis' && (

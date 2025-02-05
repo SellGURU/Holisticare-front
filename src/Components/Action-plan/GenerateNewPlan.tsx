@@ -98,10 +98,10 @@ const GenerateNewActionPlan = () => {
           </div>
         </div>
       )}
-      <div className="w-full fixed top-0 hidden lg:flex">
+      <div className="w-full fixed top-0 hidden lg:flex lg:z-[9]">
         <TopBar></TopBar>
       </div>
-      <div className="px-8 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] w-full lg:w-[unset]">
+      <div className="px-8 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] lg:z-[0] w-full lg:w-[unset]">
         <div className="flex items-center gap-3">
           <div
             onClick={() => {
