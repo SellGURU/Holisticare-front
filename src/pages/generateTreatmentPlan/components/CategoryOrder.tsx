@@ -56,27 +56,27 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   }, [categoryOrderData]);
   const [isLoadingAi, setISLoadingAi] = useState(false);
 
-  const resolveIcon = (name: string) => {
-    if (name == 'Cardiovascular and Respiratory Health') {
-      return '/icons/biomarkers/heart.svg';
-    }
-    if (name == 'Organ Health and Function') {
-      return '/icons/biomarkers/Abdominal.svg';
-    }
-    if (name == 'Urinary Health') {
-      return '/icons/biomarkers/Urine.svg';
-    }
-    if (name == 'Metabolic Health') {
-      return '/icons/biomarkers/intestine.svg';
-    }
-    if (name == 'Immune, Inflammation, and Hormonal Health') {
-      return '/icons/biomarkers/Inflammation.svg';
-    }
-    // ./images/report/intestine.svg"
-    // ./images/report/muscle.svg
-    // ./images/report/virus.svg
-    return '/icons/biomarkers/heart.svg';
-  };
+  // const resolveIcon = (name: string) => {
+  //   if (name == 'Cardiovascular and Respiratory Health') {
+  //     return '/icons/biomarkers/heart.svg';
+  //   }
+  //   if (name == 'Organ Health and Function') {
+  //     return '/icons/biomarkers/Abdominal.svg';
+  //   }
+  //   if (name == 'Urinary Health') {
+  //     return '/icons/biomarkers/Urine.svg';
+  //   }
+  //   if (name == 'Metabolic Health') {
+  //     return '/icons/biomarkers/intestine.svg';
+  //   }
+  //   if (name == 'Immune, Inflammation, and Hormonal Health') {
+  //     return '/icons/biomarkers/Inflammation.svg';
+  //   }
+  //   // ./images/report/intestine.svg"
+  //   // ./images/report/muscle.svg
+  //   // ./images/report/virus.svg
+  //   return '/icons/biomarkers/heart.svg';
+  // };
   // useConstructor(() => {
   //     setIsLoading(true)
   //     Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
@@ -230,30 +230,27 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
 
                 <div className="w-full flex justify-between lg:pr-4">
                   <div className="flex justify-start items-center">
-                    <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
-                      <img
-                        className=""
-                        src={resolveIcon(activeBio?.category)}
-                        alt=""
+                    <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
+                      <SvgIcon
+                        width="40px"
+                        height="40px"
+                        src="/icons/TreatmentPlan/cpu-setting.svg"
+                        color={'#005F73'}
                       />
                     </div>
                     <div>
                       <div className="ml-2">
                         <div className="flex">
                           <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
-                            {activeBio?.category}
+                            Holistic Plan
                           </div>
                         </div>
                         <div className="flex justify-between items-center">
-                          <div className=" text-Text-Secondary text-[8px] md:text-[10px] lg:text-[10px]">
-                            <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
-                              {activeBio?.num_biomarkers}
-                            </span>{' '}
-                            Total Biomarkers{' '}
-                            <span className="ml-2 text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
-                              {activeBio?.needs_focus_count}
-                            </span>{' '}
-                            Needs Focus
+                          <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
+                            The Holistic Plan is a health safeguard designed to
+                            help clients achieve their wellness goals. You can
+                            customize it using AI or personal insights to align
+                            with individual objectives.
                           </div>
                         </div>
                       </div>

@@ -157,7 +157,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
           <Circleloader></Circleloader>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
             We’re generating your Holistic Plan based on the selected method.
             This may take a moment.
           </div>
@@ -182,7 +182,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       </div>
       <div className="w-full flex justify-center px-4 pt-[40px] lg:pt-[30px]">
         <div className="w-full px-4 py-6 relative h-full">
-          <div className=" flex mb-2 justify-between w-full">
+          <div className="lg:fixed lg:top-13 lg:z-[9] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8 lg:pr-9 lg:ml-[-32px] lg:mt-[-13px]">
             <div className="hidden lg:flex w-full items-center gap-3">
               <div
                 onClick={() => {
@@ -242,6 +242,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 onClick={() => {
                   resolveNextStep();
                 }}
+                ClassName="hidden lg:flex"
               >
                 {isLoading ? (
                   <div className="w-full h-full min-h-[21px] flex justify-center items-center">
@@ -332,7 +333,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
               </div>
             </div> */}
           </div>
-          <div className="h-full pr-2">
+          <div className="h-full pr-2 lg:pt-10">
             {generateStep == 'Client Goals' && (
               <div className="bg-backgroundColor-Card rounded-[16px] px-6 py-6 h-[80%] mt-2  border border-Gray-50 ">
                 {isLoading && (
@@ -476,11 +477,12 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 <div className="w-[100px]">Back</div>
               </ButtonSecondary>
             )} */}
-            {/* <ButtonPrimary
+            <ButtonPrimary
               disabled={isLoading}
               onClick={() => {
                 resolveNextStep();
               }}
+              ClassName="lg:hidden"
             >
               {isLoading ? (
                 <div className="w-full h-full flex justify-center items-center">
@@ -492,7 +494,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   Save Changes
                 </div>
               )}
-            </ButtonPrimary> */}
+            </ButtonPrimary>
           </div>
         </div>
       </div>
