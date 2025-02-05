@@ -84,7 +84,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                 >
                   {
                     <div className="text-center" style={{ color: '#888888' }}>
-                      <div>{el.key}</div>
+                      <div>{data.chart_bounds[el.key].label}</div>
                       <div>
                         {'' + '(' + el.value[0] + ' - ' + el.value[1] + ')'}
                       </div>

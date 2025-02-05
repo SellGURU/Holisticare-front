@@ -422,7 +422,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Diet');
                   }}
-                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] min-w-[83px] gap-2 shadow-100 border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                  className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] min-w-[74px] gap-2 shadow-100 border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Diet'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -437,7 +437,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Mind');
                   }}
-                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[83px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                  className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Mind'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -452,7 +452,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Activity');
                   }}
-                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 border min-w-[83px] rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 border min-w-[73px] rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Activity'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
@@ -467,7 +467,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   onClick={() => {
                     setActiveTreatmentplan('Supplement');
                   }}
-                  className={` text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[83px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                     aciveTreatmentPlan == 'Supplement'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
