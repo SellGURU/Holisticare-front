@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 // import questionsData from './questions/data.json';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import Checkbox from './CheckBox';
 import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
@@ -48,15 +48,15 @@ export const Questionary = () => {
       ),
     }));
   };
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    };
-    return date.toLocaleDateString(undefined, options);
-  };
+  // const formatDate = (date: Date | null) => {
+  //   if (!date) return '';
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     year: 'numeric',
+  //     month: 'short',
+  //     day: 'numeric',
+  //   };
+  //   return date.toLocaleDateString(undefined, options);
+  // };
   const resolveForm = (type: string) => {
     if (type == 'short_answer' || type == 'paragraph') {
       return (
@@ -174,8 +174,28 @@ export const Questionary = () => {
                     questionsFormData.questions[activeCard - 1].id,
                     newDate?.getTime(),
                   );
-                }}></DatePicker> */}
-            <DatePicker
+                }}
+                ></DatePicker> */}
+            <input
+              type="date"
+              onChange={(e) => {
+                formValueChange(
+                  questionsFormData.questions[activeCard - 1].id,
+                  new Date(e.target.value).getTime(),
+                );
+              }}
+              value={
+                questionsFormData.questions[activeCard - 1].response != ''
+                  ? new Date(
+                      questionsFormData.questions[activeCard - 1].response,
+                    )
+                      .toISOString()
+                      .split('T')[0]
+                  : new Date().toISOString().split('T')[0]
+              }
+              className=" rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary"
+            />
+            {/* <DatePicker
               selected={
                 questionsFormData.questions[activeCard - 1].response != ''
                   ? new Date(
@@ -202,7 +222,7 @@ export const Questionary = () => {
                   <img src="/icons/calendar-3.svg" alt="" />
                 </button>
               }
-            />
+            /> */}
           </div>
         </>
       );
