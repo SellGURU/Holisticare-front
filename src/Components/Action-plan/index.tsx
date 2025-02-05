@@ -96,7 +96,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -163,16 +163,15 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                     {activeAction != null &&
                     activeAction?.calendar?.length > 0 ? (
                       <>
-                      {
-                        isMobile ? (
-                          <MobileCalendarComponent data={activeAction.calendar}></MobileCalendarComponent>
-                        ):(
+                        {isMobile ? (
+                          <MobileCalendarComponent
+                            data={activeAction.calendar}
+                          ></MobileCalendarComponent>
+                        ) : (
                           <CalenderComponent
-                          data={activeAction.calendar}
-                        ></CalenderComponent>
-                        )
-                      }
-                      
+                            data={activeAction.calendar}
+                          ></CalenderComponent>
+                        )}
                       </>
                     ) : (
                       <div className="w-full flex flex-col items-center">

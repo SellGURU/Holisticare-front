@@ -3,11 +3,7 @@ import React, { useState, useEffect } from 'react';
 const getCurrentMonthWithBuffer = () => {
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const lastDayOfMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    0,
-  );
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
   const startDate: any = new Date(firstDayOfMonth);
   while (startDate.getDay() !== 1) {
@@ -45,11 +41,13 @@ const getCurrentMonthWithBuffer = () => {
 };
 
 interface CalenderComponentProps {
-    data: any;
-  }
-  
-const MobileCalendarComponent : React.FC<CalenderComponentProps> = ({ data }) => {
-//   const [currentDay, setCurrentDay] = useState(0);
+  data: any;
+}
+
+const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
+  data,
+}) => {
+  //   const [currentDay, setCurrentDay] = useState(0);
   const [currentMonth, setCurrentMonth] = useState('');
   const [selectedDay, setSelectedDay] = useState(new Date());
 
@@ -114,10 +112,11 @@ const MobileCalendarComponent : React.FC<CalenderComponentProps> = ({ data }) =>
           {getCurrentMonthWithBuffer().map((day, index) => {
             const isSelectedDay =
               day.dateObject.toDateString() === selectedDay.toDateString();
-              const hasActivity = data.some(
-                (el: any) =>
-                  new Date(el.date).toDateString() === day.dateObject.toDateString(),
-              );
+            const hasActivity = data.some(
+              (el: any) =>
+                new Date(el.date).toDateString() ===
+                day.dateObject.toDateString(),
+            );
             return (
               <div
                 key={index}
@@ -127,14 +126,14 @@ const MobileCalendarComponent : React.FC<CalenderComponentProps> = ({ data }) =>
                 onClick={() => setSelectedDay(day.dateObject)}
               >
                 <div
-                 className={`${
+                  className={`${
                     isSelectedDay
                       ? 'text-white'
                       : hasActivity && currentMonth == day.monthName
-                      ? 'text-Primary-EmeraldGreen'
-                      : currentMonth !== day.monthName
-                      ? 'text-[#D5D8DE]'
-                      : 'text-Text-Primary'
+                        ? 'text-Primary-EmeraldGreen'
+                        : currentMonth !== day.monthName
+                          ? 'text-[#D5D8DE]'
+                          : 'text-Text-Primary'
                   } text-xs text-center`}
                 >
                   {day.dayNumber}
@@ -145,61 +144,71 @@ const MobileCalendarComponent : React.FC<CalenderComponentProps> = ({ data }) =>
         </div>
       </div>
       <div className="w-full p-4 border border-Gray-50 shadow-100 rounded-3xl bg-white mt-2">
-      <div className="text-sm text-Text-Primary ">
-          <span className='text-xs'>{year}</span>
+        <div className="text-sm text-Text-Primary ">
+          <span className="text-xs">{year}</span>
           <br />
-          <span className='font-medium'>{formattedDate}</span>
+          <span className="font-medium">{formattedDate}</span>
         </div>
         {categories.length === 0 && (
           <div className="flex flex-col justify-start items-center ">
-            <img src="/icons/NoCalendar.svg" alt="No Activity" className="w-[159px]" />
-            <span className="text-sm font-medium text-Text-Primary -mt-8">No Plan For This Day.</span>
-            <span className="text-xs  text-Text-Primary mt-1">Check the other days.</span>
+            <img
+              src="/icons/NoCalendar.svg"
+              alt="No Activity"
+              className="w-[159px]"
+            />
+            <span className="text-sm font-medium text-Text-Primary -mt-8">
+              No Plan For This Day.
+            </span>
+            <span className="text-xs  text-Text-Primary mt-1">
+              Check the other days.
+            </span>
           </div>
         )}
         {categories.map((category: any) => (
-          <div key={category} className="mt-4 flex w-full  justify-between bg-backgroundColor-Card rounded-2xl  py-2 px-4 border border-Gray-50">
+          <div
+            key={category}
+            className="mt-4 flex w-full  justify-between bg-backgroundColor-Card rounded-2xl  py-2 px-4 border border-Gray-50"
+          >
             <div className=" min-w-[60px] xs:min-w-[71px]  font-medium text-[8px] xs:text-[10px] text-[#383838] flex flex-col items-center justify-center gap-2">
-              <img  src={resolveIcon(category)} alt="" />
+              <img src={resolveIcon(category)} alt="" />
               {category}
             </div>
-            <div className=' border-l border-Gray-50 pl-4 flex flex-col gap-2'>
+            <div className=" border-l border-Gray-50 pl-4 flex flex-col gap-2">
+              {activitiesForTheDay
+                .filter((activity: any) => activity.category === category)
+                .map((activity: any, i: number) => {
+                  const activityDate = new Date(activity.date);
+                  const isPastDate = activityDate < today;
+                  const opacityClass =
+                    !activity.status && isPastDate
+                      ? 'opacity-70'
+                      : 'opacity-100';
 
-            {activitiesForTheDay
-              .filter((activity: any) => activity.category === category)
-              .map((activity: any, i: number) => {
-                const activityDate = new Date(activity.date);
-                const isPastDate = activityDate < today;
-                const opacityClass =
-                  !activity.status && isPastDate ? 'opacity-70' : 'opacity-100';
-               
-                
-                return (
-                  <div
-                    key={i}
-                    className={`flex items-center gap-1 mt-1 ${opacityClass}`}
-                  >
-                    {activity.status ? (
-                      <img
-                        className="w-3 h-3"
-                        src="/icons/activity-circle-done.svg"
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        className="w-3 h-3"
-                        src="/icons/acitivty-circle.svg"
-                        alt=""
-                      />
-                    )}
-                    <span className=" text-[8px] xs:text-[10px] text-Text-Primary flex-grow">
-                      {activity.name}
-                    </span>
-                  </div>
-                
-                );
-              })}
-              </div>
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-1 mt-1 ${opacityClass}`}
+                    >
+                      {activity.status ? (
+                        <img
+                          className="w-3 h-3"
+                          src="/icons/activity-circle-done.svg"
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          className="w-3 h-3"
+                          src="/icons/acitivty-circle.svg"
+                          alt=""
+                        />
+                      )}
+                      <span className=" text-[8px] xs:text-[10px] text-Text-Primary flex-grow">
+                        {activity.name}
+                      </span>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         ))}
       </div>
