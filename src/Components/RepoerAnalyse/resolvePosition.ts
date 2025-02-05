@@ -48,7 +48,7 @@ const resolvePosition = (name: string) => {
         top: 192,
         left: 92,
       },
-    },    
+    },
     {
       name: 'right hand2',
       position: {
@@ -118,7 +118,7 @@ const resolvePosition = (name: string) => {
         top: 161,
         left: 161,
       },
-    },    
+    },
     {
       name: 'neck2',
       position: {
