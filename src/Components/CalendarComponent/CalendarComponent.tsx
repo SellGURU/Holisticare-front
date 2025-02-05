@@ -271,7 +271,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
                 <div
                   className={`${
                     day.dayNumber === currenDay && day.monthName === currenMonth
-                      ? 'dtext-Text-Primary'
+                      ? 'text-Text-Primary'
                       : currenMonth !== day.monthName
                         ? 'text-Text-Secondary'
                         : 'text-Text-Primary'

@@ -6,6 +6,7 @@ import CalenderComponent from '../CalendarComponent/CalendarComponent';
 // import CalendarData from "../../api/--moch--/data/new/Calender.json";
 import Application from '../../api/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
+import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 
 // type CardData = {
 //   cardID: number;
@@ -89,6 +90,17 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
       });
     }
   }, []);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       <div className="flex flex-col gap-3 w-full">
@@ -147,13 +159,19 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                       </div>
                     </>
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-2 w-full">
                     {activeAction != null &&
                     activeAction?.calendar?.length > 0 ? (
                       <>
-                        <CalenderComponent
-                          data={activeAction.calendar}
-                        ></CalenderComponent>
+                        {isMobile ? (
+                          <MobileCalendarComponent
+                            data={activeAction.calendar}
+                          ></MobileCalendarComponent>
+                        ) : (
+                          <CalenderComponent
+                            data={activeAction.calendar}
+                          ></CalenderComponent>
+                        )}
                       </>
                     ) : (
                       <div className="w-full flex flex-col items-center">
