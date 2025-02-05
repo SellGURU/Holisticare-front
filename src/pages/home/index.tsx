@@ -2,11 +2,13 @@ import { Outlet } from 'react-router-dom';
 import { SideMenu, MainTopBar } from '../../Components';
 import { useRef, useState, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import Auth from '../../api/auth';
+import { subscribe } from '../../utils/event';
 const Home = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768); // Using 768px as md breakpoint
-
+  subscribe('mobileMenuOpen', () => {
+    setIsMobileMenuOpen(true);
+  });
   const sideMenuRef = useRef(null);
   useModalAutoClose({
     refrence: sideMenuRef,
@@ -26,19 +28,19 @@ const Home = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  const [visibleClinic, setVisibleClinic] = useState(false);
-  const refrence = useRef(null);
-  const buttentRef = useRef(null);
-  useModalAutoClose({
-    refrence: refrence,
-    buttonRefrence: buttentRef,
-    close: () => {
-      setVisibleClinic(false);
-    },
-  });
+  // const [, setVisibleClinic] = useState(false);
+  // const refrence = useRef(null);
+  // const buttentRef = useRef(null);
+  // useModalAutoClose({
+  //   refrence: refrence,
+  //   buttonRefrence: buttentRef,
+  //   close: () => {
+  //     setVisibleClinic(false);
+  //   },
+  // });
   return (
     <div className="h-screen p-2 xs:px-3 sm:p-5 md:p-0">
-      <div className="w-full flex md:hidden justify-between items-center border-b border-white  py-2">
+      {/* <div className="w-full flex md:hidden justify-between items-center border-b border-white  py-2">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2"
@@ -75,7 +77,7 @@ const Home = () => {
                 Clinic Longevity 1
               </div>
               <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
-                Clinic.Longevity@gmail.com aaaaaa
+                Clinic.Longevity@gmail.com 
               </div>
               <div className="px-4">
                 <div className="w-full h-[0.5px] my-2  bg-[#E2F1F8]"></div>
@@ -101,7 +103,8 @@ const Home = () => {
       </div>
       <div className=" hidden md:block w-full sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
-      </div>
+      </div> */}
+      <MainTopBar></MainTopBar>
       <div
         ref={sideMenuRef}
         className={`
