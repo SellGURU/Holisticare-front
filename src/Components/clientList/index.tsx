@@ -250,7 +250,7 @@ const ClientList = () => {
                 </div>
                 <div className=" w-full sm:w-auto">
                   <div className=" w-full flex gap-3 relative ">
-                    <div className=" w-full flex text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
+                    <div className=" w-full hidden  text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
                       Sort by: <SelectBox onChange={handleFilterChange} />
                     </div>
                     <div className=" hidden md:flex w-[96px] h-[32px] rounded-md ">
