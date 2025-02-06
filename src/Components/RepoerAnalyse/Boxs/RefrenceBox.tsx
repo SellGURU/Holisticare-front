@@ -96,7 +96,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
             Current Value
           </div>
           <div className="flex justify-end items-center gap-2">
-            <Legends></Legends>
+            <div className="invisible">
+              <Legends></Legends>
+            </div>
             <div className="relative z-50">
               <UnitPopUp unit={data.unit}></UnitPopUp>
             </div>
