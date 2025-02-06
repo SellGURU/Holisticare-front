@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Application from '../../api/app';
-import { useConstructor } from '../../help';
-import { useState } from 'react';
+// import Application from '../../api/app';
+// import { useConstructor } from '../../help';
+// import { useState } from 'react';
 
 interface InputMentionsProps {
   value: string;
@@ -9,24 +9,24 @@ interface InputMentionsProps {
   onSubmit: () => void;
   changeBenchMarks: (benchs: Array<string>) => void;
 }
-const mentions = [
-  { id: '1', name: 'Time Priorities ' },
-  { id: '2', name: 'Recovery' },
-  { id: '3', name: 'Metabolic Function' },
-  { id: '4', name: 'Cardiovascular Health' },
-  { id: '4', name: 'Body Composition' },
-  { id: '4', name: 'Daily Activity ' },
-  { id: '4', name: 'Stability' },
-  { id: '4', name: 'Mobility' },
-  { id: '4', name: 'Flexibility' },
-  { id: '4', name: 'Cardiovascular Fitness ' },
-  { id: '4', name: 'Power' },
-  { id: '4', name: 'Bodyweight Max Strength' },
-  { id: '4', name: 'Weighted Max Strength' },
-  { id: '4', name: 'Muscle Endurance' },
-  { id: '4', name: 'Functional Strength' },
-  { id: '4', name: 'Emotional Fitness' },
-];
+// const mentions = [
+//   { id: '1', name: 'Time Priorities ' },
+//   { id: '2', name: 'Recovery' },
+//   { id: '3', name: 'Metabolic Function' },
+//   { id: '4', name: 'Cardiovascular Health' },
+//   { id: '4', name: 'Body Composition' },
+//   { id: '4', name: 'Daily Activity ' },
+//   { id: '4', name: 'Stability' },
+//   { id: '4', name: 'Mobility' },
+//   { id: '4', name: 'Flexibility' },
+//   { id: '4', name: 'Cardiovascular Fitness ' },
+//   { id: '4', name: 'Power' },
+//   { id: '4', name: 'Bodyweight Max Strength' },
+//   { id: '4', name: 'Weighted Max Strength' },
+//   { id: '4', name: 'Muscle Endurance' },
+//   { id: '4', name: 'Functional Strength' },
+//   { id: '4', name: 'Emotional Fitness' },
+// ];
 const InputMentions: React.FC<InputMentionsProps> = ({
   value,
   onChange,
@@ -38,19 +38,19 @@ const InputMentions: React.FC<InputMentionsProps> = ({
       onSubmit();
     }
   };
-  const [myMentions, setMyMentions] = useState(mentions);
-  useConstructor(() => {
-    Application.get_benchmark_list().then((res) => {
-      console.log(res);
-      setMyMentions(
-        res.data.map((e: string, index: number) => {
-          return { id: index, name: e };
-        }),
-      );
-    });
-  });
-  const [suggestions, setSuggestions] = useState<any>([]);
-  const [isShowMentions, setIsShowMentions] = useState(false);
+  // const [myMentions, setMyMentions] = useState(mentions);
+  // useConstructor(() => {
+  //   Application.get_benchmark_list().then((res) => {
+  //     console.log(res);
+  //     setMyMentions(
+  //       res.data.map((e: string, index: number) => {
+  //         return { id: index, name: e };
+  //       }),
+  //     );
+  //   });
+  // });
+  // const [suggestions, setSuggestions] = useState<any>([]);
+  // const [isShowMentions, setIsShowMentions] = useState(false);
   const handelChange = (e: string) => {
     const inputValue = e;
 
@@ -64,35 +64,35 @@ const InputMentions: React.FC<InputMentionsProps> = ({
     const foundMentions = inputValue.match(mentionRegex) || [];
     changeBenchMarks(foundMentions);
     // Find the last '@' and get the word after it
-    const lastAtIndex = inputValue.lastIndexOf('@');
-    if (lastAtIndex !== -1) {
-      setSuggestions(myMentions);
-      setIsShowMentions(true);
-      const mentionText = inputValue.slice(lastAtIndex + 1);
+    // const lastAtIndex = inputValue.lastIndexOf('@');
+    // if (lastAtIndex !== -1) {
+      // setSuggestions(myMentions);
+      // setIsShowMentions(true);
+      // const mentionText = inputValue.slice(lastAtIndex + 1);
       // alert(mentionText)
-      if (mentionText.length > 0) {
+      // if (mentionText.length > 0) {
         // Filter the users based on the mentionText
-        const filteredUsers = myMentions.filter((men) =>
-          men.name.toLowerCase().includes(mentionText.toLowerCase()),
-        );
-        setSuggestions(filteredUsers);
-        setIsShowMentions(true);
-      } else {
+        // const filteredUsers = myMentions.filter((men) =>
+        //   men.name.toLowerCase().includes(mentionText.toLowerCase()),
+        // );
+        // setSuggestions(filteredUsers);
+        // setIsShowMentions(true);
+      // } else {
         // setIsShowMentions(false);
         // setSuggestions(mentions)
-      }
-    } else {
-      setIsShowMentions(false);
-    }
+      // }
+    // } else {
+    //   setIsShowMentions(false);
+    // }
   };
-  const handleSuggestionClick = (mention: any) => {
-    // Replace the @mention with the selected user name
-    const lastAtIndex = value.lastIndexOf('@');
-    const newText = value.slice(0, lastAtIndex) + `@${mention.name} `;
-    handelChange(newText + ' ');
-    // onChange(newText);
-    setIsShowMentions(false);
-  };
+  // const handleSuggestionClick = (mention: any) => {
+  //   // Replace the @mention with the selected user name
+  //   const lastAtIndex = value.lastIndexOf('@');
+  //   const newText = value.slice(0, lastAtIndex) + `@${mention.name} `;
+  //   handelChange(newText + ' ');
+  //   // onChange(newText);
+  //   // setIsShowMentions(false);
+  // };
 
   return (
     <>
@@ -137,7 +137,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           />
         </div>
       </div>
-      {isShowMentions && suggestions.length > 0 && (
+      {/* {isShowMentions && suggestions.length > 0 && (
         <>
           <div className="w-full absolute bottom-12 px-2">
             <div className="w-full px-4 py-2 max-h-[150px] overflow-y-scroll bg-white border-light-border-color dark:bg-black-primary border dark:border-main-border rounded-[6px]">
@@ -154,7 +154,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
             </div>
           </div>
         </>
-      )}
+      )} */}
     </>
   );
 };
