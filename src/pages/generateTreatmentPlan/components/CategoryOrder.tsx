@@ -18,6 +18,7 @@ import StatusBarChart from '../../../Components/RepoerAnalyse/Boxs/StatusBarChar
 import Application from '../../../api/app';
 import UnitPopUp from '../../../Components/UnitPopup';
 import SvgIcon from '../../../utils/svgIcon';
+import { resolveKeyStatus } from '../../../help';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
@@ -403,8 +404,22 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                               }}
                                               className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
                                             >
-                                              <div className=" text-[12px] text-Text-Primary">
-                                                {resol.name}
+                                              <div className="flex items-center gap-1">
+                                                <div className=" text-[12px] text-Text-Primary">
+                                                  {resol.name}
+                                                </div>
+                                                {resolveKeyStatus(
+                                                  resol.values[0],
+                                                  resol.chart_bounds,
+                                                ) == 'Needs Focus' && (
+                                                  <div
+                                                    className="w-3 h-3 rounded-full "
+                                                    style={{
+                                                      backgroundColor:
+                                                        '#FC5474',
+                                                    }}
+                                                  ></div>
+                                                )}
                                               </div>
                                               <img
                                                 className="  rotate-0  w-4"
@@ -420,7 +435,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                 })}
                             </div>
                             {activeEl != null && (
-                              <div className="w-full h-[32px] p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                              <div className="w-full  p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                                 <div className=" text-Text-Primary text-[14px] font-[500]">
                                   {activeEl.subcategory}
                                 </div>

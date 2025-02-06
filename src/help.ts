@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
+import { sortKeysWithValues } from './Components/RepoerAnalyse/Boxs/Help';
 
 const useConstructor = (callBack = () => {}) => {
   const [hasBeenCalled, setHasBeenCalled] = useState(false);
@@ -67,4 +68,37 @@ const isAccessNameAndKey = (key: string, name: string) => {
   return key.includes(decodeNameAndKey(name) as string);
 };
 
-export { useConstructor, blobToBase64, resolveAccesssUser, decodeAccessUser };
+const resolveKeyStatus = (value: any, statusBar: any) => {
+  let key = '';
+  sortKeysWithValues(statusBar).forEach((el) => {
+    if (value >= el.value[0] && value < el.value[1]) {
+      key = el.key;
+    }
+  });
+  return key;
+};
+
+const resolveStatusColor = (key: string) => {
+  if (key == 'Needs Focus') {
+    return '#FC5474';
+  }
+  if (key == 'Ok') {
+    return '#FBAD37';
+  }
+  if (key == 'Good') {
+    return '#06C78D';
+  }
+  if (key == 'Excellent') {
+    return '#7F39FB';
+  }
+  return '#FBAD37';
+};
+
+export {
+  useConstructor,
+  resolveKeyStatus,
+  resolveStatusColor,
+  blobToBase64,
+  resolveAccesssUser,
+  decodeAccessUser,
+};
