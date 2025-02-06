@@ -75,6 +75,15 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     });
     return resolvedColor;
   };
+  const resolveKeyStatus = (value: any, statusBar: any) => {
+    let key = '';
+    sortKeysWithValues(statusBar).forEach((el) => {
+      if (value >= el.value[0] && value < el.value[1]) {
+        key = el.key;
+      }
+    });
+    return key;
+  };
   return (
     <>
       <div
@@ -168,15 +177,20 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                       >
                         <div className="flex justify-start items-center gap-2">
                           <div className=" text-[12px]">{value.name}</div>
-                          <div
-                            className="w-3 h-3 rounded-full "
-                            style={{
-                              backgroundColor: resolveCurrentStatusColor(
-                                value.values[0],
-                                value.chart_bounds,
-                              ),
-                            }}
-                          ></div>
+                          {resolveKeyStatus(
+                            value.values[0],
+                            value.chart_bounds,
+                          ) == 'Needs Focus' && (
+                            <div
+                              className="w-3 h-3 rounded-full "
+                              style={{
+                                backgroundColor: resolveCurrentStatusColor(
+                                  value.values[0],
+                                  value.chart_bounds,
+                                ),
+                              }}
+                            ></div>
+                          )}
                         </div>
                         <img
                           className="h-4  w-4"
