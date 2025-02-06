@@ -7,6 +7,7 @@ import {
   Employes,
   TaskManager,
 } from '../../Components/DashBoardComponents';
+import Actions from './Actions';
 
 const DashBoard = () => {
   // const [reports, setreports] = useState()
@@ -22,7 +23,8 @@ const DashBoard = () => {
       <div className="px-6 py-10">
         <NumberBoxes reports={[]}></NumberBoxes>
         <div className="w-full  mt-4 grid gap-4 grid-cols-4">
-          <MessageList />
+          {/* <MessageList /> */}
+          <Actions></Actions>
           <div className="col-span-2 grid gap-4">
             <TaskManager Filters={filters} />
             <Clients></Clients>
