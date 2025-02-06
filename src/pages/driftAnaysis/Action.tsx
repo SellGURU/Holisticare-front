@@ -43,16 +43,18 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
   //   const [isMessagesOpen, setisMessagesOpen] = useState(true);
   const [isRoadCompleted] = useState(false);
-  const handleMessageDone = (id: string,Description:string) => {
-    Application.driftAnalysisApporve({member_id: memberID , description : Description}).then((res)=>{
+  const handleMessageDone = (id: string, Description: string) => {
+    Application.driftAnalysisApporve({
+      member_id: memberID,
+      description: Description,
+    }).then((res) => {
       console.log(res);
       setMessagesData((prevData) =>
         prevData.map((message) =>
           message.id === id ? { ...message, isDone: true } : message,
         ),
       );
-    })
-   
+    });
   };
 
   const handleDelete = (id: string) => {
@@ -391,9 +393,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             alt=""
           /> */}
           </div>
-          <div
-            className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}
-          >
+          <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}>
             {MessagesData.map((option) =>
               option.isDone ? (
                 <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
@@ -407,7 +407,9 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   key={option.id}
                   title={option.id}
                   description={option.description}
-                  onClick={() => handleMessageDone(option.id,option.description)}
+                  onClick={() =>
+                    handleMessageDone(option.id, option.description)
+                  }
                   onDelete={() => handleDelete(option.id)}
                   buttonText={'Apporve'}
                 />
