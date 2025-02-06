@@ -83,7 +83,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                     {/* {activeMenu.name === menu.name && menu.name} */}
                   </div>
                   {menu.name === 'Shared with you' ? (
-                    <div className="w-[80%] bg-Gray-50 h-px mb-1 mx-auto"></div>
+                    <div></div>
+                    // <div className="w-[80%] bg-Gray-50 h-px mb-1 mx-auto"></div>
                   ) : (
                     menu.name === 'Knowledge Graph' && (
                       <div className="border-y border-Gray-50 w-[80%] py-1 flex items-center justify-center mx-auto">

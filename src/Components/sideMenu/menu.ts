@@ -1,16 +1,11 @@
 export const menus = [
-  {
-    name: 'Home',
-    icon: 'sidemenu-menu-icon-home',
-    url: '',
-    active: false,
-  },
-  {
-    name: 'Shared with you',
-    icon: 'sidemenu-menu-icon-shared-witth-you',
-    url: '',
-    active: false,
-  },
+  // {
+  //   name: 'Home',
+  //   icon: 'sidemenu-menu-icon-home',
+  //   url: '',
+  //   active: false,
+  // },
+
   {
     name: 'Dashboard',
     icon: 'sidemenu-menu-icon-dashboard',
@@ -36,6 +31,12 @@ export const menus = [
     url: '/messages',
     active: true,
   },
+  {
+    name: 'Shared with you',
+    icon: 'sidemenu-menu-icon-shared-witth-you',
+    url: '',
+    active: false,
+  },  
   {
     name: 'Knowledge Graph',
     icon: 'sidemenu-menu-icon-trend-up',
