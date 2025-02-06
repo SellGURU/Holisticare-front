@@ -4,11 +4,12 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
 import DownloadModal from './downloadModal';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
 import { publish } from '../../utils/event';
 import { resolveAccesssUser } from '../../help';
 import Application from '../../api/app';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -79,6 +80,16 @@ export const TopBar: React.FC<TopBarProps> = ({
     };
     // mywindow.print()
   };
+  const [visibleClinic, setVisibleClinic] = useState(false);
+  const refrence = useRef(null);
+  const buttentRef = useRef(null);
+  useModalAutoClose({
+    refrence: refrence,
+    buttonRefrence: buttentRef,
+    close: () => {
+      setVisibleClinic(false);
+    },
+  });    
   const resolveNav = () => {
     const locationAddress = window.location.pathname;
     const routeData = locationAddress.split('/');
@@ -232,8 +243,24 @@ export const TopBar: React.FC<TopBarProps> = ({
             </div>
           </div>
         )}
-
-        <LogOutModal></LogOutModal>
+          <div className="relative">
+            <div className="flex gap-10 ">
+              <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
+                <img src="/icons/notification-2.svg" alt="" />
+              </div>
+              <div
+                ref={buttentRef}
+                onClick={() => {
+                  setVisibleClinic(!visibleClinic);
+                }}
+                className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
+              >
+                <img src="/icons/topbar-logo2.svg" alt="" />
+                Clinic Longevity 1
+              </div>
+            </div>
+            {visibleClinic && <LogOutModal refrence={refrence}></LogOutModal>}
+          </div>
       </div>
       <SlideOutPanel
         isOpen={openDownload || openShare}
