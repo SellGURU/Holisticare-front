@@ -36,7 +36,7 @@ export const menus = [
     icon: 'sidemenu-menu-icon-shared-witth-you',
     url: '',
     active: false,
-  },  
+  },
   {
     name: 'Knowledge Graph',
     icon: 'sidemenu-menu-icon-trend-up',
