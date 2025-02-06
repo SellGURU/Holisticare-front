@@ -10,8 +10,8 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
   //   setIsUnitOpen(!isUnitOpen);
   // };
   useEffect(() => {
-    setActiveUnit(unit)
-  },[unit])
+    setActiveUnit(unit);
+  }, [unit]);
   const handleSelect = (unit: string) => {
     setActiveUnit(unit);
     setIsUnitOpen(false);
