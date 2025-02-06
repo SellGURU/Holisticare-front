@@ -160,7 +160,7 @@ const MobileActivityComponent: React.FC<MobileActivityComponentProps> = ({
                 ai_generation_mode: val,
               })
                 .then((res: any) => {
-                    handleApiResponse(res.data[selectedCategory]);
+                  handleApiResponse(res.data[selectedCategory]);
                 })
                 .finally(() => setIsLoadingAi(false));
             }}

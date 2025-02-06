@@ -271,7 +271,7 @@ const GenerateCalendar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   console.log(data);
-  
+
   return (
     <>
       {isLoading && (
@@ -279,27 +279,27 @@ const GenerateCalendar: React.FC = () => {
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className='flex md:hidden w-full bg-[#E9F0F2] shadow-100 px-[35px] py-2 gap-2'>
-      <div className="flex items-center gap-2">
-            <div
-              onClick={() => {
-                navigate(-1);
-              }}
-              className={` flex items-center justify-center cursor-pointer `}
-            >
-              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
-            </div>
-            <div className="TextStyle-Headline-5 text-Text-Primary">
-              Generate Day to Day Activity
-            </div>
+      <div className="flex md:hidden w-full bg-[#E9F0F2] shadow-100 px-[35px] py-2 gap-2">
+        <div className="flex items-center gap-2">
+          <div
+            onClick={() => {
+              navigate(-1);
+            }}
+            className={` flex items-center justify-center cursor-pointer `}
+          >
+            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
           </div>
+          <div className="TextStyle-Headline-5 text-Text-Primary">
+            Generate Day to Day Activity
+          </div>
+        </div>
       </div>
       <div className="w-full hidden md:block fixed z-50 top-0 ">
         <TopBar></TopBar>
       </div>
       <div className="w-full h-full px-3 lg:px-6">
-        <div className=' px-3 flex md:hidden w-full justify-between items-center pt-5 pb-2 text-sm font-medium text-Text-Primary'>
-          Action Plan 
+        <div className=" px-3 flex md:hidden w-full justify-between items-center pt-5 pb-2 text-sm font-medium text-Text-Primary">
+          Action Plan
           <div className="  relative">
             <AnalyseButton
               isLoading={isAiLoading}
@@ -358,38 +358,38 @@ const GenerateCalendar: React.FC = () => {
               {/* {data.map((category: any, index: number) => (
               <BioMarkerRowSuggestions key={index} value={category} />
             ))} */}
-             {isMobile ? (
-              // <div></div>
-              <MobileActivityComponent data={data} setData={setData} />
-            ) : (
-              <div className="flex flex-col gap-3 md:max-h-[460px] md:overflow-y-scroll md:pr-3">
-                {Object.keys(data).map((key) => (
-                  <div className="grid gap-3" key={key}>
-                    {data[key].map((el: any, index: number) => (
-                      <BioMarkerRowSuggestions
-                        key={`${key}-${index}`}
-                        changeData={(value) => {
-                          const wrapper: any = {};
-                          const newData = data[key].map(
-                            (vl: any, index2: number) => {
-                              if (index === index2) {
-                                return value;
-                              }
-                              return vl;
-                            }
-                          );
+              {isMobile ? (
+                // <div></div>
+                <MobileActivityComponent data={data} setData={setData} />
+              ) : (
+                <div className="flex flex-col gap-3 md:max-h-[460px] md:overflow-y-scroll md:pr-3">
+                  {Object.keys(data).map((key) => (
+                    <div className="grid gap-3" key={key}>
+                      {data[key].map((el: any, index: number) => (
+                        <BioMarkerRowSuggestions
+                          key={`${key}-${index}`}
+                          changeData={(value) => {
+                            const wrapper: any = {};
+                            const newData = data[key].map(
+                              (vl: any, index2: number) => {
+                                if (index === index2) {
+                                  return value;
+                                }
+                                return vl;
+                              },
+                            );
 
-                          wrapper[key] = newData;
-                          setData({ ...data, ...wrapper });
-                        }}
-                        category={key}
-                        value={el}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
+                            wrapper[key] = newData;
+                            setData({ ...data, ...wrapper });
+                          }}
+                          category={key}
+                          value={el}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className=" w-full md:w-[120px] mx-auto mt-4">
@@ -416,11 +416,17 @@ const GenerateCalendar: React.FC = () => {
                 // }
               }}
             >
-              <div className='flex flex-row-reverse md:flex-row gap-2 items-center'>
-              <img src={isMobile ? "/icons/arrow-right-white.svg" : '/icons/tick-square.svg'}alt="" />
-               {isMobile ? "Next" : "Save Changes"} 
+              <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
+                <img
+                  src={
+                    isMobile
+                      ? '/icons/arrow-right-white.svg'
+                      : '/icons/tick-square.svg'
+                  }
+                  alt=""
+                />
+                {isMobile ? 'Next' : 'Save Changes'}
               </div>
-             
             </ButtonPrimary>
           </div>
         </div>
