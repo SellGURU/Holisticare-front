@@ -17,16 +17,19 @@ import StatusChart from '../../../Components/RepoerAnalyse/StatusChart';
 import StatusBarChart from '../../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 import Application from '../../../api/app';
 import UnitPopUp from '../../../Components/UnitPopup';
+import SvgIcon from '../../../utils/svgIcon';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
   setData: (data: any) => void;
+  memberId: string | undefined;
 }
 
 const CategoryOrder: React.FC<CategoryOrderProps> = ({
   isActionPlan,
   data,
   setData,
+  memberId,
 }) => {
   const [isLoading] = useState(false);
   const [active, setActive] = useState<string>('Suggestion');
@@ -53,27 +56,27 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   }, [categoryOrderData]);
   const [isLoadingAi, setISLoadingAi] = useState(false);
 
-  const resolveIcon = (name: string) => {
-    if (name == 'Cardiovascular and Respiratory Health') {
-      return '/icons/biomarkers/heart.svg';
-    }
-    if (name == 'Organ Health and Function') {
-      return '/icons/biomarkers/Abdominal.svg';
-    }
-    if (name == 'Urinary Health') {
-      return '/icons/biomarkers/Urine.svg';
-    }
-    if (name == 'Metabolic Health') {
-      return '/icons/biomarkers/intestine.svg';
-    }
-    if (name == 'Immune, Inflammation, and Hormonal Health') {
-      return '/icons/biomarkers/Inflammation.svg';
-    }
-    // ./images/report/intestine.svg"
-    // ./images/report/muscle.svg
-    // ./images/report/virus.svg
-    return '/icons/biomarkers/heart.svg';
-  };
+  // const resolveIcon = (name: string) => {
+  //   if (name == 'Cardiovascular and Respiratory Health') {
+  //     return '/icons/biomarkers/heart.svg';
+  //   }
+  //   if (name == 'Organ Health and Function') {
+  //     return '/icons/biomarkers/Abdominal.svg';
+  //   }
+  //   if (name == 'Urinary Health') {
+  //     return '/icons/biomarkers/Urine.svg';
+  //   }
+  //   if (name == 'Metabolic Health') {
+  //     return '/icons/biomarkers/intestine.svg';
+  //   }
+  //   if (name == 'Immune, Inflammation, and Hormonal Health') {
+  //     return '/icons/biomarkers/Inflammation.svg';
+  //   }
+  //   // ./images/report/intestine.svg"
+  //   // ./images/report/muscle.svg
+  //   // ./images/report/virus.svg
+  //   return '/icons/biomarkers/heart.svg';
+  // };
   // useConstructor(() => {
   //     setIsLoading(true)
   //     Application.generateTreatmentPlan({  member_id: 187517960166}).then((res) => {
@@ -100,6 +103,33 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
       }
     }
   }, [activeBio, data['result_tab']]);
+
+  const handleDownloadTreatmentCsv = async () => {
+    if (memberId !== null && memberId !== undefined) {
+      const Props: { member_id: number } = {
+        member_id: parseInt(memberId),
+      };
+      try {
+        const res = await Application.downloadTreatmentCsv(Props);
+        const base64Data = res.data;
+        const binaryData = atob(base64Data);
+        const byteArray = new Uint8Array(binaryData.length);
+        for (let i = 0; i < binaryData.length; i++) {
+          byteArray[i] = binaryData.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'analysis.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
 
   return (
     <>
@@ -200,76 +230,91 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
 
                 <div className="w-full flex justify-between lg:pr-4">
                   <div className="flex justify-start items-center">
-                    <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal ">
-                      <img
-                        className=""
-                        src={resolveIcon(activeBio?.category)}
-                        alt=""
+                    <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
+                      <SvgIcon
+                        width="40px"
+                        height="40px"
+                        src="/icons/TreatmentPlan/cpu-setting.svg"
+                        color={'#005F73'}
                       />
                     </div>
                     <div>
                       <div className="ml-2">
                         <div className="flex">
                           <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
-                            {activeBio?.category}
+                            Holistic Plan
                           </div>
                         </div>
                         <div className="flex justify-between items-center">
-                          <div className=" text-Text-Secondary text-[8px] md:text-[10px] lg:text-[10px]">
-                            <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
-                              {activeBio?.num_biomarkers}
-                            </span>{' '}
-                            Total Biomarkers{' '}
-                            <span className="ml-2 text-[10px] md:text-[12px] lg:text-[12px] text-Text-Primary">
-                              {activeBio?.needs_focus_count}
-                            </span>{' '}
-                            Needs Focus
+                          <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
+                            The Holistic Plan is a health safeguard designed to
+                            help clients achieve their wellness goals. You can
+                            customize it using AI or personal insights to align
+                            with individual objectives.
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {active == 'Suggestion' && (
-                    <div className="w-[32px] relative  h-[32px]">
-                      <MiniAnallyseButton
-                        isLoading={isLoadingAi}
-                        onResolve={(value: string) => {
-                          setISLoadingAi(true);
-                          Application.UpdateTreatmentPlanWithAi({
-                            treatment_category: activeBio.category,
-                            suggestion_tab_list: data['suggestion_tab'].filter(
-                              (el: any) => el.category == activeBio.category,
-                            )[0].suggestions,
-                            ai_generation_mode: value,
-                          })
-                            .then((res) => {
-                              if (res.data) {
-                                setData((pre: any) => {
-                                  const old = { ...pre };
-                                  console.log(old['suggestion_tab']);
-                                  old['suggestion_tab'] = [
-                                    ...old['suggestion_tab'].filter(
-                                      (el: any) =>
-                                        el.category != activeBio.category,
-                                    ),
-                                    res.data,
-                                  ];
-                                  return old;
-                                });
-                                const old = active;
-                                setActive('');
-                                setTimeout(() => {
-                                  setActive(old);
-                                }, 10);
-                              }
-                            })
-                            .finally(() => {
-                              setISLoadingAi(false);
-                            });
-                        }}
-                      ></MiniAnallyseButton>
+                  <div className="flex gap-8 items-center">
+                    <div
+                      className="flex gap-2 items-center cursor-pointer"
+                      onClick={handleDownloadTreatmentCsv}
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/TreatmentPlan/tick-square.svg"
+                        color={'#005F73'}
+                      />
+                      <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Primary-DeepTeal">
+                        Download CSV analysis
+                      </span>
                     </div>
-                  )}
+                    {active == 'Suggestion' && (
+                      <div className="w-[32px] relative  h-[32px]">
+                        <MiniAnallyseButton
+                          isLoading={isLoadingAi}
+                          onResolve={(value: string) => {
+                            setISLoadingAi(true);
+                            Application.UpdateTreatmentPlanWithAi({
+                              treatment_category: activeBio.category,
+                              suggestion_tab_list: data[
+                                'suggestion_tab'
+                              ].filter(
+                                (el: any) => el.category == activeBio.category,
+                              )[0].suggestions,
+                              ai_generation_mode: value,
+                            })
+                              .then((res) => {
+                                if (res.data) {
+                                  setData((pre: any) => {
+                                    const old = { ...pre };
+                                    console.log(old['suggestion_tab']);
+                                    old['suggestion_tab'] = [
+                                      ...old['suggestion_tab'].filter(
+                                        (el: any) =>
+                                          el.category != activeBio.category,
+                                      ),
+                                      res.data,
+                                    ];
+                                    return old;
+                                  });
+                                  const old = active;
+                                  setActive('');
+                                  setTimeout(() => {
+                                    setActive(old);
+                                  }, 10);
+                                }
+                              })
+                              .finally(() => {
+                                setISLoadingAi(false);
+                              });
+                          }}
+                        ></MiniAnallyseButton>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="w-full lg:px-6 lg:py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
