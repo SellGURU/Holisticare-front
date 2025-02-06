@@ -130,7 +130,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
       <div className="h-px w-full bg-gray-100 mt-4"></div>
-      <div className="mt-6 max-h-[312px] overflow-y-auto">
+      <div className="mt-6  overflow-y-auto">
         <div className="TextStyle-Headline-6 text-left hidden md:block">
           Sections
         </div>
