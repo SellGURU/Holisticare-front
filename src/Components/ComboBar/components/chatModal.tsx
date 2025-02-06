@@ -111,7 +111,9 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
         <div className={'   flex flex-col justify-between'}>
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
           <div
-            className={'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto flex '}
+            className={
+              'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto flex '
+            }
           >
             {MessageData.map((MessageDatum) => {
               if (MessageDatum.sender == 'user') {

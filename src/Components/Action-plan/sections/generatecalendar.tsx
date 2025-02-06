@@ -183,8 +183,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 rows={2}
               />
               {value.reference && (
-                <div                 onClick={() => setshowModal(true)}
-                className="text-Text-Secondarytext-xs inline-flex gap-1 ">
+                <div
+                  onClick={() => setshowModal(true)}
+                  className="text-Text-Secondarytext-xs inline-flex gap-1 "
+                >
                   Based on your:
                   <span className=" text-Primary-EmeraldGreen flex items-center gap-2 cursor-pointer">
                     {value['Based on your:']}
