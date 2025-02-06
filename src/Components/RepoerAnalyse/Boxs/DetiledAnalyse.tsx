@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import StatusChart from '../StatusChart';
 import { subscribe } from '../../../utils/event';
-import Legends from '../Legends';
+// import Legends from '../Legends';
 import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
@@ -125,7 +125,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
                 {data.subcategory}
-                {isOpen && <Legends></Legends>}
+                {/* {isOpen && <Legends></Legends>} */}
               </div>
               <div className="flex justify-start items-center">
                 <div className="TextStyle-Body-3 text-Text-Secondary">
