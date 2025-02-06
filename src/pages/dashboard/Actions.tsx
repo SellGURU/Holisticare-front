@@ -25,7 +25,7 @@ const mockActions: Action[] = [
 
 const Actions: React.FC = () => {
   const [filter, setFilter] = useState<'All' | 'Resolved' | 'Pending'>('All');
-  const [isLoading, ] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
 
   const filteredActions = mockActions.filter((action) =>
     filter === 'All' ? true : action.status === filter,
@@ -37,8 +37,7 @@ const Actions: React.FC = () => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader />
         </div>
-      ) 
-      : (
+      ) : (
         <div className="w-full h-full overflow-hidden bg-white rounded-2xl shadow-200 p-4">
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
@@ -87,19 +86,26 @@ const Actions: React.FC = () => {
                     {action.status}
                   </div> */}
                   <div
-              className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.status === 'Resolved' ? 'bg-[#DEF7EC]'  : 'bg-[#F9DEDC]'}`}
-            >
-              <div
-                className={` w-3 h-3 rounded-full  ${action.status === 'Resolved' ? 'bg-[#06C78D]'  : 'bg-[#FFBD59]'}`}
-              ></div>
-              {action.status}
-            </div>
+                    className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.status === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
+                  >
+                    <div
+                      className={` w-3 h-3 rounded-full  ${action.status === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
+                    ></div>
+                    {action.status}
+                  </div>
                 </div>
                 <div className="text-[10px] text-Text-Secondary px-4 flex justify-between items-center mt-2 text-ellipsis ">
                   {action.action}
                   <div className="flex items-center gap-2">
                     {action.status === 'Pending' && (
-                      <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">Proceed  <img  className='rotate-180 size-4' src="/public/icons/arrow-back.svg" alt="" /></div>
+                      <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
+                        Proceed{' '}
+                        <img
+                          className="rotate-180 size-4"
+                          src="/public/icons/arrow-back.svg"
+                          alt=""
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
