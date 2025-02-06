@@ -43,12 +43,16 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
   //   const [isMessagesOpen, setisMessagesOpen] = useState(true);
   const [isRoadCompleted] = useState(false);
-  const handleMarkAsDone = (id: string) => {
-    setMessagesData((prevData) =>
-      prevData.map((message) =>
-        message.id === id ? { ...message, isDone: true } : message,
-      ),
-    );
+  const handleMessageDone = (id: string,Description:string) => {
+    Application.driftAnalysisApporve({member_id: memberID , description : Description}).then((res)=>{
+      console.log(res);
+      setMessagesData((prevData) =>
+        prevData.map((message) =>
+          message.id === id ? { ...message, isDone: true } : message,
+        ),
+      );
+    })
+   
   };
 
   const handleDelete = (id: string) => {
@@ -373,7 +377,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             </div>
           )}
         </div>
-        <div className="w-full  md:max-h-[156px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+        <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
           <div className="w-full flex justify-between items-center">
             <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               Messages{' '}
@@ -388,7 +392,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           /> */}
           </div>
           <div
-            className={`flex flex-col gap-3 pr-3 mt-5  md:max-h-[220px] overflow-auto `}
+            className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}
           >
             {MessagesData.map((option) =>
               option.isDone ? (
@@ -403,7 +407,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   key={option.id}
                   title={option.id}
                   description={option.description}
-                  onClick={() => handleMarkAsDone(option.id)}
+                  onClick={() => handleMessageDone(option.id,option.description)}
                   onDelete={() => handleDelete(option.id)}
                   buttonText={'Apporve'}
                 />
