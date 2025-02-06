@@ -237,6 +237,7 @@ import AnalyseButton from '../../AnalyseButton';
 import Application from '../../../api/app';
 import MiniAnallyseButton from '../../MiniAnalyseButton';
 import { TopBar } from '../../topBar';
+import MobileActivityComponent from './MObileBiomarkerSuggestions';
 
 const GenerateCalendar: React.FC = () => {
   //   const [categories] = useState<Category[]>(initialData);
@@ -259,6 +260,18 @@ const GenerateCalendar: React.FC = () => {
 
   const navigate = useNavigate();
   const [isAiLoading, setisAiLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  console.log(data);
+  
   return (
     <>
       {isLoading && (
@@ -266,11 +279,44 @@ const GenerateCalendar: React.FC = () => {
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="w-full fixed z-50 top-0 ">
+      <div className='flex md:hidden w-full bg-[#E9F0F2] shadow-100 px-[35px] py-2 gap-2'>
+      <div className="flex items-center gap-2">
+            <div
+              onClick={() => {
+                navigate(-1);
+              }}
+              className={` flex items-center justify-center cursor-pointer `}
+            >
+              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+            </div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Generate Day to Day Activity
+            </div>
+          </div>
+      </div>
+      <div className="w-full hidden md:block fixed z-50 top-0 ">
         <TopBar></TopBar>
       </div>
       <div className="w-full h-full px-3 lg:px-6">
-        <div className="px-8 mb-2 pt-[80px] flex justify-between w-full">
+        <div className=' px-3 flex md:hidden w-full justify-between items-center pt-5 pb-2 text-sm font-medium text-Text-Primary'>
+          Action Plan 
+          <div className="  relative">
+            <AnalyseButton
+              isLoading={isAiLoading}
+              onAnalyse={(val) => {
+                setisAiLoading(true);
+                Application.generateAi({
+                  input_dict: data,
+                  ai_generation_mode: val,
+                })
+                  .then((res) => setData({ ...res.data }))
+                  .finally(() => setisAiLoading(false));
+              }}
+              text="Generate by AI"
+            ></AnalyseButton>
+          </div>
+        </div>
+        <div className="px-8 mb-2 pt-[80px] hidden  md:flex justify-between ">
           <div className="flex items-center gap-3">
             <div
               onClick={() => {
@@ -284,7 +330,7 @@ const GenerateCalendar: React.FC = () => {
               Generate Day to Day Activity
             </div>
           </div>
-          <div className="relative">
+          <div className="  relative">
             <AnalyseButton
               isLoading={isAiLoading}
               onAnalyse={(val) => {
@@ -308,44 +354,47 @@ const GenerateCalendar: React.FC = () => {
             </div> */}
             {/* <AnalyseButton text="Generate by AI" /> */}
             {/* </div> */}
-            <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll pr-3">
+            <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll md:pr-3">
               {/* {data.map((category: any, index: number) => (
               <BioMarkerRowSuggestions key={index} value={category} />
             ))} */}
-              {Object.keys(data).map((key) => {
-                return (
+             {isMobile ? (
+              // <div></div>
+              <MobileActivityComponent data={data} setData={setData} />
+            ) : (
+              <div className="flex flex-col gap-3 md:max-h-[460px] md:overflow-y-scroll md:pr-3">
+                {Object.keys(data).map((key) => (
                   <div className="grid gap-3" key={key}>
-                    {data[key].map((el: any, index: number) => {
-                      return (
-                        <BioMarkerRowSuggestions
-                          key={`${key}-${index}`}
-                          changeData={(value) => {
-                            const wrapper: any = {};
-                            const newData = data[key].map(
-                              (vl: any, index2: number) => {
-                                if (index == index2) {
-                                  return value;
-                                }
-                                return vl;
-                              },
-                            );
+                    {data[key].map((el: any, index: number) => (
+                      <BioMarkerRowSuggestions
+                        key={`${key}-${index}`}
+                        changeData={(value) => {
+                          const wrapper: any = {};
+                          const newData = data[key].map(
+                            (vl: any, index2: number) => {
+                              if (index === index2) {
+                                return value;
+                              }
+                              return vl;
+                            }
+                          );
 
-                            wrapper[key] = newData;
-                            setData({ ...data, ...wrapper });
-                          }}
-                          category={key}
-                          value={el}
-                        />
-                      );
-                    })}
+                          wrapper[key] = newData;
+                          setData({ ...data, ...wrapper });
+                        }}
+                        category={key}
+                        value={el}
+                      />
+                    ))}
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            )}
             </div>
           </div>
-          <div className="w-[120px] mx-auto mt-4">
+          <div className=" w-full md:w-[120px] mx-auto mt-4">
             <ButtonPrimary
-              style={{ textWrap: 'nowrap' }}
+              style={{ textWrap: 'nowrap', width: isMobile ? '100%' : '' }}
               onClick={() => {
                 setisLoading(true);
                 Application.ActionPlanSaveTask({
@@ -367,8 +416,11 @@ const GenerateCalendar: React.FC = () => {
                 // }
               }}
             >
-              <img src="/icons/tick-square.svg" alt="" />
-              Save Changes
+              <div className='flex flex-row-reverse md:flex-row gap-2 items-center'>
+              <img src={isMobile ? "/icons/arrow-right-white.svg" : '/icons/tick-square.svg'}alt="" />
+               {isMobile ? "Next" : "Save Changes"} 
+              </div>
+             
             </ButtonPrimary>
           </div>
         </div>
