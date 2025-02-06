@@ -312,7 +312,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {ClientSummaryBoxs?.client_summary}
           </div>
           <div className="w-full flex justify-end items-center gap-4 mt-4">
-            <div className="flex justify-start gap-1 items-center">
+            <div className="flex invisible justify-start gap-1 items-center">
               <div
                 className=""
                 style={{
@@ -758,7 +758,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     <div style={{ color: '#005F73', fontSize: '12px' }}>
                       {ActionPlan[ActionPlan.length - 1]?.progress
                         ? ActionPlan[helthPlan.length - 1]?.progress + '%'
-                        : '100%'}
+                        : '0%'}
                     </div>
                   </div>
                   <div>
@@ -779,7 +779,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           borderRadius: '12px',
                           width: ActionPlan[ActionPlan.length - 1]?.progress
                             ? ActionPlan[ActionPlan.length - 1]?.progress + '%'
-                            : '100%',
+                            : '0%',
                         }}
                       ></div>
                     </div>

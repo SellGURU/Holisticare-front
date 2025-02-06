@@ -83,14 +83,17 @@ const Uploading: React.FC<UploadingProps> = ({
   }, [file, memberId, onSuccess]);
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
-
-    Application.deleteLapReport({ file_id: fileToDelete.id })
-      .then(() => {
-        onCancel();
-      })
-      .catch((err) => {
-        console.error('Error deleting the file:', err);
-      });
+    if (fileToDelete.id) {
+      Application.deleteLapReport({ file_id: fileToDelete.id })
+        .then(() => {
+          onCancel();
+        })
+        .catch((err) => {
+          console.error('Error deleting the file:', err);
+        });
+    } else {
+      onCancel();
+    }
   };
 
   return (

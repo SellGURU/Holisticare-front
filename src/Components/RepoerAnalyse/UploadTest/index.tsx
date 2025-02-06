@@ -80,7 +80,8 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 multiple
                 onChange={(e: any) => {
                   const fileList = Array.from(e.target.files);
-                  setFiles([...files, ...upLoadingFiles]);
+                  console.log(upLoadingFiles);
+                  setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
                   setUploadingFiles([]);
                   setTimeout(() => {
                     setUploadingFiles(fileList);
