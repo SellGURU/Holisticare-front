@@ -64,7 +64,7 @@ const Actions: React.FC = () => {
                       : ''
                 } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
-                    ? 'bg-backgroundColor-Card border-Primary-DeepTeal'
+                    ? 'bg-backgroundColor-Main border-Primary-DeepTeal'
                     : 'border-Gray-50 bg-white'
                 }`}
               >
