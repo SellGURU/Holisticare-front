@@ -51,7 +51,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
   }, []);
   return (
     <>
-      <div className="sm:min-w-[315px] w-full  xs:w-[344px]  md:w-[333px] p-2 sm:p-4  bg-white shadow-200 rounded-[16px] relative ">
+      <div className="sm:min-w-[315px] w-full  xs:w-[344px]  md:w-[333px] p-2 sm:p-4  bg-white shadow-200 xl:w-[24%] rounded-[16px] relative ">
         {showModal && (
           <div
             ref={showModalRefrence}
