@@ -86,51 +86,102 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                     <div className="text-center" style={{ color: '#888888' }}>
                       <div>{data.chart_bounds[el.key].label}</div>
                       <div>
-                        {'' + '(' + el.value[0] + ' - ' + el.value[1] + ')'}
+                        {'' +
+                          '(' +
+                          el.value[0] +
+                          (el.value[1] != undefined
+                            ? ' - ' + el.value[1]
+                            : '') +
+                          ')'}
                       </div>
                     </div>
                   }
                 </div>
-                {data.values[0] >= el.value[0] &&
-                  el.value[1] > data.values[0] && (
-                    <div
-                      className={`absolute  top-[2px]  z-10`}
-                      style={{
-                        top: '2px',
-                        left:
-                          ((data.values[0] - el.value[0]) /
-                            (el.value[1] - el.value[0])) *
-                            100 +
-                          '%',
-                      }}
-                    >
+
+                {el.value[1] != undefined &&
+                data.chart_bounds[el.key].label != data.values[0] ? (
+                  <>
+                    {data.values[0] >= el.value[0] &&
+                      el.value[1] >= data.values[0] && (
+                        <div
+                          className={`absolute  top-[2px]  z-10`}
+                          style={{
+                            top: '2px',
+                            left:
+                              ((data.values[0] - el.value[0]) /
+                                (el.value[1] - el.value[0])) *
+                                100 +
+                              '%',
+                          }}
+                        >
+                          <div
+                            className="w-2 h-2 rounded-full rotate-45 bg-Primary-DeepTeal"
+                            style={{ background: '#005F73' }}
+                          ></div>
+                          <div
+                            className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                            style={{
+                              background: '#005F73',
+                              width: '3px',
+                              height: '8px',
+                              marginLeft: '2.5px',
+                            }}
+                          ></div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              gap: '2px',
+                              marginLeft: '-24px',
+                              color: '#005F73',
+                            }}
+                            className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
+                          >
+                            <span className="opacity-40">You: </span>
+                            {data.values[0]} <span>{data.unit}</span>
+                          </div>
+                        </div>
+                      )}
+                  </>
+                ) : (
+                  <>
+                    {(data.chart_bounds[el.key].label == data.values[0] ||
+                      el.value[0].toString().includes(data.values[0])) && (
                       <div
-                        className="w-2 h-2 rounded-full rotate-45 bg-Primary-DeepTeal"
-                        style={{ background: '#005F73' }}
-                      ></div>
-                      <div
-                        className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                        className={`absolute  top-[2px]  z-10`}
                         style={{
-                          background: '#005F73',
-                          width: '3px',
-                          height: '8px',
-                          marginLeft: '2.5px',
+                          top: '2px',
+                          left: '50%',
                         }}
-                      ></div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          gap: '2px',
-                          marginLeft: '-24px',
-                          color: '#005F73',
-                        }}
-                        className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
                       >
-                        <span className="opacity-40">You: </span>
-                        {data.values[0]} <span>{data.unit}</span>
+                        <div
+                          className="w-2 h-2 rounded-full rotate-45 bg-Primary-DeepTeal"
+                          style={{ background: '#005F73' }}
+                        ></div>
+                        <div
+                          className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                          style={{
+                            background: '#005F73',
+                            width: '3px',
+                            height: '8px',
+                            marginLeft: '2.5px',
+                          }}
+                        ></div>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            gap: '2px',
+                            marginLeft: '-24px',
+                            color: '#005F73',
+                          }}
+                          className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
+                        >
+                          <span className="opacity-40">You: </span>
+                          {data.values[0]} <span>{data.unit}</span>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </>
+                )}
               </div>
             </>
           );
