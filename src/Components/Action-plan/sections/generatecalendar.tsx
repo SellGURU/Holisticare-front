@@ -3,6 +3,7 @@ import Circleloader from '../../CircleLoader';
 // import AnalyseButton from "@/components/AnalyseButton";
 // import { Button } from "symphony-ui";
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import RefrenceModal from '../../../pages/generateTreatmentPlan/components/RefrenceData';
 // import MiniAnallyseButton from "../../TreatmentPlan-V2/MiniAnalyseButon";
 // import RefrenceModal from "../../TreatmentPlan-V2/RefrenceData";
 // type Activity = {
@@ -157,6 +158,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   };
   const [isLoadingAi, setIsLoadingAi] = useState(false);
+  const [showModal, setshowModal] = useState(false);
+
   return (
     <>
       <div className="w-full bg-white border border-Gray-50 shadow-100  h-full rounded-[24px] px-6 p-3 lg:p-6">
@@ -180,7 +183,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 rows={2}
               />
               {value.reference && (
-                <div className="text-Text-Secondarytext-xs inline-flex gap-1 ">
+                <div                 onClick={() => setshowModal(true)}
+                className="text-Text-Secondarytext-xs inline-flex gap-1 ">
                   Based on your:
                   <span className=" text-Primary-EmeraldGreen flex items-center gap-2 cursor-pointer">
                     {value['Based on your:']}
@@ -226,6 +230,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
         </div>
       </div>
+      {showModal && (
+        <RefrenceModal
+          reference={value.reference}
+          isOpen={showModal}
+          onClose={() => setshowModal(false)}
+        />
+      )}
     </>
   );
 };
@@ -392,9 +403,9 @@ const GenerateCalendar: React.FC = () => {
               )}
             </div>
           </div>
-          <div className=" w-full md:w-[120px] mx-auto mt-4">
+          <div className=" w-full md:w-[150px] mx-auto mt-4">
             <ButtonPrimary
-              style={{ textWrap: 'nowrap', width: isMobile ? '100%' : '' }}
+              style={{ textWrap: 'nowrap', width: '100%' }}
               onClick={() => {
                 setisLoading(true);
                 Application.ActionPlanSaveTask({
@@ -416,7 +427,7 @@ const GenerateCalendar: React.FC = () => {
                 // }
               }}
             >
-              <div className="flex flex-row-reverse md:flex-row gap-2 items-center">
+              <div className=" w-full flex flex-row-reverse md:flex-row gap-2 justify-center items-center">
                 <img
                   src={
                     isMobile

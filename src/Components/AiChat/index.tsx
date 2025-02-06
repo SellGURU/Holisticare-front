@@ -218,6 +218,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
           // </div>
         ))}
       </div>
+      <div className='w-full flex justify-center '>
       <InputMentions
         changeBenchMarks={(val: Array<string>) => {
           setSelectedBenchMarks(val);
@@ -226,6 +227,8 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
         onSubmit={handleSend}
         value={input}
       ></InputMentions>
+      </div>
+    
 
       {/* <div className="p-4 border-t border-gray-700 flex space-x-2">
         <input

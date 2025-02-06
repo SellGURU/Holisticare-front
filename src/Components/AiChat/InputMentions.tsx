@@ -96,7 +96,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
 
   return (
     <>
-      <div className="w-[98%]  bg-[#E9F0F2] left-1 md:left-0 absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
+      <div className="w-[98%]  bg-[#E9F0F2] left-1 md:left-2  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
         {/* <img
           className="cursor-default"
           src="/icons/attach-svgrepo-com 1.svg"
