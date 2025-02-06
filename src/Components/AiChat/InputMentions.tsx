@@ -66,21 +66,21 @@ const InputMentions: React.FC<InputMentionsProps> = ({
     // Find the last '@' and get the word after it
     // const lastAtIndex = inputValue.lastIndexOf('@');
     // if (lastAtIndex !== -1) {
-      // setSuggestions(myMentions);
-      // setIsShowMentions(true);
-      // const mentionText = inputValue.slice(lastAtIndex + 1);
-      // alert(mentionText)
-      // if (mentionText.length > 0) {
-        // Filter the users based on the mentionText
-        // const filteredUsers = myMentions.filter((men) =>
-        //   men.name.toLowerCase().includes(mentionText.toLowerCase()),
-        // );
-        // setSuggestions(filteredUsers);
-        // setIsShowMentions(true);
-      // } else {
-        // setIsShowMentions(false);
-        // setSuggestions(mentions)
-      // }
+    // setSuggestions(myMentions);
+    // setIsShowMentions(true);
+    // const mentionText = inputValue.slice(lastAtIndex + 1);
+    // alert(mentionText)
+    // if (mentionText.length > 0) {
+    // Filter the users based on the mentionText
+    // const filteredUsers = myMentions.filter((men) =>
+    //   men.name.toLowerCase().includes(mentionText.toLowerCase()),
+    // );
+    // setSuggestions(filteredUsers);
+    // setIsShowMentions(true);
+    // } else {
+    // setIsShowMentions(false);
+    // setSuggestions(mentions)
+    // }
     // } else {
     //   setIsShowMentions(false);
     // }
