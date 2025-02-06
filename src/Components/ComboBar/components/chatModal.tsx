@@ -112,7 +112,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
           <div
             className={
-              'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto flex '
+              'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto  '
             }
           >
             {MessageData.map((MessageDatum) => {
