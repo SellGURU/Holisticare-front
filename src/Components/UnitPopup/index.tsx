@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -9,6 +9,9 @@ const UnitPopUp = ({ unit }: { unit: any }) => {
   // const handleToggle = () => {
   //   setIsUnitOpen(!isUnitOpen);
   // };
+  useEffect(() => {
+    setActiveUnit(unit)
+  },[unit])
   const handleSelect = (unit: string) => {
     setActiveUnit(unit);
     setIsUnitOpen(false);
