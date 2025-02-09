@@ -51,8 +51,16 @@ const Employes: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
-        <ButtonPrimary style={{backgroundColor: '#fff', color: "#005F73" }}  size="small">
-          view all <img className='rotate-180 w-4 h-4 object-contain' src="/icons/arrow-back.svg" alt="" />
+        <ButtonPrimary
+          style={{ backgroundColor: '#fff', color: '#005F73' }}
+          size="small"
+        >
+          view all{' '}
+          <img
+            className="rotate-180 w-4 h-4 object-contain"
+            src="/icons/arrow-back.svg"
+            alt=""
+          />
         </ButtonPrimary>
       </div>
       <ul className="space-y-3 max-h-[283px] overflow-auto">

@@ -84,8 +84,12 @@ const RecentCheckIns: React.FC = () => {
                   {client.Enroll_date}
                 </td>
                 <td className="py-2 text-Text-Secondary text-[10px]">
-                  <CircularProgressBar percentage={client.Progress} startColor='#E742EB' endColor='#3D70F1' size={26}></CircularProgressBar>
-                  
+                  <CircularProgressBar
+                    percentage={client.Progress}
+                    startColor="#E742EB"
+                    endColor="#3D70F1"
+                    size={26}
+                  ></CircularProgressBar>
                 </td>
               </tr>
             ))}
