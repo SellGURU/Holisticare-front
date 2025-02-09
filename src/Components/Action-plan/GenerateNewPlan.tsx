@@ -82,7 +82,7 @@ const GenerateNewActionPlan = () => {
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
             We’re generating your action plan based on the selected method. This
             may take a moment.
           </div>
@@ -92,7 +92,7 @@ const GenerateNewActionPlan = () => {
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
           <Circleloader></Circleloader>
-          <div className="text-Text-Primary TextStyle-Body-1 mt-3">
+          <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
             We are generating tailored methods aligned with your Holistic Plan .
             This may take a moment.
           </div>

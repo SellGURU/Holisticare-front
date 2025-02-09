@@ -180,7 +180,7 @@ const PlanManagerModal: React.FC<PlanManagerModalProps> = ({
         <TopBar></TopBar>
       </div> */}
 
-      <div className="px-6">
+      <div className="px-6 mt-16 lg:mt-0">
         {/* <div className="px-8 mb-2 pt-[80px]">
           <div className="flex items-center gap-3">
             <div
