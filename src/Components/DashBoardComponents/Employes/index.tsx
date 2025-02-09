@@ -49,10 +49,10 @@ const Employes: React.FC = () => {
   return (
     <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-sm text-Text-Primary font-medium">Employes</h2>
+        <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
-        <ButtonPrimary size="small">
-          view all <img src="/icons/arrow-right-white.svg" alt="" />
+        <ButtonPrimary style={{backgroundColor: '#fff', color: "#005F73" }}  size="small">
+          view all <img className='rotate-180 w-4 h-4 object-contain' src="/icons/arrow-back.svg" alt="" />
         </ButtonPrimary>
       </div>
       <ul className="space-y-3 max-h-[283px] overflow-auto">
@@ -71,7 +71,7 @@ const Employes: React.FC = () => {
                 <p className="text-[10px] text-[#383838]">
                   {employee.user_name}
                 </p>
-                <p className="text-[10px] text-[#888888]">{employee.role}</p>
+                <p className="text-[8px] text-[#888888]">Clients Assigned: 2</p>
               </div>
             </div>
             <img

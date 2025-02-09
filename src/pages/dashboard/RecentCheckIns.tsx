@@ -71,7 +71,7 @@ const RecentCheckIns: React.FC = () => {
               <th className="py-2 pl-3 rounded-tl-2xl">Client Name</th>
               <th className="py-2 pl-2">Type</th>
               <th className="py-2 pl-2">Time</th>
-              <th className="py-2 pl-2 rounded-tr-2xl">Status</th>
+              <th className="py-2 pl-3 rounded-tr-2xl">Status</th>
             </tr>
           </thead>
           <tbody className="border border-t-0 border-[#E9F0F2] ">
@@ -96,7 +96,7 @@ const RecentCheckIns: React.FC = () => {
                 </td>
                 <td className="py-2">
                   <span
-                    className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-[2px] ${
+                    className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
                       checkIn.status === 'Review Now'
                         ? 'text-[#FFBD59] underline'
                         : 'bg-[#DEF7EC] '

@@ -28,11 +28,13 @@ const DashBoard = () => {
           <Actions></Actions>
           <div className="col-span-2 grid gap-4">
             <RecentCheckIns></RecentCheckIns>
+            <Reminder></Reminder>
+
             {/* <TaskManager Filters={filters} /> */}
-            <Clients></Clients>
           </div>
           <div className=" grid gap-4">
-            <Reminder></Reminder>
+            <Clients></Clients>
+
             <Employes></Employes>
           </div>
         </div>

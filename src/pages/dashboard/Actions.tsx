@@ -43,7 +43,7 @@ const Actions: React.FC = () => {
             <h2 className="text-sm text-Text-Primary font-medium">
               Actions Needed
             </h2>
-            <div className="rounded-xl py-1 px-2 bg-backgroundColor-Card border border-Gray-50 text-Primary-DeepTeal text-[10px] flex items-center gap-2">
+            <div className="rounded-xl py-1 px-2 bg-backgroundColor-Main border border-Gray-50 text-Primary-DeepTeal text-[10px] flex items-center gap-2">
               Week <img src="/icons/arrow-down-green.svg" alt="" />
             </div>
           </div>
