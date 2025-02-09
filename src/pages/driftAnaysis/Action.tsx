@@ -80,7 +80,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
 
         if (response && response.data && response.data.State) {
           setDescription(response.data.State.description);
-          setRecommendation(response.data.State.recommendation);
+          // setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
           SetRoadMapData(response.data.RoadMap);
 
@@ -98,7 +98,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     fetchData();
   }, [memberID]);
   const [Description, setDescription] = useState('');
-  const [recommendation, setRecommendation] = useState('');
+  // const [recommendation, setRecommendation] = useState('');
   const [reference, setReference] = useState('');
 
   const toggleDaySelection = (
@@ -309,22 +309,25 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         style={{ height: window.innerHeight }}
         className=" overflow-auto w-full h-fit pb-[200px] md:pb-0 flex flex-col gap-2 "
       >
-        <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
-          <div className="text-sm font-medium">State</div>
-          <p className="text-xs text-justify my-2">{Description}</p>
-          <p className="text-xs text-justify ">{recommendation}</p>
-          {reference && (
-            <a className="text-xs text-[#55B0FF]" href="">
-              {reference}/
-            </a>
-          )}
-        </div>
-        <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
-          <div className="w-full flex justify-between items-center">
-            <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
-              Road Map
-            </h5>
-            {/* <img
+        {Description !== '' && (
+          <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
+            <div className="text-sm font-medium">State</div>
+            <p className="text-xs text-justify my-2">{Description}</p>
+            {/* <p className="text-xs text-justify ">{recommendation}</p> */}
+            {reference && (
+              <a className="text-xs text-[#55B0FF]" href="">
+                {reference}/
+              </a>
+            )}
+          </div>
+        )}
+        {RoadMapData?.options?.lenght > 0 && (
+          <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+            <div className="w-full flex justify-between items-center">
+              <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
+                Road Map
+              </h5>
+              {/* <img
             onClick={() => setisRoadMapOpen(!isRoadMapOpen)}
             className={` ${
               isRoadMapOpen && "rotate-180"
@@ -332,91 +335,94 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             src=""
             alt=""
           /> */}
-            <MiniAnallyseButton
-              isLoading={isLoading}
-              onResolve={(val) => {
-                setisLoading(true);
-                Application.generateAi({
-                  input_dict: {
-                    RoadMap: RoadMapData,
-                  },
-                  ai_generation_mode: val,
-                })
-                  .then((res) => SetRoadMapData(res.data.RoadMap))
-                  .finally(() => setisLoading(false));
-              }}
-            ></MiniAnallyseButton>
-          </div>
-          {isRoadCompleted ? (
-            <div className="flex flex-col  items-center justify-center">
-              <img src="./Themes/Aurora/icons/Done.svg" alt="" />
-              <div className="font-medium text-sm text-light-primary-text dark:text-primary-text">
-                Setup completed!
-              </div>
-              <div className="text-xs text-light-secandary-text-text dark:text-secondary-text t mt-1">
-                Congratulations, you are all set up!
-              </div>
+              <MiniAnallyseButton
+                isLoading={isLoading}
+                onResolve={(val) => {
+                  setisLoading(true);
+                  Application.generateAi({
+                    input_dict: {
+                      RoadMap: RoadMapData,
+                    },
+                    ai_generation_mode: val,
+                  })
+                    .then((res) => SetRoadMapData(res.data.RoadMap))
+                    .finally(() => setisLoading(false));
+                }}
+              ></MiniAnallyseButton>
             </div>
-          ) : (
-            <div className={`flex flex-col gap-2 pr-3 mt-2`}>
-              {RoadMapData.options?.map((option: any) => (
-                <AccordionCard
-                  onClick={() => {
-                    Application.driftAction({ member_id: memberID })
-                      .then((res) => {
-                        setData(res.data.plan), setblockID(res.data.block_id);
-                      })
-                      .catch((err) => console.log(err))
-                      .finally(() => setshowModal(true));
-                  }}
-                  onDelete={() => handleOptionDelete(option.id)}
-                  key={option.id}
-                  title={option.id}
-                  description={option.description}
-                  buttonText={'Procced'}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
-          <div className="w-full flex justify-between items-center">
-            <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
-              Messages{' '}
-            </h5>
-            {/* <img
-            onClick={() => setisMessagesOpen(!isMessagesOpen)}
-            className={` ${
-              isMessagesOpen && "rotate-180"
-            } invert dark:invert-0 w-4 h-4 transition-transform cursor-pointer`}
-            src="./Themes/Aurora/icons/chevron-down.svg"
-            alt=""
-          /> */}
-          </div>
-          <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}>
-            {MessagesData.map((option) =>
-              option.isDone ? (
-                <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
-                  <img src="/icons/tick-circle.svg" alt="" />
-                  <div className="border-l border-gray-600 pl-4 text-xs ">
-                    Message sent successfully.
-                  </div>
+            {isRoadCompleted ? (
+              <div className="flex flex-col  items-center justify-center">
+                <img src="./Themes/Aurora/icons/Done.svg" alt="" />
+                <div className="font-medium text-sm text-light-primary-text dark:text-primary-text">
+                  Setup completed!
                 </div>
-              ) : (
-                <AccordionCard
-                  key={option.id}
-                  title={option.id}
-                  description={option.description}
-                  onClick={() =>
-                    handleMessageDone(option.id, option.description)
-                  }
-                  onDelete={() => handleDelete(option.id)}
-                  buttonText={'Apporve'}
-                />
-              ),
+                <div className="text-xs text-light-secandary-text-text dark:text-secondary-text t mt-1">
+                  Congratulations, you are all set up!
+                </div>
+              </div>
+            ) : (
+              <div className={`flex flex-col gap-2 pr-3 mt-2`}>
+                {RoadMapData.options?.map((option: any) => (
+                  <AccordionCard
+                    onClick={() => {
+                      Application.driftAction({ member_id: memberID })
+                        .then((res) => {
+                          setData(res.data.plan), setblockID(res.data.block_id);
+                        })
+                        .catch((err) => console.log(err))
+                        .finally(() => setshowModal(true));
+                    }}
+                    onDelete={() => handleOptionDelete(option.id)}
+                    key={option.id}
+                    title={option.id}
+                    description={option.description}
+                    buttonText={'Procced'}
+                  />
+                ))}
+              </div>
             )}
           </div>
-        </div>
+        )}
+        {MessagesData.length > 0 && (
+          <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+            <div className="w-full flex justify-between items-center">
+              <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
+                Messages{' '}
+              </h5>
+              {/* <img
+      onClick={() => setisMessagesOpen(!isMessagesOpen)}
+      className={` ${
+        isMessagesOpen && "rotate-180"
+      } invert dark:invert-0 w-4 h-4 transition-transform cursor-pointer`}
+      src="./Themes/Aurora/icons/chevron-down.svg"
+      alt=""
+    /> */}
+            </div>
+            <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}>
+              {MessagesData.map((option) =>
+                option.isDone ? (
+                  <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
+                    <img src="/icons/tick-circle.svg" alt="" />
+                    <div className="border-l border-gray-600 pl-4 text-xs ">
+                      Message sent successfully.
+                    </div>
+                  </div>
+                ) : (
+                  <AccordionCard
+                    key={option.id}
+                    title={option.id}
+                    description={option.description}
+                    onClick={() =>
+                      handleMessageDone(option.id, option.description)
+                    }
+                    onDelete={() => handleDelete(option.id)}
+                    buttonText={'Apporve'}
+                  />
+                ),
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
