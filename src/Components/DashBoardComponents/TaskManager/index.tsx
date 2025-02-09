@@ -114,7 +114,11 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
   return (
     <div className="w-full h-[320px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4 relative">
+        <div className='flex gap-1'>
         <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
+        <span className='text-xs font-medium text-Text-Triarty'>({tasks.length})</span>
+        </div>
+       
 
         <ButtonPrimary size="small">
           <img src="/icons/add.svg" alt="" />
