@@ -48,10 +48,10 @@ export const Questionary = () => {
       ),
     }));
   };
-  const validateDate = (dateString:string) => {
+  const validateDate = (dateString: string) => {
     const date = new Date(dateString);
     return !isNaN(date.getTime()); // Returns true if it's a valid date
-  };  
+  };
   // const formatDate = (date: Date | null) => {
   //   if (!date) return '';
   //   const options: Intl.DateTimeFormatOptions = {
@@ -184,12 +184,11 @@ export const Questionary = () => {
               type="date"
               onChange={(e) => {
                 // console.log(new Date(e.target.value).toISOString().split('T')[0])
-                if(validateDate(e.target.value)){
+                if (validateDate(e.target.value)) {
                   formValueChange(
                     questionsFormData.questions[activeCard - 1].id,
-                    new Date(e.target.value).toISOString().split('T')[0]
+                    new Date(e.target.value).toISOString().split('T')[0],
                   );
-
                 }
               }}
               value={
