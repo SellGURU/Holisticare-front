@@ -4,6 +4,7 @@ import { TopBar } from '../../Components/topBar';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
 import { subscribe } from '../../utils/event';
+import Draggable from 'react-draggable';
 
 const Report = () => {
   const [isVisibleCombo, setIsVisibleCombo] = useState(true);
@@ -31,7 +32,21 @@ const Report = () => {
   }, []);
   const sideMenuRef = useRef(null);
   const [showCombo, setshowCombo] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
+  const handleStart = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrag = () => {
+    setIsDragging(true);
+  };
+
+  const handleStop = () => {
+    if (!isDragging) {
+      setIsMobileMenuOpen(!isMobileMenuOpen);
+    }
+  };
   return (
     <div className="w-full h-full">
       <div className="  w-full sticky z-50 top-0 ">
@@ -42,12 +57,16 @@ const Report = () => {
         ></TopBar>
       </div>
       <div></div>
+      <Draggable   onStart={handleStart}
+      onDrag={handleDrag}
+      onStop={handleStop}>
       <div
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed z-[60]  top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2"
+        // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed z-[60] top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer"
       >
         <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
       </div>
+    </Draggable>
       <div
         ref={sideMenuRef}
         className={`

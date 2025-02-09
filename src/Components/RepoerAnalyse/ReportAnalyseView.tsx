@@ -8,7 +8,7 @@ import ConceringRow from './Boxs/ConceringRow';
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
 // import Point from "./Point"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
@@ -300,6 +300,55 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }, 500);
     }
   }, [id, loading]);
+  const [isSticky, setIsSticky] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // 2. Modified useEffect with proper dependencies
+  useEffect(() => {
+    const handleStickyScroll = () => {
+      if (!scrollContainerRef.current) return;
+
+      const container = scrollContainerRef.current;
+      const isMobile = window.innerWidth < 768;
+
+      console.log(`Scroll Position: ${container.scrollTop}`);
+
+      if (isMobile && container.scrollTop > 100) {
+        console.log('Sticky: true');
+        setIsSticky(true);
+      } else {
+        console.log('Sticky: false');
+        setIsSticky(false);
+      }
+    };
+
+    // 3. Get the actual scroll container element
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    // 4. Add event listener to the correct element
+    container.addEventListener('scroll', handleStickyScroll);
+
+    // Initial check
+    handleStickyScroll();
+
+    return () => {
+      container.removeEventListener('scroll', handleStickyScroll);
+    };
+  }, []); // Add any required dependencies here
+
+  // 5. Add resize listener to handle window size changes
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       {loading ? (
@@ -309,6 +358,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ) : (
         <>
           <div
+            ref={scrollContainerRef}
             onScrollCapture={() => {
               handleScroll();
             }}
@@ -365,8 +415,28 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
 
                 <div className="flex-grow w-full mt-0 ">
-                  <div className="w-full flex justify-between items-center">
+                  <div
+                    className={`w-full flex justify-between items-center ${
+                      isSticky
+                        ? 'fixed top-9 h-[50px] bg-[#E9F0F2] left-0 px-5 z-50 '
+                        : ''
+                    }`}
+                  >
+                    {' '}
                     <div className="flex justify-start items-center">
+                      {userInfoData?.picture && (
+                        <div className="size-6 border border-Primary-DeepTeal flex items-center justify-center mr-1  rounded-full">
+                          <img
+                            className="rounded-full"
+                            onError={(e: any) => {
+                              e.target.src = `https://ui-avatars.com/api/?name=${userInfoData?.name}`; // Set fallback image
+                            }}
+                            src={userInfoData?.picture}
+                            alt=""
+                          />
+                        </div>
+                      )}
+
                       <div className="text-[14px] font-medium text-Text-Primary">
                         {userInfoData?.name}
                       </div>
