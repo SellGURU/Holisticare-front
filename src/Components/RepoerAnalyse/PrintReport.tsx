@@ -311,8 +311,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             {ClientSummaryBoxs?.client_summary}
           </div>
-          <div className="w-full flex justify-end items-center gap-4 mt-4">
-            <div className="flex invisible justify-start gap-1 items-center">
+          <div className="w-full invisible  flex justify-end items-center gap-4 mt-4">
+            <div className="flex justify-start gap-1 items-center">
               <div
                 className=""
                 style={{

@@ -293,6 +293,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
     });
   };
+  useEffect(() => {
+    if(!loading){
+      setTimeout(() => {
+        handleScroll()
+      }, 500);
+
+    }
+  },[id,loading])
   return (
     <>
       {loading ? (
