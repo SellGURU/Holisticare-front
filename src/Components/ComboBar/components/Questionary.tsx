@@ -4,11 +4,11 @@ import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
-// import questionsData from './questions/data.json';
 // import DatePicker from 'react-datepicker';
 import Checkbox from './CheckBox';
 import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
+import QuestionRow from './questionRow';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
@@ -61,15 +61,16 @@ export const Questionary = () => {
   //   };
   //   return date.toLocaleDateString(undefined, options);
   // };
-  const resolveForm = (type: string) => {
+  const resolveForm = (type: string,questionsData:any,activeCardNumber:number,disabled?:boolean) => {
     if (type == 'short_answer' || type == 'paragraph') {
       return (
         <>
           <textarea
-            value={questionsFormData.questions[activeCard - 1].response}
+            value={questionsData.questions[activeCardNumber - 1].response}
+            disabled={disabled}
             onChange={(e) => {
               formValueChange(
-                questionsFormData.questions[activeCard - 1].id,
+                questionsData.questions[activeCardNumber - 1].id,
                 e.target.value,
               );
             }}
@@ -84,28 +85,30 @@ export const Questionary = () => {
         <>
           <div>
             <div>
-              {questionsFormData.questions[activeCard - 1]?.options?.map(
+              {questionsData.questions[activeCardNumber - 1]?.options?.map(
                 (el: any) => {
                   return (
                     <div
                       onClick={() => {
-                        formValueChange(
-                          questionsFormData.questions[activeCard - 1].id,
-                          el,
-                        );
+                        if(!disabled){
+                          formValueChange(
+                            questionsData.questions[activeCardNumber - 1].id,
+                            el,
+                          );
+                        }
                       }}
                       className="flex items-center gap-2 mb-2"
                     >
                       <div
-                        className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${questionsFormData.questions[activeCard - 1].response == el ? 'border-Primary-DeepTeal' : 'border-Text-Secondary '} bg-white border-[1.4px] rounded-full`}
+                        className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${questionsData.questions[activeCard - 1].response == el ? 'border-Primary-DeepTeal' : 'border-Text-Secondary '} bg-white border-[1.4px] rounded-full`}
                       >
-                        {questionsFormData.questions[activeCard - 1].response ==
+                        {questionsData.questions[activeCardNumber - 1].response ==
                           el && (
                           <div className="w-[7px] h-[7px] bg-Primary-DeepTeal rounded-full"></div>
                         )}
                       </div>
                       <div
-                        className={`text-[10px] cursor-pointer ${questionsFormData.questions[activeCard - 1].response == el ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
+                        className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response == el ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                       >
                         {el}
                       </div>
@@ -122,42 +125,40 @@ export const Questionary = () => {
       return (
         <>
           <div>
-            {questionsFormData.questions[activeCard - 1]?.options?.map(
+            {questionsData.questions[activeCardNumber - 1]?.options?.map(
               (el: any) => {
                 return (
                   <div
                     onClick={() => {
-                      console.log(
-                        questionsFormData.questions[
-                          activeCard - 1
-                        ].response.includes(el),
-                      );
-                      const newResponses = !questionsFormData.questions[
-                        activeCard - 1
-                      ].response.includes(el)
-                        ? [
-                            ...questionsFormData.questions[activeCard - 1]
-                              .response,
-                            el,
-                          ] // Add to array
-                        : questionsFormData.questions[
-                            activeCard - 1
-                          ].response.filter((item: any) => item !== el); // Remove from array
-                      formValueChange(
-                        questionsFormData.questions[activeCard - 1].id,
-                        newResponses,
-                      );
+                      if(!disabled) {
+                        const newResponses = !questionsData.questions[
+                          activeCardNumber - 1
+                        ].response.includes(el)
+                          ? [
+                              ...questionsData.questions[activeCardNumber - 1]
+                                .response,
+                              el,
+                            ] // Add to array
+                          : questionsData.questions[
+                              activeCardNumber - 1
+                            ].response.filter((item: any) => item !== el); // Remove from array
+                        formValueChange(
+                          questionsData.questions[activeCardNumber - 1].id,
+                          newResponses,
+                        );
+
+                      }
                     }}
                     className="flex items-center gap-2 mb-2"
                   >
                     <Checkbox
-                      checked={questionsFormData.questions[
-                        activeCard - 1
+                      checked={questionsData.questions[
+                        activeCardNumber - 1
                       ].response.includes(el)}
                     ></Checkbox>
 
                     <div
-                      className={`text-[10px] cursor-pointer ${questionsFormData.questions[activeCard - 1].response.includes(el) ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
+                      className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response.includes(el) ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                     >
                       {el}
                     </div>
@@ -184,17 +185,19 @@ export const Questionary = () => {
               type="date"
               onChange={(e) => {
                 // console.log(new Date(e.target.value).toISOString().split('T')[0])
-                if (validateDate(e.target.value)) {
-                  formValueChange(
-                    questionsFormData.questions[activeCard - 1].id,
-                    new Date(e.target.value).toISOString().split('T')[0],
-                  );
+                if(!disabled) {
+                  if (validateDate(e.target.value)) {
+                    formValueChange(
+                      questionsData.questions[activeCardNumber - 1].id,
+                      new Date(e.target.value).toISOString().split('T')[0],
+                    );
+                  }
                 }
               }}
               value={
-                questionsFormData.questions[activeCard - 1].response != ''
+                questionsData.questions[activeCardNumber - 1].response != ''
                   ? new Date(
-                      questionsFormData.questions[activeCard - 1].response,
+                      questionsData.questions[activeCardNumber - 1].response,
                     )
                       .toISOString()
                       .split('T')[0]
@@ -235,6 +238,10 @@ export const Questionary = () => {
       );
     }
   };
+  const checkFormComplete = () => {
+    const datas = questionsFormData.questions.filter((el:any) =>el.required == true && el.response.length == 0)
+    return datas.length == 0
+  }
   const [activeCard, setActiveCard] = useState(1);
   return (
     <div className=" w-full">
@@ -250,6 +257,7 @@ export const Questionary = () => {
               <div className="flex justify-between items-center">
                 <div className="text-xs text-Text-Primary">Profile Data</div>
                 <ButtonSecondary
+                  disabled={!checkFormComplete()}
                   onClick={() => {
                     setSubmitLoading(true);
                     Application.setGoogleFormEmty({
@@ -290,9 +298,13 @@ export const Questionary = () => {
                   className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
                 >
                   {resolveForm(
-                    questionsFormData.questions[activeCard - 1].type,
+                    questionsFormData.questions[activeCard - 1].type,questionsFormData,
+                    activeCard
                   )}
                 </div>
+                {questionsFormData.questions[activeCard - 1].required &&
+                  <div className='text-[10px] text-red-500 mt-1'>* This question is required.</div>
+                }
               </div>
 
               <div className="w-full flex justify-center pb-2 absolute bottom-0">
@@ -336,79 +348,11 @@ export const Questionary = () => {
           <>
             {data?.length > 0 ? (
               <>
-                <div className="flex justify-center w-full items-start overflow-auto h-[240px]">
+                <div className="flex justify-center w-full items-start overflow-auto ">
                   <div className="w-full mt-2">
                     {data?.map((el: any) => {
                       return (
-                        <div className=" bg-white border border-Gray-50 mb-1 px-5 py-3 h-[48px] w-full rounded-[12px] flex justify-between items-center">
-                          <div className="text-[10px]  text-Text-Primary">
-                            {el.Data}
-                          </div>
-
-                          <div className="text-[8px] ">
-                            <div
-                              className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
-                                el['State'] == 'Complete'
-                                  ? 'bg-[#DEF7EC]'
-                                  : 'bg-[#F9DEDC]'
-                              }`}
-                              //   style={{
-                              //     backgroundColor: 'red'
-                              //       resolveStatusColor(
-                              //         el["State"]
-                              //       ),
-                              //   }}
-                            >
-                              <div
-                                className={`w-3 h-3 rounded-full  ${
-                                  el['State'] == 'Complete'
-                                    ? 'bg-[#06C78D]'
-                                    : 'bg-[#FFBD59]'
-                                }`}
-                              ></div>
-                              {el['State']}
-                            </div>
-                          </div>
-                          <div
-                            onClick={() => {
-                              Application.Questionary_tracking_action({
-                                form_name: el['Data'],
-                                member_id: id,
-                              }).then((res) => {
-                                if (res.data && res.data.link) {
-                                  window.open(res.data.link, '_blank');
-                                }
-                              });
-                            }}
-                          >
-                            {el['State'] === 'Complete' ? (
-                              <img src="/icons/eye-green.svg" alt="" />
-                            ) : (
-                              // Render this if action is not "Complete"
-                              <img
-                                className="cursor-pointer"
-                                onClick={() => {
-                                  Application.questionaryLink({})
-                                    .then((res) => {
-                                      const url =
-                                        res.data['Personal Information'];
-                                      if (url) {
-                                        window.open(url, '_blank');
-                                      }
-                                    })
-                                    .catch((err) => {
-                                      console.error(
-                                        'Error fetching the link:',
-                                        err,
-                                      );
-                                    });
-                                }}
-                                src="/icons/Fiilout-Form.svg"
-                                alt=""
-                              />
-                            )}
-                          </div>
-                        </div>
+                        <QuestionRow el={el} id={id as string} resolveForm={resolveForm} ></QuestionRow>
                       );
                     })}
                   </div>
