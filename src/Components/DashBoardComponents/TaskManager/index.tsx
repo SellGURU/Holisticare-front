@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
-import AddFilter from './addFilter';
+// import AddFilter from './addFilter';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
 // Define the new Task type
 type Task = {
   task_id: string;
@@ -10,134 +10,126 @@ type Task = {
   progress: string;
   priority: string;
   checked: boolean;
+  ai?: boolean;
 };
 
-type Filters = {
-  priority: { high: boolean; medium: boolean; low: boolean };
-  progress: { inProgress: boolean; toDo: boolean };
-  date: { from: Date | null; to: Date | null };
-};
-interface TaskManagerProps {
-  Filters: Filters;
-}
-const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+// type Filters = {
+//   priority: { high: boolean; medium: boolean; low: boolean };
+//   progress: { inProgress: boolean; toDo: boolean };
+//   date: { from: Date | null; to: Date | null };
+// };
+
+interface TaskManagerProps {}
+const TaskManager: React.FC<TaskManagerProps> = () => {
+  const [tasks, setTasks] = useState<Task[]>([
+    {
+      task_id: '1',
+      title: 'Update Sam action plan',
+      date: 'February 28, 2025',
+      progress: 'AI-Defined',
+      priority: 'Low Priority',
+      checked: false,
+    },
+    {
+      task_id: '2',
+      title: 'Attach guide pdf to Sarah’s...',
+      date: 'February 28, 2025',
+      progress: '',
+      priority: 'High Priority',
+      checked: false,
+    },
+    {
+      task_id: '3',
+      title: 'Sync with James via Leo...',
+      date: 'February 27, 2025',
+      progress: '',
+      priority: 'High Priority',
+      checked: true,
+      ai: true,
+    },
+    {
+      task_id: '4',
+      title: 'Organize new clients prof...',
+      date: 'February 27, 2025',
+      progress: '',
+      priority: 'Low Priority',
+      checked: true,
+    },
+    {
+      task_id: '5',
+      title: 'Download client app and...',
+      date: 'February 26, 2025',
+      progress: 'AI-Defined',
+      priority: 'Low Priority',
+      checked: true,
+    },
+    {
+      task_id: '6',
+      title: 'Assign Guy to Floyd in or...',
+      date: 'February 25, 2025',
+      progress: 'AI-Defined',
+      priority: 'Medium Priority',
+      checked: true,
+    },
+    {
+      task_id: '7',
+      title: 'Check Daniel progress to...',
+      date: 'February 25, 2025',
+      progress: 'AI-Defined',
+      priority: 'Low Priority',
+      checked: true,
+    },
+    {
+      task_id: '8',
+      title: 'Set priorities to make sur...',
+      date: 'February 24, 2025',
+      progress: '',
+      priority: 'Medium Priority',
+      checked: true,
+    },
+  ]);
 
   useEffect(() => {
     Application.dashboardTasks()
       .then((response) => {
-        setTasks(response.data);
+        console.log(response);
+
+        // setTasks(response.data);
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
       });
   }, []);
 
-  const [currentTasks, setCurrentTasks] = useState(tasks);
-  const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 3;
-
-  const indexOfLastTask = currentPage * tasksPerPage;
-  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-  const paginatedTasks = currentTasks.slice(indexOfFirstTask, indexOfLastTask);
-
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(currentTasks.length / tasksPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
-  const handleClick = (pageNumber: number) => setCurrentPage(pageNumber);
+  // const [currentTasks, setCurrentTasks] = useState(tasks);
 
   const handleCheckBoxChange = (task_id: string) => {
-    setCurrentTasks(
-      currentTasks.map((task) =>
+    setTasks(
+      tasks.map((task) =>
         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
       ),
     );
   };
-  const [filters, setFilters] = useState<Filters>(Filters);
-  useEffect(() => {
-    let filteredTasks = tasks;
 
-    if (
-      filters.priority.high ||
-      filters.priority.medium ||
-      filters.priority.low
-    ) {
-      filteredTasks = filteredTasks.filter(
-        (task) =>
-          (filters.priority.high && task.priority === 'High') ||
-          (filters.priority.medium && task.priority === 'Medium') ||
-          (filters.priority.low && task.priority === 'Low'),
-      );
-    }
-
-    if (filters.progress.inProgress || filters.progress.toDo) {
-      filteredTasks = filteredTasks.filter(
-        (task) =>
-          (filters.progress.inProgress && task.progress === 'In Progress') ||
-          (filters.progress.toDo && task.progress === 'To Do'),
-      );
-    }
-
-    if (filters.date.from && filters.date.to) {
-      filteredTasks = filteredTasks.filter((task) => {
-        const taskDate = new Date(task.date);
-        const fromDate = filters.date.from!;
-        const toDate = filters.date.to!;
-        return taskDate >= fromDate && taskDate <= toDate;
-      });
-    }
-
-    setCurrentTasks(filteredTasks);
-  }, [filters, tasks]);
-  const [showFilter, setshowFilter] = useState(false);
   return (
-    <div className="w-full min-h-[328px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+    <div className="w-full h-[320px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
       <div className="flex justify-between items-center mb-4 relative">
-        <h2 className="text-sm font-medium">Tasks</h2>
-        <div className="flex items-center gap-3">
-          <div
-            onClick={() => setshowFilter(!showFilter)}
-            className=" cursor-pointer rounded-md px-4 py-2 bg-backgroundColor-Secondary shadow-Btn relative"
-          >
-            <img className="w-4 h-4" src="/icons/filter.svg" alt="" />
-          </div>
-          {showFilter && (
-            <AddFilter
-              filters={filters}
-              onApply={(newFilters) => {
-                setFilters(newFilters), setshowFilter(false);
-              }}
-              onClear={() => {
-                setFilters({
-                  priority: { high: false, medium: false, low: false },
-                  progress: { inProgress: false, toDo: false },
-                  date: { from: null, to: null },
-                });
-                setshowFilter(false);
-              }}
-              onClose={() => {
-                setshowFilter(false);
-              }}
-            />
-          )}
+        <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
 
-          <ButtonSecondary>
-            <img src="/icons/add.svg" alt="" />
-            Add A New Task
-          </ButtonSecondary>
-        </div>
+        <ButtonPrimary size="small">
+          <img src="/icons/add.svg" alt="" />
+          New task
+        </ButtonPrimary>
       </div>
-      <ul className="grid grid-cols-2 gap-3 mb-4 min-h-[191px]">
-        {paginatedTasks.map((task) => (
+      <ul className="grid grid-cols-2 pr-1 gap-3 mb-4 overflow-auto h-[253px]">
+        {tasks.map((task) => (
           <li
             key={task.task_id}
-            className="bg-backgroundColor-Card shadow-100 p-2 rounded-2xl h-fit"
+            className="bg-white border border-Gray-50 shadow-100 p-2 rounded-2xl h-[65px] relative"
           >
             <div className="w-full flex items-center justify-between">
               <label
-                className="flex items-center mb-2 cursor-pointer gap-2"
+                className="flex items-center mb-2 cursor-pointer gap-2 "
                 htmlFor={task.title}
               >
                 <input
@@ -148,8 +140,10 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
                   className="hidden"
                 />
                 <div
-                  className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
-                    task.checked ? 'bg-Primary-DeepTeal' : 'bg-white'
+                  className={`w-4 h-4 flex items-center justify-center  rounded ${
+                    task.checked
+                      ? 'bg-Primary-EmeraldGreen'
+                      : 'bg-white border border-Text-Secondary'
                   }`}
                 >
                   {task.checked && (
@@ -167,105 +161,59 @@ const TaskManager: React.FC<TaskManagerProps> = ({ Filters }) => {
                     </svg>
                   )}
                 </div>
-                <div className="text-xs">{task.title}</div>
+
+                <div
+                  className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
+                    task.checked ? 'line-through' : ''
+                  }`}
+                >
+                  {task.title}
+                </div>
               </label>
 
-              <span
+              {/* <span
                 className={`text-xs rounded-2xl py-[2px] px-[9px] text-[8px] flex items-center gap-1 ${
-                  task.progress === 'In Progress'
+                  task.progress === 'AI-Defined'
                     ? 'bg-[#06C78D1A] bg-opacity-10 text-[#06C78D]'
+                    : task.priority === 'High Priority'
+                    ? 'bg-[#FF00001A] text-[#FF0000]'
                     : 'bg-[#4C88FF1A] text-[#4C88FF] bg-opacity-10'
                 }`}
               >
-                {task.progress}
-                <img
-                  className="w-2 h-2 object-contain"
-                  src="/icons/arow-down-drop.svg"
-                  alt=""
-                />
-              </span>
+                {task.progress || task.priority}
+               
+              </span> */}
             </div>
-            <div className="w-full flex items-center justify-between mt-2 px-3">
-              <div className="text-xs text-Text-Secondary pl-3">
+            <div className="w-full flex items-center justify-between  px-3">
+              <div className="text-[10px] text-Text-Triarty pl-3">
                 {task.date}
               </div>
-
-              <span
-                className={`text-xs flex items-center gap-1 ${
-                  task.priority === 'High'
-                    ? 'text-[#FC5474]'
-                    : task.priority === 'Medium'
-                      ? 'text-[#FFBD59]'
-                      : 'text-Text-Secondary'
-                }`}
-              >
-                <img
-                  className="w-3 h-3 object-contain"
-                  src="/icons/timer.svg"
-                  alt=""
-                />
-                {task.priority}
-              </span>
+              <div className="flex flex-col justify-between gap-3 absolute top-2 right-2">
+                {task.ai && (
+                  <div className="bg-[#E9F0F2] px-[9px] py-[2px] rounded-2xl flex justify-center items-center gap-1 text-[8px] text-[#267E95]">
+                    <img src="/icons/ai-icon.svg" alt="" />
+                    AI-Defined
+                  </div>
+                )}
+                <span
+                  className={`text-[8px] flex items-center gap-1 px-2 rounded-full ${
+                    task.priority === 'High Priority'
+                      ? 'bg-[#FFD8E4]'
+                      : task.priority === 'Medium Priority'
+                        ? 'bg-[#F9DEDC]'
+                        : 'bg-[#DEF7EC]'
+                  }`}
+                >
+                  <div
+                    className={`rounded-full size-2 ${task.priority === 'High Priority' ? 'bg-[#FC5474]' : task.priority === 'Medium Priority' ? 'bg-[#FFBD59]' : 'bg-[#06C78D]'} `}
+                  ></div>
+                  {task.priority}
+                </span>
+              </div>
             </div>
           </li>
         ))}
       </ul>
-      {tasks.length > 1 && (
-        <div className="flex justify-center items-center w-full">
-          <button
-            onClick={() => handleClick(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] p-2 border-opacity-10 flex items-center justify-center cursor-pointer"
-          >
-            <img src="/icons/First.svg" alt="" />
-          </button>
-
-          {pageNumbers.map((number) => {
-            if (pageNumbers.length <= 3) {
-              return (
-                <button
-                  key={number}
-                  onClick={() => handleClick(number)}
-                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
-                    currentPage === number
-                      ? 'bg-[#005F73] text-white'
-                      : 'bg-white'
-                  }`}
-                >
-                  {number}
-                </button>
-              );
-            } else if (
-              number === currentPage ||
-              number === currentPage - 1 ||
-              number === currentPage + 1
-            ) {
-              return (
-                <button
-                  key={number}
-                  onClick={() => handleClick(number)}
-                  className={`px-3 py-2 mx-1 rounded-[24px] border-[0.75px] border-[#005F731A] text-[9.75px] font-semibold cursor-pointer ${
-                    currentPage === number
-                      ? 'bg-[#005F73] text-white'
-                      : 'bg-white'
-                  }`}
-                >
-                  {number}
-                </button>
-              );
-            }
-            return null;
-          })}
-
-          <button
-            onClick={() => handleClick(currentPage + 1)}
-            disabled={currentPage === pageNumbers.length}
-            className="rounded-[24px] border-[0.75px] bg-white border-[#005F731A] border-opacity-10 p-2 flex items-center justify-center cursor-pointer"
-          >
-            <img className="rotate-180" src="/icons/First.svg" alt="" />
-          </button>
-        </div>
-      )}
     </div>
   );
 };

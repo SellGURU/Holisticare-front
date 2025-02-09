@@ -3,9 +3,9 @@ import {
   NumberBoxes,
   // MessageList,
   Clients,
-  Reminder,
+  // Reminder,
   Employes,
-  // TaskManager,
+  TaskManager,
 } from '../../Components/DashBoardComponents';
 import Actions from './Actions';
 import RecentCheckIns from './RecentCheckIns';
@@ -28,9 +28,9 @@ const DashBoard = () => {
           <Actions></Actions>
           <div className="col-span-2 grid gap-4">
             <RecentCheckIns></RecentCheckIns>
-            <Reminder></Reminder>
+            {/* <Reminder></Reminder> */}
 
-            {/* <TaskManager Filters={filters} /> */}
+            <TaskManager />
           </div>
           <div className=" grid gap-4">
             <Clients></Clients>
