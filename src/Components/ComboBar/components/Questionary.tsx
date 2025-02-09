@@ -61,7 +61,12 @@ export const Questionary = () => {
   //   };
   //   return date.toLocaleDateString(undefined, options);
   // };
-  const resolveForm = (type: string,questionsData:any,activeCardNumber:number,disabled?:boolean) => {
+  const resolveForm = (
+    type: string,
+    questionsData: any,
+    activeCardNumber: number,
+    disabled?: boolean,
+  ) => {
     if (type == 'short_answer' || type == 'paragraph') {
       return (
         <>
@@ -90,7 +95,7 @@ export const Questionary = () => {
                   return (
                     <div
                       onClick={() => {
-                        if(!disabled){
+                        if (!disabled) {
                           formValueChange(
                             questionsData.questions[activeCardNumber - 1].id,
                             el,
@@ -102,8 +107,8 @@ export const Questionary = () => {
                       <div
                         className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${questionsData.questions[activeCard - 1].response == el ? 'border-Primary-DeepTeal' : 'border-Text-Secondary '} bg-white border-[1.4px] rounded-full`}
                       >
-                        {questionsData.questions[activeCardNumber - 1].response ==
-                          el && (
+                        {questionsData.questions[activeCardNumber - 1]
+                          .response == el && (
                           <div className="w-[7px] h-[7px] bg-Primary-DeepTeal rounded-full"></div>
                         )}
                       </div>
@@ -130,7 +135,7 @@ export const Questionary = () => {
                 return (
                   <div
                     onClick={() => {
-                      if(!disabled) {
+                      if (!disabled) {
                         const newResponses = !questionsData.questions[
                           activeCardNumber - 1
                         ].response.includes(el)
@@ -146,7 +151,6 @@ export const Questionary = () => {
                           questionsData.questions[activeCardNumber - 1].id,
                           newResponses,
                         );
-
                       }
                     }}
                     className="flex items-center gap-2 mb-2"
@@ -185,7 +189,7 @@ export const Questionary = () => {
               type="date"
               onChange={(e) => {
                 // console.log(new Date(e.target.value).toISOString().split('T')[0])
-                if(!disabled) {
+                if (!disabled) {
                   if (validateDate(e.target.value)) {
                     formValueChange(
                       questionsData.questions[activeCardNumber - 1].id,
@@ -239,9 +243,11 @@ export const Questionary = () => {
     }
   };
   const checkFormComplete = () => {
-    const datas = questionsFormData.questions.filter((el:any) =>el.required == true && el.response.length == 0)
-    return datas.length == 0
-  }
+    const datas = questionsFormData.questions.filter(
+      (el: any) => el.required == true && el.response.length == 0,
+    );
+    return datas.length == 0;
+  };
   const [activeCard, setActiveCard] = useState(1);
   return (
     <div className=" w-full">
@@ -298,13 +304,16 @@ export const Questionary = () => {
                   className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
                 >
                   {resolveForm(
-                    questionsFormData.questions[activeCard - 1].type,questionsFormData,
-                    activeCard
+                    questionsFormData.questions[activeCard - 1].type,
+                    questionsFormData,
+                    activeCard,
                   )}
                 </div>
-                {questionsFormData.questions[activeCard - 1].required &&
-                  <div className='text-[10px] text-red-500 mt-1'>* This question is required.</div>
-                }
+                {questionsFormData.questions[activeCard - 1].required && (
+                  <div className="text-[10px] text-red-500 mt-1">
+                    * This question is required.
+                  </div>
+                )}
               </div>
 
               <div className="w-full flex justify-center pb-2 absolute bottom-0">
@@ -352,7 +361,11 @@ export const Questionary = () => {
                   <div className="w-full mt-2">
                     {data?.map((el: any) => {
                       return (
-                        <QuestionRow el={el} id={id as string} resolveForm={resolveForm} ></QuestionRow>
+                        <QuestionRow
+                          el={el}
+                          id={id as string}
+                          resolveForm={resolveForm}
+                        ></QuestionRow>
                       );
                     })}
                   </div>
