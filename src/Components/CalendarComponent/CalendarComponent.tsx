@@ -11,7 +11,7 @@ interface CalenderComponentProps {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
-  console.log(data[0].date)
+  console.log(data[0].date);
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const getNext30Days = () => {
   // const today = new Date();
@@ -149,7 +149,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
   //   return days;
   // };
 
-  const getCurrentMonthWithBuffer = (todaydat:any) => {
+  const getCurrentMonthWithBuffer = (todaydat: any) => {
     const today = new Date(todaydat);
 
     // Get the first day and last day of the current month
