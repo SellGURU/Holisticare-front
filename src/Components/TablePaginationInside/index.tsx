@@ -2,17 +2,17 @@
 // import { TbFilterPlus } from "react-icons/tb";
 
 import {
+  FilterFn,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  FilterFn,
 } from '@tanstack/react-table';
-import { FaSort } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import Pagination from '../pagination/index.tsx';
+import { FaSort } from 'react-icons/fa';
+import PaginationCircular from '../paginationCircular/index.tsx';
 import { columns } from './tableTd.tsx';
 // import Application from "@/api/app.ts";
 interface TableProps {
@@ -75,7 +75,7 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
     <div className="flex items-center justify-center flex-col">
       <div className="w-full mt-4">
         <div
-          className={`overflow-x-auto  bg-white shadow-200  rounded-[16px] text-Text-Primary  mt-[-12px] h-[68vh]`}
+          className={`flex flex-col justify-between overflow-x-auto  bg-white shadow-200  rounded-[16px] text-Text-Primary  mt-[-12px] h-[68vh]`}
         >
           {table.getRowModel().rows.length > 0 ? (
             <table
@@ -141,13 +141,15 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
               </p>
             </div>
           )}
+          <div className="w-full flex justify-center items-center mb-4">
+            <PaginationCircular
+              currentPage={currentPage + 1}
+              totalPages={Math.ceil(data.length / pageSize)}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage + 1}
-        totalPages={Math.ceil(data.length / pageSize)}
-        onPageChange={handlePageChange}
-      />
     </div>
   );
 };
