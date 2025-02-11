@@ -74,7 +74,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ data, name, onEdit, onClick }) => {
             <ButtonSecondary
               onClick={() => onEdit()}
               style={{ width: '100%', borderRadius: '20px', cursor: 'pointer' }}
-              ClassName="bg-backgroundColor-Card !border-Primary-EmeraldGreen !text-Primary-EmeraldGreen mr-1"
+              ClassName="lg:hidden bg-backgroundColor-Card !border-Primary-EmeraldGreen !text-Primary-EmeraldGreen mr-1"
             >
               {' '}
               <SvgIcon src="/icons/setting-3.svg" color="#6CC24A" /> Set Orders
