@@ -141,8 +141,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
-  console.log(MessagesData);
-
+useEffect(()=>console.log(RoadMapData), [RoadMapData]
+)
   return (
     <>
       {showModal && (
@@ -321,7 +321,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             )}
           </div>
         )}
-        {RoadMapData?.options?.lenght > 0 && (
+        {RoadMapData?.options?.length > 0 ?  (
           <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -339,7 +339,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 isLoading={isLoading}
                 onResolve={(val) => {
                   setisLoading(true);
-                  Application.generateAi({
+                  Application.roadMapGenerateAi({
                     input_dict: {
                       RoadMap: RoadMapData,
                     },
@@ -382,7 +382,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             )}
           </div>
-        )}
+        ):null}
         {MessagesData.length > 0 && (
           <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
