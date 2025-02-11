@@ -64,6 +64,10 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   }, [categoryOrderData]);
   const [isLoadingAi, setISLoadingAi] = useState(false);
 
+  useEffect(() => {
+    setISLoadingAi(false);
+  }, [active]);
+
   // const resolveIcon = (name: string) => {
   //   if (name == 'Cardiovascular and Respiratory Health') {
   //     return '/icons/biomarkers/heart.svg';
@@ -545,8 +549,8 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                   </div>
                                 </div>
                                 <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
-                                  <div>
-                                    <div className="w-full lg:w-[500px] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                  <div className="lg:w-[50%]">
+                                    <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
                                       <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
                                         Last Value
                                         <div className="relative">
@@ -560,8 +564,8 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                       ></StatusBarChart>
                                     </div>
                                   </div>
-                                  <div>
-                                    <div className="w-full lg:w-[500px] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                  <div className="lg:w-[50%]">
+                                    <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
                                       <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
                                         Historical Data
                                         <div className=" flex justify-end gap-2 items-center">
@@ -570,7 +574,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                               unit={activeEl.unit}
                                             ></UnitPopUp>
                                           </div>
-                                          <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                                          <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                                             <div className="text-Primary-DeepTeal text-[10px]">
                                               6 Month
                                             </div>
