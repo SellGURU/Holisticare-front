@@ -314,7 +314,9 @@ const ClientList = () => {
                       )}
 
                       <div
-                        onClick={() => setshowFilterModal(!showFilterModal)}
+                        onClick={() => {
+                          setshowFilterModal(!showFilterModal);
+                        }}
                         className="rounded-md relative bg-backgroundColor-Secondary shadow-100 py-[6px] sm:py-2 px-[6px] xs:px-4 cursor-pointer "
                       >
                         <img

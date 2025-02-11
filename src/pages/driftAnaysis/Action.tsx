@@ -7,6 +7,7 @@ import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Circleloader from '../../Components/CircleLoader';
 interface ActionProps {
   memberID: number | null;
 }
@@ -73,6 +74,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [showModal, setshowModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
+      setisLoading(true);
       try {
         const response = await Application.driftPatientInfo({
           member_id: memberID,
@@ -93,6 +95,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
       } catch (err) {
         console.error('Error fetching data:', err);
       }
+      setisLoading(false);
     };
 
     fetchData();
@@ -141,8 +144,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
-  console.log(MessagesData);
-
   return (
     <>
       {showModal && (
@@ -309,6 +310,12 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         style={{ height: window.innerHeight }}
         className=" overflow-auto w-full h-fit pb-[200px] md:pb-0 flex flex-col gap-2 "
       >
+        {' '}
+        {isLoading && (
+          <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+            <Circleloader></Circleloader>
+          </div>
+        )}
         {Description !== '' && (
           <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
             <div className="text-sm font-medium">State</div>
@@ -321,7 +328,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             )}
           </div>
         )}
-        {RoadMapData?.options?.lenght > 0 && (
+        {RoadMapData?.options?.length > 0 ? (
           <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -339,7 +346,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 isLoading={isLoading}
                 onResolve={(val) => {
                   setisLoading(true);
-                  Application.generateAi({
+                  Application.roadMapGenerateAi({
                     input_dict: {
                       RoadMap: RoadMapData,
                     },
@@ -382,7 +389,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             )}
           </div>
-        )}
+        ) : null}
         {MessagesData.length > 0 && (
           <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
