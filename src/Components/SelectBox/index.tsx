@@ -13,10 +13,12 @@ const SelectBox: React.FC<SelectBoxProps> = ({ onChange }) => {
         onBlur={() => setIsOpen(false)}
         onChange={(e) => {
           onChange(e.target.value);
+          setIsOpen(false); // Close the dropdown after selection
+
         }}
         className="block appearance-none w-full bg-backgroundColor-Secondary border-none py-2 px-4 pr-8 shadow-100 rounded-md leading-tight focus:outline-none text-[10px] text-Text-Secondary"
       >
-        <option value="all">All</option>
+        <option  value="all">All</option>
         <option value="latest ">Latest enroll date</option>
         <option value="lowerScores">Lower Scores</option>
       </select>

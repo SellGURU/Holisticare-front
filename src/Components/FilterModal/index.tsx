@@ -289,7 +289,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                   setEnrollDate({ ...enrollDate, from: date })
                 }
                 customInput={
-                  <button className=" w-[110px] xs:w-[125px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[110px] xs:w-[145px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     From {formatDate(enrollDate.from)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
@@ -302,7 +302,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 selected={enrollDate.to}
                 onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
                 customInput={
-                  <button className=" w-[110px] xs:w-[125px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
+                  <button className=" w-[110px] xs:w-[145px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary">
                     To {formatDate(enrollDate.to)}{' '}
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>

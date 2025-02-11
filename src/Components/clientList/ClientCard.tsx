@@ -139,7 +139,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
           </div>
           <div className="flex md:hidden flex-col justify-end ml-4">
             <ButtonPrimary
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setIsExpanded(!isExpanded);
+              }}
               ClassName="px-1 ml-3"
               size="small"
             >
