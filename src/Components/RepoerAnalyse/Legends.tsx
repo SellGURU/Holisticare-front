@@ -6,7 +6,7 @@ interface LegendsProps {
 const Legends: React.FC<LegendsProps> = ({ isGray }) => {
   const [isVisibele, setIsVisible] = useState(false);
   return (
-    <div className="relative">
+    <div className="relative invisible">
       <div
         onMouseEnter={() => {
           setIsVisible(true);
