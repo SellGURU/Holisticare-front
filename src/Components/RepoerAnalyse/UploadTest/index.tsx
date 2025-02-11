@@ -107,7 +107,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
             </div>
 
             <div className="text-Text-Primary text-[12px] text-justify mt-2 w-[220px] xs:w-[300px] md:w-[470px]">
-              {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files.Max file size: 10MB.`}
+              {`Accepted formats: PDF, CSV, Excel, Image (JPEG, PNG, TIFF), and Text files. Max file size: 10MB.`}
             </div>
             <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
               {files.map((el: any) => {

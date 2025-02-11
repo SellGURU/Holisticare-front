@@ -437,28 +437,31 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       )}
 
-                      <div className="text-[14px] font-medium text-Text-Primary">
+                      <div className=" text-xs md:text-[14px] font-medium text-Text-Primary">
                         {userInfoData?.name}
                       </div>
                       {userInfoData && (
                         <>
                           {userInfoData.sex && (
                             <>
-                              <div className="text-[12px] text-Text-Secondary ml-3">
-                                Gender: {userInfoData.sex}{' '}
+                              <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 ">
+                                <span className='hidden md:block'>Gender:</span>
+                             {userInfoData.sex}{' '}
                               </div>
-                              <div className="w-[0.75px] mx-1 h-[24px] bg-Text-Triarty"></div>
+                              <div className="w-[0.75px] mx-2 md:mx-1 h-[24px] bg-Text-Triarty"></div>
                             </>
                           )}
                           {userInfoData.age && (
-                            <div className="text-[12px] text-Text-Secondary ">
-                              Age: {userInfoData.age}
+                            <div className="text-[10px] md:text-[12px] text-Text-Secondary ">
+                              <span className='hidden md:block'> Age:</span>
+                              {userInfoData.age}
                             </div>
                           )}
                         </>
                       )}
                     </div>
-                    <InfoToltip isShare={isShare}></InfoToltip>
+                    <div className='hidden md:block'> <InfoToltip isShare={isShare}></InfoToltip></div>
+                   
                   </div>
                   <div
                     className="  text-justify text-Text-Primary TextStyle-Body-2  mt-4"
@@ -689,7 +692,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
                       {' '}
                       <Circleloader></Circleloader>
-                      <div className="text-Text-Primary TextStyle-Body-1 mt-3">
+                      <div className="text-Text-Primary TextStyle-Body-1 mt-3 text-center">
                         We’re analyzing your test results to create a detailed
                         health plan. This may take a moment.
                       </div>

@@ -11,6 +11,7 @@ interface CalenderComponentProps {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
+  console.log(data[0].date);
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const getNext30Days = () => {
   // const today = new Date();
@@ -148,8 +149,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
   //   return days;
   // };
 
-  const getCurrentMonthWithBuffer = () => {
-    const today = new Date();
+  const getCurrentMonthWithBuffer = (todaydat: any) => {
+    const today = new Date(todaydat);
 
     // Get the first day and last day of the current month
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -233,8 +234,13 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
   return (
     <>
       <div className="w-full py-4 rounded-lg relative">
+        <div className="flex">
+          <div className="bg-white px-3 py-1 rounded-md ">
+            {new Date(data[0].date).toLocaleString('en-US', { month: 'long' })}
+          </div>
+        </div>
         <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1 mb-2 py-5">
-          {getCurrentMonthWithBuffer()
+          {getCurrentMonthWithBuffer(data[0].date)
             .slice(0, 7)
             .map((day, index) => (
               <div
@@ -246,7 +252,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
             ))}
         </div>
         <div className="grid grid-cols-7 gap-[1px] w-full">
-          {getCurrentMonthWithBuffer().map((day, index) => {
+          {getCurrentMonthWithBuffer(data[0].date).map((day, index) => {
             const activitiesForTheDay = data.filter(
               (el: any) =>
                 new Date(el.date).toDateString() ===

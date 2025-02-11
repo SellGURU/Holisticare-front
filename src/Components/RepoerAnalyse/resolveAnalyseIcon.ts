@@ -3,13 +3,55 @@ const resolveAnalyseIcon = (name: string) => {
     return '/icons/biomarkers/red-blood-cells.svg';
   }
   if (name == 'Blood') {
+    return '/icons/biomarkers/red-blood-cells.svg';
+  }
+  if (name == 'Diabetes & Glucose') {
+    return '/icons/biomarkers/donor.svg';
+  }
+  if (name == 'Inflammatory health') {
+    return '/icons/biomarkers/medicine.svg';
+  }
+  if (name == 'Total Body Mass') {
+    return '/icons/biomarkers/Abdominal.svg';
+  }
+  if (name == 'Urine Test Parameters') {
+    return '/icons/biomarkers/eye medicine.svg';
+  }
+  if (name == 'Cardiovascular Risk') {
     return '/icons/biomarkers/heart.svg';
+  }
+  if (name == 'Immune health') {
+    return '/icons/biomarkers/egg.svg';
+  }
+  if (name == 'Kidney Function') {
+    return '/icons/biomarkers/kidney.svg';
+  }
+  if (name == 'Vitamins') {
+    return '/icons/biomarkers/pil.svg';
+  }
+  if (name == 'Tumor health') {
+    return '/icons/biomarkers/dna (1).svg';
+  }
+  if (name == 'Arterial Stiffness') {
+    return '/icons/biomarkers/inject.svg';
+  }
+  if (name == 'Major Essential Minerals') {
+    return '/icons/biomarkers/assay.svg';
   }
   if (name == 'Bone and Mineral Health') {
     return '/icons/biomarkers/bones.svg';
   }
-  if (name == 'Liver Health') {
-    return '/icons/biomarkers/kidney.svg';
+  if (name == 'Liver Function') {
+    return '/icons/biomarkers/monitor.svg';
+  }
+  if (name == 'Trace Essential Minerals') {
+    return '/icons/biomarkers/result.svg';
+  }
+  if (name == 'Thyroid Function') {
+    return '/icons/biomarkers/thyroid.svg';
+  }
+  if (name == 'Arterial Thickness') {
+    return '/icons/biomarkers/temperature (1).svg';
   }
   if (name == 'Cardiovascular Health') {
     return '/icons/biomarkers/heart.svg';

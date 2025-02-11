@@ -301,6 +301,9 @@ input[type='number'] {
   background: var(--sb-thumb-color);
   border-radius: 8px;
 }
+.react-datepicker{
+  left: 14px;
+}
 @media (max-width: 640px) {
   .max-sm-absolute {
     position: absolute;

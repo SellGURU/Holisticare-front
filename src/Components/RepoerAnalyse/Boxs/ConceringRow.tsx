@@ -30,10 +30,10 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
             return (
               <div className=" px-6 w-full bg-white">
                 <div className="w-full py-4  flex justify-end items-center">
-                  <div className=" TextStyle-Body-3 text-Text-Primary pl-6   w-[800px]">
+                  <div className=" TextStyle-Body-3 text-Text-Primary pl-5   w-[800px]">
                     {el.name}
                   </div>
-                  <div className="TextStyle-Body-3 text-[#06C78D] w-[120px] text-center">
+                  <div className="TextStyle-Body-3 text-[#06C78D] w-[120px] text-center pr-4">
                     {el.Result}
                   </div>
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[120px] text-center">
@@ -45,7 +45,7 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[130px] text-center">
                     {el.Baseline}
                   </div>
-                  <div className="TextStyle-Body-3 text-Text-Primary  w-[130px] text-center">
+                  <div className="TextStyle-Body-3 text-Text-Primary pl-4  w-[130px] text-center">
                     {el['Optimal Range']}
                   </div>
                   <div className="TextStyle-Body-3 text-[#06C78D] w-[130px] text-right">
