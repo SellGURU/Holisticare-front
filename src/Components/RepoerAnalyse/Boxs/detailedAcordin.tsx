@@ -58,7 +58,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     setIsBiomarkerOpen(newIsBiomarkerOpen);
   };
   console.log(data.subcategory);
-  
+
   return (
     <>
       <div
