@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+// import useModalAutoClose from '../../hooks/UseModalAutoClose';
 type GenderFilter = {
   male: boolean;
   female: boolean;
@@ -75,10 +75,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
   };
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  useModalAutoClose({
-    refrence: modalRef,
-    close: onClose,
-  });
+  // useModalAutoClose({
+  //   refrence: modalRef,
+  //   close: onClose,
+  // });
   return (
     <div
       ref={modalRef}
