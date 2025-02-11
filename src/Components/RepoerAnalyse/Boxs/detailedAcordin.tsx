@@ -57,6 +57,8 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     newIsBiomarkerOpen[index] = !newIsBiomarkerOpen[index];
     setIsBiomarkerOpen(newIsBiomarkerOpen);
   };
+  console.log(data.subcategory);
+  
   return (
     <>
       <div
@@ -133,7 +135,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
-              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
+              <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden ">
                 {refrences?.biomarkers.map((value: any) => {
                   return (
                     <>
