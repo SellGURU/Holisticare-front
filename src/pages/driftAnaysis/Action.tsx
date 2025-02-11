@@ -72,7 +72,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   // const { id } = useParams<{ id: string }>();
 
   const [showModal, setshowModal] = useState(false);
-  useEffect(() => {
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);  useEffect(() => {
     const fetchData = async () => {
       setisLoading(true);
       try {
@@ -92,8 +92,16 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         }
 
         console.log(response);
-      } catch (err) {
+      } catch (err:any) {
         console.error('Error fetching data:', err);
+        const errorMessage =
+        err.detail || 'An error occurred while fetching data.';
+      setErrorMsg(errorMessage);
+        setDescription(''); // or whatever your default value is
+        // setRecommendation(''); // if you have a default value
+        setReference(''); // or whatever your default value is
+        SetRoadMapData({}); // assuming an empty array is the default
+        setMessagesData([]); // assuming an empty array is the default
       }
       setisLoading(false);
     };
@@ -144,6 +152,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+  
   return (
     <>
       {showModal && (
@@ -316,8 +325,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             <Circleloader></Circleloader>
           </div>
         )}
-        {Description !== '' && (
-          <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary">
+        {Description !== '' ? (
+          <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary font-medium">
             <div className="text-sm font-medium">State</div>
             <p className="text-xs text-justify my-2">{Description}</p>
             {/* <p className="text-xs text-justify ">{recommendation}</p> */}
@@ -327,6 +336,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </a>
             )}
           </div>
+        ):(
+          <div className='text-Text-Primary h-full w-full flex items-start justify-center mt-5'>{errorMsg}</div>
         )}
         {RoadMapData?.options?.length > 0 ? (
           <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
