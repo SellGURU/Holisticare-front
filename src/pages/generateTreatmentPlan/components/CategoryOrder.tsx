@@ -42,6 +42,13 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
       ? categoryOrderData.filter((el) => el.checked == true)[0]
       : categoryOrderData[0],
   );
+  const [isBiomarkerOpen, setIsBiomarkerOpen] = useState<boolean[]>([]);
+  const handleBiomarkerToggle = (index: number) => {
+    const newIsBiomarkerOpen = [...isBiomarkerOpen];
+    newIsBiomarkerOpen[index] = !newIsBiomarkerOpen[index];
+    setIsBiomarkerOpen(newIsBiomarkerOpen);
+  };
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
   // console.log(data["result_tab"].filter((el:any) =>el.category == activeBio.category)[0].subcategories[0].biomarkers[0])
   const [activeEl, setActiveEl] = useState<any>(
     data['result_tab'].filter((el: any) => el.category == activeBio.category)[0]
@@ -257,7 +264,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-8 items-center">
+                  <div className="flex flex-col-reverse lg:flex-row gap-8 items-center">
                     <div
                       className="flex gap-2 items-center cursor-pointer"
                       onClick={handleDownloadTreatmentCsv}
@@ -318,7 +325,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   </div>
                 </div>
 
-                <div className="w-full lg:px-6 lg:py-4 bg-backgroundColor-Card  rounded-[16px] border border-Gray-50 mt-4">
+                <div className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4">
                   {active == 'Suggestion' ? (
                     <>
                       {data['suggestion_tab'].filter(
@@ -381,10 +388,100 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     </>
                   ) : (
                     <>
-                      <div className="w-full flex flex-col-reverse lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
+                      <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
                         {
                           <>
-                            <div className="w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
+                            <div className="w-full block lg:hidden">
+                              {data['result_tab']
+                                .filter(
+                                  (el: any) =>
+                                    el.category == activeBio.category,
+                                )[0]
+                                .subcategories.map((value: any) => {
+                                  console.log(data['result_tab']);
+
+                                  return (
+                                    <>
+                                      {value.biomarkers.map(
+                                        (biomarker: any, index: number) => (
+                                          <div
+                                            key={index}
+                                            className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                                          >
+                                            <div
+                                              onClick={() =>
+                                                handleBiomarkerToggle(index)
+                                              }
+                                              className="w-full flex justify-between items-center text-sm text-Text-Primary"
+                                            >
+                                              {biomarker.name}
+                                              <img
+                                                className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
+                                                src="/icons/arrow-down.svg"
+                                                alt=""
+                                              />
+                                            </div>
+                                            {isBiomarkerOpen[index] && (
+                                              <div
+                                                key={index}
+                                                className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
+                                              >
+                                                <div className="w-full">
+                                                  <div className="  flex justify-start items-center TextStyle-Headline-6 text-Text-Primary">
+                                                    {/* {biomarker.name} */}
+                                                    <div
+                                                      onMouseEnter={() => {
+                                                        setShowMoreInfo(true);
+                                                      }}
+                                                      onMouseLeave={() => {
+                                                        setShowMoreInfo(false);
+                                                      }}
+                                                      className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                                    >
+                                                      More Info
+                                                      <img
+                                                        src="/icons/user-navbar/info-circle.svg"
+                                                        className="w-4  cursor-pointer h-4 ml-1"
+                                                        alt=""
+                                                      />
+                                                      {showMoreInfo &&
+                                                        biomarker.more_info && (
+                                                          <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
+                                                            <div className="text-[9px] text-Text-Secondary text-justify">
+                                                              {
+                                                                biomarker.more_info
+                                                              }
+                                                            </div>
+                                                          </div>
+                                                        )}
+                                                    </div>
+                                                  </div>
+                                                  <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
+                                                    Current Value
+                                                    <div className=" z-50 mr-0">
+                                                      <UnitPopUp
+                                                        unit={biomarker?.unit}
+                                                      ></UnitPopUp>
+                                                    </div>
+                                                  </div>
+                                                  <div className="mt-10">
+                                                    {biomarker && (
+                                                      <StatusBarChart
+                                                        data={biomarker}
+                                                      ></StatusBarChart>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        ),
+                                      )}
+                                    </>
+                                  );
+                                })}
+                            </div>
+                            <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
                               {data['result_tab']
                                 .filter(
                                   (el: any) =>
@@ -435,7 +532,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                 })}
                             </div>
                             {activeEl != null && (
-                              <div className="w-full  p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                              <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                                 <div className=" text-Text-Primary text-[14px] font-[500]">
                                   {activeEl.subcategory}
                                 </div>
