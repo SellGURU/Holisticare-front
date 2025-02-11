@@ -29,7 +29,7 @@ export const ComboBar = () => {
       url: '/icons/sidbar-menu/task-square.svg',
     },
     { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
-    { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
+    // { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
     { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
     { name: 'Change Client', url: '/icons/sidbar-menu/repeat.svg' },
   ];
