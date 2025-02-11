@@ -41,7 +41,7 @@ const PaginationCircular: React.FC<PaginationProps> = ({
           <button
             key={index}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 pb-1.5 h-[35px] w-[36.59px] ${page === currentPage ? "text-white" : "text-Text-Primary"} rounded-full border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 ${page === currentPage ? 'bg-Primary-DeepTeal' : 'bg-white'}`}
+            className={`px-3 py-1 pb-1.5 h-[35px] w-[36.59px] ${page === currentPage ? 'text-white' : 'text-Text-Primary'} rounded-full border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 ${page === currentPage ? 'bg-Primary-DeepTeal' : 'bg-white'}`}
           >
             {page}
           </button>
