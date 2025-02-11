@@ -57,16 +57,14 @@ const Report = () => {
         ></TopBar>
       </div>
       <div></div>
-      <Draggable   onStart={handleStart}
-      onDrag={handleDrag}
-      onStop={handleStop}>
-      <div
-        // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed z-[60] top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer"
-      >
-        <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
-      </div>
-    </Draggable>
+      <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
+        <div
+          // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="fixed z-[60] top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer"
+        >
+          <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
+        </div>
+      </Draggable>
       <div
         ref={sideMenuRef}
         className={`
