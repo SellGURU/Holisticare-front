@@ -234,6 +234,11 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({ data }) => {
   return (
     <>
       <div className="w-full py-4 rounded-lg relative">
+        <div className="flex">
+          <div className="bg-white px-3 py-1 rounded-md ">
+            {new Date(data[0].date).toLocaleString('en-US', { month: 'long' })}
+          </div>
+        </div>
         <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1 mb-2 py-5">
           {getCurrentMonthWithBuffer(data[0].date)
             .slice(0, 7)
