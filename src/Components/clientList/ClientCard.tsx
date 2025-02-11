@@ -53,7 +53,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
     <>
       <div
         onClick={(e) => {
-          e.stopPropagation()
+          e.stopPropagation();
           navigate(`/report/${client.member_id}/${client.name}`);
         }}
         className="sm:min-w-[315px] w-full  xs:w-[344px]  md:w-[333px] p-2 sm:p-4  bg-white shadow-200 xl:w-[24%] rounded-[16px] relative "
