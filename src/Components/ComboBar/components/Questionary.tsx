@@ -24,7 +24,7 @@ export const Questionary = () => {
       Application.getQuestionary_tracking({ member_id: id })
         .then((res) => {
           if (res.data) {
-            setData(res.data)
+            setData(res.data);
           } else {
             throw new Error('Unexpected data format');
           }
@@ -38,21 +38,20 @@ export const Questionary = () => {
         });
     }
   }, [id, tryComplete]);
-  const [Info,setInfo] = useState<any>({
-    email:""
-  })
+  const [Info, setInfo] = useState<any>({
+    email: '',
+  });
   useEffect(() => {
     // setIsLoading(true);
-    Application.getClientInfo({ member_id: id })
-      .then((res) => {
-        if (res.data && res.data.personal_info) {
-          const personalInfo = res.data.personal_info;
-          setInfo(personalInfo)
-        } else {
-          throw new Error('Unexpected data format');
-        }
-      })
-  }, [id]);  
+    Application.getClientInfo({ member_id: id }).then((res) => {
+      if (res.data && res.data.personal_info) {
+        const personalInfo = res.data.personal_info;
+        setInfo(personalInfo);
+      } else {
+        throw new Error('Unexpected data format');
+      }
+    });
+  }, [id]);
   const formValueChange = (id: string, value: any) => {
     setQuestionsFormData((prev: any) => ({
       ...prev,
@@ -413,11 +412,17 @@ export const Questionary = () => {
                         // setTryComplete(true);
                         Application.getGoogleFormEmty()
                           .then((res) => {
-                            const updatedQuestions = res.data.questions.map((q:any) =>
-                              q.id === "q1" ? { ...q, response: Info.email } : q
+                            const updatedQuestions = res.data.questions.map(
+                              (q: any) =>
+                                q.id === 'q1'
+                                  ? { ...q, response: Info.email }
+                                  : q,
                             );
-                            console.log(res.data)
-                            setQuestionsFormData({ ...res.data, questions: updatedQuestions });                                      
+                            console.log(res.data);
+                            setQuestionsFormData({
+                              ...res.data,
+                              questions: updatedQuestions,
+                            });
                             // setQuestionsFormData(res.data);
                             setTryComplete(true);
                           })

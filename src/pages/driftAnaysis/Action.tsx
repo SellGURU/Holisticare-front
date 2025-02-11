@@ -72,7 +72,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   // const { id } = useParams<{ id: string }>();
 
   const [showModal, setshowModal] = useState(false);
-  const [, setErrorMsg] = useState<string | null>(null);  useEffect(() => {
+  const [, setErrorMsg] = useState<string | null>(null);
+  useEffect(() => {
     const fetchData = async () => {
       setisLoading(true);
       try {
@@ -92,11 +93,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         }
 
         console.log(response);
-      } catch (err:any) {
+      } catch (err: any) {
         console.error('Error fetching data:', err);
         const errorMessage =
-        err.detail || 'An error occurred while fetching data.';
-      setErrorMsg(errorMessage);
+          err.detail || 'An error occurred while fetching data.';
+        setErrorMsg(errorMessage);
         setDescription(''); // or whatever your default value is
         // setRecommendation(''); // if you have a default value
         setReference(''); // or whatever your default value is
@@ -152,7 +153,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
-  
+
   return (
     <>
       {showModal && (
