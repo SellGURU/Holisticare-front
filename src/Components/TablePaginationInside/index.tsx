@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 import { FaSort } from 'react-icons/fa';
 import PaginationCircular from '../paginationCircular/index.tsx';
 import { columns } from './tableTd.tsx';
-// import Application from "@/api/app.ts";
 interface TableProps {
   classData: Array<any>;
 }
@@ -70,6 +69,7 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex items-center justify-center flex-col">
@@ -135,18 +135,46 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
               </tbody>
             </table>
           ) : (
-            <div className=" w-full h-full flex items-center justify-center flex-col">
+            <div className="w-full h-full flex items-center justify-center flex-col">
               <p className="text-[#ffffffa4] mt-[8px] text-[16px]">
                 No Result to Show
               </p>
             </div>
           )}
-          <div className="w-full flex justify-center items-center mb-4">
+          <div className="w-full flex justify-between items-center mb-4">
+            <div className="flex items-center justify-center text-Text-Primary text-[12px] ml-5">
+              Show
+              <div className="relative inline-block w-[80px] font-normal ml-3 mr-3">
+                <select
+                  onClick={() => setIsOpen(!isOpen)}
+                  onBlur={() => setIsOpen(false)}
+                  onChange={() => {
+                    setIsOpen(false);
+                  }}
+                  className="block appearance-none w-full bg-backgroundColor-Secondary border-none py-2 px-4 pr-8 shadow-100 rounded-md leading-tight focus:outline-none text-[10px] text-Primary-EmeraldGreen"
+                >
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+                <img
+                  className={` w-3 h-3 object-contain opacity-80 absolute top-2 right-2 transition-transform duration-200 ${
+                    isOpen ? 'rotate-180' : ''
+                  }`}
+                  src="/icons/arow-down-drop.svg"
+                  alt=""
+                />
+              </div>
+              reports in each page.
+            </div>
             <PaginationCircular
               currentPage={currentPage + 1}
               totalPages={Math.ceil(data.length / pageSize)}
               onPageChange={handlePageChange}
             />
+            <div className="flex items-center justify-center text-Text-Primary text-[12px] mr-5">
+              2 new reports were added today.
+            </div>
           </div>
         </div>
       </div>

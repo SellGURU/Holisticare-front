@@ -28,11 +28,11 @@ const PaginationCircular: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="mt-2 flex bg-white px-2 rounded-md">
+    <div className="mt-2 flex bg-white px-2 rounded-md gap-2">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="text-[#383838] disabled:opacity-50 px-3 py-1 pb-1.5 rounded-full border border-[#005F731A] cursor-pointer"
+        className="text-[12px] h-[24px] w-[24px] text-[#383838] disabled:opacity-50 rounded-full border border-[#005F731A] cursor-pointer"
       >
         &lt;
       </button>
@@ -41,7 +41,7 @@ const PaginationCircular: React.FC<PaginationProps> = ({
           <button
             key={index}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 pb-1.5 h-[35px] w-[36.59px] ${page === currentPage ? 'text-white' : 'text-Text-Primary'} rounded-full border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 ${page === currentPage ? 'bg-Primary-DeepTeal' : 'bg-white'}`}
+            className={`px-3 py-1 h-[24px] w-[24px] ${page === currentPage ? 'text-white' : 'text-Text-Primary'} rounded-full border-x border-Gray-50 flex items-center justify-center text-[9.75px] py-1 ${page === currentPage ? 'bg-Primary-DeepTeal' : 'bg-white'}`}
           >
             {page}
           </button>
@@ -54,7 +54,7 @@ const PaginationCircular: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="text-[#383838] disabled:opacity-50 px-3 py-1 pb-1.5 rounded-full border border-[#005F731A] cursor-pointer"
+        className="text-[12px] h-[24px] w-[24px] text-[#383838] disabled:opacity-50 rounded-full border border-[#005F731A] cursor-pointer"
       >
         &gt;
       </button>
