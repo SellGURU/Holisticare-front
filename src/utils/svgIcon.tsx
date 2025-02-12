@@ -30,7 +30,7 @@ const SvgIcon: React.FC<SvgIconProps> = ({ src, color, width, height }) => {
       .catch((error) => console.error('Error loading SVG:', error));
   }, [src, color, width, height]);
 
-  return <div ref={svgRef}></div>;
+  return <div className='cursor-pointer' ref={svgRef}></div>;
 };
 
 export default SvgIcon;

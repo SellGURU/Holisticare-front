@@ -19,11 +19,14 @@ import Application from '../../../api/app';
 import UnitPopUp from '../../../Components/UnitPopup';
 import SvgIcon from '../../../utils/svgIcon';
 import { resolveKeyStatus } from '../../../help';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
   setData: (data: any) => void;
   memberId: string | undefined;
+  openAnayze?: ()=>void,
+  openGoal?: ()=>void,
 }
 
 const CategoryOrder: React.FC<CategoryOrderProps> = ({
@@ -31,7 +34,11 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   data,
   setData,
   memberId,
+  openAnayze,
+  openGoal
 }) => {
+  console.log(memberId);
+  
   const [isLoading] = useState(false);
   const [active, setActive] = useState<string>('Suggestion');
   const [categoryOrderData, setCategoryData] = useState<Array<any>>(
@@ -116,32 +123,32 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
     }
   }, [activeBio, data['result_tab']]);
 
-  const handleDownloadTreatmentCsv = async () => {
-    if (memberId !== null && memberId !== undefined) {
-      const Props: { member_id: number } = {
-        member_id: parseInt(memberId),
-      };
-      try {
-        const res = await Application.downloadTreatmentCsv(Props);
-        const base64Data = res.data;
-        const binaryData = atob(base64Data);
-        const byteArray = new Uint8Array(binaryData.length);
-        for (let i = 0; i < binaryData.length; i++) {
-          byteArray[i] = binaryData.charCodeAt(i);
-        }
-        const blob = new Blob([byteArray], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'analysis.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+  // const handleDownloadTreatmentCsv = async () => {
+  //   if (memberId !== null && memberId !== undefined) {
+  //     const Props: { member_id: number } = {
+  //       member_id: parseInt(memberId),
+  //     };
+  //     try {
+  //       const res = await Application.downloadTreatmentCsv(Props);
+  //       const base64Data = res.data;
+  //       const binaryData = atob(base64Data);
+  //       const byteArray = new Uint8Array(binaryData.length);
+  //       for (let i = 0; i < binaryData.length; i++) {
+  //         byteArray[i] = binaryData.charCodeAt(i);
+  //       }
+  //       const blob = new Blob([byteArray], { type: 'text/csv' });
+  //       const url = window.URL.createObjectURL(blob);
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.setAttribute('download', 'analysis.csv');
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -153,6 +160,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                 {' '}
                 Report Details
               </div>
+
               {/* <div>
                                 <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                             </div> */}
@@ -185,6 +193,36 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     <div className="bg-Text-Primary rounded-full w-1 h-1"></div>{' '}
                     Report Details
                   </div>
+                  <div className='flex gap-2'>
+
+               
+                
+                 
+               
+              
+           
+                <div  onClick={openAnayze} className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer">
+                  <SvgIcon
+                    width="20px"
+                    height="20px"
+                    src="/icons/analyse.svg"
+                    color={'#005F73'}
+                  />
+                  {/* <img src="/icons/analyse.svg" alt="" /> */}
+                  Analysis
+                </div>
+ 
+                <div  onClick={openGoal} className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap">
+                  <SvgIcon
+                    width="20px"
+                    height="20px"
+                    src="/icons/chart.svg"
+                    color={'#005F73'}
+                  />
+                  {/* <img src="/icons/chart.svg" alt="" /> */}
+                  Client Goals
+                </div>
+              </div>
                   {/* <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                                 </div> */}
@@ -269,7 +307,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     </div>
                   </div>
                   <div className="flex flex-col-reverse lg:flex-row gap-8 items-center">
-                    <div
+                    {/* <div
                       className="flex gap-2 items-center cursor-pointer"
                       onClick={handleDownloadTreatmentCsv}
                     >
@@ -282,8 +320,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Primary-DeepTeal">
                         Download CSV analysis
                       </span>
-                    </div>
+                    </div> */}
                     {active == 'Suggestion' && (
+                      <div className='flex gap-2'>
                       <div className="w-[32px] relative  h-[32px]">
                         <MiniAnallyseButton
                           isLoading={isLoadingAi}
@@ -324,6 +363,8 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                               });
                           }}
                         ></MiniAnallyseButton>
+                      </div>
+                      <ButtonPrimary> <img src="/icons/add-square.svg" alt="" /> Add</ButtonPrimary>
                       </div>
                     )}
                   </div>

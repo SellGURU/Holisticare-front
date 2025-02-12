@@ -1,37 +1,53 @@
 import { useEffect, useState } from 'react';
 import RefrenceModal from './RefrenceData';
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import SvgIcon from '../../../utils/svgIcon';
+import EditModal from './EditModal';
+
 interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
 }
+
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
 }) => {
-  console.log(value);
   const resolveIcon = () => {
-    if (value.pillar_name == 'Diet') {
-      return '/icons/diet.svg';
-    }
-    if (value.pillar_name == 'Mind') {
-      return '/icons/mind.svg';
-    }
-    if (value.pillar_name == 'Activity') {
-      return '/icons/weight.svg';
-    }
-    if (value.pillar_name == 'Supplement') {
-      return '/icons/Supplement.svg';
+    switch (value.pillar_name) {
+      case 'Diet':
+        return '/icons/diet.svg';
+      case 'Mind':
+        return '/icons/mind.svg';
+      case 'Activity':
+        return '/icons/weight.svg';
+      case 'Supplement':
+        return '/icons/Supplement.svg';
+      default:
+        return '';
     }
   };
-  const [showModal, setshowModal] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
   const [editableValue, setEditableValue] = useState(value.note);
+  const [notes, setNotes] = useState<string[]>(value.notes || []);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showEditNote, setShowEditNote] = useState(false);
+
   useEffect(() => {
     onchange({
       ...value,
       note: editableValue,
     });
   }, [editableValue]);
+
+  const handleAddNotes = (newNotes: string[]) => {
+    setNotes(newNotes);
+    onchange({
+      ...value,
+      notes: newNotes,
+    });
+  };
+
   return (
     <>
       <div className="w-full flex justify-center items-center gap-4">
@@ -41,13 +57,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               <img className="w-[24px]" src={resolveIcon()} alt="" />
             </div>
           </div>
-          <div className=" text-Text-Primary  mt-1 tet-[10px] font-[500] text-center text-[10px]">
+          <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
             {value.pillar_name}
           </div>
         </div>
-        <div className="w-full bg-white px-4 py-2 flex justify-start text-light-primary-text rounded-[16px] items-center border border-Gray-50">
-          <div className="text-[12px] gap-2 w-full">
-            {/* {value[Object.keys(value)[0]]}  */}
+        <div className="relative w-full bg-white px-4 py-2 rounded-[16px] items-center border border-Gray-50">
+          <div className="text-[12px] gap-2 w-full max-w-[900px]">
             <textarea
               value={editableValue}
               onChange={(e) => setEditableValue(e.target.value)}
@@ -56,7 +71,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             />
             {value['Based on your:'] && (
               <div
-                onClick={() => setshowModal(true)}
+                onClick={() => setShowModal(true)}
                 className="text-light-secandary-text dark:text-secondary-text text-xs contents md:inline-flex lg:inline-flex ml-1"
               >
                 Based on your:{' '}
@@ -66,18 +81,50 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </span>
               </div>
             )}
-
-            {/* {value[Object.keys(value)[1]] &&
-                             <div className="text-primary-color">TelomerAge</div>
-                        } */}
           </div>
+          {isExpanded && (
+            <div className="flex flex-col">
+              {notes.map((note, index) => (
+                <div key={index} className="bg-transparent flex gap-1 text-[12px]">
+                  <span>Note:</span> {note}
+                </div>
+              ))}
+            </div>
+          )}
+          <div className={`${isExpanded ? 'flex' : 'hidden'} absolute top-4 right-10 flex items-center gap-[6px]`}>
+            <img
+              onClick={() => setShowEditNote(true)}
+              className="cursor-pointer size-6"
+              src="/icons/edit.svg"
+              alt=""
+            />
+            <SvgIcon
+              src="/icons/delete.svg"
+              color="#FC5474"
+              width="24px"
+              height="24px"
+            />
+          </div>
+          <img
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={`absolute cursor-pointer top-6 right-4 ${isExpanded && 'rotate-180'} transition-transform`}
+            src="/icons/arow-down-drop.svg"
+            alt=""
+          />
         </div>
       </div>
       {showModal && (
         <RefrenceModal
           reference={value.reference}
           isOpen={showModal}
-          onClose={() => setshowModal(false)}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+      {showEditNote && (
+        <EditModal
+          isOpen={showEditNote}
+          onClose={() => setShowEditNote(false)}
+          onAddNotes={handleAddNotes}
         />
       )}
     </>
