@@ -13,6 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
       'Change Password',
       'Zapier',
       'Share feedback',
+      'Packages',
     ],
     Clinic: [
       'Staff',

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, PropsWithChildren, useState } from 'react';
+import PackageManager from '../model/Packages/PackageManager';
 
 interface AppContextProp {
   permisions: any;
@@ -7,6 +8,7 @@ interface AppContextProp {
   isLoggedId: boolean;
   login: (token: string, permisions?: any) => void;
   logout: () => void;
+  PackageManager: PackageManager;
 }
 
 export const AppContext = createContext<AppContextProp>({
@@ -15,6 +17,7 @@ export const AppContext = createContext<AppContextProp>({
   login: () => {},
   permisions: {},
   logout: () => {},
+  PackageManager: new PackageManager(),
 });
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
@@ -41,6 +44,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
       localStorage.setItem('token', token);
     },
     permisions: permisions,
+    PackageManager: new PackageManager(),
   };
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

@@ -444,7 +444,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         <>
                           {userInfoData.sex && (
                             <>
-                              <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 ">
+                              <div className=" text-[10px] md:text-[12px] text-Text-Secondary ml-3 flex gap-1">
                                 <span className="hidden md:block">Gender:</span>
                                 {userInfoData.sex}{' '}
                               </div>
@@ -452,7 +452,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                             </>
                           )}
                           {userInfoData.age && (
-                            <div className="text-[10px] md:text-[12px] text-Text-Secondary ">
+                            <div className="text-[10px] md:text-[12px] text-Text-Secondary  flex gap-1">
                               <span className="hidden md:block"> Age:</span>
                               {userInfoData.age}
                             </div>
