@@ -14,13 +14,13 @@ const Setting: React.FC = () => {
       case 'Zapier':
         return <Zappier></Zappier>;
       case 'Update Your Profile':
-        return <></>
+        return <></>;
       // return <UpdateProfileContent />;
       case 'Change Password':
-        return <></>
-      
-      case 'Packages' :
-        return <PackagePage></PackagePage>
+        return <></>;
+
+      case 'Packages':
+        return <PackagePage></PackagePage>;
       // return <ChangePasswordContent />;
       // Add other cases as needed...
       default:
