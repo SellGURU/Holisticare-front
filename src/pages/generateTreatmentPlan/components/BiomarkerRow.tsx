@@ -108,8 +108,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             />
             {deleteConfirm ? (
               <div className="flex items-center gap-2 ml-1 text-Text-Secondary text-xs">
-                Sure? <img onClick={onDelete} src="/icons/confirm-tick-circle.svg" alt="" />
-                <img
+                Sure? <img className='cursor-pointer' onClick={onDelete} src="/icons/confirm-tick-circle.svg" alt="" />
+                <img className='cursor-pointer'
                   onClick={() => setdeleteConfirm(false)}
                   src="/icons/cansel-close-circle.svg"
                   alt=""

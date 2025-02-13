@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../../Components/checkbox';
 import SvgIcon from '../../../utils/svgIcon';
 
@@ -6,15 +7,17 @@ interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddNotes: (newNotes: string[]) => void;
+  isAdd?: boolean;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
   isOpen,
   onClose,
   onAddNotes,
+  isAdd,
 }) => {
   const [newNote, setNewNote] = useState('');
-  const [group, setGroup] = useState('Diet');
+
   const [recommendation, setRecommendation] = useState('');
   const [dose, setDose] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -44,16 +47,96 @@ const EditModal: React.FC<EditModalProps> = ({
     onAddNotes(notes);
     onClose();
   };
-
+  const selectRef = useRef(null);
+  const selectButRef = useRef(null);
+  const [showSelect, setShowSelect] = useState(false);
+  useModalAutoClose({
+    refrence: selectRef,
+    buttonRefrence: selectButRef,
+    close: () => {
+      setShowSelect(false);
+    },
+  });
+  const [Group, setGroup] = useState('');
+  const groups = [
+    'General Instructions',
+    'Hormone',
+    'Pharmaceutical',
+    'Supplement',
+    'Further Testing',
+    'Diet',
+    'Exercise',
+    'Lifestyle',
+    'Other',
+  ];
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary">
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
-            <img src="/icons/danger.svg" alt="" /> Edit Suggestion
+            <img src="/icons/danger.svg" alt="" />{' '}
+            {isAdd ? 'Add Suggestion' : 'Edit Suggestion'}
           </div>
         </h2>
-        <div className="my-4">
+        <div className=" w-full relative overflow-visible mt-2 mb-4">
+          <label className='text-xs font-medium text-Text-Primary'>Group</label>
+          <div
+            ref={selectButRef}
+            onClick={() => setShowSelect(!showSelect)}
+            className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
+          >
+            {Group ? (
+              <div className="text-[12px] text-Text-Primary">{Group}</div>
+            ) : (
+              <div className="text-[12px] text-gray-400">Select Group</div>
+            )}
+            <div>
+              <img
+                className={`${showSelect && 'rotate-180'}`}
+                src="/icons/arow-down-drop.svg"
+                alt=""
+              />
+            </div>
+          </div>
+          {showSelect && (
+            <div
+              ref={selectRef}
+              className="w-full z-20  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
+            >
+              {groups.map((group, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setGroup(group);
+                    setShowSelect(false);
+                  }}
+                  className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                >
+                  {group}
+                </div>
+              ))}
+              {/* <div
+                          onClick={() => {
+                            formik.setFieldValue('gender', 'Male');
+                            setShowSelect(false);
+                          }}
+                          className="text-[12px] cursor-pointer text-Text-Primary py-1 border-b border-gray-100"
+                        >
+                          Male
+                        </div>
+                        <div
+                          onClick={() => {
+                            formik.setFieldValue('gender', 'Female');
+                            setShowSelect(false);
+                          }}
+                          className="text-[12px] cursor-pointer text-Text-Primary py-1"
+                        >
+                          Female
+                        </div> */}
+            </div>
+          )}
+        </div>
+        {/* <div className="my-4">
           <label className="block text-xs font-medium">Group</label>
           <select
             value={group}
@@ -61,9 +144,8 @@ const EditModal: React.FC<EditModalProps> = ({
             className="mt-1 text-xs block w-full py-1 px-3 bg-backgroundColor-Card border border-Gray-50 outline-none rounded-2xl"
           >
             <option>Diet</option>
-            {/* Add other options as needed */}
           </select>
-        </div>
+        </div> */}
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium">Recommendation</label>
@@ -159,7 +241,7 @@ const EditModal: React.FC<EditModalProps> = ({
             onClick={handleApply}
             className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
           >
-            Apply
+            {isAdd ? 'Add' : 'Apply'}
           </button>
         </div>
       </div>

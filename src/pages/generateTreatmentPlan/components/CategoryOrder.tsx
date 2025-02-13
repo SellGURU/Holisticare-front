@@ -20,6 +20,7 @@ import UnitPopUp from '../../../Components/UnitPopup';
 import SvgIcon from '../../../utils/svgIcon';
 import { resolveKeyStatus } from '../../../help';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import EditModal from './EditModal';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
@@ -178,6 +179,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
       return newData;
     });
   };
+  const [showAddModal, setshowAddModal] = useState(false)
   return (
     <>
       {isActionPlan ? (
@@ -214,6 +216,11 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
             </>
           ) : (
             <>
+            <EditModal isAdd  isOpen={showAddModal}
+          onClose={() => setshowAddModal(false)}
+          onAddNotes={()=>{}}>
+
+            </EditModal>
               <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                 <div className="w-full flex items-center justify-between">
                   <div className="text-sm font-medium text-Text-Primary flex items-center gap-2">
@@ -392,7 +399,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                           }}
                         ></MiniAnallyseButton>
                       </div>
-                      <ButtonPrimary> <img src="/icons/add-square.svg" alt="" /> Add</ButtonPrimary>
+                      <ButtonPrimary onClick={()=>setshowAddModal(true)}> <img src="/icons/add-square.svg" alt="" /> Add</ButtonPrimary>
                       </div>
                     )}
                   </div>
