@@ -85,7 +85,7 @@ const TablePaginationInside: React.FC<TableProps> = ({
             <table
               className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
             >
-              <thead className="text-xs text-Text-Primary">
+              <thead className="text-xs text-Text-Primary bg-white sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr
                     key={headerGroup.id}
