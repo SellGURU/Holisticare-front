@@ -29,7 +29,7 @@ const Setting: React.FC = () => {
   };
   return (
     <>
-      <div className="flex fixed top-13 w-full px-6 pl-[100px] py-4 left-0 justify-between">
+      <div className="flex fixed z-50 top-13 w-full px-6 pl-[100px] py-4 left-0  justify-between">
         <div className="text-2xl text-Text-Primary">Setting</div>
         <SearchBox
           ClassName="rounded-lg"
@@ -37,13 +37,15 @@ const Setting: React.FC = () => {
           onSearch={() => {}}
         ></SearchBox>
       </div>
-      <div className="w-full h-screen px-6 pt-9 relative overflow-hidden">
-        <div className="flex h-screen w-full gap-8 ">
+      <div className="w-full px-6 pt-9  ">
+        <div className="flex  w-full gap-8 ">
           <div className="fixed  ">
             <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
           </div>
 
-          <div className="mt-10 w-full pl-[200px]">{renderContent()}</div>
+          <div className="mt-10 w-full pl-[200px] bg-bg-color">
+            {renderContent()}
+          </div>
         </div>
       </div>
     </>
