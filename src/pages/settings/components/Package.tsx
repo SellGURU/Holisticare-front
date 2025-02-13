@@ -1,9 +1,13 @@
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+
 const PackagePage = () => {
   return (
     <>
       <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
         <div className=" flex justify-between items-center">
-          <div className="text-Text-Primary text-sm font-medium">Packages</div>
+          <div className="text-Text-Primary text-sm font-medium">
+            Subscription
+          </div>
           <div className="text-Text-Secondary text-[10px]">
             Last update: 2024/02/02
           </div>
@@ -36,7 +40,29 @@ const PackagePage = () => {
               </div>
             </div>
           </div>
+
+          <div className=" pl-[53px]">
+            <div className="text-[12px] text-Text-Primary">
+              Manage Subscription{' '}
+            </div>
+            <div className="text-[12px] text-Text-Secondary mt-7">
+              Time to upgrade! Your free plan will expire in 3 days. To access
+              more features, please upgrade through Stripe.
+            </div>
+            <div className="w-full mt-7">
+              <ButtonSecondary ClassName="rounded-full w-full">
+                Manage Your Subscription
+              </ButtonSecondary>
+            </div>
+          </div>
         </div>
+      </div>
+      <div className="bg-backgroundColor-Card mt-[27px] p-4 w-full  rounded-[16px]">
+        <div className="text-Text-Primary text-sm font-medium">Packages</div>
+        <div className="text-[10px] text-Text-Secondary opacity-[87%] mt-1">
+          Explore our packages to support your wellness and achieve goals!
+        </div>
+        {/* table */}
       </div>
     </>
   );
