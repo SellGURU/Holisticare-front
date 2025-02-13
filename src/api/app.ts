@@ -694,6 +694,11 @@ class Application extends Api {
     const response = this.post('/drift_analysis/message/approve', data);
     return response;
   };
+
+  static showTimeLine = (data: any) => {
+    const response = this.post('/health_profile/timeline/show_events', data);
+    return response;
+  };
 }
 
 export default Application;

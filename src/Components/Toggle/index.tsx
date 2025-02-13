@@ -17,7 +17,7 @@ const Toggle: React.FC<ToggleProps> = ({ value, active, setActive }) => {
         >
           {value[0]}
         </div>
-        <div className="w-[1px] h-[17px] bg-[#383838] dark:bg-gray-400"></div>
+        <div className="w-[1px] h-[17px] bg-[#E5E5E5]"></div>
         <div
           onClick={() => {
             setActive(value[1]);

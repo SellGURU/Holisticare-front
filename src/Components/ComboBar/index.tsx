@@ -28,10 +28,10 @@ export const ComboBar = () => {
       name: 'Questionary Tracking',
       url: '/icons/sidbar-menu/task-square.svg',
     },
+    { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
     { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
     { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
     { name: 'Change Client', url: '/icons/sidbar-menu/repeat.svg' },
-    { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg', hidden: true },
   ];
   const [patientInfo, setPatientInfo] = useState({
     name: '',
@@ -220,7 +220,7 @@ export const ComboBar = () => {
                   el.name == 'Questionary Tracking' &&
                   'border-2 border-Orange'
                 }
-                  ${el.hidden && 'invisible'}
+                 
                 `}
               >
                 <SvgIcon src={el.url} width="16" height="16" color="#005F73" />
