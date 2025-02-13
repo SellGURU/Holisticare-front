@@ -275,7 +275,7 @@ const Reports = () => {
           )}
 
           <div
-            onClick={() => setshowFilterModal(!showFilterModal)}
+            // onClick={() => setshowFilterModal(!showFilterModal)}
             className="rounded-md bg-backgroundColor-Secondary shadow-100 py-2 px-4 cursor-pointer"
           >
             <img src="/icons/filter.svg" alt="" />
