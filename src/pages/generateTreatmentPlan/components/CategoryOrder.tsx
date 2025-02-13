@@ -26,8 +26,8 @@ interface CategoryOrderProps {
   data: any;
   setData: (data: any) => void;
   memberId: string | undefined;
-  openAnayze?: ()=>void,
-  openGoal?: ()=>void,
+  openAnayze?: () => void;
+  openGoal?: () => void;
 }
 
 const CategoryOrder: React.FC<CategoryOrderProps> = ({
@@ -36,10 +36,10 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   setData,
   memberId,
   openAnayze,
-  openGoal
+  openGoal,
 }) => {
   console.log(memberId);
-  
+
   const [isLoading] = useState(false);
   const [active, setActive] = useState<string>('Suggestion');
   const [categoryOrderData, setCategoryData] = useState<Array<any>>(
@@ -152,34 +152,39 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   // };
   const handleDelete = (suggestionIndex: number) => {
     console.log('Deleting suggestion at index:', suggestionIndex);
-    
+
     setData((pre: any) => {
       const newData = { ...pre };
-      
+
       const categoryIndex = newData.suggestion_tab.findIndex(
-        (tab: any) => tab.category === activeBio.category
+        (tab: any) => tab.category === activeBio.category,
       );
-  
+
       console.log('Found category at index:', categoryIndex);
-      console.log('Before delete:', newData.suggestion_tab[categoryIndex]?.suggestions);
-  
+      console.log(
+        'Before delete:',
+        newData.suggestion_tab[categoryIndex]?.suggestions,
+      );
+
       if (categoryIndex !== -1) {
-        const updatedSuggestions = newData.suggestion_tab[categoryIndex].suggestions.filter(
-          (_: any, index: number) => index !== suggestionIndex
+        const updatedSuggestions = newData.suggestion_tab[
+          categoryIndex
+        ].suggestions.filter(
+          (_: any, index: number) => index !== suggestionIndex,
         );
-  
+
         console.log('After delete:', updatedSuggestions);
-  
+
         newData.suggestion_tab[categoryIndex] = {
           ...newData.suggestion_tab[categoryIndex],
-          suggestions: updatedSuggestions
+          suggestions: updatedSuggestions,
         };
       }
-  
+
       return newData;
     });
   };
-  const [showAddModal, setshowAddModal] = useState(false)
+  const [showAddModal, setshowAddModal] = useState(false);
   return (
     <>
       {isActionPlan ? (
@@ -216,11 +221,12 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
             </>
           ) : (
             <>
-            <EditModal isAdd  isOpen={showAddModal}
-          onClose={() => setshowAddModal(false)}
-          onAddNotes={()=>{}}>
-
-            </EditModal>
+              <EditModal
+                isAdd
+                isOpen={showAddModal}
+                onClose={() => setshowAddModal(false)}
+                onAddNotes={() => {}}
+              ></EditModal>
               <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                 <div className="w-full flex items-center justify-between">
                   <div className="text-sm font-medium text-Text-Primary flex items-center gap-2">
@@ -228,36 +234,35 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     <div className="bg-Text-Primary rounded-full w-1 h-1"></div>{' '}
                     Report Details
                   </div>
-                  <div className='flex gap-2'>
+                  <div className="flex gap-2">
+                    <div
+                      onClick={openAnayze}
+                      className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/analyse.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/analyse.svg" alt="" /> */}
+                      Analysis
+                    </div>
 
-               
-                
-                 
-               
-              
-           
-                <div  onClick={openAnayze} className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer">
-                  <SvgIcon
-                    width="20px"
-                    height="20px"
-                    src="/icons/analyse.svg"
-                    color={'#005F73'}
-                  />
-                  {/* <img src="/icons/analyse.svg" alt="" /> */}
-                  Analysis
-                </div>
- 
-                <div  onClick={openGoal} className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap">
-                  <SvgIcon
-                    width="20px"
-                    height="20px"
-                    src="/icons/chart.svg"
-                    color={'#005F73'}
-                  />
-                  {/* <img src="/icons/chart.svg" alt="" /> */}
-                  Client Goals
-                </div>
-              </div>
+                    <div
+                      onClick={openGoal}
+                      className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/chart.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/chart.svg" alt="" /> */}
+                      Client Goals
+                    </div>
+                  </div>
                   {/* <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                                 </div> */}
@@ -357,49 +362,53 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       </span>
                     </div> */}
                     {active == 'Suggestion' && (
-                      <div className='flex gap-2'>
-                      <div className="w-[32px] relative  h-[32px]">
-                        <MiniAnallyseButton
-                          isLoading={isLoadingAi}
-                          onResolve={(value: string) => {
-                            setISLoadingAi(true);
-                            Application.UpdateTreatmentPlanWithAi({
-                              treatment_category: activeBio.category,
-                              suggestion_tab_list: data[
-                                'suggestion_tab'
-                              ].filter(
-                                (el: any) => el.category == activeBio.category,
-                              )[0].suggestions,
-                              ai_generation_mode: value,
-                            })
-                              .then((res) => {
-                                if (res.data) {
-                                  setData((pre: any) => {
-                                    const old = { ...pre };
-                                    console.log(old['suggestion_tab']);
-                                    old['suggestion_tab'] = [
-                                      ...old['suggestion_tab'].filter(
-                                        (el: any) =>
-                                          el.category != activeBio.category,
-                                      ),
-                                      res.data,
-                                    ];
-                                    return old;
-                                  });
-                                  const old = active;
-                                  setActive('');
-                                  setTimeout(() => {
-                                    setActive(old);
-                                  }, 10);
-                                }
+                      <div className="flex gap-2">
+                        <div className="w-[32px] relative  h-[32px]">
+                          <MiniAnallyseButton
+                            isLoading={isLoadingAi}
+                            onResolve={(value: string) => {
+                              setISLoadingAi(true);
+                              Application.UpdateTreatmentPlanWithAi({
+                                treatment_category: activeBio.category,
+                                suggestion_tab_list: data[
+                                  'suggestion_tab'
+                                ].filter(
+                                  (el: any) =>
+                                    el.category == activeBio.category,
+                                )[0].suggestions,
+                                ai_generation_mode: value,
                               })
-                              .finally(() => {
-                                setISLoadingAi(false);
-                              });
-                          }}
-                        ></MiniAnallyseButton>
-                      </div>
-                      <ButtonPrimary onClick={()=>setshowAddModal(true)}> <img src="/icons/add-square.svg" alt="" /> Add</ButtonPrimary>
+                                .then((res) => {
+                                  if (res.data) {
+                                    setData((pre: any) => {
+                                      const old = { ...pre };
+                                      console.log(old['suggestion_tab']);
+                                      old['suggestion_tab'] = [
+                                        ...old['suggestion_tab'].filter(
+                                          (el: any) =>
+                                            el.category != activeBio.category,
+                                        ),
+                                        res.data,
+                                      ];
+                                      return old;
+                                    });
+                                    const old = active;
+                                    setActive('');
+                                    setTimeout(() => {
+                                      setActive(old);
+                                    }, 10);
+                                  }
+                                })
+                                .finally(() => {
+                                  setISLoadingAi(false);
+                                });
+                            }}
+                          ></MiniAnallyseButton>
+                        </div>
+                        <ButtonPrimary onClick={() => setshowAddModal(true)}>
+                          {' '}
+                          <img src="/icons/add-square.svg" alt="" /> Add
+                        </ButtonPrimary>
                       </div>
                     )}
                   </div>
@@ -416,58 +425,70 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             .filter(
                               (el: any) => el.category == activeBio.category,
                             )[0]
-                            .suggestions.map((el: any,suggestionIndex: number) => {
-                             console.log(el);
-                             
-                              
-                              return (
-                                <div className="mt-2" key={`${el.title}-${suggestionIndex}`} >
-                                  <BioMarkerRowSuggestions
-                                    value={el}
-                                    onDelete={() => handleDelete(suggestionIndex)}
+                            .suggestions.map(
+                              (el: any, suggestionIndex: number) => {
+                                console.log(el);
 
-                                    onchange={(valu: any) => {
-                                      setData((pre: any) => {
-                                        const newData = { ...pre };
-                                        const suggestion_tab = [
-                                          ...newData.suggestion_tab,
-                                        ];
-                                        newData.suggestion_tab =
-                                          suggestion_tab.map((values: any) => {
-                                            // console.log(el)
-                                            if (
-                                              values.category ==
-                                              activeBio.category
-                                            ) {
-                                              const newSugs = [
-                                                ...values.suggestions,
-                                              ];
-                                              const newSugesResolved =
-                                                newSugs.map((ns) => {
-                                                  if (ns.title == valu.title) {
-                                                    console.log('findTitle');
-                                                    return valu;
-                                                  } else {
-                                                    return ns;
-                                                  }
-                                                });
-                                              return {
-                                                ...values,
-                                                suggestions: newSugesResolved,
-                                              };
-                                            } else {
-                                              return values;
-                                            }
-                                          });
-                                        console.log(newData.suggestion_tab);
-                                        return newData;
-                                      });
-                                      console.log(valu);
-                                    }}
-                                  ></BioMarkerRowSuggestions>
-                                </div>
-                              );
-                            })}
+                                return (
+                                  <div
+                                    className="mt-2"
+                                    key={`${el.title}-${suggestionIndex}`}
+                                  >
+                                    <BioMarkerRowSuggestions
+                                      value={el}
+                                      onDelete={() =>
+                                        handleDelete(suggestionIndex)
+                                      }
+                                      onchange={(valu: any) => {
+                                        setData((pre: any) => {
+                                          const newData = { ...pre };
+                                          const suggestion_tab = [
+                                            ...newData.suggestion_tab,
+                                          ];
+                                          newData.suggestion_tab =
+                                            suggestion_tab.map(
+                                              (values: any) => {
+                                                // console.log(el)
+                                                if (
+                                                  values.category ==
+                                                  activeBio.category
+                                                ) {
+                                                  const newSugs = [
+                                                    ...values.suggestions,
+                                                  ];
+                                                  const newSugesResolved =
+                                                    newSugs.map((ns) => {
+                                                      if (
+                                                        ns.title == valu.title
+                                                      ) {
+                                                        console.log(
+                                                          'findTitle',
+                                                        );
+                                                        return valu;
+                                                      } else {
+                                                        return ns;
+                                                      }
+                                                    });
+                                                  return {
+                                                    ...values,
+                                                    suggestions:
+                                                      newSugesResolved,
+                                                  };
+                                                } else {
+                                                  return values;
+                                                }
+                                              },
+                                            );
+                                          console.log(newData.suggestion_tab);
+                                          return newData;
+                                        });
+                                        console.log(valu);
+                                      }}
+                                    ></BioMarkerRowSuggestions>
+                                  </div>
+                                );
+                              },
+                            )}
                         </>
                       )}
                     </>

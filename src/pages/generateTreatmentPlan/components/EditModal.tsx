@@ -16,8 +16,8 @@ const EditModal: React.FC<EditModalProps> = ({
   onAddNotes,
   isAdd,
 }) => {
+  // Move all hooks to the top, before any conditional returns
   const [newNote, setNewNote] = useState('');
-
   const [recommendation, setRecommendation] = useState('');
   const [dose, setDose] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -25,6 +25,19 @@ const EditModal: React.FC<EditModalProps> = ({
   const [midDay, setMidDay] = useState(false);
   const [night, setNight] = useState(false);
   const [notes, setNotes] = useState<string[]>([]);
+  const [showSelect, setShowSelect] = useState(false);
+  const [Group, setGroup] = useState('');
+  
+  const selectRef = useRef(null);
+  const selectButRef = useRef(null);
+
+  useModalAutoClose({
+    refrence: selectRef,
+    buttonRefrence: selectButRef,
+    close: () => {
+      setShowSelect(false);
+    },
+  });
 
   if (!isOpen) return null;
 
@@ -47,17 +60,7 @@ const EditModal: React.FC<EditModalProps> = ({
     onAddNotes(notes);
     onClose();
   };
-  const selectRef = useRef(null);
-  const selectButRef = useRef(null);
-  const [showSelect, setShowSelect] = useState(false);
-  useModalAutoClose({
-    refrence: selectRef,
-    buttonRefrence: selectButRef,
-    close: () => {
-      setShowSelect(false);
-    },
-  });
-  const [Group, setGroup] = useState('');
+
   const groups = [
     'General Instructions',
     'Hormone',
@@ -69,6 +72,7 @@ const EditModal: React.FC<EditModalProps> = ({
     'Lifestyle',
     'Other',
   ];
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary">
