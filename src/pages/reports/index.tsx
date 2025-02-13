@@ -9,11 +9,211 @@ import TablePaginationInside from '../../Components/TablePaginationInside';
 const Reports = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState<
-    { No: number; name: string; gender: string; age: number }[]
-  >([{ No: 1, name: 'Amir', gender: 'Men', age: 21 }]);
+    {
+      No: number;
+      name: string;
+      reportWriter: string;
+      id: number;
+      gender: string;
+      testResults: boolean;
+      dateOfReport: string;
+      enrollDate: string;
+    }[]
+  >([
+    {
+      No: 1,
+      name: 'David Smith',
+      reportWriter: 'Dr.Charlotte Walker',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 2,
+      name: 'Leslie Alexander',
+      reportWriter: 'Ethan Davis',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 3,
+      name: 'Robert Garcia',
+      reportWriter: 'Isabella Moore',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 4,
+      name: 'Sarah Thompson',
+      reportWriter: 'Dr.Elijah King',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 5,
+      name: 'Daniel Carter',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 6,
+      name: 'Sophia Bennett',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 7,
+      name: 'Liam Anderson',
+      reportWriter: 'Dr.Charlotte Walker',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 8,
+      name: 'Emma Wilson',
+      reportWriter: 'Isabella Moore',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 9,
+      name: 'James Taylor',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+  ]);
   const [reportsFiltered, setReportsFiltered] = useState<
-    { No: number; name: string; gender: string; age: number }[]
-  >([{ No: 1, name: 'Amir', gender: 'Men', age: 21 }]);
+    {
+      No: number;
+      name: string;
+      reportWriter: string;
+      id: number;
+      gender: string;
+      testResults: boolean;
+      dateOfReport: string;
+      enrollDate: string;
+    }[]
+  >([
+    {
+      No: 1,
+      name: 'David Smith',
+      reportWriter: 'Dr.Charlotte Walker',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 2,
+      name: 'Leslie Alexander',
+      reportWriter: 'Ethan Davis',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 3,
+      name: 'Robert Garcia',
+      reportWriter: 'Isabella Moore',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 4,
+      name: 'Sarah Thompson',
+      reportWriter: 'Dr.Elijah King',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 5,
+      name: 'Daniel Carter',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 6,
+      name: 'Sophia Bennett',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 7,
+      name: 'Liam Anderson',
+      reportWriter: 'Dr.Charlotte Walker',
+      id: 21548461651,
+      gender: 'Male',
+      testResults: true,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 8,
+      name: 'Emma Wilson',
+      reportWriter: 'Isabella Moore',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+    {
+      No: 9,
+      name: 'James Taylor',
+      reportWriter: 'Dr.Amelia Robinson',
+      id: 21548461651,
+      gender: 'Female',
+      testResults: false,
+      dateOfReport: '04/25/2024',
+      enrollDate: '04/25/2024',
+    },
+  ]);
   const [activeList, setActiveList] = useState<string>('list');
   const [showSearch, setshowSearch] = useState<boolean>(false);
   const [showFilterModal, setshowFilterModal] = useState(false);
@@ -119,6 +319,7 @@ const Reports = () => {
       {activeList === 'list' ? (
         <TablePaginationInside
           classData={reportsFiltered}
+          setReportsFiltered={setReportsFiltered}
         ></TablePaginationInside>
       ) : (
         ''

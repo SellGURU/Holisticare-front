@@ -16,6 +16,7 @@ import PaginationCircular from '../paginationCircular/index.tsx';
 import { columns } from './tableTd.tsx';
 interface TableProps {
   classData: Array<any>;
+  setReportsFiltered: (data: any) => void;
 }
 
 // Custom filter function to handle nested fields
@@ -29,14 +30,17 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
   return String(rowValue).toLowerCase().includes(filterValue.toLowerCase());
 };
 
-const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
+const TablePaginationInside: React.FC<TableProps> = ({
+  classData,
+  setReportsFiltered,
+}) => {
   const [data, setData] = useState(classData);
   const [globalFilter, setGlobalFilter] = useState(''); // State for global filter
 
   const [currentPage, setCurrentPage] = useState(0);
 
   // calculate the height of table
-  const pageSize = (window.innerHeight * 0.67) / 65; // 100vh in pixels
+  const pageSize = (window.innerHeight * 0.67) / 45; // 100vh in pixels
 
   useEffect(() => {
     setData(classData);
@@ -44,7 +48,7 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
 
   const table = useReactTable({
     data,
-    columns: columns(data.length),
+    columns: columns(classData, setReportsFiltered),
     state: {
       globalFilter,
       pagination: {
@@ -81,7 +85,7 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
             <table
               className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
             >
-              <thead className="text-xs text-Text-Primary ">
+              <thead className="text-xs text-Text-Primary">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr
                     key={headerGroup.id}
@@ -117,11 +121,14 @@ const TablePaginationInside: React.FC<TableProps> = ({ classData }) => {
                 ))}
               </thead>
               <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr className="text-Text-Primary space-y-7  " key={row.id}>
+                {table.getRowModel().rows.map((row, index) => (
+                  <tr
+                    className={`text-Text-Primary space-y-7 ${index % 2 === 0 ? 'bg-Secondary-SelverGray' : 'bg-white'}`}
+                    key={row.id}
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <td
-                        className={`px-3 py-3 text-center text-nowrap text-xs  `}
+                        className="px-3 py-3 text-center text-nowrap text-xs"
                         key={cell.id}
                       >
                         {flexRender(
