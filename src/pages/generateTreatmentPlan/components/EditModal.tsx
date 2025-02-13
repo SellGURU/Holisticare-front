@@ -121,7 +121,7 @@ const EditModal: React.FC<EditModalProps> = ({
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="mt-1 block text-xs w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
             rows={4}
             placeholder="Write notes ..."
           />

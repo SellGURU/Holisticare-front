@@ -149,7 +149,35 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   //     }
   //   }
   // };
-
+  const handleDelete = (suggestionIndex: number) => {
+    console.log('Deleting suggestion at index:', suggestionIndex);
+    
+    setData((pre: any) => {
+      const newData = { ...pre };
+      
+      const categoryIndex = newData.suggestion_tab.findIndex(
+        (tab: any) => tab.category === activeBio.category
+      );
+  
+      console.log('Found category at index:', categoryIndex);
+      console.log('Before delete:', newData.suggestion_tab[categoryIndex]?.suggestions);
+  
+      if (categoryIndex !== -1) {
+        const updatedSuggestions = newData.suggestion_tab[categoryIndex].suggestions.filter(
+          (_: any, index: number) => index !== suggestionIndex
+        );
+  
+        console.log('After delete:', updatedSuggestions);
+  
+        newData.suggestion_tab[categoryIndex] = {
+          ...newData.suggestion_tab[categoryIndex],
+          suggestions: updatedSuggestions
+        };
+      }
+  
+      return newData;
+    });
+  };
   return (
     <>
       {isActionPlan ? (
@@ -381,11 +409,16 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             .filter(
                               (el: any) => el.category == activeBio.category,
                             )[0]
-                            .suggestions.map((el: any) => {
+                            .suggestions.map((el: any,suggestionIndex: number) => {
+                             console.log(el);
+                             
+                              
                               return (
-                                <div className="mt-2">
+                                <div className="mt-2" key={`${el.title}-${suggestionIndex}`} >
                                   <BioMarkerRowSuggestions
                                     value={el}
+                                    onDelete={() => handleDelete(suggestionIndex)}
+
                                     onchange={(valu: any) => {
                                       setData((pre: any) => {
                                         const newData = { ...pre };

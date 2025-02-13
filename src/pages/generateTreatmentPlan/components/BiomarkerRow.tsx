@@ -6,11 +6,14 @@ import EditModal from './EditModal';
 interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
+  onDelete: () => void;
+
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
+  onDelete
 }) => {
   const resolveIcon = () => {
     switch (value.pillar_name) {
@@ -47,7 +50,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       notes: newNotes,
     });
   };
-
+  const [deleteConfirm, setdeleteConfirm] = useState(false);
   return (
     <>
       <div className="w-full flex justify-center items-center gap-4">
@@ -85,25 +88,43 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           {isExpanded && (
             <div className="flex flex-col">
               {notes.map((note, index) => (
-                <div key={index} className="bg-transparent flex gap-1 text-[12px]">
+                <div
+                  key={index}
+                  className="bg-transparent flex gap-1 text-[12px]"
+                >
                   <span>Note:</span> {note}
                 </div>
               ))}
             </div>
           )}
-          <div className={`${isExpanded ? 'flex' : 'hidden'} absolute top-4 right-10 flex items-center gap-[6px]`}>
+          <div
+            className={`${isExpanded ? 'flex' : 'hidden'} absolute top-4 right-10 flex items-center gap-[6px]`}
+          >
             <img
               onClick={() => setShowEditNote(true)}
               className="cursor-pointer size-6"
               src="/icons/edit.svg"
               alt=""
             />
-            <SvgIcon
-              src="/icons/delete.svg"
-              color="#FC5474"
-              width="24px"
-              height="24px"
-            />
+            {deleteConfirm ? (
+              <div className="flex items-center gap-2 ml-1 text-Text-Secondary text-xs">
+                Sure? <img onClick={onDelete} src="/icons/confirm-tick-circle.svg" alt="" />
+                <img
+                  onClick={() => setdeleteConfirm(false)}
+                  src="/icons/cansel-close-circle.svg"
+                  alt=""
+                />
+              </div>
+            ) : (
+              <div onClick={() => setdeleteConfirm(true)}>
+                <SvgIcon
+                  src="/icons/delete.svg"
+                  color="#FC5474"
+                  width="24px"
+                  height="24px"
+                />
+              </div>
+            )}
           </div>
           <img
             onClick={() => setIsExpanded(!isExpanded)}
