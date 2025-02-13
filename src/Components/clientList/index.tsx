@@ -14,6 +14,7 @@ import { subscribe } from '../../utils/event.ts';
 import ConfirmModal from './ConfirmModal.tsx';
 import Circleloader from '../CircleLoader/index.tsx';
 import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
+import Toggle from '../Toggle/index.tsx';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -194,14 +195,15 @@ const ClientList = () => {
       // Unsubscribe when the component unmounts or when you need to clean up
     };
   }, []);
-  const [isFavorite, setisFavorite] = useState(false);
+  // const [isFavorite, setisFavorite] = useState(false);
+  const [active, setActive] = useState<string>('All');
   useEffect(() => {
-    if (isFavorite) {
+    if (active === 'High-Priority') {
       setFilteredClientList(clientList.filter((client) => client.favorite));
     } else {
       setFilteredClientList(clientList);
     }
-  }, [isFavorite, clientList]);
+  }, [active, clientList]);
   return (
     <>
       {isLoading ? (
@@ -231,7 +233,7 @@ const ClientList = () => {
               </div>
               <div className="w-full h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex justify-between mb-3">
-                <div
+                {/* <div
                   onClick={() => {
                     setisFavorite(!isFavorite);
                   }}
@@ -247,10 +249,17 @@ const ClientList = () => {
                     <img className="w-4 h-4" src="/icons/faviorte.svg" alt="" />
                   )}
                   Your favorite list
+                </div> */}
+                <div className="flex justify-center">
+                  <Toggle
+                    active={active}
+                    setActive={setActive}
+                    value={['All', 'High-Priority', 'Archived']}
+                  />
                 </div>
                 <div className=" w-full sm:w-auto">
                   <div className=" w-full flex gap-3 relative ">
-                    <div className=" w-full hidden  text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center ">
+                    <div className="w-full text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center">
                       Sort by: <SelectBox onChange={handleFilterChange} />
                     </div>
                     <div className=" hidden md:flex w-[96px] h-[32px] rounded-md ">
@@ -342,7 +351,7 @@ const ClientList = () => {
               </div>
               {activeList == 'grid' ? (
                 <div
-                  className={` w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[18px] flex-wrap ${showSearch && 'mt-10'}`}
+                  className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[18px] flex-wrap ${showSearch && 'mt-10'}`}
                 >
                   {filteredClientList.map((client: any) => {
                     return (
