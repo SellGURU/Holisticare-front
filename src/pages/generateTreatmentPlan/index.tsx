@@ -19,6 +19,7 @@ import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Circleloader from '../../Components/CircleLoader';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
+import ConfirmModal from '../../Components/confitmModal';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
@@ -150,9 +151,19 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       return old;
     });
   };
+  const [GenerateAiConfirm, setGenerateAiConfirm] = useState(false);
   // const {themeISLight} = useContext(AppContext);
+  const handleConfirm = () => {
+    // Your confirm logic here
+    setGenerateAiConfirm(false);
+  };
   return (
     <div className="h-[100vh] overflow-auto">
+       <ConfirmModal
+        isOpen={GenerateAiConfirm}
+        onClose={() => setGenerateAiConfirm(false)}
+        onConfirm={handleConfirm}
+      />
       {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -237,7 +248,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   Client Goals
                 </div>
               </ButtonPrimary> */}
-              <MiniAnallyseButton></MiniAnallyseButton>
+              <div onClick={() => setGenerateAiConfirm(true)}>
+                {' '}
+                <MiniAnallyseButton></MiniAnallyseButton>
+              </div>
+
               <ButtonPrimary
                 disabled={isLoading}
                 onClick={() => {
@@ -366,8 +381,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 data={treatmentPlanData}
                 isActionPlan={isActionPlan}
                 memberId={id}
-                openAnayze={()=>setSHowAnalyse(true)}
-                openGoal={()=>setSHowClientGoals(true)}
+                openAnayze={() => setSHowAnalyse(true)}
+                openGoal={() => setSHowClientGoals(true)}
               ></CategoryOrder>
             )}
             {generateStep == 'Analysis' && (
