@@ -1,0 +1,304 @@
+{
+  "title": "Personal Information",
+  "description": "Please fill the form below so that we can know more about you.",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Email",
+      "type": "short_answer",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q2",
+      "question": "What types of physical activity do you enjoy?",
+      "type": "checkbox",
+      "options": ["Running", "Swimming", "Yoga"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q3",
+      "question": "In the last year, how often have you participated in physical activity?",
+      "type": "multiple_choice",
+      "options": [
+        "3-4 times per week",
+        "1-2 times per week",
+        "1-2 times per month",
+        "Not at all"
+      ],
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q4",
+      "question": "What physical activity has worked for you in the past, and what level did you achieve?",
+      "type": "paragraph",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q5",
+      "question": "What has not worked, and why?",
+      "type": "paragraph",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q6",
+      "question": "Do you have any negative feelings or bad experiences with exercise?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q7",
+      "question": "If you have been unable to exercise regularly, what are the reasons?",
+      "type": "paragraph",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q8",
+      "question": "Does your occupation involve much physical activity (e.g., lifting, walking)?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q9",
+      "question": "Phone",
+      "type": "short_answer",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q10",
+      "question": "Address",
+      "type": "short_answer",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q11",
+      "question": "Date of Birth",
+      "type": "date",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q12",
+      "question": "What is your present occupation?",
+      "type": "short_answer",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q13",
+      "question": "Select the goals that best apply to you:",
+      "type": "checkbox",
+      "options": [
+        "Weight loss",
+        "Body shaping",
+        "Building muscle",
+        "Developing strength",
+        "Improving health",
+        "Reducing blood pressure",
+        "Lowering cholesterol level",
+        "Improve performance for a particular sport",
+        "Improve moods and ability to cope with stress",
+        "Improve cardiovascular fitness",
+        "Increase energy levels",
+        "Married"
+      ],
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q14",
+      "question": "Are you married?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q15",
+      "question": "What do you want to be able to do?",
+      "type": "paragraph",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q16",
+      "question": "How do you want to look?",
+      "type": "paragraph",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q17",
+      "question": "How do you want to feel?",
+      "type": "paragraph",
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q18",
+      "question": "Do you have any drug/seasonal allergies?",
+      "type": "paragraph",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q19",
+      "question": "List any current medications you are taking, including eye drops:",
+      "type": "paragraph",
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q20",
+      "question": "Are you pregnant?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q21",
+      "question": "Are you nursing?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q22",
+      "question": "Alcohol Use?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q23",
+      "question": "Tobacco Use?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q24",
+      "question": "Please check any conditions that apply to yourself or any members of the immediate family:",
+      "type": "checkbox",
+      "options": [
+        "Diabetes",
+        "High Blood Pressure",
+        "Heart Problems",
+        "Breathing Problems",
+        "Thyroid Problems",
+        "Headaches",
+        "Cancer"
+      ],
+      "required": true,
+      "response": ""
+    },
+    {
+      "id": "q25",
+      "question": "Do you follow a nutrition plan?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q26",
+      "question": "What is your usual diet like?",
+      "type": "multiple_choice",
+      "options": [
+        "Carnivore",
+        "High carb",
+        "Low carb",
+        "Mediterranean",
+        "Gluten-free",
+        "Balanced",
+        "Vegan",
+        "Vegetarian",
+        "Ketogenic",
+        "None of the above"
+      ],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q27",
+      "question": "Do you follow intermittent fasting?",
+      "type": "multiple_choice",
+      "options": ["Yes", "No"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q28",
+      "question": "How much water do you drink per day?",
+      "type": "multiple_choice",
+      "options": [
+        "Less than 1 cup",
+        "1-3 cups",
+        "3-8 cups",
+        "More than 8 cups"
+      ],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q29",
+      "question": "How do you generally feel about your energy levels during the day?",
+      "type": "multiple_choice",
+      "options": ["Very low", "Average", "Very high"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q30",
+      "question": "How often do you experience stress?",
+      "type": "multiple_choice",
+      "options": ["Never", "Rarely", "Sometimes", "Often", "Always"],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q31",
+      "question": "When under stress, what symptoms do you experience?",
+      "type": "checkbox",
+      "options": [
+        "Decreased work performance",
+        "Poor sleep",
+        "Weight changes",
+        "Anxiety"
+      ],
+      "required": false,
+      "response": ""
+    },
+    {
+      "id": "q32",
+      "question": "When you are stressed, what do you usually do to cope?",
+      "type": "checkbox",
+      "options": [
+        "Alcohol",
+        "Smoking",
+        "Physical activity",
+        "Meditation",
+        "None",
+        "Other"
+      ],
+      "required": false,
+      "response": ""
+    }
+  ],
+  "Timestamp": "1/23/2025 11:47:02"
+}

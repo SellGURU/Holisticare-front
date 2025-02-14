@@ -1,2175 +1,2398 @@
 {
-    "detailed_analysis_note": "Total of 42 biomarkers in 11 groups",
-    "total_biomarker_note": "Total of 2 biomarkers are Needs Focus in a list of 42 biomarkers.",
-    "categories": [
+  "detailed_analysis_note": "Total of 69 biomarkers in 10 categories",
+  "total_biomarker_note": "Total of 6 biomarkers are Needs Focus in a list of 69 biomarkers.",
+  "categories": [
+    {
+      "category": "Urinalysis",
+      "subcategories": [
         {
-            "category": "Liver Health",
-            "subcategories": [
-                {
-                    "subcategory": "Liver Function",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Alanine Aminotransferase",
-                            "more_info": "Alanine Aminotransferase (ALT) is an enzyme primarily found in the liver, with small amounts in the heart and muscles. ALT is a key marker for liver damage, as it is released into the bloodstream when liver cells are injured, such as during hepatitis. Minor increases in ALT may also occur after intense physical activity, alcohol use, or when taking medications like statins used for lowering cholesterol.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "IU/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        20,
-                                        40
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        15,
-                                        20
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        6,
-                                        15
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        6
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "21",
-                                "20"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Albumin",
-                            "more_info": "Albumin is the most abundant protein in the blood, responsible for maintaining osmotic pressure (keeping fluid within blood vessels), transporting certain hormones, and neutralizing free radicals. It is produced by the liver, and low levels can signal liver dysfunction or disease. As people age, albumin levels naturally decline, even without disease. An elevated albumin level typically indicates dehydration, but in healthy individuals, higher levels often reflect good health.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "g/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        4.5,
-                                        5.1
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        4,
-                                        4.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        3.6,
-                                        4
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        3.6
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "3.9",
-                                "4.2"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Alkaline Phosphatase",
-                            "more_info": "Alkaline Phosphatase (ALP) is an enzyme that removes phosphate groups from molecules, most effectively in an alkaline environment. It is found in several tissues, with high concentrations in the liver, bile ducts, and bones. Elevated ALP levels often signal liver or bile duct issues, such as a blockage. Healing bone fractures can also cause a temporary increase in ALP. Low ALP levels may be associated with hypothyroidism, but typically, minor reductions have little clinical significance.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "IU/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        50,
-                                        130
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        40,
-                                        50
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        33,
-                                        40
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        33
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "62",
-                                "59"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Aspartate Aminotransferase",
-                            "more_info": "Aspartate Aminotransferase (AST) is another enzyme involved in transferring amino groups, similar to ALT, but primarily found in the liver and heart muscles. AST levels are used to detect liver and heart muscle damage. The ratio of AST to ALT can help differentiate between different causes of liver damage. For example, an AST/ALT ratio less than 1 often suggests acute liver disease or fatty liver, while a ratio greater than 2 may indicate chronic liver disease, such as Wilson’s disease or alcoholic liver disease.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "IU/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        20,
-                                        35
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        15,
-                                        20
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        10,
-                                        15
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        10
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "29",
-                                "14"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Gamma-Glutamyl Transferase",
-                            "more_info": "Gamma-Glutamyl Transferase (GGT) is an enzyme found in the liver, prostate, kidneys, and pancreas that plays a role in the transfer of glutamyl groups to molecules. Elevated GGT levels can indicate liver dysfunction, particularly bile duct blockage. It is often the first enzyme to rise when liver function is impaired. GGT can also be elevated in conditions like acute pancreatitis, myocardial infarction, and from certain medications that damage the liver, such as those used in diabetes management.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "IU/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        30,
-                                        70
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        20,
-                                        30
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        3,
-                                        20
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        3
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "20",
-                                "10"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Globulin",
-                            "more_info": "Globulin refers to a group of proteins in the blood that are not albumin. This includes antibodies (gamma globulins) produced by B-cells, as well as proteins like transferrin and ferritin. Elevated gamma globulin levels can be indicative of certain conditions like lymphoma, multiple myeloma, or monoclonal gammopathy of undetermined significance, which are associated with abnormal antibody production.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "g/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        3.5,
-                                        3.9
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        3.2,
-                                        3.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        2.2,
-                                        3.2
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        2.2
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "2.2",
-                                "2.8"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Liver Function",
-                            "name": "Protein",
-                            "more_info": "The total protein measurement includes both albumin and globulin levels in the blood. It provides an overall picture of protein levels, which are important for various bodily functions, including immune response and nutrient transport.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "g/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        7.5,
-                                        8.3
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        6.5,
-                                        7.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        6.2,
-                                        6.5
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        6.2
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "6.1",
-                                "6.5"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 14,
-                    "needs_focus_count": 0
-                }
-            ]
-        },
-        {
-            "category": "Cardiovascular Health",
-            "subcategories": [
-                {
-                    "subcategory": "Arterial Stiffness",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Arterial Stiffness",
-                            "name": "Aortic Pulse Pressure",
-                            "more_info": "Aortic Pulse Pressure (APP) is the difference between the aortic systolic blood pressure (ASBP) and the aortic diastolic blood pressure. It is a useful marker for assessing cardiovascular risk, particularly in individuals over 40 with elevated ASBP or APP. Lifestyle changes or medications may be recommended if APP exceeds certain thresholds, as prolonged high APP can increase the risk of heart disease and stroke. Unlike peripheral SBP, APP better reflects central blood pressure dynamics.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmHg",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        40,
-                                        50
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        35,
-                                        40
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        30,
-                                        35
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        30
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "36",
-                                "35"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Arterial Stiffness",
-                            "name": "Aortic Systolic Blood Pressure",
-                            "more_info": "Aortic Systolic Blood Pressure (ASBP) refers to the peak blood pressure in the aorta during heart contraction (systole). ASBP is a more accurate predictor of cardiovascular disease than peripheral systolic blood pressure (SBP), providing better insight into the risk of heart disease and stroke.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmHg",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        120,
-                                        129
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        110,
-                                        119
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        102,
-                                        110
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        101
-                                    ],
-                                    [
-                                        130,
-                                        160
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "129",
-                                "125"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Arterial Stiffness",
-                            "name": "Diastolic Blood Pressure (at rest)",
-                            "more_info": "Diastolic Blood Pressure (DBP) measures the pressure in the arteries during the relaxation phase of the heart cycle. While DBP increases until middle adulthood and then declines, an increase in SBP with a decrease in DBP in older adults can elevate the risk for cardiovascular diseases. Proper management of both SBP and DBP is essential for cardiovascular health.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmHg",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        70,
-                                        80
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        65,
-                                        70
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        60,
-                                        65
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        60
-                                    ],
-                                    [
-                                        81,
-                                        150
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "92",
-                                "88"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Arterial Stiffness",
-                            "name": "Resting Heart Rate",
-                            "more_info": "Resting Heart Rate (RHR) is the number of heartbeats per minute when the body is at rest. It is a simple yet effective marker for cardiovascular risk, with lower RHR often correlating with better cardiovascular health. Elevated RHR is linked to increased mortality, particularly from cardiovascular causes, in the absence of other factors that may explain low heart rate.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "bpm",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        60,
-                                        99
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        55,
-                                        60
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        50,
-                                        55
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        50
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "72",
-                                "64"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Arterial Stiffness",
-                            "name": "Systolic Blood Pressure (at rest)",
-                            "more_info": "Systolic Blood Pressure (SBP) is the pressure exerted on artery walls when the heart contracts. High SBP is associated with an increased risk of cardiovascular events like stroke and heart attack. SBP rises with age, but its predictive value for cardiovascular risk is enhanced when combined with other markers like Augmentation Pressure (AP).",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmHg",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        110,
-                                        129
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        100,
-                                        110
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        90,
-                                        100
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        90
-                                    ],
-                                    [
-                                        130,
-                                        150
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "134",
-                                "126"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 10,
-                    "needs_focus_count": 0
+          "subcategory": "Urine Test Parameters",
+          "biomarkers": [
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Appearance",
+              "more_info": "The appearance of urine, whether clear or cloudy, helps identify potential issues. Cloudy urine may indicate infections, high protein levels, or the presence of crystals.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["Clear"]],
+                  "label": "Normal"
                 },
-                {
-                    "subcategory": "Cardiovascular Risk",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Cardiovascular Risk",
-                            "name": "HDL Cholesterol",
-                            "more_info": "High-Density Lipoprotein (HDL) Cholesterol, often referred to as 'good cholesterol,' helps remove excess cholesterol from tissues, transporting it to the liver for excretion. Higher HDL levels are associated with a lower risk of heart disease and stroke. A healthy diet and exercise can improve HDL function and increase its levels.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        60,
-                                        100
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        40,
-                                        59
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        30,
-                                        39
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        29
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "59",
-                                "63"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Cardiovascular Risk",
-                            "name": "LDL Cholesterol",
-                            "more_info": "Low-Density Lipoprotein (LDL) Cholesterol, known as 'bad cholesterol,' can contribute to the buildup of plaque in the arteries, leading to atherosclerosis and increasing the risk of cardiovascular disease. Lowering LDL levels is a primary target for preventing heart disease, with levels below 130 mg/dL considered optimal for most people.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0,
-                                        100
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        100,
-                                        129
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        130,
-                                        159
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        160,
-                                        189
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "110",
-                                "98"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Cardiovascular Risk",
-                            "name": "Total Cholesterol",
-                            "more_info": "Total Cholesterol is a composite measurement of low-density lipoprotein (LDL), high-density lipoprotein (HDL), and triglycerides (TG). A level below 200 mg/dL is considered healthy, but the individual components of total cholesterol are more important for assessing cardiovascular risk. For instance, a higher HDL-to-LDL ratio may reduce cardiovascular risk even if total cholesterol is elevated.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        160,
-                                        200
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        140,
-                                        160
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        125,
-                                        140
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        125
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "167",
-                                "150"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Cardiovascular Risk",
-                            "name": "Triglycerides",
-                            "more_info": "Triglycerides are a type of fat found in the blood, produced from excess dietary calories. Elevated triglyceride levels (above 150 mg/dL) are linked to an increased risk of cardiovascular disease and may also be a sign of metabolic dysfunction, such as insulin resistance. Triglyceride levels are most accurately measured after fasting for 8-12 hours.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0,
-                                        100
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        100,
-                                        149
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        150,
-                                        199
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        200,
-                                        499
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "82",
-                                "68"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 8,
-                    "needs_focus_count": 0
+                "Good": {
+                  "range": [["Slightly cloudy"]],
+                  "label": "Cloudy"
                 },
-                {
-                    "subcategory": "Arterial Thickness",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Arterial Thickness",
-                            "name": "Left Distal CCA Mean CIMT",
-                            "more_info": "The Left Distal Common Carotid Artery (CCA) Mean Carotid Intima-Media Thickness (CIMT) is the average thickness of the inner layers of the left carotid artery. CIMT is a marker of atherosclerosis and cardiovascular disease risk, with thicker arterial walls indicating a higher risk of cardiovascular events. This measurement helps assess the extent of plaque buildup in the arteries.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mm",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0.7,
-                                        0.8
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        0.6,
-                                        0.7
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        0.4,
-                                        0.6
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        0.4
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "0.739",
-                                "0.799"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Arterial Thickness",
-                            "name": "Right Distal CCA Mean CIMT",
-                            "more_info": "The Right Distal Common Carotid Artery (CCA) Mean Carotid Intima-Media Thickness (CIMT) measures the thickness of the arterial wall in the right carotid artery. CIMT is used to evaluate cardiovascular disease risk, with increased thickness suggesting the presence of atherosclerosis or other vascular issues.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mm",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0.7,
-                                        0.8
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        0.6,
-                                        0.7
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        0.4,
-                                        0.6
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        0.4
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "0.643",
-                                "0.821"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 4,
-                    "needs_focus_count": 0
-                }
-            ]
-        },
-        {
-            "category": "Micronutrient Levels",
-            "subcategories": [
-                {
-                    "subcategory": "Major Essential Minerals",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Major Essential Minerals",
-                            "name": "Calcium",
-                            "more_info": "Calcium is vital for muscle, nerve, and heart function, with its levels tightly regulated by the kidneys and endocrine system. Abnormal levels—either high (hypercalcemia) or low (hypocalcemia)—can indicate underlying health issues, including parathyroid disorders or kidney disease.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": true,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        9.1,
-                                        10.2
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        8.8,
-                                        9
-                                    ],
-                                    [
-                                        10.3,
-                                        10.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        8.6,
-                                        8.7
-                                    ],
-                                    [
-                                        10.6,
-                                        11
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        8.5
-                                    ],
-                                    [
-                                        11.1,
-                                        15
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "8.1",
-                                "8.8"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Major Essential Minerals",
-                            "name": "Carbon Dioxide",
-                            "more_info": "Carbon dioxide (CO2) is involved in the body's acid-base balance as bicarbonate (HCO3). It helps buffer blood acidity. Low bicarbonate levels may indicate acidosis, often associated with conditions like diabetes, kidney disease, or chronic diarrhea. High bicarbonate suggests alkalosis, which can occur in conditions like vomiting or lung disease.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmol/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        25,
-                                        30
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        23,
-                                        25
-                                    ],
-                                    [
-                                        30,
-                                        33
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        21,
-                                        23
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        21
-                                    ],
-                                    [
-                                        33,
-                                        35
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "23",
-                                "23"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Major Essential Minerals",
-                            "name": "Phosphorus",
-                            "more_info": "Phosphorus is essential for energy production, bone health, and cell function. It is mainly stored in bones and muscles, with small amounts circulating in the blood. Imbalances in phosphorus levels can indicate problems with the parathyroid, kidney function, or vitamin D levels, often affecting calcium metabolism.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        3,
-                                        4.5
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        2.8,
-                                        3
-                                    ],
-                                    [
-                                        4.5,
-                                        4.8
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        2.5,
-                                        2.8
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        2.5
-                                    ],
-                                    [
-                                        4.8,
-                                        5
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "4",
-                                "6.3"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Major Essential Minerals",
-                            "name": "Potassium",
-                            "more_info": "Potassium is the main intracellular cation, crucial for heart and muscle function. High potassium levels (hyperkalemia) are typically seen in kidney disease or the use of certain medications, and can lead to life-threatening heart arrhythmias. Low potassium (hypokalemia) can cause muscle weakness, cramps, and irregular heart rhythms.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmol/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        4,
-                                        5
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        3.8,
-                                        4
-                                    ],
-                                    [
-                                        5,
-                                        5.3
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        3.5,
-                                        3.8
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        3.5
-                                    ],
-                                    [
-                                        5.3,
-                                        6
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "4.6",
-                                "4.3"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Major Essential Minerals",
-                            "name": "Sodium",
-                            "more_info": "Sodium is the primary positively charged ion in the extracellular space, essential for fluid balance, nerve function, and muscle contraction. Imbalances in sodium levels—either high (hypernatremia) or low (hyponatremia)—can result in serious conditions, including dehydration, kidney dysfunction, and heart failure.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mmol/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        137,
-                                        144
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        135,
-                                        137
-                                    ],
-                                    [
-                                        144,
-                                        146
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        130,
-                                        135
-                                    ],
-                                    [
-                                        146,
-                                        150
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        130
-                                    ],
-                                    [
-                                        150,
-                                        200
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "141",
-                                "142"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 10,
-                    "needs_focus_count": 1
+                "Ok": {
+                  "range": [["Cloudy"]],
+                  "label": "Cloudy"
                 },
-                {
-                    "subcategory": "Trace Essential Minerals",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Trace Essential Minerals",
-                            "name": "Iron",
-                            "more_info": "Iron is an essential nutrient involved in red blood cell production and numerous enzyme reactions. While iron deficiency can lead to anemia and fatigue, excessive iron can lead to harmful oxidative stress, increasing the risk for cardiovascular disease and certain cancers. Maintaining an optimal iron balance is crucial for health.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "µg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        70,
-                                        120
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        60,
-                                        70
-                                    ],
-                                    [
-                                        120,
-                                        160
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        40,
-                                        60
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        40
-                                    ],
-                                    [
-                                        160,
-                                        180
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "63",
-                                "70"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Trace Essential Minerals",
-                            "name": "Total Iron Binding Capacity (TIBC)",
-                            "more_info": "TIBC measures the total amount of iron-binding proteins (transferrin) in the blood. High TIBC is often seen in iron deficiency, while low TIBC suggests iron overload conditions.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "µg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        300,
-                                        400
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        250,
-                                        300
-                                    ],
-                                    [
-                                        400,
-                                        450
-                                    ]
-                                ],
-                                "Ok": [],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        250
-                                    ],
-                                    [
-                                        450,
-                                        500
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "269",
-                                "262"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Trace Essential Minerals",
-                            "name": "Unsaturated Iron Binding Capacity (UIBC)",
-                            "more_info": "UIBC is calculated by subtracting serum iron levels from TIBC. It can provide further insight into iron deficiency or overload when used alongside other tests.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "µg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        200,
-                                        300
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        180,
-                                        200
-                                    ],
-                                    [
-                                        300,
-                                        400
-                                    ]
-                                ],
-                                "Ok": [],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        180
-                                    ],
-                                    [
-                                        400,
-                                        450
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "166",
-                                "172"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 6,
-                    "needs_focus_count": 1
+                "Needs Focus": {
+                  "range": [["Very cloudy"]],
+                  "label": "Cloudy"
+                }
+              },
+              "values": ["Clear"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Blood (Hemoglobin)",
+              "more_info": "The presence of blood or hemoglobin in urine (hematuria) may indicate kidney stones, infections, trauma, or other urological conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["Negative"]],
+                  "label": "Negative"
                 },
-                {
-                    "subcategory": "Vitamins",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Vitamins",
-                            "name": "Vitamin D",
-                            "more_info": "Vitamin D is synthesized by the body when exposed to sunlight, playing a crucial role in calcium metabolism, bone health, and immune function. A deficiency in vitamin D is linked to conditions such as osteoporosis, hypertension, and cardiovascular issues. Vitamin D deficiency can be particularly common in individuals with limited sun exposure or poor dietary intake.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "ng/mL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        40,
-                                        80
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        30,
-                                        40
-                                    ],
-                                    [
-                                        80,
-                                        100
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        20,
-                                        30
-                                    ],
-                                    [
-                                        100,
-                                        120
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        20
-                                    ],
-                                    [
-                                        120,
-                                        150
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "49",
-                                "62"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 2,
-                    "needs_focus_count": 0
+                "Good": {
+                  "range": [["Trace"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Small"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Moderate", "Large"]],
+                  "label": "High"
                 }
-            ]
-        },
-        {
-            "category": "Renal Health",
-            "subcategories": [
-                {
-                    "subcategory": "Kidney Function",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Kidney Function",
-                            "name": "Creatinine",
-                            "more_info": "Creatinine is a byproduct of muscle metabolism, and its levels are used to assess kidney function. Since creatinine is filtered by the kidneys, its serum concentration provides insight into how well the kidneys are removing waste. Elevated levels may indicate impaired kidney function, while lower levels can be seen in individuals with reduced muscle mass.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0.8,
-                                        1.2
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        0.7,
-                                        0.8
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        0.5,
-                                        0.7
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        0.5
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "0.8",
-                                "0.7"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Kidney Function",
-                            "name": "Urea Nitrogen in Blood",
-                            "more_info": "Urea Nitrogen in Blood (BUN) is a waste product produced when the liver breaks down proteins. Elevated BUN levels can indicate kidney dysfunction, dehydration, or other conditions affecting kidney health. Normal levels suggest proper kidney filtration, while extremely low levels are rare and not usually of concern unless accompanied by other abnormal findings.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": true,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        10,
-                                        25
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        7,
-                                        10
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        2,
-                                        6
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        1
-                                    ],
-                                    [
-                                        25,
-                                        50
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "29",
-                                "28"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Kidney Function",
-                            "name": "Uric Acid",
-                            "more_info": "Uric acid is a byproduct of purine metabolism, which comes from the breakdown of nucleic acids (DNA and RNA). High levels of uric acid can result from excessive production, such as during chemotherapy or radiation, or from decreased excretion due to kidney dysfunction. Conditions like gout and kidney stones are associated with elevated uric acid, as crystals can form in joints or the kidneys. On the other hand, uric acid also acts as an antioxidant, and individuals with high-normal levels may experience better protection against free-radical damage.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        5,
-                                        7
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        4.5,
-                                        5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        2.5,
-                                        4.5
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        2.5
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "5.1",
-                                "5.5"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 6,
-                    "needs_focus_count": 2
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Casts /h.p.f",
+              "more_info": "Casts are cylindrical particles formed in the kidney tubules. Their presence may indicate kidney disease, infection, or other renal conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["None"]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [["Hyaline"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Granular"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Cellular"]],
+                  "label": "High"
                 }
-            ]
-        },
-        {
-            "category": "Hormonal Health",
-            "subcategories": [
-                {
-                    "subcategory": "Thyroid Function",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Thyroid Function",
-                            "name": "Free T3",
-                            "more_info": "Free T3 represents the unbound portion of triiodothyronine (T3) that is available for cellular uptake. Lower levels of free T3 are associated with decreased metabolic function, which can lead to symptoms like fatigue, weight gain, and depression. Free T3 tends to decline with age, contributing to various age-related health issues.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "pg/mL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        3.5,
-                                        4.2
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        3,
-                                        3.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        2.3,
-                                        3
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        2.3
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "3.3",
-                                "3.2"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Thyroid Function",
-                            "name": "Thyroid Stimulating Hormone",
-                            "more_info": "Thyroid Stimulating Hormone (TSH) is produced by the pituitary gland and stimulates the thyroid to release thyroid hormones (T3 and T4). High TSH levels suggest that the body is not producing enough thyroid hormone (hypothyroidism), while low TSH levels indicate excessive thyroid hormone production (hyperthyroidism).",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mIU/L",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        1,
-                                        4.5
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        0.8,
-                                        1
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        0.4,
-                                        0.8
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        0.4
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "1.2",
-                                "1.0"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Thyroid Function",
-                            "name": "Thyroxine",
-                            "more_info": "Thyroxine (T4) is the precursor to the more active thyroid hormone triiodothyronine (T3). Most of the thyroid hormone in circulation is in the form of T4, which is converted into T3 in the liver and other tissues. T4 levels help assess thyroid function and are useful in diagnosing thyroid disorders.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "µg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        9.5,
-                                        12
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        8.5,
-                                        9.5
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        7.5,
-                                        8.5
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        7.5
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "5.4",
-                                "5.3"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 6,
-                    "needs_focus_count": 0
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Color",
+              "more_info": "Urine color is assessed to evaluate hydration status and detect potential abnormalities. Variations in color can indicate conditions such as dehydration, hematuria, or liver disease.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["Light yellow"]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [["Yellow"]],
+                  "label": "Dark yellow or amber"
+                },
+                "Ok": {
+                  "range": [["Dark yellow"]],
+                  "label": "Dark yellow or amber"
+                },
+                "Needs Focus": {
+                  "range": [["Brown", "Red", "Cloudy"]],
+                  "label": "Dark yellow or amber"
                 }
-            ]
-        },
-        {
-            "category": "Metabolic Health",
-            "subcategories": [
-                {
-                    "subcategory": "Diabetes & Glucose",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Diabetes & Glucose",
-                            "name": "Glucose",
-                            "more_info": "Glucose is a simple sugar that serves as the body's primary energy source. It is critical for cellular function and is absorbed from food, primarily carbohydrates. Abnormal glucose levels, either too high or too low, can indicate issues such as diabetes or hypoglycemia, respectively.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "mg/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        90,
-                                        100
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        80,
-                                        90
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        70,
-                                        80
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        70
-                                    ],
-                                    [
-                                        101,
-                                        200
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "99",
-                                "95"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Diabetes & Glucose",
-                            "name": "Insulin",
-                            "more_info": "Insulin is a hormone produced by the pancreas that regulates blood glucose levels. It facilitates the uptake of glucose into cells for energy or storage. Elevated fasting insulin levels may indicate insulin resistance, a precursor to type 2 diabetes, while normal insulin levels suggest good metabolic health.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "µIU/mL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        0,
-                                        5
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        5,
-                                        10
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        10,
-                                        16
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        16,
-                                        100
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "10",
-                                "8"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 4,
-                    "needs_focus_count": 0
+              },
+              "values": ["Yellow"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Crystals",
+              "more_info": "Crystals in urine can indicate metabolic conditions or a risk for kidney stone formation. The type of crystals provides clues about underlying disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["None"]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [["Few"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Moderate"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Many"]],
+                  "label": "High"
                 }
-            ]
-        },
-        {
-            "category": "Hematology",
-            "subcategories": [
-                {
-                    "subcategory": "Blood",
-                    "biomarkers": [
-                        {
-                            "subcategory": "Blood",
-                            "name": "Hemoglobin",
-                            "more_info": "Hemoglobin is a protein in red blood cells responsible for transporting oxygen. When glucose binds to hemoglobin, it forms glycated hemoglobin (Hemoglobin A1C). The percentage of glycated hemoglobin reflects average blood glucose over a 3-4 month period, helping assess diabetes management and blood sugar control.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "g/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [],
-                                "Good": [
-                                    [
-                                        12,
-                                        16
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        10,
-                                        12
-                                    ],
-                                    [
-                                        16,
-                                        18
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        10
-                                    ],
-                                    [
-                                        18,
-                                        20
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "12",
-                                "13"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Mean Corpuscular Hemoglobin (MCH)",
-                            "more_info": "MCH measures the average amount of hemoglobin in each red blood cell. This value helps diagnose different types of anemia. Low MCH is often seen in iron deficiency anemia.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "pg",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        29,
-                                        33
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        28,
-                                        29
-                                    ],
-                                    [
-                                        33,
-                                        34
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        27,
-                                        28
-                                    ],
-                                    [
-                                        34,
-                                        35
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        27
-                                    ],
-                                    [
-                                        35,
-                                        36
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "31",
-                                "33"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Mean Corpuscular Hemoglobin Concentration (MCHC)",
-                            "more_info": "MCHC calculates the concentration of hemoglobin in red blood cells, indicating the amount of hemoglobin per red blood cell. It is particularly useful in diagnosing iron deficiency anemia, with low values signaling a lack of sufficient hemoglobin.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "g/dL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        33,
-                                        35
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        32,
-                                        33
-                                    ],
-                                    [
-                                        35,
-                                        36
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        31,
-                                        32
-                                    ],
-                                    [
-                                        36,
-                                        37
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        31
-                                    ],
-                                    [
-                                        37,
-                                        38
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "32.7",
-                                "33.8"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Mean Corpuscular Volume (MCV)",
-                            "more_info": "MCV measures the average size of red blood cells. Variations in MCV can indicate disease states or nutrient deficiencies. Larger red blood cells are commonly seen in vitamin B12 or folate deficiency, while smaller cells are often associated with iron deficiency anemia.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "fL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        85,
-                                        95
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        80,
-                                        85
-                                    ],
-                                    [
-                                        95,
-                                        100
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        75,
-                                        80
-                                    ],
-                                    [
-                                        100,
-                                        105
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        75
-                                    ],
-                                    [
-                                        105,
-                                        110
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "92",
-                                "94"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Mean Platelet Volume (MPV)",
-                            "more_info": "MPV measures the average size of platelets. High MPV values indicate larger platelets, which may increase the risk of heart attacks or strokes, while lower MPV values suggest smaller platelets, which can lead to bleeding disorders.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "fL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        8,
-                                        10
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        7.5,
-                                        8
-                                    ],
-                                    [
-                                        10,
-                                        11
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        7,
-                                        7.5
-                                    ],
-                                    [
-                                        11,
-                                        11.5
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        7
-                                    ],
-                                    [
-                                        11.5,
-                                        12
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "8.1"
-                            ],
-                            "date": [
-                                "2024-11-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Platelets",
-                            "more_info": "Platelets are critical components in blood clotting, produced from megakaryocytes in the bone marrow. They also release growth factors that support tissue repair. Abnormal platelet counts—either too low (thrombocytopenia) or too high (thrombocytosis)—can lead to increased bleeding or clotting risks. A normal platelet count ranges between 150,000 and 450,000 per microliter.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "thousand/µL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        200,
-                                        400
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        150,
-                                        200
-                                    ],
-                                    [
-                                        400,
-                                        450
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        140,
-                                        150
-                                    ],
-                                    [
-                                        450,
-                                        500
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        140
-                                    ],
-                                    [
-                                        500,
-                                        600
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "252",
-                                "241"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        },
-                        {
-                            "subcategory": "Blood",
-                            "name": "Red Blood Cells",
-                            "more_info": "Hemoglobin A1C, or glycated hemoglobin, is a form of hemoglobin that attaches to glucose in the blood over time. The percentage of glycated hemoglobin in red blood cells reflects average blood glucose levels over the past 3-4 months. Elevated levels suggest poor blood sugar control, indicating diabetes or prediabetes, while lower levels reflect healthier glucose regulation. Glycated hemoglobin is part of advanced glycation end-products (AGEs), which can impair protein function, leading to tissue damage and aging.",
-                            "cart_type": 2,
-                            "chart_type": "bar",
-                            "test_type": "vital",
-                            "unit": "million/µL",
-                            "duration": "6 Month",
-                            "outofref": false,
-                            "chart_bounds": {
-                                "Excellent": [
-                                    [
-                                        4.5,
-                                        5.1
-                                    ]
-                                ],
-                                "Good": [
-                                    [
-                                        4.2,
-                                        4.5
-                                    ],
-                                    [
-                                        5.1,
-                                        5.4
-                                    ]
-                                ],
-                                "Ok": [
-                                    [
-                                        3.8,
-                                        4.2
-                                    ],
-                                    [
-                                        5.4,
-                                        5.7
-                                    ]
-                                ],
-                                "Needs Focus": [
-                                    [
-                                        0,
-                                        3.8
-                                    ],
-                                    [
-                                        5.7,
-                                        6
-                                    ]
-                                ]
-                            },
-                            "values": [
-                                "4.4",
-                                "4.2"
-                            ],
-                            "date": [
-                                "2024-11-01",
-                                "2024-06-01"
-                            ]
-                        }
-                    ],
-                    "num_of_biomarkers": 13,
-                    "needs_focus_count": 0
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Glucose",
+              "more_info": "The presence of glucose in urine (glucosuria) is often a sign of diabetes or hyperglycemia and warrants further investigation.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[90, 100]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [[80, 90]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [[70, 80]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 70],
+                    [100, 200]
+                  ],
+                  "label": "High"
                 }
-            ]
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Mucus",
+              "more_info": "Mucus in urine is usually normal in small amounts, but excessive mucus may indicate irritation or inflammation of the urinary tract.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["None"]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [["Trace"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Moderate"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Excessive"]],
+                  "label": "High"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Nitrite",
+              "more_info": "Nitrite in urine is a marker for bacterial infections, particularly urinary tract infections caused by nitrate-reducing bacteria.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["Negative"]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [["Trace"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Positive"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Strongly Positive"]],
+                  "label": "High"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "pH",
+              "more_info": "Urine pH indicates its acidity or alkalinity. Abnormal values may suggest metabolic or renal conditions, such as acidosis, alkalosis, or infection.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[5, 7]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[7.1, 8]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[8.1, 9]],
+                  "label": "Normal"
+                },
+                "Needs Focus": {
+                  "range": [[9.1, 14]],
+                  "label": "High"
+                }
+              },
+              "values": ["5"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Protein",
+              "more_info": "The presence of protein in urine (proteinuria) can indicate kidney dysfunction, hypertension, or other systemic conditions like diabetes.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 10]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [[11, 30]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [[31, 100]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [[101, 500]],
+                  "label": "High"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Specific Gravity H",
+              "more_info": "Specific gravity measures the concentration of solutes in urine, reflecting the kidney's ability to concentrate or dilute urine. Abnormal values may indicate dehydration or kidney disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[1.005, 1.025]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[1.026, 1.03]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[1.031, 1.035]],
+                  "label": "Normal"
+                },
+                "Needs Focus": {
+                  "range": [[1.036, 1.05]],
+                  "label": "High"
+                }
+              },
+              "values": ["1.03"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Urobilinogen",
+              "more_info": "Urobilinogen in urine reflects liver function and bile flow. Elevated levels may indicate liver disease, hemolysis, or bile duct obstruction.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0.1, 1]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [[1.1, 2]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [[2.1, 4]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [[4.1, 8]],
+                  "label": "High"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Urine Test Parameters",
+              "name": "Yeast",
+              "more_info": "Yeast in urine may indicate a fungal infection, commonly seen in immunocompromised individuals or those with poorly controlled diabetes.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "N/A",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [["None"]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [["Few"]],
+                  "label": "Good"
+                },
+                "Ok": {
+                  "range": [["Moderate"]],
+                  "label": "Ok"
+                },
+                "Needs Focus": {
+                  "range": [["Many"]],
+                  "label": "High"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 13,
+          "needs_focus_count": 1
         }
-    ]
+      ]
+    },
+    {
+      "category": "Body Composition",
+      "subcategories": [
+        {
+          "subcategory": "Total Body Mass",
+          "biomarkers": [
+            {
+              "subcategory": "Total Body Mass",
+              "name": "BMI",
+              "more_info": "Body Mass Index (BMI) is a calculated value that assesses body weight in relation to height. It is used to classify individuals as underweight, normal weight, overweight, or obese, providing insight into overall health and disease risk.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "kg/mÂ²",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[18.5, 24.9]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[25, 29.9]],
+                  "label": "Overweight"
+                },
+                "Ok": {
+                  "range": [[30, 34.9]],
+                  "label": "Overweight"
+                },
+                "Needs Focus": {
+                  "range": [[35, 50]],
+                  "label": "Obesity"
+                }
+              },
+              "values": ["28.4"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 1,
+          "needs_focus_count": 0
+        }
+      ]
+    },
+    {
+      "category": "Renal Health",
+      "subcategories": [
+        {
+          "subcategory": "Kidney Function",
+          "biomarkers": [
+            {
+              "subcategory": "Kidney Function",
+              "name": "BUN",
+              "more_info": "BUN measures the amount of nitrogen in your blood that comes from urea, a waste product of protein metabolism. Since the kidneys filter urea from the bloodstream, this value is an important indicator of kidney function. Abnormal BUN levels can point to issues such as kidney dysfunction, dehydration, or liver disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[7, 18]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[19, 24]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[25, 29]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[30, 999]],
+                  "label": "High"
+                }
+              },
+              "values": ["18"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "BUN/Creatinine",
+              "more_info": "This value represents the calculated ratio between BUN and creatinine levels in your blood. It is used to provide additional context regarding kidney function by comparing these two waste products. The ratio helps differentiate between various causes of kidney impairment, as different conditions may alter BUN and creatinine levels in distinct ways.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ratio",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[10, 20]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[21, 25]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[26, 30]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[31, 999]],
+                  "label": "High"
+                }
+              },
+              "values": ["18"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Calcium (Ca)",
+              "more_info": "Calcium is an essential mineral for bone health, muscle function, and nerve signaling. Abnormal levels may indicate parathyroid disorders, bone diseases, or kidney problems.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[8.5, 10.2]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[10.3, 11]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[11.1, 12]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[12, 20]],
+                  "label": "High"
+                }
+              },
+              "values": ["9.4"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Calculated Serum Osmolality",
+              "more_info": "Calculated serum osmolality estimates the concentration of solutes in the blood, helping to evaluate hydration status and electrolyte balance.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mOsm/kg",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[280, 295]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[296, 300]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[301, 310]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[311, 400]],
+                  "label": "High"
+                }
+              },
+              "values": ["292"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Creatinine",
+              "more_info": "Creatinine is a byproduct of muscle metabolism, and its levels are used to assess kidney function. Since creatinine is filtered by the kidneys, its serum concentration provides insight into how well the kidneys are removing waste. Elevated levels may indicate impaired kidney function, while lower levels can be seen in individuals with reduced muscle mass.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[0.7, 1.3]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [
+                    [0.5, 0.7],
+                    [1.3, 1.5]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 0.5],
+                    [1.5, 2]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["1"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Direct Bilirubin",
+              "more_info": "Direct bilirubin measures the conjugated form of bilirubin, which is processed by the liver. High levels are often associated with liver disease or bile duct blockages.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 0.3]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[0.31, 0.5]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[0.51, 1]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[1, 5]],
+                  "label": "High"
+                }
+              },
+              "values": ["0.3"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "eGFR",
+              "more_info": "Estimated Glomerular Filtration Rate (eGFR) evaluates kidney function and is used to stage chronic kidney disease. Lower values indicate reduced kidney function.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mL/min/1.73mÂ²",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[90, 120]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[60, 89]],
+                  "label": "Mild Decrease"
+                },
+                "Ok": {
+                  "range": [[30, 59]],
+                  "label": "Moderate Decrease"
+                },
+                "Needs Focus": {
+                  "range": [[0, 29]],
+                  "label": "Severe Decrease"
+                }
+              },
+              "values": ["97"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Iron (Fe)",
+              "more_info": "Iron is crucial for hemoglobin production and oxygen transport in the blood. Low levels can indicate anemia, while high levels may suggest iron overload or metabolic issues.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Âµg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[60, 170]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[171, 200]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[201, 250]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[251, 500]],
+                  "label": "High"
+                }
+              },
+              "values": ["111"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Iron Binding Capacity (TIBC)",
+              "more_info": "Iron Binding Capacity (TIBC) measures the blood's capacity to bind iron with transferrin. It helps evaluate iron status and is often used to diagnose anemia or iron overload conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Âµg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[250, 450]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[451, 500]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[501, 550]],
+                  "label": "Normal"
+                },
+                "Needs Focus": {
+                  "range": [[551, 700]],
+                  "label": "High"
+                }
+              },
+              "values": ["309"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Magnesium (Mg)",
+              "more_info": "Magnesium is an essential mineral for muscle and nerve function, as well as energy production. Abnormal levels can affect heart rhythm, muscle function, and overall metabolism.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[1.7, 2.2]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[2.3, 2.5]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[2.6, 3]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[3, 5]],
+                  "label": "High"
+                }
+              },
+              "values": ["2.1"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Phosphatase Alkaline",
+              "more_info": "Alkaline Phosphatase (ALP) is an enzyme linked to the liver, bile ducts, and bones. Elevated levels can indicate liver disease, bile duct blockage, or bone disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "U/L",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[40, 130]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[131, 150]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[151, 200]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[201, 1000]],
+                  "label": "High"
+                }
+              },
+              "values": ["208"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Phosphorus (P)",
+              "more_info": "Phosphorus is vital for bone and teeth formation, energy metabolism, and cell function. Abnormal levels may signal kidney disease or issues with calcium and vitamin D metabolism.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[2.5, 4.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[4.6, 5.5]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[5.6, 6]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[6, 15]],
+                  "label": "High"
+                }
+              },
+              "values": ["3.7"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Potassium (K)",
+              "more_info": "Potassium is an essential electrolyte for heart, muscle, and nerve function. Abnormal levels can affect cardiac rhythm and muscle performance.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mEq/L",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[3.5, 5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[5.1, 5.5]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[5.6, 6]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[6, 10]],
+                  "label": "High"
+                }
+              },
+              "values": ["4.8"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Sodium (Na)",
+              "more_info": "Sodium is a key electrolyte that helps maintain fluid balance and proper nerve and muscle function. Abnormal levels can indicate dehydration, kidney issues, or hormonal imbalances.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mEq/L",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[135, 145]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[146, 150]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[151, 155]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[156, 200]],
+                  "label": "High"
+                }
+              },
+              "values": ["140"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "TG / HDL Ratio",
+              "more_info": "The Triglyceride to HDL Cholesterol (TG/HDL) ratio is used to assess cardiovascular risk. A higher ratio is associated with an increased risk of atherosclerosis and heart disease.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Ratio",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 2]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[2, 4]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [[4, 6]],
+                  "label": "Moderate High"
+                },
+                "Needs Focus": {
+                  "range": [[6, 20]],
+                  "label": "High"
+                }
+              },
+              "values": ["8.3"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Uric Acid",
+              "more_info": "Uric acid is a byproduct of purine metabolism. Elevated levels can cause gout and kidney stones or indicate other metabolic disorders like hyperuricemia.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[3.5, 7.2]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [
+                    [2.5, 3.5],
+                    [7.2, 8]
+                  ],
+                  "label": "Moderate High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 2.5],
+                    [8, 10]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["8"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "VLDL/TG Ratio",
+              "more_info": "The VLDL to Triglyceride (VLDL/TG) ratio helps evaluate the efficiency of lipid metabolism. Abnormal values may suggest metabolic disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Ratio",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 0.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[0.6, 1]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [[1.1, 1.5]],
+                  "label": "Moderate High"
+                },
+                "Needs Focus": {
+                  "range": [[1.6, 5]],
+                  "label": "High"
+                }
+              },
+              "values": ["0.19"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Kidney Function",
+              "name": "Zinc (Zn)",
+              "more_info": "Zinc is a trace element critical for immune function, wound healing, and enzyme activity. Abnormal levels may affect immunity, growth, or metabolic functions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Âµg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[70, 120]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[121, 140]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[141, 160]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[161, 300]],
+                  "label": "High"
+                }
+              },
+              "values": ["121"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 18,
+          "needs_focus_count": 2
+        }
+      ]
+    },
+    {
+      "category": "Tumor Marker",
+      "subcategories": [
+        {
+          "subcategory": "Tumor health",
+          "biomarkers": [
+            {
+              "subcategory": "Tumor health",
+              "name": "CA 19-9",
+              "more_info": "CA 19-9 is a tumor marker primarily associated with pancreatic, gastrointestinal, and bile duct cancers. Elevated levels may indicate malignancy or inflammation in the gastrointestinal system.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "U/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 37]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[37, 50]],
+                  "label": "Borderline"
+                },
+                "Ok": {
+                  "range": [[50, 100]],
+                  "label": "Borderline"
+                },
+                "Needs Focus": {
+                  "range": [[100, 1000]],
+                  "label": "High"
+                }
+              },
+              "values": ["6.2"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Tumor health",
+              "name": "CEA (Carcinoembryonic Ag)",
+              "more_info": "CEA, or Carcinoembryonic Antigen, is a tumor marker used primarily to monitor colorectal cancer and other malignancies. Elevated levels may indicate cancer presence or recurrence, though it can also be elevated in non-cancerous conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ng/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 2.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[2.5, 5]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[5, 10]],
+                  "label": "Borderline"
+                },
+                "Needs Focus": {
+                  "range": [[10, 100]],
+                  "label": "High"
+                }
+              },
+              "values": ["1.7"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Tumor health",
+              "name": "P.S.A .Free (PSA.F)",
+              "more_info": "Free Prostate-Specific Antigen (PSA_F) is the unbound form of PSA in the blood. The ratio of free to total PSA is used to differentiate between benign and malignant prostate conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ng/mL",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 0.1]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[0.1, 0.25]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[0.25, 0.5]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[0.5, 100]],
+                  "label": "Low"
+                }
+              },
+              "values": ["0.33"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Tumor health",
+              "name": "P.S.A .Total (PSA.T)",
+              "more_info": "Total Prostate-Specific Antigen (PSA.T) is a protein produced by the prostate gland. Elevated levels may indicate prostate cancer, benign prostatic hyperplasia, or inflammation of the prostate.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ng/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 1]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[1, 2.5]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[2.5, 4]],
+                  "label": "Borderline"
+                },
+                "Needs Focus": {
+                  "range": [[4, 100]],
+                  "label": "High"
+                }
+              },
+              "values": ["0.87"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 4,
+          "needs_focus_count": 1
+        }
+      ]
+    },
+    {
+      "category": "Cardiovascular Health",
+      "subcategories": [
+        {
+          "subcategory": "Cardiovascular Risk",
+          "biomarkers": [
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "Cholesterol/HDL Ratio",
+              "more_info": "The Total Cholesterol/HDL ratio compares the amount of total cholesterol to HDL cholesterol in the blood. A lower ratio indicates a healthier balance and reduced cardiovascular risk. It is a useful marker for assessing overall heart health.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "-",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 3.5]],
+                  "label": "Desirable"
+                },
+                "Good": {
+                  "range": [[3.6, 4.5]],
+                  "label": "Desirable"
+                },
+                "Ok": {
+                  "range": [[4.6, 5.5]],
+                  "label": "Borderline High"
+                },
+                "Needs Focus": {
+                  "range": [[5.6, 10]],
+                  "label": "High"
+                }
+              },
+              "values": ["5.4"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "HDL Cholestrol",
+              "more_info": "HDL (High-Density Lipoprotein) cholesterol is often called 'good' cholesterol because it helps remove other forms of cholesterol from the bloodstream. Higher levels of HDL are associated with a lower risk of heart disease. Maintaining healthy HDL levels supports cardiovascular health.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[60, 1000]],
+                  "label": "High"
+                },
+                "Good": {
+                  "range": [[50, 59]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[40, 49]],
+                  "label": "Normal"
+                },
+                "Needs Focus": {
+                  "range": [[0, 39]],
+                  "label": "Low"
+                }
+              },
+              "values": ["45"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "LDL Cholesterol",
+              "more_info": "LDL (Low-Density Lipoprotein) cholesterol is known as 'bad' cholesterol because it can build up in the walls of arteries, leading to plaque formation. High levels increase the risk of atherosclerosis and cardiovascular disease. Monitoring LDL levels is crucial for heart health.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 100]],
+                  "label": "High"
+                },
+                "Good": {
+                  "range": [[101, 129]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[130, 159]],
+                  "label": "Normal"
+                },
+                "Needs Focus": {
+                  "range": [[160, 1000]],
+                  "label": "Low"
+                }
+              },
+              "values": ["125"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "LDL/HDL Ratio",
+              "more_info": "The LDL to HDL Cholesterol (LDL/HDL) ratio is a marker for cardiovascular health. A lower ratio is desirable as it indicates a healthier lipid profile.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "-",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[1, 2]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[2.1, 3]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [[3.1, 4]],
+                  "label": "Moderate High"
+                },
+                "Needs Focus": {
+                  "range": [[4.1, 10]],
+                  "label": "High"
+                }
+              },
+              "values": ["2.8"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "Non HDL Cholesterol",
+              "more_info": "Non-HDL cholesterol represents the total 'bad' cholesterol in your blood by subtracting HDL (the 'good' cholesterol) from your total cholesterol. This value includes LDL, VLDL, and other atherogenic particles that can contribute to plaque buildup in the arteries. Monitoring and managing non-HDL cholesterol levels is important for assessing cardiovascular risk and supporting overall heart health.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 129]],
+                  "label": "Optimal"
+                },
+                "Good": {
+                  "range": [[130, 159]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [[160, 189]],
+                  "label": "Borderline High"
+                },
+                "Needs Focus": {
+                  "range": [[190, 300]],
+                  "label": "High"
+                }
+              },
+              "values": ["198"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Cardiovascular Risk",
+              "name": "VLDL Cholesterol H",
+              "more_info": "VLDL (Very Low-Density Lipoprotein) cholesterol primarily carries triglycerides to tissues and is a precursor to LDL cholesterol. High levels can contribute to plaque buildup in arteries, increasing cardiovascular risk. It is typically calculated based on triglyceride levels.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/dL",
+              "duration": "6 Month",
+              "outofref": true,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 20]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[21, 30]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[31, 40]],
+                  "label": "Borderline High"
+                },
+                "Needs Focus": {
+                  "range": [[41, 1000]],
+                  "label": "High"
+                }
+              },
+              "values": ["73"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 6,
+          "needs_focus_count": 2
+        }
+      ]
+    },
+    {
+      "category": "Serology",
+      "subcategories": [
+        {
+          "subcategory": "Inflammatory health",
+          "biomarkers": [
+            {
+              "subcategory": "Inflammatory health",
+              "name": "CRP (Titer)",
+              "more_info": "C-reactive protein (CRP) is a marker of inflammation in the body. Elevated levels can indicate acute or chronic inflammatory conditions, infections, or autoimmune diseases. The titer measurement helps assess the severity of inflammation.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg/L",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 1]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[1, 3]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [[3, 10]],
+                  "label": "Mildly Elevated"
+                },
+                "Needs Focus": {
+                  "range": [[10, 100]],
+                  "label": "Severely Elevated"
+                }
+              },
+              "values": ["5"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Inflammatory health",
+              "name": "RF",
+              "more_info": "Rheumatoid Factor (RF) is an antibody associated with autoimmune disorders, particularly rheumatoid arthritis. Elevated levels are often seen in individuals with inflammatory joint diseases or other autoimmune conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "IU/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 14]],
+                  "label": "Negative"
+                },
+                "Good": {
+                  "range": [[14, 20]],
+                  "label": "Low Positive"
+                },
+                "Ok": {
+                  "range": [[20, 30]],
+                  "label": "Low Positive"
+                },
+                "Needs Focus": {
+                  "range": [[30, 100]],
+                  "label": "High Positive"
+                }
+              },
+              "values": ["Negative"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 2,
+          "needs_focus_count": 0
+        }
+      ]
+    },
+    {
+      "category": "Hematology",
+      "subcategories": [
+        {
+          "subcategory": "Blood",
+          "biomarkers": [
+            {
+              "subcategory": "Blood",
+              "name": "Eos#",
+              "more_info": "Eosinophils (Eos#) are white blood cells involved in allergic responses and fighting parasitic infections. Elevated levels are often associated with allergies, asthma, or parasitic infections.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 0.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[0.51, 0.7]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[0.71, 1]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[1.1, 10]],
+                  "label": "High"
+                }
+              },
+              "values": ["0.1"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "ESR 1st hr",
+              "more_info": "Erythrocyte Sedimentation Rate (ESR) measures the rate at which red blood cells settle in a tube over one hour. It is a nonspecific marker of inflammation, infection, or autoimmune conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mm/hr",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 20]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[21, 30]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[31, 40]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[41, 100]],
+                  "label": "High"
+                }
+              },
+              "values": ["3"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Hematocrit (Hct)",
+              "more_info": "Hematocrit (Hct) represents the percentage of blood volume occupied by red blood cells. Abnormal values may indicate anemia, dehydration, or other conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[38, 50]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [35, 37],
+                    [51, 53]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [30, 34],
+                    [54, 60]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 29],
+                    [61, 100]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["47.9"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Hemoglobin (Hb)",
+              "more_info": "Hemoglobin (Hb) is a protein in red blood cells responsible for oxygen transport. Low levels indicate anemia, while high levels may suggest polycythemia or other conditions.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "g/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[13.5, 17.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [12, 13.4],
+                    [17.6, 18]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [10, 11.9],
+                    [18.1, 20]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 9.9],
+                    [20.1, 30]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["16.6"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Lymp#",
+              "more_info": "Lymphocytes (Lymp#) are white blood cells that are part of the immune system, helping fight viral infections and producing antibodies. Abnormal levels may indicate infections, immune disorders, or lymphoproliferative diseases.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[1, 4.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [0.8, 0.9],
+                    [4.6, 5]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [0.5, 0.7],
+                    [5.1, 6]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 0.4],
+                    [6.1, 100]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["2.6"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "M.C.H",
+              "more_info": "Mean Corpuscular Hemoglobin (MCH) measures the average amount of hemoglobin in a red blood cell. Abnormal values help diagnose types of anemia.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "pg",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[27, 33]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [26, 26.9],
+                    [33.1, 34]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [25, 25.9],
+                    [34.1, 36]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 24.9],
+                    [36.1, 50]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["32"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "M.C.H.C",
+              "more_info": "Mean Corpuscular Hemoglobin Concentration (MCHC) measures the average concentration of hemoglobin in red blood cells. It helps evaluate the type and severity of anemia.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "g/dL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[32, 36]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [31, 31.9],
+                    [36.1, 37]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [30, 30.9],
+                    [37.1, 38]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 29.9],
+                    [38.1, 50]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["35"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "M.C.V",
+              "more_info": "Mean Corpuscular Volume (MCV) measures the average size of red blood cells. It is used to classify anemias as microcytic, normocytic, or macrocytic.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "fL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[80, 100]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [76, 79],
+                    [101, 105]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [70, 75],
+                    [106, 110]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 69],
+                    [111, 200]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["91"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Mono#",
+              "more_info": "Monocytes (Monor) are a type of white blood cell involved in removing debris and fighting infections. Elevated levels may indicate chronic inflammation or certain infections.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0.2, 0.8]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [0.1, 0.19],
+                    [0.81, 1]
+                  ],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [
+                    [0.05, 0.09],
+                    [1.01, 1.5]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 0.04],
+                    [1.51, 10]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["0.5"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "MPV",
+              "more_info": "Mean Platelet Volume (MPV) measures the average size of platelets. Larger platelets may indicate increased platelet production, while smaller ones may suggest certain platelet disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "fL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[7.5, 11.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [7, 7.4],
+                    [11.6, 12]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [6.5, 6.9],
+                    [12.1, 13]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 6.4],
+                    [13.1, 20]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["8.1"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Neut#",
+              "more_info": "Neutrophils (Neut#) are a type of white blood cell that plays a critical role in fighting bacterial and fungal infections. Elevated or decreased levels can indicate infection or immune system issues.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[2, 7.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [1.5, 1.9],
+                    [7.6, 8.5]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [1, 1.4],
+                    [8.6, 10]
+                  ],
+                  "label": "Low"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 0.9],
+                    [10.1, 100]
+                  ],
+                  "label": "Low"
+                }
+              },
+              "values": ["3.9"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "PCT",
+              "more_info": "Plateletcrit (PCT) is a measure of the volume occupied by platelets in the blood, used to assess overall platelet mass.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0.2, 0.36]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [0.18, 0.19],
+                    [0.37, 0.4]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [0.15, 0.17],
+                    [0.41, 0.5]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 0.14],
+                    [0.51, 1]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["0.27"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "PDW",
+              "more_info": "Platelet Distribution Width (PDW) measures the variation in platelet size, which can indicate platelet activation or disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[9, 14]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[14.1, 15]],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [[15.1, 16]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[16.1, 20]],
+                  "label": "High"
+                }
+              },
+              "values": ["10"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Platelets (Plt)",
+              "more_info": "Platelet count measures the number of platelets in the blood, which are essential for blood clotting. Abnormal levels may indicate clotting disorders or bone marrow issues.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[150, 450]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [120, 149],
+                    [451, 500]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [100, 119],
+                    [501, 600]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 99],
+                    [601, 1000]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["336"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "R.B.C",
+              "more_info": "Red Blood Cell (RBC) count measures the number of red blood cells in the blood. It helps assess oxygen transport capacity and can indicate anemia or polycythemia.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^6/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[4.5, 5.9]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [4, 4.4],
+                    [6, 6.5]
+                  ],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [
+                    [3.5, 3.9],
+                    [6.6, 7]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 3.4],
+                    [7.1, 10]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["5.26"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "RDW",
+              "more_info": "Red Cell Distribution Width (RDW) measures the variation in size of red blood cells. Increased RDW can indicate anemia or other blood disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[11.5, 14.5]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[14.6, 15]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[15.1, 16]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[16.1, 30]],
+                  "label": "High"
+                }
+              },
+              "values": ["13.2"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "Transferrin Saturation",
+              "more_info": "Transferrin saturation indicates the percentage of transferrin—the main protein responsible for transporting iron in the blood—that is bound with iron. This metric is crucial for evaluating iron metabolism, as low levels can suggest iron deficiency while high levels may point to conditions like iron overload. Monitoring transferrin saturation helps in diagnosing and managing various iron-related disorders, ensuring proper oxygen delivery and overall metabolic balance.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[20, 50]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[15, 20]],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [[10, 15]],
+                  "label": "Low"
+                },
+                "Needs Focus": {
+                  "range": [[0, 10]],
+                  "label": "Low"
+                }
+              },
+              "values": ["36"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Blood",
+              "name": "WBC",
+              "more_info": "White Blood Cell (WBC) count measures the number of white blood cells in the blood, which are essential for fighting infections and responding to inflammation.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "x10^3/ÂµL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[4, 10]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [
+                    [3, 3.9],
+                    [10.1, 12]
+                  ],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [
+                    [2, 2.9],
+                    [12.1, 15]
+                  ],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 1.9],
+                    [15.1, 100]
+                  ],
+                  "label": "High"
+                }
+              },
+              "values": ["7.1"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 18,
+          "needs_focus_count": 0
+        }
+      ]
+    },
+    {
+      "category": "Micronutrient Levels",
+      "subcategories": [
+        {
+          "subcategory": "Major Essential Minerals",
+          "biomarkers": [
+            {
+              "subcategory": "Major Essential Minerals",
+              "name": "Folic Acid (Vit B9)",
+              "more_info": "Folic Acid, or Vitamin B9, is essential for DNA synthesis, red blood cell production, and neural health. Low levels can lead to anemia, neural tube defects during pregnancy, and other health issues.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ng/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[5, 20]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[3, 4.9]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[2, 2.9]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[0, 1.9]],
+                  "label": "High"
+                }
+              },
+              "values": ["13"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Major Essential Minerals",
+              "name": "Total Body Iron Storage",
+              "more_info": "Total body iron storage represents the overall iron reserves in the body, including ferritin and hemosiderin. It is crucial for evaluating iron balance and diagnosing conditions like anemia or hemochromatosis.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "mg",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[300, 1000]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[200, 299]],
+                  "label": "Low"
+                },
+                "Ok": {
+                  "range": [[100, 199]],
+                  "label": "Low"
+                },
+                "Needs Focus": {
+                  "range": [[0, 99]],
+                  "label": "Low"
+                }
+              },
+              "values": ["42.9"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 2,
+          "needs_focus_count": 0
+        },
+        {
+          "subcategory": "Vitamins",
+          "biomarkers": [
+            {
+              "subcategory": "Vitamins",
+              "name": "Vitamin B12 (Cobalamin) -",
+              "more_info": "Vitamin B12, also known as Cobalamin, is crucial for nerve function, red blood cell formation, and DNA synthesis. Deficiency can lead to megaloblastic anemia, neurological issues, and fatigue.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "pg/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[200, 900]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[150, 199]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[100, 149]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[0, 99]],
+                  "label": "High"
+                }
+              },
+              "values": ["490"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Vitamins",
+              "name": "Vitamin D (25 OH)",
+              "more_info": "Vitamin D (25 OH) is a marker for assessing vitamin D levels in the body, which are essential for bone health, immune function, and calcium metabolism. Deficiency can lead to bone disorders such as rickets or osteomalacia.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ng/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[30, 50]],
+                  "label": "Sufficient"
+                },
+                "Good": {
+                  "range": [[20, 29]],
+                  "label": "Insufficient"
+                },
+                "Ok": {
+                  "range": [[10, 19]],
+                  "label": "Deficient"
+                },
+                "Needs Focus": {
+                  "range": [[0, 9]],
+                  "label": "Deficient"
+                }
+              },
+              "values": ["38"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 2,
+          "needs_focus_count": 0
+        }
+      ]
+    },
+    {
+      "category": "Metabolic Health",
+      "subcategories": [
+        {
+          "subcategory": "Diabetes & Glucose",
+          "biomarkers": [
+            {
+              "subcategory": "Diabetes & Glucose",
+              "name": "Hb A1C",
+              "more_info": "HbA1c measures the percentage of glycated hemoglobin in the blood, reflecting the average blood glucose levels over the past two to three months. It is a crucial test for managing diabetes, indicating how well blood sugar levels have been controlled. Higher HbA1c levels suggest poorer glucose control and an increased risk of diabetes complications, while lower HbA1c levels indicate better glucose management.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "%",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[5.7, 6.4]],
+                  "label": "Normal"
+                },
+                "Ok": {
+                  "range": [
+                    [4, 5.7],
+                    [6.4, 7]
+                  ],
+                  "label": "Prediabetes"
+                },
+                "Needs Focus": {
+                  "range": [
+                    [0, 4],
+                    [7, 10]
+                  ],
+                  "label": "Diabetes"
+                }
+              },
+              "values": ["5.2"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Diabetes & Glucose",
+              "name": "HOMA-IR",
+              "more_info": "The Homeostatic Model Assessment for Insulin Resistance (HOMA-IR) is a calculated marker that assesses insulin resistance and beta-cell function. It is a key indicator of metabolic health and diabetes risk.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "Ratio",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[0, 1.9]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[2, 2.9]],
+                  "label": "Borderline High"
+                },
+                "Ok": {
+                  "range": [[3, 4]],
+                  "label": "Borderline High"
+                },
+                "Needs Focus": {
+                  "range": [[4.1, 10]],
+                  "label": "High"
+                }
+              },
+              "values": ["2.11"],
+              "date": ["2025-02-04"]
+            },
+            {
+              "subcategory": "Diabetes & Glucose",
+              "name": "Insulin",
+              "more_info": "Insulin is a hormone produced by the pancreas that regulates blood sugar levels by facilitating glucose uptake into cells. High or low levels may indicate insulin resistance, diabetes, or other metabolic disorders.",
+              "cart_type": 2,
+              "chart_type": "bar",
+              "test_type": "vital",
+              "unit": "ÂµIU/mL",
+              "duration": "6 Month",
+              "outofref": false,
+              "chart_bounds": {
+                "Excellent": {
+                  "range": [[2, 19]],
+                  "label": "Normal"
+                },
+                "Good": {
+                  "range": [[20, 25]],
+                  "label": "High"
+                },
+                "Ok": {
+                  "range": [[26, 30]],
+                  "label": "High"
+                },
+                "Needs Focus": {
+                  "range": [[31, 100]],
+                  "label": "High"
+                }
+              },
+              "values": ["8"],
+              "date": ["2025-02-04"]
+            }
+          ],
+          "num_of_biomarkers": 3,
+          "needs_focus_count": 0
+        }
+      ]
+    }
+  ]
 }

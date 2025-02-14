@@ -9,17 +9,17 @@
   width: 100%;
   --sb-track-color: #e9f0f200;
   --sb-thumb-color: #e5e5e5;
-  --sb-size: 8px;  
+  --sb-size: 8px;
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* For Firefox */
-input[type="number"] {
-    -moz-appearance: textfield;
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 
 /* icons */
@@ -60,7 +60,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-dashboard {
   mask-image: url(/icons/side-menu/dashboard.svg);
@@ -72,7 +71,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-shared-witth-you {
   mask-image: url(/icons/side-menu/shared-witth-you.svg);
@@ -84,7 +82,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-messages {
   mask-image: url(/icons/side-menu/messages.svg);
@@ -96,7 +93,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-money-send {
   mask-image: url(/icons/side-menu/bookmark-2.svg);
@@ -108,7 +104,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-reports {
   mask-image: url(/icons/side-menu/reports.svg);
@@ -120,7 +115,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 
 .sidemenu-menu-icon-packages {
@@ -133,7 +127,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-setting {
   mask-image: url(/icons/side-menu/setting-2.svg);
@@ -145,7 +138,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-trend-up {
   mask-image: url(/icons/side-menu/trend-up.svg);
@@ -157,7 +149,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-drift-analysis {
   mask-image: url(/icons/status-up.svg);
@@ -169,7 +160,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 .sidemenu-menu-icon-home {
   mask-image: url(/icons/side-menu/home-2.svg);
@@ -181,7 +171,6 @@ input[type="number"] {
   mask-position: center;
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
-
 }
 /* .report-side-menu-layer-icon{
   mask-image: url('/public//icons//menu.svg');
@@ -191,98 +180,67 @@ input[type="number"] {
   mask-position: center;
   @apply  h-4;
 } */
-.spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    width: 50px;
-    height: 50px;
-  }
-  
-  .dot {
-    width: 10px;
-    height: 10px;
-    background-color: #ccc;
-    border-radius: 50%;
-    position: absolute;
-    animation: dotSpin 1.2s infinite linear;
-  }
-  .gradient-border {
-    border-style: solid;
-    
-    border-image: linear-gradient(to right, #005F73 , #6CC24A ) 1;
-  }
-  .text-gradient {
-    background: linear-gradient(to right, #005F73, #6CC24A);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  .dot:nth-child(1) { transform: rotate(0deg) translate(20px); animation-delay: 0s; }
-  .dot:nth-child(2) { transform: rotate(45deg) translate(20px); animation-delay: 0.15s; }
-  .dot:nth-child(3) { transform: rotate(90deg) translate(20px); animation-delay: 0.3s; }
-  .dot:nth-child(4) { transform: rotate(135deg) translate(20px); animation-delay: 0.45s; }
-  .dot:nth-child(5) { transform: rotate(180deg) translate(20px); animation-delay: 0.6s; }
-  .dot:nth-child(6) { transform: rotate(225deg) translate(20px); animation-delay: 0.75s; }
-  .dot:nth-child(7) { transform: rotate(270deg) translate(20px); animation-delay: 0.9s; }
-  .dot:nth-child(8) { transform: rotate(315deg) translate(20px); animation-delay: 1.05s; }
-  
-  @keyframes dotSpin {
-    0%, 100% { background-color: #ccc; }
-    50% { background-color: #4CAF50; }
-  }
-@layer utilities {
-    .TextStyle-Button {
-        @apply text-xs font-medium;
-    }
-    .TextStyle-Overline {
-        @apply text-[10px] font-medium;
-    }
-    .TextStyle-Headline-1 {
-        @apply text-[32px] font-medium;
-    }
-    .TextStyle-Headline-2 {
-        @apply text-[24px] font-medium;
-    }
-    .TextStyle-Headline-3 {
-        @apply text-[20px] font-medium;
-    }
-    .TextStyle-Headline-4 {
-        @apply text-[16px] font-medium;
-    }
-    .TextStyle-Headline-5 {
-        @apply text-[14px] font-medium;
-    }
-    .TextStyle-Headline-6 {
-        @apply text-[12px] font-medium;
-    }                
 
-    .TextStyle-Body-1 {
-        @apply text-[14px] ;
-    } 
-    .TextStyle-Body-2 {
-        @apply text-[12px] ;
-    }     
-    .TextStyle-Body-3 {
-        @apply text-[10px] ;
-    }   
-    
-    .TextStyle-Subtitle-1 {
-        @apply text-[16px] font-medium;
-    }  
-    .TextStyle-Subtitle-2 {
-        @apply text-[14px] font-medium;
-    }                 
+.gradient-border {
+  border-style: solid;
+
+  border-image: linear-gradient(to right, #005f73, #6cc24a) 1;
+}
+.text-gradient {
+  background: linear-gradient(to right, #005f73, #6cc24a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
+@layer utilities {
+  .TextStyle-Button {
+    @apply text-xs font-medium;
+  }
+  .TextStyle-Overline {
+    @apply text-[10px] font-medium;
+  }
+  .TextStyle-Headline-1 {
+    @apply text-[32px] font-medium;
+  }
+  .TextStyle-Headline-2 {
+    @apply text-[24px] font-medium;
+  }
+  .TextStyle-Headline-3 {
+    @apply text-[20px] font-medium;
+  }
+  .TextStyle-Headline-4 {
+    @apply text-[16px] font-medium;
+  }
+  .TextStyle-Headline-5 {
+    @apply text-xs md:text-[14px] font-medium;
+  }
+  .TextStyle-Headline-6 {
+    @apply text-[12px] font-medium;
+  }
 
+  .TextStyle-Body-1 {
+    @apply text-[14px];
+  }
+  .TextStyle-Body-2 {
+    @apply text-[12px];
+  }
+  .TextStyle-Body-3 {
+    @apply text-[10px];
+  }
+
+  .TextStyle-Subtitle-1 {
+    @apply text-[16px] font-medium;
+  }
+  .TextStyle-Subtitle-2 {
+    @apply text-[14px] font-medium;
+  }
+}
 
 .Aurora-TextArea-container {
   @apply flex flex-col  w-[100%]  gap-y-1;
 }
 .Aurora-TextArea-label {
-  @apply leading-[19.36px] text-[12px] font-[500] text-Text-Primary opacity-85 ;
+  @apply leading-[19.36px] text-[12px] font-[500] text-Text-Primary opacity-85;
 }
 .Aurora-TextArea-input {
   @apply focus:outline-none h-[95px] w-full resize-none px-2 rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[16px]  placeholder:font-[300]   pb-[12px] pt-[10px] border dark:border-[#383838]   bg-white  dark:bg-[#1E1E1E];
@@ -292,7 +250,7 @@ input[type="number"] {
   @apply border-red-500 border;
 }
 .Aurora-TextArea-box {
-  @apply rounded-[4px] flex items-center justify-between ;
+  @apply rounded-[4px] flex items-center justify-between;
 }
 .Aurora-TextArea-togglePassword {
   @apply cursor-pointer;
@@ -316,7 +274,7 @@ input[type="number"] {
   @apply border-red-500 border;
 }
 .Aurora-S-TextArea-box {
-  @apply rounded-[4px] flex items-center justify-between ;
+  @apply rounded-[4px] flex items-center justify-between;
 }
 .Aurora-S-TextArea-togglePassword {
   @apply cursor-pointer;
@@ -326,23 +284,12 @@ input[type="number"] {
   @apply text-red-500 text-xs -mt-1;
 }
 
-
 .hidden-scrollbar::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Edge */
 }
 
-.shadow-chat-input{
-  box-shadow: 4px 0px 12px 0px #CACAD740;
-}
-
-
-
-
-
-
-
 ::-webkit-scrollbar {
-  width: var(--sb-size)
+  width: var(--sb-size);
 }
 
 ::-webkit-scrollbar-track {
@@ -353,12 +300,18 @@ input[type="number"] {
 ::-webkit-scrollbar-thumb {
   background: var(--sb-thumb-color);
   border-radius: 8px;
-  
+}
+.react-datepicker {
+  left: 14px;
+}
+@media (max-width: 640px) {
+  .max-sm-absolute {
+    position: absolute;
+  }
 }
 
 @supports not selector(::-webkit-scrollbar) {
   body {
-    scrollbar-color: var(--sb-thumb-color)
-                     var(--sb-track-color);
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }

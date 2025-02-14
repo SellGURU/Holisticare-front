@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/PerformanceChart.tsx
-import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import React, { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   LineElement,
@@ -11,10 +11,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { ChartOptions, Plugin } from "chart.js";
-import { BeatLoader } from "react-spinners";
-import { resolveMaxValue, sortKeysWithValues } from "./Boxs/Help";
+} from 'chart.js';
+import { ChartOptions, Plugin } from 'chart.js';
+import { BeatLoader } from 'react-spinners';
+import { resolveMaxValue, sortKeysWithValues } from './Boxs/Help';
 
 // Register necessary components from Chart.js
 ChartJS.register(
@@ -24,7 +24,7 @@ ChartJS.register(
   PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 interface PerformanceChartProps {
@@ -40,65 +40,68 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   dataPoints,
   statusBar,
 }) => {
-  const maxVal = resolveMaxValue(statusBar)
-  const [themeColor, setThemeColor] = useState(localStorage.getItem("theme-base") || "light");
-  const [, setXLabelColor] = useState(themeColor === "dark" ? "#FFFFFFDE" : "#262626");
+  const maxVal = resolveMaxValue(statusBar);
+  const [themeColor, setThemeColor] = useState(
+    localStorage.getItem('theme-base') || 'light',
+  );
+  const [, setXLabelColor] = useState(
+    themeColor === 'dark' ? '#FFFFFFDE' : '#262626',
+  );
   useEffect(() => {
     const handleThemeChange = () => {
-      const newThemeColor = localStorage.getItem("theme-base") || "light";
+      const newThemeColor = localStorage.getItem('theme-base') || 'light';
       setThemeColor(newThemeColor);
-      setXLabelColor(newThemeColor === "dark" ? "#FFFFFFDE" : "#262626");
+      setXLabelColor(newThemeColor === 'dark' ? '#FFFFFFDE' : '#262626');
     };
 
     // Assume that 'mode' changes indicate a theme change
     handleThemeChange();
   }, [mode]);
-    const resolveColor =(key:string) => {
-      if(key == 'Needs Focus'){
-        return '#FC5474'
-      }
-      if(key == 'Ok'){
-        return '#FBAD37'
-      }   
-      if(key == 'Good'){
-        return '#06C78D'
-      }   
-      if(key == 'Excellent'){
-        return '#7F39FB'
-      }                
-      return "#FBAD37"
-    }  
-    const resolveLayerColor = (key:string) => {
-      if(key == 'Needs Focus'){
-        return 'rgba(252, 84, 116, 0.1)'
-      }
-      if(key == 'Ok'){
-        return 'rgba(251, 173, 55, 0.3)'
-      }   
-      if(key == 'Good'){
-        return 'rgba(6, 199, 141, 0.1)'
-      }   
-      if(key == 'Excellent'){
-        return 'rgba(250, 110, 245,0.1)'
-      }                
-      return "#FBAD37"
+  const resolveColor = (key: string) => {
+    if (key == 'Needs Focus') {
+      return '#FC5474';
     }
+    if (key == 'Ok') {
+      return '#FBAD37';
+    }
+    if (key == 'Good') {
+      return '#06C78D';
+    }
+    if (key == 'Excellent') {
+      return '#7F39FB';
+    }
+    return '#FBAD37';
+  };
+  const resolveLayerColor = (key: string) => {
+    if (key == 'Needs Focus') {
+      return 'rgba(252, 84, 116, 0.1)';
+    }
+    if (key == 'Ok') {
+      return 'rgba(251, 173, 55, 0.3)';
+    }
+    if (key == 'Good') {
+      return 'rgba(6, 199, 141, 0.1)';
+    }
+    if (key == 'Excellent') {
+      return 'rgba(250, 110, 245,0.1)';
+    }
+    return '#FBAD37';
+  };
   // Chart Data
   const pointColors = dataPoints.map((value) => {
-    let resolvedColor = '#FC5474'
+    let resolvedColor = '#FC5474';
     sortKeysWithValues(statusBar).forEach((el) => {
-      if(value>= el.value[0] && value<el.value[1]){
-        resolvedColor = resolveColor(el.key)
+      if (value >= el.value[0] && value < el.value[1]) {
+        resolvedColor = resolveColor(el.key);
       }
-    })
-    return resolvedColor
-
+    });
+    return resolvedColor;
   });
   const data = {
     labels: labels, // Labels passed as props
     datasets: [
       {
-        label: "value",
+        label: 'value',
         data: dataPoints, // Data points passed as props
         fill: false,
         pointBackgroundColor: pointColors, // Point fill color
@@ -113,7 +116,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   };
 
   // Chart Options
-  const options: ChartOptions<"line"> = {
+  const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false, // Disable aspect ratio to control height
     scales: {
@@ -124,7 +127,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
       },
       x: {
         ticks: {
-          color: "#005F73", // Change the text color of x-axis labels
+          color: '#005F73', // Change the text color of x-axis labels
           font: {
             size: 10, // Change the font size of x-axis labels
           },
@@ -143,8 +146,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   };
 
   // Plugin to draw background layers for "Perfect", "Good", and "Need Focus"
-  const backgroundLayerPlugin: Plugin<"line"> = {
-    id: "backgroundLayer",
+  const backgroundLayerPlugin: Plugin<'line'> = {
+    id: 'backgroundLayer',
     beforeDraw: (chart) => {
       const {
         ctx,
@@ -160,13 +163,13 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
           left,
           y.getPixelForValue(yMax),
           right - left,
-          y.getPixelForValue(yMin) - y.getPixelForValue(yMax)
+          y.getPixelForValue(yMin) - y.getPixelForValue(yMax),
         );
         ctx.restore();
       };
       sortKeysWithValues(statusBar).forEach((el) => {
         drawLayer(el.value[0], el.value[1], resolveLayerColor(el.key));
-      })
+      });
       // if (mode == "multi") {
       //   drawLayer(0, statusBar["Needs Focus"][0][1], "rgba(252, 84, 116, 0.1)");
 
@@ -202,34 +205,33 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
       //       statusBar["Good"][0][0],
       //       statusBar["Good"][0][1],
       //       "rgba(6, 199, 141, 0.1)"
-      //     );        
+      //     );
       //     drawLayer(
       //       statusBar["Ok"][0][0],
       //       statusBar["Ok"][0][1],
       //       "rgba(251, 173, 55, 0.3)"
-      //     );   
+      //     );
       //     drawLayer(
       //       statusBar["Needs Focus"][1][0],
       //       statusBar["Needs Focus"][1][1],
       //       "rgba(252, 84, 116, 0.1)"
-      //     );                   
+      //     );
       //   }else {
       //     drawLayer(
       //       statusBar["Good"][0][0],
       //       statusBar["Good"][0][1],
       //       "rgba(6, 199, 141, 0.1)"
-      //     );        
+      //     );
       //     drawLayer(
       //       statusBar["Ok"][0][0],
       //       statusBar["Ok"][0][1],
       //       "rgba(251, 173, 55, 0.3)"
-      //     );   
+      //     );
       //     drawLayer(
       //       statusBar["Needs Focus"][0][0],
       //       statusBar["Needs Focus"][0][1],
       //       "rgba(252, 84, 116, 0.1)"
-      //     );             
-
+      //     );
 
       //   }
 
@@ -256,8 +258,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
           <BeatLoader size={8} color="#0CBC84"></BeatLoader>
         </div>
       ) : (
-        <div style={{ width: "100%", height: "90px" }}>
-          {" "}
+        <div style={{ width: '100%', height: '90px' }}>
+          {' '}
           {/* Set container height to 64px */}
           <Line
             data={data}

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef } from "react";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useRef } from 'react';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+// import { useNavigate, useParams } from 'react-router-dom';
+import TooltipText from '../TooltipText';
 // import ConfirmModal from "./sections/ConfirmModal";
 
 // type CardData = {
@@ -17,8 +18,8 @@ interface ActionPlanCardProps {
   el: any;
   index: number;
   onDelete: (cardID: number) => void;
-  onClick:() => void
-  isActive?:boolean
+  onClick: () => void;
+  isActive?: boolean;
 }
 
 export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
@@ -26,24 +27,24 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   index,
   onDelete,
   onClick,
-  isActive
+  isActive,
 }) => {
   // const { status, title, subtitle, progress, time, cardID } = el;
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  // const navigate = useNavigate();
+  // const { id } = useParams<{ id: string }>();
 
   const resolveStatusColor = () => {
     switch (el.state) {
-      case "Completed":
-        return "#55DD4A";
-      case "On Going":
-        return "#3C79D6";
-      case "Paused":
-        return "#E84040";
-      case "Upcoming":
-        return "#FFC123";
+      case 'Completed':
+        return '#55DD4A';
+      case 'On Going':
+        return '#3C79D6';
+      case 'Paused':
+        return '#E84040';
+      case 'Upcoming':
+        return '#FFC123';
       default:
-        return "#3C79D6"; // Fallback color
+        return '#3C79D6'; // Fallback color
     }
   };
 
@@ -61,14 +62,18 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   const [DeleteConfirm, setDeleteConfirm] = useState(false);
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
-  const isDisabled = el.status === "Completed";
+  const isDisabled = el.state === 'Completed';
 
   return (
     <div
-      onClick={() => onClick()}
-      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen':'border-Gray-50  '}  ${
-        isDisabled ? "opacity-45 cursor-not-allowed" : ""
-      }`} 
+      onClick={() => {
+        if (!isDisabled) {
+          onClick();
+        }
+      }}
+      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
+        isDisabled ? 'opacity-45 cursor-not-allowed' : ''
+      }`}
     >
       <div className="flex w-full items-start start-0  px-2 justify-between">
         <div className="flex items mt-2 gap-1 TextStyle-Body-3  text-Text-Primary">
@@ -76,23 +81,26 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
             style={{ backgroundColor: resolveStatusColor() }}
             className={`w-2 h-2 rounded-full mt-1`}
           ></div>
-          {el.state? el.state :'On Going'}
+          {el.state ? el.state : 'On Going'}
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
           className="w-[65px] z-[-1] h-[46px] border-t border-Gray-50   rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  "
         >
-          {index<10 && 0}{index}
+          {index < 10 && 0}
+          {index}
         </div>
-        <div className="relative py-3">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isDisabled) {
+              setshowModal(!showModal);
+            }
+          }}
+          className="relative py-3"
+        >
           <img
             ref={showModalButtonRefrence}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!isDisabled) {
-                setshowModal(!showModal);
-              }
-            }}
             className=" cursor-pointer"
             src="/icons/dots.svg"
             alt=""
@@ -102,7 +110,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
               ref={showModalRefrence}
               className="absolute top-5 right-0 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
             >
-              <div
+              {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
@@ -111,13 +119,9 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
               >
-                <img
-               
-                  src="icons/targeting-green.svg"
-                  alt=""
-                />
+                <img src="/icons/targeting-green.svg" alt="" />
                 Targeting
-              </div>
+              </div> */}
               {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -134,7 +138,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 />
                 Calendar
               </div> */}
-              <div
+              {/* <div
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!isDisabled) {
@@ -143,14 +147,9 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
               >
-              
-                <img
-                  
-                  src="icons/edit-green.svg"
-                  alt=""
-                />
+                <img src="/icons/edit-green.svg" alt="" />
                 Edit
-              </div>
+              </div> */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -159,27 +158,35 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
                   }
                 }}
                 className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
-                
               >
                 {DeleteConfirm ? (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!isDisabled) {
-                        onDelete(el.id);
-                      }
-                    }}
-                    className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
-                  >
-                    Sure?{" "}
+                  <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
+                    Sure?{' '}
+                    <div className="flex items-center w-full justify-end gap-[2px]">
+                      <img
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isDisabled) {
+                            onDelete(el.id);
+                            setshowModal(false);
+                          }
+                        }}
+                        src="/icons/confirm-tick-circle.svg"
+                        alt=""
+                      />
+                      <img
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setshowModal(false);
+                        }}
+                        src="/icons/cansel-close-circle.svg"
+                        alt=""
+                      />
+                    </div>
                   </div>
                 ) : (
                   <>
-                    <img
-                      
-                      src="icons/delete-green.svg"
-                      alt=""
-                    />
+                    <img src="/icons/delete-green.svg" alt="" />
                     Remove
                   </>
                 )}
@@ -189,9 +196,13 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
       </div>
       <div className="mt-2 flex flex-col items-center justify-center gap-[6px]">
-        <h5 className="TextStyle-Headline-6 text-Text-Primary">
+        <TooltipText
+          tooltipValue={el.title}
+          className="w-[80%] text-center TextStyle-Headline-6 text-Text-Primary"
+        >
+          {/* <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5> */}
           {el.title}
-        </h5>
+        </TooltipText>
         <h6 className="TextStyle-Body-3 text-nowrap overflow-hidden text-ellipsis w-[80%] text-Text-Secondary">
           {el.description}
         </h6>

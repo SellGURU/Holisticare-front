@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   className?: string;
-  type: "text" | "password" | "email" | "phone" | "searchBox";
+  type: 'text' | 'password' | 'email' | 'phone' | 'searchBox';
   inValid?: boolean;
   errorMessage?: string;
 }
@@ -13,6 +13,7 @@ const TextField: React.FC<TextFieldProps> = ({
   className,
   inValid,
   errorMessage,
+  onChange,
   type,
   ...props
 }) => {
@@ -23,10 +24,47 @@ const TextField: React.FC<TextFieldProps> = ({
   };
 
   const getInputType = () => {
-    if (type === "password" && showPassword) {
-      return "text";
+    if (type === 'password' && showPassword) {
+      return 'text';
     }
     return type;
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+
+    if (type === 'email') {
+      // Remove only leading spaces for email type
+      const trimmedValue = value.replace(/^\s+/, '');
+      // Alternatively, you can use: const trimmedValue = value.trimStart();
+
+      // Only proceed if trimming changed the value
+      if (trimmedValue !== value) {
+        const newEvent = {
+          ...event,
+          target: {
+            ...event.target,
+            value: trimmedValue,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        if (onChange) {
+          onChange(newEvent);
+        }
+        return; // Exit early since we've handled the trimmed value
+      }
+    } else {
+      // For non-email types, prevent leading spaces
+      if (value.startsWith(' ')) {
+        // Optionally, you can show a warning or simply ignore the input
+        return; // Do not call onChange, effectively preventing the change
+      }
+    }
+
+    // If no modifications are needed, call the original onChange handler
+    if (onChange) {
+      onChange(event);
+    }
   };
 
   return (
@@ -40,25 +78,27 @@ const TextField: React.FC<TextFieldProps> = ({
         <input
           type={getInputType()}
           className={`w-full h-[32px] rounded-[16px] mt-1 border placeholder:text-gray-400 text-[12px] px-3 outline-none ${
-            inValid ? "border-red-500" : "border-gray-50"
-          } shadow-300`}
+            inValid ? 'border-red-500' : 'border-gray-50'
+          } 
+            ${type === 'password' ? 'pr-8' : ''}
+            shadow-300`}
           {...props}
+          onChange={handleChange}
         />
-        {type === "password" && (
+        {type === 'password' && (
           <div
             onClick={togglePassword}
-            className="absolute top-2 right-0 pr-3 flex items-center text-sm cursor-pointer"
+            className="absolute top-3 right-0 pr-3 flex items-center text-sm cursor-pointer"
           >
             {showPassword ? (
-                <img src="/icons/eyeOff.svg" alt="" />
+              <img src="/icons/eye-slash.svg" alt="" />
             ) : (
-                <img src="/icons/eyeOn.svg" alt="" />
-
+              <img src="/icons/eye.svg" alt="" />
             )}
           </div>
         )}
       </div>
-      {inValid &&  (
+      {inValid && (
         <span className="text-red-500 text-[10px] mt-1">{errorMessage}</span>
       )}
     </div>

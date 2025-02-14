@@ -1,34 +1,34 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 // import { Auth } from "@/api";
 // import { useApp } from "@/hooks";
-import Auth from "../../api/auth";
-import { useApp } from "../../hooks";
-import { useNavigate } from "react-router-dom";
+import Auth from '../../api/auth';
+import { useApp } from '../../hooks';
+import { useNavigate } from 'react-router-dom';
 // import { Button, TextField } from "symphony-ui";
-import TextField from "../../Components/TextField";
-import { useFormik } from "formik";
-import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
-import * as yup from "yup";
+import TextField from '../../Components/TextField';
+import { useFormik } from 'formik';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import * as yup from 'yup';
 const validationSchema = yup.object({
   username: yup
     .string()
-    .min(4, "username must be at least 4 characters")
-    .required("Username is required"),
+    .min(4, 'username must be at least 4 characters')
+    .required('Username is required'),
   email: yup
     .string()
-    .email("Enter a valid email")
-    .required("Email is required"),
+    .email('Enter a valid email')
+    .required('Email is required'),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(
       /[@$!%*?&#]/,
-      "Password must contain at least one special character"
+      'Password must contain at least one special character',
     )
-    .required("Password is required"),
+    .required('Password is required'),
 });
 
 const SignUp: React.FC = () => {
@@ -39,9 +39,9 @@ const SignUp: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
-      email: "",
-      password: "",
+      username: '',
+      email: '',
+      password: '',
     },
     validationSchema,
 
@@ -50,24 +50,24 @@ const SignUp: React.FC = () => {
         const signupResponse = await Auth.signup(
           values.username,
           values.email,
-          values.password
+          values.password,
         );
-        console.log("User registered successfully:", signupResponse.data);
+        console.log('User registered successfully:', signupResponse.data);
 
         try {
           const loginResponse = await Auth.login(values.email, values.password);
           appContext.login(
             loginResponse.data.access_token,
-            loginResponse.data.permission
+            loginResponse.data.permission,
           );
-          console.log("User logged in successfully:", loginResponse.data);
+          console.log('User logged in successfully:', loginResponse.data);
 
-          navigate("/");
+          navigate('/');
         } catch (loginError) {
-          console.error("Login failed:", loginError);
+          console.error('Login failed:', loginError);
         }
       } catch (signupError) {
-        console.error("Registration failed:", signupError);
+        console.error('Registration failed:', signupError);
       }
     },
   });
@@ -79,7 +79,6 @@ const SignUp: React.FC = () => {
     !formik.values.email ||
     !formik.values.password ||
     !checkboxChecked;
-  !formik.isValid;
   return (
     <div className="w-full h-screen flex  justify-center dark:bg-black-background px-12 pt-[66px] gap-20 overflow-auto ">
       <div className=" h-full hidden md:block w-[40%] self-center">
@@ -93,11 +92,11 @@ const SignUp: React.FC = () => {
         />
         <div className="flex flex-col  gap-5 mt-6  ">
           <h3 className="text-2xl font-medium text-Text-Primary">
-            {" "}
+            {' '}
             Create Account!
           </h3>
           <TextField
-            {...formik.getFieldProps("username")}
+            {...formik.getFieldProps('username')}
             label="Username"
             placeholder="Enter your username..."
             name="username"
@@ -109,7 +108,7 @@ const SignUp: React.FC = () => {
             }
           ></TextField>
           <TextField
-            {...formik.getFieldProps("email")}
+            {...formik.getFieldProps('email')}
             label="Email Address"
             placeholder="Enter your email address..."
             name="email"
@@ -121,7 +120,7 @@ const SignUp: React.FC = () => {
             }
           ></TextField>
           <TextField
-            {...formik.getFieldProps("password")}
+            {...formik.getFieldProps('password')}
             label="Password"
             placeholder="Enter your password..."
             name="password"
@@ -134,7 +133,7 @@ const SignUp: React.FC = () => {
           ></TextField>
           <div className="w-full">
             <ButtonSecondary
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               onClick={() => {
                 // e.preventDefault();
                 handleSubmit();
@@ -151,7 +150,7 @@ const SignUp: React.FC = () => {
               className="flex items-center space-x-2 cursor-pointer mt-2"
             >
               <input
-              id="terms"
+                id="terms"
                 type="checkbox"
                 checked={checkboxChecked}
                 onChange={() => setCheckboxChecked(!checkboxChecked)}
@@ -159,7 +158,7 @@ const SignUp: React.FC = () => {
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Primary-DeepTeal ${
-                  checkboxChecked ? "bg-Primary-DeepTeal" : " bg-white "
+                  checkboxChecked ? 'bg-Primary-DeepTeal' : ' bg-white '
                 }`}
               >
                 {checkboxChecked && (
@@ -181,8 +180,8 @@ const SignUp: React.FC = () => {
                 I agree with
                 <span className="text-brand-primary-color">
                   Terms & Conditions
-                </span>{" "}
-                and{" "}
+                </span>{' '}
+                and{' '}
                 <span className="text-brand-primary-color">Privacy Policy</span>
                 .
               </div>
@@ -205,13 +204,13 @@ const SignUp: React.FC = () => {
           </ButtonSecondary> */}
 
           <div className="font-normal text-sm text-Text-Primary">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <span
-              onClick={() => navigate("/login")}
+              onClick={() => navigate('/login')}
               className="text-Primary-EmeraldGreen cursor-pointer text-base font-medium"
             >
               Sign in
-            </span>{" "}
+            </span>{' '}
           </div>
         </div>
       </div>

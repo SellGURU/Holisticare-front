@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from "react";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
+import { useState, useRef, useEffect } from 'react';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
-import TreatmentCard from "./TreatmentCard";
-import { ButtonPrimary } from "../Button/ButtonPrimary";
-import { SlideOutPanel } from "../SlideOutPanel";
-import { useNavigate , useParams} from "react-router-dom";
-import Application from "../../api/app";
+import TreatmentCard from './TreatmentCard';
+import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { SlideOutPanel } from '../SlideOutPanel';
+import { useNavigate, useParams } from 'react-router-dom';
+import Application from '../../api/app';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
+
 type CardData = {
   id: number;
   date: string;
@@ -38,22 +40,28 @@ const initialCardData: CardData[] = [
 ];
 
 interface TreatmentPlanProps {
-  treatmentPlanData:any
+  treatmentPlanData: any;
+  setPrintActionPlan: (value: any) => void;
+  isShare?: boolean;
 }
 
-export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) => {
+export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
+  treatmentPlanData,
+  setPrintActionPlan,
+  isShare,
+}) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
-      case "Completed":
-        return "#55DD4A";
-      case "On Going":
-        return "#3C79D6";
-      case "Paused":
-        return "#E84040";
-      case "Upcoming":
-        return "#FFC123";
+      case 'Completed':
+        return '#55DD4A';
+      case 'On Going':
+        return '#3C79D6';
+      case 'Paused':
+        return '#E84040';
+      case 'Upcoming':
+        return '#FFC123';
       default:
-        return "#000000"; // Fallback color
+        return '#000000'; // Fallback color
     }
   };
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
@@ -64,230 +72,95 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
     buttonRefrence: showModalButtonRefrence,
     close: () => {
       setShowModalIndex(null);
+      setDeleteConfirmIndex(null);
     },
   });
   const [cardData, setCardData] = useState<Array<any>>(initialCardData);
 
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(
-    null
+    null,
   );
-  const [aciveTreatmentPlan, setActiveTreatmentplan] = useState("Diet");
-  const [TreatMentPlanData,setTreatmentPlanData] = useState<any>(treatmentPlanData);
+  const [aciveTreatmentPlan, setActiveTreatmentplan] = useState('Diet');
+  const [TreatMentPlanData, setTreatmentPlanData] =
+    useState<any>(treatmentPlanData);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
-  const [NeedFocusData,setNeedFocusData] = useState<Array<any>>([])
-  const handleDeleteCard = (index: number) => {
-    setCardData((prevCardData) => prevCardData.filter((_, i) => i !== index));
-    setShowModalIndex(null);
-    setDeleteConfirmIndex(null);
-  };
-  const navigate = useNavigate()
+  const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
+  const [clientSummary, setclientSummary] = useState('second');
+
+  const navigate = useNavigate();
   const [clientGools, setClientGools]: any = useState({});
   const { id } = useParams<{ id: string }>();
-  const [activeTreatment,setActiveTreatmnet] = useState('')
+  const [activeTreatment, setActiveTreatmnet] = useState('');
   useEffect(() => {
-    Application.showHistory({
-      member_id:id
-    }).then((res) => {
-      setCardData(res.data)
-      if(res.data.length> 0){
-        setActiveTreatmnet(res.data[res.data.length-1].t_plan_id)
-        
-      }
-      setTimeout(() => {
-        const container:any = document.getElementById('scrollContainer');
-        if(container){
-          container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+    if (!isShare) {
+      Application.showHistory({
+        member_id: id,
+      }).then((res) => {
+        setCardData(res.data);
+        setPrintActionPlan(res.data);
+        if (res.data.length > 0) {
+          setActiveTreatmnet(res.data[res.data.length - 1].t_plan_id);
         }
-        
-      }, 500);
-    })
-  },[])
-  useEffect(() => {
-    if(activeTreatment != ''){
-        Application.getTreatmentPlanDetail({
-          treatment_id:activeTreatment,
-          member_id:id
-        }).then((res) => {
-          setTreatmentPlanData(res.data.details)
-          if(res.data.client_goals!=null){
-            setClientGools(res.data.client_goals)
+        setTimeout(() => {
+          const container: any = document.getElementById('scrollContainer');
+          if (container) {
+            container.scrollLeft = container.scrollWidth; // Set scroll to the very end
           }
-          setNeedFocusData(res.data.need_focus_benchmarks)
-        })
+        }, 500);
+      });
     }
-  },[activeTreatment])
+  }, []);
+  useEffect(() => {
+    if (activeTreatment != '' && !isShare) {
+      Application.getTreatmentPlanDetail({
+        treatment_id: activeTreatment,
+        member_id: id,
+      }).then((res) => {
+        setTreatmentPlanData(res.data.details);
+        if (res.data.client_goals != null) {
+          setClientGools(res.data.client_goals);
+        }
+        setNeedFocusData(res.data.need_focus_benchmarks);
+        setclientSummary(res.data.medical_summary);
+      });
+    }
+  }, [activeTreatment]);
+  const handleDeleteCard = (index: number, id: string) => {
+    if (index === cardData.length - 1) {
+      Application.deleteHolisticPlan({
+        treatment_id: id,
+      });
+
+      setCardData((prevCardData) => {
+        const newCardData = prevCardData.filter((_, i) => i !== index);
+        if (index > 0) {
+          setActiveTreatmnet(newCardData[index - 1].t_plan_id);
+        } else if (newCardData.length > 0) {
+          setActiveTreatmnet(newCardData[0].t_plan_id);
+        } else {
+          setActiveTreatmnet('');
+        }
+        return newCardData;
+      });
+
+      setShowModalIndex(null);
+      setDeleteConfirmIndex(null);
+    }
+  };
   return (
     <>
-      {cardData.length < 1 ? (
-        <div className="w-full h-[450px] flex justify-center items-center">
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <img src="/icons/EmptyState.svg" alt="" />
-            <div className="text-base font-medium text-Text-Primary -mt-9">
-              No Treatment Plan Generated Yet
-            </div>
-            <div className="text-xs text-Text-Primary mt-2 mb-5">
-              Start creating your treatment plan
-            </div>
-            <ButtonPrimary             onClick={()=>navigate(`/report/Generate-Holistic-Plan/${id}`)}
-  >
-              <img src="/icons/tick-square.svg" alt="" /> Generate New
-            </ButtonPrimary>
-          </div>
-
-        </div>
-      ) : (
-        <div className="">
-          <div className="w-full mb-3 flex items-center justify-between">
-            {/* <div
-            id="Treatment Plan"
-            className="TextStyle-Headline-4 text-Text-Primary"
-          >
-            Treatment Plan{" "}
-          </div> */}
-            <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
-              {/* Total of 30 Treatment in 4 category */}
-            </div>
-            {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
-          </div>
-          <></>
-          <div id="scrollContainer" className="flex items-center overflow-x-auto hidden-scrollbar  justify-start  p-4 -mt-12 ">
-            {cardData.map((card, index: number) => (
-              <div
-                key={card.id}
-                className={` ${card.state == "Upcoming" && "opacity-60"} ${
-                  index % 2 == 0 ? "mt-10 " : "mt-0"
-                } relative flex flex-col   items-center -ml-10  `}
-              >
-                {index % 2 == 0 ? (
-                  <img
-                    className="relative min-w-[191px] -bottom-[63px]"
-                    src="/images/Group (1).svg"
-                    alt=""
-                  />
-                ) : (
-                  <img className="relative  min-w-[191px] " src="/images/Group.svg" alt="" />
-                )}
-
-                <div
-                  onClick={() => {
-                    setActiveTreatmnet(card.t_plan_id)
-                  }}
-                  className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
-                    activeTreatment == card.t_plan_id
-                      ? "border-Primary-EmeraldGreen"
-                      : "border-Gray-25"
-                  }`}
-                >
-                  <div className=" flex w-full justify-center items-center flex-col gap-2">
-                    <div className="flex w-full  justify-center ">
-                      <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs text-Text-Primary  ">
-                        {index+1<10&& 0}{index + 1}
-                      </div>
-                      {card.state == "On Going" && (
-                        <img
-                          onClick={() => setShowModalIndex(index)}
-                          className="-mr-5 ml-3 cursor-pointer"
-                          src="/icons/dots.svg"
-                          alt=""
-                        />
-                      )}
-                    </div>
-
-                    <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
-                      <img src="/icons/calendar-2.svg" alt="" />
-                      {card.formatted_date.split(',')[0]}
-                    </div>
-                    <div
-                      // style={{ backgroundColor: resolveStatusColor() }}
-                      className={`text-[10px] flex gap-1 items-center`}
-                    >
-                      <div
-                        style={{
-                          backgroundColor: resolveStatusColor(card.state),
-                        }}
-                        className={`w-2 h-2 rounded-full `}
-                      ></div>
-                      {card.state}
-                    </div>
-                  </div>
-                  {showModalIndex === index && (
-                    <div
-                      ref={showModalRefrence}
-                      className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] px-2 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
-                    >
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          //   if (!isDisabled) {
-                          //     navigate(`/action-plan/edit/${id}`);
-                          //   }
-                        }}
-                        className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
-                      >
-                        <img src="/icons/edit-green.svg" alt="" />
-                        Edit
-                      </div>
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (card.status == "On Going") {
-                            setDeleteConfirmIndex(index);
-                          }
-                        }}
-                        className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
-                      >
-                        {deleteConfirmIndex === index ? (
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteCard(index);
-                            }}
-                            className="TextStyle-Body-2 text-Primary-EmeraldGreen w-full flex items-center justify-center"
-                          >
-                            Sure?{" "}
-                          </div>
-                        ) : (
-                          <>
-                            <img src="/icons/delete-green.svg" alt="" />
-                            Remove
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            <div
-            onClick={()=>navigate(`/report/Generate-Holistic-Plan/${id}`)}
-              className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
-            >
-              <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-              <div className="text-sm font-medium text-Primary-DeepTeal">
-                Generate New
-              </div>
-            </div>
-          </div>
-          <div className="w-full flex justify-end gap-2 my-3">
-            <ButtonPrimary size="small" onClick={() => setisAnalysisOpen(true)}>
-              {" "}
-              <img src="/icons/analyse.svg" alt="" /> Analysis
-            </ButtonPrimary>
-            <ButtonPrimary size="small" onClick={() => setisClientGoalOpen(true)}>
-              {" "}
-              <img src="/icons/chart.svg" alt="" /> Client Goals
-            </ButtonPrimary>
-          </div>
-          <div className="w-full gap-2 flex justify-between items-center">
+      {isShare ? (
+        <>
+          <div className="w-full mt-8 gap-2 flex justify-between items-center">
             <div
               onClick={() => {
-                setActiveTreatmentplan("Diet");
+                setActiveTreatmentplan('Diet');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Diet"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Diet'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -297,12 +170,12 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Mind");
+                setActiveTreatmentplan('Mind');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Mind"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Mind'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -312,12 +185,12 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Activity");
+                setActiveTreatmentplan('Activity');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Activity"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Activity'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -327,12 +200,12 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan("Supplement");
+                setActiveTreatmentplan('Supplement');
               }}
               className={` flex justify-center bg-white  cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == "Supplement"
-                  ? " border-Primary-EmeraldGreen"
-                  : ""
+                aciveTreatmentPlan == 'Supplement'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
@@ -344,13 +217,280 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
           {TreatMentPlanData.length > 0 && (
             <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
               {TreatMentPlanData?.filter(
-                (value: any) => value.category == aciveTreatmentPlan
+                (value: any) => value.category == aciveTreatmentPlan,
               )[0].data.map((el: any) => {
                 return <TreatmentCard data={el}></TreatmentCard>;
               })}
             </div>
           )}
-        </div>
+        </>
+      ) : (
+        <>
+          {cardData.length < 1 ? (
+            <div className="w-full h-[450px] flex justify-center items-center">
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                <img src="/icons/EmptyState.svg" alt="" />
+                <div className="text-base font-medium text-Text-Primary -mt-9">
+                  No Holistic Plan Generated Yet
+                </div>
+                <div className="text-xs text-Text-Primary mt-2 mb-5">
+                  Start creating your Holistic Plan
+                </div>
+                <ButtonSecondary
+                  ClassName="w-full md:w-fit"
+                  onClick={() =>
+                    navigate(`/report/Generate-Holistic-Plan/${id}`)
+                  }
+                >
+                  <img src="/icons/tick-square.svg" alt="" /> Generate New
+                </ButtonSecondary>
+              </div>
+            </div>
+          ) : (
+            <div className="">
+              <div className="w-full mb-3 flex items-center justify-between">
+                {/* <div
+              id="Treatment Plan"
+              className="TextStyle-Headline-4 text-Text-Primary"
+            >
+              Treatment Plan{" "}
+            </div> */}
+                <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
+                  {/* Total of 30 Treatment in 4 category */}
+                </div>
+                {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
+              </div>
+              <></>
+              <div
+                id="scrollContainer"
+                className="flex items-center overflow-x-auto hidden-scrollbar  justify-start min-h-[300px] -mt-16 p-4  "
+              >
+                {cardData.map((card, index: number) => (
+                  <div
+                    key={card.id}
+                    className={` ${card.state == 'Upcoming' && 'opacity-60'} ${
+                      index % 2 == 0 ? 'mt-10 ' : 'mt-0'
+                    } relative flex flex-col   items-center -ml-10  `}
+                  >
+                    {index % 2 == 0 ? (
+                      <img
+                        className="relative min-w-[191px] -bottom-[63px]"
+                        src="/images/Group (1).svg"
+                        alt=""
+                      />
+                    ) : (
+                      <img
+                        className="relative  min-w-[191px] "
+                        src="/images/Group.svg"
+                        alt=""
+                      />
+                    )}
+
+                    <div
+                      onClick={() => {
+                        setActiveTreatmnet(card.t_plan_id);
+                      }}
+                      className={`absolute cursor-pointer  mt-2 flex items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] ${
+                        activeTreatment == card.t_plan_id
+                          ? 'border-Primary-EmeraldGreen'
+                          : 'border-Gray-25'
+                      }`}
+                    >
+                      <div className=" flex w-full justify-center items-center flex-col gap-2">
+                        <div className="flex w-full  justify-center ">
+                          <div className="bg-[#DEF7EC] rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs text-Text-Primary  ">
+                            {index + 1 < 10 && 0}
+                            {index + 1}
+                          </div>
+                          {activeTreatment == card.t_plan_id &&
+                            index === cardData.length - 1 && (
+                              <img
+                                onClick={() => setShowModalIndex(index)}
+                                className="-mr-5 ml-3 cursor-pointer"
+                                src="/icons/dots.svg"
+                                alt=""
+                              />
+                            )}
+                        </div>
+
+                        <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">
+                          <img src="/icons/calendar-2.svg" alt="" />
+                          {card.formatted_date.split(',')[0]}
+                        </div>
+                        <div
+                          // style={{ backgroundColor: resolveStatusColor() }}
+                          className={`text-[10px] flex gap-1 items-center`}
+                        >
+                          <div
+                            style={{
+                              backgroundColor: resolveStatusColor(card.state),
+                            }}
+                            className={`w-2 h-2 rounded-full `}
+                          ></div>
+                          {card.state}
+                        </div>
+                      </div>
+                      {showModalIndex === index && (
+                        <div
+                          ref={showModalRefrence}
+                          className="absolute top-12 -right-16 z-20 w-[96px] rounded-[16px] pl-2 pr-1 py-4 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+                        >
+                          {/* <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            navigate(`/action-plan/edit/${id}`);
+                          }}
+                          className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                        >
+                          <img src="/icons/edit-green.svg" alt="" />
+                          Edit
+                        </div> */}
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteConfirmIndex(index);
+                            }}
+                            className="flex w-full items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                          >
+                            {deleteConfirmIndex === index ? (
+                              <div className="text-[12px] text-Text-Secondary  w-full flex items-center justify-between">
+                                Sure?{' '}
+                                <div className="flex items-center w-full justify-end gap-[2px]">
+                                  <img
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteCard(index, card.t_plan_id);
+                                    }}
+                                    src="/icons/confirm-tick-circle.svg"
+                                    alt=""
+                                  />
+                                  <img
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirmIndex(null);
+                                    }}
+                                    src="/icons/cansel-close-circle.svg"
+                                    alt=""
+                                  />
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <img src="/icons/delete-green.svg" alt="" />
+                                Remove
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div
+                  onClick={() =>
+                    navigate(`/report/Generate-Holistic-Plan/${id}`)
+                  }
+                  className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
+                >
+                  <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+                  <div className="text-sm font-medium text-Primary-DeepTeal">
+                    Generate New
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex justify-center md:justify-end gap-2 my-3">
+                <ButtonPrimary
+                  ClassName="w-full md:w-fit"
+                  size="small"
+                  onClick={() => setisAnalysisOpen(true)}
+                >
+                  {' '}
+                  <img src="/icons/analyse.svg" alt="" /> Analysis
+                </ButtonPrimary>
+                <ButtonPrimary
+                  ClassName="w-full md:w-fit"
+                  size="small"
+                  onClick={() => setisClientGoalOpen(true)}
+                >
+                  {' '}
+                  <img src="/icons/chart.svg" alt="" /> Client Goals
+                </ButtonPrimary>
+              </div>
+              <div className="w-full gap-1 md:gap-2 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden ">
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Diet');
+                  }}
+                  className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] min-w-[74px] gap-2 shadow-100 border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Diet'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/diet.svg" alt="" />
+                  </div>
+                  Diet
+                </div>
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Mind');
+                  }}
+                  className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Mind'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/mind.svg" alt="" />
+                  </div>
+                  Mind
+                </div>
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Activity');
+                  }}
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 border min-w-[73px] rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Activity'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/weight.svg" alt="" />
+                  </div>
+                  Activity
+                </div>
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Supplement');
+                  }}
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Supplement'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/Supplement.svg" alt="" />
+                  </div>
+                  Supplement
+                </div>
+              </div>
+              {TreatMentPlanData.length > 0 && (
+                <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+                  {TreatMentPlanData?.filter(
+                    (value: any) => value.category == aciveTreatmentPlan,
+                  )[0].data.map((el: any) => {
+                    return <TreatmentCard data={el}></TreatmentCard>;
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       <SlideOutPanel
@@ -359,9 +499,8 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
         headline="Analysis"
       >
         <>
-
-          <div className="rounded-xl border border-Gray-50">
-            <div className="bg-[#005F731A] w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+          <div className="rounded-xl border border-t-0 border-Gray-50">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Needs Focus Benchmarks
             </div>
             <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
@@ -370,9 +509,17 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
                   <>
                     <li className="list-disc">{el}</li>
                   </>
-                )
+                );
               })}
             </ul>
+          </div>
+          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+              Client Condition Insights
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+              {clientSummary}
+            </div>
           </div>
         </>
       </SlideOutPanel>
@@ -381,18 +528,26 @@ export const TreatmentPlan:React.FC<TreatmentPlanProps> = ({treatmentPlanData}) 
         onClose={() => setisClientGoalOpen(false)}
         headline="Client Goal"
       >
-          <div>
-            {Object.keys(clientGools).map((el,index) => {
-              return (
-                <>
-                  <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]" style={{borderTopLeftRadius:index!=0?'0px':'12px',borderTopRightRadius:index!=0?'0px':'12px'}}>{el}</div>
-                  <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
-                    {clientGools[el]}
-                  </div>
-                </>
-              )
-            })}
-          </div>
+        <div>
+          {Object.keys(clientGools).map((el, index) => {
+            return (
+              <>
+                <div
+                  className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px]"
+                  style={{
+                    borderTopLeftRadius: index != 0 ? '0px' : '12px',
+                    borderTopRightRadius: index != 0 ? '0px' : '12px',
+                  }}
+                >
+                  {el}
+                </div>
+                <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                  {clientGools[el]}
+                </div>
+              </>
+            );
+          })}
+        </div>
       </SlideOutPanel>
     </>
   );

@@ -1,0 +1,50 @@
+{
+  "personal_info": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "total workouts": "15",
+    "total Cardio Activities": "5",
+    "expert": "Fitness Expert",
+    "Location": "New York",
+    "email": "john.doe@example.com",
+    "phone": "+123456789"
+  },
+  "Data Syncing": [
+    {
+      "Data": "Fitness App",
+      "Last Sync": "2025-01-01",
+      "State": "Connected"
+    },
+    {
+      "Data": "Health Tracker",
+      "Last Sync": "2025-01-02",
+      "State": "Disconnected"
+    }
+  ],
+  "Questionary Tracking": [
+    {
+      "Data": "Health Survey",
+      "State": "Complete",
+      "Action": "Complete"
+    },
+    {
+      "Data": "Dietary Habits",
+      "State": "Incomplete",
+      "Action": "Incomplete"
+    }
+  ],
+  "File History": [
+    {
+      "Data": "Blood Test",
+      "Upload Date": "2025-01-02"
+    }
+  ],
+  "notes": [
+    {
+      "date": "2025-01-02",
+      "writer": "",
+      "note": "hello",
+      "time": "14,14"
+    }
+  ]
+}

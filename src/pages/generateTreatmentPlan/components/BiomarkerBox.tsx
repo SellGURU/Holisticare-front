@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Tag from "../../../Components/Tag";
+import Tag from '../../../Components/Tag';
 interface BioMarkerBoxProps {
   data: any;
   onCheck: () => void;
@@ -15,36 +15,36 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
 }) => {
   const resolveTitle = () => {
     if (data.category.length > 30) {
-      return data.category.substring(0, 30) + " ...";
+      return data.category.substring(0, 30) + ' ...';
     } else {
       return data.category;
     }
   };
 
   const resolveIcon = (name: string) => {
-    if (name == "Cardiovascular and Respiratory Health") {
-      return "/icons/biomarkers/heart.svg";
+    if (name == 'Cardiovascular and Respiratory Health') {
+      return '/icons/biomarkers/heart.svg';
     }
-    if (name == "Organ Health and Function") {
-      return "/icons/biomarkers/Abdominal.svg";
+    if (name == 'Organ Health and Function') {
+      return '/icons/biomarkers/Abdominal.svg';
     }
-    if (name == "Urinary Health") {
-      return "/icons/biomarkers/Urine.svg";
+    if (name == 'Urinary Health') {
+      return '/icons/biomarkers/Urine.svg';
     }
-    if (name == "Metabolic and Nutritional Health") {
-      return "/icons/biomarkers/metabolism.svg";
+    if (name == 'Metabolic Health') {
+      return '/icons/biomarkers/intestine.svg';
     }
-    if (name == "Immune, Inflammation, and Hormonal Health") {
-      return "/icons/biomarkers/Inflammation.svg";
+    if (name == 'Immune, Inflammation, and Hormonal Health') {
+      return '/icons/biomarkers/Inflammation.svg';
     }
     // ./images/report/intestine.svg"
     // ./images/report/muscle.svg
     // ./images/report/virus.svg
-    return "/icons/biomarkers/heart.svg";
+    return '/icons/biomarkers/heart.svg';
   };
   return (
     <>
-      <div className="flex justify-start items-center gap-2">
+      <div className="flex justify-start items-center gap-2 w-full lg:w-[unset]">
         <label className="flex items-center cursor-pointer">
           <input
             type="checkbox"
@@ -56,7 +56,7 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
           />
           <div
             className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-              data.checked ? "bg-Primary-DeepTeal" : "bg-white"
+              data.checked ? 'bg-Primary-DeepTeal' : 'bg-white'
             }`}
           >
             {data.checked && (
@@ -83,36 +83,30 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
             onClick();
           }}
           className={` ${
-            isActive
-              ? "border-Primary-EmeraldGreen"
-              : " border-Gray-50"
-          }  bg-backgroundColor-Card w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[64px] rounded-[16px] border `}
+            isActive ? 'border-Primary-EmeraldGreen' : ' border-Gray-50'
+          }  bg-backgroundColor-Card w-[100%] lg:w-[360px] cursor-pointer flex justify-start  gap-2 items-center p-[12px] h-[unset] lg:h-[64px] rounded-[16px] border `}
         >
-          <div className="w-10 h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
-            <img
-              className=""
-              src={resolveIcon(data.category)}
-              alt=""
-            />
+          <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
+            <img className="" src={resolveIcon(data.category)} alt="" />
           </div>
           <div>
             <div className="flex">
               <div className="text-xs text-Text-Primary">{resolveTitle()}</div>
               {data.tags.length > 0 && (
-                <div className="ml-8">
-                  <Tag value={data.tags[0]}></Tag> 
+                <div className="ml-8 hidden lg:block">
+                  <Tag value={data.tags[0]}></Tag>
                 </div>
               )}
             </div>
             <div className="flex justify-between items-center">
-              <div className=" text-Text-Secondary text-[10px]">
-                <span className="text-[12px] text-Text-Primary">
+              <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                <span className="text-[8px] lg:text-[12px] text-Text-Primary">
                   {data.num_biomarkers}
-                </span>{" "}
-                Total Biomarkers{" "}
-                <span className="ml-2 text-[12px] text-Text-Primary">
+                </span>{' '}
+                Total Biomarkers{' '}
+                <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
                   {data.needs_focus_count}
-                </span>{" "}
+                </span>{' '}
                 Needs Focus
               </div>
               {data.tags.length > 1 && (
@@ -121,6 +115,11 @@ const BioMarkerBox: React.FC<BioMarkerBoxProps> = ({
                 </div>
               )}
             </div>
+            {data.tags.length > 0 && (
+              <div className="mt-1 block lg:hidden">
+                <Tag value={data.tags[0]}></Tag>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ActivityMenu from "../../Components/ActivityMenu";
-import SearchBox from "../../Components/SearchBox";
-import StatusMenu from "../../Components/StatusMenu";
-import { useEffect, useRef, useState } from "react";
-import { ClientCard } from "./ClientCard";
-import Application from "../../api/app";
+import ActivityMenu from '../../Components/ActivityMenu';
+import SearchBox from '../../Components/SearchBox';
+import StatusMenu from '../../Components/StatusMenu';
+import { useEffect, useRef, useState } from 'react';
+import { ClientCard } from './ClientCard';
+import Application from '../../api/app';
 // import { Button } from "symphony-ui";
 // import GenerateReportTable from "./GenerateReportTable";
 // import ReportTable from "./ReportsTable";
 // import GenerateWithAiModal from "./GenerateWithAiModal";
-import useModalAutoClose from "../../hooks/UseModalAutoClose";
-import { BeatLoader } from "react-spinners";
-import { subscribe } from "../../utils/event";
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { subscribe } from '../../utils/event';
 // import ReportAnalyseView from "../RepoerAnalyse/ReportAnalyseView";
 // import { useSelector } from "react-redux";
-import { Action } from "./Action";
+import { Action } from './Action';
 // import AnalyseButton from "../../Components/AnalyseButton";
-import AiChat from "../../Components/AiChat";
+import AiChat from '../../Components/AiChat';
+import Circleloader from '../../Components/CircleLoader';
+import Pagination from '../../Components/pagination';
+import { useNavigate } from 'react-router-dom';
 type menuItem = {
   name: string;
 };
@@ -35,26 +37,26 @@ interface Patient {
 export const DriftAnaysis = () => {
   // const theme = useSelector((state: any) => state.theme.value.name);
 
-  const [activeMenu, setActiveMenu] = useState("Action");
+  const [activeMenu, setActiveMenu] = useState('Action');
   // const [isStateOpen, setIsStateOpen] = useState(true);
   // const [isAlertOpen, setIsAlertOpen] = useState(true);
   // const [isEngagementOpen, setIsEngagementOpen] = useState(true);
-  const [activeStatus, setActiveStatus] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeStatus, setActiveStatus] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [patients, setPatients] = useState<Patient[]>([
     {
-      email: "",
+      email: '',
       member_id: 1,
-      name: "",
-      status: "",
-      picture: "",
-      sex: "",
+      name: '',
+      status: '',
+      picture: '',
+      sex: '',
       age: 0,
       tags: [],
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
-//   const [, setOverviewData] = useState<any>(null);
+  //   const [, setOverviewData] = useState<any>(null);
 
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
@@ -62,9 +64,9 @@ export const DriftAnaysis = () => {
 
   const menus: Array<menuItem> = [
     // { name: "Overview" },
-    { name: "Action" },
+    { name: 'Action' },
 
-    { name: "Copilot" },
+    { name: 'Copilot' },
 
     // { name: "Generate Report" },
   ];
@@ -100,23 +102,23 @@ export const DriftAnaysis = () => {
   // },[patients,searchQuery,activeStatus])
 
   const resolvedFiltersData = () => {
-    if (searchQuery != "" && activeStatus != "All") {
+    if (searchQuery != '' && activeStatus != 'All') {
       return patients.filter(
         (el) =>
           el.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          el.status == activeStatus
+          el.status == activeStatus,
       );
     } else {
-      if (activeStatus != "All") {
+      if (activeStatus != 'All') {
         return patients.filter((el) => {
           return el.status == activeStatus;
         });
-      } else if (searchQuery != "") {
+      } else if (searchQuery != '') {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
         return patients.filter((el) =>
-          el.name.toUpperCase().includes(searchQuery.toUpperCase())
+          el.name.toUpperCase().includes(searchQuery.toUpperCase()),
         );
-      } else if (searchQuery == "" && activeStatus == "All") {
+      } else if (searchQuery == '' && activeStatus == 'All') {
         return patients;
       }
     }
@@ -136,44 +138,44 @@ export const DriftAnaysis = () => {
     };
     fetchData();
   }, []);
-//   useEffect(() => {
-//     if (activeMemberID != null) {
-//       Application.aiStudio_overview({
-//         member_id: activeMemberID,
-//       }).then((res) => {
-//         // setDescription(res.data.description)
-//         // setAlerts(res.data.alerts || {});
-//         // setRecommendations(res.data.recommendations || {});
-//         setOverviewData(res.data);
+  //   useEffect(() => {
+  //     if (activeMemberID != null) {
+  //       Application.aiStudio_overview({
+  //         member_id: activeMemberID,
+  //       }).then((res) => {
+  //         // setDescription(res.data.description)
+  //         // setAlerts(res.data.alerts || {});
+  //         // setRecommendations(res.data.recommendations || {});
+  //         setOverviewData(res.data);
 
-//         // console.log(res);
-//       });
-//     }
-//   }, [activeMemberID]);
+  //         // console.log(res);
+  //       });
+  //     }
+  //   }, [activeMemberID]);
   const [, setActivePatent] = useState(patients[0]);
   useEffect(() => {
     if (activeMemberID != null) {
       setActivePatent(
-        patients.filter((el) => el.member_id == activeMemberID)[0]
+        patients.filter((el) => el.member_id == activeMemberID)[0],
       );
     }
   }, [activeMemberID]);
   //   const [reloadData, setReloadData] = useState(false);
-//   const [, SetReportsData] = useState([]);
-//   useEffect(() => {
-//     if (activeMemberID != null) {
-//       Application.showReportList({
-//         member_id: activeMemberID,
-//       }).then((res) => {
-//         SetReportsData(res.data);
-//       });
-//     }
-//   }, [activeMemberID]);
+  //   const [, SetReportsData] = useState([]);
+  //   useEffect(() => {
+  //     if (activeMemberID != null) {
+  //       Application.showReportList({
+  //         member_id: activeMemberID,
+  //       }).then((res) => {
+  //         SetReportsData(res.data);
+  //       });
+  //     }
+  //   }, [activeMemberID]);
   const status: Array<string> = [
-    "All",
-    "Need to check",
-    "Checked",
-    "Incomplete Data",
+    'All',
+    'Need to check',
+    'Checked',
+    'Incomplete Data',
   ];
   //   const [isCreateReportMode, setisCreateReportMode] = useState(false);
   //   const [isEditMode, setEditMode] = useState(false);
@@ -187,7 +189,7 @@ export const DriftAnaysis = () => {
     },
   });
   const [, setShowGenerateButton] = useState(true);
-  subscribe("completeChanges", () => {
+  subscribe('completeChanges', () => {
     setShowGenerateButton(false);
   });
   // const renderRecommendations = () => {
@@ -208,31 +210,70 @@ export const DriftAnaysis = () => {
   //     return null;
   //   });
   // };
-console.log(searchQuery)
+  console.log(searchQuery);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(resolvedFiltersData().length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedData = resolvedFiltersData().slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+  const navigate = useNavigate();
+  const handleClientCardClick = (memberId: number, name: string) => {
+    if (window.innerWidth <= 640) {
+      navigate(`/drift-analysis/client/${name}/${memberId}`);
+    } else {
+      setActiveMemberID(memberId);
+    }
+  };
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  const dataToMap = isMobile ? paginatedData : resolvedFiltersData();
+
   return (
-    <div className=" w-full pl-6 pt-6 flex items-start overflow-hidden gap-3">
+    <div
+      style={{ height: window.innerHeight - 70 + 'px' }}
+      className=" w-full  md:pl-6 pt-6 px-2 flex flex-col md:flex-row items-start overflow-auto md:overflow-hidden gap-3"
+    >
       <>
         {patients[0]?.member_id == 1 ? (
           <div className="w-full flex flex-col gap-3  justify-center items-center h-[450px]">
-            <BeatLoader size={10} color="#0CBC84"></BeatLoader>
+            <Circleloader></Circleloader>
           </div>
         ) : (
-          <div className="w-[75%] flex flex-col gap-3">
-            <div className="w-full flex justify-between text-Text-Primary">
-              Drift Analysis 
-              {/* <AnalyseButton text="Generate by AI" />{" "} */}
-            </div>
-            <div className="w-full flex items-center justify-between">
-              <div className="w-[171px]"></div>
-              <div className="w-full flex justify-center">
-                <ActivityMenu
-                  activeMenu={activeMenu}
-                  menus={menus}
-                  onChangeMenuAction={(menu) => setActiveMenu(menu)}
-                />
+          <>
+            <div className=" w-full md:w-[75%] flex flex-col gap-3">
+              <div className="w-full font-medium text-Text-Primary">
+                Drift Analysis
+                {/* <AnalyseButton text="Generate by AI" />{" "} */}
+                <p className=" mt-1 text-xs text-Text-Secondary block md:hidden">
+                  Select a client to view their drift analysis.
+                </p>
               </div>
+              <div className="w-full flex items-center justify-center">
+                {/* <div className="w-[171px]"></div> */}
+                <div className=" hidden md:flex justify-center  ">
+                  <ActivityMenu
+                    activeMenu={activeMenu}
+                    menus={menus}
+                    onChangeMenuAction={(menu) => setActiveMenu(menu)}
+                  />
+                </div>
 
-              {/* <div className="flex justify-end invisible items-center gap-2">
+                {/* <div className="flex justify-end invisible items-center gap-2">
                   <Button
                     onClick={() => {
                       Application.getManualData().then((res) => {
@@ -265,52 +306,69 @@ console.log(searchQuery)
                     />
                   </Button>
                 </div> */}
+              </div>
+              <div className="hidden md:block">
+                {activeMenu === 'Copilot' ? (
+                  <AiChat memberID={activeMemberID} />
+                ) : (
+                  <Action memberID={activeMemberID}></Action>
+                )}
+              </div>
             </div>
-            {activeMenu === "Copilot" ? (
-              <AiChat memberID={activeMemberID} />
-            ) : (
-              <Action memberID={activeMemberID}></Action>
-            )}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-[10px] justify-center w-[26%]    ">
-          <SearchBox
-          
-            onSearch={(search) => setSearchQuery(search)}
-            placeHolder="Search for client..."
-          />
-          <StatusMenu
-            status={status}
-            activeStatus={activeStatus as any}
-            onChange={(value) => setActiveStatus(value)}
-          />
-
-          <div className="flex flex-col pr-1  max-h-[500px] w-full overflow-auto">
-            {resolvedFiltersData().map((client, i) => {
-              console.log(client);
-
-              return (
-                <ClientCard
-                  index={i}
-                  key={i}
-                  name={client.name}
-                  email={client.email}
-                  picture={client.picture}
-                  memberID={client.member_id}
-                  setCardActive={setActiveMemberID}
-                  // onClick={() => {
-                  //   setcardActive(i + 1); // Update the active card index
-                  //   setActiveMemberID(client.member_id); // Set active member ID
-                  // }}
-                  status={client.status}
-                  cardActive={activeMemberID}
-                  tags={client.tags}
+            <div
+              style={{
+                height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+              }}
+              className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%] overflow-hidden md:overflow-y-auto    "
+            >
+              <div className="flex md:flex-col gap-3 flex-col-reverse ">
+                <SearchBox
+                  onSearch={(search) => setSearchQuery(search)}
+                  placeHolder="Search for client..."
                 />
-              );
-            })}
-          </div>
-        </div>
+                <StatusMenu
+                  status={status}
+                  activeStatus={activeStatus as any}
+                  onChange={(value) => setActiveStatus(value)}
+                />
+              </div>
+
+              <div className="flex flex-col pr-1 h-full    w-[102%] ">
+                {dataToMap.map((client, i) => {
+                  console.log(client);
+
+                  return (
+                    <ClientCard
+                      index={i}
+                      key={i}
+                      name={client.name}
+                      email={client.email}
+                      picture={client.picture}
+                      memberID={client.member_id}
+                      setCardActive={() =>
+                        handleClientCardClick(client.member_id, client.name)
+                      }
+                      // onClick={() => {
+                      //   setcardActive(i + 1); // Update the active card index
+                      //   setActiveMemberID(client.member_id); // Set active member ID
+                      // }}
+                      status={client.status}
+                      cardActive={activeMemberID}
+                      tags={client.tags}
+                    />
+                  );
+                })}
+              </div>
+              <div className="w-full flex md:hidden justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            </div>
+          </>
+        )}
       </>
     </div>
   );

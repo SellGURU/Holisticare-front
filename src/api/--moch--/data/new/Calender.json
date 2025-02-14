@@ -1,28 +1,26 @@
 {
-    "Friday": [
-        "Snack on calcium-rich foods for bone health (Diet).",
-        "Journal or practice gratitude for stress relief (Mind)."
-    ],
-    "Monday": [
-        "Eat calcium-rich foods for bone health (Diet).",
-        "Practice deep breathing or yoga for heart health (Mind)."
-    ],
-    "Sunday": [
-        "Plan meals with omega-3 foods for heart health (Diet).",
-        "Do light cardio (swimming/cycling) for vascular health (Activity)."
-    ],
-    "Tuesday": [
-        "Take magnesium/chromium supplements for blood sugar regulation (Supplement)."
-    ],
-    "Saturday": [
-        "Prepare meals with cruciferous vegetables and green tea for liver health (Diet).",
-        "Practice mindfulness meditation for stress reduction (Mind)."
-    ],
-    "Thursday": [
-        "Take CoQ10 supplements (Supplement)."
-    ],
-    "Wednesday": [
-        "Eat healthy fats and fiber to maintain HDL cholesterol (Diet).",
-        "Do jogging or aerobics for HDL cholesterol (Activity)."
-    ]
+  "Friday": [
+    "Snack on calcium-rich foods for bone health (Diet).",
+    "Journal or practice gratitude for stress relief (Mind)."
+  ],
+  "Monday": [
+    "Eat calcium-rich foods for bone health (Diet).",
+    "Practice deep breathing or yoga for heart health (Mind)."
+  ],
+  "Sunday": [
+    "Plan meals with omega-3 foods for heart health (Diet).",
+    "Do light cardio (swimming/cycling) for vascular health (Activity)."
+  ],
+  "Tuesday": [
+    "Take magnesium/chromium supplements for blood sugar regulation (Supplement)."
+  ],
+  "Saturday": [
+    "Prepare meals with cruciferous vegetables and green tea for liver health (Diet).",
+    "Practice mindfulness meditation for stress reduction (Mind)."
+  ],
+  "Thursday": ["Take CoQ10 supplements (Supplement)."],
+  "Wednesday": [
+    "Eat healthy fats and fiber to maintain HDL cholesterol (Diet).",
+    "Do jogging or aerobics for HDL cholesterol (Activity)."
+  ]
 }

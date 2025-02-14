@@ -1,42 +1,97 @@
-import { ReportSideMenu } from "../../Components"
-import ReportAnalyseView from "../../Components/RepoerAnalyse/ReportAnalyseView"
-import { TopBar } from "../../Components/topBar"
-import { ComboBar } from "../../Components"
-import { useState } from "react"
-import { subscribe } from "../../utils/event"
+import { ReportSideMenu } from '../../Components';
+import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
+import { TopBar } from '../../Components/topBar';
+import { ComboBar } from '../../Components';
+import { useState, useEffect, useRef } from 'react';
+import { subscribe } from '../../utils/event';
+import Draggable from 'react-draggable';
 
 const Report = () => {
-    const [isVisibleCombo,setIsVisibleCombo] = useState(true)
-    subscribe("openSideOut",() => {
-        setIsVisibleCombo(false)
-    })
-    subscribe("closeSideOut",() => {
-        setIsVisibleCombo(true)
-    })    
-    return (
-       <div className="">
-            <div className="w-full sticky z-50 top-0 ">
-                <TopBar canDownload></TopBar>
-            </div>
-            <div className="fixed z-10 left-4 top-16">
-                <ReportSideMenu></ReportSideMenu>
+  const [isVisibleCombo, setIsVisibleCombo] = useState(true);
+  subscribe('openSideOut', () => {
+    setIsVisibleCombo(false);
+  });
+  subscribe('closeSideOut', () => {
+    setIsVisibleCombo(true);
+  });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 1280);
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 1280;
+      setIsMobileView(isMobile);
 
-            </div>
+      // If switching to desktop view, close mobile menu
+      if (!isMobile) {
+        setIsMobileMenuOpen(false);
+      }
+    };
 
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  const sideMenuRef = useRef(null);
+  const [showCombo, setshowCombo] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
-            <div className="w-full pl-[200px] fixed">
-                <ReportAnalyseView ></ReportAnalyseView>
-               
-            </div>
-            
-            <div className={`fixed top-20 right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo?'visible':'invisible'} `}>
-                <ComboBar></ComboBar>
-            </div>
+  const handleStart = () => {
+    setIsDragging(false);
+  };
 
-        
+  const handleDrag = () => {
+    setIsDragging(true);
+  };
 
+  const handleStop = () => {
+    if (!isDragging) {
+      setIsMobileMenuOpen(!isMobileMenuOpen);
+    }
+  };
+  return (
+    <div className="w-full h-full">
+      <div className="  w-full sticky z-50 top-0 ">
+        <TopBar
+          showCombo={showCombo}
+          setShowCombo={() => setshowCombo(!showCombo)}
+          canDownload
+        ></TopBar>
+      </div>
+      <div></div>
+      <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
+        <div
+          // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="fixed z-[60] top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer"
+        >
+          <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
         </div>
-    )
-}
+      </Draggable>
+      <div
+        ref={sideMenuRef}
+        className={`
+        
+          ${isMobileView && !isMobileMenuOpen ? '-left-[178px]' : 'left-0'}
+          
+          transition-all z-[80] fixed top-20 xl:top-16  duration-300 ease-in-out
+          xl:left-4
+        `}
+      >
+        <ReportSideMenu
+          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+        ></ReportSideMenu>
+      </div>
 
-export default Report
+      <div className="w-full xl:pl-[200px] fixed">
+        <ReportAnalyseView></ReportAnalyseView>
+      </div>
+
+      <div
+        className={`fixed top-10 duration-300 ease-in-out transition-all xl:top-20 xl:right-6 h-[80vh] flex items-center justify-between flex-col ${isVisibleCombo ? 'visible' : 'invisible'}           ${isMobileView && !showCombo ? '-right-[120px]' : 'right-0'}
+        `}
+      >
+        <ComboBar></ComboBar>
+      </div>
+    </div>
+  );
+};
+
+export default Report;

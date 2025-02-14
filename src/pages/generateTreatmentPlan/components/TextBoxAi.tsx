@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Application from "../../../api/app";
-import GenerateWithAiModal from "../../../Components/GenerateWithAiModal";
-import { useEffect, useRef, useState } from "react";
-import { BeatLoader } from "react-spinners";
-import { Button, TextArea } from "symphony-ui";
+import Application from '../../../api/app';
+import GenerateWithAiModal from '../../../Components/GenerateWithAiModal';
+import { useEffect, useRef, useState } from 'react';
+import { BeatLoader } from 'react-spinners';
+import { Button, TextArea } from 'symphony-ui';
 
 interface TextBoxAiProps {
   value: string;
@@ -30,12 +30,12 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
   const [isActiveAi, setIsActiveAi] = useState(false);
   const modalAiGenerateRef = useRef(null);
   const [showAiReport, setShowAiReport] = useState(false);
-  const [, setPramt] = useState("");
+  const [, setPramt] = useState('');
   const [localVal, setLocalVal] = useState(value);
   const [isLoading, setIsLoading] = useState(false);
   const beGenerateWithAi = (pre: string) => {
     setIsLoading(true);
-    if (pre == "Generate by Knowledge") {
+    if (pre == 'Generate by Knowledge') {
       Application.treatment_by_knowledge({
         text: localVal[0],
         benchmark_area: benchMark,
@@ -52,9 +52,9 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
         ai_generation_mode: pre,
         input_text: isDescript
           ? [localVal]
-          : localVal.includes(",")
-          ? localVal.split(",")
-          : [localVal],
+          : localVal.includes(',')
+            ? localVal.split(',')
+            : [localVal],
       }).then((res) => {
         setLocalVal(res.data.map((e: any) => e));
         setIsLoading(false);
@@ -80,7 +80,7 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
           setIsActiveAi(true);
         }}
         className={`${
-          !isNeedFocus && !isDescript ? "w-[450px]" : "w-full"
+          !isNeedFocus && !isDescript ? 'w-[450px]' : 'w-full'
         } relative `}
       >
         <TextArea
@@ -90,7 +90,7 @@ const TextBoxAi: React.FC<TextBoxAiProps> = ({
           }}
           value={localVal}
           label={label}
-          theme={isNeedFocus || isDescript ? "Aurora-S" : "Aurora"}
+          theme={isNeedFocus || isDescript ? 'Aurora-S' : 'Aurora'}
           name=""
           inValid={false}
         ></TextArea>
