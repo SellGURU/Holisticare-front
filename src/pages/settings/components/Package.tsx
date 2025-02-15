@@ -258,9 +258,11 @@ const PackagePage = () => {
           <div className="w-full flex flex-col items-center pt-3">
             <img src="/icons/done.svg" alt="" />
             <div className="text-Text-Primary text-xs font-medium mt-3">
-            You downgraded your subscription successfully.             </div>
+              You downgraded your subscription successfully.{' '}
+            </div>
             <div className="text-Text-Secondary text-xs mt-2 mb-4 text-center">
-            After a short processing period, you will be able to use limited version of features.
+              After a short processing period, you will be able to use limited
+              version of features.
             </div>
             <ButtonPrimary
               onClick={() => {
