@@ -10,6 +10,8 @@ const PackagePage = () => {
   const [activeMenu, setActiveMenu] = useState('Monthly');
   const [showCancel, setshowCancel] = useState(false);
   const [isCancelConfirm, setisCancelConfirm] = useState(false);
+  const [showUpgrade, setshowUpgrade] = useState(true);
+  const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
       <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
@@ -225,6 +227,49 @@ const PackagePage = () => {
                 </>
               );
             })}
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showUpgrade} onClose={() => setshowUpgrade(false)}>
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+              You upgraded your subscription successfully.{' '}
+            </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4">
+              After a short processing period, you will be able to access all
+              features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowUpgrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showDowngrade} onClose={() => setshowDowngrade(false)}>
+        {' '}
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+            You downgraded your subscription successfully.             </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4 text-center">
+            After a short processing period, you will be able to use limited version of features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowDowngrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
           </div>
         </div>
       </MainModal>
