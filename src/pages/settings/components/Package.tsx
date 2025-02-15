@@ -5,6 +5,7 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Toggle from '../../../Components/Toggle';
 import packagesData from './packagesMoch.json';
 import { AppContext } from '../../../store/app';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 const PackagePage = () => {
   const context = useContext(AppContext);
@@ -25,6 +26,10 @@ const PackagePage = () => {
     }
     return 'Upgrade';
   };
+  const [showCancel, setshowCancel] = useState(false);
+  const [isCancelConfirm, setisCancelConfirm] = useState(false);
+  const [showUpgrade, setshowUpgrade] = useState(false);
+  const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
       <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
@@ -78,7 +83,7 @@ const PackagePage = () => {
               {context.PackageManager.curentPackage.type != 'Free' && (
                 <>
                   <div className="text-Text-Secondary w-[50%] text-center  text-[12px] font-medium">
-                    <div className="cursor-pointer">Cancel Subscription</div>
+                    <div onClick={() => setshowCancel(true)} className="cursor-pointer">Cancel Subscription</div>
                   </div>
                 </>
               )}
@@ -101,7 +106,61 @@ const PackagePage = () => {
         </div>
         {/* table */}
       </div>
-
+      <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">
+          {isCancelConfirm ? (
+            <>
+              <div className="w-full flex flex-col items-center pt-3">
+                <img src="/icons/done.svg" alt="" />
+                <div className="text-Text-Primary text-xs font-medium mt-3">
+                  Your subscription has been canceled successfully.
+                </div>
+                <div className="text-Text-Secondary text-xs mt-2 mb-4">
+                  You will retain access to free features until September 27th,
+                  2024.{' '}
+                </div>
+                <ButtonPrimary
+                  onClick={() => {
+                    setisCancelConfirm(false);
+                    setshowCancel(false);
+                  }}
+                >
+                  {' '}
+                  <div className="w-[150px]">Got it</div>
+                </ButtonPrimary>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-full flex gap-2 items-center border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
+                <img src="/icons/danger.svg" alt="" />
+                Cancel Subscription
+              </div>
+              <div className="mt-5 text-center text-xs font-medium">
+                Are you sure you want to cancel your subscription?{' '}
+              </div>
+              <div className="mt-4 text-xs text-Text-Secondary text-center">
+                After canceling your subscription, you will still have access to
+                features until September 27th, 2024.
+              </div>
+              <div className=" mt-5 w-full flex justify-end gap-3 items-center">
+                <div
+                  onClick={() => setshowCancel(false)}
+                  className="text-sm font-medium text-[#909090] cursor-pointer"
+                >
+                  Cancel
+                </div>
+                <div
+                  onClick={() => setisCancelConfirm(true)}
+                  className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                >
+                  Confirm
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </MainModal>
       <MainModal
         isOpen={showManagePackage}
         onClose={() => {
@@ -196,6 +255,51 @@ const PackagePage = () => {
                 </>
               );
             })}
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showUpgrade} onClose={() => setshowUpgrade(false)}>
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+              You upgraded your subscription successfully.{' '}
+            </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4">
+              After a short processing period, you will be able to access all
+              features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowUpgrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showDowngrade} onClose={() => setshowDowngrade(false)}>
+        {' '}
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+              You downgraded your subscription successfully.{' '}
+            </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4 text-center">
+              After a short processing period, you will be able to use limited
+              version of features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowDowngrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
           </div>
         </div>
       </MainModal>
