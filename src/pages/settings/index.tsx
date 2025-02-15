@@ -29,7 +29,7 @@ const Setting: React.FC = () => {
   };
   return (
     <>
-      <div className="flex fixed z-50 top-13 w-full px-6 pl-[100px] py-4 left-0  justify-between">
+      <div className="flex fixed z-[48] top-13 w-full px-6 pl-[100px] py-4 left-0  justify-between">
         <div className="text-2xl text-Text-Primary">Setting</div>
         <SearchBox
           ClassName="rounded-lg"

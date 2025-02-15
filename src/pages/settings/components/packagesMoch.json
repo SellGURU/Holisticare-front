@@ -2,6 +2,7 @@
   {
     "name": "Free",
     "clients": 50,
+    "access": 1,
     "featuresText": "Features",
     "features": [
       "In-App Nutrition Tracker",
@@ -18,6 +19,7 @@
   {
     "name": "Plus",
     "clients": 100,
+    "access": 2,
     "featuresText": "Everything in Free, Plus ",
     "features": [
       "Custom Branding",
@@ -31,6 +33,7 @@
   {
     "name": "Pro",
     "clients": 100,
+    "access": 3,
     "featuresText": "Everything in Plus, Plus ",
     "features": [
       "Group Chats",
