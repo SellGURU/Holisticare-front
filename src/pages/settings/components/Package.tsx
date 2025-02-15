@@ -10,7 +10,7 @@ const PackagePage = () => {
   const [activeMenu, setActiveMenu] = useState('Monthly');
   const [showCancel, setshowCancel] = useState(false);
   const [isCancelConfirm, setisCancelConfirm] = useState(false);
-  const [showUpgrade, setshowUpgrade] = useState(true);
+  const [showUpgrade, setshowUpgrade] = useState(false);
   const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
