@@ -83,7 +83,12 @@ const PackagePage = () => {
               {context.PackageManager.curentPackage.type != 'Free' && (
                 <>
                   <div className="text-Text-Secondary w-[50%] text-center  text-[12px] font-medium">
-                    <div onClick={() => setshowCancel(true)} className="cursor-pointer">Cancel Subscription</div>
+                    <div
+                      onClick={() => setshowCancel(true)}
+                      className="cursor-pointer"
+                    >
+                      Cancel Subscription
+                    </div>
                   </div>
                 </>
               )}
