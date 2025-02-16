@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
 import Application from '../../api/app.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
+import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ClientCardProps {
   client: any;
@@ -17,6 +18,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
   ondelete,
   onarchive,
 }) => {
+  console.log(client);
+  
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -55,8 +58,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
     // Cleanup event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  const [showArchiveModal, setshowArchiveModal] = useState(false);
   return (
     <>
+      <ArchiveModal
+      archived={client.archived}
+        onConfirm={() => {
+          Application.archivePatient({
+            member_id: client.member_id,
+          });
+          onarchive(client.member_id);
+        }}
+        name={client.name}
+        isOpen={showArchiveModal}
+        onClose={() => setshowArchiveModal(false)}
+      ></ArchiveModal>
       <div
         onClick={() => {
           // e.stopPropagation();
@@ -77,16 +93,17 @@ const ClientCard: React.FC<ClientCardProps> = ({
             <div
               onClick={() => {
                 setshowModal(false);
-                Application.archivePatient({
-                  member_id: client.member_id,
-                });
-                onarchive(client.member_id);
+                setshowArchiveModal(true);
+                // Application.archivePatient({
+                //   member_id: client.member_id,
+                // });
+                // onarchive(client.member_id);
                 // ondelete(client.member_id);
               }}
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
             >
               <img src="/icons/directbox-send.svg" alt="" />
-              Send to Archieve
+              {client.archived? 'Unarchive' : 'Send to Archieve'} 
             </div>
             <div
               onClick={handleToggleFavorite}
