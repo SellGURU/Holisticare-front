@@ -29,6 +29,8 @@ type ClientData = {
   email: string;
   weight: number;
   favorite?: boolean;
+  archived?: boolean;
+  drift_analyzed?: boolean;
   // Add other properties as needed
 };
 type GenderFilter = {
@@ -200,8 +202,12 @@ const ClientList = () => {
   useEffect(() => {
     if (active === 'High-Priority') {
       setFilteredClientList(clientList.filter((client) => client.favorite));
+    } else if (active === 'Archived') {
+      setFilteredClientList(clientList.filter((client) => client.archived));
     } else {
-      setFilteredClientList(clientList);
+      setFilteredClientList(
+        clientList.filter((client) => client.archived == false),
+      );
     }
   }, [active, clientList]);
   return (
@@ -364,6 +370,34 @@ const ClientList = () => {
                           setClientList((pre) => {
                             const nes = [...pre];
                             return nes.filter((el) => el.member_id != memberId);
+                          });
+                        }}
+                        onarchive={(memberId: any) => {
+                          setFilteredClientList((pre) => {
+                            const nes = [...pre];
+                            return nes.map((el) => {
+                              if (el.member_id != memberId) {
+                                return el;
+                              } else {
+                                return {
+                                  ...el,
+                                  archived: true,
+                                };
+                              }
+                            });
+                          });
+                          setClientList((pre) => {
+                            const nes = [...pre];
+                            return nes.map((el) => {
+                              if (el.member_id != memberId) {
+                                return el;
+                              } else {
+                                return {
+                                  ...el,
+                                  archived: true,
+                                };
+                              }
+                            });
                           });
                         }}
                         client={client}

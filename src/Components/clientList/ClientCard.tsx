@@ -9,9 +9,14 @@ import SvgIcon from '../../utils/svgIcon.tsx';
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
+  onarchive: (memberid: any) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
+const ClientCard: React.FC<ClientCardProps> = ({
+  client,
+  ondelete,
+  onarchive,
+}) => {
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -53,9 +58,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
   return (
     <>
       <div
-        onClick={(e) => {
-          e.stopPropagation();
-          navigate(`/report/${client.member_id}/${client.name}`);
+        onClick={() => {
+          // e.stopPropagation();
+          // navigate(`/report/${client.member_id}/${client.name}`);
         }}
         className="sm:min-w-[315px] w-full xs:w-[344px] md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
       >
@@ -72,10 +77,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             <div
               onClick={() => {
                 setshowModal(false);
-                Application.deletePatient({
+                Application.archivePatient({
                   member_id: client.member_id,
                 });
-                ondelete(client.member_id);
+                onarchive(client.member_id);
+                // ondelete(client.member_id);
               }}
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
             >
@@ -84,12 +90,26 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             </div>
             <div
               onClick={handleToggleFavorite}
-              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+              className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
               {client.favorite
-                ? 'Remove from favorite'
-                : 'Add to favorite'}{' '}
+                ? 'Remove from High-Priorities'
+                : 'Add to High-Priorities'}{' '}
+            </div>
+            <div
+              onClick={() => {
+                setshowModal(false);
+                Application.deletePatient({
+                  member_id: client.member_id,
+                });
+                // onarchive(client.member_id)
+                ondelete(client.member_id);
+              }}
+              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
+            >
+              <img src="/icons/delete-green.svg" className="w-4" alt="" />
+              Delete
             </div>
           </div>
         )}
@@ -115,7 +135,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
             {client.favorite && (
               <img
                 className="absolute bottom-0 right-0"
-                src="/icons/Icon_star.svg"
+                src="/icons/Priority.svg"
                 alt=""
               />
             )}
@@ -195,7 +215,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="size-[24px] xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
+                    <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img
                         className="w-full h-full rounded-full object-cover"
                         onError={(e: any) => {
@@ -223,13 +243,13 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
                       Status
                     </div>
                     {client.status ? (
-                      <div className="flex items-center w-[72px] h-[20px] rounded-[10px] bg-[#DEF7EC] justify-center text-[10px] text-Text-Primary">
+                      <div className="flex items-center px-2 h-[20px] rounded-[10px] bg-[#DEF7EC] justify-center text-[10px] text-Text-Primary">
                         <img
                           src="/icons/ellipse-green.svg"
                           alt=""
                           className="mr-[5px]"
                         />{' '}
-                        Normal
+                        {client.status}
                       </div>
                     ) : (
                       <div className="flex items-center w-[118px] h-[20px] rounded-[10px] bg-[#FFD8E4] justify-center text-[10px] text-Text-Primary">
@@ -259,7 +279,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, ondelete }) => {
                 </div>
               </div>
               <div className="w-full flex justify-between items-center py-1 mt-2">
-                <div className="flex items-center text-Primary-DeepTeal text-sm gap-1">
+                <div
+                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
+                >
                   <SvgIcon
                     src="/icons/tick-square-blue.svg"
                     width="16px"
