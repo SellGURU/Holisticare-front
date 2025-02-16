@@ -1,13 +1,35 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useContext } from 'react';
 import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Toggle from '../../../Components/Toggle';
 import packagesData from './packagesMoch.json';
+import { AppContext } from '../../../store/app';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 const PackagePage = () => {
+  const context = useContext(AppContext);
   const [showManagePackage, setShowManagePackage] = useState(false);
   const [activeMenu, setActiveMenu] = useState('Monthly');
-
+  const resolvePackageButtonName = (el: any) => {
+    if (
+      context.PackageManager.curentPackage.type == el.name &&
+      el.name == 'Free'
+    ) {
+      return 'Purchase';
+    }
+    if (context.PackageManager.curentPackage.type == el.name) {
+      return 'Cancel';
+    }
+    if (context.PackageManager.curentPackage?.access > el.access) {
+      return 'Downgrade';
+    }
+    return 'Upgrade';
+  };
+  const [showCancel, setshowCancel] = useState(false);
+  const [isCancelConfirm, setisCancelConfirm] = useState(false);
+  const [showUpgrade, setshowUpgrade] = useState(false);
+  const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
       <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
@@ -16,16 +38,15 @@ const PackagePage = () => {
             Subscription
           </div>
           <div className="text-Text-Secondary text-[10px]">
-            Last update: 2024/02/02
+            Last update: {context.PackageManager.lastUpdate}
           </div>
         </div>
 
         <div className="grid grid-cols-2 w-full mt-8">
           <div className="border-r border-Boarder pr-[53px]">
             <div className="text-[12px] text-Text-Primary">Current Plan</div>
-            <div className="text-[12px] text-Text-Secondary mt-2">
-              You are currently on the free plan, which provides access to basic
-              features and tools. For access to all features, you can upgrade.
+            <div className="text-[12px] text-justify min-h-[36px] text-Text-Secondary mt-2">
+              {context.PackageManager.curentPackage.getDescription()}
             </div>
             <div
               style={{
@@ -40,9 +61,11 @@ const PackagePage = () => {
                 alt=""
               />
               <div className="text-[20px] text-white">
-                <div className="text-center">Free</div>
+                <div className="text-center">
+                  {context.PackageManager.curentPackage.type}
+                </div>
                 <div className="text-[10px] text-center">
-                  Exp Date: Jan 28, 2024
+                  Exp Date: {context.PackageManager.curentPackage.expiredDate}
                 </div>
               </div>
             </div>
@@ -52,16 +75,28 @@ const PackagePage = () => {
             <div className="text-[12px] text-Text-Primary">
               Manage Subscription{' '}
             </div>
-            <div className="text-[12px] text-Text-Secondary mt-7">
+            <div className="text-[12px] text-Text-Secondary text-justify mt-7">
               Time to upgrade! Your free plan will expire in 3 days. To access
               more features, please upgrade through Stripe.
             </div>
-            <div className="w-full mt-7">
+            <div className="w-full mt-7 flex items-center">
+              {context.PackageManager.curentPackage.type != 'Free' && (
+                <>
+                  <div className="text-Text-Secondary w-[50%] text-center  text-[12px] font-medium">
+                    <div
+                      onClick={() => setshowCancel(true)}
+                      className="cursor-pointer"
+                    >
+                      Cancel Subscription
+                    </div>
+                  </div>
+                </>
+              )}
               <ButtonSecondary
                 onClick={() => {
                   setShowManagePackage(true);
                 }}
-                ClassName="rounded-full w-full"
+                ClassName="rounded-full flex-grow"
               >
                 Manage Your Subscription
               </ButtonSecondary>
@@ -76,7 +111,61 @@ const PackagePage = () => {
         </div>
         {/* table */}
       </div>
-
+      <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">
+          {isCancelConfirm ? (
+            <>
+              <div className="w-full flex flex-col items-center pt-3">
+                <img src="/icons/done.svg" alt="" />
+                <div className="text-Text-Primary text-xs font-medium mt-3">
+                  Your subscription has been canceled successfully.
+                </div>
+                <div className="text-Text-Secondary text-xs mt-2 mb-4">
+                  You will retain access to free features until September 27th,
+                  2024.{' '}
+                </div>
+                <ButtonPrimary
+                  onClick={() => {
+                    setisCancelConfirm(false);
+                    setshowCancel(false);
+                  }}
+                >
+                  {' '}
+                  <div className="w-[150px]">Got it</div>
+                </ButtonPrimary>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-full flex gap-2 items-center border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
+                <img src="/icons/danger.svg" alt="" />
+                Cancel Subscription
+              </div>
+              <div className="mt-5 text-center text-xs font-medium">
+                Are you sure you want to cancel your subscription?{' '}
+              </div>
+              <div className="mt-4 text-xs text-Text-Secondary text-center">
+                After canceling your subscription, you will still have access to
+                features until September 27th, 2024.
+              </div>
+              <div className=" mt-5 w-full flex justify-end gap-3 items-center">
+                <div
+                  onClick={() => setshowCancel(false)}
+                  className="text-sm font-medium text-[#909090] cursor-pointer"
+                >
+                  Cancel
+                </div>
+                <div
+                  onClick={() => setisCancelConfirm(true)}
+                  className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                >
+                  Confirm
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </MainModal>
       <MainModal
         isOpen={showManagePackage}
         onClose={() => {
@@ -153,16 +242,69 @@ const PackagePage = () => {
                         <div className="text-[14px] font-medium">/month</div>
                       </div>
                       <ButtonSecondary
-                        disabled={el.name == 'Free'}
+                        disabled={
+                          el.name == 'Free' &&
+                          context.PackageManager.curentPackage.type == 'Free'
+                        }
+                        onClick={() => {
+                          context.PackageManager.changePackage(el.name as any);
+                          setShowManagePackage(false);
+                        }}
                         ClassName="rounded-full w-full"
                       >
-                        {el.name == 'Free' ? 'Purchase' : 'Upgrade'}
+                        {resolvePackageButtonName(el)}
+                        {/* {el.name == 'Free' && context.PackageManager.curentPackage.type=='Free' ? 'Purchase' : 'Upgrade'} */}
                       </ButtonSecondary>
                     </div>
                   </div>
                 </>
               );
             })}
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showUpgrade} onClose={() => setshowUpgrade(false)}>
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+              You upgraded your subscription successfully.{' '}
+            </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4">
+              After a short processing period, you will be able to access all
+              features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowUpgrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
+          </div>
+        </div>
+      </MainModal>
+      <MainModal isOpen={showDowngrade} onClose={() => setshowDowngrade(false)}>
+        {' '}
+        <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
+          <div className="w-full flex flex-col items-center pt-3">
+            <img src="/icons/done.svg" alt="" />
+            <div className="text-Text-Primary text-xs font-medium mt-3">
+              You downgraded your subscription successfully.{' '}
+            </div>
+            <div className="text-Text-Secondary text-xs mt-2 mb-4 text-center">
+              After a short processing period, you will be able to use limited
+              version of features.
+            </div>
+            <ButtonPrimary
+              onClick={() => {
+                setshowDowngrade(false);
+              }}
+            >
+              {' '}
+              <div className="w-[150px]">Got it</div>
+            </ButtonPrimary>
           </div>
         </div>
       </MainModal>
