@@ -1,13 +1,31 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useContext } from 'react';
 import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Toggle from '../../../Components/Toggle';
 import packagesData from './packagesMoch.json';
+import { AppContext } from '../../../store/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 const PackagePage = () => {
+  const context = useContext(AppContext);
   const [showManagePackage, setShowManagePackage] = useState(false);
   const [activeMenu, setActiveMenu] = useState('Monthly');
+  const resolvePackageButtonName = (el: any) => {
+    if (
+      context.PackageManager.curentPackage.type == el.name &&
+      el.name == 'Free'
+    ) {
+      return 'Purchase';
+    }
+    if (context.PackageManager.curentPackage.type == el.name) {
+      return 'Cancel';
+    }
+    if (context.PackageManager.curentPackage?.access > el.access) {
+      return 'Downgrade';
+    }
+    return 'Upgrade';
+  };
   const [showCancel, setshowCancel] = useState(false);
   const [isCancelConfirm, setisCancelConfirm] = useState(false);
   const [showUpgrade, setshowUpgrade] = useState(false);
@@ -20,16 +38,15 @@ const PackagePage = () => {
             Subscription
           </div>
           <div className="text-Text-Secondary text-[10px]">
-            Last update: 2024/02/02
+            Last update: {context.PackageManager.lastUpdate}
           </div>
         </div>
 
         <div className="grid grid-cols-2 w-full mt-8">
           <div className="border-r border-Boarder pr-[53px]">
             <div className="text-[12px] text-Text-Primary">Current Plan</div>
-            <div className="text-[12px] text-Text-Secondary mt-2">
-              You are currently on the free plan, which provides access to basic
-              features and tools. For access to all features, you can upgrade.
+            <div className="text-[12px] text-justify min-h-[36px] text-Text-Secondary mt-2">
+              {context.PackageManager.curentPackage.getDescription()}
             </div>
             <div
               style={{
@@ -44,9 +61,11 @@ const PackagePage = () => {
                 alt=""
               />
               <div className="text-[20px] text-white">
-                <div className="text-center">Free</div>
+                <div className="text-center">
+                  {context.PackageManager.curentPackage.type}
+                </div>
                 <div className="text-[10px] text-center">
-                  Exp Date: Jan 28, 2024
+                  Exp Date: {context.PackageManager.curentPackage.expiredDate}
                 </div>
               </div>
             </div>
@@ -56,22 +75,28 @@ const PackagePage = () => {
             <div className="text-[12px] text-Text-Primary">
               Manage Subscription{' '}
             </div>
-            <div className="text-[12px] text-Text-Secondary mt-7">
+            <div className="text-[12px] text-Text-Secondary text-justify mt-7">
               Time to upgrade! Your free plan will expire in 3 days. To access
               more features, please upgrade through Stripe.
             </div>
             <div className="w-full mt-7 flex items-center">
-              <div
-                onClick={() => setshowCancel(true)}
-                className="text-xs font-medium w-full text-Text-Secondary cursor-pointer text-center"
-              >
-                Cancel Subscription{' '}
-              </div>
+              {context.PackageManager.curentPackage.type != 'Free' && (
+                <>
+                  <div className="text-Text-Secondary w-[50%] text-center  text-[12px] font-medium">
+                    <div
+                      onClick={() => setshowCancel(true)}
+                      className="cursor-pointer"
+                    >
+                      Cancel Subscription
+                    </div>
+                  </div>
+                </>
+              )}
               <ButtonSecondary
                 onClick={() => {
                   setShowManagePackage(true);
                 }}
-                ClassName="rounded-full w-full"
+                ClassName="rounded-full flex-grow"
               >
                 Manage Your Subscription
               </ButtonSecondary>
@@ -217,10 +242,18 @@ const PackagePage = () => {
                         <div className="text-[14px] font-medium">/month</div>
                       </div>
                       <ButtonSecondary
-                        disabled={el.name == 'Free'}
+                        disabled={
+                          el.name == 'Free' &&
+                          context.PackageManager.curentPackage.type == 'Free'
+                        }
+                        onClick={() => {
+                          context.PackageManager.changePackage(el.name as any);
+                          setShowManagePackage(false);
+                        }}
                         ClassName="rounded-full w-full"
                       >
-                        {el.name == 'Free' ? 'Purchase' : 'Upgrade'}
+                        {resolvePackageButtonName(el)}
+                        {/* {el.name == 'Free' && context.PackageManager.curentPackage.type=='Free' ? 'Purchase' : 'Upgrade'} */}
                       </ButtonSecondary>
                     </div>
                   </div>
