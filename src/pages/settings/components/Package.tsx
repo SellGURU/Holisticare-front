@@ -8,6 +8,33 @@ import { AppContext } from '../../../store/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import TableNoPaginate from '../../../Components/TableNoPaginate';
 
+const packages = [
+  {
+    No: 1,
+    package_name: 'Free Package',
+    price: '0',
+    start_date: 'Jan 14, 2024',
+    expire_date: 'Jan 28, 2024',
+    status: false,
+  },
+  {
+    No: 2,
+    package_name: 'Plus Package',
+    price: '100',
+    start_date: 'Jan 14, 2024',
+    expire_date: 'Jun 14, 2024',
+    status: false,
+  },
+  {
+    No: 3,
+    package_name: 'Pro Package',
+    price: '200',
+    start_date: 'Jan 14, 2024',
+    expire_date: 'Nov 14, 2024',
+    status: true,
+  },
+];
+
 const PackagePage = () => {
   const context = useContext(AppContext);
   const [showManagePackage, setShowManagePackage] = useState(false);
@@ -107,11 +134,11 @@ const PackagePage = () => {
       </div>
       <div className="bg-backgroundColor-Card mt-[27px] p-4 w-full  rounded-[16px]">
         <div className="text-Text-Primary text-sm font-medium">Packages</div>
-        <div className="text-[10px] text-Text-Secondary opacity-[87%] mt-1">
+        <div className="text-[10px] text-Text-Secondary opacity-[87%] mt-1 mb-5">
           Explore our packages to support your wellness and achieve goals!
         </div>
         {/* table */}
-        <TableNoPaginate classData={[]} />
+        <TableNoPaginate classData={packages} />
       </div>
       <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
         <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">

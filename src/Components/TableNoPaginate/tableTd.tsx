@@ -47,7 +47,7 @@ export const columns = (): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original?.price || '-'}
+          ${row.original?.price || '-'}
         </div>
       );
     },
@@ -103,8 +103,12 @@ export const columns = (): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original.status || 'NO Data'}
+        <div className="text-xs text-Text-Secondary flex justify-center">
+          <div
+            className={`flex justify-center items-center w-[112px] h-[24px] rounded-[16px] ${row.original?.status ? 'bg-[#06C78D1A] text-Green' : 'bg-[#9090901A] text-[Disable]'}`}
+          >
+            {row.original?.status ? 'Active' : 'Deactive'}
+          </div>
         </div>
       );
     },
