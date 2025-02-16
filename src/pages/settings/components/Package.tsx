@@ -249,8 +249,20 @@ const PackagePage = () => {
                           context.PackageManager.curentPackage.type == 'Free'
                         }
                         onClick={() => {
-                          context.PackageManager.changePackage(el.name as any);
                           setShowManagePackage(false);
+                          if (resolvePackageButtonName(el) == 'Cancel') {
+                            setshowCancel(true);
+                          } else if (
+                            resolvePackageButtonName(el) == 'Downgrade'
+                          ) {
+                            setshowDowngrade(true);
+                          } else if (
+                            resolvePackageButtonName(el) == 'Upgrade'
+                          ) {
+                            setshowUpgrade(true);
+                          }
+                          context.PackageManager.changePackage(el.name as any);
+                          // context.PackageManager.changePackage(el.name as any);
                         }}
                         ClassName="rounded-full w-full"
                       >
