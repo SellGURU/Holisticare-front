@@ -19,7 +19,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   onarchive,
 }) => {
   console.log(client);
-  
+
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -62,7 +62,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   return (
     <>
       <ArchiveModal
-      archived={client.archived}
+        archived={client.archived}
         onConfirm={() => {
           Application.archivePatient({
             member_id: client.member_id,
@@ -103,7 +103,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
             >
               <img src="/icons/directbox-send.svg" alt="" />
-              {client.archived? 'Unarchive' : 'Send to Archieve'} 
+              {client.archived ? 'Unarchive' : 'Send to Archieve'}
             </div>
             <div
               onClick={handleToggleFavorite}

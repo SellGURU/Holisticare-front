@@ -211,7 +211,7 @@ const ClientList = () => {
     }
   }, [active, clientList]);
   console.log(filteredClientList);
-  
+
   return (
     <>
       {isLoading ? (
