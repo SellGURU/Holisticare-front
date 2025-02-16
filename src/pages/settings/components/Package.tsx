@@ -6,6 +6,7 @@ import Toggle from '../../../Components/Toggle';
 import packagesData from './packagesMoch.json';
 import { AppContext } from '../../../store/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import TableNoPaginate from '../../../Components/TableNoPaginate';
 
 const PackagePage = () => {
   const context = useContext(AppContext);
@@ -110,6 +111,7 @@ const PackagePage = () => {
           Explore our packages to support your wellness and achieve goals!
         </div>
         {/* table */}
+        <TableNoPaginate classData={[]} />
       </div>
       <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
         <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">
