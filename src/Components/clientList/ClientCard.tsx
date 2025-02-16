@@ -130,9 +130,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 : 'Add to High-Priorities'}{' '}
             </div>
             <div
-            onClick={()=>{
-              setshowDeleteModal(true)
-            }}
+              onClick={() => {
+                setshowDeleteModal(true);
+              }}
               // onClick={() => {
               //   setshowModal(false);
               //   Application.deletePatient({

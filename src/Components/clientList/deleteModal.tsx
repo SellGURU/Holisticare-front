@@ -5,16 +5,16 @@ interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  name:string
+  name: string;
 }
 export const DeleteModal: React.FC<ArchiveModalProps> = ({
   isOpen,
   onClose,
-name,
+  name,
   onConfirm,
 }) => {
   const modalRefrence = useRef(null);
-  const [isComplete, setisComplete] = useState(false)
+  const [isComplete, setisComplete] = useState(false);
 
   useModalAutoClose({
     refrence: modalRefrence,
@@ -33,7 +33,7 @@ name,
               <div className="flex flex-col items-center">
                 <img src="/icons/done.svg" alt="" />
                 <div className="text-center text-xs font-medium text-Text-Primary mt-3 mb-6">
-                 {name} has been successfully deleted.
+                  {name} has been successfully deleted.
                 </div>
                 <ButtonPrimary
                   onClick={() => {
@@ -51,10 +51,10 @@ name,
                   Delete
                 </div>
                 <div className="mt-5 text-center text-xs font-medium">
-                Are you sure you want to delete client {name}?
+                  Are you sure you want to delete client {name}?
                 </div>
                 <div className="mt-4 text-xs text-Text-Secondary text-center">
-                After deleting, you will not be able to return this client.
+                  After deleting, you will not be able to return this client.
                 </div>
                 <div className=" mt-5 w-full flex justify-end gap-3 items-center">
                   <div
@@ -66,10 +66,8 @@ name,
                   <div
                     onClick={() => {
                       onConfirm();
-                     
-                        setisComplete(true);
-                      
-                        
+
+                      setisComplete(true);
                     }}
                     className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
                   >
