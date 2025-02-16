@@ -310,7 +310,7 @@ const GenerateCalendar: React.FC = () => {
       <div className="w-full hidden md:block fixed z-50 top-0 ">
         <TopBar></TopBar>
       </div>
-      <div className="w-full h-full px-3 lg:px-6">
+      <div className="w-full h-screen px-3 lg:px-6 overflow-auto ">
         <div className=" px-3 flex md:hidden w-full justify-between items-center pt-5 pb-2 text-sm font-medium text-Text-Primary">
           Action Plan
           <div className="  relative">
@@ -329,7 +329,7 @@ const GenerateCalendar: React.FC = () => {
             ></AnalyseButton>
           </div>
         </div>
-        <div className="px-8 mb-2 pt-[80px] hidden  md:flex justify-between ">
+        <div className="px-8 fixed  w-full  left-0 top-10 items-center h-[70px] bg-bg-color z-50 mb-2 hidden  md:flex justify-between ">
           <div className="flex items-center gap-3">
             <div
               onClick={() => {
@@ -359,15 +359,15 @@ const GenerateCalendar: React.FC = () => {
             ></AnalyseButton>
           </div>
         </div>
-        <div className=" w-full rounded-2xl  p-3  lg:p-6">
-          <div className=" mx-auto p-">
+        <div className=" w-full rounded-2xl   p-3  lg:p-6 lg:px-0">
+          <div className=" mx-auto pt-[100px]">
             {/* <div className="flex justify-between items-center mb-6">
             <div className="text-sm font-medium text-light-primary-text dark:text-primary-text">
               {isDriftAnalysis ? "Action Edit" : " Action Plan Calendar"}
             </div> */}
             {/* <AnalyseButton text="Generate by AI" /> */}
             {/* </div> */}
-            <div className="flex flex-col gap-3 max-h-[460px] overflow-y-scroll md:pr-3">
+            <div className="flex flex-col gap-3  ">
               {/* {data.map((category: any, index: number) => (
               <BioMarkerRowSuggestions key={index} value={category} />
             ))} */}
@@ -375,7 +375,7 @@ const GenerateCalendar: React.FC = () => {
                 // <div></div>
                 <MobileActivityComponent data={data} setData={setData} />
               ) : (
-                <div className="flex flex-col gap-3 md:max-h-[460px] md:overflow-y-scroll md:pr-3">
+                <div className="flex flex-col gap-3  ">
                   {Object.keys(data).map((key) => (
                     <div className="grid gap-3" key={key}>
                       {data[key].map((el: any, index: number) => (
