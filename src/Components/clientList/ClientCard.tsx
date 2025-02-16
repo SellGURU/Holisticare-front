@@ -7,6 +7,7 @@ import Application from '../../api/app.ts';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DeleteModal } from './deleteModal.tsx';
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
@@ -59,6 +60,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const [showArchiveModal, setshowArchiveModal] = useState(false);
+  const [showDeleteModal, setshowDeleteModal] = useState(false);
   return (
     <>
       <ArchiveModal
@@ -73,6 +75,19 @@ const ClientCard: React.FC<ClientCardProps> = ({
         isOpen={showArchiveModal}
         onClose={() => setshowArchiveModal(false)}
       ></ArchiveModal>
+      <DeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => setshowDeleteModal(false)}
+        name={client.name}
+        onConfirm={() => {
+          setshowModal(false);
+          Application.deletePatient({
+            member_id: client.member_id,
+          });
+          // onarchive(client.member_id)
+          ondelete(client.member_id);
+        }}
+      ></DeleteModal>
       <div
         onClick={() => {
           // e.stopPropagation();
@@ -115,14 +130,17 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 : 'Add to High-Priorities'}{' '}
             </div>
             <div
-              onClick={() => {
-                setshowModal(false);
-                Application.deletePatient({
-                  member_id: client.member_id,
-                });
-                // onarchive(client.member_id)
-                ondelete(client.member_id);
-              }}
+            onClick={()=>{
+              setshowDeleteModal(true)
+            }}
+              // onClick={() => {
+              //   setshowModal(false);
+              //   Application.deletePatient({
+              //     member_id: client.member_id,
+              //   });
+              //   // onarchive(client.member_id)
+              //   ondelete(client.member_id);
+              // }}
               className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
             >
               <img src="/icons/delete-green.svg" className="w-4" alt="" />
