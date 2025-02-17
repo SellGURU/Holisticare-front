@@ -210,6 +210,8 @@ const ClientList = () => {
       );
     }
   }, [active, clientList]);
+  console.log(filteredClientList);
+
   return (
     <>
       {isLoading ? (
@@ -381,7 +383,7 @@ const ClientList = () => {
                               } else {
                                 return {
                                   ...el,
-                                  archived: true,
+                                  archived: !el.archived,
                                 };
                               }
                             });
@@ -394,7 +396,7 @@ const ClientList = () => {
                               } else {
                                 return {
                                   ...el,
-                                  archived: true,
+                                  archived: !el.archived,
                                 };
                               }
                             });
