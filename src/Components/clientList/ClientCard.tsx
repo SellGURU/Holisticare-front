@@ -73,7 +73,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
           backgroundColor: '#F9DEDC',
           ellipseColor: '#FFAB2C',
         };
- 
+
       default:
         return {
           backgroundColor: '#FFD8E4',
@@ -299,18 +299,17 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       <img src="/icons/status.svg" alt="" />
                       Status
                     </div>
-                   
+
+                    <div
+                      style={{ backgroundColor }}
+                      className="flex items-center px-2 h-[20px] rounded-[10px]  justify-center text-[10px] text-Text-Primary"
+                    >
                       <div
-                        style={{ backgroundColor }}
-                        className="flex items-center px-2 h-[20px] rounded-[10px]  justify-center text-[10px] text-Text-Primary"
-                      >
-                        <div
-                          className="mr-[5px] size-3 rounded-full"
-                          style={{ backgroundColor: ellipseColor }}
-                        ></div>
-                        {client.status}
-                      </div>
-                    
+                        className="mr-[5px] size-3 rounded-full"
+                        style={{ backgroundColor: ellipseColor }}
+                      ></div>
+                      {client.status}
+                    </div>
                   </div>
                   <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-9">
@@ -330,6 +329,11 @@ const ClientCard: React.FC<ClientCardProps> = ({
               </div>
               <div className="w-full flex justify-between items-center py-1 mt-2">
                 <div
+                  onClick={() =>
+                    navigate(
+                      `/drift-analysis?activeMemberId=${client.member_id}`,
+                    )
+                  }
                   className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
                 >
                   <SvgIcon

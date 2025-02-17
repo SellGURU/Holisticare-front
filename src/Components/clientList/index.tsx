@@ -96,15 +96,15 @@ const ClientList = () => {
     } else if (active === 'Archived') {
       listToSearch = clientList.filter((client) => client.archived);
     }
-  
+
     // Perform the search within the determined list
     const searchResult = listToSearch.filter((client) =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase())
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  
+
     setFilteredClientList(searchResult);
   };
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState('grid');
