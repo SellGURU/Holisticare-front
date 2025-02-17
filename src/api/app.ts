@@ -274,7 +274,10 @@ class Application extends Api {
     const response = this.post('/patients/delete_patient', data);
     return response;
   };
-
+  static archivePatient = (data: any) => {
+    const response = this.post('/patients/add_to_archive', data);
+    return response;
+  };
   static saveTreatmentPaln = (data: any) => {
     const response = this.post('/save_treatment_plan', data);
     return response;
