@@ -1,4 +1,4 @@
-import React from 'react';
+import {useEffect, useMemo} from 'react';
 import { useSearchParams } from 'react-router-dom';
 type SidebarProps = {
   activeMenu: string;
@@ -6,7 +6,7 @@ type SidebarProps = {
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
-  const menuItems = {
+  const menuItems = useMemo(() => ({
     Account: [
       'Overview',
       'Update Your Profile',
@@ -24,12 +24,23 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
       'Biomarkers',
     ],
     Archive: ['Surveys', 'Previous Clients'],
-  };
-  const [, setSearchParams] = useSearchParams();
+  }), []);
+  const [searchParams, setSearchParams] = useSearchParams();
   const handleMenuClick = (item: string) => {
     setActiveMenu(item);
     setSearchParams({ section: item.replace(/\s+/g, '-').toLowerCase() });
   };
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section) {
+      const menuItem = Object.values(menuItems).flat().find(item => 
+        item.replace(/\s+/g, '-').toLowerCase() === section
+      );
+      if (menuItem) {
+        setActiveMenu(menuItem);
+      }
+    }
+  }, [searchParams, setActiveMenu, menuItems]);
   return (
     <div className="w-[180px] bg-transparent pt-5 ">
       <div className="space-y-8">
