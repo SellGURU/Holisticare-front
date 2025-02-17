@@ -89,11 +89,22 @@ const ClientList = () => {
     setFilteredClientList(sortedList);
   };
   const handleSearch = (searchTerm: string) => {
-    const searchResult = clientList.filter((client) =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    // Determine the current list to search within based on the active state
+    let listToSearch = clientList;
+    if (active === 'High-Priority') {
+      listToSearch = clientList.filter((client) => client.favorite);
+    } else if (active === 'Archived') {
+      listToSearch = clientList.filter((client) => client.archived);
+    }
+  
+    // Perform the search within the determined list
+    const searchResult = listToSearch.filter((client) =>
+      client.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  
     setFilteredClientList(searchResult);
   };
+  
   const [isLoading, setIsLoading] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
   const [activeList, setActiveList] = useState('grid');
@@ -200,15 +211,15 @@ const ClientList = () => {
   // const [isFavorite, setisFavorite] = useState(false);
   const [active, setActive] = useState<string>('All');
   useEffect(() => {
+    let filtered = clientList;
     if (active === 'High-Priority') {
-      setFilteredClientList(clientList.filter((client) => client.favorite));
+      filtered = clientList.filter((client) => client.favorite);
     } else if (active === 'Archived') {
-      setFilteredClientList(clientList.filter((client) => client.archived));
+      filtered = clientList.filter((client) => client.archived);
     } else {
-      setFilteredClientList(
-        clientList.filter((client) => client.archived == false),
-      );
+      filtered = clientList.filter((client) => !client.archived);
     }
+    setFilteredClientList(filtered);
   }, [active, clientList]);
   console.log(filteredClientList);
 
