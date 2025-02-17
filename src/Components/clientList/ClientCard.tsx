@@ -61,6 +61,28 @@ const ClientCard: React.FC<ClientCardProps> = ({
   }, []);
   const [showArchiveModal, setshowArchiveModal] = useState(false);
   const [showDeleteModal, setshowDeleteModal] = useState(false);
+  const getStatusStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'normal':
+        return {
+          backgroundColor: '#DEF7EC',
+          ellipseColor: '#06C78D',
+        };
+      case 'needs checking':
+        return {
+          backgroundColor: '#F9DEDC',
+          ellipseColor: '#FFAB2C',
+        };
+ 
+      default:
+        return {
+          backgroundColor: '#FFD8E4',
+          ellipseColor: '#FC5474',
+        };
+    }
+  };
+  const { backgroundColor, ellipseColor } = getStatusStyles(client.status);
+
   return (
     <>
       <ArchiveModal
@@ -277,27 +299,20 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       <img src="/icons/status.svg" alt="" />
                       Status
                     </div>
-                    {client.status ? (
-                      <div className="flex items-center px-2 h-[20px] rounded-[10px] bg-[#DEF7EC] justify-center text-[10px] text-Text-Primary">
-                        <img
-                          src="/icons/ellipse-green.svg"
-                          alt=""
-                          className="mr-[5px]"
-                        />{' '}
+                   
+                      <div
+                        style={{ backgroundColor }}
+                        className="flex items-center px-2 h-[20px] rounded-[10px]  justify-center text-[10px] text-Text-Primary"
+                      >
+                        <div
+                          className="mr-[5px] size-3 rounded-full"
+                          style={{ backgroundColor: ellipseColor }}
+                        ></div>
                         {client.status}
                       </div>
-                    ) : (
-                      <div className="flex items-center w-[118px] h-[20px] rounded-[10px] bg-[#FFD8E4] justify-center text-[10px] text-Text-Primary">
-                        <img
-                          src="/icons/ellipse-red.svg"
-                          alt=""
-                          className="mr-[5px]"
-                        />{' '}
-                        Needs Checking
-                      </div>
-                    )}
+                    
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
+                  <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-9">
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
