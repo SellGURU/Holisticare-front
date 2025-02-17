@@ -12,12 +12,14 @@ interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
   onarchive: (memberid: any) => void;
+  onToggleHighPriority:(memberid:any) => void;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
   client,
   ondelete,
   onarchive,
+  onToggleHighPriority
 }) => {
   console.log(client);
 
@@ -32,21 +34,38 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-  const handleToggleFavorite = async () => {
+  const handleToggleFavoriteAndHighPriority = async () => {
     try {
       // Call API to toggle favorite status
       await Application.addFavorite({
         member_id: client.member_id,
         is_favorite: !client.favorite,
       });
-
+  
       // Update the local state to reflect the change
-      client.favorite = !client.favorite;
+      onToggleHighPriority(client.member_id);
+  
+      // Optionally close the modal if applicable
       setshowModal(false);
     } catch (error) {
       console.error('Error updating favorite status:', error);
     }
   };
+  // const handleToggleFavorite = async () => {
+  //   try {
+  //     // Call API to toggle favorite status
+  //     await Application.addFavorite({
+  //       member_id: client.member_id,
+  //       is_favorite: !client.favorite,
+  //     });
+
+  //     // Update the local state to reflect the change
+  //     client.favorite = !client.favorite;
+  //     setshowModal(false);
+  //   } catch (error) {
+  //     console.error('Error updating favorite status:', error);
+  //   }
+  // };
 
   const [isExpanded, setIsExpanded] = useState(window.innerWidth > 768);
   useEffect(() => {
@@ -120,7 +139,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
         {showModal && (
           <div
             ref={showModalRefrence}
-            className="absolute top-7 right-[10px] z-20 w-[188px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+            className="absolute top-7 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
             {/* <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
               <img src="/icons/assign-green.svg" alt="" />
@@ -143,7 +162,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               {client.archived ? 'Unarchive' : 'Send to Archieve'}
             </div>
             <div
-              onClick={handleToggleFavorite}
+              onClick={handleToggleFavoriteAndHighPriority}
               className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/star.svg" alt="" />
@@ -239,7 +258,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            setshowModal(true);
+            setshowModal(!showModal);
           }}
           className="absolute top-3 right-2 cursor-pointer"
         >
