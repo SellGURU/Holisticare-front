@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 type SidebarProps = {
   activeMenu: string;
@@ -6,25 +6,28 @@ type SidebarProps = {
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
-  const menuItems = useMemo(() => ({
-    Account: [
-      'Overview',
-      'Update Your Profile',
-      'Change Password',
-      'Zapier',
-      'Share feedback',
-      'Packages',
-    ],
-    Clinic: [
-      'Staff',
-      'Community',
-      'Plan Priority',
-      'Customize Questionnaire',
-      'Integration',
-      'Biomarkers',
-    ],
-    Archive: ['Surveys', 'Previous Clients'],
-  }), []);
+  const menuItems = useMemo(
+    () => ({
+      Account: [
+        'Overview',
+        'Update Your Profile',
+        'Change Password',
+        'Zapier',
+        'Share feedback',
+        'Packages',
+      ],
+      Clinic: [
+        'Staff',
+        'Community',
+        'Plan Priority',
+        'Customize Questionnaire',
+        'Integration',
+        'Biomarkers',
+      ],
+      Archive: ['Surveys', 'Previous Clients'],
+    }),
+    [],
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const handleMenuClick = (item: string) => {
     setActiveMenu(item);
@@ -33,9 +36,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
   useEffect(() => {
     const section = searchParams.get('section');
     if (section) {
-      const menuItem = Object.values(menuItems).flat().find(item => 
-        item.replace(/\s+/g, '-').toLowerCase() === section
-      );
+      const menuItem = Object.values(menuItems)
+        .flat()
+        .find((item) => item.replace(/\s+/g, '-').toLowerCase() === section);
       if (menuItem) {
         setActiveMenu(menuItem);
       }

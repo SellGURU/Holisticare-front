@@ -83,11 +83,11 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
       case 'normal':
-        case 'checked':
-          return {
-            backgroundColor: '#DEF7EC',
-            ellipseColor: '#06C78D',
-          };
+      case 'checked':
+        return {
+          backgroundColor: '#DEF7EC',
+          ellipseColor: '#06C78D',
+        };
       case 'needs checking':
         return {
           backgroundColor: '#F9DEDC',
