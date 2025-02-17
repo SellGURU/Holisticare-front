@@ -227,8 +227,8 @@ const ClientList = () => {
       prevList.map((client) =>
         client.member_id === memberId
           ? { ...client, favorite: !client.favorite }
-          : client
-      )
+          : client,
+      ),
     );
   };
   return (
@@ -422,7 +422,6 @@ const ClientList = () => {
                           });
                         }}
                         onToggleHighPriority={toggleHighPriority}
-
                         client={client}
                       ></ClientCard>
                     );

@@ -12,14 +12,14 @@ interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
   onarchive: (memberid: any) => void;
-  onToggleHighPriority:(memberid:any) => void;
+  onToggleHighPriority: (memberid: any) => void;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
   client,
   ondelete,
   onarchive,
-  onToggleHighPriority
+  onToggleHighPriority,
 }) => {
   console.log(client);
 
@@ -41,10 +41,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
         member_id: client.member_id,
         is_favorite: !client.favorite,
       });
-  
+
       // Update the local state to reflect the change
       onToggleHighPriority(client.member_id);
-  
+
       // Optionally close the modal if applicable
       setshowModal(false);
     } catch (error) {
