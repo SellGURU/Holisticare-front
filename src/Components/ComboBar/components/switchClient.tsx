@@ -6,6 +6,7 @@ import StatusMenu from '../../StatusMenu';
 import { ClientCard } from '../../../pages/driftAnaysis/ClientCard';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { useNavigate, useParams } from 'react-router-dom';
+import Circleloader from '../../CircleLoader';
 interface Patient {
   email: string;
   name: string;
@@ -21,7 +22,7 @@ export const SwitchClient = () => {
   const { id } = useParams<{ id: string }>();
   console.log(id);
   const [activeMemberID, setActiveMemberID] = useState<any>(Number(id));
-
+const [isLoading, setisLoading] = useState(false)
   const [activeStatus, setActiveStatus] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [patients, setPatients] = useState<Patient[]>([
@@ -62,12 +63,16 @@ export const SwitchClient = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
+      setisLoading(true)
       try {
         const response = await Application.getPatients();
         setPatients(response.data.patients_list_data);
         // setActiveMemberID(response.data.patients_list_data[0].member_id);
       } catch (err) {
         console.log(err);
+      }
+      finally{
+        setisLoading(false)
       }
     };
     fetchData();
@@ -79,7 +84,7 @@ export const SwitchClient = () => {
         patients.filter((el) => el.member_id == activeMemberID)[0],
       );
     }
-  }, [activeMemberID, id]);
+  }, [activeMemberID, id,patients]);
   const status: Array<string> = [
     'All',
     'Need to check',
@@ -98,52 +103,62 @@ export const SwitchClient = () => {
       }
     }
   };
-  return (
+  return (<>
+      {isLoading ? (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+        )
+        :
+      (
     <div className="flex flex-col gap-[10px] justify-center w-full    ">
-      <SearchBox
-        isHaveBorder
-        onSearch={(search) => setSearchQuery(search)}
-        placeHolder="Search for client..."
-      />
-      <StatusMenu
-        status={status}
-        activeStatus={activeStatus as any}
-        onChange={(value) => setActiveStatus(value)}
-      />
+    <SearchBox
+      isHaveBorder
+      onSearch={(search) => setSearchQuery(search)}
+      placeHolder="Search for client..."
+    />
+    <StatusMenu
+      status={status}
+      activeStatus={activeStatus as any}
+      onChange={(value) => setActiveStatus(value)}
+    />
 
-      <div className="flex flex-col pr-1  max-h-[400px] w-full overflow-auto">
-        <>
-          {resolvedFiltersData().map((client, i) => {
-            console.log(client);
+    <div className="flex flex-col pr-1  max-h-[400px] w-full overflow-auto">
+      <>
+        {resolvedFiltersData().map((client, i) => {
+          console.log(client);
 
-            return (
-              <ClientCard
-                index={i}
-                key={i}
-                name={client.name}
-                email={client.email}
-                picture={client.picture}
-                memberID={client.member_id}
-                setCardActive={setActiveMemberID}
-                // onClick={() => {
-                //   setcardActive(i + 1); // Update the active card index
-                //   setActiveMemberID(client.member_id); // Set active member ID
-                // }}
-                status={client.status}
-                cardActive={activeMemberID}
-                tags={client.tags}
-                isSwitch
-              />
-            );
-          })}
-        </>
-      </div>
-      <div className="w-full flex justify-center mt-3 md:mt-6">
-        <ButtonPrimary onClick={handleSaveChanges}>
-          <img src="/icons/tick-square.svg" alt="" />
-          Save Changes
-        </ButtonPrimary>
-      </div>
+          return (
+            <ClientCard
+              index={i}
+              key={i}
+              name={client.name}
+              email={client.email}
+              picture={client.picture}
+              memberID={client.member_id}
+              setCardActive={setActiveMemberID}
+              // onClick={() => {
+              //   setcardActive(i + 1); // Update the active card index
+              //   setActiveMemberID(client.member_id); // Set active member ID
+              // }}
+              status={client.status}
+              cardActive={activeMemberID}
+              tags={client.tags}
+              isSwitch
+            />
+          );
+        })}
+      </>
     </div>
+    <div className="w-full flex justify-center mt-3 md:mt-6">
+      <ButtonPrimary onClick={handleSaveChanges}>
+        <img src="/icons/tick-square.svg" alt="" />
+        Save Changes
+      </ButtonPrimary>
+    </div>
+  </div>
+        )
+      }
+      </>
   );
 };
