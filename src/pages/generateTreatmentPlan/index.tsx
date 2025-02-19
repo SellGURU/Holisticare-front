@@ -18,7 +18,7 @@ import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Circleloader from '../../Components/CircleLoader';
 import SpinnerLoader from '../../Components/SpinnerLoader';
-import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
+// import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
 import ConfirmModal from '../../Components/confitmModal';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
@@ -248,10 +248,10 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   Client Goals
                 </div>
               </ButtonPrimary> */}
-              <div onClick={() => setGenerateAiConfirm(true)}>
+              {/* <div onClick={() => setGenerateAiConfirm(true)}>
                 {' '}
                 <MiniAnallyseButton></MiniAnallyseButton>
-              </div>
+              </div> */}
 
               <ButtonPrimary
                 disabled={isLoading}

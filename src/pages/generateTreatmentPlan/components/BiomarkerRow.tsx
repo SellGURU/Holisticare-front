@@ -102,7 +102,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           >
             <img
               onClick={() => setShowEditNote(true)}
-              className="cursor-pointer size-6"
+              className={`cursor-pointer size-6 ${deleteConfirm && 'hidden'}`}
               src="/icons/edit.svg"
               alt=""
             />
