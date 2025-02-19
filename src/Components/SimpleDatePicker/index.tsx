@@ -1,7 +1,6 @@
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
-import { format } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
+import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 
 interface DatePickerProps {
   date: Date | null;
@@ -15,26 +14,56 @@ export default function SimpleDatePicker({
   placeholder,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
+  const calendarRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
+  const selectedDay = date
+    ? {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
+      }
+    : null;
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={calendarRef}>
       <button
-        className="w-[110px] xs:w-[145px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary"
         onClick={() => setOpen(!open)}
+        className="w-[110px] xs:w-[145px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary"
       >
-        {date ? `${placeholder} ` + format(date, 'dd/MM/yyyy') : placeholder}
+        {date ? `${placeholder} ${date.toLocaleDateString()}` : placeholder}
         <img src="/icons/calendar-3.svg" alt="Calendar" />
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
-          <DayPicker
-            mode="single"
-            selected={date || undefined}
-            onSelect={(selectedDate) => {
-              setDate(selectedDate ?? null);
+        <div className="absolute top-full mt-2 right-0 z-50">
+          <Calendar
+            value={selectedDay}
+            onChange={(newDate) => {
+              if (newDate) {
+                setDate(new Date(newDate.year, newDate.month - 1, newDate.day));
+              }
               setOpen(false);
             }}
+            shouldHighlightWeekends
           />
         </div>
       )}
