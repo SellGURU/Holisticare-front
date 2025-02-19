@@ -2,9 +2,8 @@ interface ToggleProps {
   value: Array<string>;
   active: string;
   setActive: (value: string) => void;
-  
 }
-const Toggle: React.FC<ToggleProps> = ({ value ,  active, setActive }) => {
+const Toggle: React.FC<ToggleProps> = ({ value, active, setActive }) => {
   return (
     <>
       <div className=" bg-backgroundColor-Main h-7 w-[294px] px-2 flex justify-between items-center rounded-[24px]">

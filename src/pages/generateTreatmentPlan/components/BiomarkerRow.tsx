@@ -7,13 +7,12 @@ interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
   onDelete: () => void;
-
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
-  onDelete
+  onDelete,
 }) => {
   const resolveIcon = () => {
     switch (value.pillar_name) {
@@ -108,8 +107,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             />
             {deleteConfirm ? (
               <div className="flex items-center gap-2 ml-1 text-Text-Secondary text-xs">
-                Sure? <img className='cursor-pointer' onClick={onDelete} src="/icons/confirm-tick-circle.svg" alt="" />
-                <img className='cursor-pointer'
+                Sure?{' '}
+                <img
+                  className="cursor-pointer"
+                  onClick={onDelete}
+                  src="/icons/confirm-tick-circle.svg"
+                  alt=""
+                />
+                <img
+                  className="cursor-pointer"
                   onClick={() => setdeleteConfirm(false)}
                   src="/icons/cansel-close-circle.svg"
                   alt=""

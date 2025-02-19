@@ -153,45 +153,45 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
 
   const handleDelete = (suggestionIndex: number) => {
     console.log('Deleting suggestion at index:', suggestionIndex);
-  
+
     setData((pre: any) => {
       const newData = { ...pre };
-  
+
       const categoryIndex = newData.suggestion_tab.findIndex(
         (tab: any) => tab.category === activeBio.category,
       );
-  
+
       console.log('Found category at index:', categoryIndex);
       console.log(
         'Before delete:',
         newData.suggestion_tab[categoryIndex]?.suggestions,
       );
-  
+
       if (categoryIndex !== -1) {
         const updatedSuggestions = newData.suggestion_tab[
           categoryIndex
         ].suggestions.filter(
           (_: any, index: number) => index !== suggestionIndex,
         );
-  
+
         console.log('After delete:', updatedSuggestions);
-  
+
         newData.suggestion_tab[categoryIndex] = {
           ...newData.suggestion_tab[categoryIndex],
           suggestions: updatedSuggestions,
         };
       }
-  
+
       return newData;
     });
-  
+
     // Check if suggestions are empty and trigger UI update if necessary
     const category = data.suggestion_tab.find(
-      (tab: any) => tab.category === activeBio.category
+      (tab: any) => tab.category === activeBio.category,
     );
-  
+
     if (category && category.suggestions.length === 0) {
-      console.log("No more suggestions, show generate section");
+      console.log('No more suggestions, show generate section');
       // Here you can set a state or trigger a UI update to show the generate section
       setShowGenerateSection(true);
     }
@@ -330,7 +330,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       value={['Recommendation', 'Result']}
                     ></Toggle>
                   </div>
-                  <div className={` ${showGenerateSection ? 'hidden' : 'flex'}  justify-end gap-2`}>
+                  <div
+                    className={` ${showGenerateSection ? 'hidden' : 'flex'}  justify-end gap-2`}
+                  >
                     <div
                       onClick={openAnayze}
                       className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
@@ -361,7 +363,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   </div>
                 </div>
 
-                <div className={`w-full ${showGenerateSection ? 'hidden' : 'flex'} items-center mt-6 justify-between lg:pr-4`}>
+                <div
+                  className={`w-full ${showGenerateSection ? 'hidden' : 'flex'} items-center mt-6 justify-between lg:pr-4`}
+                >
                   <div className="flex justify-start items-center">
                     <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
                       <SvgIcon
@@ -459,99 +463,97 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
 
                 <div className="">
                   {active == 'Recommendation' ? (
-                  <>
-                  {data['suggestion_tab'].filter(
-                    (el: any) => el.category == activeBio.category,
-                  ).length > 0 && !showGenerateSection ? (
                     <>
-                      {data['suggestion_tab']
-                        .filter(
-                          (el: any) => el.category == activeBio.category,
-                        )[0]
-                        .suggestions.map(
-                          (el: any, suggestionIndex: number) => {
-                            console.log(el);
-              
-                            return (
-                              <div
-                                className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                                key={`${el.title}-${suggestionIndex}`}
-                              >
-                                <BioMarkerRowSuggestions
-                                  value={el}
-                                  onDelete={() =>
-                                    handleDelete(suggestionIndex)
-                                  }
-                                  onchange={(valu: any) => {
-                                    setData((pre: any) => {
-                                      const newData = { ...pre };
-                                      const suggestion_tab = [
-                                        ...newData.suggestion_tab,
-                                      ];
-                                      newData.suggestion_tab =
-                                        suggestion_tab.map(
-                                          (values: any) => {
-                                            if (
-                                              values.category ==
-                                              activeBio.category
-                                            ) {
-                                              const newSugs = [
-                                                ...values.suggestions,
-                                              ];
-                                              const newSugesResolved =
-                                                newSugs.map((ns) => {
-                                                  if (
-                                                    ns.title == valu.title
-                                                  ) {
-                                                    console.log(
-                                                      'findTitle',
-                                                    );
-                                                    return valu;
-                                                  } else {
-                                                    return ns;
-                                                  }
-                                                });
-                                              return {
-                                                ...values,
-                                                suggestions:
-                                                  newSugesResolved,
-                                              };
-                                            } else {
-                                              return values;
-                                            }
-                                          },
-                                        );
-                                      console.log(newData.suggestion_tab);
-                                      return newData;
-                                    });
-                                    console.log(valu);
-                                  }}
-                                ></BioMarkerRowSuggestions>
-                              </div>
-                            );
-                          },
-                        )}
+                      {data['suggestion_tab'].filter(
+                        (el: any) => el.category == activeBio.category,
+                      ).length > 0 && !showGenerateSection ? (
+                        <>
+                          {data['suggestion_tab']
+                            .filter(
+                              (el: any) => el.category == activeBio.category,
+                            )[0]
+                            .suggestions.map(
+                              (el: any, suggestionIndex: number) => {
+                                console.log(el);
+
+                                return (
+                                  <div
+                                    className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
+                                    key={`${el.title}-${suggestionIndex}`}
+                                  >
+                                    <BioMarkerRowSuggestions
+                                      value={el}
+                                      onDelete={() =>
+                                        handleDelete(suggestionIndex)
+                                      }
+                                      onchange={(valu: any) => {
+                                        setData((pre: any) => {
+                                          const newData = { ...pre };
+                                          const suggestion_tab = [
+                                            ...newData.suggestion_tab,
+                                          ];
+                                          newData.suggestion_tab =
+                                            suggestion_tab.map(
+                                              (values: any) => {
+                                                if (
+                                                  values.category ==
+                                                  activeBio.category
+                                                ) {
+                                                  const newSugs = [
+                                                    ...values.suggestions,
+                                                  ];
+                                                  const newSugesResolved =
+                                                    newSugs.map((ns) => {
+                                                      if (
+                                                        ns.title == valu.title
+                                                      ) {
+                                                        console.log(
+                                                          'findTitle',
+                                                        );
+                                                        return valu;
+                                                      } else {
+                                                        return ns;
+                                                      }
+                                                    });
+                                                  return {
+                                                    ...values,
+                                                    suggestions:
+                                                      newSugesResolved,
+                                                  };
+                                                } else {
+                                                  return values;
+                                                }
+                                              },
+                                            );
+                                          console.log(newData.suggestion_tab);
+                                          return newData;
+                                        });
+                                        console.log(valu);
+                                      }}
+                                    ></BioMarkerRowSuggestions>
+                                  </div>
+                                );
+                              },
+                            )}
+                        </>
+                      ) : (
+                        <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                          <div className="w-full h-full flex flex-col items-center justify-center">
+                            <img src="/icons/EmptyState.svg" alt="" />
+                            <div className="text-base font-medium text-Text-Primary -mt-9">
+                              No Holistic Plan Generated Yet
+                            </div>
+                            <div className="text-xs text-Text-Primary mt-2 mb-5">
+                              Start creating your Holistic Plan
+                            </div>
+                            <ButtonSecondary ClassName="w-full md:w-fit">
+                              <img src="/icons/tick-square.svg" alt="" /> Auto
+                              Generate
+                            </ButtonSecondary>
+                          </div>
+                        </div>
+                      )}
                     </>
-                  ) : (
-                    <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
-                       <div className="w-full h-full flex flex-col items-center justify-center">
-                                      <img src="/icons/EmptyState.svg" alt="" />
-                                      <div className="text-base font-medium text-Text-Primary -mt-9">
-                                        No Holistic Plan Generated Yet
-                                      </div>
-                                      <div className="text-xs text-Text-Primary mt-2 mb-5">
-                                        Start creating your Holistic Plan
-                                      </div>
-                                      <ButtonSecondary
-                                        ClassName="w-full md:w-fit"
-                                      
-                                      >
-                                        <img src="/icons/tick-square.svg" alt="" /> Auto Generate
-                                      </ButtonSecondary>
-                                    </div>
-                    </div>
-                  )}
-                </>
                   ) : (
                     <>
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">

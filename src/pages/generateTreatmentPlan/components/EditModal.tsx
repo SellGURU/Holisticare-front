@@ -27,7 +27,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const [notes, setNotes] = useState<string[]>([]);
   const [showSelect, setShowSelect] = useState(false);
   const [Group, setGroup] = useState('');
-  
+
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
 
@@ -83,7 +83,7 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
         </h2>
         <div className=" w-full relative overflow-visible mt-2 mb-4">
-          <label className='text-xs font-medium text-Text-Primary'>Group</label>
+          <label className="text-xs font-medium text-Text-Primary">Group</label>
           <div
             ref={selectButRef}
             onClick={() => setShowSelect(!showSelect)}

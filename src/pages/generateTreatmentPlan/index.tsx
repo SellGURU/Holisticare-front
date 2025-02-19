@@ -159,7 +159,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
   };
   return (
     <div className="h-[100vh] overflow-auto">
-       <ConfirmModal
+      <ConfirmModal
         isOpen={GenerateAiConfirm}
         onClose={() => setGenerateAiConfirm(false)}
         onConfirm={handleConfirm}
