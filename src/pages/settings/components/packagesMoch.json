@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Free",
+    "clients": 50,
+    "access": 1,
+    "featuresText": "Features",
+    "features": [
+      "In-App Nutrition Tracker",
+      "Onboarding Automations",
+      "Wearable Integrations",
+      "Check-Ins & Questionnaires",
+      "Habit Coaching",
+      "Advanced Workout Builder",
+      "Nutrition & Macros Planner",
+      "Vault & Resources"
+    ],
+    "price": "0"
+  },
+  {
+    "name": "Plus",
+    "clients": 100,
+    "access": 2,
+    "featuresText": "Everything in Free, Plus ",
+    "features": [
+      "Custom Branding",
+      "Payments & Packages",
+      "Autoflow",
+      "Meal AI",
+      "Workout AI"
+    ],
+    "price": "499"
+  },
+  {
+    "name": "Pro",
+    "clients": 100,
+    "access": 3,
+    "featuresText": "Everything in Plus, Plus ",
+    "features": [
+      "Group Chats",
+      "Group Polls",
+      "Team Members",
+      "Community Forums",
+      "Broadcast Messages",
+      "Zapier Integration"
+    ],
+    "price": "999"
+  }
+]

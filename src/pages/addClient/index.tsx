@@ -26,6 +26,7 @@ const AddClient = () => {
       email: YoupValidation('email'),
       firstName: yup.string().required(),
       lastName: yup.string().required(),
+      gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
     }),
     onSubmit: () => {
       // Logic for submission
@@ -70,17 +71,9 @@ const AddClient = () => {
   const [isLoading, setisLoading] = useState(false);
 
   const submit = () => {
-    if (
-      !formik.values.firstName ||
-      !formik.values.email ||
-      !formik.values.lastName ||
-      !formik.values.age ||
-      formik.values.gender === 'unset'
-    ) {
-      // alert("Please fill in all required fields");
+    if (!formik.isValid) {
       return;
     }
-
     setisLoading(true);
 
     Application.addClient({
@@ -237,14 +230,17 @@ const AddClient = () => {
                     />
                   </div>
                 </div>
-                <div className="w-full flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
+                <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
                   <div className=" w-full relative md:h-[28px] overflow-visible mb-4">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Gender
                     </label>
                     <div
                       ref={selectButRef}
-                      onClick={() => setShowSelect(!showSelect)}
+                      onClick={() => {
+                        formik.setFieldTouched('gender', true);
+                        setShowSelect(!showSelect);
+                      }}
                       className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
                     >
                       {formik.values.gender !== 'unset' ? (
@@ -287,6 +283,11 @@ const AddClient = () => {
                         >
                           Female
                         </div>
+                      </div>
+                    )}
+                    {formik.touched.gender && (
+                      <div className="text-Red text-[10px] font-medium mt-[2px]">
+                        {formik.errors.gender}
                       </div>
                     )}
                   </div>

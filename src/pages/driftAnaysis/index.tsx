@@ -18,7 +18,7 @@ import { Action } from './Action';
 import AiChat from '../../Components/AiChat';
 import Circleloader from '../../Components/CircleLoader';
 import Pagination from '../../Components/pagination';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 type menuItem = {
   name: string;
 };
@@ -36,7 +36,7 @@ interface Patient {
 
 export const DriftAnaysis = () => {
   // const theme = useSelector((state: any) => state.theme.value.name);
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeMenu, setActiveMenu] = useState('Action');
   // const [isStateOpen, setIsStateOpen] = useState(true);
   // const [isAlertOpen, setIsAlertOpen] = useState(true);
@@ -57,7 +57,16 @@ export const DriftAnaysis = () => {
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
   //   const [, setOverviewData] = useState<any>(null);
-
+  useEffect(() => {
+    if (activeMemberID != null) {
+      setSearchParams({ ['activeMemberId']: activeMemberID.toString() });
+    }
+    // setSearchParams({['activeMemberId':activeMemberID]})
+  }, [activeMemberID]);
+  useEffect(() => {
+    setActiveMemberID(Number(searchParams.get('activeMemberId')));
+    // document.getElementById(searchParams.get("activeMemberId") as any)?.scrollIntoView()
+  }, []);
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
   // const toggleEngagementSection = () => setIsEngagementOpen(!isEngagementOpen);
@@ -131,7 +140,9 @@ export const DriftAnaysis = () => {
       try {
         const response = await Application.aiStudio_patients();
         setPatients(response.data.patients_list_data);
-        setActiveMemberID(response.data.patients_list_data[0].member_id);
+        if (!searchParams.get('activeMemberId')) {
+          setActiveMemberID(response.data.patients_list_data[0].member_id);
+        }
       } catch (err) {
         console.log(err);
       }

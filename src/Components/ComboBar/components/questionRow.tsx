@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Application from '../../../api/app';
-import questionsDataMoch from './questions/data.json';
+// import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -17,7 +17,7 @@ interface QuestionRowProps {
 const QuestionRow: React.FC<QuestionRowProps> = ({ el, id, resolveForm }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
-
+  const [viewQuestienry, setViewQuestienry] = useState<any>({});
   return (
     <>
       <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px] w-full rounded-[12px]">
@@ -46,22 +46,23 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ el, id, resolveForm }) => {
           </div>
           <div
             onClick={() => {
-              Application.Questionary_tracking_action({
-                form_name: el['Data'],
-                member_id: id,
-              }).then((res) => {
-                if (res.data && res.data.link) {
-                  window.open(res.data.link, '_blank');
-                }
-              });
+              if (!isView) {
+                Application.Questionary_tracking_action({
+                  form_name: el['Data'],
+                  member_id: id,
+                }).then((res) => {
+                  setViewQuestienry(res.data);
+                  setIsView(true);
+                });
+              } else {
+                setIsView(false);
+              }
             }}
           >
             {el['State'] === 'Complete' ? (
               // <SvgIcon width="16px" height="16px" src={isView?'/icons/eye-slash.svg':"/icons/eye.svg"} color="" />
               <img
-                onClick={() => {
-                  setIsView(!isView);
-                }}
+                onClick={() => {}}
                 className="cursor-pointer w-4"
                 src={isView ? '/icons/eye-slash.svg' : '/icons/eye.svg'}
                 alt=""
@@ -92,15 +93,15 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ el, id, resolveForm }) => {
           <div className="mt-2 select-none">
             <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
               <div className="text-[12px] font-medium">
-                {questionsDataMoch.questions[activeCard - 1].question}
+                {viewQuestienry.questions[activeCard - 1].question}
               </div>
             </div>
             <div
-              className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsDataMoch.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+              className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${viewQuestienry.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
             >
               {resolveForm(
-                questionsDataMoch.questions[activeCard - 1].type,
-                questionsDataMoch,
+                viewQuestienry.questions[activeCard - 1].type,
+                viewQuestienry,
                 activeCard,
                 true,
               )}
@@ -122,11 +123,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ el, id, resolveForm }) => {
                   />
                 </div>
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
-                  {activeCard} /{questionsDataMoch.questions.length}
+                  {activeCard} /{viewQuestienry.questions.length}
                 </div>
                 <div
                   onClick={() => {
-                    if (activeCard < questionsDataMoch.questions.length) {
+                    if (activeCard < viewQuestienry.questions.length) {
                       setActiveCard(activeCard + 1);
                     }
                   }}

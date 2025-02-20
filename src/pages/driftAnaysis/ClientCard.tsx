@@ -30,6 +30,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   const navigate = useNavigate();
   return (
     <div
+      id={memberID as any}
       onClick={() => {
         setCardActive(memberID);
       }} // onClick={() => setCardActive(index)}

@@ -24,6 +24,21 @@ const Toggle: React.FC<ToggleProps> = ({ value, active, setActive }) => {
         >
           {value[1]}
         </div>
+        {value[2] ? (
+          <>
+            <div className="w-[1px] h-[17px] bg-[#E5E5E5]"></div>
+            <div
+              onClick={() => {
+                setActive(value[2]);
+              }}
+              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'}  w-[100px] h-[24px] rounded-[16px] flex justify-center items-center text-[12px]`}
+            >
+              {value[2]}
+            </div>
+          </>
+        ) : (
+          ''
+        )}
       </div>
     </>
   );

@@ -75,7 +75,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
     <div className="flex items-center justify-center flex-col">
       <div className="w-full mt-4">
         <div
-          className={`overflow-x-auto  bg-white shadow-200  rounded-[16px] text-Text-Primary  mt-[-12px] h-[68vh]`}
+          className={`overflow-x-auto  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[60vh]`}
         >
           {table.getRowModel().rows.length > 0 ? (
             <table

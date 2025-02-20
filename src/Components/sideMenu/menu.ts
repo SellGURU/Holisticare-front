@@ -51,7 +51,8 @@ export const menus = [
   {
     name: 'reports',
     icon: 'sidemenu-menu-icon-reports',
-    url: '',
+    url: '/reports',
+    active: true,
   },
   {
     name: 'Packages',
