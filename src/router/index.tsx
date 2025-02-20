@@ -18,6 +18,7 @@ import Messages from '../pages/messages/index.tsx';
 import Setting from '../pages/settings/index.tsx';
 import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
+import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: 'report/Generate-Holistic-Plan/:id',
         element: <GenerateNewPlan></GenerateNewPlan>,
+      },
+      {
+        path: 'report/Generate-Recommendation/:id',
+        element: <GenerateRecommendation></GenerateRecommendation>,
       },
       // {
       //   path: "action-plan/orders/:id",
