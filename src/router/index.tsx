@@ -18,6 +18,7 @@ import Messages from '../pages/messages/index.tsx';
 import Setting from '../pages/settings/index.tsx';
 import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
+import Forms from '../pages/forms/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
           {
             path: '/reports',
             element: <Reports></Reports>,
+          },
+          {
+            path: '/forms',
+            element: <Forms></Forms>,
           },
         ],
       },
