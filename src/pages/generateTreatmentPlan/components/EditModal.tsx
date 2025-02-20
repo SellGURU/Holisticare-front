@@ -25,7 +25,9 @@ const EditModal: React.FC<EditModalProps> = ({
   const [group, setGroup] = useState('');
   const [practitionerComment, setPractitionerComment] = useState('');
 
-  const [practitionerComments, setPractitionerComments] = useState<string[]>([]);
+  const [practitionerComments, setPractitionerComments] = useState<string[]>(
+    [],
+  );
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
 
@@ -49,7 +51,9 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   };
 
-  const handleCommentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleCommentKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (practitionerComment.trim()) {
@@ -263,7 +267,9 @@ const EditModal: React.FC<EditModalProps> = ({
           ))}
         </div>
         <div className="mb-4">
-          <label className="block text-xs font-medium">Practitioner Comments</label>
+          <label className="block text-xs font-medium">
+            Practitioner Comments
+          </label>
           <textarea
             value={practitionerComment}
             onChange={(e) => setPractitionerComment(e.target.value)}
