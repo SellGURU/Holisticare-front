@@ -1,7 +1,5 @@
-import React from 'react'
+import React from 'react';
 
 export const Overview = () => {
-  return (
-    <div>Overview</div>
-  )
-}
+  return <div>Overview</div>;
+};

@@ -82,21 +82,15 @@ export const GenerateRecommendation = () => {
             </React.Fragment>
           ))}
         </div>
-        <div className='mt-2 w-full'>
-
-    
-          {
-            currentStepIndex == 0 ? (
-                <GeneralCondition></GeneralCondition>
-            ):
-            currentStepIndex == 1 ? (
-                <SetOrders></SetOrders>
-
-            ):(
-                <Overview></Overview>
-            )
-          }
-              </div>
+        <div className="mt-2 w-full">
+          {currentStepIndex == 0 ? (
+            <GeneralCondition></GeneralCondition>
+          ) : currentStepIndex == 1 ? (
+            <SetOrders></SetOrders>
+          ) : (
+            <Overview></Overview>
+          )}
+        </div>
       </div>
     </div>
   );

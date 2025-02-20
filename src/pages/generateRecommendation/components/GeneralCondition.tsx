@@ -1,7 +1,5 @@
-import React from 'react'
+import React from 'react';
 
 export const GeneralCondition = () => {
-  return (
-    <div>GeneralCondition</div>
-  )
-}
+  return <div>GeneralCondition</div>;
+};

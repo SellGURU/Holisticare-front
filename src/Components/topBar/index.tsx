@@ -94,7 +94,7 @@ export const TopBar: React.FC<TopBarProps> = ({
     const locationAddress = window.location.pathname;
     const routeData = locationAddress.split('/');
     if (
-      locationAddress.includes('Generate-Holistic-Plan') || 
+      locationAddress.includes('Generate-Holistic-Plan') ||
       locationAddress.includes('Generate-Recommendation')
     ) {
       return [
