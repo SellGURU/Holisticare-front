@@ -93,7 +93,10 @@ export const TopBar: React.FC<TopBarProps> = ({
   const resolveNav = () => {
     const locationAddress = window.location.pathname;
     const routeData = locationAddress.split('/');
-    if (locationAddress.includes('Generate-Holistic-Plan')) {
+    if (
+      locationAddress.includes('Generate-Holistic-Plan') || 
+      locationAddress.includes('Generate-Recommendation')
+    ) {
       return [
         {
           name: 'Home',
