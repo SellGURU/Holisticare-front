@@ -200,7 +200,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   };
   const [showAddModal, setshowAddModal] = useState(false);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <>
       {isActionPlan ? (
@@ -237,24 +237,40 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
             </>
           ) : (
             <>
-            <MainModal isOpen={showAutoGenerateModal} onClose={()=>setshowAutoGenerateModal(false)}>
-            <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[232px]">
-              <div className='pb-2 border-b border-Gray-50 flex items-center gap-2 text-sm font-medium'>
-                <img className='' src="/icons/danger.svg" alt="" />
-                Auto Generate
-              </div>
-              <div className=' mt-6 text-center text-xs font-medium text-Text-Primary'>
-              Are you sure you want to continue?
-              </div>
-              <div className=' mt-3 text-center text-xs text-Text-Secondary'>
-              Auto-generated changes will replace the existing plan, and all previous data will be lost.
-              </div>
-              <div className=' mt-10 flex justify-end gap-2'>
-                <div className='text-sm font-medium text-Disable cursor-pointer' onClick={()=>setshowAutoGenerateModal(false)}>Cancel</div>
-                <div className='text-sm font-medium text-Primary-DeepTeal cursor-pointer' onClick={()=>navigate(`/report/Generate-Recommendation/${memberId}`)}>Confirm</div>
-              </div>
-            </div>
-            </MainModal>
+              <MainModal
+                isOpen={showAutoGenerateModal}
+                onClose={() => setshowAutoGenerateModal(false)}
+              >
+                <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[232px]">
+                  <div className="pb-2 border-b border-Gray-50 flex items-center gap-2 text-sm font-medium">
+                    <img className="" src="/icons/danger.svg" alt="" />
+                    Auto Generate
+                  </div>
+                  <div className=" mt-6 text-center text-xs font-medium text-Text-Primary">
+                    Are you sure you want to continue?
+                  </div>
+                  <div className=" mt-3 text-center text-xs text-Text-Secondary">
+                    Auto-generated changes will replace the existing plan, and
+                    all previous data will be lost.
+                  </div>
+                  <div className=" mt-10 flex justify-end gap-2">
+                    <div
+                      className="text-sm font-medium text-Disable cursor-pointer"
+                      onClick={() => setshowAutoGenerateModal(false)}
+                    >
+                      Cancel
+                    </div>
+                    <div
+                      className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                      onClick={() =>
+                        navigate(`/report/Generate-Recommendation/${memberId}`)
+                      }
+                    >
+                      Confirm
+                    </div>
+                  </div>
+                </div>
+              </MainModal>
               <EditModal
                 isAdd
                 isOpen={showAddModal}
