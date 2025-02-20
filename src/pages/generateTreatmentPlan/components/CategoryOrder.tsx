@@ -197,6 +197,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
     }
   };
   const [showAddModal, setshowAddModal] = useState(false);
+  const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false)
   return (
     <>
       {isActionPlan ? (
@@ -232,7 +233,9 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
               </div>
             </>
           ) : (
+            
             <>
+            
               <EditModal
                 isAdd
                 isOpen={showAddModal}
@@ -546,7 +549,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             <div className="text-xs text-Text-Primary mt-2 mb-5">
                               Start creating your Holistic Plan
                             </div>
-                            <ButtonSecondary ClassName="w-full md:w-fit">
+                            <ButtonSecondary onClick={()=>setshowAutoGenerateModal(true)} ClassName="w-full md:w-fit">
                               <img src="/icons/tick-square.svg" alt="" /> Auto
                               Generate
                             </ButtonSecondary>

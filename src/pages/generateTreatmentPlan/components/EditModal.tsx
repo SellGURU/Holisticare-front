@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import Checkbox from '../../../Components/checkbox';
 import SvgIcon from '../../../utils/svgIcon';
 
 interface EditModalProps {
@@ -16,18 +15,17 @@ const EditModal: React.FC<EditModalProps> = ({
   onAddNotes,
   isAdd,
 }) => {
-  // Move all hooks to the top, before any conditional returns
   const [newNote, setNewNote] = useState('');
   const [recommendation, setRecommendation] = useState('');
   const [dose, setDose] = useState('');
   const [instructions, setInstructions] = useState('');
-  const [morning, setMorning] = useState(false);
-  const [midDay, setMidDay] = useState(false);
-  const [night, setNight] = useState(false);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   const [showSelect, setShowSelect] = useState(false);
-  const [Group, setGroup] = useState('');
+  const [group, setGroup] = useState('');
+  const [practitionerComment, setPractitionerComment] = useState('');
 
+  const [practitionerComments, setPractitionerComments] = useState<string[]>([]);
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
 
@@ -41,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (newNote.trim()) {
@@ -51,6 +49,15 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   };
 
+  const handleCommentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (practitionerComment.trim()) {
+        setPractitionerComments([...practitionerComments, practitionerComment]);
+        setPractitionerComment('');
+      }
+    }
+  };
   const handleDeleteNote = (index: number) => {
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
@@ -60,26 +67,29 @@ const EditModal: React.FC<EditModalProps> = ({
     onAddNotes(notes);
     onClose();
   };
+  const handleDeleteComment = (index: number) => {
+    const updatedComments = practitionerComments.filter((_, i) => i !== index);
+    setPractitionerComments(updatedComments);
+  };
 
-  const groups = [
-    'General Instructions',
-    'Hormone',
-    'Pharmaceutical',
-    'Supplement',
-    'Further Testing',
-    'Diet',
-    'Exercise',
-    'Lifestyle',
-    'Other',
-  ];
+  const toggleTimeSelection = (time: string) => {
+    setSelectedTimes((prevTimes) =>
+      prevTimes.includes(time)
+        ? prevTimes.filter((t) => t !== time)
+        : [...prevTimes, time],
+    );
+  };
+
+  const times = ['Morning', 'MidDay', 'Night'];
+  const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary">
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
-            <img src="/icons/danger.svg" alt="" />{' '}
-            {isAdd ? 'Add Suggestion' : 'Edit Suggestion'}
+            {/* <img src="/icons/danger.svg" alt="" />{' '} */}
+            {isAdd ? 'Add Recommendation' : 'Edit Recommendation'}
           </div>
         </h2>
         <div className=" w-full relative overflow-visible mt-2 mb-4">
@@ -89,8 +99,8 @@ const EditModal: React.FC<EditModalProps> = ({
             onClick={() => setShowSelect(!showSelect)}
             className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
           >
-            {Group ? (
-              <div className="text-[12px] text-Text-Primary">{Group}</div>
+            {group ? (
+              <div className="text-[12px] text-Text-Primary">{group}</div>
             ) : (
               <div className="text-[12px] text-gray-400">Select Group</div>
             )}
@@ -175,7 +185,7 @@ const EditModal: React.FC<EditModalProps> = ({
         <div className="mb-4">
           <label className="flex w-full justify-between items-center text-xs font-medium">
             Instructions
-            <div className="flex mt-2 space-x-4">
+            {/* <div className="flex mt-2 space-x-4">
               <Checkbox
                 label="Morning"
                 checked={morning}
@@ -191,7 +201,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 checked={night}
                 onChange={() => setNight(!night)}
               />
-            </div>
+            </div> */}
           </label>
           <input
             value={instructions}
@@ -202,17 +212,35 @@ const EditModal: React.FC<EditModalProps> = ({
           />
         </div>
         <div className="mb-4">
+          <label className="text-xs font-medium">Times</label>
+          <div className="flex w-full mt-2 ">
+            {times.map((time, index) => (
+              <div
+                key={time}
+                onClick={() => toggleTimeSelection(time)}
+                className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                  selectedTimes.includes(time)
+                    ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]  text-white'
+                    : 'bg-backgroundColor-Card text-Text-Secondary'
+                }`}
+              >
+                {time}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mb-4">
           <label className="block text-xs font-medium">Client Note</label>
           <textarea
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onKeyDown={handleNoteKeyDown}
             className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
             rows={4}
             placeholder="Write notes ..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[150px] overflow-auto ">
+        <div className="mb-4 flex flex-col gap-2 max-h-[100px] overflow-auto ">
           {notes.map((note, index) => (
             <div
               key={index}
@@ -234,6 +262,38 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
           ))}
         </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium">Practitioner Comments</label>
+          <textarea
+            value={practitionerComment}
+            onChange={(e) => setPractitionerComment(e.target.value)}
+            onKeyDown={handleCommentKeyDown}
+            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            rows={4}
+            placeholder="Enter internal observations or comments..."
+          />
+        </div>
+        <div className="mb-4 flex flex-col gap-2 max-h-[100px] overflow-auto ">
+          {practitionerComments.map((comment, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
+            >
+              <span>{comment}</span>
+              <div
+                onClick={() => handleDeleteComment(index)}
+                className="cursor-pointer"
+              >
+                <SvgIcon
+                  src="/icons/delete.svg"
+                  color="#FC5474"
+                  width="24px"
+                  height="24px"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
         <div className="flex justify-end gap-2 mt-6">
           <button
             onClick={onClose}
@@ -245,7 +305,7 @@ const EditModal: React.FC<EditModalProps> = ({
             onClick={handleApply}
             className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
           >
-            {isAdd ? 'Add' : 'Apply'}
+            Save
           </button>
         </div>
       </div>
