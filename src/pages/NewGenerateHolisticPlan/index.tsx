@@ -225,9 +225,11 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </div>
-                    <ButtonPrimary onClick={() => {
-                      setshowAddModal(true)
-                    }}>
+                    <ButtonPrimary
+                      onClick={() => {
+                        setshowAddModal(true);
+                      }}
+                    >
                       {' '}
                       <img src="/icons/add-square.svg" alt="" /> Add
                     </ButtonPrimary>
@@ -346,14 +348,14 @@ const NewGenerateHolisticPlan = () => {
         <EditModal
           onSubmit={(addData) => {
             // treatmentPlanData['suggestion_tab']
-            setTratmentPlanData((pre:any) => {
-              const oldsData:any = pre
-              const suggestions = oldsData.suggestion_tab
-              suggestions.push(addData)
-              oldsData.suggestion_tab = suggestions
-              return oldsData
-            })
-            console.log(addData)
+            setTratmentPlanData((pre: any) => {
+              const oldsData: any = pre;
+              const suggestions = oldsData.suggestion_tab;
+              suggestions.push(addData);
+              oldsData.suggestion_tab = suggestions;
+              return oldsData;
+            });
+            console.log(addData);
           }}
           isAdd
           isOpen={showAddModal}

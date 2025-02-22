@@ -8,8 +8,8 @@ interface EditModalProps {
   onClose: () => void;
   onAddNotes: (newNotes: string[]) => void;
   isAdd?: boolean;
-  defalts?:any
-  onSubmit:(data:any) => void
+  defalts?: any;
+  onSubmit: (data: any) => void;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -24,14 +24,18 @@ const EditModal: React.FC<EditModalProps> = ({
   const [recommendation, setRecommendation] = useState(defalts?.Recommendation);
   const [dose, setDose] = useState(defalts?.Dose);
   const [instructions, setInstructions] = useState(defalts?.Instruction);
-  const [selectedTimes, setSelectedTimes] = useState<string[]>(defalts?defalts.Times:[]);
-  const [notes, setNotes] = useState<string[]>(defalts?defalts["Client Notes"]:[]);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(
+    defalts ? defalts.Times : [],
+  );
+  const [notes, setNotes] = useState<string[]>(
+    defalts ? defalts['Client Notes'] : [],
+  );
   const [showSelect, setShowSelect] = useState(false);
   const [group, setGroup] = useState(defalts?.Category);
   const [practitionerComment, setPractitionerComment] = useState('');
 
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
-    defalts?defalts["Practitioner Comments"]:[],
+    defalts ? defalts['Practitioner Comments'] : [],
   );
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
@@ -73,18 +77,16 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const handleApply = () => {
-    onSubmit(
-      {
-        "Category": group,
-        "Recommendation": recommendation,
-        "Based on": "",
-        "Practitioner Comments": practitionerComments,
-        "Instruction": instructions,
-        "Times": selectedTimes,
-        "Dose": dose,
-        "Client Notes": notes
-      },
-    )
+    onSubmit({
+      Category: group,
+      Recommendation: recommendation,
+      'Based on': '',
+      'Practitioner Comments': practitionerComments,
+      Instruction: instructions,
+      Times: selectedTimes,
+      Dose: dose,
+      'Client Notes': notes,
+    });
     onClose();
   };
   const handleDeleteComment = (index: number) => {
@@ -102,8 +104,8 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const times = ['morning', 'midday', 'night'];
   //               "morning",
-                // "midday",
-                // "night"
+  // "midday",
+  // "night"
   const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
   return (
