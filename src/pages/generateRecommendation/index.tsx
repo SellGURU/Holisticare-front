@@ -17,10 +17,7 @@ export const GenerateRecommendation = () => {
     }
   };
 
-  const handleSkip = () => {
-    // Navigate to a specific route if skipping
-    navigate('/some-other-route');
-  };
+  const handleSkip = () => {};
 
   return (
     <div className="h-[100vh] overflow-auto">
