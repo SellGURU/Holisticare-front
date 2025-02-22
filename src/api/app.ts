@@ -702,6 +702,11 @@ class Application extends Api {
     const response = this.post('/health_profile/timeline/show_events', data);
     return response;
   };
+
+  static getActionPlanMethodsNew = () => {
+    const response = this.post('/action_plan/percents', {});
+    return response;
+  };
 }
 
 export default Application;

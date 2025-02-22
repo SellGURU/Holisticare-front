@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { DashBoard, Home, Report, Share } from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
-import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
+// import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
 // import PlanManagerModal from "../Components/Action-plan/sections/PLanManager";
 import Login from '../pages/login/index2';
 import { Targeting } from '../Components/Action-plan/sections/Targeting';
@@ -20,6 +20,7 @@ import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
 import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
 import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
+import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -71,7 +72,7 @@ const router = createBrowserRouter([
 
       {
         path: 'report/Generate-Action-Plan/:id',
-        element: <GenerateNewActionPlan></GenerateNewActionPlan>,
+        element: <NewGenerateActionPlan></NewGenerateActionPlan>,
       },
       {
         path: 'report/Generate-Holistic-Plan/:id',
