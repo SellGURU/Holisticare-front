@@ -76,7 +76,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                   </TooltipText>
                 </div>
                 {el.value[1] != undefined &&
-                data.chart_bounds[el.key].label != data.values[0] ? (
+                data.chart_bounds[el.key].label.toLowerCase() != data.values[0].toLowerCase() ? (
                   <>
                     {data.values[0] >= el.value[0] &&
                       el.value[1] >= data.values[0] && (
@@ -101,8 +101,8 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                   </>
                 ) : (
                   <>
-                    {(data.chart_bounds[el.key].label == data.values[0] ||
-                      el.value[0]?.toString().includes(data.values[0])) && (
+                    {(data.chart_bounds[el.key].label.toLowerCase() == data.values[0].toLowerCase() ||
+                      el.value[0]?.toString().includes(data.values[0]) || data.status[0] ==el.key) && (
                       <div
                         className={`absolute  top-[2px]  z-10`}
                         style={{
