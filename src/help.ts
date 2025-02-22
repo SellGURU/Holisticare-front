@@ -94,6 +94,27 @@ const resolveStatusColor = (key: string) => {
   return '#FBAD37';
 };
 
+const convertToBase64 = (file: File): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      resolve({
+        name: file.name,
+        url: base64,
+        type: file.type,
+        size: file.size,
+      });
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
 export {
   useConstructor,
   resolveKeyStatus,
@@ -101,4 +122,5 @@ export {
   blobToBase64,
   resolveAccesssUser,
   decodeAccessUser,
+  convertToBase64,
 };
