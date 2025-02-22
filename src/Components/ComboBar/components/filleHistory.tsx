@@ -1,10 +1,15 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, useRef } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import FileBox from './FileBox';
+import FileBoxUpload from './FileBoxUpload';
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
-
+  const fileInputRef = useRef<any>(null);
+  const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   useEffect(() => {
     // setIsLoading(true);
     Application.getFilleList({ member_id: id })
@@ -23,29 +28,29 @@ export const FilleHistory = () => {
         // setIsLoading(false);
       });
   }, [id]);
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   const months = [
+  //     'Jan',
+  //     'Feb',
+  //     'Mar',
+  //     'Apr',
+  //     'May',
+  //     'Jun',
+  //     'Jul',
+  //     'Aug',
+  //     'Sep',
+  //     'Oct',
+  //     'Nov',
+  //     'Dec',
+  //   ];
 
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
+  //   const day = date.getDate();
+  //   const month = months[date.getMonth()];
+  //   const year = date.getFullYear();
 
-    return `${day} ${month} ${year}`;
-  };
+  //   return `${day} ${month} ${year}`;
+  // };
   return (
     <div className=" w-full">
       <div className="px-2">
@@ -58,82 +63,57 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto h-[350px] md:h-[240px]">
+              <div className="flex justify-center w-full items-start overflow-auto max-h-[450px]">
                 <div className="w-full mt-2">
-                  {data?.map((el: any) => {
+                  {upLoadingFiles.map((el: any) => {
                     return (
-                      <div className=" bg-white border border-Gray-50 mb-1 p-1 md:p-3 h-[48px] w-full rounded-[12px] flex justify-between items-center text-Text-Primary text-[10px]">
-                        <div
-                          className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
-                          title={el.file_name}
-                        >
-                          {el.file_name}
-                        </div>
-                        <div className="w-[70px] text-center">
-                          {formatDate(el.date_uploaded)}
-                        </div>
-                        <div className="flex w-[55px] justify-center gap-1">
-                          {/* <img
-                            className="cursor-pointer"
-                            src="/icons/eye-green.svg"
-                            alt=""
-                          /> */}
-                          <img
-                            onClick={() => {
-                              Application.downloadFille({
-                                file_id: el.file_id,
-                                member_id: id,
-                              }).then((res) => {
-                                const base64Data = res.data.replace(
-                                  /^data:application\/pdf;base64,/,
-                                  '',
-                                );
-                                console.log(base64Data);
-
-                                // Convert base64 string to a binary string
-                                const byteCharacters = atob(base64Data);
-
-                                // Create an array for each character's byte
-                                const byteNumbers = new Array(
-                                  byteCharacters.length,
-                                );
-                                for (
-                                  let i = 0;
-                                  i < byteCharacters.length;
-                                  i++
-                                ) {
-                                  byteNumbers[i] = byteCharacters.charCodeAt(i);
-                                }
-
-                                // Convert the array to a Uint8Array
-                                const byteArray = new Uint8Array(byteNumbers);
-
-                                // Create a Blob from the Uint8Array
-                                const blob = new Blob([byteArray], {
-                                  type: 'application/pdf',
-                                });
-
-                                // Create a link element
-                                const link = document.createElement('a');
-                                link.href = window.URL.createObjectURL(blob);
-                                link.download = 'downloaded-file.pdf'; // Specify the file name
-
-                                // Append to the body, click and remove
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                              });
-                            }}
-                            className="cursor-pointer -mt-[3px]"
-                            src="/icons/import.svg"
-                            alt=""
-                          />
-                        </div>
-                      </div>
+                      <FileBoxUpload
+                        file={el}
+                        onSuccess={(fileWithId) => {
+                          setData((prevFiles: any) => [
+                            ...prevFiles,
+                            fileWithId,
+                          ]);
+                          setUploadingFiles((prevUploadingFiles) =>
+                            prevUploadingFiles.filter((file) => file !== el),
+                          );
+                        }}
+                      ></FileBoxUpload>
                     );
+                  })}
+                  {data?.map((el: any) => {
+                    return <FileBox el={el}></FileBox>;
                   })}
                 </div>
               </div>
+              <div className="w-full mt-5 flex justify-center">
+                <ButtonPrimary
+                  onClick={() => {
+                    document.getElementById('uploadFile')?.click();
+                  }}
+                  size="small"
+                >
+                  <img src="/icons/add-square.svg" alt="" />
+                  Add File
+                </ButtonPrimary>
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
+                multiple
+                onChange={(e: any) => {
+                  const fileList = Array.from(e.target.files);
+                  // setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
+                  // setUploadingFiles([]);
+                  setTimeout(() => {
+                    setUploadingFiles(fileList);
+                  }, 200);
+                  fileInputRef.current.value = '';
+                }}
+                id="uploadFile"
+                className="w-full absolute invisible h-full left-0 top-0"
+              />
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-[200px]">
