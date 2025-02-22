@@ -17,9 +17,7 @@ export const GenerateRecommendation = () => {
     }
   };
 
-  const handleSkip = () => {
-
-  };
+  const handleSkip = () => {};
 
   return (
     <div className="h-[100vh] overflow-auto">
