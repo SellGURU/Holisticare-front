@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
@@ -7,26 +8,30 @@ interface EditModalProps {
   onClose: () => void;
   onAddNotes: (newNotes: string[]) => void;
   isAdd?: boolean;
+  defalts?:any
+  onSubmit:(data:any) => void
 }
 
 const EditModal: React.FC<EditModalProps> = ({
   isOpen,
+  defalts,
   onClose,
-  onAddNotes,
+  onSubmit,
+  // onAddNotes,
   isAdd,
 }) => {
   const [newNote, setNewNote] = useState('');
-  const [recommendation, setRecommendation] = useState('');
-  const [dose, setDose] = useState('');
-  const [instructions, setInstructions] = useState('');
-  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [notes, setNotes] = useState<string[]>([]);
+  const [recommendation, setRecommendation] = useState(defalts?.Recommendation);
+  const [dose, setDose] = useState(defalts?.Dose);
+  const [instructions, setInstructions] = useState(defalts?.Instruction);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(defalts?defalts.Times:[]);
+  const [notes, setNotes] = useState<string[]>(defalts?defalts["Client Notes"]:[]);
   const [showSelect, setShowSelect] = useState(false);
-  const [group, setGroup] = useState('');
+  const [group, setGroup] = useState(defalts?.Category);
   const [practitionerComment, setPractitionerComment] = useState('');
 
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
-    [],
+    defalts?defalts["Practitioner Comments"]:[],
   );
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
@@ -68,7 +73,18 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const handleApply = () => {
-    onAddNotes(notes);
+    onSubmit(
+      {
+        "Category": group,
+        "Recommendation": recommendation,
+        "Based on": "",
+        "Practitioner Comments": practitionerComments,
+        "Instruction": instructions,
+        "Times": selectedTimes,
+        "Dose": dose,
+        "Client Notes": notes
+      },
+    )
     onClose();
   };
   const handleDeleteComment = (index: number) => {
@@ -84,12 +100,15 @@ const EditModal: React.FC<EditModalProps> = ({
     );
   };
 
-  const times = ['Morning', 'MidDay', 'Night'];
+  const times = ['morning', 'midday', 'night'];
+  //               "morning",
+                // "midday",
+                // "night"
   const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
-      <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary">
+      <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 max-h-[600px] overflow-y-scroll w-[500px] text-Text-Primary">
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
             {/* <img src="/icons/danger.svg" alt="" />{' '} */}
@@ -280,7 +299,7 @@ const EditModal: React.FC<EditModalProps> = ({
           />
         </div>
         <div className="mb-4 flex flex-col gap-2 max-h-[100px] overflow-auto ">
-          {practitionerComments.map((comment, index) => (
+          {practitionerComments?.map((comment, index) => (
             <div
               key={index}
               className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"

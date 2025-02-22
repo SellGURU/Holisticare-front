@@ -35,7 +35,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [editableValue] = useState(value.Instruction);
   const [notes, setNotes] = useState<string[]>(
-    value['Practitioner Comments'] || [],
+    value['Client Notes'] || [],
   );
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
@@ -95,7 +95,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
           {isExpanded && (
             <div className="flex flex-col mt-1">
-              {notes.map((note, index) => (
+              {notes?.map((note, index) => (
                 <div
                   key={index}
                   className="bg-transparent flex gap-1 items-start text-[12px]"
@@ -161,6 +161,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       )}
       {showEditNote && (
         <EditModal
+          defalts={value}
+          onSubmit={() => {
+            
+          }}
           isOpen={showEditNote}
           onClose={() => setShowEditNote(false)}
           onAddNotes={handleAddNotes}

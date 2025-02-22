@@ -11,6 +11,7 @@ import BioMarkerRowSuggestions from '../generateTreatmentPlan/components/Biomark
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
+import EditModal from '../generateTreatmentPlan/components/EditModal';
 
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const NewGenerateHolisticPlan = () => {
   const [showClientGoals, setSHowClientGoals] = useState(false);
   const [showAnalyse, setSHowAnalyse] = useState(false);
   const [showGenerateSection] = useState(false);
+  const [showAddModal, setshowAddModal] = useState(false);
   const updateClientConditionInsights = (value: any) => {
     setTratmentPlanData((pre: any) => {
       const old = pre;
@@ -223,7 +225,9 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </div>
-                    <ButtonPrimary>
+                    <ButtonPrimary onClick={() => {
+                      setshowAddModal(true)
+                    }}>
                       {' '}
                       <img src="/icons/add-square.svg" alt="" /> Add
                     </ButtonPrimary>
@@ -339,7 +343,23 @@ const NewGenerateHolisticPlan = () => {
             </div>
           </div>
         </div>
-
+        <EditModal
+          onSubmit={(addData) => {
+            // treatmentPlanData['suggestion_tab']
+            setTratmentPlanData((pre:any) => {
+              const oldsData:any = pre
+              const suggestions = oldsData.suggestion_tab
+              suggestions.push(addData)
+              oldsData.suggestion_tab = suggestions
+              return oldsData
+            })
+            console.log(addData)
+          }}
+          isAdd
+          isOpen={showAddModal}
+          onClose={() => setshowAddModal(false)}
+          onAddNotes={() => {}}
+        ></EditModal>
         <SlideOutPanel
           isOpen={showClientGoals}
           onClose={() => {
