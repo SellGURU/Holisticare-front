@@ -9,7 +9,7 @@ import { Targeting } from '../Components/Action-plan/sections/Targeting';
 import GenerateCalendar from '../Components/Action-plan/sections/generatecalendar';
 import { ClientList } from '../Components';
 import AddClient from '../pages/addClient';
-import GenerateNewPlan from '../pages/generateTreatmentPlan';
+// import GenerateNewPlan from '../pages/generateTreatmentPlan';
 import { DriftAnaysis } from '../pages/driftAnaysis';
 import AiKnowledge from '../pages/ai-knowledge/AiKnowledge.tsx';
 import SignUp from '../pages/signUp/index2.tsx';
@@ -19,6 +19,7 @@ import Setting from '../pages/settings/index.tsx';
 import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
 import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
+import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'report/Generate-Holistic-Plan/:id',
-        element: <GenerateNewPlan></GenerateNewPlan>,
+        element: <NewGenerateHolisticPlan></NewGenerateHolisticPlan>,
       },
       {
         path: 'report/Generate-Recommendation/:id',
