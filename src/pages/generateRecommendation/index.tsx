@@ -18,8 +18,7 @@ export const GenerateRecommendation = () => {
   };
 
   const handleSkip = () => {
-    // Navigate to a specific route if skipping
-    navigate('/some-other-route');
+
   };
 
   return (
