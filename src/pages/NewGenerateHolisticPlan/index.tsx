@@ -12,6 +12,8 @@ import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import TextBoxAi from '../generateTreatmentPlan/components/TextBoxAi';
 import EditModal from '../generateTreatmentPlan/components/EditModal';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import { MainModal } from '../../Components';
 
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const NewGenerateHolisticPlan = () => {
   const [active, setActive] = useState<string>('Recommendation');
   const [clientGools, setClientGools]: any = useState({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
+  const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const generatePaln = () => {
     setIsLoading(true);
     Application.generateTreatmentPlan({
@@ -124,7 +127,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
             {treatmentPlanData && (
               <div className="h-full pr-2 lg:pt-10">
-                <div className=" w-full bg-white rounded-[16px] p-6">
+                <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6">
                   <div className="flex w-full">
                     <div className={`flex justify-end invisible gap-2`}>
                       <div
@@ -238,7 +241,7 @@ const NewGenerateHolisticPlan = () => {
                   <div>
                     {active == 'Recommendation' && (
                       <>
-                        {treatmentPlanData['suggestion_tab'].length > 0 && (
+                        {treatmentPlanData['suggestion_tab'].length > 0 ? (
                           <>
                             {treatmentPlanData['suggestion_tab'].map(
                               (el: any, suggestionIndex: number) => {
@@ -250,55 +253,25 @@ const NewGenerateHolisticPlan = () => {
                                     >
                                       <BioMarkerRowSuggestions
                                         value={el}
-                                        // onDelete={() =>
-                                        //     // handleDelete(suggestionIndex)
-                                        // }
-                                        onchange={() => {
-                                          // setData((pre: any) => {
-                                          // const newData = { ...pre };
-                                          // const suggestion_tab = [
-                                          //     ...newData.suggestion_tab,
-                                          // ];
-                                          // newData.suggestion_tab =
-                                          //     suggestion_tab.map(
-                                          //     (values: any) => {
-                                          //         if (
-                                          //         values.category ==
-                                          //         activeBio.category
-                                          //         ) {
-                                          //         const newSugs = [
-                                          //             ...values.suggestions,
-                                          //         ];
-                                          //         const newSugesResolved =
-                                          //             newSugs.map((ns) => {
-                                          //             if (
-                                          //                 ns.title == valu.title
-                                          //             ) {
-                                          //                 console.log(
-                                          //                 'findTitle',
-                                          //                 );
-                                          //                 return valu;
-                                          //             } else {
-                                          //                 return ns;
-                                          //             }
-                                          //             });
-                                          //         return {
-                                          //             ...values,
-                                          //             suggestions:
-                                          //             newSugesResolved,
-                                          //         };
-                                          //         } else {
-                                          //         return values;
-                                          //         }
-                                          //     },
-                                          //     );
-                                          // return newData;
-                                          // });
-                                        }}
-                                        onDelete={function (): void {
-                                          throw new Error(
-                                            'Function not implemented.',
-                                          );
+                                        onchange={() => {}}
+                                        onDelete={() => {
+                                          setTratmentPlanData((pre: any) => {
+                                            const oldData: any = { ...pre };
+                                            const suggestions =
+                                              pre.suggestion_tab;
+                                            oldData.suggestion_tab =
+                                              suggestions.filter(
+                                                (_val: any, index: number) =>
+                                                  index != suggestionIndex,
+                                              );
+                                            console.log(
+                                              suggestions.filter(
+                                                (_val: any, index: number) =>
+                                                  index != suggestionIndex,
+                                              ),
+                                            );
+                                            return oldData;
+                                          });
                                         }}
                                       ></BioMarkerRowSuggestions>
                                     </div>
@@ -307,6 +280,25 @@ const NewGenerateHolisticPlan = () => {
                               },
                             )}
                           </>
+                        ) : (
+                          <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                            <div className="w-full h-full flex flex-col items-center justify-center">
+                              <img src="/icons/EmptyState.svg" alt="" />
+                              <div className="text-base font-medium text-Text-Primary -mt-9">
+                                No recommendation to show
+                              </div>
+                              <div className="text-xs text-Text-Primary mt-2 mb-5">
+                                {/* Start creating your Holistic Plan */}
+                              </div>
+                              <ButtonSecondary
+                                onClick={() => setshowAutoGenerateModal(true)}
+                                ClassName="w-full md:w-fit"
+                              >
+                                <img src="/icons/tick-square.svg" alt="" /> Auto
+                                Generate
+                              </ButtonSecondary>
+                            </div>
+                          </div>
                         )}
                       </>
                     )}
@@ -362,6 +354,40 @@ const NewGenerateHolisticPlan = () => {
           onClose={() => setshowAddModal(false)}
           onAddNotes={() => {}}
         ></EditModal>
+        <MainModal
+          isOpen={showAutoGenerateModal}
+          onClose={() => setshowAutoGenerateModal(false)}
+        >
+          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[232px]">
+            <div className="pb-2 border-b border-Gray-50 flex items-center gap-2 text-sm font-medium">
+              <img className="" src="/icons/danger.svg" alt="" />
+              Auto Generate
+            </div>
+            <div className=" mt-6 text-center text-xs font-medium text-Text-Primary">
+              Are you sure you want to continue?
+            </div>
+            <div className=" mt-3 text-center text-xs text-Text-Secondary">
+              Auto-generated changes will replace the existing plan, and all
+              previous data will be lost.
+            </div>
+            <div className=" mt-10 flex justify-end gap-2">
+              <div
+                className="text-sm font-medium text-Disable cursor-pointer"
+                onClick={() => setshowAutoGenerateModal(false)}
+              >
+                Cancel
+              </div>
+              <div
+                className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                onClick={() =>
+                  navigate(`/report/Generate-Recommendation/${id}`)
+                }
+              >
+                Confirm
+              </div>
+            </div>
+          </div>
+        </MainModal>
         <SlideOutPanel
           isOpen={showClientGoals}
           onClose={() => {

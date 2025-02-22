@@ -272,6 +272,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                 </div>
               </MainModal>
               <EditModal
+                onSubmit={() => {}}
                 isAdd
                 isOpen={showAddModal}
                 onClose={() => setshowAddModal(false)}
