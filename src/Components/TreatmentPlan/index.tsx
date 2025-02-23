@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import TreatmentCard from './TreatmentCard';
@@ -8,6 +8,7 @@ import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
+import { AppContext } from '../../store/app';
 
 type CardData = {
   id: number;
@@ -67,6 +68,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [showModalIndex, setShowModalIndex] = useState<number | null>(null);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
+  const { setTreatmentId } = useContext(AppContext);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -238,9 +240,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
                 <ButtonSecondary
                   ClassName="w-full md:w-fit"
-                  onClick={() =>
-                    navigate(`/report/Generate-Holistic-Plan/${id}`)
-                  }
+                  onClick={() => {
+                    setTreatmentId('');
+                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                  }}
                 >
                   <img src="/icons/tick-square.svg" alt="" /> Generate New
                 </ButtonSecondary>
@@ -388,9 +391,10 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </div>
                 ))}
                 <div
-                  onClick={() =>
-                    navigate(`/report/Generate-Holistic-Plan/${id}`)
-                  }
+                  onClick={() => {
+                    setTreatmentId('');
+                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                  }}
                   className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
                 >
                   <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
@@ -444,7 +448,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   } w-full flex items-center px-4`}
                 >
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
-                    <img className='size-4' src="/public/icons/LifeStyle2.svg" alt="" />
+                    <img
+                      className="size-4"
+                      src="/public/icons/LifeStyle2.svg"
+                      alt=""
+                    />
                   </div>
                   Lifestyle
                 </div>

@@ -5,6 +5,7 @@ import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
+import Circleloader from '../../../Components/CircleLoader';
 // type Item = {
 //   id: number;
 //   name: string;
@@ -80,11 +81,12 @@ interface SetOrdersProps {
 export const SetOrders: React.FC<SetOrdersProps> = ({
   data,
   treatMentPlanData,
+  setData,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
   // const [data, setData] = useState<MockData>(mockData);
   const [FilteredData, setFilteredData] = useState(data);
-
+  const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
@@ -107,7 +109,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       ...FilteredData.filter((el: any) => el.Category != category),
       ...newData,
     ]);
-    // setData([...data.filter((el:any) => el.Category != category),...newData])
+    setData([...data.filter((el: any) => el.Category != category), ...newData]);
     // setData({
     //   ...data,
     //   [category]: data[category].map((item) =>
@@ -115,8 +117,10 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     //   ),
     // });
   };
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleContinue = () => {
+    setIsLoading(true);
+    setisStarted(true);
     Application.holisticPlanReScore({
       member_id: id,
       selected_interventions: FilteredData.filter(
@@ -125,19 +129,28 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       biomarker_insight: treatMentPlanData?.completion_suggestion,
       client_insight: treatMentPlanData?.client_insight,
       looking_forwards: treatMentPlanData?.looking_forwards,
-    }).then((res) => {
-      const visibleCategories = categories
-        .filter(
-          (cat) =>
-            cat.visible &&
-            res.data.map((el: any) => el.Category).includes(cat.name),
-        )
-        .map((cat) => cat.name);
-      const currentIndex = visibleCategories.indexOf(activeCategory);
-      const nextIndex = (currentIndex + 1) % visibleCategories.length;
-      setFilteredData(res.data);
-      setActiveCategory(visibleCategories[nextIndex]);
-    });
+    })
+      .then((res) => {
+        setIsLoading(false);
+
+        const visibleCategories = categories
+          .filter(
+            (cat) =>
+              cat.visible &&
+              res.data.map((el: any) => el.Category).includes(cat.name),
+          )
+          .map((cat) => cat.name);
+        const currentIndex = visibleCategories.indexOf(activeCategory);
+        let nextIndex = currentIndex;
+        if (currentIndex < visibleCategories.length - 1) {
+          nextIndex = nextIndex + 1;
+        }
+        setFilteredData(res.data);
+        setActiveCategory(visibleCategories[nextIndex]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const [showchangeOrders, setshowchangeOrders] = useState(false);
@@ -249,6 +262,12 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
           </div>
         </div>
       </MainModal>
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {' '}
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="bg-white rounded-2xl shadow-100 p-6 border border-Gray-50">
         <div className="flex w-full justify-between border-b border-Gray-50 pb-2 px-6">
           <div className="flex w-[50%] gap-[100px]">
@@ -279,7 +298,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
             )}
           </div>
           <div
-            className={`w-[50%] justify-end ${activeCategory == categories[0].name ? 'flex' : 'hidden'}`}
+            className={`w-[50%] justify-end ${!isStarted ? 'flex' : 'hidden'}`}
           >
             <img
               className="cursor-pointer"
@@ -312,12 +331,14 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
               </div>
             ),
           )}
-          <div
-            className="absolute bottom-3 right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none"
-            onClick={handleContinue}
-          >
-            Continue
-          </div>
+          {activeCategory !=
+            categories.filter((el) => el.visible)[
+              categories.filter((el) => el.visible).length - 1
+            ].name && (
+            <div className="absolute bottom-3 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+              <div onClick={handleContinue}>Continue</div>
+            </div>
+          )}
         </div>
       </div>
     </>

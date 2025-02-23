@@ -9,8 +9,9 @@ export const Overview: React.FC<OverviewProps> = ({ treatmentPlanData }) => {
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
-        {treatmentPlanData['suggestion_tab'].map(
-          (el: any, suggestionIndex: number) => {
+        {treatmentPlanData['suggestion_tab']
+          .filter((el: any) => el.checked == true)
+          .map((el: any, suggestionIndex: number) => {
             return (
               <>
                 <div
@@ -26,8 +27,7 @@ export const Overview: React.FC<OverviewProps> = ({ treatmentPlanData }) => {
                 </div>
               </>
             );
-          },
-        )}
+          })}
       </div>
     </>
   );

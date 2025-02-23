@@ -83,11 +83,13 @@ const NewGenerateHolisticPlan = () => {
   };
   const { treatmentId } = useContext(AppContext);
 
-  useEffect(()=>{
-Application.showHolisticPlan({treatment_id:treatmentId,member_id:id}).then((res)=>setTratmentPlanData(res.data)
-)
-  },[])
-  
+  useEffect(() => {
+    Application.showHolisticPlan({
+      treatment_id: treatmentId,
+      member_id: id,
+    }).then((res) => setTratmentPlanData(res.data));
+  }, []);
+
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -287,7 +289,7 @@ Application.showHolisticPlan({treatment_id:treatmentId,member_id:id}).then((res)
                                         key={`${el.title}-${suggestionIndex}`}
                                       >
                                         <BioMarkerRowSuggestions
-                                        
+                                          editAble
                                           value={el}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {

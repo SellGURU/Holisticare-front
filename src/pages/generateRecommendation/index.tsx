@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState , useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -27,8 +27,8 @@ export const GenerateRecommendation = () => {
     }
   };
   const handleSkip = () => {
-    if(currentStepIndex < steps.length -1 ){
-      setCurrentStepIndex(steps.length -1 )
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex(steps.length - 1);
     }
   };
   const { id } = useParams<{ id: string }>();
@@ -40,9 +40,9 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
-        setTratmentPlanData({ ...res.data, member_id: id}); 
-      setTreatmentId(res.data.treatment_id)
-         })
+        setTratmentPlanData({ ...res.data, member_id: id });
+        setTreatmentId(res.data.treatment_id);
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -81,7 +81,7 @@ export const GenerateRecommendation = () => {
           </div>
           <div className="flex items-center gap-2">
             <div
-              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'flex' } items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
+              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'flex'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
               onClick={handleSkip}
             >
               Skip <img src="/icons/Skip.svg" alt="" />
@@ -98,19 +98,27 @@ export const GenerateRecommendation = () => {
                 Back
               </ButtonPrimary>
             )}
-            <ButtonPrimary ClassName="border border-white" onClick={()=>{
-              if( currentStepIndex == steps.length - 1){
-             Application.saveHolisticPlan(treatmentPlanData).then((res)=>console.log(res)
-             ).finally(()=> navigate(`/report/Generate-Holistic-Plan/${id}`))
-              }else(
-                handleNext()
-              )
-            }}>
+            <ButtonPrimary
+              ClassName="border border-white"
+              onClick={() => {
+                if (currentStepIndex == steps.length - 1) {
+                  Application.saveHolisticPlan({
+                    ...treatmentPlanData,
+                    suggestion_tab: treatmentPlanData.suggestion_tab.filter(
+                      (el: any) => el.checked == true,
+                    ),
+                  })
+                    .then((res) => console.log(res))
+                    .finally(() =>
+                      navigate(`/report/Generate-Holistic-Plan/${id}`),
+                    );
+                } else handleNext();
+              }}
+            >
               {currentStepIndex == 2 ? 'Generate' : 'Next'}
               {currentStepIndex != 2 && (
                 <img src="/icons/arrow-right-white.svg" alt="" />
               )}
-             
             </ButtonPrimary>
           </div>
         </div>
