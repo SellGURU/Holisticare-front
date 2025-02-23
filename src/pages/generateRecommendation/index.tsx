@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useContext} from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -9,11 +9,12 @@ import { SetOrders } from './components/SetOrders';
 import Application from '../../api/app';
 import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
-
+import { AppContext } from '../../store/app';
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
   const steps = ['General Condition', 'Set orders', 'Overview'];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const { setTreatmentId } = useContext(AppContext);
 
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -39,7 +40,9 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
-        setTratmentPlanData({ ...res.data, member_id: id});      })
+        setTratmentPlanData({ ...res.data, member_id: id}); 
+      setTreatmentId(res.data.treatment_id)
+         })
       .finally(() => {
         setIsLoading(false);
       });

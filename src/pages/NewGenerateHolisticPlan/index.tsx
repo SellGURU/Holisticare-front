@@ -3,7 +3,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { TopBar } from '../../Components/topBar';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
 import Toggle from '../../Components/Toggle';
@@ -20,7 +20,7 @@ import { resolveKeyStatus } from '../../help';
 import UnitPopUp from '../../Components/UnitPopup';
 import StatusBarChart from '../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
-
+import { AppContext } from '../../store/app';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -81,6 +81,13 @@ const NewGenerateHolisticPlan = () => {
     });
     return subs;
   };
+  const { treatmentId } = useContext(AppContext);
+
+  useEffect(()=>{
+Application.showHolisticPlan({treatment_id:treatmentId,member_id:id}).then((res)=>setTratmentPlanData(res.data)
+)
+  },[])
+  
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -280,6 +287,7 @@ const NewGenerateHolisticPlan = () => {
                                         key={`${el.title}-${suggestionIndex}`}
                                       >
                                         <BioMarkerRowSuggestions
+                                        
                                           value={el}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {
