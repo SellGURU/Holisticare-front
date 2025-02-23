@@ -204,7 +204,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               {refrences?.biomarkers.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
-                  <div className="absolute hidden cursor-pointer top-4 right-4">
+                  {/* <div className="absolute  cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
                       <div className="TextStyle-Headline-6  text-Text-Primary">
                         Historical Chart
@@ -216,7 +216,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         checked={isCheced}
                       ></Toggle>
                     </div>
-                  </div>
+                  </div> */}
                   {!isCheced ? (
                     <div className="w-full ">
                       <div className=" w-full p-4 border border-Gray-50 h-[159px] bg-white rounded-[6px]">
@@ -247,8 +247,23 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               )}
                             </div>
                           </div>
-                          <div className="relative z-50 mr-0">
-                            <UnitPopUp unit={active?.unit}></UnitPopUp>
+                          <div className="flex items-center gap-4">
+                            <div className="  cursor-pointer ">
+                              <div className="flex gap-2 justify-end items-center">
+                                <div className="TextStyle-Headline-6  text-Text-Primary">
+                                  Historical Chart
+                                </div>
+                                <Toggle
+                                  setChecked={(value) => {
+                                    setIsCheced(value);
+                                  }}
+                                  checked={isCheced}
+                                ></Toggle>
+                              </div>
+                            </div>
+                            <div className="relative z-50 mr-0">
+                              <UnitPopUp unit={active?.unit}></UnitPopUp>
+                            </div>
                           </div>
                         </div>
                         {active && (
@@ -259,14 +274,27 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   ) : (
                     <div className="w-full">
                       <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
-                        <div className="TextStyle-Headline-6 flex justify-between  pr-[140px] items-center gap-2 text-Text-Primary mb-5">
+                        <div className="TextStyle-Headline-6 flex justify-between  items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
-                          <div className="flex justify-end items-center  mt-[-8px]  gap-2">
+                          <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
+                            <div className="  cursor-pointer mr-6 ">
+                              <div className="flex gap-2 justify-end items-center">
+                                <div className="TextStyle-Headline-6  text-Text-Primary">
+                                  Historical Chart
+                                </div>
+                                <Toggle
+                                  setChecked={(value) => {
+                                    setIsCheced(value);
+                                  }}
+                                  checked={isCheced}
+                                ></Toggle>
+                              </div>
+                            </div>
                             <div className="relative z-50 ">
                               <UnitPopUp unit={active?.unit}></UnitPopUp>
                             </div>
 
-                            <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                            <div className="w-[94px] opacity-50 cursor-pointer flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                               <div className="text-Primary-DeepTeal text-[10px]">
                                 6 Month
                               </div>

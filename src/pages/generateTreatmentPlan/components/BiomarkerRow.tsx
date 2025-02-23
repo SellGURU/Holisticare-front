@@ -8,12 +8,16 @@ interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
   onDelete: () => void;
+  onEdit: (value: any) => void;
+  editAble?: boolean;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
   onDelete,
+  onEdit,
+  editAble,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -26,17 +30,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       case 'Supplement':
         return '/icons/Supplement.svg';
       case 'Lifestyle':
-        return '/icons/lifeStyle.svg';
+        return '/icons/LifeStyle2.svg';
       default:
-        return '/icons/lifeStyle.svg';
+        return '/icons/LifeStyle2.svg';
     }
   };
 
   const [showModal, setShowModal] = useState(false);
-  const [editableValue] = useState(value.Instruction);
-  const [notes, setNotes] = useState<string[]>(
-    value['Practitioner Comments'] || [],
-  );
+  const [editableValue, setEditAbleValue] = useState(value.Instruction);
+  const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
 
@@ -46,7 +48,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       note: editableValue,
     });
   }, [editableValue]);
-
+  useEffect(() => {
+    setEditAbleValue(value.Instruction);
+    setNotes(value['Client Notes']);
+  }, [value]);
   const handleAddNotes = (newNotes: string[]) => {
     setNotes(newNotes);
     onchange({
@@ -57,8 +62,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   return (
     <>
-      <div className="w-full flex justify-center items-center gap-4">
-        <div className="w-[60px]">
+      <div className="w-full flex justify-center items-start gap-4">
+        <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
             <div className="w-[32px] flex justify-center items-center h-[32px] bg-backgroundColor-Main border border-gray-50 rounded-[8px]">
               <img className="w-[24px]" src={resolveIcon()} alt="" />
@@ -95,7 +100,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
           {isExpanded && (
             <div className="flex flex-col mt-1">
-              {notes.map((note, index) => (
+              {notes?.map((note, index) => (
                 <div
                   key={index}
                   className="bg-transparent flex gap-1 items-start text-[12px]"
@@ -114,7 +119,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               alt=""
             />
             <div
-              className={`${isExpanded ? 'grid' : 'hidden'} flex items-center gap-[6px]`}
+              className={`${isExpanded && editAble ? 'grid' : 'hidden'} flex items-center gap-[6px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}
@@ -127,7 +132,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   Sure?{' '}
                   <img
                     className="cursor-pointer"
-                    onClick={onDelete}
+                    onClick={() => {
+                      setdeleteConfirm(false);
+                      onDelete();
+                    }}
                     src="/icons/confirm-tick-circle.svg"
                     alt=""
                   />
@@ -154,13 +162,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       </div>
       {showModal && (
         <RefrenceModal
-          reference={value.reference}
+          reference={[]}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
         />
       )}
       {showEditNote && (
         <EditModal
+          defalts={value}
+          onSubmit={(editData) => {
+            onEdit(editData);
+          }}
           isOpen={showEditNote}
           onClose={() => setShowEditNote(false)}
           onAddNotes={handleAddNotes}

@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 
 // Define types for the data structure
-interface MockData {
+interface ConditionDataProps {
   biomarkers: string[];
   completionSuggestions: string[];
   clientInsights: string[];
@@ -27,37 +28,45 @@ interface CardProps {
 }
 
 // Type for the section keys
-type SectionKey = keyof MockData;
+type SectionKey = keyof ConditionDataProps;
 
 // Mock data with type annotation
-const mockData: MockData = {
-  biomarkers: [
-    "Moreover, studies have shown that blood tests measuring specific biomarkers can estimate a woman's cardiovascular disease risk for the next 30 years, underscoring the importance of early evaluation and intervention.",
-    "Moreover, studies have shown that blood tests measuring specific biomarkers can estimate a woman's cardiovascular disease risk for the next 30 years, underscoring the importance of early evaluation and intervention.",
-  ],
-  completionSuggestions: [
-    'Given that this client seems to have a high stress quotient, it would be best to have him undergo a mental stress test.',
-    'Given that this client seems to have a high stress quotient, it would be best to have him undergo a mental stress test.',
-  ],
-  clientInsights: [
-    "The patient's heart rate is increasing in the data received from the verbal device, and according to a report received, the patient's prescribed medications are not being taken as scheduled. This case needs to be evaluated immediately.",
-    "The patient's heart rate is increasing in the data received from the verbal device, and according to a report received, the patient's prescribed medications are not being taken as scheduled. This case needs to be evaluated immediately.",
-  ],
-  lookingForwards: [
-    'Given that weight loss is a high priority for this client, it is suggested that we start with a fasting diet to get him closer to his ideal weight in the first step.',
-    'Given that weight loss is a high priority for this client, it is suggested that we start with a fasting diet to get him closer to his ideal weight in the first step.',
-  ],
-};
+// const mockData: MockData = {
+//   biomarkers: [
+//     "Moreover, studies have shown that blood tests measuring specific biomarkers can estimate a woman's cardiovascular disease risk for the next 30 years, underscoring the importance of early evaluation and intervention.",
+//     "Moreover, studies have shown that blood tests measuring specific biomarkers can estimate a woman's cardiovascular disease risk for the next 30 years, underscoring the importance of early evaluation and intervention.",
+//   ],
+//   completionSuggestions: [
+//     'Given that this client seems to have a high stress quotient, it would be best to have him undergo a mental stress test.',
+//     'Given that this client seems to have a high stress quotient, it would be best to have him undergo a mental stress test.',
+//   ],
+//   clientInsights: [
+//     "The patient's heart rate is increasing in the data received from the verbal device, and according to a report received, the patient's prescribed medications are not being taken as scheduled. This case needs to be evaluated immediately.",
+//     "The patient's heart rate is increasing in the data received from the verbal device, and according to a report received, the patient's prescribed medications are not being taken as scheduled. This case needs to be evaluated immediately.",
+//   ],
+//   lookingForwards: [
+//     'Given that weight loss is a high priority for this client, it is suggested that we start with a fasting diet to get him closer to his ideal weight in the first step.',
+//     'Given that weight loss is a high priority for this client, it is suggested that we start with a fasting diet to get him closer to his ideal weight in the first step.',
+//   ],
+// };
 
-export const GeneralCondition: React.FC = () => {
-  const [data, setData] = useState<MockData>(mockData);
+interface GeneralConditionProps {
+  data: ConditionDataProps;
+  setData: (values: any) => void;
+}
+export const GeneralCondition: React.FC<GeneralConditionProps> = ({
+  data,
+  setData,
+}) => {
+  // const [data, setData] = useState<ConditionDataProps>(updata);
   const [editMode, setEditMode] = useState<EditModeState>({
     biomarkers: false,
     completionSuggestions: false,
     clientInsights: false,
     lookingForwards: false,
   });
-  const [tempData, setTempData] = useState<MockData>(data);
+
+  const [tempData, setTempData] = useState<ConditionDataProps>(data);
 
   const handleEdit = (section: SectionKey): void => {
     if (!editMode[section]) {
@@ -68,7 +77,38 @@ export const GeneralCondition: React.FC = () => {
   };
   const handleSave = (section: SectionKey): void => {
     // Save changes from tempData to actual data
-    setData((prev) => ({ ...prev, [section]: [...tempData[section]] }));
+    if (section == 'biomarkers') {
+      setData((prev: any) => {
+        return {
+          ...prev,
+          biomarker_insight: tempData[section],
+        };
+      });
+    }
+    if (section == 'clientInsights') {
+      setData((prev: any) => {
+        return {
+          ...prev,
+          client_insight: tempData[section],
+        };
+      });
+    }
+    if (section == 'completionSuggestions') {
+      setData((prev: any) => {
+        return {
+          ...prev,
+          completion_suggestion: tempData[section],
+        };
+      });
+    }
+    if (section == 'lookingForwards') {
+      setData((prev: any) => {
+        return {
+          ...prev,
+          looking_forwards: tempData[section],
+        };
+      });
+    }
     setEditMode((prev) => ({ ...prev, [section]: false }));
   };
 
@@ -153,7 +193,7 @@ export const GeneralCondition: React.FC = () => {
           {(editMode.lookingForwards
             ? tempData.lookingForwards
             : data.lookingForwards
-          ).map((item, index) => (
+          )?.map((item, index) => (
             <React.Fragment key={index}>
               {editMode.lookingForwards ? (
                 <textarea
@@ -193,12 +233,13 @@ const Card: React.FC<CardProps> = ({
       {isEditing ? (
         <div
           onClick={onSave}
-          className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
+          className="size-6 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
         >
-          <img src="/icons/tick-square-blue.svg" alt="" />
+          <img className="" src="/icons/tick-square-blue.svg" alt="" />
         </div>
       ) : (
         <img
+          className="w-5"
           src="/icons/edit-2.svg"
           alt=""
           onClick={onEdit}
@@ -208,7 +249,7 @@ const Card: React.FC<CardProps> = ({
     </div>
 
     <ul className="mt-4 px-6">
-      {content.map((item, index) => (
+      {content?.map((item, index) => (
         <>
           {isEditing ? (
             <textarea

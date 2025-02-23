@@ -9,6 +9,8 @@ interface AppContextProp {
   login: (token: string, permisions?: any) => void;
   logout: () => void;
   PackageManager: PackageManager;
+  treatmentId: string | null;
+  setTreatmentId: (id: string) => void;
 }
 
 export const AppContext = createContext<AppContextProp>({
@@ -18,12 +20,16 @@ export const AppContext = createContext<AppContextProp>({
   permisions: {},
   logout: () => {},
   PackageManager: new PackageManager(),
+  treatmentId: null,
+  setTreatmentId: () => {},
 });
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [token, setToken] = useState<string | null>(
     localStorage.getItem('token') || null,
   );
+  const [treatmentId, setTreatmentId] = useState<string | null>(null);
+
   const [permisions, setPermisions] = useState(
     JSON.parse(localStorage.getItem('permisins') || '{}'),
   );
@@ -45,6 +51,8 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     },
     permisions: permisions,
     PackageManager: new PackageManager(),
+    treatmentId: treatmentId,
+    setTreatmentId: setTreatmentId,
   };
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

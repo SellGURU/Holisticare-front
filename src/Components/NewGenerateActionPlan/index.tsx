@@ -284,7 +284,7 @@ const NewGenerateActionPlan = () => {
                       <div className="flex items-start justify-between">
                         <div className="flex items-start text-Text-Primary text-xs text-nowrap">
                           <img
-                            src="/icons/add-square.svg"
+                            src="/icons/add-square-green.svg"
                             alt=""
                             className="mr-1 w-[16px] h-[16px] cursor-pointer"
                             onClick={() => {

@@ -272,6 +272,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                 </div>
               </MainModal>
               <EditModal
+                onSubmit={() => {}}
                 isAdd
                 isOpen={showAddModal}
                 onClose={() => setshowAddModal(false)}
@@ -520,6 +521,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                                     key={`${el.title}-${suggestionIndex}`}
                                   >
                                     <BioMarkerRowSuggestions
+                                      onEdit={() => {}}
                                       value={el}
                                       onDelete={() =>
                                         handleDelete(suggestionIndex)
