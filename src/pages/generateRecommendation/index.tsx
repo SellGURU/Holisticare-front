@@ -103,17 +103,10 @@ export const GenerateRecommendation = () => {
                 handleNext()
               )
             }}>
-              {
-                currentStepIndex < steps.length - 1 ? (
-                  <>
-                   Next <img src="/icons/arrow-right-white.svg" alt="" />
-                  </>
-                ):(
-                  <>
-                  Generate
-                  </>
-                )
-              }
+              {currentStepIndex == 2 ? 'Generate' : 'Next'}
+              {currentStepIndex != 2 && (
+                <img src="/icons/arrow-right-white.svg" alt="" />
+              )}
              
             </ButtonPrimary>
           </div>
@@ -173,7 +166,7 @@ export const GenerateRecommendation = () => {
               data={treatmentPlanData.suggestion_tab}
             ></SetOrders>
           ) : (
-            <Overview></Overview>
+            <Overview treatmentPlanData={treatmentPlanData}></Overview>
           )}
         </div>
       </div>
