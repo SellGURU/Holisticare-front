@@ -170,18 +170,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             </div>
             <div
               onClick={() => {
-                setActiveTreatmentplan('Mind');
+                setActiveTreatmentplan('Lifestyle');
               }}
               className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
-                aciveTreatmentPlan == 'Mind'
+                aciveTreatmentPlan == 'Lifestyle'
                   ? ' border-Primary-EmeraldGreen'
                   : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
-                <img src="/icons/mind.svg" alt="" />
+                <img src="/icons/Lifestyle.svg" alt="" />
               </div>
-              Mind
+              Lifestyle
             </div>
             <div
               onClick={() => {
@@ -435,18 +435,18 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 </div>
                 <div
                   onClick={() => {
-                    setActiveTreatmentplan('Mind');
+                    setActiveTreatmentplan('Lifestyle');
                   }}
                   className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
-                    aciveTreatmentPlan == 'Mind'
+                    aciveTreatmentPlan == 'Lifestyle'
                       ? ' border-Primary-EmeraldGreen'
                       : ''
                   } w-full flex items-center px-4`}
                 >
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
-                    <img src="/icons/mind.svg" alt="" />
+                    <img className='size-4' src="/public/icons/LifeStyle2.svg" alt="" />
                   </div>
-                  Mind
+                  Lifestyle
                 </div>
                 <div
                   onClick={() => {
