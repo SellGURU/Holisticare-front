@@ -78,16 +78,16 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 <FiExternalLink></FiExternalLink>
               </div>
               <div className="ml-10 gap-2 flex xl:hidden justify-end items-center">
-            <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
-              Historical Chart
-            </div>
-            <Toggle
-              setChecked={(value) => {
-                setIsCheced(value);
-              }}
-              checked={isCheced}
-            ></Toggle>
-          </div>
+                <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
+                  Historical Chart
+                </div>
+                <Toggle
+                  setChecked={(value) => {
+                    setIsCheced(value);
+                  }}
+                  checked={isCheced}
+                ></Toggle>
+              </div>
             </div>
           </div>
           <div className=" gap-2 hidden xl:flex justify-end items-center">
