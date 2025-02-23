@@ -51,7 +51,7 @@ const NewGenerateHolisticPlan = () => {
       .then((res) => {
         setClientGools(res.data.client_goals);
         setTratmentPlanData(res.data);
-        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0])
+        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
         // setActive(res.data.result_tab[0].subcategories[0].)
         // setGenereStep('Generate Plan');
       })
@@ -141,7 +141,7 @@ const NewGenerateHolisticPlan = () => {
                   Generate Holistic Plan
                 </div>
               </div>
-              {treatmentPlanData &&
+              {treatmentPlanData && (
                 <div className="w-full flex gap-2 justify-center lg:justify-end items-center">
                   <ButtonPrimary
                     disabled={isLoading}
@@ -166,388 +166,391 @@ const NewGenerateHolisticPlan = () => {
                     )}
                   </ButtonPrimary>
                 </div>
-              }
+              )}
             </div>
-              <div className="h-full pr-2 lg:pt-10">
-                <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6">
-                  <div className="flex w-full">
-                    <div className={`flex justify-end invisible gap-2`}>
-                      <div
-                        onClick={() => setSHowAnalyse(true)}
-                        className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
-                      >
-                        <SvgIcon
-                          width="20px"
-                          height="20px"
-                          src="/icons/analyse.svg"
-                          color={'#005F73'}
-                        />
-                        {/* <img src="/icons/analyse.svg" alt="" /> */}
-                        Analysis
-                      </div>
-
-                      <div
-                        onClick={() => {
-                          setSHowClientGoals(true);
-                        }}
-                        className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
-                      >
-                        <SvgIcon
-                          width="20px"
-                          height="20px"
-                          src="/icons/chart.svg"
-                          color={'#005F73'}
-                        />
-                        {/* <img src="/icons/chart.svg" alt="" /> */}
-                        Client Goals
-                      </div>
-                    </div>
-                    <div className="w-full flex justify-center">
-                      <Toggle
-                        active={active}
-                        setActive={setActive}
-                        value={['Recommendation', 'Result']}
-                      ></Toggle>
-                    </div>
+            <div className="h-full pr-2 lg:pt-10">
+              <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6">
+                <div className="flex w-full">
+                  <div className={`flex justify-end invisible gap-2`}>
                     <div
-                      className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData?'visible':'invisible'}  justify-end gap-2`}
+                      onClick={() => setSHowAnalyse(true)}
+                      className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
                     >
-                      <div
-                        onClick={() => setSHowAnalyse(true)}
-                        className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
-                      >
-                        <SvgIcon
-                          width="20px"
-                          height="20px"
-                          src="/icons/analyse.svg"
-                          color={'#005F73'}
-                        />
-                        {/* <img src="/icons/analyse.svg" alt="" /> */}
-                        Analysis
-                      </div>
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/analyse.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/analyse.svg" alt="" /> */}
+                      Analysis
+                    </div>
 
-                      <div
-                        onClick={() => setSHowClientGoals(true)}
-                        className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
-                      >
-                        <SvgIcon
-                          width="20px"
-                          height="20px"
-                          src="/icons/chart.svg"
-                          color={'#005F73'}
-                        />
-                        {/* <img src="/icons/chart.svg" alt="" /> */}
-                        Client Goals
-                      </div>
+                    <div
+                      onClick={() => {
+                        setSHowClientGoals(true);
+                      }}
+                      className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/chart.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/chart.svg" alt="" /> */}
+                      Client Goals
                     </div>
                   </div>
-                  {
-                    treatmentPlanData ?
-                      <div>
-                        {active == 'Recommendation' && (
-                          <>
-                            <div className="flex justify-between items-center mt-3">
-                              <div className="flex justify-start items-center">
-                                <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
-                                  <SvgIcon
-                                    width="40px"
-                                    height="40px"
-                                    src="/icons/TreatmentPlan/cpu-setting.svg"
-                                    color={'#005F73'}
-                                  />
+                  <div className="w-full flex justify-center">
+                    <Toggle
+                      active={active}
+                      setActive={setActive}
+                      value={['Recommendation', 'Result']}
+                    ></Toggle>
+                  </div>
+                  <div
+                    className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData ? 'visible' : 'invisible'}  justify-end gap-2`}
+                  >
+                    <div
+                      onClick={() => setSHowAnalyse(true)}
+                      className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/analyse.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/analyse.svg" alt="" /> */}
+                      Analysis
+                    </div>
+
+                    <div
+                      onClick={() => setSHowClientGoals(true)}
+                      className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/chart.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/chart.svg" alt="" /> */}
+                      Client Goals
+                    </div>
+                  </div>
+                </div>
+                {treatmentPlanData ? (
+                  <div>
+                    {active == 'Recommendation' && (
+                      <>
+                        <div className="flex justify-between items-center mt-3">
+                          <div className="flex justify-start items-center">
+                            <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
+                              <SvgIcon
+                                width="40px"
+                                height="40px"
+                                src="/icons/TreatmentPlan/cpu-setting.svg"
+                                color={'#005F73'}
+                              />
+                            </div>
+                            <div>
+                              <div className="ml-2">
+                                <div className="flex">
+                                  <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
+                                    Holistic Plan
+                                  </div>
                                 </div>
-                                <div>
-                                  <div className="ml-2">
-                                    <div className="flex">
-                                      <div className=" text-Text-Primary text-[10px] md:text-[14px] lg:text-[14px]">
-                                        Holistic Plan
-                                      </div>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                      <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
-                                        The Holistic Plan is a health safeguard
-                                        designed to help clients achieve their
-                                        wellness goals. You can customize it using AI
-                                        or personal insights to align with individual
-                                        objectives.
-                                      </div>
-                                    </div>
+                                <div className="flex justify-between items-center">
+                                  <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
+                                    The Holistic Plan is a health safeguard
+                                    designed to help clients achieve their
+                                    wellness goals. You can customize it using
+                                    AI or personal insights to align with
+                                    individual objectives.
                                   </div>
                                 </div>
                               </div>
-                              <ButtonPrimary
-                                onClick={() => {
-                                  setshowAddModal(true);
-                                }}
-                              >
-                                {' '}
-                                <img src="/icons/add-square.svg" alt="" /> Add
-                              </ButtonPrimary>
                             </div>
+                          </div>
+                          <ButtonPrimary
+                            onClick={() => {
+                              setshowAddModal(true);
+                            }}
+                          >
+                            {' '}
+                            <img src="/icons/add-square.svg" alt="" /> Add
+                          </ButtonPrimary>
+                        </div>
+                        <div>
+                          {treatmentPlanData['suggestion_tab'].length > 0 ? (
+                            <>
+                              {treatmentPlanData['suggestion_tab'].map(
+                                (el: any, suggestionIndex: number) => {
+                                  return (
+                                    <>
+                                      <div
+                                        className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
+                                        key={`${el.title}-${suggestionIndex}`}
+                                      >
+                                        <BioMarkerRowSuggestions
+                                          value={el}
+                                          onEdit={(editData) => {
+                                            setTratmentPlanData((pre: any) => {
+                                              const oldsData: any = { ...pre };
+                                              const suggestions =
+                                                oldsData.suggestion_tab;
+                                              oldsData.suggestion_tab =
+                                                suggestions.map(
+                                                  (
+                                                    edits: any,
+                                                    myindex: number,
+                                                  ) => {
+                                                    if (
+                                                      suggestionIndex != myindex
+                                                    ) {
+                                                      return edits;
+                                                    } else {
+                                                      return editData;
+                                                    }
+                                                  },
+                                                );
+                                              return { ...oldsData };
+                                            });
+                                          }}
+                                          onchange={() => {}}
+                                          onDelete={() => {
+                                            setTratmentPlanData((pre: any) => {
+                                              const oldData: any = { ...pre };
+                                              const suggestions =
+                                                pre.suggestion_tab;
+                                              oldData.suggestion_tab =
+                                                suggestions.filter(
+                                                  (_val: any, index: number) =>
+                                                    index != suggestionIndex,
+                                                );
+                                              console.log(
+                                                suggestions.filter(
+                                                  (_val: any, index: number) =>
+                                                    index != suggestionIndex,
+                                                ),
+                                              );
+                                              return oldData;
+                                            });
+                                          }}
+                                        ></BioMarkerRowSuggestions>
+                                      </div>
+                                    </>
+                                  );
+                                },
+                              )}
+                            </>
+                          ) : (
+                            <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                              <div className="w-full h-full flex flex-col items-center justify-center">
+                                <img src="/icons/EmptyState.svg" alt="" />
+                                <div className="text-base font-medium text-Text-Primary -mt-9">
+                                  No recommendation to show
+                                </div>
+                                <div className="text-xs text-Text-Primary mt-2 mb-5">
+                                  {/* Start creating your Holistic Plan */}
+                                </div>
+                                <ButtonSecondary
+                                  onClick={() => setshowAutoGenerateModal(true)}
+                                  ClassName="w-full md:w-fit"
+                                >
+                                  <img src="/icons/tick-square.svg" alt="" />{' '}
+                                  Auto Generate
+                                </ButtonSecondary>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {active == 'Result' && (
+                      <>
+                        <div className="flex justify-start items-center gap-2">
+                          <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
+                            <img
+                              className=""
+                              src={'/icons/biomarkers/heart.svg'}
+                              alt=""
+                            />
+                          </div>
+                          {activeEl && (
                             <div>
-                              {treatmentPlanData['suggestion_tab'].length > 0 ? (
-                                <>
-                                  {treatmentPlanData['suggestion_tab'].map(
-                                    (el: any, suggestionIndex: number) => {
+                              <div className="text-[14px] font-medium text-Text-Primary">
+                                {activeEl?.subcategory}
+                              </div>
+                              <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                                <span className="text-[8px] lg:text-[12px] text-Text-Primary">
+                                  {activeEl?.num_of_biomarkers}
+                                </span>{' '}
+                                Total Biomarkers{' '}
+                                <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
+                                  {activeEl?.needs_focus_count}
+                                </span>{' '}
+                                Needs Focus
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
+                          <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
+                            <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
+                              {resoveSubctegoriesSubs().map((value: any) => {
+                                return (
+                                  <>
+                                    {value.biomarkers.map((resol: any) => {
                                       return (
                                         <>
                                           <div
-                                            className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
-                                            key={`${el.title}-${suggestionIndex}`}
+                                            onClick={() => {
+                                              setActiveEl(resol);
+                                            }}
+                                            className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
                                           >
-                                            <BioMarkerRowSuggestions
-                                              value={el}
-                                              onEdit={(editData) => {
-                                                setTratmentPlanData((pre: any) => {
-                                                  const oldsData: any = { ...pre };
-                                                  const suggestions =
-                                                    oldsData.suggestion_tab;
-                                                  oldsData.suggestion_tab =
-                                                    suggestions.map(
-                                                      (
-                                                        edits: any,
-                                                        myindex: number,
-                                                      ) => {
-                                                        if (
-                                                          suggestionIndex != myindex
-                                                        ) {
-                                                          return edits;
-                                                        } else {
-                                                          return editData;
-                                                        }
-                                                      },
-                                                    );
-                                                  return { ...oldsData };
-                                                });
-                                              }}
-                                              onchange={() => {}}
-                                              onDelete={() => {
-                                                setTratmentPlanData((pre: any) => {
-                                                  const oldData: any = { ...pre };
-                                                  const suggestions =
-                                                    pre.suggestion_tab;
-                                                  oldData.suggestion_tab =
-                                                    suggestions.filter(
-                                                      (_val: any, index: number) =>
-                                                        index != suggestionIndex,
-                                                    );
-                                                  console.log(
-                                                    suggestions.filter(
-                                                      (_val: any, index: number) =>
-                                                        index != suggestionIndex,
-                                                    ),
-                                                  );
-                                                  return oldData;
-                                                });
-                                              }}
-                                            ></BioMarkerRowSuggestions>
+                                            <div className="flex items-center gap-1">
+                                              <div className=" text-[12px] text-Text-Primary">
+                                                {resol.name}
+                                              </div>
+                                              {resolveKeyStatus(
+                                                resol.values[0],
+                                                resol.chart_bounds,
+                                              ) == 'Needs Focus' && (
+                                                <div
+                                                  className="w-3 h-3 rounded-full "
+                                                  style={{
+                                                    backgroundColor: '#FC5474',
+                                                  }}
+                                                ></div>
+                                              )}
+                                            </div>
+                                            <img
+                                              className="  rotate-0  w-4"
+                                              src="/icons/arrow-right.svg"
+                                              alt=""
+                                            />
                                           </div>
                                         </>
                                       );
-                                    },
-                                  )}
-                                </>
-                              ) : (
-                                <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
-                                  <div className="w-full h-full flex flex-col items-center justify-center">
-                                    <img src="/icons/EmptyState.svg" alt="" />
-                                    <div className="text-base font-medium text-Text-Primary -mt-9">
-                                      No recommendation to show
-                                    </div>
-                                    <div className="text-xs text-Text-Primary mt-2 mb-5">
-                                      {/* Start creating your Holistic Plan */}
-                                    </div>
-                                    <ButtonSecondary
-                                      onClick={() => setshowAutoGenerateModal(true)}
-                                      ClassName="w-full md:w-fit"
-                                    >
-                                      <img src="/icons/tick-square.svg" alt="" /> Auto
-                                      Generate
-                                    </ButtonSecondary>
-                                  </div>
-                                </div>
-                              )}
+                                    })}
+                                  </>
+                                );
+                              })}
                             </div>
-                          </>
-                        )}
 
-                        {active == 'Result' && (
-                          <>
-                            <div className="flex justify-start items-center gap-2">
-                              <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
-                                <img
-                                  className=""
-                                  src={'/icons/biomarkers/heart.svg'}
-                                  alt=""
-                                />
-                              </div>
-                              {activeEl && (
+                            {activeEl != null && (
+                              <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                                <div className=" text-Text-Primary text-[14px] font-[500]">
+                                  {activeEl.subcategory}
+                                </div>
                                 <div>
-                                  <div className="text-[14px] font-medium text-Text-Primary">
-                                    {activeEl?.subcategory}
-                                  </div>
-                                  <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
-                                    <span className="text-[8px] lg:text-[12px] text-Text-Primary">
-                                      {activeEl?.num_of_biomarkers}
-                                    </span>{' '}
-                                    Total Biomarkers{' '}
-                                    <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
-                                      {activeEl?.needs_focus_count}
-                                    </span>{' '}
-                                    Needs Focus
+                                  <div
+                                    style={{ lineHeight: '24px' }}
+                                    className=" text-Text-Secondary text-[12px] mt-3"
+                                  >
+                                    {activeEl.description}
                                   </div>
                                 </div>
-                              )}
-                            </div>
-                            <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
-                              <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
-                                <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                                  {resoveSubctegoriesSubs().map((value: any) => {
-                                    return (
-                                      <>
-                                        {value.biomarkers.map((resol: any) => {
-                                          return (
-                                            <>
-                                              <div
-                                                onClick={() => {
-                                                  setActiveEl(resol);
-                                                }}
-                                                className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
-                                              >
-                                                <div className="flex items-center gap-1">
-                                                  <div className=" text-[12px] text-Text-Primary">
-                                                    {resol.name}
-                                                  </div>
-                                                  {resolveKeyStatus(
-                                                    resol.values[0],
-                                                    resol.chart_bounds,
-                                                  ) == 'Needs Focus' && (
-                                                    <div
-                                                      className="w-3 h-3 rounded-full "
-                                                      style={{
-                                                        backgroundColor: '#FC5474',
-                                                      }}
-                                                    ></div>
-                                                  )}
-                                                </div>
-                                                <img
-                                                  className="  rotate-0  w-4"
-                                                  src="/icons/arrow-right.svg"
-                                                  alt=""
-                                                />
-                                              </div>
-                                            </>
-                                          );
-                                        })}
-                                      </>
-                                    );
-                                  })}
-                                </div>
-
-                                {activeEl != null && (
-                                  <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
-                                    <div className=" text-Text-Primary text-[14px] font-[500]">
-                                      {activeEl.subcategory}
-                                    </div>
-                                    <div>
-                                      <div
-                                        style={{ lineHeight: '24px' }}
-                                        className=" text-Text-Secondary text-[12px] mt-3"
-                                      >
-                                        {activeEl.description}
-                                      </div>
-                                    </div>
-                                    <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
-                                      <div className="lg:w-[50%]">
-                                        <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
-                                          <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
-                                            Last Value
-                                            <div className="relative">
-                                              <UnitPopUp
-                                                unit={activeEl.unit}
-                                              ></UnitPopUp>
-                                            </div>
-                                          </div>
-                                          <StatusBarChart
-                                            data={activeEl}
-                                          ></StatusBarChart>
+                                <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
+                                  <div className="lg:w-[50%]">
+                                    <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                      <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
+                                        Last Value
+                                        <div className="relative">
+                                          <UnitPopUp
+                                            unit={activeEl.unit}
+                                          ></UnitPopUp>
                                         </div>
                                       </div>
-                                      <div className="lg:w-[50%]">
-                                        <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
-                                          <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
-                                            Historical Data
-                                            <div className=" flex justify-end gap-2 items-center">
-                                              <div className="relative">
-                                                <UnitPopUp
-                                                  unit={activeEl.unit}
-                                                ></UnitPopUp>
-                                              </div>
-                                              <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
-                                                <div className="text-Primary-DeepTeal text-[10px]">
-                                                  6 Month
-                                                </div>
-                                                <div className="w-[16px]">
-                                                  <img
-                                                    src="/icons/arrow-down-green.svg"
-                                                    alt=""
-                                                  />
-                                                </div>
-                                              </div>
-                                            </div>
+                                      <StatusBarChart
+                                        data={activeEl}
+                                      ></StatusBarChart>
+                                    </div>
+                                  </div>
+                                  <div className="lg:w-[50%]">
+                                    <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                      <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
+                                        Historical Data
+                                        <div className=" flex justify-end gap-2 items-center">
+                                          <div className="relative">
+                                            <UnitPopUp
+                                              unit={activeEl.unit}
+                                            ></UnitPopUp>
                                           </div>
-                                          <div className="mt-0 relative">
-                                            <StatusChart
-                                              mode={
-                                                activeEl.chart_bounds['Needs Focus']
-                                                  .length > 1 &&
-                                                activeEl.chart_bounds['Ok'].length > 1
-                                                  ? 'multi'
-                                                  : 'line'
-                                              }
-                                              statusBar={activeEl.chart_bounds}
-                                              labels={[...activeEl.date].reverse()}
-                                              dataPoints={[
-                                                ...activeEl.values,
-                                              ].reverse()}
-                                            ></StatusChart>
+                                          <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                                            <div className="text-Primary-DeepTeal text-[10px]">
+                                              6 Month
+                                            </div>
+                                            <div className="w-[16px]">
+                                              <img
+                                                src="/icons/arrow-down-green.svg"
+                                                alt=""
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
+                                      <div className="mt-0 relative">
+                                        <StatusChart
+                                          mode={
+                                            activeEl.chart_bounds['Needs Focus']
+                                              .length > 1 &&
+                                            activeEl.chart_bounds['Ok'].length >
+                                              1
+                                              ? 'multi'
+                                              : 'line'
+                                          }
+                                          statusBar={activeEl.chart_bounds}
+                                          labels={[...activeEl.date].reverse()}
+                                          dataPoints={[
+                                            ...activeEl.values,
+                                          ].reverse()}
+                                        ></StatusChart>
+                                      </div>
                                     </div>
                                   </div>
-                                )}
+                                </div>
                               </div>
-                            </div>
-                          </>
-                        )}
-
-                      </div>
-                    :
-                    <>
-                      <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
-                        <div className="w-full h-full flex flex-col items-center justify-center">
-                          <img className='w-44' src="/icons/EmptyState.svg" alt="" />
-                          <div className="text-base font-medium text-Text-Primary -mt-9">
-                            No Holistic Plan Generated Yet
+                            )}
                           </div>
-                          <div className="text-xs text-Text-Primary mt-2 mb-5">
-                            {/* Start creating your Holistic Plan */}
-                            Start creating your holistic plan
-                          </div>
-                          <ButtonSecondary
-                            onClick={() => setshowAutoGenerateModal(true)}
-                            ClassName="w-full md:w-fit rounded-full"
-                          >
-                            <img src="/icons/tick-square.svg" alt="" /> Auto
-                            Generate
-                          </ButtonSecondary>
                         </div>
-                      </div>                    
-                    </>
-                  }
-                </div>
-                {/* <CategoryOrder
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                      <div className="w-full h-full flex flex-col items-center justify-center">
+                        <img
+                          className="w-44"
+                          src="/icons/EmptyState.svg"
+                          alt=""
+                        />
+                        <div className="text-base font-medium text-Text-Primary -mt-9">
+                          No Holistic Plan Generated Yet
+                        </div>
+                        <div className="text-xs text-Text-Primary mt-2 mb-5">
+                          {/* Start creating your Holistic Plan */}
+                          Start creating your holistic plan
+                        </div>
+                        <ButtonSecondary
+                          onClick={() => setshowAutoGenerateModal(true)}
+                          ClassName="w-full md:w-fit rounded-full"
+                        >
+                          <img src="/icons/tick-square.svg" alt="" /> Auto
+                          Generate
+                        </ButtonSecondary>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              {/* <CategoryOrder
                             setData={setTratmentPlanData}
                             data={treatmentPlanData}
                             isActionPlan={isActionPlan}
@@ -555,8 +558,7 @@ const NewGenerateHolisticPlan = () => {
                             openAnayze={() => setSHowAnalyse(true)}
                             openGoal={() => setSHowClientGoals(true)}
                             ></CategoryOrder> */}
-              </div>
-            
+            </div>
 
             <div className="w-full mt-6 flex gap-4 justify-center">
               <ButtonPrimary
