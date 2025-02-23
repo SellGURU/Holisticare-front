@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate, useParams } from 'react-router-dom';
 import { TopBar } from '../../Components/topBar';
@@ -23,10 +24,10 @@ import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [active, setActive] = useState<string>('Recommendation');
-  const [clientGools, setClientGools]: any = useState({});
+  const [clientGools]: any = useState({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
@@ -42,22 +43,6 @@ const NewGenerateHolisticPlan = () => {
       navigate(`/report/${id}/a?section=Holistic Plan`);
     }, 3000);
     navigate(-1);
-  };
-  const _generatePaln = () => {
-    setIsLoading(true);
-    Application.generateTreatmentPlan({
-      member_id: id,
-    })
-      .then((res) => {
-        setClientGools(res.data.client_goals);
-        setTratmentPlanData(res.data);
-        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
-        // setActive(res.data.result_tab[0].subcategories[0].)
-        // setGenereStep('Generate Plan');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
   };
   const [activeEl, setActiveEl] = useState<any>();
   const updateNeedFocus = (value: any) => {
