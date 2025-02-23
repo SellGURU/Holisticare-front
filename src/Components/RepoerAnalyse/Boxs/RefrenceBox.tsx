@@ -41,7 +41,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               {data.name}
             </div>
             {isLongName && <Tooltip className="z-30" id="name" />}
-            <div className="flex items-center gap-6">
+            <div className="flex  items-center gap-6">
               <div
                 onMouseEnter={() => {
                   setShowMoreInfo(true);
@@ -77,9 +77,20 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 Group
                 <FiExternalLink></FiExternalLink>
               </div>
+              <div className="ml-10 gap-2 flex xl:hidden justify-end items-center">
+                <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
+                  Historical Chart
+                </div>
+                <Toggle
+                  setChecked={(value) => {
+                    setIsCheced(value);
+                  }}
+                  checked={isCheced}
+                ></Toggle>
+              </div>
             </div>
           </div>
-          <div className=" gap-2 hidden justify-end items-center">
+          <div className=" gap-2 hidden xl:flex justify-end items-center">
             <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
               Historical Chart
             </div>
@@ -103,7 +114,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               <UnitPopUp unit={data.unit}></UnitPopUp>
             </div>
             {isCheced && (
-              <div className="w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+              <div className="w-[94px] opacity-50 cursor-pointer flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                 <div className="text-Primary-DeepTeal text-[10px]">6 Month</div>
                 <div className="w-[16px]">
                   <img src="/icons/arrow-down-green.svg" alt="" />
