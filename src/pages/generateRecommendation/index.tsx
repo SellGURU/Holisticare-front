@@ -25,7 +25,11 @@ export const GenerateRecommendation = () => {
       setCurrentStepIndex(currentStepIndex - 1);
     }
   };
-  const handleSkip = () => {};
+  const handleSkip = () => {
+    if(currentStepIndex < steps.length -1 ){
+      setCurrentStepIndex(steps.length -1 )
+    }
+  };
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -35,8 +39,7 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
-        setTratmentPlanData(res.data);
-      })
+        setTratmentPlanData({ ...res.data, member_id: id});      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -75,7 +78,7 @@ export const GenerateRecommendation = () => {
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center text-[12px] cursor-pointer text-Primary-DeepTeal"
+              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'flex' } items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
               onClick={handleSkip}
             >
               Skip <img src="/icons/Skip.svg" alt="" />
@@ -92,8 +95,26 @@ export const GenerateRecommendation = () => {
                 Back
               </ButtonPrimary>
             )}
-            <ButtonPrimary ClassName="border border-white" onClick={handleNext}>
-              Next <img src="/icons/arrow-right-white.svg" alt="" />
+            <ButtonPrimary ClassName="border border-white" onClick={()=>{
+              if( currentStepIndex == steps.length - 1){
+             Application.saveHolisticPlan(treatmentPlanData).then((res)=>console.log(res)
+             ).finally(()=> navigate(`/report/Generate-Holistic-Plan/${id}`))
+              }else(
+                handleNext()
+              )
+            }}>
+              {
+                currentStepIndex < steps.length - 1 ? (
+                  <>
+                   Next <img src="/icons/arrow-right-white.svg" alt="" />
+                  </>
+                ):(
+                  <>
+                  Generate
+                  </>
+                )
+              }
+             
             </ButtonPrimary>
           </div>
         </div>

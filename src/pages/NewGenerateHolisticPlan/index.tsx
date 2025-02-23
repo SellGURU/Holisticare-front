@@ -545,7 +545,7 @@ const NewGenerateHolisticPlan = () => {
                             ></CategoryOrder> */}
             </div>
 
-            <div className="w-full mt-6 flex gap-4 justify-center">
+            <div className="w-full mt-6 flex gap-4 justify-center ">
               <ButtonPrimary
                 disabled={isLoading}
                 onClick={() => {
