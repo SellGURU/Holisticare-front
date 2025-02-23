@@ -7,9 +7,10 @@ interface SliderData {
 
 interface SlidersProps {
   data: Record<string, number>[] | null;
+  setData: (newData: Record<string, number>[]) => void;
 }
 
-export default function Sliders({ data }: SlidersProps) {
+export default function Sliders({ data, setData }: SlidersProps) {
   const [sliders, setSliders] = useState<SliderData[] | null>(null);
 
   useEffect(() => {
@@ -23,13 +24,20 @@ export default function Sliders({ data }: SlidersProps) {
   }, [data]);
 
   const handleChange = (index: number, newValue: number) => {
-    setSliders((prev) =>
-      prev
-        ? prev.map((item, i) =>
-            i === index ? { ...item, value: newValue } : item,
-          )
-        : null,
-    );
+    setSliders((prev) => {
+      if (!prev) return null;
+
+      const updatedSliders = prev.map((item, i) =>
+        i === index ? { ...item, value: newValue } : item,
+      );
+
+      const updatedData = updatedSliders.map((item) => ({
+        [item.name]: item.value,
+      }));
+      setData(updatedData);
+
+      return updatedSliders;
+    });
   };
 
   if (!sliders) {
