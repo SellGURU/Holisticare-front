@@ -117,11 +117,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   };
 
   const handleContinue = () => {
-    const visibleCategories = categories
-      .filter((cat) => cat.visible)
-      .map((cat) => cat.name);
-    const currentIndex = visibleCategories.indexOf(activeCategory);
-    const nextIndex = (currentIndex + 1) % visibleCategories.length;
     Application.holisticPlanReScore({
       member_id: id,
       selected_interventions: FilteredData.filter(
@@ -131,6 +126,15 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       client_insight: treatMentPlanData?.client_insight,
       looking_forwards: treatMentPlanData?.looking_forwards,
     }).then((res) => {
+      const visibleCategories = categories
+        .filter(
+          (cat) =>
+            cat.visible &&
+            res.data.map((el: any) => el.Category).includes(cat.name),
+        )
+        .map((cat) => cat.name);
+      const currentIndex = visibleCategories.indexOf(activeCategory);
+      const nextIndex = (currentIndex + 1) % visibleCategories.length;
       setFilteredData(res.data);
       setActiveCategory(visibleCategories[nextIndex]);
     });

@@ -93,7 +93,10 @@ export const GenerateRecommendation = () => {
               </ButtonPrimary>
             )}
             <ButtonPrimary ClassName="border border-white" onClick={handleNext}>
-              Next <img src="/icons/arrow-right-white.svg" alt="" />
+              {currentStepIndex == 2 ? 'Generate' : 'Next'}
+              {currentStepIndex != 2 && (
+                <img src="/icons/arrow-right-white.svg" alt="" />
+              )}
             </ButtonPrimary>
           </div>
         </div>
@@ -152,7 +155,7 @@ export const GenerateRecommendation = () => {
               data={treatmentPlanData.suggestion_tab}
             ></SetOrders>
           ) : (
-            <Overview></Overview>
+            <Overview treatmentPlanData={treatmentPlanData}></Overview>
           )}
         </div>
       </div>
