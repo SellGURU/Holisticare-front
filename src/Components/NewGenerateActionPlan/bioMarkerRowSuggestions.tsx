@@ -4,14 +4,14 @@ import React, { useEffect, useState } from 'react';
 interface BioMarkerRowSuggestionsProps {
   value: any;
   category: string;
-//   changeData: (value: any) => void;
+  //   changeData: (value: any) => void;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   category,
-//   changeData,
+  //   changeData,
 }) => {
-//   useEffect(() => console.log(value), [value]);
+  //   useEffect(() => console.log(value), [value]);
 
   const resolveIcon = () => {
     if (category == 'Diet') {
@@ -30,9 +30,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   // const [showModal, setshowModal] = useState(false);
   const [editableValue, setEditableValue] = useState(value.Instruction);
-  const [selectedDays, setSelectedDays] = useState<string[]>(
-    value.Days || [],
-  );
+  const [selectedDays, setSelectedDays] = useState<string[]>(value.Days || []);
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -42,16 +40,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   useEffect(() => {
     setEditableValue(value.Instruction);
   }, [value]);
-//   useEffect(() => {
-//     value.days = selectedDays;
-//   }, [selectedDays, value]);
-//   useEffect(() => {
-//     changeData({
-//       ...value,
-//       instructions: editableValue,
-//       repeat_days: [...selectedDays],
-//     });
-//   }, [editableValue, selectedDays]);
+  //   useEffect(() => {
+  //     value.days = selectedDays;
+  //   }, [selectedDays, value]);
+  //   useEffect(() => {
+  //     changeData({
+  //       ...value,
+  //       instructions: editableValue,
+  //       repeat_days: [...selectedDays],
+  //     });
+  //   }, [editableValue, selectedDays]);
   //   const handleApiResponse = (response: any) => {
   //     try {
   //       // Get the category from the first key in the response
