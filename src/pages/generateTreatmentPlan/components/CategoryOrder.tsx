@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import BioMarkerBox from './BiomarkerBox';
+// import BioMarkerBox from './BiomarkerBox';
 import { useEffect, useState } from 'react';
 import BioMarkerRowSuggestions from './BiomarkerRow';
 import Toggle from '../../../Components/Toggle';
@@ -8,22 +8,29 @@ import Toggle from '../../../Components/Toggle';
 // import PillarsBox from "./PillarsBox"
 // import TreatmentplanData from '../../../api/--moch--/data/new/TreatmentPlanData.json'
 // import { Button } from "symphony-ui"
-import MiniAnallyseButton from '../../../Components/MiniAnalyseButton';
+// import MiniAnallyseButton from '../../../Components/MiniAnalyseButton';
 // import Application from "../../../api/app"
 // import { useConstructor } from "../../../help"
 
 import { ClipLoader } from 'react-spinners';
 import StatusChart from '../../../Components/RepoerAnalyse/StatusChart';
 import StatusBarChart from '../../../Components/RepoerAnalyse/Boxs/StatusBarChart';
-import Application from '../../../api/app';
+// import Application from '../../../api/app';
 import UnitPopUp from '../../../Components/UnitPopup';
 import SvgIcon from '../../../utils/svgIcon';
 import { resolveKeyStatus } from '../../../help';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import EditModal from './EditModal';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import { MainModal } from '../../../Components';
+import { useNavigate } from 'react-router-dom';
 interface CategoryOrderProps {
   isActionPlan?: boolean;
   data: any;
   setData: (data: any) => void;
   memberId: string | undefined;
+  openAnayze?: () => void;
+  openGoal?: () => void;
 }
 
 const CategoryOrder: React.FC<CategoryOrderProps> = ({
@@ -31,13 +38,15 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
   data,
   setData,
   memberId,
+  openAnayze,
+  openGoal,
 }) => {
+  console.log(memberId);
+
   const [isLoading] = useState(false);
-  const [active, setActive] = useState<string>('Suggestion');
-  const [categoryOrderData, setCategoryData] = useState<Array<any>>(
-    data['report_detail'],
-  );
-  const [activeBio, setActiveBio] = useState<any>(
+  const [active, setActive] = useState<string>('Recommendation');
+  const [categoryOrderData] = useState<Array<any>>(data['report_detail']);
+  const [activeBio] = useState<any>(
     categoryOrderData.filter((el) => el.checked == true)[0]
       ? categoryOrderData.filter((el) => el.checked == true)[0]
       : categoryOrderData[0],
@@ -62,11 +71,11 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
       return old;
     });
   }, [categoryOrderData]);
-  const [isLoadingAi, setISLoadingAi] = useState(false);
+  // const [isLoadingAi, setISLoadingAi] = useState(false);
 
-  useEffect(() => {
-    setISLoadingAi(false);
-  }, [active]);
+  // useEffect(() => {
+  //   setISLoadingAi(false);
+  // }, [active]);
 
   // const resolveIcon = (name: string) => {
   //   if (name == 'Cardiovascular and Respiratory Health') {
@@ -116,33 +125,82 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
     }
   }, [activeBio, data['result_tab']]);
 
-  const handleDownloadTreatmentCsv = async () => {
-    if (memberId !== null && memberId !== undefined) {
-      const Props: { member_id: number } = {
-        member_id: parseInt(memberId),
-      };
-      try {
-        const res = await Application.downloadTreatmentCsv(Props);
-        const base64Data = res.data;
-        const binaryData = atob(base64Data);
-        const byteArray = new Uint8Array(binaryData.length);
-        for (let i = 0; i < binaryData.length; i++) {
-          byteArray[i] = binaryData.charCodeAt(i);
-        }
-        const blob = new Blob([byteArray], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'analysis.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (err) {
-        console.log(err);
+  // const handleDownloadTreatmentCsv = async () => {
+  //   if (memberId !== null && memberId !== undefined) {
+  //     const Props: { member_id: number } = {
+  //       member_id: parseInt(memberId),
+  //     };
+  //     try {
+  //       const res = await Application.downloadTreatmentCsv(Props);
+  //       const base64Data = res.data;
+  //       const binaryData = atob(base64Data);
+  //       const byteArray = new Uint8Array(binaryData.length);
+  //       for (let i = 0; i < binaryData.length; i++) {
+  //         byteArray[i] = binaryData.charCodeAt(i);
+  //       }
+  //       const blob = new Blob([byteArray], { type: 'text/csv' });
+  //       const url = window.URL.createObjectURL(blob);
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.setAttribute('download', 'analysis.csv');
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  // };
+  const [showGenerateSection, setShowGenerateSection] = useState(false);
+
+  const handleDelete = (suggestionIndex: number) => {
+    console.log('Deleting suggestion at index:', suggestionIndex);
+
+    setData((pre: any) => {
+      const newData = { ...pre };
+
+      const categoryIndex = newData.suggestion_tab.findIndex(
+        (tab: any) => tab.category === activeBio.category,
+      );
+
+      console.log('Found category at index:', categoryIndex);
+      console.log(
+        'Before delete:',
+        newData.suggestion_tab[categoryIndex]?.suggestions,
+      );
+
+      if (categoryIndex !== -1) {
+        const updatedSuggestions = newData.suggestion_tab[
+          categoryIndex
+        ].suggestions.filter(
+          (_: any, index: number) => index !== suggestionIndex,
+        );
+
+        console.log('After delete:', updatedSuggestions);
+
+        newData.suggestion_tab[categoryIndex] = {
+          ...newData.suggestion_tab[categoryIndex],
+          suggestions: updatedSuggestions,
+        };
       }
+
+      return newData;
+    });
+
+    // Check if suggestions are empty and trigger UI update if necessary
+    const category = data.suggestion_tab.find(
+      (tab: any) => tab.category === activeBio.category,
+    );
+
+    if (category && category.suggestions.length === 0) {
+      console.log('No more suggestions, show generate section');
+      // Here you can set a state or trigger a UI update to show the generate section
+      setShowGenerateSection(true);
     }
   };
-
+  const [showAddModal, setshowAddModal] = useState(false);
+  const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
+  const navigate = useNavigate();
   return (
     <>
       {isActionPlan ? (
@@ -153,6 +211,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                 {' '}
                 Report Details
               </div>
+
               {/* <div>
                                 <AnalyseButton text="Generate by AI"></AnalyseButton>                           
                             </div> */}
@@ -178,16 +237,86 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
             </>
           ) : (
             <>
-              <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
+              <MainModal
+                isOpen={showAutoGenerateModal}
+                onClose={() => setshowAutoGenerateModal(false)}
+              >
+                <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[232px]">
+                  <div className="pb-2 border-b border-Gray-50 flex items-center gap-2 text-sm font-medium">
+                    <img className="" src="/icons/danger.svg" alt="" />
+                    Auto Generate
+                  </div>
+                  <div className=" mt-6 text-center text-xs font-medium text-Text-Primary">
+                    Are you sure you want to continue?
+                  </div>
+                  <div className=" mt-3 text-center text-xs text-Text-Secondary">
+                    Auto-generated changes will replace the existing plan, and
+                    all previous data will be lost.
+                  </div>
+                  <div className=" mt-10 flex justify-end gap-2">
+                    <div
+                      className="text-sm font-medium text-Disable cursor-pointer"
+                      onClick={() => setshowAutoGenerateModal(false)}
+                    >
+                      Cancel
+                    </div>
+                    <div
+                      className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                      onClick={() =>
+                        navigate(`/report/Generate-Recommendation/${memberId}`)
+                      }
+                    >
+                      Confirm
+                    </div>
+                  </div>
+                </div>
+              </MainModal>
+              <EditModal
+                onSubmit={() => {}}
+                isAdd
+                isOpen={showAddModal}
+                onClose={() => setshowAddModal(false)}
+                onAddNotes={() => {}}
+              ></EditModal>
+              {/* <div className="bg-white rounded-[16px] shadow-100  p-6 mt-2  border border-Gray-50 ">
                 <div className="w-full flex items-center justify-between">
                   <div className="text-sm font-medium text-Text-Primary flex items-center gap-2">
                     {' '}
                     <div className="bg-Text-Primary rounded-full w-1 h-1"></div>{' '}
                     Report Details
                   </div>
-                  {/* <div>
+                  <div className="flex gap-2">
+                    <div
+                      onClick={openAnayze}
+                      className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/analyse.svg"
+                        color={'#005F73'}
+                      />
+                      <img src="/icons/analyse.svg" alt="" />
+                      Analysis
+                    </div>
+
+                    <div
+                      onClick={openGoal}
+                      className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/chart.svg"
+                        color={'#005F73'}
+                      />
+                      <img src="/icons/chart.svg" alt="" />
+                      Client Goals
+                    </div>
+                  </div>
+                  <div>
                                     <AnalyseButton text="Generate by AI"></AnalyseButton>                           
-                                </div> */}
+                                </div>
                 </div>
 
                 <div className="flex flex-wrap gap-6 mt-3">
@@ -207,7 +336,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                             setTimeout(() => {
                               setActive(old);
                             }, 10);
-                            // setActiveEl(el["Out of Reference"][0])
+                            setActiveEl(el["Out of Reference"][0])
                           }}
                           onCheck={() => {
                             const old: Array<any> = [];
@@ -230,17 +359,52 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     );
                   })}
                 </div>
-              </div>
+              </div> */}
               <div className="bg-white rounded-[16px]  shadow-100 py-6 px-2 md:px-6 lg:px-6  mt-2  border border-Gray-25  ">
-                <div className="w-full flex justify-center">
-                  <Toggle
-                    active={active}
-                    setActive={setActive}
-                    value={['Suggestion', 'Result']}
-                  ></Toggle>
+                <div className="flex w-full">
+                  <div className="w-full flex justify-center">
+                    <Toggle
+                      active={active}
+                      setActive={setActive}
+                      value={['Recommendation', 'Result']}
+                    ></Toggle>
+                  </div>
+                  <div
+                    className={` ${showGenerateSection ? 'hidden' : 'flex'}  justify-end gap-2`}
+                  >
+                    <div
+                      onClick={openAnayze}
+                      className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/analyse.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/analyse.svg" alt="" /> */}
+                      Analysis
+                    </div>
+
+                    <div
+                      onClick={openGoal}
+                      className="w-full cursor-pointer flex text-xs font-inter text-Primary-DeepTeal items-center gap-1 text-nowrap"
+                    >
+                      <SvgIcon
+                        width="20px"
+                        height="20px"
+                        src="/icons/chart.svg"
+                        color={'#005F73'}
+                      />
+                      {/* <img src="/icons/chart.svg" alt="" /> */}
+                      Client Goals
+                    </div>
+                  </div>
                 </div>
 
-                <div className="w-full flex justify-between lg:pr-4">
+                <div
+                  className={`w-full ${showGenerateSection ? 'hidden' : 'flex'} items-center mt-6 justify-between lg:pr-4`}
+                >
                   <div className="flex justify-start items-center">
                     <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
                       <SvgIcon
@@ -269,7 +433,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                     </div>
                   </div>
                   <div className="flex flex-col-reverse lg:flex-row gap-8 items-center">
-                    <div
+                    {/* <div
                       className="flex gap-2 items-center cursor-pointer"
                       onClick={handleDownloadTreatmentCsv}
                     >
@@ -282,112 +446,155 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                       <span className="text-[10px] md:text-[12px] lg:text-[12px] text-Primary-DeepTeal">
                         Download CSV analysis
                       </span>
-                    </div>
-                    {active == 'Suggestion' && (
-                      <div className="w-[32px] relative  h-[32px]">
-                        <MiniAnallyseButton
-                          isLoading={isLoadingAi}
-                          onResolve={(value: string) => {
-                            setISLoadingAi(true);
-                            Application.UpdateTreatmentPlanWithAi({
-                              treatment_category: activeBio.category,
-                              suggestion_tab_list: data[
-                                'suggestion_tab'
-                              ].filter(
-                                (el: any) => el.category == activeBio.category,
-                              )[0].suggestions,
-                              ai_generation_mode: value,
-                            })
-                              .then((res) => {
-                                if (res.data) {
-                                  setData((pre: any) => {
-                                    const old = { ...pre };
-                                    console.log(old['suggestion_tab']);
-                                    old['suggestion_tab'] = [
-                                      ...old['suggestion_tab'].filter(
-                                        (el: any) =>
-                                          el.category != activeBio.category,
-                                      ),
-                                      res.data,
-                                    ];
-                                    return old;
-                                  });
-                                  const old = active;
-                                  setActive('');
-                                  setTimeout(() => {
-                                    setActive(old);
-                                  }, 10);
-                                }
+                    </div> */}
+                    {active == 'Recommendation' && (
+                      <div className="flex gap-2">
+                        <div className="w-[32px] relative  h-[32px]">
+                          {/* <MiniAnallyseButton
+                            isLoading={isLoadingAi}
+                            onResolve={(value: string) => {
+                              setISLoadingAi(true);
+                              Application.UpdateTreatmentPlanWithAi({
+                                treatment_category: activeBio.category,
+                                suggestion_tab_list: data[
+                                  'suggestion_tab'
+                                ].filter(
+                                  (el: any) =>
+                                    el.category == activeBio.category,
+                                )[0].suggestions,
+                                ai_generation_mode: value,
                               })
-                              .finally(() => {
-                                setISLoadingAi(false);
-                              });
-                          }}
-                        ></MiniAnallyseButton>
+                                .then((res) => {
+                                  if (res.data) {
+                                    setData((pre: any) => {
+                                      const old = { ...pre };
+                                      console.log(old['suggestion_tab']);
+                                      old['suggestion_tab'] = [
+                                        ...old['suggestion_tab'].filter(
+                                          (el: any) =>
+                                            el.category != activeBio.category,
+                                        ),
+                                        res.data,
+                                      ];
+                                      return old;
+                                    });
+                                    const old = active;
+                                    setActive('');
+                                    setTimeout(() => {
+                                      setActive(old);
+                                    }, 10);
+                                  }
+                                })
+                                .finally(() => {
+                                  setISLoadingAi(false);
+                                });
+                            }}
+                          ></MiniAnallyseButton> */}
+                        </div>
+                        <ButtonPrimary onClick={() => setshowAddModal(true)}>
+                          {' '}
+                          <img src="/icons/add-square.svg" alt="" /> Add
+                        </ButtonPrimary>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4">
-                  {active == 'Suggestion' ? (
+                <div className="">
+                  {active == 'Recommendation' ? (
                     <>
                       {data['suggestion_tab'].filter(
                         (el: any) => el.category == activeBio.category,
-                      ).length > 0 && (
+                      ).length > 0 && !showGenerateSection ? (
                         <>
                           {data['suggestion_tab']
                             .filter(
                               (el: any) => el.category == activeBio.category,
                             )[0]
-                            .suggestions.map((el: any) => {
-                              return (
-                                <div className="mt-2">
-                                  <BioMarkerRowSuggestions
-                                    value={el}
-                                    onchange={(valu: any) => {
-                                      setData((pre: any) => {
-                                        const newData = { ...pre };
-                                        const suggestion_tab = [
-                                          ...newData.suggestion_tab,
-                                        ];
-                                        newData.suggestion_tab =
-                                          suggestion_tab.map((values: any) => {
-                                            // console.log(el)
-                                            if (
-                                              values.category ==
-                                              activeBio.category
-                                            ) {
-                                              const newSugs = [
-                                                ...values.suggestions,
-                                              ];
-                                              const newSugesResolved =
-                                                newSugs.map((ns) => {
-                                                  if (ns.title == valu.title) {
-                                                    console.log('findTitle');
-                                                    return valu;
-                                                  } else {
-                                                    return ns;
-                                                  }
-                                                });
-                                              return {
-                                                ...values,
-                                                suggestions: newSugesResolved,
-                                              };
-                                            } else {
-                                              return values;
-                                            }
-                                          });
-                                        console.log(newData.suggestion_tab);
-                                        return newData;
-                                      });
-                                      console.log(valu);
-                                    }}
-                                  ></BioMarkerRowSuggestions>
-                                </div>
-                              );
-                            })}
+                            .suggestions.map(
+                              (el: any, suggestionIndex: number) => {
+                                console.log(el);
+
+                                return (
+                                  <div
+                                    className="w-full lg:px-6 lg:py-4 lg:bg-backgroundColor-Card lg:rounded-[16px] lg:border lg:border-Gray-50 mt-4"
+                                    key={`${el.title}-${suggestionIndex}`}
+                                  >
+                                    <BioMarkerRowSuggestions
+                                      onEdit={() => {}}
+                                      value={el}
+                                      onDelete={() =>
+                                        handleDelete(suggestionIndex)
+                                      }
+                                      onchange={(valu: any) => {
+                                        setData((pre: any) => {
+                                          const newData = { ...pre };
+                                          const suggestion_tab = [
+                                            ...newData.suggestion_tab,
+                                          ];
+                                          newData.suggestion_tab =
+                                            suggestion_tab.map(
+                                              (values: any) => {
+                                                if (
+                                                  values.category ==
+                                                  activeBio.category
+                                                ) {
+                                                  const newSugs = [
+                                                    ...values.suggestions,
+                                                  ];
+                                                  const newSugesResolved =
+                                                    newSugs.map((ns) => {
+                                                      if (
+                                                        ns.title == valu.title
+                                                      ) {
+                                                        console.log(
+                                                          'findTitle',
+                                                        );
+                                                        return valu;
+                                                      } else {
+                                                        return ns;
+                                                      }
+                                                    });
+                                                  return {
+                                                    ...values,
+                                                    suggestions:
+                                                      newSugesResolved,
+                                                  };
+                                                } else {
+                                                  return values;
+                                                }
+                                              },
+                                            );
+                                          console.log(newData.suggestion_tab);
+                                          return newData;
+                                        });
+                                        console.log(valu);
+                                      }}
+                                    ></BioMarkerRowSuggestions>
+                                  </div>
+                                );
+                              },
+                            )}
                         </>
+                      ) : (
+                        <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                          <div className="w-full h-full flex flex-col items-center justify-center">
+                            <img src="/icons/EmptyState.svg" alt="" />
+                            <div className="text-base font-medium text-Text-Primary -mt-9">
+                              No Holistic Plan Generated Yet
+                            </div>
+                            <div className="text-xs text-Text-Primary mt-2 mb-5">
+                              Start creating your Holistic Plan
+                            </div>
+                            <ButtonSecondary
+                              onClick={() => setshowAutoGenerateModal(true)}
+                              ClassName="w-full md:w-fit"
+                            >
+                              <img src="/icons/tick-square.svg" alt="" /> Auto
+                              Generate
+                            </ButtonSecondary>
+                          </div>
+                        </div>
                       )}
                     </>
                   ) : (

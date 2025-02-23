@@ -6,14 +6,12 @@ interface ToggleProps {
 const Toggle: React.FC<ToggleProps> = ({ value, active, setActive }) => {
   return (
     <>
-      <div
-        className={`bg-backgroundColor-Main h-10 ${value[2] ? 'w-[340px]' : 'w-[240px]'} px-2 flex justify-between items-center rounded-[24px]`}
-      >
+      <div className=" bg-backgroundColor-Main h-7 w-[294px] px-2 flex justify-between items-center rounded-[24px]">
         <div
           onClick={() => {
             setActive(value[0]);
           }}
-          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'}  w-[100px] h-[24px] rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'}  w-[135px] h-[20px] rounded-[16px] flex justify-center items-center text-[12px]`}
         >
           {value[0]}
         </div>
@@ -22,7 +20,7 @@ const Toggle: React.FC<ToggleProps> = ({ value, active, setActive }) => {
           onClick={() => {
             setActive(value[1]);
           }}
-          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'}  w-[100px] h-[24px] rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'}  w-[135px] h-[20px] rounded-[16px] flex justify-center items-center text-[12px]`}
         >
           {value[1]}
         </div>

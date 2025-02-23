@@ -35,7 +35,11 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) => {
           </svg>
         )}
       </div>
-      <span className="text-xs text-Text-Secondary ml-[6px]">{label}</span>
+      <span
+        className={`text-xs ${checked ? 'text-Primary-DeepTeal' : 'text-Text-Secondary'} ml-[6px]`}
+      >
+        {label}
+      </span>
     </label>
   );
 };

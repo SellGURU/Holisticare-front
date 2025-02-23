@@ -18,7 +18,8 @@ import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import { SlideOutPanel } from '../../Components/SlideOutPanel';
 import Circleloader from '../../Components/CircleLoader';
 import SpinnerLoader from '../../Components/SpinnerLoader';
-import SvgIcon from '../../utils/svgIcon';
+// import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
+import ConfirmModal from '../../Components/confitmModal';
 // import { ButtonSecondary } from "../../Components/Button/ButtosSecondary";
 // import { AppContext } from "@/store/app";
 // import data from './data.json';
@@ -150,9 +151,19 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
       return old;
     });
   };
+  const [GenerateAiConfirm, setGenerateAiConfirm] = useState(false);
   // const {themeISLight} = useContext(AppContext);
+  const handleConfirm = () => {
+    // Your confirm logic here
+    setGenerateAiConfirm(false);
+  };
   return (
     <div className="h-[100vh] overflow-auto">
+      <ConfirmModal
+        isOpen={GenerateAiConfirm}
+        onClose={() => setGenerateAiConfirm(false)}
+        onConfirm={handleConfirm}
+      />
       {isFinalLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -198,7 +209,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             </div>
 
             <div className="w-full flex gap-2 justify-center lg:justify-end items-center">
-              <ButtonPrimary
+              {/* <ButtonPrimary
                 onClick={() => {
                   setSHowAnalyse(true);
                 }}
@@ -213,11 +224,11 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                     src="/icons/analyse.svg"
                     color={'#005F73'}
                   />
-                  {/* <img src="/icons/analyse.svg" alt="" /> */}
+                  <img src="/icons/analyse.svg" alt="" />
                   Analysis
                 </div>
-              </ButtonPrimary>
-              <ButtonPrimary
+              </ButtonPrimary> */}
+              {/* <ButtonPrimary
                 onClick={() => {
                   setSHowClientGoals(true);
                 }}
@@ -225,7 +236,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 // size="small"
                 // ClassName="w-[50%] lg:w-[unset] px-6 py-[6px] lg:px-4 lg:py-[2px]"
               >
-                {/* <img src="/icons/" alt="" /> */}
+                <img src="/icons/" alt="" />
                 <div className="w-full flex justify-center items-center lg:justify-between gap-1 text-nowrap">
                   <SvgIcon
                     width="16px"
@@ -233,10 +244,15 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                     src="/icons/chart.svg"
                     color={'#005F73'}
                   />
-                  {/* <img src="/icons/chart.svg" alt="" /> */}
+                  <img src="/icons/chart.svg" alt="" />
                   Client Goals
                 </div>
-              </ButtonPrimary>
+              </ButtonPrimary> */}
+              {/* <div onClick={() => setGenerateAiConfirm(true)}>
+                {' '}
+                <MiniAnallyseButton></MiniAnallyseButton>
+              </div> */}
+
               <ButtonPrimary
                 disabled={isLoading}
                 onClick={() => {
@@ -365,6 +381,8 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                 data={treatmentPlanData}
                 isActionPlan={isActionPlan}
                 memberId={id}
+                openAnayze={() => setSHowAnalyse(true)}
+                openGoal={() => setSHowClientGoals(true)}
               ></CategoryOrder>
             )}
             {generateStep == 'Analysis' && (
