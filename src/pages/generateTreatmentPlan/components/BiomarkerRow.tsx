@@ -8,12 +8,14 @@ interface BioMarkerRowSuggestionsProps {
   value: any;
   onchange: (value: string) => void;
   onDelete: () => void;
+  onEdit: (value: any) => void;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
   onDelete,
+  onEdit,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -26,14 +28,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       case 'Supplement':
         return '/icons/Supplement.svg';
       case 'Lifestyle':
-        return '/icons/lifeStyle.svg';
+        return '/icons/LifeStyle2.svg';
       default:
-        return '/icons/lifeStyle.svg';
+        return '/icons/LifeStyle2.svg';
     }
   };
 
   const [showModal, setShowModal] = useState(false);
-  const [editableValue] = useState(value.Instruction);
+  const [editableValue, setEditAbleValue] = useState(value.Instruction);
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
@@ -44,7 +46,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       note: editableValue,
     });
   }, [editableValue]);
-
+  useEffect(() => {
+    setEditAbleValue(value.Instruction);
+    setNotes(value['Client Notes']);
+  }, [value]);
   const handleAddNotes = (newNotes: string[]) => {
     setNotes(newNotes);
     onchange({
@@ -125,7 +130,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   Sure?{' '}
                   <img
                     className="cursor-pointer"
-                    onClick={onDelete}
+                    onClick={() => {
+                      setdeleteConfirm(false);
+                      onDelete();
+                    }}
                     src="/icons/confirm-tick-circle.svg"
                     alt=""
                   />
@@ -152,7 +160,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       </div>
       {showModal && (
         <RefrenceModal
-          reference={value.reference}
+          reference={[]}
           isOpen={showModal}
           onClose={() => setShowModal(false)}
         />
@@ -160,7 +168,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       {showEditNote && (
         <EditModal
           defalts={value}
-          onSubmit={() => {}}
+          onSubmit={(editData) => {
+            onEdit(editData);
+          }}
           isOpen={showEditNote}
           onClose={() => setShowEditNote(false)}
           onAddNotes={handleAddNotes}

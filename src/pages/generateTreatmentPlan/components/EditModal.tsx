@@ -38,6 +38,7 @@ const EditModal: React.FC<EditModalProps> = ({
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const selectRef = useRef(null);
+  const modalRef = useRef(null);
   const selectButRef = useRef(null);
 
   useModalAutoClose({
@@ -45,6 +46,13 @@ const EditModal: React.FC<EditModalProps> = ({
     buttonRefrence: selectButRef,
     close: () => {
       setShowSelect(false);
+    },
+  });
+
+  useModalAutoClose({
+    refrence: modalRef,
+    close: () => {
+      onClose();
     },
   });
 
@@ -80,7 +88,7 @@ const EditModal: React.FC<EditModalProps> = ({
     onSubmit({
       Category: group,
       Recommendation: recommendation,
-      'Based on': '',
+      'Based on': defalts ? defalts['Based on'] : '',
       'Practitioner Comments': practitionerComments,
       Instruction: instructions,
       Times: selectedTimes,
@@ -110,7 +118,10 @@ const EditModal: React.FC<EditModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
-      <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 max-h-[600px] overflow-y-scroll w-[500px] text-Text-Primary">
+      <div
+        ref={modalRef}
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 max-h-[600px] overflow-y-scroll w-[500px] text-Text-Primary"
+      >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
             {/* <img src="/icons/danger.svg" alt="" />{' '} */}
@@ -140,7 +151,7 @@ const EditModal: React.FC<EditModalProps> = ({
           {showSelect && (
             <div
               ref={selectRef}
-              className="w-full z-20  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
+              className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
             >
               {groups.map((group, index) => (
                 <div
@@ -245,7 +256,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 onClick={() => toggleTimeSelection(time)}
                 className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
                   selectedTimes.includes(time)
-                    ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]  text-white'
+                    ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-white'
                     : 'bg-backgroundColor-Card text-Text-Secondary'
                 }`}
               >
