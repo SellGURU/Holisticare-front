@@ -9,6 +9,7 @@ interface BioMarkerRowSuggestionsProps {
   onchange: (value: string) => void;
   onDelete: () => void;
   onEdit: (value: any) => void;
+  editAble?: boolean;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -16,6 +17,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   onchange,
   onDelete,
   onEdit,
+  editAble,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -60,8 +62,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   return (
     <>
-      <div className="w-full flex justify-center items-center gap-4">
-        <div className="w-[60px]">
+      <div className="w-full flex justify-center items-start gap-4">
+        <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
             <div className="w-[32px] flex justify-center items-center h-[32px] bg-backgroundColor-Main border border-gray-50 rounded-[8px]">
               <img className="w-[24px]" src={resolveIcon()} alt="" />
@@ -117,7 +119,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               alt=""
             />
             <div
-              className={`${isExpanded ? 'grid' : 'hidden'} flex items-center gap-[6px]`}
+              className={`${isExpanded && editAble ? 'grid' : 'hidden'} flex items-center gap-[6px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}

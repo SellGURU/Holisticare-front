@@ -256,7 +256,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 onClick={() => toggleTimeSelection(time)}
                 className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
                   selectedTimes.includes(time)
-                    ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-white'
+                    ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
                     : 'bg-backgroundColor-Card text-Text-Secondary'
                 }`}
               >

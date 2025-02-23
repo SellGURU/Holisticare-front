@@ -9,7 +9,7 @@ const Toggle: React.FC<ToggleProps> = ({ checked, setChecked }) => {
         onClick={() => {
           setChecked(!checked);
         }}
-        className="relative"
+        className="relative cursor-pointer"
       >
         <div
           className={`w-5 h-5  ${checked ? 'right-0 bg-Primary-EmeraldGreen' : 'left-0 bg-backgroundColor-Main'} absolute top-[-4px] rounded-full`}

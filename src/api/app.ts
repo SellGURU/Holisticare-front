@@ -702,6 +702,19 @@ class Application extends Api {
     const response = this.post('/health_profile/timeline/show_events', data);
     return response;
   };
+
+  static holisticPlanReScore = (data: any) => {
+    const response = this.post('/patients/treatment_plan_rescore', data);
+    return response;
+  };
+  static saveHolisticPlan = (data: any) => {
+    const response = this.post('/initial_save_treatment_plan', data);
+    return response;
+  };
+  static showHolisticPlan = (data: any) => {
+    const response = this.post('/show_initial_saved_treatment_plan', data);
+    return response;
+  };
 }
 
 export default Application;

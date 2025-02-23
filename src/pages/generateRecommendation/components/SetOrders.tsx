@@ -1,59 +1,64 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
-type Item = {
-  id: number;
-  name: string;
-  ingredient?: string;
-  instructions: string;
-  checked: boolean;
-};
+import Application from '../../../api/app';
+import { useParams } from 'react-router-dom';
+import Circleloader from '../../../Components/CircleLoader';
+// type Item = {
+//   id: number;
+//   name: string;
+//   ingredient?: string;
+//   instructions: string;
+//   checked: boolean;
+// };
 
-type MockData = {
-  [category: string]: Item[];
-};
+// type MockData = {
+//   [category: string]: Item[];
+// };
 
-const mockData: MockData = {
-  Activity: [
-    {
-      id: 1,
-      name: 'Omeprazole (Oral Pill) 40 MG',
-      ingredient: 'omeprazole',
-      instructions: '1qam',
-      checked: true,
-    },
-    {
-      id: 2,
-      name: 'TA-65 500 IU',
-      instructions: 'Take two a day first thing in the morning',
-      checked: true,
-    },
-  ],
-  Diet: [
-    {
-      id: 3,
-      name: 'Vitamin C 500 mg',
-      instructions: 'Take one a day with food',
-      checked: false,
-    },
-  ],
-  Supplement: [
-    {
-      id: 4,
-      name: 'Vitamin C 500 mg',
-      instructions: 'Take one a day with food',
-      checked: false,
-    },
-  ],
-  Lifestyle: [
-    {
-      id: 5,
-      name: 'Vitamin C 500 mg',
-      instructions: 'Take one a day with food',
-      checked: false,
-    },
-  ],
-};
+// const mockData: MockData = {
+//   Activity: [
+//     {
+//       id: 1,
+//       name: 'Omeprazole (Oral Pill) 40 MG',
+//       ingredient: 'omeprazole',
+//       instructions: '1qam',
+//       checked: true,
+//     },
+//     {
+//       id: 2,
+//       name: 'TA-65 500 IU',
+//       instructions: 'Take two a day first thing in the morning',
+//       checked: true,
+//     },
+//   ],
+//   Diet: [
+//     {
+//       id: 3,
+//       name: 'Vitamin C 500 mg',
+//       instructions: 'Take one a day with food',
+//       checked: false,
+//     },
+//   ],
+//   Supplement: [
+//     {
+//       id: 4,
+//       name: 'Vitamin C 500 mg',
+//       instructions: 'Take one a day with food',
+//       checked: false,
+//     },
+//   ],
+//   Lifestyle: [
+//     {
+//       id: 5,
+//       name: 'Vitamin C 500 mg',
+//       instructions: 'Take one a day with food',
+//       checked: false,
+//     },
+//   ],
+// };
 
 type CategoryState = {
   name: string;
@@ -67,28 +72,85 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Lifestyle', visible: true },
 ];
 
-export const SetOrders: React.FC = () => {
+interface SetOrdersProps {
+  data: any;
+  treatMentPlanData: any;
+  setData: (values: any) => void;
+}
+
+export const SetOrders: React.FC<SetOrdersProps> = ({
+  data,
+  treatMentPlanData,
+  setData,
+}) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
-  const [data, setData] = useState<MockData>(mockData);
+  // const [data, setData] = useState<MockData>(mockData);
+  const [FilteredData, setFilteredData] = useState(data);
+  const [isStarted, setisStarted] = useState(false);
+  const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
   const handleCheckboxChange = (category: string, itemId: number) => {
-    setData({
-      ...data,
-      [category]: data[category].map((item) =>
-        item.id === itemId ? { ...item, checked: !item.checked } : item,
-      ),
+    // console.log(data.filter((el:any) => el.Category == category)[itemId])
+    const newData = FilteredData.filter(
+      (el: any) => el.Category == category,
+    ).map((el: any, index: number) => {
+      if (index == itemId) {
+        return {
+          ...el,
+          checked: !el.checked,
+        };
+      } else {
+        return el;
+      }
     });
+    setFilteredData([
+      ...FilteredData.filter((el: any) => el.Category != category),
+      ...newData,
+    ]);
+    setData([...data.filter((el: any) => el.Category != category), ...newData]);
+    // setData({
+    //   ...data,
+    //   [category]: data[category].map((item) =>
+    //     item.id === itemId ? { ...item, checked: !item.checked } : item,
+    //   ),
+    // });
   };
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleContinue = () => {
-    const visibleCategories = categories
-      .filter((cat) => cat.visible)
-      .map((cat) => cat.name);
-    const currentIndex = visibleCategories.indexOf(activeCategory);
-    const nextIndex = (currentIndex + 1) % visibleCategories.length;
-    setActiveCategory(visibleCategories[nextIndex]);
+    setIsLoading(true);
+    setisStarted(true);
+    Application.holisticPlanReScore({
+      member_id: id,
+      selected_interventions: FilteredData.filter(
+        (el: any) => el.checked == true,
+      ),
+      biomarker_insight: treatMentPlanData?.completion_suggestion,
+      client_insight: treatMentPlanData?.client_insight,
+      looking_forwards: treatMentPlanData?.looking_forwards,
+    })
+      .then((res) => {
+        setIsLoading(false);
+
+        const visibleCategories = categories
+          .filter(
+            (cat) =>
+              cat.visible &&
+              res.data.map((el: any) => el.Category).includes(cat.name),
+          )
+          .map((cat) => cat.name);
+        const currentIndex = visibleCategories.indexOf(activeCategory);
+        let nextIndex = currentIndex;
+        if (currentIndex < visibleCategories.length - 1) {
+          nextIndex = nextIndex + 1;
+        }
+        setFilteredData(res.data);
+        setActiveCategory(visibleCategories[nextIndex]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const [showchangeOrders, setshowchangeOrders] = useState(false);
@@ -117,6 +179,7 @@ export const SetOrders: React.FC = () => {
 
   const handleConfirm = () => {
     setCategories(localCategories);
+    setActiveCategory(localCategories[0].name);
     setshowchangeOrders(false);
   };
   return (
@@ -150,7 +213,7 @@ export const SetOrders: React.FC = () => {
                         : category.name === 'Diet'
                           ? '/icons/diet.svg'
                           : category.name === 'Lifestyle'
-                            ? '/icons/lifestyle.svg'
+                            ? '/icons/LifeStyle2.svg'
                             : '/icons/Supplement.svg'
                     }
                     alt=""
@@ -199,6 +262,12 @@ export const SetOrders: React.FC = () => {
           </div>
         </div>
       </MainModal>
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          {' '}
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="bg-white rounded-2xl shadow-100 p-6 border border-Gray-50">
         <div className="flex w-full justify-between border-b border-Gray-50 pb-2 px-6">
           <div className="flex w-[50%] gap-[100px]">
@@ -208,7 +277,7 @@ export const SetOrders: React.FC = () => {
                   <div
                     className={`flex items-center gap-2 text-Primary-DeepTeal text-sm font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
-                    onClick={() => setActiveCategory(name)}
+                    // onClick={() => setActiveCategory(name)}
                   >
                     <img
                       className="size-5"
@@ -218,7 +287,7 @@ export const SetOrders: React.FC = () => {
                           : name === 'Diet'
                             ? '/icons/diet.svg'
                             : name === 'Lifestyle'
-                              ? '/icons/lifestyle.svg'
+                              ? '/icons/LifeStyle2.svg'
                               : '/icons/Supplement.svg'
                       }
                       alt=""
@@ -229,7 +298,7 @@ export const SetOrders: React.FC = () => {
             )}
           </div>
           <div
-            className={`w-[50%] justify-end ${activeCategory === 'Activity' ? 'flex' : 'hidden'}`}
+            className={`w-[50%] justify-end ${!isStarted ? 'flex' : 'hidden'}`}
           >
             <img
               className="cursor-pointer"
@@ -240,27 +309,36 @@ export const SetOrders: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 px-6 min-h-[400px] overflow-y-auto">
-          {data[activeCategory].map((item) => (
-            <div key={item.id} className="flex items-center gap-2 mb-3">
-              <Checkbox
-                checked={item.checked}
-                onChange={() => handleCheckboxChange(activeCategory, item.id)}
-              />
-              <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-                <li className="list-disc">
-                  {item.name} / Ingredient: {item.ingredient || 'N/A'} /
-                  Instructions: {item.instructions}
-                </li>
-              </ul>
+        <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
+          {FilteredData.filter((el: any) => el.Category == activeCategory).map(
+            (item: any, index: number) => (
+              <div className="flex items-center gap-2 mb-3">
+                <Checkbox
+                  checked={item.checked}
+                  onChange={() => handleCheckboxChange(activeCategory, index)}
+                />
+                <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
+                  <li className="list-disc">
+                    {item['Based on']}{' '}
+                    <span className="text-Text-Secondary">/ Ingredient:</span>{' '}
+                    {item.Recommendation || 'N/A'}
+                    <span className="text-Text-Secondary">
+                      / Instructions:
+                    </span>{' '}
+                    {item.Instruction}
+                  </li>
+                </ul>
+              </div>
+            ),
+          )}
+          {activeCategory !=
+            categories.filter((el) => el.visible)[
+              categories.filter((el) => el.visible).length - 1
+            ].name && (
+            <div className="absolute bottom-3 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+              <div onClick={handleContinue}>Continue</div>
             </div>
-          ))}
-          <div
-            className="absolute bottom-3 right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none"
-            onClick={handleContinue}
-          >
-            Continue
-          </div>
+          )}
         </div>
       </div>
     </>
