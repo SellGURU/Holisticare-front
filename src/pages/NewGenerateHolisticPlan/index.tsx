@@ -377,21 +377,23 @@ const NewGenerateHolisticPlan = () => {
                             alt=""
                           />
                         </div>
-                        <div>
-                          <div className="text-[14px] font-medium text-Text-Primary">
-                            {activeEl.subcategory}
+                        {activeEl && (
+                          <div>
+                            <div className="text-[14px] font-medium text-Text-Primary">
+                              {activeEl?.subcategory}
+                            </div>
+                            <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                              <span className="text-[8px] lg:text-[12px] text-Text-Primary">
+                                {activeEl?.num_of_biomarkers}
+                              </span>{' '}
+                              Total Biomarkers{' '}
+                              <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
+                                {activeEl?.needs_focus_count}
+                              </span>{' '}
+                              Needs Focus
+                            </div>
                           </div>
-                          <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
-                            <span className="text-[8px] lg:text-[12px] text-Text-Primary">
-                              {activeEl.num_of_biomarkers}
-                            </span>{' '}
-                            Total Biomarkers{' '}
-                            <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
-                              {activeEl.needs_focus_count}
-                            </span>{' '}
-                            Needs Focus
-                          </div>
-                        </div>
+                        )}
                       </div>
                       <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
                         <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
