@@ -27,7 +27,7 @@ const NewGenerateHolisticPlan = () => {
   const [isLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [active, setActive] = useState<string>('Recommendation');
-  const [clientGools,setClientGools] = useState<any>({});
+  const [clientGools, setClientGools] = useState<any>({});
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [showAutoGenerateModal, setshowAutoGenerateModal] = useState(false);
   const [isFinalLoading, setisFinalLoading] = useState(false);
@@ -92,7 +92,7 @@ const NewGenerateHolisticPlan = () => {
       })
         .then((res) => {
           setTratmentPlanData(res.data);
-          setClientGools({...res.data.client_goals})
+          setClientGools({ ...res.data.client_goals });
           setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
         })
         .finally(() => {
