@@ -86,7 +86,7 @@ const NewGenerateActionPlan = () => {
       });
   };
   return (
-    <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
+    <div className="h-[100vh] lg:h-[unset] overflow-auto overflow-y-scroll pb-6">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
@@ -110,7 +110,7 @@ const NewGenerateActionPlan = () => {
         <TopBar></TopBar>
       </div>
       <div
-        className={`${selectPlanView && 'flex items-center justify-between'} px-8 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] lg:z-[0] w-full lg:w-[unset]`}
+        className={`${selectPlanView && 'flex items-center justify-between'} px-8 pr-0 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] lg:z-[0] w-full lg:w-[unset]`}
       >
         <div className="flex items-center gap-3">
           <div
@@ -132,8 +132,16 @@ const NewGenerateActionPlan = () => {
         {selectPlanView && (
           <div className="w-[192px] flex justify-center">
             <ButtonPrimary onClick={generateActionPlanBlockSaveTasks}>
+             
+              {loadingButton ?
+              <>
+               
+               <SpinnerLoader /> 
+              </>
+              : <>
               <img src="/icons/tick-square.svg" alt="" />
-              {loadingButton ? <SpinnerLoader /> : 'Save Changes'}
+              'Save Changes'
+              </>}
             </ButtonPrimary>
           </div>
         )}
@@ -174,7 +182,7 @@ const NewGenerateActionPlan = () => {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-between px-4 w-[25%] h-[48px] rounded-xl bg-backgroundColor-Card border">
+            <div className="flex items-center justify-between px-4 w-[27%] h-[48px] rounded-xl bg-backgroundColor-Card border">
               <div className="flex items-center text-Primary-DeepTeal text-xs text-nowrap">
                 <img src="/icons/timer.svg" alt="" className="mr-1" />
                 Time Duration:
@@ -203,8 +211,8 @@ const NewGenerateActionPlan = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between w-full mt-4 h-[92%]">
-            <div className="w-[70%] h-full bg-white rounded-3xl shadow-100">
+          <div className="flex items-center justify-between w-full mt-4 h-[80%]">
+            <div className="w-[70%] h-full bg-white rounded-3xl overflow-y-scroll shadow-100">
               {!selectedCategory.length ? (
                 <div className="flex flex-col items-center justify-center w-full h-full">
                   <img
@@ -258,39 +266,39 @@ const NewGenerateActionPlan = () => {
                 </div>
               )}
             </div>
-            <div className="w-[25%] h-full bg-white rounded-3xl flex flex-col p-4 shadow-100">
+            <div className="w-[27%] overflow-x-hidden h-full bg-white rounded-3xl flex flex-col p-4 shadow-100">
               <SearchBox
                 ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
                 placeHolder="Search for tips ..."
                 onSearch={() => {}}
               ></SearchBox>
-              <div className="flex w-full items-center justify-between mt-2 flex-wrap">
+              <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
                 <div
-                  className={`${selectCategory === 'Diet' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] cursor-pointer`}
+                  className={`${selectCategory === 'Diet' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                   onClick={() => setSelectCategory('Diet')}
                 >
                   Diet
                 </div>
                 <div
-                  className={`${selectCategory === 'Activity' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] cursor-pointer`}
+                  className={`${selectCategory === 'Activity' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl flex-grow text-[10px] cursor-pointer`}
                   onClick={() => setSelectCategory('Activity')}
                 >
                   Activity
                 </div>
                 <div
-                  className={`${selectCategory === 'Supplement' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] cursor-pointer`}
+                  className={`${selectCategory === 'Supplement' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl flex-grow text-[10px] cursor-pointer`}
                   onClick={() => setSelectCategory('Supplement')}
                 >
                   Supplement
                 </div>
                 <div
-                  className={`${selectCategory === 'Lifestyle' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] cursor-pointer`}
+                  className={`${selectCategory === 'Lifestyle' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                   onClick={() => setSelectCategory('Lifestyle')}
                 >
                   Lifestyle
                 </div>
               </div>
-              <div className="flex flex-col w-full h-[86%] gap-2 overflow-y-auto mt-2">
+              <div className="flex flex-col overflow-x-hidden w-full gap-2 overflow-y-auto mt-2">
                 {filteredData?.map((tip: any, index: number) => {
                   const RecommendationParts = tip.Recommendation?.split(
                     '*',
