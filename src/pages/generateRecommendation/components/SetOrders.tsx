@@ -6,59 +6,7 @@ import { MainModal } from '../../../Components';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
-// type Item = {
-//   id: number;
-//   name: string;
-//   ingredient?: string;
-//   instructions: string;
-//   checked: boolean;
-// };
-
-// type MockData = {
-//   [category: string]: Item[];
-// };
-
-// const mockData: MockData = {
-//   Activity: [
-//     {
-//       id: 1,
-//       name: 'Omeprazole (Oral Pill) 40 MG',
-//       ingredient: 'omeprazole',
-//       instructions: '1qam',
-//       checked: true,
-//     },
-//     {
-//       id: 2,
-//       name: 'TA-65 500 IU',
-//       instructions: 'Take two a day first thing in the morning',
-//       checked: true,
-//     },
-//   ],
-//   Diet: [
-//     {
-//       id: 3,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-//   Supplement: [
-//     {
-//       id: 4,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-//   Lifestyle: [
-//     {
-//       id: 5,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-// };
+import SvgIcon from '../../../utils/svgIcon';
 
 type CategoryState = {
   name: string;
@@ -78,6 +26,7 @@ interface SetOrdersProps {
   setData: (values: any) => void;
   storeChecked: (data: any) => void;
   checkeds: Array<any>;
+  reset: () => void;
   // resolvedSuggestions:(data:any) => void
 }
 
@@ -87,10 +36,13 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setData,
   storeChecked,
   checkeds,
+  reset,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
+  const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
+  const [showModal, setShowModal] = useState(false);
   // const [FilteredData, setFilteredData] = useState(data);
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
@@ -185,6 +137,10 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       .finally(() => {
         setIsLoading(false);
       });
+  };
+  const handleReset = () => {
+    setActiveCategory(categories.filter((el) => el.visible)[0].name);
+    reset();
   };
   useEffect(() => {
     // setData([
@@ -366,29 +322,66 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 />
                 <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
                   <li className="list-disc">
-                    {item['Based on']}{' '}
-                    <span className="text-Text-Secondary">
-                      / Recommendation:
-                    </span>{' '}
-                    {item.Recommendation || 'N/A'}
-                    <span className="text-Text-Secondary">
-                      / Instructions:
-                    </span>{' '}
+                    {item.Recommendation}{' '}
+                    <span className="text-Text-Secondary">/ Instructions:</span>{' '}
                     {item.Instruction}
+                    {item['Based on'] && (
+                      <div
+                        onClick={() => {
+                          setShowModal(true);
+                          setActivemOdalValue(item['Practitioner Comments']);
+                        }}
+                        className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
+                      >
+                        Based on your:{' '}
+                        <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
+                          {item['Based on']}{' '}
+                          <SvgIcon src="/icons/export.svg" color="#005F73" />
+                        </span>
+                      </div>
+                    )}
                   </li>
                 </ul>
               </div>
             ))}
-          {activeCategory !=
-            categories.filter((el) => el.visible)[
-              categories.filter((el) => el.visible).length - 1
-            ].name && (
-            <div className="absolute bottom-3 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-              <div onClick={handleContinue}>Continue</div>
-            </div>
-          )}
+          <div className=" absolute bottom-3 gap-2 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+            {activeCategory !=
+              categories.filter((el) => el.visible)[0].name && (
+              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
+                <div onClick={handleReset}>Reset</div>
+              </div>
+            )}
+            {activeCategory !=
+              categories.filter((el) => el.visible)[
+                categories.filter((el) => el.visible).length - 1
+              ].name && (
+              <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+                <div onClick={handleContinue}>Continue</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      {showModal && (
+        <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <div className="bg-white min-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+            <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
+              <img src="/icons/notification-status.svg" alt="" /> Practitioner
+              Comment
+            </div>
+            <div className="flex flex-col gap-2 mt-5">
+              {activeModalValue?.map((comment: string, index: number) => (
+                <div
+                  className="bg-backgroundColor-Card w-full rounded-2xl py-1 px-3 border border-Gray-50 text-xs text-Text-Primary text-justify "
+                  key={index}
+                >
+                  {comment}
+                </div>
+              ))}
+            </div>
+          </div>
+        </MainModal>
+      )}
     </>
   );
 };
