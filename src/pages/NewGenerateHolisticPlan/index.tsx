@@ -84,7 +84,7 @@ const NewGenerateHolisticPlan = () => {
   const { treatmentId } = useContext(AppContext);
 
   useEffect(() => {
-    if (treatmentId !== null) {
+    if (treatmentId !== null && treatmentId != '') {
       setisFirstLoading(true);
       Application.showHolisticPlan({
         treatment_id: treatmentId,
