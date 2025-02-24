@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
+import Application from '../../../api/app';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -20,6 +21,17 @@ const EditModal: React.FC<EditModalProps> = ({
   // onAddNotes,
   isAdd,
 }) => {
+  useEffect(() => {
+    Application.HolisticPlanCategories({}).then((res) => {
+      console.log(res.data);
+
+      setGroups(res.data);
+    });
+  }, []);
+  const [groups, setGroups] = useState<any[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(
+    defalts?.Category || null,
+  );
   const [newNote, setNewNote] = useState('');
   const [recommendation, setRecommendation] = useState(defalts?.Recommendation);
   const [dose, setDose] = useState(defalts?.Dose);
@@ -31,7 +43,7 @@ const EditModal: React.FC<EditModalProps> = ({
     defalts ? defalts['Client Notes'] : [],
   );
   const [showSelect, setShowSelect] = useState(false);
-  const [group, setGroup] = useState(defalts?.Category);
+  // const [group, setGroup] = useState(defalts?.Category);
   const [practitionerComment, setPractitionerComment] = useState('');
 
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
@@ -87,7 +99,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleApply = () => {
     onSubmit({
-      Category: group,
+      Category: selectedGroup,
       Recommendation: recommendation,
       'Based on': defalts ? defalts['Based on'] : '',
       'Practitioner Comments': practitionerComments,
@@ -115,8 +127,12 @@ const EditModal: React.FC<EditModalProps> = ({
   //               "morning",
   // "midday",
   // "night"
-  const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
+  // const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
+  const selectedGroupDose = selectedGroup
+    ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
+        .Dose
+    : false;
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -136,8 +152,10 @@ const EditModal: React.FC<EditModalProps> = ({
             onClick={() => setShowSelect(!showSelect)}
             className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
           >
-            {group ? (
-              <div className="text-[12px] text-Text-Primary">{group}</div>
+            {selectedGroup ? (
+              <div className="text-[12px] text-Text-Primary">
+                {selectedGroup}
+              </div>
             ) : (
               <div className="text-[12px] text-gray-400">Select Group</div>
             )}
@@ -154,18 +172,21 @@ const EditModal: React.FC<EditModalProps> = ({
               ref={selectRef}
               className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
             >
-              {groups.map((group, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setGroup(group);
-                    setShowSelect(false);
-                  }}
-                  className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                >
-                  {group}
-                </div>
-              ))}
+              {groups.map((groupObj, index) => {
+                const groupName = Object.keys(groupObj)[0];
+                return (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setSelectedGroup(groupName);
+                      setShowSelect(false);
+                    }}
+                    className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                  >
+                    {groupName}
+                  </div>
+                );
+              })}
               {/* <div
                           onClick={() => {
                             formik.setFieldValue('gender', 'Male');
@@ -208,16 +229,18 @@ const EditModal: React.FC<EditModalProps> = ({
               className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
             />
           </div>
-          <div>
-            <label className="block text-xs font-medium">Dose</label>
-            <input
-              value={dose}
-              onChange={(e) => setDose(e.target.value)}
-              placeholder="Write Dose"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
-          </div>
+          {selectedGroupDose && (
+            <div>
+              <label className="block text-xs font-medium">Dose</label>
+              <input
+                value={dose}
+                onChange={(e) => setDose(e.target.value)}
+                placeholder="Write Dose"
+                type="text"
+                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+              />
+            </div>
+          )}
         </div>
         <div className="mb-4">
           <label className="flex w-full justify-between items-center text-xs font-medium">
