@@ -101,6 +101,11 @@ const NewGenerateHolisticPlan = () => {
     }
   }, []);
   const [isFirstLoading, setisFirstLoading] = useState(false);
+  const isChartDataEmpty = !activeEl?.values.some(
+    (value: string) => !isNaN(parseFloat(value)),
+  );
+  console.log(activeEl);
+
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -484,7 +489,9 @@ const NewGenerateHolisticPlan = () => {
                                       ></StatusBarChart>
                                     </div>
                                   </div>
-                                  <div className="lg:w-[50%]">
+                                  <div
+                                    className={`lg:w-[50%] ${isChartDataEmpty && 'invisible'}`}
+                                  >
                                     <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
                                       <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
                                         Historical Data

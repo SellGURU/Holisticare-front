@@ -279,7 +279,7 @@ const ClientList = () => {
                 </div> */}
                 <div className="flex justify-center">
                   <Toggle
-                  isClientList
+                    isClientList
                     active={active}
                     setActive={setActive}
                     value={['All', 'High-Priority', 'Archived']}
