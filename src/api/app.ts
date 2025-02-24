@@ -716,7 +716,7 @@ class Application extends Api {
     return response;
   };
   static HolisticPlanCategories = (data: any) => {
-    const response = this.post('/action_plan/available_categories', data);
+    const response = this.post('/patients/available_categories', data);
     return response;
   };
 }
