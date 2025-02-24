@@ -703,6 +703,22 @@ class Application extends Api {
     return response;
   };
 
+  static getActionPlanMethodsNew = () => {
+    const response = this.post('/action_plan/percents', {});
+    return response;
+  };
+  static getActionPlanTaskDirectoryNew = (data: any) => {
+    const response = this.post('/action_plan/task_directory', data);
+    return response;
+  };
+  static getActionPlanGenerateActionPlanTaskNew = (data: any) => {
+    const response = this.post('/action_plan/generate_action_plan_task', data);
+    return response;
+  };
+  static getActionPlanBlockSaveTasksNew = (data: any) => {
+    const response = this.post('/action_plan/block/save_tasks', data);
+    return response;
+  };
   static holisticPlanReScore = (data: any) => {
     const response = this.post('/patients/treatment_plan_rescore', data);
     return response;
