@@ -59,10 +59,10 @@ export const GenerateRecommendation = () => {
       })
       .finally(() => {
         setIsLoading(false);
-      }).catch(() => {
+      })
+      .catch(() => {
         setTimeout(() => {
-          navigate(-1)
-          
+          navigate(-1);
         }, 1000);
       });
   };
