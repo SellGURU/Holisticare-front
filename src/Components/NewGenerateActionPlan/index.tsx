@@ -213,9 +213,9 @@ const NewGenerateActionPlan = () => {
             </div>
           </div>
           <div className="flex items-center justify-between w-full mt-4 h-[80%]">
-            <div className='w-[70%] h-full'>
-              <div className='flex justify-end mb-3 gap-4 items-center'>
-                <div className='text-[12px] text-[#005F73] font-medium'>
+            <div className="w-[70%] h-full">
+              <div className="flex justify-end mb-3 gap-4 items-center">
+                <div className="text-[12px] text-[#005F73] font-medium">
                   Calendar View
                 </div>
                 <div>
@@ -279,7 +279,6 @@ const NewGenerateActionPlan = () => {
                   </div>
                 )}
               </div>
-
             </div>
             <div className="w-[27%] overflow-x-hidden h-[480px] bg-white rounded-3xl flex flex-col p-4 shadow-100">
               <SearchBox
