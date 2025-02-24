@@ -129,7 +129,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             )}
           </div>
           {isExpanded && (
-            <div className="flex flex-col mt-1">
+            <div className="flex flex-col mt-1 pt-1 border-t border-Gray-50">
               {notes?.map((note, index) => (
                 <div
                   key={index}
@@ -145,11 +145,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             {isExpanded ? (
               <div
                 onClick={() => setIsExpanded(false)}
-                className="size-6 transition-transform rotate-180"
+                className="size-4 transition-transform rotate-180"
               >
                 <SvgIcon
-                  width="24px"
-                  height="24px"
+                  width="16px"
+                  height="16px"
                   color="#005F73"
                   src="/icons/arow-down-drop.svg"
                 />
@@ -157,18 +157,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             ) : (
               <img
                 onClick={() => setIsExpanded(true)}
-                className={` ${isOverview && 'hidden'} cursor-pointer mb-2  w-4 transition-transform`}
+                className={` ${isOverview && 'hidden'} cursor-pointer mb-2  size-4 transition-transform`}
                 src="/icons/arow-down-drop.svg"
                 alt=""
               />
             )}
 
             <div
-              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col  items-center gap-[6px]`}
+              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col mt-1 items-center gap-[6px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}
-                className={`cursor-pointer w-4 size-6 ${deleteConfirm && 'hidden'}`}
+                className={`cursor-pointer w-4  ${deleteConfirm && 'hidden'}`}
                 src="/icons/edit.svg"
                 alt=""
               />
@@ -207,7 +207,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       </div>
       {showModal && (
         <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <div className="bg-white min-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+          <div className="bg-white h-fit max-h-[600px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
             <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
               <img src="/icons/notification-status.svg" alt="" /> Practitioner
               Comment

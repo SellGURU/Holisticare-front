@@ -35,6 +35,7 @@ export default {
           Primary: '#383838',
           Secondary: '#38383899',
           Triarty: '#38383866',
+          Quadruple: '#888888',
         },
         backgroundColor: {
           Main: '#F4F4F4',

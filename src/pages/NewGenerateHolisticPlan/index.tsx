@@ -84,18 +84,20 @@ const NewGenerateHolisticPlan = () => {
   const { treatmentId } = useContext(AppContext);
 
   useEffect(() => {
-    setisFirstLoading(true);
-    Application.showHolisticPlan({
-      treatment_id: treatmentId,
-      member_id: id,
-    })
-      .then((res) => {
-        setTratmentPlanData(res.data);
-        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+    if (treatmentId !== null) {
+      setisFirstLoading(true);
+      Application.showHolisticPlan({
+        treatment_id: treatmentId,
+        member_id: id,
       })
-      .finally(() => {
-        setisFirstLoading(false);
-      });
+        .then((res) => {
+          setTratmentPlanData(res.data);
+          setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+        })
+        .finally(() => {
+          setisFirstLoading(false);
+        });
+    }
   }, []);
   const [isFirstLoading, setisFirstLoading] = useState(false);
   return (
@@ -483,7 +485,7 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                   <div className="lg:w-[50%]">
                                     <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
-                                      <div className="text-Text-Primary flex justify-between items-center text-[12px] font-medium mb-5">
+                                      <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
                                         Historical Data
                                         <div className=" flex justify-end gap-2 items-center">
                                           <div className="relative">
