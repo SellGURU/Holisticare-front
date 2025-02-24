@@ -450,7 +450,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
                     <img
                       className="size-4"
-                      src="/public/icons/LifeStyle2.svg"
+                      src="/icons/LifeStyle2.svg"
                       alt=""
                     />
                   </div>
