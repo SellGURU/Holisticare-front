@@ -19,7 +19,7 @@ export const Overview: React.FC<OverviewProps> = ({ treatmentPlanData }) => {
                   key={`${el.title}-${suggestionIndex}`}
                 >
                   <BioMarkerRowSuggestions
-                  isOverview
+                    isOverview
                     value={el}
                     onEdit={() => {}}
                     onchange={() => {}}

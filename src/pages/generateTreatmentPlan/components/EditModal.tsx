@@ -63,7 +63,7 @@ const EditModal: React.FC<EditModalProps> = ({
       e.preventDefault();
       if (newNote.trim()) {
         setNotes([...notes, newNote]);
-  
+
         setNewNote('');
       }
     }

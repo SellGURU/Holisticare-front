@@ -215,7 +215,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex flex-col gap-2 mt-5">
               {value['Practitioner Comments']?.map(
                 (comment: string, index: number) => (
-                  <div className='bg-backgroundColor-Card w-full rounded-2xl py-1 px-3 border border-Gray-50 text-xs text-Text-Primary text-justify ' key={index}>{comment}</div>
+                  <div
+                    className="bg-backgroundColor-Card w-full rounded-2xl py-1 px-3 border border-Gray-50 text-xs text-Text-Primary text-justify "
+                    key={index}
+                  >
+                    {comment}
+                  </div>
                 ),
               )}
             </div>
