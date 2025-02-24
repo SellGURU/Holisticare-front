@@ -143,7 +143,12 @@ export const GenerateRecommendation = () => {
           {steps.map((label, index) => (
             <React.Fragment key={index}>
               <div
-                onClick={() => setCurrentStepIndex(index)}
+                onClick={() => {
+                  setCurrentStepIndex(index);
+                  if (label != 'Overview') {
+                    setCheckedSuggestion([]);
+                  }
+                }}
                 className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
                   index === currentStepIndex
                     ? 'text-Primary-DeepTeal '
@@ -181,6 +186,21 @@ export const GenerateRecommendation = () => {
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
+              reset={() => {
+                setCheckedSuggestion([]);
+                setTratmentPlanData((pre: any) => {
+                  const newSuggestios = pre.suggestion_tab.map((el: any) => {
+                    return {
+                      ...el,
+                      checked: false,
+                    };
+                  });
+                  return {
+                    ...pre,
+                    suggestion_tab: newSuggestios,
+                  };
+                });
+              }}
               storeChecked={(data) =>
                 setCheckedSuggestion([...checkedSuggestions, ...data])
               }
