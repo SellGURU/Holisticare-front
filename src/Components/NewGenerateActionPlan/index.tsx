@@ -24,9 +24,7 @@ const NewGenerateActionPlan = () => {
   const [selectedCategory, setSelectedCategory] = useState<any[]>([]);
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [duration, setDuration] = useState(1);
-  const [planObjective, setPlanObjective] = useState(
-    'Improving diet plan in order to  decreasing weight',
-  );
+  const [planObjective, setPlanObjective] = useState('');
   useEffect(() => {
     Application.getActionPlanMethodsNew().then((res) => {
       setPlans(res.data);
