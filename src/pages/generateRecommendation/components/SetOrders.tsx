@@ -76,50 +76,58 @@ interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
   setData: (values: any) => void;
+  storeChecked: (data: any) => void;
+  checkeds: Array<any>;
+  // resolvedSuggestions:(data:any) => void
 }
 
 export const SetOrders: React.FC<SetOrdersProps> = ({
   data,
   treatMentPlanData,
   setData,
+  storeChecked,
+  checkeds,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
+  const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
-  const [FilteredData, setFilteredData] = useState(data);
+  // const [FilteredData, setFilteredData] = useState(data);
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
-  const handleCheckboxChange = (category: string, itemId: number) => {
-    // console.log(data.filter((el:any) => el.Category == category)[itemId])
-    const newData = FilteredData.filter(
-      (el: any) => el.Category == category,
-    ).map((el: any, index: number) => {
-      if (index == itemId) {
+  const AllCategoryChecekd = (category: string) => {
+    const newData = data
+      .filter((el: any) => el.Category == category)
+      .map((el: any) => {
         return {
           ...el,
-          checked: !el.checked,
+          checked: true,
         };
-      } else {
-        return el;
-      }
-    });
-    setFilteredData([
-      ...FilteredData.filter((el: any) => el.Category != category),
-      ...newData,
-    ]);
+      });
     setData([...data.filter((el: any) => el.Category != category), ...newData]);
-    // setData({
-    //   ...data,
-    //   [category]: data[category].map((item) =>
-    //     item.id === itemId ? { ...item, checked: !item.checked } : item,
-    //   ),
-    // });
+  };
+
+  const handleCheckboxChange = (category: string, itemId: number) => {
+    // console.log(data.filter((el:any) => el.Category == category)[itemId])
+    const newData = data
+      .filter((el: any) => el.Category == category)
+      .map((el: any, index: number) => {
+        if (index == itemId) {
+          return {
+            ...el,
+            checked: !el.checked,
+          };
+        } else {
+          return el;
+        }
+      });
+    setData([...data.filter((el: any) => el.Category != category), ...newData]);
   };
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (!FilteredData.map((el: any) => el.Category).includes(activeCategory)) {
+    if (!data.map((el: any) => el.Category).includes(activeCategory)) {
       const visibleCategories = categories
         .filter((cat) => cat.visible)
         .map((cat) => cat.name);
@@ -129,18 +137,20 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         nextIndex = nextIndex + 1;
       }
       setActiveCategory(visibleCategories[nextIndex]);
+      // AllCategoryChecekd(visibleCategories[nextIndex])
     }
   }, [activeCategory]);
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
+    storeChecked(data.filter((el: any) => el.checked == true));
     Application.holisticPlanReScore({
       member_id: id,
       selected_interventions: [
+        ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
         ...data.filter(
-          (el: any) => el.checked == true && el.Category != activeCategory,
+          (el: any) => el.checked == true && el.Category == activeCategory,
         ),
-        ...FilteredData.filter((el: any) => el.checked == true),
       ],
       biomarker_insight: treatMentPlanData?.completion_suggestion,
       client_insight: treatMentPlanData?.client_insight,
@@ -148,7 +158,11 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     })
       .then((res) => {
         setIsLoading(false);
-
+        setOrderedCategories((pre) => {
+          const old = [...pre];
+          old.push(activeCategory);
+          return old;
+        });
         // const visibleCategories = categories
         //   .filter(
         //     (cat) =>
@@ -164,7 +178,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         if (currentIndex < visibleCategories.length - 1) {
           nextIndex = nextIndex + 1;
         }
-        setFilteredData(res.data);
+        // setFilteredData(res.data);
+        setData([...res.data]);
         setActiveCategory(visibleCategories[nextIndex]);
       })
       .finally(() => {
@@ -172,17 +187,18 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       });
   };
   useEffect(() => {
-    setData([
-      ...data.map((el: any) => {
-        return { ...el, checked: false };
-      }),
-    ]);
-    setFilteredData([
-      ...data.map((el: any) => {
-        return { ...el, checked: false };
-      }),
-    ]);
-  }, []);
+    // setData([
+    //   ...data.map((el: any) => {
+    //     return { ...el, checked: false };
+    //   }),
+    // ]);
+    // setFilteredData([
+    //   ...data.map((el: any) => {
+    //     return { ...el, checked: false };
+    //   }),
+    // ]);
+    AllCategoryChecekd(activeCategory);
+  }, [activeCategory]);
   const [showchangeOrders, setshowchangeOrders] = useState(false);
   const [localCategories, setLocalCategories] = useState<CategoryState[]>([
     ...categories,
@@ -340,8 +356,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         </div>
 
         <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
-          {FilteredData.filter((el: any) => el.Category == activeCategory).map(
-            (item: any, index: number) => (
+          {data
+            .filter((el: any) => el.Category == activeCategory)
+            .map((item: any, index: number) => (
               <div className="flex items-center gap-2 mb-3">
                 <Checkbox
                   checked={item.checked}
@@ -361,8 +378,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                   </li>
                 </ul>
               </div>
-            ),
-          )}
+            ))}
           {activeCategory !=
             categories.filter((el) => el.visible)[
               categories.filter((el) => el.visible).length - 1
