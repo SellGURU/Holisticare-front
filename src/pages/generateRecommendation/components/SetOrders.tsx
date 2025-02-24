@@ -136,9 +136,12 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     setisStarted(true);
     Application.holisticPlanReScore({
       member_id: id,
-      selected_interventions: FilteredData.filter(
-        (el: any) => el.checked == true,
-      ),
+      selected_interventions: [
+        ...data.filter(
+          (el: any) => el.checked == true && el.Category != activeCategory,
+        ),
+        ...FilteredData.filter((el: any) => el.checked == true),
+      ],
       biomarker_insight: treatMentPlanData?.completion_suggestion,
       client_insight: treatMentPlanData?.client_insight,
       looking_forwards: treatMentPlanData?.looking_forwards,
@@ -347,7 +350,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
                   <li className="list-disc">
                     {item['Based on']}{' '}
-                    <span className="text-Text-Secondary">/ Ingredient:</span>{' '}
+                    <span className="text-Text-Secondary">
+                      / Recommendation:
+                    </span>{' '}
                     {item.Recommendation || 'N/A'}
                     <span className="text-Text-Secondary">
                       / Instructions:
