@@ -9,6 +9,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
+import dataJson from './data.json';
 
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
@@ -25,7 +26,7 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [, setCategories] = useState([]);
+  const [categories, setCategories] = useState(dataJson.action_db);
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
@@ -104,7 +105,7 @@ const GenerateActionPlan = () => {
         ) : (
           <>
             <div className=" w-full h-full mt-[190px] ">
-              <Stadio></Stadio>
+              <Stadio data={categories}></Stadio>
             </div>
           </>
         )}
