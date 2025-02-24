@@ -88,8 +88,8 @@ const NewGenerateHolisticPlan = () => {
       treatment_id: treatmentId,
       member_id: id,
     }).then((res) => {
-      setTratmentPlanData(res.data)
-      setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0])
+      setTratmentPlanData(res.data);
+      setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
     });
   }, []);
 
