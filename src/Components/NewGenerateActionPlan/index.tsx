@@ -20,7 +20,7 @@ const NewGenerateActionPlan = () => {
   const [selectCategory, setSelectCategory] = useState('Activity');
   const [isOpen, setIsOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
-  const [categories, setCategories] = useState<any>(null);
+  const [categories, setCategories] = useState<Array<any>>([]);
   const [selectedCategory, setSelectedCategory] = useState<any[]>([]);
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
   const [isGenerate, setisGenerate] = useState<boolean>(false);
@@ -38,7 +38,7 @@ const NewGenerateActionPlan = () => {
       percents: plans,
     })
       .then((res) => {
-        setCategories(res.data);
+        setCategories(res.data.action_db);
       })
       .finally(() => {
         setisLoading(false);
@@ -49,7 +49,7 @@ const NewGenerateActionPlan = () => {
     setisGenerate(true);
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
-      tasks: categories.action_db,
+      tasks: categories,
     })
       .then((res) => {
         setSelectedCategory(res.data);
@@ -58,7 +58,7 @@ const NewGenerateActionPlan = () => {
         setisGenerate(false);
       });
   };
-  const filteredData = categories?.action_db?.filter(
+  const filteredData = categories?.filter(
     (item: any) => item.Category === selectCategory,
   );
   const [expandedItems, setExpandedItems] = useState<{
@@ -314,7 +314,7 @@ const NewGenerateActionPlan = () => {
                           <img
                             src="/icons/add-square-green.svg"
                             alt=""
-                            className="mr-1 w-[16px] h-[16px] cursor-pointer"
+                            className="mr-1 w-[16px]  h-[16px] cursor-pointer"
                             onClick={() => {
                               setSelectedCategory((prev) => {
                                 const newArray = Array.isArray(prev)
@@ -330,9 +330,16 @@ const NewGenerateActionPlan = () => {
                                 const updatedArray = [...newArray, { ...tip }];
                                 return updatedArray;
                               });
+                              setCategories((prev) =>{
+                                const oldCategory= [...prev]
+                                return oldCategory.filter((_el,inde) => inde != index)
+                              })
                             }}
                           />
-                          {RecommendationParts[0]}
+                          <div className='overflow-hidden text-ellipsis max-w-[250px] w-full flex-grow'>
+                            {RecommendationParts[0]}
+
+                          </div>
                         </div>
                         <img
                           src="/icons/arrow-down-blue.svg"
