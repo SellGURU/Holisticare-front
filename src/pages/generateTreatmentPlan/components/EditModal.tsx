@@ -230,17 +230,19 @@ const EditModal: React.FC<EditModalProps> = ({
             />
           </div>
           {/* {selectedGroupDose && ( */}
-            <div className={`${selectedGroupDose?'opacity-100':'opacity-50'}`}>
-              <label className="block text-xs font-medium">Dose</label>
-              <input
-                value={dose}
-                disabled={!selectedGroupDose}
-                onChange={(e) => setDose(e.target.value)}
-                placeholder="Write Dose"
-                type="text"
-                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-              />
-            </div>
+          <div
+            className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
+          >
+            <label className="block text-xs font-medium">Dose</label>
+            <input
+              value={dose}
+              disabled={!selectedGroupDose}
+              onChange={(e) => setDose(e.target.value)}
+              placeholder="Write Dose"
+              type="text"
+              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            />
+          </div>
           {/* )} */}
         </div>
         <div className="mb-4">
