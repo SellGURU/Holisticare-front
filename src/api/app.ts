@@ -731,6 +731,10 @@ class Application extends Api {
     const response = this.post('/show_initial_saved_treatment_plan', data);
     return response;
   };
+  static HolisticPlanCategories = (data: any) => {
+    const response = this.post('/patients/available_categories', data);
+    return response;
+  };
 }
 
 export default Application;

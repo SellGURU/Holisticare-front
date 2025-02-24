@@ -197,7 +197,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             <div className="hidden lg:flex w-full items-center gap-3">
               <div
                 onClick={() => {
-                  navigate(-1);
+                  navigate(`/report/${id}/a`);
                 }}
                 className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
               >

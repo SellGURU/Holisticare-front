@@ -1,64 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
-// type Item = {
-//   id: number;
-//   name: string;
-//   ingredient?: string;
-//   instructions: string;
-//   checked: boolean;
-// };
-
-// type MockData = {
-//   [category: string]: Item[];
-// };
-
-// const mockData: MockData = {
-//   Activity: [
-//     {
-//       id: 1,
-//       name: 'Omeprazole (Oral Pill) 40 MG',
-//       ingredient: 'omeprazole',
-//       instructions: '1qam',
-//       checked: true,
-//     },
-//     {
-//       id: 2,
-//       name: 'TA-65 500 IU',
-//       instructions: 'Take two a day first thing in the morning',
-//       checked: true,
-//     },
-//   ],
-//   Diet: [
-//     {
-//       id: 3,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-//   Supplement: [
-//     {
-//       id: 4,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-//   Lifestyle: [
-//     {
-//       id: 5,
-//       name: 'Vitamin C 500 mg',
-//       instructions: 'Take one a day with food',
-//       checked: false,
-//     },
-//   ],
-// };
+import SvgIcon from '../../../utils/svgIcon';
 
 type CategoryState = {
   name: string;
@@ -76,83 +24,137 @@ interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
   setData: (values: any) => void;
+  storeChecked: (data: any) => void;
+  checkeds: Array<any>;
+  reset: () => void;
+  // resolvedSuggestions:(data:any) => void
 }
 
 export const SetOrders: React.FC<SetOrdersProps> = ({
   data,
   treatMentPlanData,
   setData,
+  storeChecked,
+  checkeds,
+  reset,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
+  const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
-  const [FilteredData, setFilteredData] = useState(data);
+  const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
+  const [showModal, setShowModal] = useState(false);
+  // const [FilteredData, setFilteredData] = useState(data);
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
-  const handleCheckboxChange = (category: string, itemId: number) => {
-    // console.log(data.filter((el:any) => el.Category == category)[itemId])
-    const newData = FilteredData.filter(
-      (el: any) => el.Category == category,
-    ).map((el: any, index: number) => {
-      if (index == itemId) {
+  const AllCategoryChecekd = (category: string) => {
+    const newData = data
+      .filter((el: any) => el.Category == category)
+      .map((el: any) => {
         return {
           ...el,
-          checked: !el.checked,
+          checked: true,
         };
-      } else {
-        return el;
-      }
-    });
-    setFilteredData([
-      ...FilteredData.filter((el: any) => el.Category != category),
-      ...newData,
-    ]);
+      });
     setData([...data.filter((el: any) => el.Category != category), ...newData]);
-    // setData({
-    //   ...data,
-    //   [category]: data[category].map((item) =>
-    //     item.id === itemId ? { ...item, checked: !item.checked } : item,
-    //   ),
-    // });
+  };
+
+  const handleCheckboxChange = (category: string, itemId: number) => {
+    // console.log(data.filter((el:any) => el.Category == category)[itemId])
+    const newData = data
+      .filter((el: any) => el.Category == category)
+      .map((el: any, index: number) => {
+        if (index == itemId) {
+          return {
+            ...el,
+            checked: !el.checked,
+          };
+        } else {
+          return el;
+        }
+      });
+    setData([...data.filter((el: any) => el.Category != category), ...newData]);
   };
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (!data.map((el: any) => el.Category).includes(activeCategory)) {
+      const visibleCategories = categories
+        .filter((cat) => cat.visible)
+        .map((cat) => cat.name);
+      const currentIndex = visibleCategories.indexOf(activeCategory);
+      let nextIndex = currentIndex;
+      if (currentIndex < visibleCategories.length - 1) {
+        nextIndex = nextIndex + 1;
+      }
+      setActiveCategory(visibleCategories[nextIndex]);
+      // AllCategoryChecekd(visibleCategories[nextIndex])
+    }
+  }, [activeCategory]);
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
+    storeChecked(data.filter((el: any) => el.checked == true));
     Application.holisticPlanReScore({
       member_id: id,
-      selected_interventions: FilteredData.filter(
-        (el: any) => el.checked == true,
-      ),
+      selected_interventions: [
+        ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+        ...data.filter(
+          (el: any) => el.checked == true && el.Category == activeCategory,
+        ),
+      ],
       biomarker_insight: treatMentPlanData?.completion_suggestion,
       client_insight: treatMentPlanData?.client_insight,
       looking_forwards: treatMentPlanData?.looking_forwards,
     })
       .then((res) => {
         setIsLoading(false);
-
+        setOrderedCategories((pre) => {
+          const old = [...pre];
+          old.push(activeCategory);
+          return old;
+        });
+        // const visibleCategories = categories
+        //   .filter(
+        //     (cat) =>
+        //       cat.visible &&
+        //       res.data.map((el: any) => el.Category).includes(cat.name),
+        //   )
+        //   .map((cat) => cat.name);
         const visibleCategories = categories
-          .filter(
-            (cat) =>
-              cat.visible &&
-              res.data.map((el: any) => el.Category).includes(cat.name),
-          )
+          .filter((cat) => cat.visible)
           .map((cat) => cat.name);
         const currentIndex = visibleCategories.indexOf(activeCategory);
         let nextIndex = currentIndex;
         if (currentIndex < visibleCategories.length - 1) {
           nextIndex = nextIndex + 1;
         }
-        setFilteredData(res.data);
+        // setFilteredData(res.data);
+        setData([...res.data]);
         setActiveCategory(visibleCategories[nextIndex]);
       })
       .finally(() => {
         setIsLoading(false);
       });
   };
-
+  const handleReset = () => {
+    setActiveCategory(categories.filter((el) => el.visible)[0].name);
+    reset();
+  };
+  useEffect(() => {
+    // setData([
+    //   ...data.map((el: any) => {
+    //     return { ...el, checked: false };
+    //   }),
+    // ]);
+    // setFilteredData([
+    //   ...data.map((el: any) => {
+    //     return { ...el, checked: false };
+    //   }),
+    // ]);
+    AllCategoryChecekd(activeCategory);
+  }, [activeCategory]);
   const [showchangeOrders, setshowchangeOrders] = useState(false);
   const [localCategories, setLocalCategories] = useState<CategoryState[]>([
     ...categories,
@@ -310,8 +312,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         </div>
 
         <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
-          {FilteredData.filter((el: any) => el.Category == activeCategory).map(
-            (item: any, index: number) => (
+          {data
+            .filter((el: any) => el.Category == activeCategory)
+            .map((item: any, index: number) => (
               <div className="flex items-center gap-2 mb-3">
                 <Checkbox
                   checked={item.checked}
@@ -319,28 +322,66 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 />
                 <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
                   <li className="list-disc">
-                    {item['Based on']}{' '}
-                    <span className="text-Text-Secondary">/ Ingredient:</span>{' '}
-                    {item.Recommendation || 'N/A'}
-                    <span className="text-Text-Secondary">
-                      / Instructions:
-                    </span>{' '}
+                    {item.Recommendation}{' '}
+                    <span className="text-Text-Secondary">/ Instructions:</span>{' '}
                     {item.Instruction}
+                    {item['Based on'] && (
+                      <div
+                        onClick={() => {
+                          setShowModal(true);
+                          setActivemOdalValue(item['Practitioner Comments']);
+                        }}
+                        className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
+                      >
+                        Based on your:{' '}
+                        <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
+                          {item['Based on']}{' '}
+                          <SvgIcon src="/icons/export.svg" color="#005F73" />
+                        </span>
+                      </div>
+                    )}
                   </li>
                 </ul>
               </div>
-            ),
-          )}
-          {activeCategory !=
-            categories.filter((el) => el.visible)[
-              categories.filter((el) => el.visible).length - 1
-            ].name && (
-            <div className="absolute bottom-3 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-              <div onClick={handleContinue}>Continue</div>
-            </div>
-          )}
+            ))}
+          <div className=" absolute bottom-3 gap-2 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+            {activeCategory !=
+              categories.filter((el) => el.visible)[0].name && (
+              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
+                <div onClick={handleReset}>Reset</div>
+              </div>
+            )}
+            {activeCategory !=
+              categories.filter((el) => el.visible)[
+                categories.filter((el) => el.visible).length - 1
+              ].name && (
+              <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+                <div onClick={handleContinue}>Continue</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      {showModal && (
+        <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <div className="bg-white min-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+            <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
+              <img src="/icons/notification-status.svg" alt="" /> Practitioner
+              Comment
+            </div>
+            <div className="flex flex-col gap-2 mt-5">
+              {activeModalValue?.map((comment: string, index: number) => (
+                <div
+                  className="bg-backgroundColor-Card w-full rounded-2xl py-1 px-3 border border-Gray-50 text-xs text-Text-Primary text-justify "
+                  key={index}
+                >
+                  {comment}
+                </div>
+              ))}
+            </div>
+          </div>
+        </MainModal>
+      )}
     </>
   );
 };

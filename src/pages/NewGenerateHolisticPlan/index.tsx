@@ -84,15 +84,33 @@ const NewGenerateHolisticPlan = () => {
   const { treatmentId } = useContext(AppContext);
 
   useEffect(() => {
-    Application.showHolisticPlan({
-      treatment_id: treatmentId,
-      member_id: id,
-    }).then((res) => setTratmentPlanData(res.data));
-  }, []);
 
+    if(treatmentId !== null){
+          setisFirstLoading(true);
+      Application.showHolisticPlan({
+        treatment_id: treatmentId,
+        member_id: id,
+      })
+        .then((res) => {
+          setTratmentPlanData(res.data);
+          setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+        })
+        .finally(() => {
+          setisFirstLoading(false);
+        });
+    }
+
+  }, []);
+  const [isFirstLoading, setisFirstLoading] = useState(false);
   return (
     <>
       <div className="h-[100vh] overflow-auto">
+        {isFirstLoading && (
+          <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+            {' '}
+            <Circleloader></Circleloader>
+          </div>
+        )}
         {isFinalLoading && (
           <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
             {' '}
