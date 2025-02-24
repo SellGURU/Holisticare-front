@@ -304,6 +304,14 @@ input[type='number'] {
 .react-datepicker {
   left: 14px;
 }
+.bullet-point::before {
+  content: '•'; /* Unicode for bullet character */
+  color: inherit; /* Color of the bullet */
+  display: inline-block;
+  width: 10px; /* Space for the bullet */
+  margin-right: 4px; /* Space between bullet and text */
+  font-size: 14px; /* Adjust size of the bullet if needed */
+}
 @media (max-width: 640px) {
   .max-sm-absolute {
     position: absolute;

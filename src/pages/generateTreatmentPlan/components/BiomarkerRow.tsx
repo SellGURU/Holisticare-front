@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import RefrenceModal from './RefrenceData';
+// import RefrenceModal from './RefrenceData';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
+import { MainModal } from '../../../Components';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -10,6 +11,7 @@ interface BioMarkerRowSuggestionsProps {
   onDelete: () => void;
   onEdit: (value: any) => void;
   editAble?: boolean;
+  isOverview?: boolean;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -18,6 +20,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   onDelete,
   onEdit,
   editAble,
+  isOverview,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -60,6 +63,20 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     });
   };
   const [deleteConfirm, setdeleteConfirm] = useState(false);
+  useEffect(() => console.log(value), [value]);
+  const splitInstructions = (instruction: string) => {
+    const positiveMatch = instruction.match(
+      /Positive:\s*(.+?)(?=\s*Negative:|$)/,
+    );
+    const negativeMatch = instruction.match(/Negative:\s*(.+)/);
+    return {
+      positive: positiveMatch ? positiveMatch[1].trim() : '',
+      negative: negativeMatch ? negativeMatch[1].trim() : '',
+    };
+  };
+
+  const { positive, negative } = splitInstructions(editableValue);
+
   return (
     <>
       <div className="w-full flex justify-center items-start gap-4">
@@ -84,16 +101,29 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               rows={2}
             /> */}
             <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-              {editableValue}
+              <div className="text-Text-Primary">
+                {' '}
+                <span className="text-Text-Secondary bullet-point">
+                  Positive:{' '}
+                </span>
+                {positive}
+              </div>
+              <div className="text-Text-Primary">
+                <span className="text-Text-Secondary bullet-point">
+                  Negative:{' '}
+                </span>
+                {negative}
+              </div>{' '}
             </div>
             {value['Based on'] && (
               <div
                 onClick={() => setShowModal(true)}
-                className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex"
+                className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
               >
                 Based on your:{' '}
-                <span className="text-[#6CC24A] flex items-center ml-1 gap-2 cursor-pointer">
-                  {value['Based on']} <img src="/icons/export.svg" alt="" />
+                <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
+                  {value['Based on']}{' '}
+                  <SvgIcon src="/icons/export.svg" color="#005F73" />
                 </span>
               </div>
             )}
@@ -111,15 +141,30 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               ))}
             </div>
           )}
-          <div className=" top-6 right-4  absolute">
-            <img
-              onClick={() => setIsExpanded(!isExpanded)}
-              className={` cursor-pointer mb-2 ${isExpanded && 'rotate-180'} w-4 transition-transform`}
-              src="/icons/arow-down-drop.svg"
-              alt=""
-            />
+          <div className=" top-4 right-4  absolute">
+            {isExpanded ? (
+              <div
+                onClick={() => setIsExpanded(false)}
+                className="size-6 transition-transform rotate-180"
+              >
+                <SvgIcon
+                  width="24px"
+                  height="24px"
+                  color="#005F73"
+                  src="/icons/arow-down-drop.svg"
+                />
+              </div>
+            ) : (
+              <img
+                onClick={() => setIsExpanded(true)}
+                className={` ${isOverview && 'hidden'} cursor-pointer mb-2  w-4 transition-transform`}
+                src="/icons/arow-down-drop.svg"
+                alt=""
+              />
+            )}
+
             <div
-              className={`${isExpanded && editAble ? 'grid' : 'hidden'} flex items-center gap-[6px]`}
+              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col  items-center gap-[6px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}
@@ -128,10 +173,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 alt=""
               />
               {deleteConfirm ? (
-                <div className="grid items-center gap-2 ml-1 text-Text-Secondary text-xs">
+                <div className="flex flex-col items-center gap-2 pb-1 text-Text-Secondary text-xs">
                   Sure?{' '}
                   <img
-                    className="cursor-pointer"
+                    className="cursor-pointer mr-1"
                     onClick={() => {
                       setdeleteConfirm(false);
                       onDelete();
@@ -140,7 +185,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                   />
                   <img
-                    className="cursor-pointer"
+                    className="cursor-pointer mr-1"
                     onClick={() => setdeleteConfirm(false)}
                     src="/icons/cansel-close-circle.svg"
                     alt=""
@@ -161,11 +206,31 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         </div>
       </div>
       {showModal && (
-        <RefrenceModal
-          reference={[]}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-        />
+        <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <div className="bg-white min-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+            <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
+              <img src="/icons/notification-status.svg" alt="" /> Practitioner
+              Comment
+            </div>
+            <div className="flex flex-col gap-2 mt-5">
+              {value['Practitioner Comments']?.map(
+                (comment: string, index: number) => (
+                  <div
+                    className="bg-backgroundColor-Card w-full rounded-2xl py-1 px-3 border border-Gray-50 text-xs text-Text-Primary text-justify "
+                    key={index}
+                  >
+                    {comment}
+                  </div>
+                ),
+              )}
+            </div>
+          </div>
+        </MainModal>
+        // <RefrenceModal
+        //   reference={[]}
+        //   isOpen={showModal}
+        //   onClose={() => setShowModal(false)}
+        // />
       )}
       {showEditNote && (
         <EditModal

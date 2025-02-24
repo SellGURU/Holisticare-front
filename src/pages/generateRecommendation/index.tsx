@@ -23,14 +23,28 @@ export const GenerateRecommendation = () => {
   };
   const handleBack = () => {
     if (currentStepIndex > 0) {
+      setCheckedSuggestion([]);
       setCurrentStepIndex(currentStepIndex - 1);
     }
   };
   const handleSkip = () => {
     if (currentStepIndex < steps.length - 1) {
+      setTratmentPlanData((pre: any) => {
+        const newSuggestios = pre.suggestion_tab.map((el: any) => {
+          return {
+            ...el,
+            checked: true,
+          };
+        });
+        return {
+          ...pre,
+          suggestion_tab: newSuggestios,
+        };
+      });
       setCurrentStepIndex(steps.length - 1);
     }
   };
+  const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
@@ -81,7 +95,7 @@ export const GenerateRecommendation = () => {
           </div>
           <div className="flex items-center gap-2">
             <div
-              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'flex'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
+              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
               onClick={handleSkip}
             >
               Skip <img src="/icons/Skip.svg" alt="" />
@@ -104,9 +118,12 @@ export const GenerateRecommendation = () => {
                 if (currentStepIndex == steps.length - 1) {
                   Application.saveHolisticPlan({
                     ...treatmentPlanData,
-                    suggestion_tab: treatmentPlanData.suggestion_tab.filter(
-                      (el: any) => el.checked == true,
-                    ),
+                    suggestion_tab: [
+                      ...checkedSuggestions,
+                      ...treatmentPlanData.suggestion_tab.filter(
+                        (el: any) => el.checked == true,
+                      ),
+                    ],
                   })
                     .then((res) => console.log(res))
                     .finally(() =>
@@ -126,7 +143,12 @@ export const GenerateRecommendation = () => {
           {steps.map((label, index) => (
             <React.Fragment key={index}>
               <div
-                onClick={() => setCurrentStepIndex(index)}
+                onClick={() => {
+                  setCurrentStepIndex(index);
+                  if (label != 'Overview') {
+                    setCheckedSuggestion([]);
+                  }
+                }}
                 className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
                   index === currentStepIndex
                     ? 'text-Primary-DeepTeal '
@@ -164,6 +186,25 @@ export const GenerateRecommendation = () => {
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
+              reset={() => {
+                setCheckedSuggestion([]);
+                setTratmentPlanData((pre: any) => {
+                  const newSuggestios = pre.suggestion_tab.map((el: any) => {
+                    return {
+                      ...el,
+                      checked: false,
+                    };
+                  });
+                  return {
+                    ...pre,
+                    suggestion_tab: newSuggestios,
+                  };
+                });
+              }}
+              storeChecked={(data) =>
+                setCheckedSuggestion([...checkedSuggestions, ...data])
+              }
+              checkeds={checkedSuggestions}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
                 console.log(newOrders);
@@ -177,7 +218,10 @@ export const GenerateRecommendation = () => {
               data={treatmentPlanData.suggestion_tab}
             ></SetOrders>
           ) : (
-            <Overview treatmentPlanData={treatmentPlanData}></Overview>
+            <Overview
+              suggestionsChecked={checkedSuggestions}
+              treatmentPlanData={treatmentPlanData}
+            ></Overview>
           )}
         </div>
       </div>
