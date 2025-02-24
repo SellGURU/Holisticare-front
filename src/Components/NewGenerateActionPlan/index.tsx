@@ -23,6 +23,7 @@ const NewGenerateActionPlan = () => {
   const [categories, setCategories] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<any[]>([]);
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
+  const [isGenerate, setisGenerate] = useState<boolean>(false);
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   useEffect(() => {
@@ -45,7 +46,7 @@ const NewGenerateActionPlan = () => {
       });
   };
   const generateActionPlanGenerateActionPlanTask = () => {
-    setLoadingButton(true);
+    setisGenerate(true);
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
       tasks: categories.action_db,
@@ -54,7 +55,7 @@ const NewGenerateActionPlan = () => {
         setSelectedCategory(res.data);
       })
       .finally(() => {
-        setLoadingButton(false);
+        setisGenerate(false);
       });
   };
   const filteredData = categories?.action_db?.filter(
@@ -227,7 +228,7 @@ const NewGenerateActionPlan = () => {
                     ClassName="rounded-[20px] mt-8"
                     onClick={generateActionPlanGenerateActionPlanTask}
                   >
-                    {loadingButton ? (
+                    {isGenerate ? (
                       <SpinnerLoader />
                     ) : (
                       <>
