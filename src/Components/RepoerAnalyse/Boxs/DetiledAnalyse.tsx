@@ -84,6 +84,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     });
     return key;
   };
+  const isChartDataEmpty = !active?.values.some((value: string) => !isNaN(parseFloat(value)));
+
+
+
   return (
     <>
       <div
@@ -252,8 +256,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               <UnitPopUp unit={active?.unit}></UnitPopUp>
                             </div>
                             <div className="  cursor-pointer ">
-                              <div className="flex gap-2 justify-end items-center">
-                                <div className="TextStyle-Headline-6 text-nowrap text-Text-Primary">
+                              <div className={` ${isChartDataEmpty && 'opacity-50 pointer-events-none'} flex gap-2 justify-end items-center`}>
+                                <div className={`TextStyle-Headline-6 text-nowrap text-Text-Primary `}>
                                   Historical Chart
                                 </div>
                                 <Toggle
