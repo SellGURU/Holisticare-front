@@ -63,6 +63,7 @@ const EditModal: React.FC<EditModalProps> = ({
       e.preventDefault();
       if (newNote.trim()) {
         setNotes([...notes, newNote]);
+  
         setNewNote('');
       }
     }
@@ -120,7 +121,7 @@ const EditModal: React.FC<EditModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
         ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 max-h-[600px] overflow-y-scroll w-[500px] text-Text-Primary"
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary"
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
@@ -271,12 +272,12 @@ const EditModal: React.FC<EditModalProps> = ({
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             onKeyDown={handleNoteKeyDown}
-            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
             rows={4}
             placeholder="Write notes ..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[100px] overflow-auto ">
+        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
           {notes.map((note, index) => (
             <div
               key={index}
@@ -311,7 +312,7 @@ const EditModal: React.FC<EditModalProps> = ({
             placeholder="Enter internal observations or comments..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[100px] overflow-auto ">
+        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
           {practitionerComments?.map((comment, index) => (
             <div
               key={index}
@@ -332,7 +333,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-2 mt-6">
+        <div className="flex justify-end gap-2 ">
           <button
             onClick={onClose}
             className="text-sm font-medium text-[#909090] cursor-pointer"

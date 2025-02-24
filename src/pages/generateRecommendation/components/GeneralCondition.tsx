@@ -205,7 +205,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                       e.target.value,
                     )
                   }
-                  className="w-full p-1 outline-none resize-none h-[50px] text-xs"
+                 className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50  text-xs  resize-none outline-none h-[60px]"
                 />
               ) : (
                 <li className="list-disc text-xs mt-2">{item}</li>
@@ -257,7 +257,7 @@ const Card: React.FC<CardProps> = ({
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 onContentChange(index, e.target.value)
               }
-              className="w-full  text-xs  resize-none outline-none h-[50px]"
+              className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50  text-xs  resize-none outline-none h-fit"
             />
           ) : (
             <li className="list-disc text-xs mt-2">{item}</li>
