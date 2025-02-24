@@ -22,8 +22,11 @@ const NewGenerateActionPlan = () => {
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<any[]>([]);
-  console.log('selectedCategory => ', selectedCategory);
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
+  const [duration, setDuration] = useState(1);
+  const [planObjective, setPlanObjective] = useState(
+    'Improving diet plan in order to  decreasing weight',
+  );
   useEffect(() => {
     Application.getActionPlanMethodsNew().then((res) => {
       setPlans(res.data);
@@ -68,6 +71,21 @@ const NewGenerateActionPlan = () => {
       ...prev,
       [index]: !prev[index],
     }));
+  };
+  const generateActionPlanBlockSaveTasks = () => {
+    setLoadingButton(true);
+    Application.getActionPlanBlockSaveTasksNew({
+      member_id: id,
+      tasks: selectedCategory,
+      duration,
+      plan_objective: planObjective,
+    })
+      .then(() => {
+        navigate(-1);
+      })
+      .finally(() => {
+        setLoadingButton(false);
+      });
   };
   return (
     <div className="h-[100vh] lg:h-[unset] overflow-auto lg:overflow-hidden">
@@ -115,9 +133,9 @@ const NewGenerateActionPlan = () => {
         </div>
         {selectPlanView && (
           <div className="w-[192px] flex justify-center">
-            <ButtonPrimary>
+            <ButtonPrimary onClick={generateActionPlanBlockSaveTasks}>
               <img src="/icons/tick-square.svg" alt="" />
-              Save Changes
+              {loadingButton ? <SpinnerLoader /> : 'Save Changes'}
             </ButtonPrimary>
           </div>
         )}
@@ -153,11 +171,12 @@ const NewGenerateActionPlan = () => {
                 <input
                   type="text"
                   className={`w-full h-[28px] rounded-2xl border placeholder:text-gray-400 text-xs px-3 outline-none`}
-                  value="Improving diet plan in order to  decreasing weight"
+                  value={planObjective}
+                  onChange={(e) => setPlanObjective(e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex items-center justify-between px-4 w-[20%] h-[48px] rounded-xl bg-backgroundColor-Card border">
+            <div className="flex items-center justify-between px-4 w-[25%] h-[48px] rounded-xl bg-backgroundColor-Card border">
               <div className="flex items-center text-Primary-DeepTeal text-xs text-nowrap">
                 <img src="/icons/timer.svg" alt="" className="mr-1" />
                 Time Duration:
@@ -166,14 +185,15 @@ const NewGenerateActionPlan = () => {
                 <select
                   onClick={() => setIsOpen(!isOpen)}
                   onBlur={() => setIsOpen(false)}
-                  onChange={() => {
+                  onChange={(e) => {
                     setIsOpen(false);
+                    setDuration(parseInt(e.target.value));
                   }}
                   className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                 >
-                  <option value="1">1 Month</option>
-                  <option value="2">2 Month</option>
-                  <option value="3">3 Month</option>
+                  <option value={1}>1 Month</option>
+                  <option value={2}>2 Month</option>
+                  <option value={3}>3 Month</option>
                 </select>
                 <img
                   className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
@@ -217,8 +237,8 @@ const NewGenerateActionPlan = () => {
                 </div>
               ) : (
                 <div>
-                  <div className="flex flex-col gap-3">
-                    <div className="grid gap-3">
+                  <div className="flex flex-col">
+                    <div className="grid gap-1 pt-5">
                       {selectedCategory.map((el: any, index: number) => (
                         <BioMarkerRowSuggestions
                           key={index}
@@ -230,6 +250,7 @@ const NewGenerateActionPlan = () => {
                           //     );
                           //   });
                           // }}
+                          index={index}
                           category={el.Category}
                           value={el}
                         />
@@ -239,13 +260,13 @@ const NewGenerateActionPlan = () => {
                 </div>
               )}
             </div>
-            <div className="w-[20%] h-full bg-white rounded-3xl flex flex-col p-4 shadow-100">
+            <div className="w-[25%] h-full bg-white rounded-3xl flex flex-col p-4 shadow-100">
               <SearchBox
-                ClassName="rounded-2xl border shadow-none h-[40px] bg-white"
+                ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
                 placeHolder="Search for tips ..."
                 onSearch={() => {}}
               ></SearchBox>
-              <div className="flex w-full items-center justify-between mt-2">
+              <div className="flex w-full items-center justify-between mt-2 flex-wrap">
                 <div
                   className={`${selectCategory === 'Diet' ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] cursor-pointer`}
                   onClick={() => setSelectCategory('Diet')}
