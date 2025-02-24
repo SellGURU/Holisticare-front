@@ -110,7 +110,7 @@ const NewGenerateActionPlan = () => {
         <TopBar></TopBar>
       </div>
       <div
-        className={`${selectPlanView && 'flex items-center justify-between'} px-8 pr-0 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] lg:z-[0] w-full lg:w-[unset]`}
+        className={`${selectPlanView && 'flex items-center justify-between'} px-8 mb-2 py-3 lg:py-0 lg:pt-[80px] shadow-300 bg-bg-color lg:bg-[none] lg:shadow-[unset] fixed lg:relative top-0 z-[9] lg:z-[0] w-full lg:w-[unset]`}
       >
         <div className="flex items-center gap-3">
           <div
@@ -130,18 +130,18 @@ const NewGenerateActionPlan = () => {
           </div>
         </div>
         {selectPlanView && (
-          <div className="w-[192px] flex justify-center">
+          <div className=" flex justify-center">
             <ButtonPrimary onClick={generateActionPlanBlockSaveTasks}>
-             
-              {loadingButton ?
-              <>
-               
-               <SpinnerLoader /> 
-              </>
-              : <>
-              <img src="/icons/tick-square.svg" alt="" />
-              'Save Changes'
-              </>}
+              {loadingButton ? (
+                <>
+                  <SpinnerLoader />
+                </>
+              ) : (
+                <>
+                  <img src="/icons/tick-square.svg" alt="" />
+                  Save Changes
+                </>
+              )}
             </ButtonPrimary>
           </div>
         )}
