@@ -248,9 +248,13 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
+                           
+                            <div className="relative z-50 mr-0">
+                              <UnitPopUp unit={active?.unit}></UnitPopUp>
+                            </div>
                             <div className="  cursor-pointer ">
                               <div className="flex gap-2 justify-end items-center">
-                                <div className="TextStyle-Headline-6  text-Text-Primary">
+                                <div className="TextStyle-Headline-6 text-nowrap text-Text-Primary">
                                   Historical Chart
                                 </div>
                                 <Toggle
@@ -260,9 +264,6 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   checked={isCheced}
                                 ></Toggle>
                               </div>
-                            </div>
-                            <div className="relative z-50 mr-0">
-                              <UnitPopUp unit={active?.unit}></UnitPopUp>
                             </div>
                           </div>
                         </div>
@@ -274,22 +275,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   ) : (
                     <div className="w-full">
                       <div className=" w-full border border-Gray-50 p-4 h-[159px] bg-white  rounded-[6px]">
-                        <div className="TextStyle-Headline-6 flex justify-between  items-center gap-2 text-Text-Primary mb-5">
+                        <div className="TextStyle-Headline-6 flex justify-between text-nowrap items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
-                            <div className="  cursor-pointer mr-6 ">
-                              <div className="flex gap-2 justify-end items-center">
-                                <div className="TextStyle-Headline-6  text-Text-Primary">
-                                  Historical Chart
-                                </div>
-                                <Toggle
-                                  setChecked={(value) => {
-                                    setIsCheced(value);
-                                  }}
-                                  checked={isCheced}
-                                ></Toggle>
-                              </div>
-                            </div>
+                           
                             <div className="relative z-50 ">
                               <UnitPopUp unit={active?.unit}></UnitPopUp>
                             </div>
@@ -300,6 +289,19 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                               </div>
                               <div className="w-[16px]">
                                 <img src="/icons/arrow-down-green.svg" alt="" />
+                              </div>
+                            </div>
+                            <div className="  cursor-pointer ml-6 ">
+                              <div className="flex gap-2 justify-end items-center">
+                                <div className="TextStyle-Headline-6 text-nowrap text-Text-Primary">
+                                  Historical Chart
+                                </div>
+                                <Toggle
+                                  setChecked={(value) => {
+                                    setIsCheced(value);
+                                  }}
+                                  checked={isCheced}
+                                ></Toggle>
                               </div>
                             </div>
                           </div>
