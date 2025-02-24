@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
 import Application from '../../../api/app';
@@ -118,14 +118,30 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     // });
   };
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (!FilteredData.map((el: any) => el.Category).includes(activeCategory)) {
+      const visibleCategories = categories
+        .filter((cat) => cat.visible)
+        .map((cat) => cat.name);
+      const currentIndex = visibleCategories.indexOf(activeCategory);
+      let nextIndex = currentIndex;
+      if (currentIndex < visibleCategories.length - 1) {
+        nextIndex = nextIndex + 1;
+      }
+      setActiveCategory(visibleCategories[nextIndex]);
+    }
+  }, [activeCategory]);
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
     Application.holisticPlanReScore({
       member_id: id,
-      selected_interventions: FilteredData.filter(
-        (el: any) => el.checked == true,
-      ),
+      selected_interventions: [
+        ...data.filter(
+          (el: any) => el.checked == true && el.Category != activeCategory,
+        ),
+        ...FilteredData.filter((el: any) => el.checked == true),
+      ],
       biomarker_insight: treatMentPlanData?.completion_suggestion,
       client_insight: treatMentPlanData?.client_insight,
       looking_forwards: treatMentPlanData?.looking_forwards,
@@ -133,12 +149,15 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       .then((res) => {
         setIsLoading(false);
 
+        // const visibleCategories = categories
+        //   .filter(
+        //     (cat) =>
+        //       cat.visible &&
+        //       res.data.map((el: any) => el.Category).includes(cat.name),
+        //   )
+        //   .map((cat) => cat.name);
         const visibleCategories = categories
-          .filter(
-            (cat) =>
-              cat.visible &&
-              res.data.map((el: any) => el.Category).includes(cat.name),
-          )
+          .filter((cat) => cat.visible)
           .map((cat) => cat.name);
         const currentIndex = visibleCategories.indexOf(activeCategory);
         let nextIndex = currentIndex;
@@ -152,7 +171,18 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         setIsLoading(false);
       });
   };
-
+  useEffect(() => {
+    setData([
+      ...data.map((el: any) => {
+        return { ...el, checked: false };
+      }),
+    ]);
+    setFilteredData([
+      ...data.map((el: any) => {
+        return { ...el, checked: false };
+      }),
+    ]);
+  }, []);
   const [showchangeOrders, setshowchangeOrders] = useState(false);
   const [localCategories, setLocalCategories] = useState<CategoryState[]>([
     ...categories,
@@ -320,7 +350,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
                   <li className="list-disc">
                     {item['Based on']}{' '}
-                    <span className="text-Text-Secondary">/ Ingredient:</span>{' '}
+                    <span className="text-Text-Secondary">
+                      / Recommendation:
+                    </span>{' '}
                     {item.Recommendation || 'N/A'}
                     <span className="text-Text-Secondary">
                       / Instructions:
