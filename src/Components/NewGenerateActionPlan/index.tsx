@@ -330,15 +330,16 @@ const NewGenerateActionPlan = () => {
                                 const updatedArray = [...newArray, { ...tip }];
                                 return updatedArray;
                               });
-                              setCategories((prev) =>{
-                                const oldCategory= [...prev]
-                                return oldCategory.filter((_el,inde) => inde != index)
-                              })
+                              setCategories((prev) => {
+                                const oldCategory = [...prev];
+                                return oldCategory.filter(
+                                  (_el, inde) => inde != index,
+                                );
+                              });
                             }}
                           />
-                          <div className='overflow-hidden text-ellipsis max-w-[250px] w-full flex-grow'>
+                          <div className="overflow-hidden text-ellipsis max-w-[250px] w-full flex-grow">
                             {RecommendationParts[0]}
-
                           </div>
                         </div>
                         <img
