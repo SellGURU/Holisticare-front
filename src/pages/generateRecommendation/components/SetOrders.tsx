@@ -49,17 +49,17 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
-  const AllCategoryChecekd = (category: string) => {
-    const newData = data
-      .filter((el: any) => el.Category == category)
-      .map((el: any) => {
-        return {
-          ...el,
-          checked: true,
-        };
-      });
-    setData([...data.filter((el: any) => el.Category != category), ...newData]);
-  };
+  // const _AllCategoryChecekd = (category: string) => {
+  //   const newData = data
+  //     .filter((el: any) => el.Category == category)
+  //     .map((el: any) => {
+  //       return {
+  //         ...el,
+  //         checked: true,
+  //       };
+  //     });
+  //   setData([...data.filter((el: any) => el.Category != category), ...newData]);
+  // };
 
   const handleCheckboxChange = (category: string, itemId: number) => {
     // console.log(data.filter((el:any) => el.Category == category)[itemId])
@@ -142,19 +142,19 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     setActiveCategory(categories.filter((el) => el.visible)[0].name);
     reset();
   };
-  useEffect(() => {
-    // setData([
-    //   ...data.map((el: any) => {
-    //     return { ...el, checked: false };
-    //   }),
-    // ]);
-    // setFilteredData([
-    //   ...data.map((el: any) => {
-    //     return { ...el, checked: false };
-    //   }),
-    // ]);
-    AllCategoryChecekd(activeCategory);
-  }, [activeCategory]);
+  // useEffect(() => {
+  //   // setData([
+  //   //   ...data.map((el: any) => {
+  //   //     return { ...el, checked: false };
+  //   //   }),
+  //   // ]);
+  //   // setFilteredData([
+  //   //   ...data.map((el: any) => {
+  //   //     return { ...el, checked: false };
+  //   //   }),
+  //   // ]);
+  //   AllCategoryChecekd(activeCategory);
+  // }, [activeCategory]);
   const [showchangeOrders, setshowchangeOrders] = useState(false);
   const [localCategories, setLocalCategories] = useState<CategoryState[]>([
     ...categories,

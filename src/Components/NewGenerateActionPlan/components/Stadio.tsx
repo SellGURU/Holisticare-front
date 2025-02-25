@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBox from '../../SearchBox';
 import LibBox from './LibBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
@@ -22,6 +22,7 @@ const Stadio: React.FC<StadioProps> = ({
   actions,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
+  const [haveConflic, setHaveConflic] = useState(false);
   const AllCategories = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
@@ -49,6 +50,23 @@ const Stadio: React.FC<StadioProps> = ({
         setIsAutoGenerate(false);
       });
   };
+  const conflicCheck = () => {
+    if (actions.length > 1) {
+      Application.checkConflicActionPlan({
+        member_id: id,
+        tasks: actions,
+      }).then((res) => {
+        if (res.data.conflicts != 'No conflicts detected.') {
+          setHaveConflic(true);
+        } else {
+          setHaveConflic(false);
+        }
+      });
+    }
+  };
+  useEffect(() => {
+    conflicCheck();
+  }, [actions]);
   const filteredData = data.filter(
     (el) =>
       el.Category == selectCategory &&
@@ -58,8 +76,16 @@ const Stadio: React.FC<StadioProps> = ({
     <>
       <div className="flex px-6 gap-4">
         <div className="flex-grow">
+          {/* alert */}
+          {haveConflic && (
+            <div className="text-[12px]">
+              Aww yeah, you successfully read this important alert message. This
+              example text is going to run a bit longer so that you can see how
+              spacing within an alert works with this kind of content.
+            </div>
+          )}
           <div
-            className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   h-[480px]  ${actions.length != 0 && ''} `}
+            className={`w-full bg-white rounded-[24px] sticky  top-[190px] border border-gray-50 shadow-100   h-[480px]  ${actions.length != 0 && ''} `}
           >
             {actions.length == 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-[500px]">

@@ -68,7 +68,7 @@ const GenerateActionPlan = () => {
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll ">
-        <div className="w-full  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
+        <div className="w-full fixed top-0  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
           <div className="w-full ">
             <TopBar></TopBar>
             <div className="flex justify-between items-center mt-9 mx-8">
@@ -126,12 +126,7 @@ const GenerateActionPlan = () => {
               </div>
               )
             } */}
-             
-           
           </div>
-      
-              
-        
         </div>
 
         {isLoadingPlans && (
