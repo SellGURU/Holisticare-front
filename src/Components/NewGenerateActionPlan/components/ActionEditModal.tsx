@@ -28,13 +28,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-       const [selectedDays, setSelectedDays] = useState<string[]>( []);
-    
-      const toggleDaySelection = (day: string) => {
-        setSelectedDays((prev) =>
-          prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
-        );
-      };
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+  const toggleDaySelection = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
   const [groups, setGroups] = useState<any[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(
     defalts?.Category || null,
@@ -114,7 +114,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Dose: dose,
       'Client Notes': notes,
       Days: selectedDays,
-
     });
     onClose();
   };
@@ -141,7 +140,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
         .Dose
     : false;
-const days  =['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri']
+  const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -286,7 +285,7 @@ const days  =['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri']
         <div className="mb-4 flex w-full items-center justify-between">
           <div className="">
             <label className="text-xs font-medium">Times</label>
-           
+
             <div className="flex w-full mt-2 ">
               {times.map((time, index) => (
                 <div
@@ -305,24 +304,22 @@ const days  =['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri']
           </div>
           <div className=" ">
             <label className="text-xs font-medium">Days</label>
-           
+
             <div className="  mt-2 w-full  flex ">
-                  {days.map(
-                    (day , index) => (
-                      <div
-                        key={index}
-                        onClick={() => toggleDaySelection(day)}
-                        className={`cursor-pointer border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2.5 text-xs text-center ${
-                          selectedDays.includes(day)
-                            ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                            : 'text-Text-Secondary bg-backgroundColor-Card'
-                        }`}
-                      >
-                        {day}
-                      </div>
-                    ),
-                  )}
+              {days.map((day, index) => (
+                <div
+                  key={index}
+                  onClick={() => toggleDaySelection(day)}
+                  className={`cursor-pointer border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2.5 text-xs text-center ${
+                    selectedDays.includes(day)
+                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                      : 'text-Text-Secondary bg-backgroundColor-Card'
+                  }`}
+                >
+                  {day}
                 </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="mb-4">
