@@ -143,7 +143,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
-              <div className="flex flex-col w-[60%]">
+              <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 <div className="flex items-center">
                   <div className="flex items-center text-Text-Quadruple text-[12px]">
                     Score:
@@ -182,10 +182,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <div className="flex items-center text-Text-Quadruple text-[12px]">
+                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
                     • Instruction:
                   </div>
-                  <div className="flex items-center text-Text-Primary text-[12px] ml-1">
+                  <div className="flex items-center text-Text-Primary text-[12px] ml-1 text-wrap">
                     {value.Instruction}
                   </div>
                 </div>
