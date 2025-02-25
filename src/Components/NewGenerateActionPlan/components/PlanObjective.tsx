@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import React from 'react';
 
-const PlanObjective = () => {
-  const [value, setValue] = useState('');
+interface PlanObjectiveProps {
+  value: string;
+  setValue: (val: string) => void;
+}
+
+const PlanObjective: React.FC<PlanObjectiveProps> = ({ value, setValue }) => {
   return (
     <>
       <div className="w-full h-[48px] flex justify-between items-center px-4 bg-[#FDFDFD] rounded-[12px] border border-gray-50">

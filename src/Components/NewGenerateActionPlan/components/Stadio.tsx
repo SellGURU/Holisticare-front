@@ -7,17 +7,37 @@ import SpinnerLoader from '../../SpinnerLoader';
 import ActionCard from './ActionCard';
 
 interface StadioProps {
-  data: any;
+  data: Array<any>;
+  actions: Array<any>;
+  setActions: (data: any) => void;
+  setData: (values: any) => void;
 }
 
-const Stadio: React.FC<StadioProps> = ({ data }) => {
+const Stadio: React.FC<StadioProps> = ({
+  data,
+  setData,
+  setActions,
+  actions,
+}) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const AllCategories = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
-  const [actions, setActions] = useState<Array<any>>([]);
+  const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate] = useState(false);
   const addToActions = (item: any) => {
-    setActions((prev) => [...prev, item]);
+    setActions((prev: any) => [...prev, item]);
+    setData((prev: Array<any>) => {
+      const oldCategory = [...prev];
+      const itemindex = prev.findIndex(
+        (el: any) => JSON.stringify(el) === JSON.stringify(item),
+      );
+      return oldCategory.filter((_el, inde) => inde != itemindex);
+    });
   };
+  const filteredData = data.filter(
+    (el) =>
+      el.Category == selectCategory &&
+      el.Recommendation.toLowerCase().includes(searchValue.toLowerCase()),
+  );
   return (
     <>
       <div className="flex px-6 gap-4">
@@ -55,7 +75,7 @@ const Stadio: React.FC<StadioProps> = ({ data }) => {
               </div>
             ) : (
               <>
-                <div className="h-[480px] grid gap-3 py-3 overflow-y-auto">
+                <div className="max-h-[480px] grid grid-cols-1 gap-3 py-3 overflow-y-auto">
                   {actions.map((act: any) => {
                     return (
                       <>
@@ -72,7 +92,9 @@ const Stadio: React.FC<StadioProps> = ({ data }) => {
           <SearchBox
             ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
             placeHolder="Search for actions ..."
-            onSearch={() => {}}
+            onSearch={(value) => {
+              setSearchValue(value);
+            }}
           ></SearchBox>
           <div>
             <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
@@ -90,7 +112,7 @@ const Stadio: React.FC<StadioProps> = ({ data }) => {
               })}
             </div>
             <div className="mt-2 grid gap-2">
-              {data.map((value: any) => {
+              {filteredData.map((value: any) => {
                 return (
                   <>
                     <LibBox

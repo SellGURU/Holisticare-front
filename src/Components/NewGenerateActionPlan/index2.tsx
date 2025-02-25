@@ -4,18 +4,20 @@ import { TopBar } from '../topBar';
 import CategorieyWeight from './components/CategorieyWeight';
 import Application from '../../api/app';
 import LoaderBox from './components/LoaderBox';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
 import dataJson from './data.json';
+import SpinnerLoader from '../SpinnerLoader';
 
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
   const [isWeighted, setIsWeighted] = useState(true);
+  const [actions, setActions] = useState<Array<any>>([]);
   useEffect(() => {
     setIsLoadingPlans(true);
     Application.getActionPlanMethodsNew()
@@ -42,6 +44,25 @@ const GenerateActionPlan = () => {
         // setSelectPlanView(true);
       });
   };
+  const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
+  const navigate = useNavigate();
+  const [duration, setDuration] = useState(1);
+  const [planObjective, setPlanObjective] = useState('');
+  const saveChanges = () => {
+    setISLoadingSaveChanges(true);
+    Application.getActionPlanBlockSaveTasksNew({
+      member_id: id,
+      tasks: actions,
+      duration: duration,
+      plan_objective: planObjective,
+    })
+      .then(() => {
+        navigate(-1);
+      })
+      .finally(() => {
+        setISLoadingSaveChanges(false);
+      });
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll ">
@@ -62,9 +83,17 @@ const GenerateActionPlan = () => {
               </div>
               {isWeighted && (
                 <div>
-                  <ButtonPrimary>
-                    <img className="w-4" src="/icons/tick-square.svg" alt="" />
-                    Save Changes
+                  <ButtonPrimary onClick={saveChanges}>
+                    {isLoadingSaveChanges ? (
+                      <>
+                        <SpinnerLoader />
+                      </>
+                    ) : (
+                      <>
+                        <img src="/icons/tick-square.svg" alt="" />
+                        Save Changes
+                      </>
+                    )}
                   </ButtonPrimary>
                 </div>
               )}
@@ -73,10 +102,17 @@ const GenerateActionPlan = () => {
               <>
                 <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center">
                   <div className="flex-grow">
-                    <PlanObjective></PlanObjective>
+                    <PlanObjective
+                      value={planObjective}
+                      setValue={setPlanObjective}
+                    ></PlanObjective>
                   </div>
                   <div className="w-[342px]">
-                    <TimeDuration setDuration={() => {}}></TimeDuration>
+                    <TimeDuration
+                      setDuration={(value) => {
+                        setDuration(value);
+                      }}
+                    ></TimeDuration>
                   </div>
                 </div>
               </>
@@ -105,7 +141,12 @@ const GenerateActionPlan = () => {
         ) : (
           <>
             <div className=" w-full h-full mt-[190px] ">
-              <Stadio data={categories}></Stadio>
+              <Stadio
+                actions={actions}
+                setActions={setActions}
+                setData={setCategories}
+                data={categories}
+              ></Stadio>
             </div>
           </>
         )}
