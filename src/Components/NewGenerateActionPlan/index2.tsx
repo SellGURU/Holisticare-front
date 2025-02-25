@@ -126,12 +126,7 @@ const GenerateActionPlan = () => {
               </div>
               )
             } */}
-             
-           
           </div>
-      
-              
-        
         </div>
 
         {isLoadingPlans && (
