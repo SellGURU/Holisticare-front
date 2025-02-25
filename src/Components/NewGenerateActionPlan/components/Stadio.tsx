@@ -155,7 +155,7 @@ const Stadio: React.FC<StadioProps> = ({
             </div>
             <div
               className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
-              style={{ height: haveConflic ? '440px' : '480px' }}
+              style={{ height: haveConflic ? '420px' : '480px' }}
             >
               {actions.length == 0 ? (
                 <div className="flex flex-col items-center justify-center w-full h-[500px]">
@@ -191,7 +191,7 @@ const Stadio: React.FC<StadioProps> = ({
                 <>
                   <div
                     className=" grid grid-cols-1 gap-3 py-3 overflow-y-auto"
-                    style={{ maxHeight: haveConflic ? '440px' : '480px' }}
+                    style={{ maxHeight: haveConflic ? '420px' : '480px' }}
                   >
                     {actions.map((act: any) => {
                       return (
