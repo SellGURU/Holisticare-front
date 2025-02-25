@@ -32,7 +32,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
     if (category == 'Lifestyle') {
       return '/icons/LifeStyle2.svg';
-    }    
+    }
   };
 
   // const [showModal, setshowModal] = useState(false);
