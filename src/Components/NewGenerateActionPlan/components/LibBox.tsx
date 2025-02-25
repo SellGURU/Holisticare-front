@@ -18,7 +18,7 @@ const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
           <div className="flex justify-start gap-2 items-center">
             <img
               onClick={onAdd}
-              className="w-4"
+              className="w-4 cursor-pointer"
               src="/icons/add-square-green.svg"
               alt=""
             />

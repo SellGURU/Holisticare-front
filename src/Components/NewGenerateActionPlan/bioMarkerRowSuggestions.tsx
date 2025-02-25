@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import BasedOnModal from './components/BasedOnModal';
+import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -91,6 +93,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }));
   };
   const [sureRemove, setSureRemove] = useState(false);
+  const [showBasedOn, setShowBasedOn] = useState(false);
 
   return (
     <>
@@ -112,23 +115,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 {RecommendationParts[2]}
               </div>
               <div className="flex items-center">
-                <div className=" w-[200px] lg:w-[244px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50  inline-flex lg:ml-4">
-                  {['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'].map(
-                    (day) => (
-                      <div
-                        key={day}
-                        onClick={() => toggleDaySelection(day)}
-                        className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
-                          selectedDays.includes(day)
-                            ? 'text-Primary-EmeraldGreen'
-                            : 'text-Text-Primary'
-                        }`}
-                      >
-                        {day}
-                      </div>
-                    ),
-                  )}
-                </div>
+                <ChoosingDaysWeek
+                  selectedDays={selectedDays}
+                  toggleDaySelection={toggleDaySelection}
+                />
                 <img
                   src="/icons/arrow-down-blue.svg"
                   alt=""
@@ -154,8 +144,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className="flex items-center text-Text-Quadruple text-[12px] ml-1.5">
                     Based on:
                   </div>
-                  <div className="flex items-center text-Primary-DeepTeal text-[12px] ml-1">
-                    Visceral Fat Level
+                  <div
+                    className="flex items-center text-Primary-DeepTeal text-[12px] ml-1 cursor-pointer"
+                    onClick={() => setShowBasedOn(true)}
+                  >
+                    {value['Based on']}
                     <img
                       src="/icons/export-blue.svg"
                       alt=""
@@ -192,7 +185,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
               <div className="flex">
                 <div
-                  className={`text-Text-Quadruple text-xs text-nowrap ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
+                  className={`text-Text-Quadruple text-xs text-nowrap capitalize ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value.Times.join(' & ')}
                 </div>
@@ -251,13 +244,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
         </div>
       </div>
-      {/* {showModal && (
-        <RefrenceModal
-          reference={value.reference}
-          isOpen={showModal}
-          onClose={() => setshowModal(false)}
-        />
-      )} */}
+      <BasedOnModal
+        value={value['Practitioner Comments']}
+        setShowModal={setShowBasedOn}
+        showModal={showBasedOn}
+      />
     </>
   );
 };

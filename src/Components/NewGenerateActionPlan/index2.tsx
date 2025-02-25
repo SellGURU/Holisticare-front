@@ -11,6 +11,7 @@ import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
 // import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
+import CalenderComponent from '../CalendarComponent/CalendarComponent';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
@@ -64,10 +65,28 @@ const GenerateActionPlan = () => {
         setISLoadingSaveChanges(false);
       });
   };
+  const [calendarView, setCalendarView] = useState(false);
+  const [calendarViewData, setCalendarViewData] = useState<any>(null);
   // const [showAlert, setshowAlert] = useState(true)
+  useEffect(() => {
+    if (calendarView) {
+      setIsLoadingPlans(true);
+      Application.getActionPlanBlockCalendarView({
+        member_id: id,
+        tasks: actions,
+        duration: duration,
+      })
+        .then((res) => {
+          setCalendarViewData(res.data);
+        })
+        .finally(() => {
+          setIsLoadingPlans(false);
+        });
+    }
+  }, [calendarView]);
   return (
     <>
-      <div className="h-[100vh] overflow-auto overflow-y-scroll ">
+      <div className="h-[100vh] overflow-auto overflow-y-scroll">
         <div className="w-full fixed top-0  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
           <div className="w-full ">
             <TopBar></TopBar>
@@ -75,50 +94,62 @@ const GenerateActionPlan = () => {
               <div className="flex items-center gap-3">
                 <div
                   onClick={() => {
-                    navigate(-1);
+                    if (!calendarView) {
+                      navigate(-1);
+                    } else {
+                      setCalendarView(false);
+                    }
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
                 >
                   <img className="w-6 h-6" src="/icons/arrow-back.svg" />
                 </div>
                 <div className="TextStyle-Headline-5 text-Text-Primary">
-                  Generate Action Plan
+                  {calendarView ? 'Calendar View' : 'Generate Action Plan'}
                 </div>
               </div>
-              {isWeighted && (
-                <div>
-                  <ButtonPrimary onClick={saveChanges}>
-                    {isLoadingSaveChanges ? (
-                      <>
-                        <SpinnerLoader />
-                      </>
-                    ) : (
-                      <>
-                        <img src="/icons/tick-square.svg" alt="" />
-                        Save Changes
-                      </>
-                    )}
-                  </ButtonPrimary>
-                </div>
+              {!calendarView && (
+                <>
+                  {isWeighted && (
+                    <div>
+                      <ButtonPrimary onClick={saveChanges}>
+                        {isLoadingSaveChanges ? (
+                          <>
+                            <SpinnerLoader />
+                          </>
+                        ) : (
+                          <>
+                            <img src="/icons/tick-square.svg" alt="" />
+                            Save Changes
+                          </>
+                        )}
+                      </ButtonPrimary>
+                    </div>
+                  )}
+                </>
               )}
             </div>
-            {isWeighted && (
+            {!calendarView && (
               <>
-                <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center">
-                  <div className="flex-grow">
-                    <PlanObjective
-                      value={planObjective}
-                      setValue={setPlanObjective}
-                    ></PlanObjective>
-                  </div>
-                  <div className="w-[342px]">
-                    <TimeDuration
-                      setDuration={(value) => {
-                        setDuration(value);
-                      }}
-                    ></TimeDuration>
-                  </div>
-                </div>
+                {isWeighted && (
+                  <>
+                    <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center">
+                      <div className="flex-grow">
+                        <PlanObjective
+                          value={planObjective}
+                          setValue={setPlanObjective}
+                        ></PlanObjective>
+                      </div>
+                      <div className="w-[342px]">
+                        <TimeDuration
+                          setDuration={(value) => {
+                            setDuration(value);
+                          }}
+                        ></TimeDuration>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -131,27 +162,42 @@ const GenerateActionPlan = () => {
           ></LoaderBox>
         )}
 
-        {!isWeighted ? (
+        {!calendarView ? (
           <>
-            <div className="w-full h-full flex justify-center items-center">
-              <CategorieyWeight
-                data={plans}
-                onSubmit={(values) => {
-                  savePlan(values);
-                }}
-              ></CategorieyWeight>
-            </div>
+            {!isWeighted ? (
+              <>
+                <div className="w-full h-full flex justify-center items-center">
+                  <CategorieyWeight
+                    data={plans}
+                    onSubmit={(values) => {
+                      savePlan(values);
+                    }}
+                  ></CategorieyWeight>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className=" w-full h-full mt-[190px] ">
+                  <Stadio
+                    actions={actions}
+                    setActions={setActions}
+                    setData={setCategories}
+                    data={categories}
+                    setCalendarView={setCalendarView}
+                  ></Stadio>
+                </div>
+              </>
+            )}
           </>
         ) : (
           <>
-            <div className=" w-full h-full mt-[190px] ">
-              <Stadio
-                actions={actions}
-                setActions={setActions}
-                setData={setCategories}
-                data={categories}
-              ></Stadio>
-            </div>
+            {calendarViewData && (
+              <div className="px-8 py-6">
+                {calendarViewData.length > 0 && (
+                  <CalenderComponent data={calendarViewData} />
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

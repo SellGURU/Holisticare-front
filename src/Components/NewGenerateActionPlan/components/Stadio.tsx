@@ -16,6 +16,7 @@ interface StadioProps {
   actions: Array<any>;
   setActions: (data: any) => void;
   setData: (values: any) => void;
+  setCalendarView: (value: boolean) => void;
 }
 
 const Stadio: React.FC<StadioProps> = ({
@@ -23,6 +24,7 @@ const Stadio: React.FC<StadioProps> = ({
   setData,
   setActions,
   actions,
+  setCalendarView,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
@@ -139,6 +141,13 @@ const Stadio: React.FC<StadioProps> = ({
               </div>
             )}
             <div className="w-full flex justify-end mb-2">
+              <div
+                className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal mr-4 cursor-pointer"
+                onClick={() => setCalendarView(true)}
+              >
+                <img src="/icons/calendar-date.svg" alt="" className="w-5" />
+                Calendar View
+              </div>
               <ButtonPrimary onClick={() => setshowAddModal(true)}>
                 {' '}
                 <img src="/icons/add-square.svg" alt="" /> Add
