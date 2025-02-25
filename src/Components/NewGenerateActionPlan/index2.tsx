@@ -11,6 +11,7 @@ import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
 // import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
+// import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
@@ -63,10 +64,11 @@ const GenerateActionPlan = () => {
         setISLoadingSaveChanges(false);
       });
   };
+  // const [showAlert, setshowAlert] = useState(true)
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll ">
-        <div className="w-full fixed top-0 hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
+        <div className="w-full  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
           <div className="w-full ">
             <TopBar></TopBar>
             <div className="flex justify-between items-center mt-9 mx-8">
@@ -117,7 +119,19 @@ const GenerateActionPlan = () => {
                 </div>
               </>
             )}
+            {/* {
+              showAlert  && isWeighted && (
+                <div className='w-full px-8 my-2 '>
+                <AlertModal heading='Alert heading' text='Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.' onClose={()=>{setshowAlert(false)}} /> 
+              </div>
+              )
+            } */}
+             
+           
           </div>
+      
+              
+        
         </div>
 
         {isLoadingPlans && (
@@ -140,7 +154,7 @@ const GenerateActionPlan = () => {
           </>
         ) : (
           <>
-            <div className=" w-full h-full mt-[190px] ">
+            <div className=" w-full h-full ">
               <Stadio
                 actions={actions}
                 setActions={setActions}
