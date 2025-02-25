@@ -8,6 +8,8 @@ import ActionCard from './ActionCard';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import { AlertModal } from '../../AlertModal';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import ActionEditModal from './ActionEditModal';
 
 interface StadioProps {
   data: Array<any>;
@@ -37,6 +39,16 @@ const Stadio: React.FC<StadioProps> = ({
       );
       return oldCategory.filter((_el, inde) => inde != itemindex);
     });
+  };
+  const removeFromActions = (item: any) => {
+    setActions((prev: any) => {
+      const updatedActions = prev.filter(
+        (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+      );
+      return updatedActions;
+    });
+
+    setData((prev: Array<any>) => [...prev, item]);
   };
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = () => {
@@ -75,8 +87,42 @@ const Stadio: React.FC<StadioProps> = ({
       el.Category == selectCategory &&
       el.Recommendation.toLowerCase().includes(searchValue.toLowerCase()),
   );
+  const [showAddModal, setshowAddModal] = useState(false);
+  console.log(actions);
+  console.log(data);
+
   return (
     <>
+      <ActionEditModal
+        isAdd
+        isOpen={showAddModal}
+        onClose={() => {
+          setshowAddModal(false);
+        }}
+        onAddNotes={() => {}}
+        onSubmit={(addData) => {
+          const newData = {
+            Category: addData.Category,
+            Recommendation: addData.Recommendation || '',
+            'Based on': '',
+            'Practitioner Comments': addData['Practitioner Comments'] || [],
+            Instruction: addData.Instruction || '',
+            Times: addData.Times || [],
+            Dose: addData.Dose || null,
+            'Client Notes': addData['Client Notes'] || [],
+            Score: 10,
+            Days: addData.Days || [],
+            Layers: {
+              first_layer: '',
+              second_layer: '',
+              third_layer: '',
+            },
+          };
+
+          setData((prevData: any) => [...prevData, newData]);
+          setshowAddModal(false);
+        }}
+      ></ActionEditModal>
       <div className="flex px-6 gap-4">
         <div className="flex-grow">
           <div className="sticky  top-[190px] ">
@@ -92,9 +138,15 @@ const Stadio: React.FC<StadioProps> = ({
                 />
               </div>
             )}
+            <div className="w-full flex justify-end mb-2">
+              <ButtonPrimary onClick={() => setshowAddModal(true)}>
+                {' '}
+                <img src="/icons/add-square.svg" alt="" /> Add
+              </ButtonPrimary>
+            </div>
             <div
               className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
-              style={{ height: haveConflic ? '440px' : '480px' }}
+              style={{ height: haveConflic ? '420px' : '480px' }}
             >
               {actions.length == 0 ? (
                 <div className="flex flex-col items-center justify-center w-full h-[500px]">
@@ -130,12 +182,15 @@ const Stadio: React.FC<StadioProps> = ({
                 <>
                   <div
                     className=" grid grid-cols-1 gap-3 py-3 overflow-y-auto"
-                    style={{ maxHeight: haveConflic ? '440px' : '480px' }}
+                    style={{ maxHeight: haveConflic ? '420px' : '480px' }}
                   >
                     {actions.map((act: any) => {
                       return (
                         <>
-                          <ActionCard data={act}></ActionCard>
+                          <ActionCard
+                            data={act}
+                            onRemove={() => removeFromActions(act)}
+                          ></ActionCard>
                         </>
                       );
                     })}

@@ -4,7 +4,7 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
 
-interface EditModalProps {
+interface ActionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddNotes: (newNotes: string[]) => void;
@@ -13,7 +13,7 @@ interface EditModalProps {
   onSubmit: (data: any) => void;
 }
 
-const EditModal: React.FC<EditModalProps> = ({
+const ActionEditModal: React.FC<ActionEditModalProps> = ({
   isOpen,
   defalts,
   onClose,
@@ -28,6 +28,13 @@ const EditModal: React.FC<EditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+  const toggleDaySelection = (day: string) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
   const [groups, setGroups] = useState<any[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(
     defalts?.Category || null,
@@ -101,12 +108,12 @@ const EditModal: React.FC<EditModalProps> = ({
     onSubmit({
       Category: selectedGroup,
       Recommendation: recommendation,
-      'Based on': defalts ? defalts['Based on'] : '',
       'Practitioner Comments': practitionerComments,
       Instruction: instructions,
       Times: selectedTimes,
       Dose: dose,
       'Client Notes': notes,
+      Days: selectedDays,
     });
     onClose();
   };
@@ -133,16 +140,17 @@ const EditModal: React.FC<EditModalProps> = ({
     ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
         .Dose
     : false;
+  const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
         ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary overflow-auto max-h-[660px]"
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[530px] text-Text-Primary overflow-auto max-h-[660px]"
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
             {/* <img src="/icons/danger.svg" alt="" />{' '} */}
-            {isAdd ? 'Add Recommendation' : 'Edit Recommendation'}
+            {isAdd ? 'Add Action' : 'Edit Action'}
           </div>
         </h2>
         <div className=" w-full relative overflow-visible mt-2 mb-4">
@@ -218,32 +226,32 @@ const EditModal: React.FC<EditModalProps> = ({
             <option>Diet</option>
           </select>
         </div> */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium">Recommendation</label>
-            <input
-              value={recommendation}
-              onChange={(e) => setRecommendation(e.target.value)}
-              placeholder="Write Recommendation"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
-          </div>
+        <div className="mb-4">
+          <label className="block text-xs font-medium">Recommendation</label>
+          <input
+            value={recommendation}
+            onChange={(e) => setRecommendation(e.target.value)}
+            placeholder="Write Recommendation"
+            type="text"
+            className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+          />
+
           {/* {selectedGroupDose && ( */}
-          <div
-            className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
-          >
-            <label className="block text-xs font-medium">Dose</label>
-            <input
-              value={dose}
-              disabled={!selectedGroupDose}
-              onChange={(e) => setDose(e.target.value)}
-              placeholder="Write Dose"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
-          </div>
+
           {/* )} */}
+        </div>
+        <div
+          className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
+        >
+          <label className="block text-xs font-medium">Dose</label>
+          <input
+            value={dose}
+            disabled={!selectedGroupDose}
+            onChange={(e) => setDose(e.target.value)}
+            placeholder="Write Dose"
+            type="text"
+            className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+          />
         </div>
         <div className="mb-4">
           <label className="flex w-full justify-between items-center text-xs font-medium">
@@ -274,22 +282,44 @@ const EditModal: React.FC<EditModalProps> = ({
             className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
           />
         </div>
-        <div className="mb-4">
-          <label className="text-xs font-medium">Times</label>
-          <div className="flex w-full mt-2 ">
-            {times.map((time, index) => (
-              <div
-                key={time}
-                onClick={() => toggleTimeSelection(time)}
-                className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
-                  selectedTimes.includes(time)
-                    ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                    : 'bg-backgroundColor-Card text-Text-Secondary'
-                }`}
-              >
-                {time}
-              </div>
-            ))}
+        <div className="mb-4 flex w-full items-center justify-between">
+          <div className="">
+            <label className="text-xs font-medium">Times</label>
+
+            <div className="flex w-full mt-2 ">
+              {times.map((time, index) => (
+                <div
+                  key={time}
+                  onClick={() => toggleTimeSelection(time)}
+                  className={`cursor-pointer py-2 px-2.5 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                    selectedTimes.includes(time)
+                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                      : 'bg-backgroundColor-Card text-Text-Secondary'
+                  }`}
+                >
+                  {time}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className=" ">
+            <label className="text-xs font-medium">Days</label>
+
+            <div className="  mt-2 w-full  flex ">
+              {days.map((day, index) => (
+                <div
+                  key={index}
+                  onClick={() => toggleDaySelection(day)}
+                  className={`cursor-pointer border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2.5 text-xs text-center ${
+                    selectedDays.includes(day)
+                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                      : 'text-Text-Secondary bg-backgroundColor-Card'
+                  }`}
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="mb-4">
@@ -378,4 +408,4 @@ const EditModal: React.FC<EditModalProps> = ({
   );
 };
 
-export default EditModal;
+export default ActionEditModal;
