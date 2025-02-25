@@ -119,13 +119,6 @@ const GenerateActionPlan = () => {
                 </div>
               </>
             )}
-            {/* {
-              showAlert  && isWeighted && (
-                <div className='w-full px-8 my-2 '>
-                <AlertModal heading='Alert heading' text='Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.' onClose={()=>{setshowAlert(false)}} /> 
-              </div>
-              )
-            } */}
           </div>
         </div>
 
@@ -149,7 +142,7 @@ const GenerateActionPlan = () => {
           </>
         ) : (
           <>
-            <div className=" w-full h-full ">
+            <div className=" w-full h-full mt-[190px] ">
               <Stadio
                 actions={actions}
                 setActions={setActions}
