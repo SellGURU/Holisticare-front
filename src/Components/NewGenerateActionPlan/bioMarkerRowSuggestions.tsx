@@ -91,7 +91,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   return (
     <>
-      <div className="w-full h-full px-6 p-3 lg:px-6 lg:py-1">
+      <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div className="w-[60px]">
             <div className="w-full flex justify-center">
