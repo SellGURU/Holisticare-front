@@ -213,61 +213,74 @@ const NewGenerateActionPlan = () => {
             </div>
           </div>
           <div className="flex items-center justify-between w-full mt-4 h-[80%]">
-            <div className="w-[70%] h-full bg-white rounded-3xl overflow-y-scroll shadow-100">
-              {!selectedCategory.length ? (
-                <div className="flex flex-col items-center justify-center w-full h-full">
-                  <img
-                    src="/icons/document-text.svg"
-                    alt=""
-                    className="w-[87px] h-[87px]"
-                  />
-                  <div className="text-Text-Primary font-medium text-base mt-2">
-                    No action to show
-                  </div>
-                  <ButtonSecondary
-                    ClassName="rounded-[20px] mt-8"
-                    onClick={generateActionPlanGenerateActionPlanTask}
-                  >
-                    {isGenerate ? (
-                      <SpinnerLoader />
-                    ) : (
-                      <>
-                        <img
-                          src="/icons/tree-start-white.svg"
-                          alt=""
-                          className="mr-2"
-                        />
-                        Auto Generate
-                      </>
-                    )}
-                  </ButtonSecondary>
+            <div className="w-[70%] h-full">
+              <div className="flex justify-end mb-3 gap-4 items-center">
+                <div className="text-[12px] text-[#005F73] font-medium">
+                  Calendar View
                 </div>
-              ) : (
                 <div>
-                  <div className="flex flex-col">
-                    <div className="grid gap-1 pt-5">
-                      {selectedCategory.map((el: any, index: number) => (
-                        <BioMarkerRowSuggestions
-                          key={index}
-                          // changeData={(value) => {
-                          //   setSelectedCategory((prev) => {
-                          //     if (!Array.isArray(prev)) return prev;
-                          //     return prev.map((vl, index2) =>
-                          //       index === index2 ? value : vl,
-                          //     );
-                          //   });
-                          // }}
-                          index={index}
-                          category={el.Category}
-                          value={el}
-                        />
-                      ))}
+                  <ButtonPrimary>
+                    <img src="/icons/add-square.svg" alt="" />
+                    Add
+                  </ButtonPrimary>
+                </div>
+              </div>
+              <div className="w-full h-[440px] bg-white rounded-3xl overflow-y-scroll shadow-100">
+                {!selectedCategory.length ? (
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <img
+                      src="/icons/document-text.svg"
+                      alt=""
+                      className="w-[87px] h-[87px]"
+                    />
+                    <div className="text-Text-Primary font-medium text-base mt-2">
+                      No action to show
+                    </div>
+                    <ButtonSecondary
+                      ClassName="rounded-[20px] mt-8"
+                      onClick={generateActionPlanGenerateActionPlanTask}
+                    >
+                      {isGenerate ? (
+                        <SpinnerLoader />
+                      ) : (
+                        <>
+                          <img
+                            src="/icons/tree-start-white.svg"
+                            alt=""
+                            className="mr-2"
+                          />
+                          Auto Generate
+                        </>
+                      )}
+                    </ButtonSecondary>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex flex-col">
+                      <div className="grid gap-1 pt-5">
+                        {selectedCategory.map((el: any, index: number) => (
+                          <BioMarkerRowSuggestions
+                            key={index}
+                            // changeData={(value) => {
+                            //   setSelectedCategory((prev) => {
+                            //     if (!Array.isArray(prev)) return prev;
+                            //     return prev.map((vl, index2) =>
+                            //       index === index2 ? value : vl,
+                            //     );
+                            //   });
+                            // }}
+                            index={index}
+                            category={el.Category}
+                            value={el}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-            <div className="w-[27%] overflow-x-hidden h-full bg-white rounded-3xl flex flex-col p-4 shadow-100">
+            <div className="w-[27%] overflow-x-hidden h-[480px] bg-white rounded-3xl flex flex-col p-4 shadow-100">
               <SearchBox
                 ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
                 placeHolder="Search for tips ..."

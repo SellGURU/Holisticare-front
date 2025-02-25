@@ -22,6 +22,11 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
 
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
+  console.log(data.values);
+
+  const isChartDataEmpty = !data.values.some(
+    (value: string) => !isNaN(parseFloat(value)),
+  );
 
   return (
     <>
@@ -77,7 +82,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 Group
                 <FiExternalLink></FiExternalLink>
               </div>
-              <div className="ml-10 gap-2 flex xl:hidden justify-end items-center">
+              <div
+                className={` ${isChartDataEmpty && 'opacity-50 pointer-events-none'} ml-10 gap-2 flex xl:hidden justify-end items-center`}
+              >
                 <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
                   Historical Chart
                 </div>
@@ -90,7 +97,9 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
               </div>
             </div>
           </div>
-          <div className=" gap-2 hidden xl:flex justify-end items-center">
+          <div
+            className={` ${isChartDataEmpty && 'opacity-50  pointer-events-none'} gap-2 hidden xl:flex justify-end items-center`}
+          >
             <div className="text-Text-Primary text-[10px] md:text-xs font-medium">
               Historical Chart
             </div>
