@@ -38,6 +38,16 @@ const Stadio: React.FC<StadioProps> = ({
       return oldCategory.filter((_el, inde) => inde != itemindex);
     });
   };
+  const removeFromActions = (item: any) => {
+    setActions((prev: any) => {
+      const updatedActions = prev.filter(
+        (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+      );
+      return updatedActions;
+    });
+
+    setData((prev: Array<any>) => [...prev, item]);
+  };
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = () => {
     setIsAutoGenerate(true);
@@ -135,7 +145,10 @@ const Stadio: React.FC<StadioProps> = ({
                     {actions.map((act: any) => {
                       return (
                         <>
-                          <ActionCard data={act}></ActionCard>
+                          <ActionCard
+                            data={act}
+                            onRemove={() => removeFromActions(act)}
+                          ></ActionCard>
                         </>
                       );
                     })}

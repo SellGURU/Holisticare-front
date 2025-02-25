@@ -5,12 +5,14 @@ interface BioMarkerRowSuggestionsProps {
   value: any;
   category: string;
   index: number;
+  onRemove: () => void;
   //   changeData: (value: any) => void;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   category,
   index,
+  onRemove,
   //   changeData,
 }) => {
   //   useEffect(() => console.log(value), [value]);
@@ -88,6 +90,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       [index]: !prev[index],
     }));
   };
+  const [sureRemove, setSureRemove] = useState(false);
 
   return (
     <>
@@ -196,16 +199,35 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <img
+                  {/* <img
                     src="/icons/edit.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer"
-                  />
-                  <img
-                    src="/icons/trash-red.svg"
-                    alt=""
-                    className="w-[24px] h-[24px] mt-2 cursor-pointer"
-                  />
+                  /> */}
+                  {!sureRemove ? (
+                    <img
+                      src="/icons/trash-red.svg"
+                      alt=""
+                      className="w-[24px] h-[24px] cursor-pointer"
+                      onClick={() => setSureRemove(true)}
+                    />
+                  ) : (
+                    <>
+                      <div className="text-Text-Quadruple text-xs">Sure?</div>
+                      <img
+                        src="/icons/tick-circle-green.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={onRemove}
+                      />
+                      <img
+                        src="/icons/close-circle-red.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={() => setSureRemove(false)}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
