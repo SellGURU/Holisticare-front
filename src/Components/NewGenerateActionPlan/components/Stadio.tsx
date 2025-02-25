@@ -85,7 +85,7 @@ const Stadio: React.FC<StadioProps> = ({
             </div>
           )}
           <div
-            className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   h-[480px]  ${actions.length != 0 && ''} `}
+            className={`w-full bg-white rounded-[24px] sticky  top-[190px] border border-gray-50 shadow-100   h-[480px]  ${actions.length != 0 && ''} `}
           >
             {actions.length == 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-[500px]">
