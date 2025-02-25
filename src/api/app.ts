@@ -735,6 +735,10 @@ class Application extends Api {
     const response = this.post('/patients/available_categories', data);
     return response;
   };
+  static checkConflicActionPlan = (data: any) => {
+    const response = this.post('/action_plan/conflict_check', data);
+    return response;
+  };
 }
 
 export default Application;

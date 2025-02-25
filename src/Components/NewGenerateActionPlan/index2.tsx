@@ -9,14 +9,15 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
-// import dataJson from './data.json';
+import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
+// import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
-  const [isWeighted, setIsWeighted] = useState(false);
+  const [isWeighted, setIsWeighted] = useState(true);
   const [actions, setActions] = useState<Array<any>>([]);
   useEffect(() => {
     setIsLoadingPlans(true);
@@ -28,7 +29,7 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(dataJson.action_db);
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
@@ -63,10 +64,11 @@ const GenerateActionPlan = () => {
         setISLoadingSaveChanges(false);
       });
   };
+  // const [showAlert, setshowAlert] = useState(true)
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll ">
-        <div className="w-full fixed top-0 hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
+        <div className="w-full fixed top-0  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
           <div className="w-full ">
             <TopBar></TopBar>
             <div className="flex justify-between items-center mt-9 mx-8">

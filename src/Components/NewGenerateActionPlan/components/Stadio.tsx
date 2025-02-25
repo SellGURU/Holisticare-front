@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBox from '../../SearchBox';
 import LibBox from './LibBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
@@ -7,6 +7,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import ActionCard from './ActionCard';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
+import { AlertModal } from '../../AlertModal';
 
 interface StadioProps {
   data: Array<any>;
@@ -22,6 +23,8 @@ const Stadio: React.FC<StadioProps> = ({
   actions,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
+  const [haveConflic, setHaveConflic] = useState(false);
+  const [haveConflicText, setHaveConflicText] = useState('');
   const AllCategories = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
@@ -49,6 +52,24 @@ const Stadio: React.FC<StadioProps> = ({
         setIsAutoGenerate(false);
       });
   };
+  const conflicCheck = () => {
+    if (actions.length > 1) {
+      Application.checkConflicActionPlan({
+        member_id: id,
+        tasks: actions,
+      }).then((res) => {
+        if (res.data.conflicts != 'No conflicts detected.') {
+          setHaveConflic(true);
+          setHaveConflicText(res.data.conflicts);
+        } else {
+          setHaveConflic(false);
+        }
+      });
+    }
+  };
+  useEffect(() => {
+    conflicCheck();
+  }, [actions]);
   const filteredData = data.filter(
     (el) =>
       el.Category == selectCategory &&
@@ -58,52 +79,70 @@ const Stadio: React.FC<StadioProps> = ({
     <>
       <div className="flex px-6 gap-4">
         <div className="flex-grow">
-          <div
-            className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100 sticky  top-[190px] h-[480px]  ${actions.length != 0 && ''} `}
-          >
-            {actions.length == 0 ? (
-              <div className="flex flex-col items-center justify-center w-full h-[500px]">
-                <img
-                  src="/icons/document-text.svg"
-                  alt=""
-                  className="w-[87px] h-[87px]"
-                />
-                <div className="text-Text-Primary font-medium text-base mt-2">
-                  No action to show
-                </div>
-                <ButtonSecondary
-                  ClassName="rounded-[20px] mt-8"
-                  onClick={() => {
-                    AutoGenerate();
+          <div className="sticky  top-[190px] ">
+            {/* alert */}
+            {haveConflic && (
+              <div className="w-full  my-2 ">
+                <AlertModal
+                  heading="Alert heading"
+                  text={haveConflicText}
+                  onClose={() => {
+                    setHaveConflic(false);
                   }}
-                >
-                  {isAutoGenerate ? (
-                    <SpinnerLoader />
-                  ) : (
-                    <>
-                      <img
-                        src="/icons/tree-start-white.svg"
-                        alt=""
-                        className="mr-2"
-                      />
-                      Auto Generate
-                    </>
-                  )}
-                </ButtonSecondary>
+                />
               </div>
-            ) : (
-              <>
-                <div className="max-h-[480px] grid grid-cols-1 gap-3 py-3 overflow-y-auto">
-                  {actions.map((act: any) => {
-                    return (
-                      <>
-                        <ActionCard data={act}></ActionCard>
-                      </>
-                    );
-                  })}
-                </div>
-              </>
             )}
+            <div
+              className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
+              style={{ height: haveConflic ? '440px' : '480px' }}
+            >
+              {actions.length == 0 ? (
+                <div className="flex flex-col items-center justify-center w-full h-[500px]">
+                  <img
+                    src="/icons/document-text.svg"
+                    alt=""
+                    className="w-[87px] h-[87px]"
+                  />
+                  <div className="text-Text-Primary font-medium text-base mt-2">
+                    No action to show
+                  </div>
+                  <ButtonSecondary
+                    ClassName="rounded-[20px] mt-8"
+                    onClick={() => {
+                      AutoGenerate();
+                    }}
+                  >
+                    {isAutoGenerate ? (
+                      <SpinnerLoader />
+                    ) : (
+                      <>
+                        <img
+                          src="/icons/tree-start-white.svg"
+                          alt=""
+                          className="mr-2"
+                        />
+                        Auto Generate
+                      </>
+                    )}
+                  </ButtonSecondary>
+                </div>
+              ) : (
+                <>
+                  <div
+                    className=" grid grid-cols-1 gap-3 py-3 overflow-y-auto"
+                    style={{ maxHeight: haveConflic ? '440px' : '480px' }}
+                  >
+                    {actions.map((act: any) => {
+                      return (
+                        <>
+                          <ActionCard data={act}></ActionCard>
+                        </>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <div className="w-[342px] p-4 min-h-[200px] bg-white rounded-[24px] border border-gray-50 shadow-100">
