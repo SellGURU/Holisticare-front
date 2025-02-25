@@ -160,7 +160,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             <div className="text-Text-Primary TextStyle-Headline-5 mt-4">
               Description
             </div>
-            <div className=" h-[30px] overflow-y-auto text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
+            <div className="  text-Text-Secondary TextStyle-Body-2 mt-2 text-justify">
               {data.description}
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
