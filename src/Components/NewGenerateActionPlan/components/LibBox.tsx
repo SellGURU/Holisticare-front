@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SvgIcon from '../../../utils/svgIcon';
+import BasedOnModal from './BasedOnModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
@@ -9,6 +10,7 @@ interface LibBoxProps {
 
 const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
   const [showMore, setShowMore] = useState(false);
+  const [showBasedOn, setShowBasedOn] = useState(false);
   return (
     <>
       <div className="w-full overflow-hidden bg-white border border-gray-50 rounded-[12px] py-3 px-3">
@@ -70,15 +72,28 @@ const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
               <div className="rounded-[12px] text-[10px] text-Text-Primary py-1 px-2 bg-red-100">
                 {data.Score} <span className="text-Text-Secondary">/ 10</span>
               </div>
-              <div className="text-[10px] text-Text-Secondary"> Based on:</div>
-              <div className="text-Primary-DeepTeal text-[10px] flex items-center ml-1 gap-2 cursor-pointer">
-                {data['Based on']}
+              <div
+                onClick={() => setShowBasedOn(true)}
+                className="flex justify-start gap-1 items-center"
+              >
+                <div className="text-[10px] text-Text-Secondary">
+                  {' '}
+                  Based on:
+                </div>
+                <div className="text-Primary-DeepTeal text-[10px] flex items-center ml-1 gap-2 cursor-pointer">
+                  {data['Based on']}
+                </div>
+                <SvgIcon src="/icons/export.svg" color="#005F73" />
               </div>
-              <SvgIcon src="/icons/export.svg" color="#005F73" />
             </div>
           </div>
         )}
       </div>
+      <BasedOnModal
+        value={data['Practitioner Comments']}
+        setShowModal={setShowBasedOn}
+        showModal={showBasedOn}
+      ></BasedOnModal>
     </>
   );
 };
