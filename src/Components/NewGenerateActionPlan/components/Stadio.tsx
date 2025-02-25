@@ -33,7 +33,7 @@ const Stadio: React.FC<StadioProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const addToActions = (item: any) => {
-    setActions((prev: any) => [...prev, item]);
+    setActions((prev: any) => [item, ...prev]);
     setData((prev: Array<any>) => {
       const oldCategory = [...prev];
       const itemindex = prev.findIndex(
@@ -50,7 +50,7 @@ const Stadio: React.FC<StadioProps> = ({
       return updatedActions;
     });
 
-    setData((prev: Array<any>) => [...prev, item]);
+    setData((prev: Array<any>) => [item, ...prev]);
   };
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = () => {
