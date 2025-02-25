@@ -75,7 +75,7 @@ const GenerateActionPlan = () => {
               <div className="flex items-center gap-3">
                 <div
                   onClick={() => {
-                    navigate(-1)
+                    navigate(-1);
                   }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
                 >
