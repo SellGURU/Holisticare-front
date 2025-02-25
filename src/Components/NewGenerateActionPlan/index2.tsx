@@ -9,14 +9,14 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
-import dataJson from './data.json';
+// import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
 
 const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
-  const [isWeighted, setIsWeighted] = useState(true);
+  const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<Array<any>>([]);
   useEffect(() => {
     setIsLoadingPlans(true);
@@ -28,7 +28,7 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [categories, setCategories] = useState(dataJson.action_db);
+  const [categories, setCategories] = useState([]);
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({

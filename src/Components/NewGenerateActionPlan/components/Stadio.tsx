@@ -5,6 +5,8 @@ import LibBox from './LibBox';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
 import ActionCard from './ActionCard';
+import Application from '../../../api/app';
+import { useParams } from 'react-router-dom';
 
 interface StadioProps {
   data: Array<any>;
@@ -22,7 +24,7 @@ const Stadio: React.FC<StadioProps> = ({
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const AllCategories = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
   const [searchValue, setSearchValue] = useState('');
-  const [isAutoGenerate] = useState(false);
+  const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const addToActions = (item: any) => {
     setActions((prev: any) => [...prev, item]);
     setData((prev: Array<any>) => {
@@ -32,6 +34,20 @@ const Stadio: React.FC<StadioProps> = ({
       );
       return oldCategory.filter((_el, inde) => inde != itemindex);
     });
+  };
+  const { id } = useParams<{ id: string }>();
+  const AutoGenerate = () => {
+    setIsAutoGenerate(true);
+    Application.getActionPlanGenerateActionPlanTaskNew({
+      member_id: id,
+      tasks: data,
+    })
+      .then((res) => {
+        setActions(res.data);
+      })
+      .finally(() => {
+        setIsAutoGenerate(false);
+      });
   };
   const filteredData = data.filter(
     (el) =>
@@ -57,7 +73,9 @@ const Stadio: React.FC<StadioProps> = ({
                 </div>
                 <ButtonSecondary
                   ClassName="rounded-[20px] mt-8"
-                  onClick={() => {}}
+                  onClick={() => {
+                    AutoGenerate();
+                  }}
                 >
                   {isAutoGenerate ? (
                     <SpinnerLoader />
