@@ -109,7 +109,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
-                {RecommendationParts[0]}
+                {RecommendationParts[2]}
               </div>
               <div className="flex items-center">
                 <div className=" w-[200px] lg:w-[244px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50  inline-flex lg:ml-4">
@@ -143,7 +143,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[60%]">
                 <div className="flex items-center">
                   <div className="flex items-center text-Text-Quadruple text-[12px]">
                     Score:
@@ -166,33 +166,33 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex items-center mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <div className="flex items-center text-Text-Quadruple text-[12px]">
+                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
                     • Hierarchy:
                   </div>
                   <div className="flex items-center text-Text-Primary text-[12px] ml-1">
-                    {RecommendationParts[1]}
+                    {RecommendationParts[0]}
                     <img
                       src="/icons/arrow-right.svg"
                       alt=""
                       className="mr-1 ml-1 w-[16px] h-[16px]"
                     />
-                    {RecommendationParts[0]}
+                    {RecommendationParts[1]}
                   </div>
                 </div>
                 <div
-                  className={`flex items-center mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   <div className="flex items-center text-Text-Quadruple text-[12px]">
                     • Instruction:
                   </div>
                   <div className="flex items-center text-Text-Primary text-[12px] ml-1">
-                    {RecommendationParts[2]}
+                    {value.Instruction}
                   </div>
                 </div>
               </div>
               <div className="flex">
                 <div
-                  className={`text-Text-Quadruple text-xs ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
+                  className={`text-Text-Quadruple text-xs text-nowrap ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value.Times.join(' & ')}
                 </div>
