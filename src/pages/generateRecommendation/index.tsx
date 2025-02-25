@@ -206,9 +206,9 @@ export const GenerateRecommendation = () => {
                   };
                 });
               }}
-              storeChecked={(data) =>
+              storeChecked={(data) =>{
                 setCheckedSuggestion([...checkedSuggestions, ...data])
-              }
+              }}
               checkeds={checkedSuggestions}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {

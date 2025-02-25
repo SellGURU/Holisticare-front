@@ -95,7 +95,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
-    storeChecked(data.filter((el: any) => el.checked == true));
+    storeChecked(data.filter((el: any) => el.checked == true &&el.Category == activeCategory));
     Application.holisticPlanReScore({
       member_id: id,
       selected_interventions: [
