@@ -9,7 +9,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import TimeDuration from './components/TimeDuration';
 import PlanObjective from './components/PlanObjective';
 import Stadio from './components/Stadio';
-import dataJson from './data.json';
+// import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
 // import { AlertModal } from '../AlertModal';
 
@@ -17,7 +17,7 @@ const GenerateActionPlan = () => {
   const [plans, setPlans] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
-  const [isWeighted, setIsWeighted] = useState(true);
+  const [isWeighted, setIsWeighted] = useState(false);
   const [actions, setActions] = useState<Array<any>>([]);
   useEffect(() => {
     setIsLoadingPlans(true);
@@ -29,7 +29,7 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [categories, setCategories] = useState(dataJson.action_db);
+  const [categories, setCategories] = useState([]);
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
@@ -74,7 +74,9 @@ const GenerateActionPlan = () => {
             <div className="flex justify-between items-center mt-9 mx-8">
               <div className="flex items-center gap-3">
                 <div
-                  onClick={() => {}}
+                  onClick={() => {
+                    navigate(-1);
+                  }}
                   className={` px-[6px] py-[3px] flex items-center justify-center cursor-pointer lg:bg-white lg:border lg:border-Gray-50 lg:rounded-md lg:shadow-100`}
                 >
                   <img className="w-6 h-6" src="/icons/arrow-back.svg" />
