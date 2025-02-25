@@ -108,12 +108,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     onSubmit({
       Category: selectedGroup,
       Recommendation: recommendation,
-      'Based on': defalts ? defalts['Based on'] : '',
       'Practitioner Comments': practitionerComments,
       Instruction: instructions,
       Times: selectedTimes,
       Dose: dose,
       'Client Notes': notes,
+      Days: selectedDays,
+
     });
     onClose();
   };
