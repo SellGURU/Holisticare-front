@@ -58,16 +58,16 @@ const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
               </div>
             </div>
             <div className=" flex justify-start mt-1 items-start">
-              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center">
-                <div>•</div> Instruction:
+              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
+                • Instruction:
               </div>
               <div className="text-[10px] text-Text-Primary text-justify ml-1">
                 {data.Instruction}
               </div>
             </div>
             <div className=" flex justify-start mt-1 flex-wrap  gap-2 items-center">
-              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center">
-                <div>•</div>Score
+              <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
+                • Score
               </div>
               <div className="rounded-[12px] text-[10px] text-Text-Primary py-1 px-2 bg-red-100">
                 {data.Score} <span className="text-Text-Secondary">/ 10</span>
