@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { TopBar } from '../../Components/topBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
@@ -10,6 +10,7 @@ import Application from '../../api/app';
 import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
+import SpinnerLoader from '../../Components/SpinnerLoader';
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
   const steps = ['General Condition', 'Set orders', 'Overview'];
@@ -69,8 +70,36 @@ export const GenerateRecommendation = () => {
   useEffect(() => {
     generatePaln();
   }, []);
+  const [isButtonLoading, setisButtonLoading] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    
+    const handleScroll = () => {
+      if (container) {  // Add null check here
+        const position = container.scrollTop;
+        setScrollPosition(position);
+        console.log('scroll position:', position);
+      }
+    };
+  
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true });
+    }
+  
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+useEffect(()=>console.log(scrollPosition),[scrollPosition]
+)
   return (
-    <div className="h-[100vh] overflow-auto">
+    <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           {' '}
@@ -119,8 +148,10 @@ export const GenerateRecommendation = () => {
             )}
             <ButtonPrimary
               ClassName="border border-white"
+              disabled={isButtonLoading}
               onClick={() => {
                 if (currentStepIndex == steps.length - 1) {
+                  setisButtonLoading(true);
                   Application.saveHolisticPlan({
                     ...treatmentPlanData,
                     suggestion_tab: [
@@ -131,20 +162,34 @@ export const GenerateRecommendation = () => {
                     ],
                   })
                     .then((res) => console.log(res))
-                    .finally(() =>
-                      navigate(`/report/Generate-Holistic-Plan/${id}`),
-                    );
+                    .finally(() => {
+                      setisButtonLoading(false);
+                      navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    });
                 } else handleNext();
               }}
             >
-              {currentStepIndex == 2 ? 'Generate' : 'Next'}
-              {currentStepIndex != 2 && (
-                <img src="/icons/arrow-right-white.svg" alt="" />
+              {isButtonLoading ? (
+                <>
+                
+                  Generate
+                  <SpinnerLoader></SpinnerLoader>
+                </>
+              ) : (
+                <>
+                  {currentStepIndex == 2 ? 'Generate' : 'Next'}
+                  {currentStepIndex != 2 && (
+                    <img src="/icons/arrow-right-white.svg" alt="" />
+                  )}
+                </>
               )}
             </ButtonPrimary>
           </div>
         </div>
-        <div className="mt-6 flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm">
+        <div className={`h-[100px] flex items-start bg-bg-color sticky ${scrollPosition > 80 ? 'top-[40px]' : 'top-[80px]'} z-[7] transition-all duration-300`}>
+
+    
+        <div className="mt-6  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
           {steps.map((label, index) => (
             <React.Fragment key={index}>
               <div
@@ -177,7 +222,8 @@ export const GenerateRecommendation = () => {
             </React.Fragment>
           ))}
         </div>
-        <div className="mt-2 w-full mb-6">
+        </div>
+        <div className="mt-[70px] w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{

@@ -95,12 +95,19 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
+    const visibleCategories = categories
+      .filter((cat) => cat.visible)
+      .map((cat) => cat.name);
+    const currentIndex = visibleCategories.indexOf(activeCategory);
+    const nextTabName = visibleCategories[currentIndex + 1];
+
     storeChecked(
       data.filter(
         (el: any) => el.checked == true && el.Category == activeCategory,
       ),
     );
     Application.holisticPlanReScore({
+      tab_name: nextTabName,
       member_id: id,
       selected_interventions: [
         ...checkeds.filter((el) => orderedCategories.includes(el.Category)),

@@ -21,6 +21,7 @@ export const Overview: React.FC<OverviewProps> = ({
                 key={`${el.title}-${suggestionIndex}`}
               >
                 <BioMarkerRowSuggestions
+                isOverview
                   value={el}
                   onEdit={() => {}}
                   onchange={() => {}}
