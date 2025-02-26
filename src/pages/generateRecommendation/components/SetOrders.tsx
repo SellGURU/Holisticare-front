@@ -27,6 +27,7 @@ interface SetOrdersProps {
   storeChecked: (data: any) => void;
   checkeds: Array<any>;
   reset: () => void;
+  defaultSuggestions: Array<any>;
   // resolvedSuggestions:(data:any) => void
 }
 
@@ -37,6 +38,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   storeChecked,
   checkeds,
   reset,
+  defaultSuggestions,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
@@ -49,6 +51,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
+  useEffect(() => {
+    setData(defaultSuggestions);
+  }, [defaultSuggestions]);
   // const _AllCategoryChecekd = (category: string) => {
   //   const newData = data
   //     .filter((el: any) => el.Category == category)
@@ -95,12 +100,19 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const handleContinue = () => {
     setIsLoading(true);
     setisStarted(true);
+    const visibleCategories = categories
+      .filter((cat) => cat.visible)
+      .map((cat) => cat.name);
+    const currentIndex = visibleCategories.indexOf(activeCategory);
+    const nextTabName = visibleCategories[currentIndex + 1];
+
     storeChecked(
       data.filter(
         (el: any) => el.checked == true && el.Category == activeCategory,
       ),
     );
     Application.holisticPlanReScore({
+      tab_name: nextTabName,
       member_id: id,
       selected_interventions: [
         ...checkeds.filter((el) => orderedCategories.includes(el.Category)),

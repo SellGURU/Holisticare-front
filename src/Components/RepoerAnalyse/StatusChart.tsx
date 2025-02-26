@@ -14,7 +14,7 @@ import {
 } from 'chart.js';
 import { ChartOptions, Plugin } from 'chart.js';
 import { BeatLoader } from 'react-spinners';
-import { resolveMaxValue, sortKeysWithValues } from './Boxs/Help';
+import { sortKeysWithValues } from './Boxs/Help';
 
 // Register necessary components from Chart.js
 ChartJS.register(
@@ -40,7 +40,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   dataPoints,
   statusBar,
 }) => {
-  const maxVal = resolveMaxValue(statusBar);
+  // const maxVal = resolveMaxValue(statusBar);
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem('theme-base') || 'light',
   );
@@ -97,6 +97,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     });
     return resolvedColor;
   });
+
   const data = {
     labels: labels, // Labels passed as props
     datasets: [
@@ -122,7 +123,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     scales: {
       y: {
         beginAtZero: true,
-        max: maxVal.value[1],
+        // max: maxVal.value[1],
         display: false, // Hide y-axis labels for compact design
       },
       x: {

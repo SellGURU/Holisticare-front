@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import SimpleDatePicker from '../SimpleDatePicker';
 // import useModalAutoClose from '../../hooks/UseModalAutoClose';
 type GenderFilter = {
   male: boolean;
@@ -64,15 +65,15 @@ const FilterModal: React.FC<FilterModalProps> = ({
     onClose();
   };
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    };
-    return date.toLocaleDateString(undefined, options);
-  };
+  // const formatDate = (date: Date | null) => {
+  //   if (!date) return '';
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     year: 'numeric',
+  //     month: 'short',
+  //     day: 'numeric',
+  //   };
+  //   return date.toLocaleDateString(undefined, options);
+  // };
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   // useModalAutoClose({
@@ -282,8 +283,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
         <div className=" w-full flex flex-col md:flex-row items-start md:items-center gap-[15px] md:gap-7">
           <h3 className="text-xs font-medium  text-nowrap">Enroll Date</h3>
           <div className="w-full flex  gap-3">
-            <div className="relative">
-              <DatePicker
+            {/* <div className="relative"> */}
+            {/* <DatePicker
                 selected={enrollDate.from}
                 onChange={(date) =>
                   setEnrollDate({ ...enrollDate, from: date })
@@ -294,11 +295,16 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
                 }
-              />
-            </div>
+              /> */}
+            <SimpleDatePicker
+              date={enrollDate.from}
+              setDate={(date) => setEnrollDate({ ...enrollDate, from: date })}
+              placeholder="From"
+            />
+            {/* </div> */}
 
-            <div className="relative">
-              <DatePicker
+            {/* <div className="relative"> */}
+            {/* <DatePicker
                 selected={enrollDate.to}
                 onChange={(date) => setEnrollDate({ ...enrollDate, to: date })}
                 customInput={
@@ -307,8 +313,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     <img src="/icons/calendar-3.svg" alt="" />
                   </button>
                 }
-              />
-            </div>
+              /> */}
+            <SimpleDatePicker
+              date={enrollDate.to}
+              setDate={(date) => setEnrollDate({ ...enrollDate, to: date })}
+              placeholder="To"
+            />
+            {/* </div> */}
           </div>
         </div>
 
