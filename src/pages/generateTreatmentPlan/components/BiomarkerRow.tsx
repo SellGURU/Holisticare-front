@@ -21,7 +21,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   onEdit,
   editAble,
   isOverview,
-
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {

@@ -77,27 +77,27 @@ export const GenerateRecommendation = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    
+
     const handleScroll = () => {
-      if (container) {  // Add null check here
+      if (container) {
+        // Add null check here
         const position = container.scrollTop;
         setScrollPosition(position);
         console.log('scroll position:', position);
       }
     };
-  
+
     if (container) {
       container.addEventListener('scroll', handleScroll, { passive: true });
     }
-  
+
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
-useEffect(()=>console.log(scrollPosition),[scrollPosition]
-)
+  useEffect(() => console.log(scrollPosition), [scrollPosition]);
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
@@ -171,7 +171,6 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
             >
               {isButtonLoading ? (
                 <>
-                
                   Generate
                   <SpinnerLoader></SpinnerLoader>
                 </>
@@ -186,42 +185,42 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
             </ButtonPrimary>
           </div>
         </div>
-        <div className={`h-[100px] flex items-start bg-bg-color sticky ${scrollPosition > 80 ? 'top-[40px]' : 'top-[80px]'} z-[7] transition-all duration-300`}>
-
-    
-        <div className="mt-6  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
-          {steps.map((label, index) => (
-            <React.Fragment key={index}>
-              <div
-                onClick={() => {
-                  setCurrentStepIndex(index);
-                  if (label != 'Overview') {
-                    setCheckedSuggestion([]);
-                  }
-                }}
-                className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
-                  index === currentStepIndex
-                    ? 'text-Primary-DeepTeal '
-                    : 'text-Text-Secondary'
-                }`}
-              >
+        <div
+          className={`h-[100px] flex items-start bg-bg-color sticky ${scrollPosition > 80 ? 'top-[40px]' : 'top-[80px]'} z-[7] transition-all duration-300`}
+        >
+          <div className="mt-6  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
+            {steps.map((label, index) => (
+              <React.Fragment key={index}>
                 <div
-                  className={`size-5 rounded-full text-xs font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
+                  onClick={() => {
+                    setCurrentStepIndex(index);
+                    if (label != 'Overview') {
+                      setCheckedSuggestion([]);
+                    }
+                  }}
+                  className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
+                    index === currentStepIndex
+                      ? 'text-Primary-DeepTeal '
+                      : 'text-Text-Secondary'
+                  }`}
                 >
-                  {index + 1}
+                  <div
+                    className={`size-5 rounded-full text-xs font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
+                  >
+                    {index + 1}
+                  </div>
+                  {label}
                 </div>
-                {label}
-              </div>
-              {index < steps.length - 1 && (
-                <img
-                  src="/icons/chevron-double-right.svg"
-                  alt="step-icon"
-                  className="mx-2"
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+                {index < steps.length - 1 && (
+                  <img
+                    src="/icons/chevron-double-right.svg"
+                    alt="step-icon"
+                    className="mx-2"
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
         <div className="mt-[70px] w-full mb-6">
           {currentStepIndex == 0 ? (
