@@ -152,10 +152,10 @@ const Stadio: React.FC<StadioProps> = ({
             </ButtonPrimary>
           </div>
           <div
-            className={`w-full min-h-[420px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
+            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
           >
             {actions.length == 0 ? (
-              <div className="flex flex-col items-center justify-center w-full h-[500px]">
+              <div className="flex flex-col items-center justify-center w-full h-[450px]">
                 <img
                   src="/icons/document-text.svg"
                   alt=""
@@ -205,8 +205,8 @@ const Stadio: React.FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="sticky top-[190px]">
-          <div className="w-[342px] p-4 h-[540px] bg-white rounded-[24px] border border-gray-50 shadow-100">
+        <div className=" w-[342px] ">
+          <div className="w-[342px] sticky top-[190px] p-4 h-[490px] bg-white rounded-[24px] border border-gray-50 shadow-100">
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
               placeHolder="Search for actions ..."
@@ -229,7 +229,7 @@ const Stadio: React.FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[420px] overflow-y-auto">
+              <div className="w-full h-[390px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredData.map((value: any) => {
                     return (
