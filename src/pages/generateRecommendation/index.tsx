@@ -144,7 +144,7 @@ export const GenerateRecommendation = () => {
             </ButtonPrimary>
           </div>
         </div>
-        <div className="mt-6 flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm">
+        <div className="mt-6  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full sticky top-[70px] ">
           {steps.map((label, index) => (
             <React.Fragment key={index}>
               <div
@@ -177,7 +177,7 @@ export const GenerateRecommendation = () => {
             </React.Fragment>
           ))}
         </div>
-        <div className="mt-2 w-full mb-6">
+        <div className="mt-[70px] w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{

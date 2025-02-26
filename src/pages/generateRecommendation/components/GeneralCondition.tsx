@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -197,16 +197,14 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
             <React.Fragment key={index}>
               {editMode.lookingForwards ? (
                 <textarea
-                  value={item}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    handleContentChange(
-                      'lookingForwards',
-                      index,
-                      e.target.value,
-                    )
-                  }
-                  className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50  text-xs  resize-none outline-none h-[60px]"
-                />
+                value={item}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  handleContentChange('lookingForwards', index, e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+                className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50 text-xs resize-none outline-none  mb-2"
+              />
               ) : (
                 <li className="list-disc text-xs mt-2">{item}</li>
               )}
@@ -225,7 +223,22 @@ const Card: React.FC<CardProps> = ({
   onEdit,
   onSave,
   onContentChange,
-}) => (
+}) => {
+  const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
+  const adjustHeight = (element: HTMLTextAreaElement) => {
+    element.style.height = 'auto';
+    element.style.height = `${element.scrollHeight}px`;
+  };
+  useEffect(() => {
+    if (isEditing) {
+      textareaRefs.current.forEach((ref) => {
+        if (ref) {
+          adjustHeight(ref);
+        }
+      });
+    }
+  }, [content, isEditing]);
+  return(
   <div className="bg-white p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 min-w-[444px] w-[33%] text-Text-Primary">
     <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
       {title}
@@ -233,18 +246,24 @@ const Card: React.FC<CardProps> = ({
       {isEditing ? (
         <div
           onClick={onSave}
-          className="size-6 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
+          className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
         >
-          <img className="" src="/icons/tick-square-blue.svg" alt="" />
+          <img
+            className="cursor-pointer size-6"
+            src="/icons/tick-square-blue.svg"
+            alt=""
+          />
         </div>
       ) : (
-        <img
-          className="w-5"
-          src="/icons/edit-2.svg"
-          alt=""
-          onClick={onEdit}
-          style={{ cursor: 'pointer' }}
-        />
+        <div   onClick={onEdit} className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center">
+          <img
+            className="size-6"
+            src="/icons/edit-2.svg"
+            alt=""
+        
+            style={{ cursor: 'pointer' }}
+          />
+        </div>
       )}
     </div>
 
@@ -252,13 +271,15 @@ const Card: React.FC<CardProps> = ({
       {content?.map((item, index) => (
         <>
           {isEditing ? (
-            <textarea
-              value={item}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                onContentChange(index, e.target.value)
-              }
-              className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50  text-xs  resize-none outline-none h-fit"
-            />
+          <textarea
+          ref={(el) => (textareaRefs.current[index] = el)}
+          value={item}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            onContentChange(index, e.target.value);
+            adjustHeight(e.target);
+          }}
+          className="w-full bg-backgroundColor-Card px-4 rounded-lg resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
+        />
           ) : (
             <li className="list-disc text-xs mt-2">{item}</li>
           )}
@@ -267,3 +288,5 @@ const Card: React.FC<CardProps> = ({
     </ul>
   </div>
 );
+}
+
