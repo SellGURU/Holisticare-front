@@ -205,37 +205,39 @@ const Stadio: React.FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="w-[342px] p-4 min-h-[200px] max-h-[77.5vh] bg-white rounded-[24px] border border-gray-50 shadow-100">
-          <SearchBox
-            ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
-            placeHolder="Search for actions ..."
-            onSearch={(value) => {
-              setSearchValue(value);
-            }}
-          ></SearchBox>
-          <div>
-            <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
-              {AllCategories.map((cat) => {
-                return (
-                  <>
-                    <div
-                      className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
-                      onClick={() => setSelectedCategory(cat)}
-                    >
-                      {cat}
-                    </div>
-                  </>
-                );
-              })}
-            </div>
-            <div className="mt-2 grid gap-2 min-h-[200px] max-h-[64.5vh] overflow-y-auto">
-              {filteredData.map((value: any) => {
-                return (
-                  <>
-                    <LibBox onAdd={() => addToActions(value)} data={value} />
-                  </>
-                );
-              })}
+        <div className="sticky top-[190px]">
+          <div className="w-[342px] p-4 h-[77.5vh] bg-white rounded-[24px] border border-gray-50 shadow-100">
+            <SearchBox
+              ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
+              placeHolder="Search for actions ..."
+              onSearch={(value) => {
+                setSearchValue(value);
+              }}
+            ></SearchBox>
+            <div>
+              <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
+                {AllCategories.map((cat) => {
+                  return (
+                    <>
+                      <div
+                        className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-4 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
+                        onClick={() => setSelectedCategory(cat)}
+                      >
+                        {cat}
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+              <div className="mt-2 flex flex-col gap-2 h-[64.5vh] overflow-y-auto">
+                {filteredData.map((value: any) => {
+                  return (
+                    <>
+                      <LibBox onAdd={() => addToActions(value)} data={value} />
+                    </>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
