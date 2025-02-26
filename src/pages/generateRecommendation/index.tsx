@@ -50,7 +50,7 @@ export const GenerateRecommendation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const generatePaln = () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     Application.generateTreatmentPlan({
       member_id: id,
     })
@@ -109,11 +109,12 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
           </div>
         </div>
       )}
-      <div className="fixed w-full top-0 hidden lg:flex z-[9]">
+      <div className="fixed w-full  top-0 hidden lg:flex z-[9] bg-bg-color pb-4">
+        <div className='w-full'>
+
+        
         <TopBar />
-      </div>
-      <div className="px-8">
-        <div className="w-full flex justify-between  pt-[40px] lg:pt-[80px]">
+        <div className="w-full flex justify-between  pt-[40px] px-8 ">
           <div className="flex items-center gap-3">
             <div
               onClick={() => {
@@ -186,10 +187,10 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
             </ButtonPrimary>
           </div>
         </div>
-        <div className={`h-[100px] flex items-start bg-bg-color sticky ${scrollPosition > 80 ? 'top-[40px]' : 'top-[80px]'} z-[7] transition-all duration-300`}>
+     
 
-    
-        <div className="mt-6  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
+    <div className='px-8'>
+        <div className="mt-5  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
           {steps.map((label, index) => (
             <React.Fragment key={index}>
               <div
@@ -223,7 +224,12 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
           ))}
         </div>
         </div>
-        <div className="mt-2 w-full mb-6">
+        </div>
+      </div>
+      <div className="px-8">
+      
+       
+        <div className="mt-[220px] w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{
