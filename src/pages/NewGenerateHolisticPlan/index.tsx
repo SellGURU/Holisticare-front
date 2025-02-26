@@ -143,7 +143,7 @@ const NewGenerateHolisticPlan = () => {
         </div>
         <div className="w-full flex justify-center px-4 pt-[40px] lg:pt-[30px]">
           <div className="w-full px-4 py-6 relative h-full">
-            <div className="lg:fixed lg:top-13 lg:z-[9] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8 lg:pr-9 lg:ml-[-32px] lg:mt-[-13px]">
+            <div className="lg:fixed lg:top-13 lg:z-[7] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8 lg:pr-9 lg:ml-[-32px] lg:mt-[-13px]">
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
                   onClick={() => {

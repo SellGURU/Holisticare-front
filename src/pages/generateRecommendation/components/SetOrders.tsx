@@ -96,8 +96,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     setIsLoading(true);
     setisStarted(true);
     const visibleCategories = categories
-    .filter((cat) => cat.visible)
-    .map((cat) => cat.name);
+      .filter((cat) => cat.visible)
+      .map((cat) => cat.name);
     const currentIndex = visibleCategories.indexOf(activeCategory);
     const nextTabName = visibleCategories[currentIndex + 1];
 
