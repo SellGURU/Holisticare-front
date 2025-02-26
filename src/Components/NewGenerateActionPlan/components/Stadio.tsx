@@ -206,7 +206,7 @@ const Stadio: React.FC<StadioProps> = ({
           </div>
         </div>
         <div className="sticky top-[190px]">
-          <div className="w-[342px] p-4 h-[77.5vh] bg-white rounded-[24px] border border-gray-50 shadow-100">
+          <div className="w-[342px] p-4 h-[540px] bg-white rounded-[24px] border border-gray-50 shadow-100">
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
               placeHolder="Search for actions ..."
@@ -229,14 +229,19 @@ const Stadio: React.FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="mt-2 flex flex-col gap-2 h-[64.5vh] overflow-y-auto">
-                {filteredData.map((value: any) => {
-                  return (
-                    <>
-                      <LibBox onAdd={() => addToActions(value)} data={value} />
-                    </>
-                  );
-                })}
+              <div className="w-full h-[420px] overflow-y-auto">
+                <div className="mt-2 grid gap-2">
+                  {filteredData.map((value: any) => {
+                    return (
+                      <>
+                        <LibBox
+                          onAdd={() => addToActions(value)}
+                          data={value}
+                        />
+                      </>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
