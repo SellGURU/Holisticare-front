@@ -90,8 +90,6 @@ const Stadio: React.FC<StadioProps> = ({
       el.Recommendation.toLowerCase().includes(searchValue.toLowerCase()),
   );
   const [showAddModal, setshowAddModal] = useState(false);
-  console.log(actions);
-  console.log(data);
 
   return (
     <>
@@ -120,27 +118,26 @@ const Stadio: React.FC<StadioProps> = ({
               third_layer: '',
             },
           };
-
           setData((prevData: any) => [...prevData, newData]);
           setshowAddModal(false);
         }}
-      ></ActionEditModal>
+      />
       <div className="flex px-6 gap-4">
         <div className="flex-grow">
-          <div className="sticky  top-[190px] ">
-            {/* alert */}
-            {haveConflic && (
-              <div className="w-full  my-2 ">
-                <AlertModal
-                  heading="Alert heading"
-                  text={haveConflicText}
-                  onClose={() => {
-                    setHaveConflic(false);
-                  }}
-                />
-              </div>
-            )}
-            <div className="w-full flex justify-end mb-2">
+          {/* alert */}
+          {haveConflic && (
+            <div className="w-full  my-2 ">
+              <AlertModal
+                heading="Alert heading"
+                text={haveConflicText}
+                onClose={() => {
+                  setHaveConflic(false);
+                }}
+              />
+            </div>
+          )}
+          <div className="w-full flex justify-end mb-2">
+            {actions.length !== 0 && (
               <div
                 className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal mr-4 cursor-pointer"
                 onClick={() => setCalendarView(true)}
@@ -148,68 +145,67 @@ const Stadio: React.FC<StadioProps> = ({
                 <img src="/icons/calendar-date.svg" alt="" className="w-5" />
                 Calendar View
               </div>
-              <ButtonPrimary onClick={() => setshowAddModal(true)}>
-                {' '}
-                <img src="/icons/add-square.svg" alt="" /> Add
-              </ButtonPrimary>
-            </div>
-            <div
-              className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
-              style={{ height: haveConflic ? '420px' : '480px' }}
-            >
-              {actions.length == 0 ? (
-                <div className="flex flex-col items-center justify-center w-full h-[500px]">
-                  <img
-                    src="/icons/document-text.svg"
-                    alt=""
-                    className="w-[87px] h-[87px]"
-                  />
-                  <div className="text-Text-Primary font-medium text-base mt-2">
-                    No action to show
-                  </div>
-                  <ButtonSecondary
-                    ClassName="rounded-[20px] mt-8"
-                    onClick={() => {
-                      AutoGenerate();
-                    }}
-                  >
-                    {isAutoGenerate ? (
-                      <SpinnerLoader />
-                    ) : (
-                      <>
-                        <img
-                          src="/icons/tree-start-white.svg"
-                          alt=""
-                          className="mr-2"
-                        />
-                        Auto Generate
-                      </>
-                    )}
-                  </ButtonSecondary>
+            )}
+            <ButtonPrimary onClick={() => setshowAddModal(true)}>
+              {' '}
+              <img src="/icons/add-square.svg" alt="" /> Add
+            </ButtonPrimary>
+          </div>
+          <div
+            className={`w-full min-h-[420px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
+          >
+            {actions.length == 0 ? (
+              <div className="flex flex-col items-center justify-center w-full h-[500px]">
+                <img
+                  src="/icons/document-text.svg"
+                  alt=""
+                  className="w-[87px] h-[87px]"
+                />
+                <div className="text-Text-Primary font-medium text-base mt-2">
+                  No action to show
                 </div>
-              ) : (
-                <>
-                  <div
-                    className=" grid grid-cols-1 gap-3 py-3 overflow-y-auto"
-                    style={{ maxHeight: haveConflic ? '420px' : '480px' }}
-                  >
-                    {actions.map((act: any) => {
-                      return (
-                        <>
-                          <ActionCard
-                            data={act}
-                            onRemove={() => removeFromActions(act)}
-                          ></ActionCard>
-                        </>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
+                <ButtonSecondary
+                  ClassName="rounded-[20px] mt-8"
+                  onClick={() => {
+                    AutoGenerate();
+                  }}
+                >
+                  {isAutoGenerate ? (
+                    <SpinnerLoader />
+                  ) : (
+                    <>
+                      <img
+                        src="/icons/tree-start-white.svg"
+                        alt=""
+                        className="mr-2"
+                      />
+                      Auto Generate
+                    </>
+                  )}
+                </ButtonSecondary>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-3 py-3 min-h-[420px]">
+                  {actions.map((act: any, index: number) => {
+                    return (
+                      <>
+                        <ActionCard
+                          data={act}
+                          onRemove={() => removeFromActions(act)}
+                          setActions={setActions}
+                          key={index}
+                          index={index}
+                        />
+                      </>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>
-        <div className="w-[342px] p-4 min-h-[200px] bg-white rounded-[24px] border border-gray-50 shadow-100">
+        <div className="w-[342px] p-4 min-h-[200px] max-h-[77.5vh] bg-white rounded-[24px] border border-gray-50 shadow-100">
           <SearchBox
             ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
             placeHolder="Search for actions ..."
@@ -232,14 +228,11 @@ const Stadio: React.FC<StadioProps> = ({
                 );
               })}
             </div>
-            <div className="mt-2 grid gap-2">
+            <div className="mt-2 grid gap-2 min-h-[200px] max-h-[64.5vh] overflow-y-auto">
               {filteredData.map((value: any) => {
                 return (
                   <>
-                    <LibBox
-                      onAdd={() => addToActions(value)}
-                      data={value}
-                    ></LibBox>
+                    <LibBox onAdd={() => addToActions(value)} data={value} />
                   </>
                 );
               })}

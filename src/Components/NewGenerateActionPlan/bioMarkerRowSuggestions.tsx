@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BasedOnModal from './components/BasedOnModal';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
+import ActionEditModal from './components/ActionEditModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
   value: any;
+  setValues: (data: any) => void;
   category: string;
   index: number;
   onRemove: () => void;
-  //   changeData: (value: any) => void;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
+  setValues,
   category,
   index,
   onRemove,
-  //   changeData,
 }) => {
-  //   useEffect(() => console.log(value), [value]);
-
   const resolveIcon = () => {
     if (category == 'Diet') {
       return '/icons/diet.svg';
@@ -37,50 +36,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   };
 
-  // const [showModal, setshowModal] = useState(false);
-  // const [editableValue, setEditableValue] = useState(value.Instruction);
   const [selectedDays, setSelectedDays] = useState<string[]>(value.Days || []);
+
+  useEffect(() => {
+    if (value) {
+      setSelectedDays(value.Days || []);
+    }
+  }, [value]);
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
-  // useEffect(() => {
-  //   setEditableValue(value.Instruction);
-  // }, [value]);
-  //   useEffect(() => {
-  //     value.days = selectedDays;
-  //   }, [selectedDays, value]);
-  //   useEffect(() => {
-  //     changeData({
-  //       ...value,
-  //       instructions: editableValue,
-  //       repeat_days: [...selectedDays],
-  //     });
-  //   }, [editableValue, selectedDays]);
-  //   const handleApiResponse = (response: any) => {
-  //     try {
-  //       // Get the category from the first key in the response
-  //       const category = Object.keys(response)[0];
-  //       if (category && response[category] && response[category].length > 0) {
-  //         const data = response[category][0];
-
-  //         changeData({
-  //           instructions: data.instructions,
-  //           name: data.name,
-  //           reference: data.reference,
-  //           repeat_days: data.repeat_days,
-  //           based_on: data.based_on,
-  //           category: category, // Adding category to track what type of data it is
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error('Error updating component data:', error);
-  //     }
-  //   };
-  //   const [isLoadingAi, setIsLoadingAi] = useState(false);
-  //   const [showModal, setshowModal] = useState(false);
 
   const RecommendationParts = value.Recommendation?.split('*').map(
     (part: string) => part.trim(),
@@ -97,6 +65,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
   const [sureRemove, setSureRemove] = useState(false);
   const [showBasedOn, setShowBasedOn] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newValue, setNewValue] = useState(null);
+  useEffect(() => {
+    setNewValue(value);
+  }, [value]);
 
   return (
     <>
@@ -195,18 +168,21 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  {/* <img
-                    src="/icons/edit.svg"
-                    alt=""
-                    className="w-[24px] h-[24px] cursor-pointer"
-                  /> */}
                   {!sureRemove ? (
-                    <img
-                      src="/icons/trash-red.svg"
-                      alt=""
-                      className="w-[24px] h-[24px] cursor-pointer"
-                      onClick={() => setSureRemove(true)}
-                    />
+                    <>
+                      <img
+                        src="/icons/edit.svg"
+                        alt=""
+                        className="w-[24px] h-[24px] cursor-pointer"
+                        onClick={() => setShowEditModal(true)}
+                      />
+                      <img
+                        src="/icons/trash-red.svg"
+                        alt=""
+                        className="w-[24px] h-[24px] cursor-pointer mt-2"
+                        onClick={() => setSureRemove(true)}
+                      />
+                    </>
                   ) : (
                     <>
                       <div className="text-Text-Quadruple text-xs">Sure?</div>
@@ -251,6 +227,42 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         value={value['Practitioner Comments']}
         setShowModal={setShowBasedOn}
         showModal={showBasedOn}
+      />
+      <ActionEditModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        defalts={newValue}
+        onAddNotes={() => {}}
+        onSubmit={(editedData) => {
+          setValues((prevData: any) => {
+            return prevData.map((item: any, idx: number) => {
+              // استفاده از ایندکس برای شناسایی آیتم مورد نظر
+              if (idx === index) {
+                return {
+                  ...item,
+                  Category: editedData.Category,
+                  Recommendation: editedData.Recommendation || '',
+                  'Based on': item['Based on'],
+                  'Practitioner Comments':
+                    editedData['Practitioner Comments'] || [],
+                  Instruction: editedData.Instruction || '',
+                  Times: editedData.Times || [],
+                  Dose: editedData.Dose || null,
+                  'Client Notes': editedData['Client Notes'] || [],
+                  Score: item.Score,
+                  Days: editedData.Days || [],
+                  Layers: {
+                    first_layer: '',
+                    second_layer: '',
+                    third_layer: '',
+                  },
+                };
+              }
+              return item;
+            });
+          });
+          setShowEditModal(false);
+        }}
       />
     </>
   );
