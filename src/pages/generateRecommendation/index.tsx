@@ -26,13 +26,13 @@ export const GenerateRecommendation = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);
       setCurrentStepIndex(currentStepIndex - 1);
-      setTratmentPlanData((pre:any) => {
+      setTratmentPlanData((pre: any) => {
         const newSuggestios = suggestionsDefualt;
-          return {
-            ...pre,
-            suggestion_tab: newSuggestios,
-          };                  
-      })
+        return {
+          ...pre,
+          suggestion_tab: newSuggestios,
+        };
+      });
     }
   };
   const handleSkip = () => {
@@ -56,7 +56,7 @@ export const GenerateRecommendation = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
-  const [suggestionsDefualt,setSuggestionsDefualt] = useState([])
+  const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
 
   const generatePaln = () => {
     setIsLoading(true);
@@ -66,7 +66,7 @@ export const GenerateRecommendation = () => {
       .then((res) => {
         setTratmentPlanData({ ...res.data, member_id: id });
         setTreatmentId(res.data.treatment_id);
-        setSuggestionsDefualt(res.data.suggestion_tab)
+        setSuggestionsDefualt(res.data.suggestion_tab);
       })
       .finally(() => {
         setIsLoading(false);
@@ -87,27 +87,27 @@ export const GenerateRecommendation = () => {
 
   useEffect(() => {
     const container = containerRef.current;
-    
+
     const handleScroll = () => {
-      if (container) {  // Add null check here
+      if (container) {
+        // Add null check here
         const position = container.scrollTop;
         setScrollPosition(position);
         console.log('scroll position:', position);
       }
     };
-  
+
     if (container) {
       container.addEventListener('scroll', handleScroll, { passive: true });
     }
-  
+
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
-useEffect(()=>console.log(scrollPosition),[scrollPosition]
-)
+  useEffect(() => console.log(scrollPosition), [scrollPosition]);
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
@@ -120,125 +120,119 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
         </div>
       )}
       <div className="fixed w-full  top-0 hidden lg:flex z-[9] bg-bg-color pb-4">
-        <div className='w-full'>
-
-        
-        <TopBar />
-        <div className="w-full flex justify-between  pt-[40px] px-8 ">
-          <div className="flex items-center gap-3">
-            <div
-              onClick={() => {
-                navigate(-1);
-              }}
-              className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
-            >
-              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
-            </div>
-            <div className="TextStyle-Headline-5 text-Text-Primary">
-              Generate Holistic Plan
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div
-              className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
-              onClick={handleSkip}
-            >
-              Skip <img src="/icons/Skip.svg" alt="" />
-            </div>
-            {currentStepIndex > 0 && (
-              <ButtonPrimary outLine onClick={handleBack}>
-                <div className="rotate-180">
-                  <SvgIcon
-                    src="/icons/arrow-right-white.svg"
-                    color="#005F73"
-                  ></SvgIcon>
-                </div>
-                {/* <img src="/icons/arrow-right-white.svg" alt="" /> */}
-                Back
-              </ButtonPrimary>
-            )}
-            <ButtonPrimary
-              ClassName="border border-white"
-              disabled={isButtonLoading}
-              onClick={() => {
-                if (currentStepIndex == steps.length - 1) {
-                  setisButtonLoading(true);
-                  Application.saveHolisticPlan({
-                    ...treatmentPlanData,
-                    suggestion_tab: [
-                      ...checkedSuggestions,
-                      ...treatmentPlanData.suggestion_tab.filter(
-                        (el: any) => el.checked == true,
-                      ),
-                    ],
-                  })
-                    .then((res) => console.log(res))
-                    .finally(() => {
-                      setisButtonLoading(false);
-                      navigate(`/report/Generate-Holistic-Plan/${id}`);
-                    });
-                } else handleNext();
-              }}
-            >
-              {isButtonLoading ? (
-                <>
-                
-                  Generate
-                  <SpinnerLoader></SpinnerLoader>
-                </>
-              ) : (
-                <>
-                  {currentStepIndex == 2 ? 'Generate' : 'Next'}
-                  {currentStepIndex != 2 && (
-                    <img src="/icons/arrow-right-white.svg" alt="" />
-                  )}
-                </>
-              )}
-            </ButtonPrimary>
-          </div>
-        </div>
-     
-
-    <div className='px-8'>
-        <div className="mt-5  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
-          {steps.map((label, index) => (
-            <React.Fragment key={index}>
+        <div className="w-full">
+          <TopBar />
+          <div className="w-full flex justify-between  pt-[40px] px-8 ">
+            <div className="flex items-center gap-3">
               <div
                 onClick={() => {
-                  setCurrentStepIndex(index);
-                  if (label != 'Overview') {
-                    setCheckedSuggestion([]);
-                  }
+                  navigate(-1);
                 }}
-                className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
-                  index === currentStepIndex
-                    ? 'text-Primary-DeepTeal '
-                    : 'text-Text-Secondary'
-                }`}
+                className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
               >
-                <div
-                  className={`size-5 rounded-full text-xs font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
-                >
-                  {index + 1}
-                </div>
-                {label}
+                <img className="w-6 h-6" src="/icons/arrow-back.svg" />
               </div>
-              {index < steps.length - 1 && (
-                <img
-                  src="/icons/chevron-double-right.svg"
-                  alt="step-icon"
-                  className="mx-2"
-                />
+              <div className="TextStyle-Headline-5 text-Text-Primary">
+                Generate Holistic Plan
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
+                onClick={handleSkip}
+              >
+                Skip <img src="/icons/Skip.svg" alt="" />
+              </div>
+              {currentStepIndex > 0 && (
+                <ButtonPrimary outLine onClick={handleBack}>
+                  <div className="rotate-180">
+                    <SvgIcon
+                      src="/icons/arrow-right-white.svg"
+                      color="#005F73"
+                    ></SvgIcon>
+                  </div>
+                  {/* <img src="/icons/arrow-right-white.svg" alt="" /> */}
+                  Back
+                </ButtonPrimary>
               )}
-            </React.Fragment>
-          ))}
-        </div>
-        </div>
+              <ButtonPrimary
+                ClassName="border border-white"
+                disabled={isButtonLoading}
+                onClick={() => {
+                  if (currentStepIndex == steps.length - 1) {
+                    setisButtonLoading(true);
+                    Application.saveHolisticPlan({
+                      ...treatmentPlanData,
+                      suggestion_tab: [
+                        ...checkedSuggestions,
+                        ...treatmentPlanData.suggestion_tab.filter(
+                          (el: any) => el.checked == true,
+                        ),
+                      ],
+                    })
+                      .then((res) => console.log(res))
+                      .finally(() => {
+                        setisButtonLoading(false);
+                        navigate(`/report/Generate-Holistic-Plan/${id}`);
+                      });
+                  } else handleNext();
+                }}
+              >
+                {isButtonLoading ? (
+                  <>
+                    Generate
+                    <SpinnerLoader></SpinnerLoader>
+                  </>
+                ) : (
+                  <>
+                    {currentStepIndex == 2 ? 'Generate' : 'Next'}
+                    {currentStepIndex != 2 && (
+                      <img src="/icons/arrow-right-white.svg" alt="" />
+                    )}
+                  </>
+                )}
+              </ButtonPrimary>
+            </div>
+          </div>
+
+          <div className="px-8">
+            <div className="mt-5  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
+              {steps.map((label, index) => (
+                <React.Fragment key={index}>
+                  <div
+                    onClick={() => {
+                      setCurrentStepIndex(index);
+                      if (label != 'Overview') {
+                        setCheckedSuggestion([]);
+                      }
+                    }}
+                    className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
+                      index === currentStepIndex
+                        ? 'text-Primary-DeepTeal '
+                        : 'text-Text-Secondary'
+                    }`}
+                  >
+                    <div
+                      className={`size-5 rounded-full text-xs font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
+                    >
+                      {index + 1}
+                    </div>
+                    {label}
+                  </div>
+                  {index < steps.length - 1 && (
+                    <img
+                      src="/icons/chevron-double-right.svg"
+                      alt="step-icon"
+                      className="mx-2"
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <div className="px-8">
-      
-       
         <div className="mt-[220px] w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
@@ -256,13 +250,13 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
               defaultSuggestions={suggestionsDefualt}
               reset={() => {
                 setCheckedSuggestion([]);
-                setTratmentPlanData((pre:any) => {
+                setTratmentPlanData((pre: any) => {
                   const newSuggestios = suggestionsDefualt;
-                    return {
-                      ...pre,
-                      suggestion_tab: newSuggestios,
-                    };                  
-                })
+                  return {
+                    ...pre,
+                    suggestion_tab: newSuggestios,
+                  };
+                });
               }}
               storeChecked={(data) => {
                 setCheckedSuggestion([...checkedSuggestions, ...data]);

@@ -14,7 +14,7 @@ import {
 } from 'chart.js';
 import { ChartOptions, Plugin } from 'chart.js';
 import { BeatLoader } from 'react-spinners';
-import {  sortKeysWithValues } from './Boxs/Help';
+import { sortKeysWithValues } from './Boxs/Help';
 
 // Register necessary components from Chart.js
 ChartJS.register(
@@ -97,7 +97,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     });
     return resolvedColor;
   });
-  
+
   const data = {
     labels: labels, // Labels passed as props
     datasets: [
