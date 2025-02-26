@@ -223,7 +223,7 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
           ))}
         </div>
         </div>
-        <div className="mt-[70px] w-full mb-6">
+        <div className="mt-2 w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{
