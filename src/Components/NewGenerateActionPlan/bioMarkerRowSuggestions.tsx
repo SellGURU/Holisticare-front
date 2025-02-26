@@ -5,12 +5,14 @@ interface BioMarkerRowSuggestionsProps {
   value: any;
   category: string;
   index: number;
+  onRemove: () => void;
   //   changeData: (value: any) => void;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   category,
   index,
+  onRemove,
   //   changeData,
 }) => {
   //   useEffect(() => console.log(value), [value]);
@@ -27,6 +29,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
     if (category == 'Supplement') {
       return '/icons/Supplement.svg';
+    }
+    if (category == 'Lifestyle') {
+      return '/icons/LifeStyle2.svg';
     }
   };
 
@@ -88,6 +93,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       [index]: !prev[index],
     }));
   };
+  const [sureRemove, setSureRemove] = useState(false);
 
   return (
     <>
@@ -106,7 +112,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
-                {RecommendationParts[0]}
+                {RecommendationParts[2]}
               </div>
               <div className="flex items-center">
                 <div className=" w-[200px] lg:w-[244px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50  inline-flex lg:ml-4">
@@ -140,7 +146,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
-              <div className="flex flex-col">
+              <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 <div className="flex items-center">
                   <div className="flex items-center text-Text-Quadruple text-[12px]">
                     Score:
@@ -163,49 +169,68 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex items-center mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <div className="flex items-center text-Text-Quadruple text-[12px]">
+                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
                     • Hierarchy:
                   </div>
                   <div className="flex items-center text-Text-Primary text-[12px] ml-1">
-                    {RecommendationParts[1]}
+                    {RecommendationParts[0]}
                     <img
                       src="/icons/arrow-right.svg"
                       alt=""
                       className="mr-1 ml-1 w-[16px] h-[16px]"
                     />
-                    {RecommendationParts[0]}
+                    {RecommendationParts[1]}
                   </div>
                 </div>
                 <div
-                  className={`flex items-center mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <div className="flex items-center text-Text-Quadruple text-[12px]">
+                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
                     • Instruction:
                   </div>
-                  <div className="flex items-center text-Text-Primary text-[12px] ml-1">
-                    {RecommendationParts[2]}
+                  <div className="flex items-center text-Text-Primary text-[12px] ml-1 text-wrap">
+                    {value.Instruction}
                   </div>
                 </div>
               </div>
               <div className="flex">
                 <div
-                  className={`text-Text-Quadruple text-xs ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
+                  className={`text-Text-Quadruple text-xs text-nowrap ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value.Times.join(' & ')}
                 </div>
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <img
+                  {/* <img
                     src="/icons/edit.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer"
-                  />
-                  <img
-                    src="/icons/trash-red.svg"
-                    alt=""
-                    className="w-[24px] h-[24px] mt-2 cursor-pointer"
-                  />
+                  /> */}
+                  {!sureRemove ? (
+                    <img
+                      src="/icons/trash-red.svg"
+                      alt=""
+                      className="w-[24px] h-[24px] cursor-pointer"
+                      onClick={() => setSureRemove(true)}
+                    />
+                  ) : (
+                    <>
+                      <div className="text-Text-Quadruple text-xs">Sure?</div>
+                      <img
+                        src="/icons/tick-circle-green.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={onRemove}
+                      />
+                      <img
+                        src="/icons/close-circle-red.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer mt-2"
+                        onClick={() => setSureRemove(false)}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -40,6 +40,16 @@ const Stadio: React.FC<StadioProps> = ({
       return oldCategory.filter((_el, inde) => inde != itemindex);
     });
   };
+  const removeFromActions = (item: any) => {
+    setActions((prev: any) => {
+      const updatedActions = prev.filter(
+        (el: any) => JSON.stringify(el) !== JSON.stringify(item),
+      );
+      return updatedActions;
+    });
+
+    setData((prev: Array<any>) => [...prev, item]);
+  };
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = () => {
     setIsAutoGenerate(true);
@@ -136,7 +146,7 @@ const Stadio: React.FC<StadioProps> = ({
             </div>
             <div
               className={`w-full bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.length != 0 && ''} `}
-              style={{ height: haveConflic ? '440px' : '480px' }}
+              style={{ height: haveConflic ? '420px' : '480px' }}
             >
               {actions.length == 0 ? (
                 <div className="flex flex-col items-center justify-center w-full h-[500px]">
@@ -172,12 +182,15 @@ const Stadio: React.FC<StadioProps> = ({
                 <>
                   <div
                     className=" grid grid-cols-1 gap-3 py-3 overflow-y-auto"
-                    style={{ maxHeight: haveConflic ? '440px' : '480px' }}
+                    style={{ maxHeight: haveConflic ? '420px' : '480px' }}
                   >
                     {actions.map((act: any) => {
                       return (
                         <>
-                          <ActionCard data={act}></ActionCard>
+                          <ActionCard
+                            data={act}
+                            onRemove={() => removeFromActions(act)}
+                          ></ActionCard>
                         </>
                       );
                     })}
