@@ -18,7 +18,7 @@ const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
           <div className="flex justify-start gap-2 items-center">
             <img
               onClick={onAdd}
-              className="w-4"
+              className="w-4 cursor-pointer"
               src="/icons/add-square-green.svg"
               alt=""
             />
@@ -53,7 +53,10 @@ const LibBox: React.FC<LibBoxProps> = ({ data, onAdd }) => {
                 alt=""
                 className="mr-1 ml-1 w-[16px] h-[16px]"
               />
-              <div className="text-[10px] text-Text-Primary">
+              <div
+                className="text-[10px] text-Text-Primary whitespace-nowrap truncate flex-1"
+                title={data.Recommendation.split('*')[1]}
+              >
                 {data.Recommendation.split('*')[1]}
               </div>
             </div>

@@ -4,16 +4,24 @@ import BioMarkerRowSuggestions from '../bioMarkerRowSuggestions';
 interface ActionCardProps {
   data: any;
   onRemove: () => void;
+  setActions: (data: any) => void;
+  index: number;
 }
-const ActionCard: React.FC<ActionCardProps> = ({ data, onRemove }) => {
+const ActionCard: React.FC<ActionCardProps> = ({
+  data,
+  onRemove,
+  setActions,
+  index,
+}) => {
   return (
     <>
       <BioMarkerRowSuggestions
         category={data.Category}
-        index={0}
+        index={index}
         value={data}
         onRemove={onRemove}
-      ></BioMarkerRowSuggestions>
+        setValues={setActions}
+      />
     </>
   );
 };

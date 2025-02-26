@@ -28,7 +28,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedDays, setSelectedDays] = useState<string[]>(
+    defalts?.Days || [],
+  );
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -56,6 +58,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
+  useEffect(() => {
+    if (defalts) {
+      setSelectedDays(defalts.Days || []);
+      setSelectedGroup(defalts.Category || null);
+      setRecommendation(defalts.Recommendation);
+      setDose(defalts.Dose);
+      setInstructions(defalts.Instruction);
+      setSelectedTimes(defalts.Times || []);
+      setNotes(defalts['Client Notes'] || []);
+    }
+  }, [defalts]);
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);
@@ -291,7 +304,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <div
                   key={time}
                   onClick={() => toggleTimeSelection(time)}
-                  className={`cursor-pointer py-2 px-2.5 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                  className={`cursor-pointer capitalize py-2 px-2.5 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
                     selectedTimes.includes(time)
                       ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
                       : 'bg-backgroundColor-Card text-Text-Secondary'
@@ -310,7 +323,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <div
                   key={index}
                   onClick={() => toggleDaySelection(day)}
-                  className={`cursor-pointer border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2.5 text-xs text-center ${
+                  className={`cursor-pointer capitalize border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2 text-xs text-center ${
                     selectedDays.includes(day)
                       ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
                       : 'text-Text-Secondary bg-backgroundColor-Card'
@@ -346,10 +359,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               >
                 <SvgIcon
                   src="/icons/delete.svg"
-                  color="#FC5474
-"
-                  width="24px"
-                  height="24px"
+                  color="#FC5474"
+                  width="20px"
+                  height="20px"
                 />
               </div>
             </div>
@@ -382,8 +394,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <SvgIcon
                   src="/icons/delete.svg"
                   color="#FC5474"
-                  width="24px"
-                  height="24px"
+                  width="20px"
+                  height="20px"
                 />
               </div>
             </div>
