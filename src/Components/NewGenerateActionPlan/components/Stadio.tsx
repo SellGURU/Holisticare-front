@@ -186,7 +186,7 @@ const Stadio: React.FC<StadioProps> = ({
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 gap-3 py-3 min-h-[420px]">
+                <div className="flex flex-col gap-3 py-3 min-h-[420px]">
                   {actions.map((act: any, index: number) => {
                     return (
                       <>
