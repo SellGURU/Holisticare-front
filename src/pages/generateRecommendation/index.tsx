@@ -26,6 +26,13 @@ export const GenerateRecommendation = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);
       setCurrentStepIndex(currentStepIndex - 1);
+      setTratmentPlanData((pre:any) => {
+        const newSuggestios = suggestionsDefualt;
+          return {
+            ...pre,
+            suggestion_tab: newSuggestios,
+          };                  
+      })
     }
   };
   const handleSkip = () => {
@@ -49,14 +56,17 @@ export const GenerateRecommendation = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
+  const [suggestionsDefualt,setSuggestionsDefualt] = useState([])
+
   const generatePaln = () => {
-    // setIsLoading(true);
+    setIsLoading(true);
     Application.generateTreatmentPlan({
       member_id: id,
     })
       .then((res) => {
         setTratmentPlanData({ ...res.data, member_id: id });
         setTreatmentId(res.data.treatment_id);
+        setSuggestionsDefualt(res.data.suggestion_tab)
       })
       .finally(() => {
         setIsLoading(false);
@@ -243,20 +253,16 @@ useEffect(()=>console.log(scrollPosition),[scrollPosition]
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
+              defaultSuggestions={suggestionsDefualt}
               reset={() => {
                 setCheckedSuggestion([]);
-                setTratmentPlanData((pre: any) => {
-                  const newSuggestios = pre.suggestion_tab.map((el: any) => {
+                setTratmentPlanData((pre:any) => {
+                  const newSuggestios = suggestionsDefualt;
                     return {
-                      ...el,
-                      checked: false,
-                    };
-                  });
-                  return {
-                    ...pre,
-                    suggestion_tab: newSuggestios,
-                  };
-                });
+                      ...pre,
+                      suggestion_tab: newSuggestios,
+                    };                  
+                })
               }}
               storeChecked={(data) => {
                 setCheckedSuggestion([...checkedSuggestions, ...data]);

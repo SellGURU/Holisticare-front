@@ -27,6 +27,7 @@ interface SetOrdersProps {
   storeChecked: (data: any) => void;
   checkeds: Array<any>;
   reset: () => void;
+  defaultSuggestions:Array<any>
   // resolvedSuggestions:(data:any) => void
 }
 
@@ -37,6 +38,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   storeChecked,
   checkeds,
   reset,
+  defaultSuggestions
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
@@ -49,6 +51,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [categories, setCategories] =
     useState<CategoryState[]>(initialCategoryState);
 
+  useEffect(() => {
+    setData(defaultSuggestions)
+  },[defaultSuggestions])
   // const _AllCategoryChecekd = (category: string) => {
   //   const newData = data
   //     .filter((el: any) => el.Category == category)
