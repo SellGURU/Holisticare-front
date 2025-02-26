@@ -739,6 +739,10 @@ class Application extends Api {
     const response = this.post('/action_plan/conflict_check', data);
     return response;
   };
+  static getActionPlanBlockCalendarView = (data: any) => {
+    const response = this.post('/action_plan/block/calendar_view', data);
+    return response;
+  };
 }
 
 export default Application;
