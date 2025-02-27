@@ -702,6 +702,47 @@ class Application extends Api {
     const response = this.post('/health_profile/timeline/show_events', data);
     return response;
   };
+
+  static getActionPlanMethodsNew = () => {
+    const response = this.post('/action_plan/percents', {});
+    return response;
+  };
+  static getActionPlanTaskDirectoryNew = (data: any) => {
+    const response = this.post('/action_plan/task_directory', data);
+    return response;
+  };
+  static getActionPlanGenerateActionPlanTaskNew = (data: any) => {
+    const response = this.post('/action_plan/generate_action_plan_task', data);
+    return response;
+  };
+  static getActionPlanBlockSaveTasksNew = (data: any) => {
+    const response = this.post('/action_plan/block/save_tasks', data);
+    return response;
+  };
+  static holisticPlanReScore = (data: any) => {
+    const response = this.post('/patients/treatment_plan_rescore', data);
+    return response;
+  };
+  static saveHolisticPlan = (data: any) => {
+    const response = this.post('/initial_save_treatment_plan', data);
+    return response;
+  };
+  static showHolisticPlan = (data: any) => {
+    const response = this.post('/show_initial_saved_treatment_plan', data);
+    return response;
+  };
+  static HolisticPlanCategories = (data: any) => {
+    const response = this.post('/patients/available_categories', data);
+    return response;
+  };
+  static checkConflicActionPlan = (data: any) => {
+    const response = this.post('/action_plan/conflict_check', data);
+    return response;
+  };
+  static getActionPlanBlockCalendarView = (data: any) => {
+    const response = this.post('/action_plan/block/calendar_view', data);
+    return response;
+  };
 }
 
 export default Application;
