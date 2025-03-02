@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from 'react';
 
 const mode = [
@@ -27,13 +28,35 @@ const mode = [
 
 interface AddQuestionCheckInProps {
   setAddMode: (value: boolean) => void;
+  setCheckInList: (value: any) => void;
 }
 
-const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
+const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
+  setAddMode,
+  setCheckInList,
+}) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [itemSelected, setItemSelected] = useState('');
+  const [title, setTitle] = useState('');
+  const addToCheckInList = () => {
+    if (!title.trim() || !itemSelected.trim()) return;
+
+    setCheckInList((prevList: any) => [
+      {
+        title,
+        type: itemSelected,
+        required: checkboxChecked,
+      },
+      ...prevList,
+    ]);
+
+    setTitle('');
+    setItemSelected('');
+    setCheckboxChecked(false);
+  };
+
   return (
-    <div className="w-full border border-Gray-50 rounded-2xl p-4 bg-backgroundColor-Card mb-3">
+    <div className="w-full border border-Gray-50 rounded-2xl p-4 bg-backgroundColor-Card mb-3 mt-2">
       <div className="w-full flex items-center justify-between">
         <div className="text-Text-Primary text-xs font-medium">Question</div>
         <div className="flex items-center">
@@ -44,9 +67,10 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
             onClick={() => setAddMode(false)}
           />
           <img
-            src="/icons/tick-square-background.svg"
+            src={`${!title || !itemSelected ? '/icons/tick-square-background.svg' : '/icons/tick-square-background-green.svg'}`}
             alt=""
             className="w-[18px] h-[18px] cursor-pointer ml-2"
+            onClick={addToCheckInList}
           />
         </div>
       </div>
@@ -55,6 +79,8 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
           placeholder="Write your question..."
           className="w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
           type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <label
           htmlFor="terms"
@@ -87,7 +113,9 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
               </svg>
             )}
           </div>
-          <div className="text-[10px] leading-6 text-Text-Fivefold select-none">
+          <div
+            className={`text-[10px] leading-6 ${checkboxChecked ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} select-none`}
+          >
             Required
           </div>
         </label>
@@ -98,7 +126,13 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
             <div
               className={`flex items-center justify-start w-[49%] h-[40px] rounded-xl px-3 py-1 border ${itemSelected === item.title ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'} cursor-pointer`}
               key={index}
-              onClick={() => setItemSelected(item.title)}
+              onClick={() => {
+                if (!itemSelected) {
+                  setItemSelected(item.title);
+                } else {
+                  setItemSelected('');
+                }
+              }}
             >
               <div className="w-8 h-6 rounded-lg bg-Primary-DeepTeal flex items-center justify-center bg-opacity-10">
                 <img src={item.icon} alt="" />
@@ -116,7 +150,13 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
         })}
         <div
           className={`flex items-center justify-start w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Checkboxes' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
-          onClick={() => setItemSelected('Checkboxes')}
+          onClick={() => {
+            if (!itemSelected) {
+              setItemSelected('Checkboxes');
+            } else {
+              setItemSelected('');
+            }
+          }}
         >
           <div className="cursor-pointer flex items-center">
             <div className="w-8 h-6 rounded-lg bg-Primary-DeepTeal flex items-center justify-center bg-opacity-10">
@@ -134,7 +174,13 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({ setAddMode }) => {
         </div>
         <div
           className={`flex items-center justify-start w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Multiple choice' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
-          onClick={() => setItemSelected('Multiple choice')}
+          onClick={() => {
+            if (!itemSelected) {
+              setItemSelected('Multiple choice');
+            } else {
+              setItemSelected('');
+            }
+          }}
         >
           <div className="cursor-pointer flex items-center">
             <div className="w-8 h-6 rounded-lg bg-Primary-DeepTeal flex items-center justify-center bg-opacity-10">

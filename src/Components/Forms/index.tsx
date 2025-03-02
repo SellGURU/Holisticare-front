@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from 'react';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MainModal from '../MainModal';
@@ -10,6 +11,8 @@ interface FormsProps {
   setActive: (value: string) => void;
   showModal: boolean;
   setShowModal: (value: boolean) => void;
+  checkInList: Array<any>;
+  setCheckInList: (value: any) => void;
 }
 
 const FormsComponents: FC<FormsProps> = ({
@@ -17,6 +20,8 @@ const FormsComponents: FC<FormsProps> = ({
   setActive,
   showModal,
   setShowModal,
+  checkInList,
+  setCheckInList,
 }) => {
   return (
     <>
@@ -63,7 +68,11 @@ const FormsComponents: FC<FormsProps> = ({
           setShowModal(false);
         }}
       >
-        <CheckInModalContent setShowModal={setShowModal} />
+        <CheckInModalContent
+          setShowModal={setShowModal}
+          checkInList={checkInList}
+          setCheckInList={setCheckInList}
+        />
       </MainModal>
     </>
   );
