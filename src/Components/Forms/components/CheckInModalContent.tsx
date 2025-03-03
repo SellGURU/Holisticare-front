@@ -23,6 +23,19 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
     setCheckInList((prevList: any[]) => prevList.filter((_, i) => i !== index));
     setSureRemoveIndex(null);
   };
+
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editItemSelected, setEditItemSelected] = useState('');
+  const [editCheckboxChecked, setEditCheckboxChecked] = useState(false);
+
+  const handleEdit = (index: number) => {
+    setEditIndex(index);
+    setAddMode(true);
+    setEditTitle(checkInList[index].title);
+    setEditItemSelected(checkInList[index].type);
+    setEditCheckboxChecked(checkInList[index].required);
+  };
   return (
     <>
       <div className="flex flex-col justify-between bg-white w-[664px] rounded-[20px] p-4">
@@ -48,7 +61,9 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
             className={`flex flex-col w-full ${addMode || checkInList?.length ? 'mt-3' : 'mt-10'} items-center justify-center`}
           >
             {checkInList?.length ? (
-              <div className="max-h-[300px] min-h-[60px] overflow-y-auto w-full">
+              <div
+                className={`${addMode ? 'max-h-[150px]' : 'max-h-[200px]'} min-h-[60px] overflow-y-auto w-full`}
+              >
                 <div className="flex flex-col items-center justify-center gap-1 w-full">
                   {checkInList?.map((item: any, index: number) => {
                     return (
@@ -104,6 +119,7 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
                                   src="./icons/edit-blue.svg"
                                   alt=""
                                   className="w-[16px] h-[16px] cursor-pointer"
+                                  onClick={() => handleEdit(index)}
                                 />
                                 <img
                                   src="./icons/trash-blue.svg"
@@ -146,6 +162,14 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
                 <AddQuestionCheckIn
                   setAddMode={setAddMode}
                   setCheckInList={setCheckInList}
+                  editIndex={editIndex}
+                  setEditIndex={setEditIndex}
+                  editTitle={editTitle}
+                  setEditTitle={setEditTitle}
+                  editItemSelected={editItemSelected}
+                  setEditItemSelected={setEditItemSelected}
+                  editCheckboxChecked={editCheckboxChecked}
+                  setEditCheckboxChecked={setEditCheckboxChecked}
                 />
               </>
             )}

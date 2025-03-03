@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 const mode = [
   {
@@ -29,11 +29,27 @@ const mode = [
 interface AddQuestionCheckInProps {
   setAddMode: (value: boolean) => void;
   setCheckInList: (value: any) => void;
+  editIndex: number | null;
+  setEditIndex: (value: number | null) => void;
+  editTitle: string;
+  setEditTitle: (value: string) => void;
+  editItemSelected: string;
+  setEditItemSelected: (value: string) => void;
+  editCheckboxChecked: boolean;
+  setEditCheckboxChecked: (value: boolean) => void;
 }
 
 const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
   setAddMode,
   setCheckInList,
+  editIndex,
+  editCheckboxChecked,
+  editItemSelected,
+  editTitle,
+  setEditCheckboxChecked,
+  setEditItemSelected,
+  setEditTitle,
+  setEditIndex,
 }) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [itemSelected, setItemSelected] = useState('');
@@ -55,6 +71,43 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
     setCheckboxChecked(false);
   };
 
+  useEffect(() => {
+    if (editIndex !== null) {
+      setCheckboxChecked(editCheckboxChecked);
+      setItemSelected(editItemSelected);
+      setTitle(editTitle);
+    } else {
+      setEditCheckboxChecked(checkboxChecked);
+      setEditItemSelected(itemSelected);
+      setEditTitle(title);
+    }
+  }, [editIndex, editCheckboxChecked, editItemSelected, editTitle]);
+
+  const handleSaveEdit = (index: number) => {
+    setCheckInList((prevList: any) =>
+      prevList.map((item: any, i: number) =>
+        i === index
+          ? {
+              ...item,
+              title: title,
+              type: itemSelected,
+              required: checkboxChecked,
+            }
+          : item,
+      ),
+    );
+    setEditIndex(null);
+    setAddMode(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditIndex(null);
+    setAddMode(false);
+    setEditTitle('');
+    setEditItemSelected('');
+    setEditCheckboxChecked(false);
+  };
+
   return (
     <div className="w-full border border-Gray-50 rounded-2xl p-4 bg-backgroundColor-Card mb-3 mt-2">
       <div className="w-full flex items-center justify-between">
@@ -64,13 +117,28 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
             src="/icons/close-square.svg"
             alt=""
             className="w-[18px] h-[18px] cursor-pointer"
-            onClick={() => setAddMode(false)}
+            onClick={() => {
+              if (editIndex !== null) {
+                handleCancelEdit();
+              } else {
+                setItemSelected('');
+                setTitle('');
+                setCheckboxChecked(false);
+                setAddMode(false);
+              }
+            }}
           />
           <img
             src={`${!title || !itemSelected ? '/icons/tick-square-background.svg' : '/icons/tick-square-background-green.svg'}`}
             alt=""
             className="w-[18px] h-[18px] cursor-pointer ml-2"
-            onClick={addToCheckInList}
+            onClick={() => {
+              if (editIndex !== null) {
+                handleSaveEdit(editIndex);
+              } else {
+                addToCheckInList();
+              }
+            }}
           />
         </div>
       </div>
@@ -127,10 +195,10 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
               className={`flex items-center justify-start w-[49%] h-[40px] rounded-xl px-3 py-1 border ${itemSelected === item.title ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'} cursor-pointer`}
               key={index}
               onClick={() => {
-                if (!itemSelected) {
-                  setItemSelected(item.title);
-                } else {
+                if (itemSelected === item.title) {
                   setItemSelected('');
+                } else {
+                  setItemSelected(item.title);
                 }
               }}
             >

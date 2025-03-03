@@ -5,6 +5,7 @@ import MainModal from '../MainModal';
 import SearchBox from '../SearchBox';
 import Toggle from '../Toggle';
 import CheckInModalContent from './components/CheckInModalContent';
+import SvgIcon from '../../utils/svgIcon';
 
 interface FormsProps {
   active: string;
@@ -57,7 +58,7 @@ const FormsComponents: FC<FormsProps> = ({
             ClassName="rounded-[20px] w-[229px] mt-9"
             onClick={() => setShowModal(true)}
           >
-            <img src="/icons/firstline.svg" alt="" />
+            <SvgIcon src="/icons/firstline.svg" color="#FFF" />
             Create New
           </ButtonSecondary>
         </div>
