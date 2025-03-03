@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import Application from '../../../api/app';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 interface Employee {
   picture: string;
   user_name: string;
@@ -63,35 +64,61 @@ const Employes: React.FC = () => {
           />
         </ButtonPrimary>
       </div>
-      <ul className="space-y-3 max-h-[283px] overflow-auto">
+      <ul className="space-y-3  ">
         {Employees.map((employee, index) => (
-          <li key={index} className="flex items-center justify-between">
-            <div className="flex items-center">
-              <img
-                src={
-                  employee.picture ||
-                  `https://ui-avatars.com/api/?name=${employee.user_name}`
-                }
-                alt={`${employee.user_name}'s avatar`}
-                className="w-10 h-10 rounded-full mr-3"
-              />
-              <div>
-                <p className="text-[10px] text-[#383838]">
-                  {employee.user_name}
-                </p>
-                <p className="text-[8px] text-[#888888]">Clients Assigned: 2</p>
-              </div>
-            </div>
-            <img
-              className={'cursor-pointer'}
-              src="/icons/client-card/more.svg"
-              alt=""
-            />
-          </li>
+          <EmployeeRow employee={employee} index={index}></EmployeeRow>
         ))}
       </ul>
     </div>
   );
 };
-
+const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
+  employee,
+  index,
+}) => {
+  const [showModal, setshowModal] = useState(false);
+const modalRef = useRef(null)
+  useModalAutoClose({
+    refrence: modalRef,
+    close: ()=>setshowModal(false)
+  })
+  return (
+    <>
+      <li key={index} className=" relative flex items-center justify-between">
+        <div className="flex items-center">
+          <img
+            src={
+              employee.picture ||
+              `https://ui-avatars.com/api/?name=${employee.user_name}`
+            }
+            alt={`${employee.user_name}'s avatar`}
+            className="w-10 h-10 rounded-full mr-3"
+          />
+          <div>
+            <p className="text-[10px] text-[#383838]">{employee.user_name}</p>
+            <p className="text-[8px] text-[#888888]">Clients Assigned: 2</p>
+          </div>
+        </div>
+        <img
+          onClick={() =>  setshowModal(!showModal)}
+          className={'cursor-pointer'}
+          src="/icons/client-card/more.svg"
+          alt=""
+        />
+        {showModal && (
+          <div ref={modalRef} className="absolute top-5 right-[16px] z-20 w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3">
+            <div className='flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer'>
+              <img src="/icons/user-minus.svg" alt="" />
+              Remove
+            </div>
+            <div className='flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer'>
+              <img src="/icons/firstline.svg" alt="" />
+            Show Assign List
+            </div>
+          </div>
+        )}
+      </li>
+    </>
+  );
+};
 export default Employes;
