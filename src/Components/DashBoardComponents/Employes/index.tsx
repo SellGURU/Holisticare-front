@@ -77,11 +77,11 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
   index,
 }) => {
   const [showModal, setshowModal] = useState(false);
-const modalRef = useRef(null)
+  const modalRef = useRef(null);
   useModalAutoClose({
     refrence: modalRef,
-    close: ()=>setshowModal(false)
-  })
+    close: () => setshowModal(false),
+  });
   return (
     <>
       <li key={index} className=" relative flex items-center justify-between">
@@ -100,20 +100,23 @@ const modalRef = useRef(null)
           </div>
         </div>
         <img
-          onClick={() =>  setshowModal(!showModal)}
+          onClick={() => setshowModal(!showModal)}
           className={'cursor-pointer'}
           src="/icons/client-card/more.svg"
           alt=""
         />
         {showModal && (
-          <div ref={modalRef} className="absolute top-5 right-[16px] z-20 w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3">
-            <div className='flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer'>
+          <div
+            ref={modalRef}
+            className="absolute top-5 right-[16px] z-20 w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+          >
+            <div className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
               <img src="/icons/user-minus.svg" alt="" />
               Remove
             </div>
-            <div className='flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer'>
+            <div className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer">
               <img src="/icons/firstline.svg" alt="" />
-            Show Assign List
+              Show Assign List
             </div>
           </div>
         )}

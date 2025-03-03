@@ -7,7 +7,11 @@ interface DropdownProps {
   onOptionSelect: (option: string) => void;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({ options, selectedOption, onOptionSelect }) => {
+export const Dropdown: React.FC<DropdownProps> = ({
+  options,
+  selectedOption,
+  onOptionSelect,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
@@ -18,11 +22,11 @@ export const Dropdown: React.FC<DropdownProps> = ({ options, selectedOption, onO
     onOptionSelect(option);
     setIsOpen(false);
   };
-  const modalRef = useRef(null)
+  const modalRef = useRef(null);
   useModalAutoClose({
     refrence: modalRef,
-    close: ()=> setIsOpen(false)
-  })
+    close: () => setIsOpen(false),
+  });
 
   return (
     <div ref={modalRef} className="relative">

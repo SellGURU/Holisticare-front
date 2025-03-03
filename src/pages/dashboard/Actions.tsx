@@ -46,10 +46,10 @@ const Actions: React.FC = () => {
               Actions Needed
             </h2>
             <Dropdown
-        options={options}
-        selectedOption={selectedOption}
-        onOptionSelect={setSelectedOption}
-      />
+              options={options}
+              selectedOption={selectedOption}
+              onOptionSelect={setSelectedOption}
+            />
           </div>
 
           <div className="w-full shadow-200 flex mt-3">

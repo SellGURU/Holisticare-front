@@ -19,8 +19,10 @@ type Task = {
 //   date: { from: Date | null; to: Date | null };
 // };
 
-interface TaskManagerProps {}
-const TaskManager: React.FC<TaskManagerProps> = () => {
+interface TaskManagerProps {
+  onAdd: () => void;
+}
+const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
   const [tasks, setTasks] = useState<Task[]>([
     {
       task_id: '1',
@@ -121,7 +123,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           </span>
         </div>
 
-        <ButtonPrimary size="small">
+        <ButtonPrimary onClick={onAdd} size="small">
           <img src="/icons/add.svg" alt="" />
           New task
         </ButtonPrimary>
