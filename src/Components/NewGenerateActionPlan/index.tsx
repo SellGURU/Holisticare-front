@@ -260,6 +260,8 @@ const NewGenerateActionPlan = () => {
                       <div className="grid gap-1 pt-5">
                         {selectedCategory.map((el: any, index: number) => (
                           <BioMarkerRowSuggestions
+                            onRemove={() => {}}
+                            setValues={() => {}}
                             key={index}
                             // changeData={(value) => {
                             //   setSelectedCategory((prev) => {

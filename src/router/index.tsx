@@ -23,6 +23,7 @@ import { GenerateRecommendation } from '../pages/generateRecommendation/index.ts
 import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
 // import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
 import GenerateActionPlan from '../Components/NewGenerateActionPlan/index2.tsx';
+import Checkin from '../pages/CheckIn/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -121,6 +122,10 @@ const router = createBrowserRouter([
   {
     path: '/forgetPassword',
     element: <ForgetPassword></ForgetPassword>,
+  },
+  {
+    path: '/checkin',
+    element: <Checkin></Checkin>,
   },
 ]);
 
