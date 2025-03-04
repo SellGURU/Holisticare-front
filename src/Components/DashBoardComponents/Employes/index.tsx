@@ -91,27 +91,32 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
         isOpen={showRemoveStaffModal}
         onClose={() => {
           setshowRemoveStaffModal(false);
-          setisConfirm(false)
+          setisConfirm(false);
         }}
       >
         {isConfirm ? (
           <div className="bg-white w-[293px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">
-            <div className=' w-full flex flex-col items-center gap-4 -mt-3'>
-            <img className='object-contain' src="/public/icons/EmptyState-bg.svg" alt="" />
-            <div className="text-xs font-medium text-center -mt-6">
-              {employee.user_name} has been successfully removed.
+            <div className=" w-full flex flex-col items-center gap-4 -mt-3">
+              <img
+                className="object-contain"
+                src="/public/icons/EmptyState-bg.svg"
+                alt=""
+              />
+              <div className="text-xs font-medium text-center -mt-6">
+                {employee.user_name} has been successfully removed.
+              </div>
+              <div className="w-full flex justify-center ">
+                <ButtonPrimary
+                  onClick={() => {
+                    setisConfirm(false);
+                    setshowRemoveStaffModal(false);
+                  }}
+                >
+                  {' '}
+                  <div className="w-[150px]">Got it</div>{' '}
+                </ButtonPrimary>
+              </div>
             </div>
-            <div className="w-full flex justify-center ">
-              <ButtonPrimary onClick={()=>{
-                setisConfirm(false)
-                setshowRemoveStaffModal(false)
-              }}>
-                {' '}
-                <div className="w-[150px]">Got it</div>{' '}
-              </ButtonPrimary>
-            </div>
-            </div>
-        
           </div>
         ) : (
           <div className="bg-white w-[500px] h-[212px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">

@@ -51,11 +51,10 @@ const mockCheckIns: CheckIn[] = [
     status: 'Reviewed',
   },
 ];
-interface RecentCheckInsProps{
-  onCheckIn: ()=>void
-
+interface RecentCheckInsProps {
+  onCheckIn: () => void;
 }
-const RecentCheckIns: React.FC<RecentCheckInsProps> = ({onCheckIn}) => {
+const RecentCheckIns: React.FC<RecentCheckInsProps> = ({ onCheckIn }) => {
   return (
     <div className="w-full h-[328px] bg-white rounded-2xl shadow-200 p-4">
       <div className=" overflow-y-scroll pb-3 h-[300px] pr-2 ">
@@ -97,11 +96,14 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = ({onCheckIn}) => {
                 <td className="py-2 text-Text-Secondary text-[10px]">
                   {checkIn.time}
                 </td>
-                <td onClick={()=>{
-                  if(checkIn.status !== 'Reviewed'){
-                    onCheckIn()
-                  }
-                }} className="py-2">
+                <td
+                  onClick={() => {
+                    if (checkIn.status !== 'Reviewed') {
+                      onCheckIn();
+                    }
+                  }}
+                  className="py-2"
+                >
                   <span
                     className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
                       checkIn.status === 'Review Now'
