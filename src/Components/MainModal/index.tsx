@@ -29,7 +29,7 @@ const MainModal: React.FC<MainModalProps> = ({ isOpen, onClose, children }) => {
       <div className="w-full h-screen flex justify-center fixed z-[120] top-0 left-0 items-center">
         <div
           ref={modalRefrence}
-          className="bg-[#FFFFFF66] min-w-[450px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
+          className="bg-[#FFFFFF66] min-w-[309px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
         >
           {children}
         </div>
