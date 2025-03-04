@@ -3,14 +3,16 @@ import { useState } from 'react';
 interface RangeCardProps {
   question: string;
   value: number;
-  index?:number
+  index?: number;
 }
-const RangeCard: React.FC<RangeCardProps> = ({ question, value ,index}) => {
+const RangeCard: React.FC<RangeCardProps> = ({ question, value, index }) => {
   const [val, setVal] = useState(value);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">{index}. {question}</div>
+        <div className="text-[12px] text-Text-Primary">
+          {index}. {question}
+        </div>
         <div className="w-full mt-4 px-3">
           <input
             type="range"

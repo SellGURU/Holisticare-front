@@ -18,43 +18,58 @@ const Checkin = () => {
       type: 'text',
       question: 'What snacks did you take today?',
       value: '',
-      placeHolder:"Write the snacks you took ..."
-
-    },   
+      placeHolder: 'Write the snacks you took ...',
+    },
     {
       type: 'rate',
       question: 'Rate your workout.',
       value: '4.5',
-
-    },        
+    },
   ]);
 
-  const resolveQuestionCard = (item: any,index:number) => {
+  const resolveQuestionCard = (item: any, index: number) => {
     switch (item.type) {
       case 'yes/no':
         return (
-          <YesNoCard index={index} question={item.question} value={item.value}></YesNoCard>
+          <YesNoCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></YesNoCard>
         );
       case 'range':
         return (
-          <RangeCard index={index}  question={item.question} value={item.value}></RangeCard>
+          <RangeCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></RangeCard>
         );
 
       case 'text':
         return (
-          <TextCard index={index}  placeHolder={item.placeHolder} question={item.question} value={item.value}></TextCard>
-        );   
+          <TextCard
+            index={index}
+            placeHolder={item.placeHolder}
+            question={item.question}
+            value={item.value}
+          ></TextCard>
+        );
       case 'rate':
         return (
-          <RateCard index={index} question={item.question} value={item.value}></RateCard>
-        );                 
+          <RateCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></RateCard>
+        );
     }
   };
   return (
     <>
       <div className=" px-6 py-4 grid gap-3">
-        {chekinData.map((el: any,index:number) => {
-          return <>{resolveQuestionCard(el,index+1)}</>;
+        {chekinData.map((el: any, index: number) => {
+          return <>{resolveQuestionCard(el, index + 1)}</>;
         })}
       </div>
     </>
