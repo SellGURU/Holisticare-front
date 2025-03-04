@@ -6,12 +6,14 @@ interface DatePickerProps {
   date: Date | null;
   setDate: (date: Date | null) => void;
   placeholder: string;
+  isLarge?: boolean;
 }
 
 export default function SimpleDatePicker({
   date,
   setDate,
   placeholder,
+  isLarge,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -47,14 +49,15 @@ export default function SimpleDatePicker({
     <div className="relative inline-block" ref={calendarRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-[110px] xs:w-[145px] sm:w-[133px] rounded-md px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary"
+        className={`w-[110px] xs:w-[145px] ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
+         px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary`}
       >
         {date ? `${placeholder} ${date.toLocaleDateString()}` : placeholder}
         <img src="/icons/calendar-3.svg" alt="Calendar" />
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 right-0 z-50">
+        <div className="absolute top-full mt-2 right-0 z-50 ">
           <Calendar
             value={selectedDay}
             onChange={(newDate) => {

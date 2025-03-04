@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
+import { Dropdown } from '../../Components/DropDown';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
@@ -30,7 +31,8 @@ const Actions: React.FC = () => {
   const filteredActions = mockActions.filter((action) =>
     filter === 'All' ? true : action.status === filter,
   );
-
+  const [selectedOption, setSelectedOption] = useState('Week');
+  const options = ['Day', 'Week', 'Month'];
   return (
     <>
       {isLoading ? (
@@ -43,9 +45,11 @@ const Actions: React.FC = () => {
             <h2 className="text-sm text-Text-Primary font-medium">
               Actions Needed
             </h2>
-            <div className="rounded-xl py-1 px-2 bg-backgroundColor-Main border border-Gray-50 text-Primary-DeepTeal text-[10px] flex items-center gap-2">
-              Week <img src="/icons/arrow-down-green.svg" alt="" />
-            </div>
+            <Dropdown
+              options={options}
+              selectedOption={selectedOption}
+              onOptionSelect={setSelectedOption}
+            />
           </div>
 
           <div className="w-full shadow-200 flex mt-3">
