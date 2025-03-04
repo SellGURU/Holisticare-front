@@ -301,8 +301,28 @@ input[type='number'] {
   background: var(--sb-thumb-color);
   border-radius: 8px;
 }
+
+.sliderCheckin::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 10px;
+  background-color: #6cc24a;
+  overflow: visible;
+  cursor: pointer;
+}
 .react-datepicker {
   left: 14px;
+}
+.Calendar {
+  font-size: 8px !important;
+  height: 242px;
+  min-height: 176px !important;
+
+  max-width: 222px !important;
+}
+.Calendar__monthYear > * {
+  font-size: 12px !important;
 }
 .bullet-point::before {
   content: '•'; /* Unicode for bullet character */
