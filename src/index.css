@@ -304,14 +304,14 @@ input[type='number'] {
 .react-datepicker {
   left: 14px;
 }
-.Calendar{
+.Calendar {
   font-size: 8px !important;
   height: 242px;
   min-height: 176px !important;
 
   max-width: 222px !important;
 }
-.Calendar__monthYear > *{
+.Calendar__monthYear > * {
   font-size: 12px !important;
 }
 .bullet-point::before {
