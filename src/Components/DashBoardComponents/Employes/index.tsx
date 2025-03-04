@@ -246,7 +246,9 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
                   <th className="py-2 w-[40px] text-center ">Gender</th>
                   <th className="py-2 w-[80px] text-center ">Enroll Date</th>
                   <th className="py-2 w-[80px] text-center">Assign Date</th>
-                  <th className="py-2 w-[70px] text-center rounded-tr-2xl">Status</th>
+                  <th className="py-2 w-[70px] text-center rounded-tr-2xl">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="border border-t-0 border-[#E9F0F2] w-full">
@@ -317,7 +319,12 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
               </tbody>
             </table>
           </div>
-          <div onClick={()=>setshowAssignListModal(false)} className='w-full text-end mt-10 text-sm font-medium text-[#909090] cursor-pointer'>close</div>
+          <div
+            onClick={() => setshowAssignListModal(false)}
+            className="w-full text-end mt-10 text-sm font-medium text-[#909090] cursor-pointer"
+          >
+            close
+          </div>
         </div>
       </MainModal>
       <li key={index} className=" relative flex items-center justify-between">
