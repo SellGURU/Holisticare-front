@@ -6,6 +6,7 @@ import SearchBox from '../SearchBox';
 import Toggle from '../Toggle';
 import CheckInModalContent from './components/CheckInModalContent';
 import SvgIcon from '../../utils/svgIcon';
+import TableNoPaginateForForms from './components/TableNoPaginate';
 
 interface FormsProps {
   active: string;
@@ -14,6 +15,8 @@ interface FormsProps {
   setShowModal: (value: boolean) => void;
   checkInList: Array<any>;
   setCheckInList: (value: any) => void;
+  checkInLists: Array<any>;
+  setCheckInLists: (value: any) => void;
 }
 
 const FormsComponents: FC<FormsProps> = ({
@@ -23,7 +26,10 @@ const FormsComponents: FC<FormsProps> = ({
   setShowModal,
   checkInList,
   setCheckInList,
+  checkInLists,
+  setCheckInLists,
 }) => {
+  console.log('checkInLists => ', checkInLists);
   return (
     <>
       <div className="px-6 pt-8">
@@ -44,23 +50,51 @@ const FormsComponents: FC<FormsProps> = ({
             setActive={setActive}
             value={['Check-In', 'Questionary']}
           />
-          <img
-            src="/icons/plant-device-floor.svg"
-            alt="plant-device-floor"
-            width="284.53px"
-            height="190px"
-            className="mt-16"
-          />
-          <div className="text-Text-Primary text-base font-medium mt-9">
-            No check-in form existed yet.
-          </div>
-          <ButtonSecondary
-            ClassName="rounded-[20px] w-[229px] mt-9"
-            onClick={() => setShowModal(true)}
-          >
-            <SvgIcon src="/icons/firstline.svg" color="#FFF" />
-            Create New
-          </ButtonSecondary>
+          {checkInLists.length > 0 ? (
+            <div className="flex flex-col w-full mt-4">
+              <div className="w-full flex items-center justify-between mb-3">
+                <div className="text-Text-Primary font-medium text-sm">
+                  Check-In Forms
+                </div>
+                <ButtonSecondary
+                  ClassName="rounded-[20px] w-[152px]"
+                  onClick={() => {
+                    if (active === 'Check-In') {
+                      setShowModal(true);
+                    }
+                  }}
+                >
+                  <SvgIcon src="/icons/firstline.svg" color="#FFF" />
+                  Create New
+                </ButtonSecondary>
+              </div>
+              <TableNoPaginateForForms classData={checkInLists} />
+            </div>
+          ) : (
+            <>
+              <img
+                src="/icons/plant-device-floor.svg"
+                alt="plant-device-floor"
+                width="284.53px"
+                height="190px"
+                className="mt-16"
+              />
+              <div className="text-Text-Primary text-base font-medium mt-9">
+                No check-in form existed yet.
+              </div>
+              <ButtonSecondary
+                ClassName="rounded-[20px] w-[229px] mt-9"
+                onClick={() => {
+                  if (active === 'Check-In') {
+                    setShowModal(true);
+                  }
+                }}
+              >
+                <SvgIcon src="/icons/firstline.svg" color="#FFF" />
+                Create New
+              </ButtonSecondary>
+            </>
+          )}
         </div>
       </div>
       <MainModal
@@ -73,6 +107,7 @@ const FormsComponents: FC<FormsProps> = ({
           setShowModal={setShowModal}
           checkInList={checkInList}
           setCheckInList={setCheckInList}
+          setCheckInLists={setCheckInLists}
         />
       </MainModal>
     </>

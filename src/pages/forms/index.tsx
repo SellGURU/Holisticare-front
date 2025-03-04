@@ -5,7 +5,8 @@ import FormsComponents from '../../Components/Forms';
 const Forms = () => {
   const [active, setActive] = useState<string>('Check-In');
   const [showModal, setShowModal] = useState(false);
-  const [checkInList, setCheckInList] = useState<Array<any>>([]);
+  const [checkInListModal, setCheckInListModal] = useState<Array<any>>([]);
+  const [checkInLists, setCheckInLists] = useState<Array<any>>([]);
   return (
     <>
       <FormsComponents
@@ -13,8 +14,10 @@ const Forms = () => {
         setActive={setActive}
         showModal={showModal}
         setShowModal={setShowModal}
-        checkInList={checkInList}
-        setCheckInList={setCheckInList}
+        checkInList={checkInListModal}
+        setCheckInList={setCheckInListModal}
+        checkInLists={checkInLists}
+        setCheckInLists={setCheckInLists}
       />
     </>
   );

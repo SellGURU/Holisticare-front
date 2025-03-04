@@ -3,17 +3,20 @@ import { FC, useState } from 'react';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import TextField from '../../TextField';
 import AddQuestionCheckIn from './AddQuestionCheckIn';
+import ItemInListModal from './ItemInListModal';
 
 interface CheckInModalContentProps {
   setShowModal: (value: boolean) => void;
   checkInList: Array<any>;
   setCheckInList: (value: any) => void;
+  setCheckInLists: (value: any) => void;
 }
 
 const CheckInModalContent: FC<CheckInModalContentProps> = ({
   setShowModal,
   checkInList,
   setCheckInList,
+  setCheckInLists,
 }) => {
   console.log('checkInList => ', checkInList);
   const [addMode, setAddMode] = useState<boolean>(false);
@@ -28,6 +31,7 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
   const [editTitle, setEditTitle] = useState('');
   const [editItemSelected, setEditItemSelected] = useState('');
   const [editCheckboxChecked, setEditCheckboxChecked] = useState(false);
+  const [mainTitle, setMainTitle] = useState('');
 
   const handleEdit = (index: number) => {
     setEditIndex(index);
@@ -52,6 +56,8 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
               name="formtitle"
               label="Form Title"
               placeholder="Enter community name..."
+              value={mainTitle}
+              onChange={(e) => setMainTitle(e.target.value)}
             />
           </div>
           <div className="w-full text-xs text-Text-Primary font-medium mt-6">
@@ -67,71 +73,15 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
                 <div className="flex flex-col items-center justify-center gap-1 w-full">
                   {checkInList?.map((item: any, index: number) => {
                     return (
-                      <div
+                      <ItemInListModal
                         key={index}
-                        className="flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border border-Gray-50"
-                      >
-                        <div className="text-Text-Quadruple text-[10px] w-[60%]">
-                          {String(index + 1).padStart(2, '0')}
-                          {'  '}
-                          {item.title}
-                        </div>
-                        <div className="flex items-center justify-between w-[40%]">
-                          <div className="text-Orange text-[8px] flex items-center justify-center w-[41%]">
-                            {item.required ? (
-                              <img
-                                src="./icons/danger-new.svg"
-                                alt=""
-                                className="w-[12px] h-[12px] mr-1"
-                              />
-                            ) : (
-                              ''
-                            )}
-                            {item.required ? 'Required' : ''}
-                          </div>
-                          <div className="text-Text-Quadruple text-[10px] w-[30%] flex items-center justify-center text-nowrap">
-                            {item.type}
-                          </div>
-                          <div
-                            className={`flex items-center justify-end ${sureRemoveIndex === index ? 'w-[35%]' : 'w-[24%]'}`}
-                          >
-                            {sureRemoveIndex === index ? (
-                              <div className="flex items-center justify-center gap-1">
-                                <div className="text-Text-Quadruple text-xs">
-                                  Sure?
-                                </div>
-                                <img
-                                  src="/icons/tick-circle-green.svg"
-                                  alt=""
-                                  className="w-[20px] h-[20px] cursor-pointer"
-                                  onClick={() => handleRemove(index)}
-                                />
-                                <img
-                                  src="/icons/close-circle-red.svg"
-                                  alt=""
-                                  className="w-[20px] h-[20px] cursor-pointer"
-                                  onClick={() => setSureRemoveIndex(null)}
-                                />
-                              </div>
-                            ) : (
-                              <>
-                                <img
-                                  src="./icons/edit-blue.svg"
-                                  alt=""
-                                  className="w-[16px] h-[16px] cursor-pointer"
-                                  onClick={() => handleEdit(index)}
-                                />
-                                <img
-                                  src="./icons/trash-blue.svg"
-                                  alt=""
-                                  className="w-[16px] h-[16px] ml-2 cursor-pointer"
-                                  onClick={() => setSureRemoveIndex(index)}
-                                />
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                        index={index}
+                        handleEdit={handleEdit}
+                        handleRemove={handleRemove}
+                        item={item}
+                        setSureRemoveIndex={setSureRemoveIndex}
+                        sureRemoveIndex={sureRemoveIndex}
+                      />
                     );
                   })}
                 </div>
@@ -205,7 +155,25 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
           >
             Cancel
           </div>
-          <div className="text-Primary-DeepTeal text-sm font-medium">Save</div>
+          <div
+            className={`${mainTitle && checkInList.length > 0 ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+            onClick={() => {
+              setCheckInLists((prev: any) => [
+                ...prev,
+                {
+                  item: checkInList,
+                  title: mainTitle,
+                  questions: checkInList.length,
+                  no: prev.length + 1,
+                },
+              ]);
+              setShowModal(false);
+              setAddMode(false);
+              setCheckInList([]);
+            }}
+          >
+            Save
+          </div>
         </div>
       </div>
     </>
