@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import { AlertModal } from '../../AlertModal';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import ActionEditModal from './ActionEditModal';
+import BasedOnModal from './BasedOnModal';
 
 interface StadioProps {
   data: Array<any>;
@@ -90,6 +91,8 @@ const Stadio: React.FC<StadioProps> = ({
       el.Recommendation.toLowerCase().includes(searchValue.toLowerCase()),
   );
   const [showAddModal, setshowAddModal] = useState(false);
+  const [showBasedOn, setShowBasedOn] = useState(false);
+  const [valueBasedOn, setValueBasedOn] = useState([]);
 
   return (
     <>
@@ -237,6 +240,8 @@ const Stadio: React.FC<StadioProps> = ({
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
+                          setShowBasedOn={setShowBasedOn}
+                          setValueBasedOn={setValueBasedOn}
                         />
                       </>
                     );
@@ -247,6 +252,11 @@ const Stadio: React.FC<StadioProps> = ({
           </div>
         </div>
       </div>
+      <BasedOnModal
+        value={valueBasedOn}
+        setShowModal={setShowBasedOn}
+        showModal={showBasedOn}
+      />
     </>
   );
 };
