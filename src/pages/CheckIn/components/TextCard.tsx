@@ -1,9 +1,5 @@
-const TextCard =() => {
-    return (
-        <>
-        
-        </>
-    )
-}
+const TextCard = () => {
+  return <></>;
+};
 
-export default TextCard
+export default TextCard;
