@@ -41,10 +41,32 @@ const DashBoard = () => {
   const [Priority, setPriority] = useState('High');
 
   // End Add Task Section
-  const [showCheckInModal, setshowCheckInModal] = useState(false);
+  const [showCheckInCommentModal, setshowCheckICommentnModal] = useState(false);
   const [checkInComment, setCheckInComment] = useState('');
   console.log(checkInComment);
 
+  const [showcheckInModal, setCheckInModal] = useState(false);
+  const [isStickMealPlan, setisStickMealPlan] = useState(true);
+  const [hoursSlept, setHoursSlept] = useState<number>(0);
+
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setHoursSlept(Number(event.target.value));
+  };
+  const sliderBackground = {
+    background: `linear-gradient(to right, #6CC24A ${hoursSlept * 10}%, #e5e7eb ${hoursSlept * 10}%)`,
+  };
+  const feelings = [
+    { emoji: '/images/emoji/angry-emoji.svg', text: 'Angry' },
+    { emoji: '/images/emoji/sad-emoji.svg', text: 'Sad' },
+    { emoji: '/images/emoji/poker-emoji.svg', text: 'Neutral' },
+    { emoji: '/images/emoji/smile-emoji.svg', text: 'Happy' },
+    { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
+  ];
+  const [selectedFeeling, setSelectedFeeling] = useState<number | null>(2); // Default to Neutral
+
+  const handleFeelingClick = (index: number) => {
+    setSelectedFeeling(index);
+  };
   return (
     <>
       {/* Add Task Modal */}
@@ -153,13 +175,13 @@ const DashBoard = () => {
           </div>
         </div>
       </MainModal>
-      {/* Check-In Modal */}
+      {/* Check-In Comment Modal */}
       <MainModal
-        isOpen={showCheckInModal}
-        onClose={() => setshowCheckInModal(false)}
+        isOpen={showCheckInCommentModal}
+        onClose={() => setshowCheckICommentnModal(false)}
       >
         <div className="w-[500px] h-[324px] rounded-2xl p-6 pb-8 bg-white shadow-800 text-Text-Primary relative">
-          <div className="flex items-center w-full text-sm font-medium border-b border-Gray-50  ">
+          <div className="flex items-center pb-2 w-full text-sm font-medium border-b border-Gray-50  ">
             Check-In Review
           </div>
           <div className="mt-4 w-full">
@@ -180,7 +202,7 @@ const DashBoard = () => {
             <div
               onClick={() => {
                 setCheckInComment('');
-                setshowCheckInModal(false);
+                setshowCheckICommentnModal(false);
               }}
               className="text-sm font-medium text-[#909090] cursor-pointer"
             >
@@ -189,12 +211,99 @@ const DashBoard = () => {
             <div
               onClick={() => {
                 setCheckInComment('');
-                setshowCheckInModal(false);
+                setshowCheckICommentnModal(false);
               }}
               className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
             >
               Save
             </div>
+          </div>
+        </div>
+      </MainModal>
+
+      {/* Check in Modal */}
+      <MainModal
+        isOpen={showcheckInModal}
+        onClose={() => {
+          setshowCheckICommentnModal(true);
+          setCheckInModal(false);
+        }}
+      >
+        <div className="bg-white min-w-[500px] w-full h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
+          <div className="w-full flex items-center gap-2 border-b borderz-Gray-50 pb-2 text-sm font-medium">
+            <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]"></div>
+            David Smith
+          </div>
+          <div className="mt-4 w-full flex justify-between items-center text-xs font-medium">
+            Daily Check-In
+            <div className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer">
+              <img src="/icons/3square.svg" alt="" />
+              Compare
+            </div>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 h-[370px] overflow-auto">
+            <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
+              <div className="text-[10px]">
+                1.Did you stick to the Meal Plan?
+              </div>
+              <div className="mt-3 w-[96px] h-8 border border-Gray-50 flex text-[10px] ">
+                <div
+                  onClick={() => setisStickMealPlan(true)}
+                  className={` ${isStickMealPlan ? 'text-white bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]' : ''}  cursor-pointer flex justify-center items-center w-[50%]`}
+                >
+                  Yes
+                </div>
+                <div
+                  onClick={() => setisStickMealPlan(false)}
+                  className={` ${!isStickMealPlan ? 'text-white bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]' : ''} cursor-pointer flex justify-center items-center w-[50%]`}
+                >
+                  No
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
+              <div className="text-[10px] mb-4">
+                2.How many hours did you sleep yesterday?
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                value={hoursSlept}
+                onChange={handleSliderChange}
+                style={sliderBackground}
+                className="w-full appearance-none bg-[#E9EDF5] rounded-full h-[2px] slider-thumb-green"
+              />
+              <div className="flex justify-between mt-2 text-[10px] text-[#888888]">
+                {Array.from({ length: 11 }, (_, i) => (
+                  <span key={i}>{i === 10 ? '>10' : i}</span>
+                ))}
+              </div>
+            </div>
+            <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
+              <div className="text-[10px]">3.How are you feeling today?</div>
+              <div className="bg-white rounded-[20px] p-4 pb-2 drop-shadow mt-3 overflow-x-hidden relative">
+              <img className='absolute  inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]' src="/images/Union.svg" alt="" />
+              <div className="flex items-center justify-between overflow-auto  relative">
+              
+                {feelings.map((feeling, index) => (
+                  <div
+                    key={index}
+                    className={`flex flex-col items-center cursor-pointer ${selectedFeeling === index ? '' : ''}`}
+                    onClick={() => handleFeelingClick(index)}
+                  >
+                    <img src={feeling.emoji} alt="" />
+                    
+                      <span className={`mt-2 text-sm font-medium text-Primary-DeepTeal ${selectedFeeling === index  ? 'block' : 'invisible'}`}>
+                        {feeling.text}
+                      </span>
+                  
+                  </div>
+                ))}
+              </div>
+            </div>
+            </div>
+            
           </div>
         </div>
       </MainModal>
@@ -206,7 +315,7 @@ const DashBoard = () => {
           <div className="col-span-2 grid gap-4">
             <RecentCheckIns
               onCheckIn={() => {
-                setshowCheckInModal(true);
+                setCheckInModal(true);
               }}
             ></RecentCheckIns>
             {/* <Reminder></Reminder> */}
