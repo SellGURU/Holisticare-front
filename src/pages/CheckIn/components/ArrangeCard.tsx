@@ -40,7 +40,7 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
           {index}. {question}
         </div>
         <div className="w-full flex justify-center items-center">
-          <div className="flex w-min px-2  mt-4 border border-gray-50 h-10 rounded-[12px] justify-center items-center">
+          <div className="flex min-w-[412px] w-min  px-2  mt-4 border border-Gray-50 h-10 rounded-[12px] justify-between items-center">
             {Array.from({
               length: 9,
             }).map((_, ind) => {

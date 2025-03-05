@@ -14,6 +14,8 @@ import { MainModal } from '../../Components';
 import TextField from '../../Components/TextField';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import UploadCard from '../CheckIn/components/UploadCard';
+import { ArrangeCard, TextCard } from '../CheckIn/components';
 
 const DashBoard = () => {
   // const [reports, setreports] = useState()
@@ -67,6 +69,9 @@ const DashBoard = () => {
   const handleFeelingClick = (index: number) => {
     setSelectedFeeling(index);
   };
+  const [val, setVal] = useState<number>(55);
+const [snackValue,] = useState('')
+const [workHours] = useState('')
   return (
     <>
       {/* Add Task Modal */}
@@ -283,27 +288,60 @@ const DashBoard = () => {
             <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
               <div className="text-[10px]">3.How are you feeling today?</div>
               <div className="bg-white rounded-[20px] p-4 pb-2 drop-shadow mt-3 overflow-x-hidden relative">
-              <img className='absolute  inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]' src="/images/Union.svg" alt="" />
-              <div className="flex items-center justify-between overflow-auto  relative">
-              
-                {feelings.map((feeling, index) => (
-                  <div
-                    key={index}
-                    className={`flex flex-col items-center cursor-pointer ${selectedFeeling === index ? '' : ''}`}
-                    onClick={() => handleFeelingClick(index)}
-                  >
-                    <img src={feeling.emoji} alt="" />
-                    
-                      <span className={`mt-2 text-sm font-medium text-Primary-DeepTeal ${selectedFeeling === index  ? 'block' : 'invisible'}`}>
+                <img
+                  className="absolute  inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]"
+                  src="/images/Union.svg"
+                  alt=""
+                />
+                <div className="flex items-center justify-between overflow-auto  relative">
+                  {feelings.map((feeling, index) => (
+                    <div
+                      key={index}
+                      className={`flex flex-col items-center cursor-pointer ${selectedFeeling === index ? '' : ''}`}
+                      onClick={() => handleFeelingClick(index)}
+                    >
+                      <img src={feeling.emoji} alt="" />
+
+                      <span
+                        className={`mt-2 text-sm font-medium text-Primary-DeepTeal ${selectedFeeling === index ? 'block' : 'invisible'}`}
+                      >
                         {feeling.text}
                       </span>
-                  
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
+                <div className="text-[12px] text-Text-Primary">4.Rate your workout.</div>
+                <div className="flex justify-center gap-2 items-center mt-4">
+                  {Array.from({ length: 5 }).map((_, ind) => {
+                    return (
+                      <img
+                        onClick={() => {
+                          setVal(ind + 1);
+                        }}
+                        className="cursor-pointer"
+                        src={
+                          ind + 1 <= Number(val)
+                            ? './icons/starFull.svg'
+                            : './icons/starEmpty.svg'
+                        }
+                        alt=""
+                      />
+                    );
+                  })}
+                  {/* <img src="./icons/starEmpty.svg" alt="" />
+            <img src="./icons/starEmpty.svg" alt="" />
+            <img src="./icons/starEmpty.svg" alt="" />
+            <img src="./icons/starEmpty.svg" alt="" /> */}
+                </div>
+             
             </div>
-            
+            <UploadCard index={5} question='Upload your progress pictures'></UploadCard>
+            <TextCard index={6} question='What snacks did you take today?' placeHolder='Chips, Juice, ...' value={snackValue}></TextCard>
+            <ArrangeCard index={7} question='Weight' value={60}></ArrangeCard>
+            <TextCard index={8} question='How many hours did you work today?(Dropdown sample)' placeHolder='8 hours' value={workHours}></TextCard>
           </div>
         </div>
       </MainModal>

@@ -3,7 +3,7 @@ import ItemUpload from './ItemUpload';
 
 interface UploadCardProps {
   question: string;
-  value: number;
+  value?: number;
   index?: number;
 }
 
@@ -15,11 +15,11 @@ const UploadCard: React.FC<UploadCardProps> = ({ index, question }) => {
         <div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>
-        <div className="w-full bg-white rounded-[8px] p-2">
+        <div className="w-full bg-white rounded-[8px] p-2 mt-4">
           <div className="flex justify-between">
             <div className="text-[12px] text-[#B0B0B0]">Jan 27, 2024</div>
           </div>
-          <div className="w-full gap-4 flex justify-center items-center">
+          <div className="w-full gap-4 flex justify-center items-center mt-2">
             <ItemUpload name="Frontal"></ItemUpload>
             <ItemUpload name="Back"></ItemUpload>
             <ItemUpload name="Side"></ItemUpload>
