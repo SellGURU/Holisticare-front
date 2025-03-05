@@ -4,4 +4,4 @@ import TextCard from './TextCard';
 import YesNoCard from './YesNoCard';
 import RateCard from './RateCard';
 
-export { ArrangeCard,RangeCard, TextCard, YesNoCard, RateCard };
+export { ArrangeCard, RangeCard, TextCard, YesNoCard, RateCard };
