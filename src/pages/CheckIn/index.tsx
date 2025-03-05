@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { RangeCard, RateCard, TextCard, YesNoCard } from './components';
+import {
+  ArrangeCard,
+  RangeCard,
+  RateCard,
+  TextCard,
+  YesNoCard,
+} from './components';
+import UploadCard from './components/UploadCard';
 
 const Checkin = () => {
   const [chekinData] = useState([
@@ -24,6 +31,16 @@ const Checkin = () => {
       type: 'rate',
       question: 'Rate your workout.',
       value: '4.5',
+    },
+    {
+      type: 'arrange',
+      question: 'Weight',
+      value: '60',
+    },
+    {
+      type: 'upload',
+      question: 'Upload your progress pictures.',
+      value: '60',
     },
   ]);
 
@@ -63,11 +80,27 @@ const Checkin = () => {
             value={item.value}
           ></RateCard>
         );
+      case 'arrange':
+        return (
+          <ArrangeCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></ArrangeCard>
+        );
+      case 'upload':
+        return (
+          <UploadCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></UploadCard>
+        );
     }
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3">
+      <div className=" px-6 py-4 grid gap-3 h-screen overflow-y-auto pb-4">
         {chekinData.map((el: any, index: number) => {
           return <>{resolveQuestionCard(el, index + 1)}</>;
         })}
