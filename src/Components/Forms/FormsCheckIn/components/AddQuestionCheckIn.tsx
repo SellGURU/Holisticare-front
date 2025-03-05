@@ -37,6 +37,8 @@ interface AddQuestionCheckInProps {
   setEditItemSelected: (value: string) => void;
   editCheckboxChecked: boolean;
   setEditCheckboxChecked: (value: boolean) => void;
+  editCheckboxOptions: string[];
+  editMultipleChoiceOptions: string[];
 }
 
 const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
@@ -50,21 +52,65 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
   setEditItemSelected,
   setEditTitle,
   setEditIndex,
+  editCheckboxOptions,
+  editMultipleChoiceOptions,
 }) => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [itemSelected, setItemSelected] = useState('');
   const [title, setTitle] = useState('');
+  const [checkboxOptions, setCheckboxOptions] = useState(['', '']);
+  const addOption = () => {
+    setCheckboxOptions([...checkboxOptions, '']);
+  };
+  const handleOptionChange = (index: number, value: string) => {
+    const newOptions = [...checkboxOptions];
+    newOptions[index] = value;
+    setCheckboxOptions(newOptions);
+  };
+  const [multipleChoiceOptions, setMultipleChoiceOptions] = useState(['', '']);
+  const addChoiceOption = () => {
+    setMultipleChoiceOptions([...multipleChoiceOptions, '']);
+  };
+  const handleChoiceOptionChange = (index: number, value: string) => {
+    const newOptions = [...multipleChoiceOptions];
+    newOptions[index] = value;
+    setMultipleChoiceOptions(newOptions);
+  };
   const addToCheckInList = () => {
     if (!title.trim() || !itemSelected.trim()) return;
 
-    setCheckInList((prevList: any) => [
-      {
-        title,
-        type: itemSelected,
-        required: checkboxChecked,
-      },
-      ...prevList,
-    ]);
+    if (itemSelected === 'Checkboxes') {
+      setCheckInList((prevList: any) => [
+        {
+          title,
+          type: itemSelected,
+          required: checkboxChecked,
+          options: checkboxOptions,
+        },
+        ...prevList,
+      ]);
+    }
+    if (itemSelected === 'Multiple choice') {
+      setCheckInList((prevList: any) => [
+        {
+          title,
+          type: itemSelected,
+          required: checkboxChecked,
+          options: multipleChoiceOptions,
+        },
+        ...prevList,
+      ]);
+    }
+    if (itemSelected !== 'Checkboxes' && itemSelected !== 'Multiple choice') {
+      setCheckInList((prevList: any) => [
+        {
+          title,
+          type: itemSelected,
+          required: checkboxChecked,
+        },
+        ...prevList,
+      ]);
+    }
 
     setTitle('');
     setItemSelected('');
@@ -76,6 +122,8 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
       setCheckboxChecked(editCheckboxChecked);
       setItemSelected(editItemSelected);
       setTitle(editTitle);
+      setCheckboxOptions(editCheckboxOptions);
+      setMultipleChoiceOptions(editMultipleChoiceOptions);
     } else {
       setEditCheckboxChecked(checkboxChecked);
       setEditItemSelected(itemSelected);
@@ -84,18 +132,50 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
   }, [editIndex, editCheckboxChecked, editItemSelected, editTitle]);
 
   const handleSaveEdit = (index: number) => {
-    setCheckInList((prevList: any) =>
-      prevList.map((item: any, i: number) =>
-        i === index
-          ? {
-              ...item,
-              title: title,
-              type: itemSelected,
-              required: checkboxChecked,
-            }
-          : item,
-      ),
-    );
+    if (itemSelected === 'Checkboxes') {
+      setCheckInList((prevList: any) =>
+        prevList.map((item: any, i: number) =>
+          i === index
+            ? {
+                ...item,
+                title: title,
+                type: itemSelected,
+                required: checkboxChecked,
+                options: checkboxOptions,
+              }
+            : item,
+        ),
+      );
+    }
+    if (itemSelected === 'Multiple choice') {
+      setCheckInList((prevList: any) =>
+        prevList.map((item: any, i: number) =>
+          i === index
+            ? {
+                ...item,
+                title: title,
+                type: itemSelected,
+                required: checkboxChecked,
+                options: multipleChoiceOptions,
+              }
+            : item,
+        ),
+      );
+    }
+    if (itemSelected !== 'Checkboxes' && itemSelected !== 'Multiple choice') {
+      setCheckInList((prevList: any) =>
+        prevList.map((item: any, i: number) =>
+          i === index
+            ? {
+                ...item,
+                title: title,
+                type: itemSelected,
+                required: checkboxChecked,
+              }
+            : item,
+        ),
+      );
+    }
     setEditIndex(null);
     setAddMode(false);
   };
@@ -151,11 +231,11 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
           onChange={(e) => setTitle(e.target.value)}
         />
         <label
-          htmlFor="terms"
+          htmlFor="required"
           className="flex items-center space-x-1 cursor-pointer mt-1.5"
         >
           <input
-            id="terms"
+            id="required"
             type="checkbox"
             checked={checkboxChecked}
             onChange={() => setCheckboxChecked(!checkboxChecked)}
@@ -217,16 +297,18 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
           );
         })}
         <div
-          className={`flex items-center justify-start w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Checkboxes' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
-          onClick={() => {
-            if (!itemSelected) {
-              setItemSelected('Checkboxes');
-            } else {
-              setItemSelected('');
-            }
-          }}
+          className={`flex w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Checkboxes' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
         >
-          <div className="cursor-pointer flex items-center">
+          <div
+            className="cursor-pointer flex items-start w-[35%]"
+            onClick={() => {
+              if (itemSelected === 'Checkboxes') {
+                setItemSelected('');
+              } else {
+                setItemSelected('Checkboxes');
+              }
+            }}
+          >
             <div className="w-8 h-6 rounded-lg bg-Primary-DeepTeal flex items-center justify-center bg-opacity-10">
               <img src="/icons/task-square.svg" alt="" />
             </div>
@@ -239,18 +321,53 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
               </div>
             </div>
           </div>
+          <div className="flex items-start w-[65%]">
+            <div className="flex flex-wrap gap-1 w-full">
+              {checkboxOptions.map((option, index) => {
+                return (
+                  <div
+                    className="flex items-center justify-center gap-1"
+                    key={index}
+                  >
+                    <div className="w-3 h-3 rounded-[2px] border border-Primary-DeepTeal"></div>
+                    <input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        handleOptionChange(index, e.target.value)
+                      }
+                      className="bg-backgroundColor-Card border border-Gray-50 rounded-2xl py-1 px-2 text-[8px] w-[130px]"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <div
+              className="text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap cursor-pointer ml-1 mt-1"
+              onClick={addOption}
+            >
+              <img
+                src="/icons/add-blue.svg"
+                alt=""
+                className="w-4 h-4 mr-[1px]"
+              />{' '}
+              Add New
+            </div>
+          </div>
         </div>
         <div
-          className={`flex items-center justify-start w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Multiple choice' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
-          onClick={() => {
-            if (!itemSelected) {
-              setItemSelected('Multiple choice');
-            } else {
-              setItemSelected('');
-            }
-          }}
+          className={`flex w-[99.5%] rounded-xl px-3 py-1.5 border ${itemSelected === 'Multiple choice' ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'}`}
         >
-          <div className="cursor-pointer flex items-center">
+          <div
+            className="cursor-pointer flex items-start w-[35%]"
+            onClick={() => {
+              if (itemSelected === 'Multiple choice') {
+                setItemSelected('');
+              } else {
+                setItemSelected('Multiple choice');
+              }
+            }}
+          >
             <div className="w-8 h-6 rounded-lg bg-Primary-DeepTeal flex items-center justify-center bg-opacity-10">
               <img src="/icons/subtitle.svg" alt="" />
             </div>
@@ -261,6 +378,39 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
               <div className="text-Text-Fivefold text-[8px] font-normal">
                 Choose from Multiple choice
               </div>
+            </div>
+          </div>
+          <div className="flex items-start w-[65%]">
+            <div className="flex flex-wrap gap-1 w-full">
+              {multipleChoiceOptions.map((option, index) => {
+                return (
+                  <div
+                    className="flex items-center justify-center gap-1"
+                    key={index}
+                  >
+                    <div className="w-3 h-3 rounded-[8px] border border-Primary-DeepTeal"></div>
+                    <input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        handleChoiceOptionChange(index, e.target.value)
+                      }
+                      className="bg-backgroundColor-Card border border-Gray-50 rounded-2xl py-1 px-2 text-[8px] w-[130px]"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <div
+              className="text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap cursor-pointer ml-1 mt-1"
+              onClick={addChoiceOption}
+            >
+              <img
+                src="/icons/add-blue.svg"
+                alt=""
+                className="w-4 h-4 mr-[1px]"
+              />{' '}
+              Add New
             </div>
           </div>
         </div>

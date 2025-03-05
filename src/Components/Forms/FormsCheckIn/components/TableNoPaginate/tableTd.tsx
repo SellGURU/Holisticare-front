@@ -70,21 +70,21 @@ export const columns = (): ColumnDef<any>[] => [
       );
     },
   },
-  {
-    accessorKey: '',
-    header: 'Action',
-    enableSorting: false,
-    cell: () => {
-      return (
-        <div className="flex justify-center w-full gap-2">
-          <img
-            onClick={() => {}}
-            src="/icons/more-blue.svg"
-            alt=""
-            className="cursor-pointer"
-          />
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: '',
+  //   header: 'Action',
+  //   enableSorting: false,
+  //   cell: () => {
+  //     return (
+  //       <div className="flex justify-center w-full">
+  //         <img
+  //           onClick={() => {}}
+  //           src="/icons/more-blue.svg"
+  //           alt=""
+  //           className="cursor-pointer"
+  //         />
+  //       </div>
+  //     );
+  //   },
+  // },
 ];
