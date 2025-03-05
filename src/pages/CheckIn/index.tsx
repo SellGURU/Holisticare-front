@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { RangeCard, RateCard, TextCard, YesNoCard } from './components';
+import { ArrangeCard, RangeCard, RateCard, TextCard, YesNoCard } from './components';
 
 const Checkin = () => {
   const [chekinData] = useState([
@@ -25,6 +25,11 @@ const Checkin = () => {
       question: 'Rate your workout.',
       value: '4.5',
     },
+    {
+      type: 'arrange',
+      question: 'Weight',
+      value: '60',
+    },    
   ]);
 
   const resolveQuestionCard = (item: any, index: number) => {
@@ -63,6 +68,14 @@ const Checkin = () => {
             value={item.value}
           ></RateCard>
         );
+      case 'arrange':
+        return (
+          <ArrangeCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></ArrangeCard>
+        );        
     }
   };
   return (
