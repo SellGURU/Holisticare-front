@@ -1,5 +1,5 @@
-import SvgIcon from "../../../utils/svgIcon";
-import { ButtonSecondary } from "../../Button/ButtosSecondary";
+import SvgIcon from '../../../utils/svgIcon';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 
 const FormsQuestionary = () => {
   return (
