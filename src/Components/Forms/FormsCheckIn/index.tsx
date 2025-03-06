@@ -26,6 +26,12 @@ interface FormsProps {
   setShowModalSchedule: (value: boolean) => void;
   selectDays: Array<any>;
   setSelectDays: (value: any) => void;
+  duration: string;
+  setDuration: (value: string) => void;
+  earlier: number;
+  setEarlier: (value: number) => void;
+  time: string;
+  setTime: (value: string) => void;
 }
 
 const FormsCheckIn: FC<FormsProps> = ({
@@ -47,8 +53,13 @@ const FormsCheckIn: FC<FormsProps> = ({
   showModalSchedule,
   selectDays,
   setSelectDays,
+  duration,
+  earlier,
+  setDuration,
+  setEarlier,
+  setTime,
+  time,
 }) => {
-  console.log('checkInLists => ', checkInLists);
   return (
     <>
       {checkInLists.length > 0 ? (
@@ -134,6 +145,14 @@ const FormsCheckIn: FC<FormsProps> = ({
           setShowModal={setShowModalSchedule}
           selectDays={selectDays}
           setSelectDays={setSelectDays}
+          setDuration={setDuration}
+          setEarlier={setEarlier}
+          duration={duration}
+          earlier={earlier}
+          setTime={setTime}
+          time={time}
+          setCheckInLists={setCheckInLists}
+          checkInListEditValue={checkInListEditValue}
         />
       </MainModal>
     </>

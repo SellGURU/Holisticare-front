@@ -1,22 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 interface ScheduleModalContentProps {
   setShowModal: (value: boolean) => void;
   selectDays: Array<any>;
   setSelectDays: (value: any) => void;
+  setDuration: (value: string) => void;
+  setEarlier: (value: number) => void;
+  time: string;
+  setTime: (value: string) => void;
+  earlier: number;
+  duration: string;
+  setCheckInLists: (value: any) => void;
+  checkInListEditValue: any;
 }
 
 const ScheduleModalContent: FC<ScheduleModalContentProps> = ({
   setShowModal,
   selectDays,
   setSelectDays,
+  setDuration,
+  setEarlier,
+  setTime,
+  time,
+  duration,
+  earlier,
+  setCheckInLists,
+  checkInListEditValue,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenEarlier, setIsOpenEarlier] = useState(false);
+
   const toggleCheckbox = (day: string) => {
     setSelectDays((prev: string[]) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
+  useEffect(() => {
+    if (checkInListEditValue?.reminder) {
+      setTime(checkInListEditValue?.reminder.time);
+      setSelectDays(checkInListEditValue?.reminder.selectDays);
+      setEarlier(checkInListEditValue?.reminder.earlier);
+      setDuration(checkInListEditValue?.reminder.duration);
+    } else {
+      setTime('');
+      setSelectDays([]);
+      setEarlier(30);
+      setDuration('Am');
+    }
+  }, []);
   return (
     <>
       <div className="flex flex-col justify-between bg-white w-[446px] rounded-[20px] p-4">
@@ -83,10 +115,64 @@ const ScheduleModalContent: FC<ScheduleModalContentProps> = ({
               <div className="text-xs font-medium text-Text-Primary">
                 Enter a time:
               </div>
-              <input
-                placeholder="Enter a Time ..."
-                className="border border-Gray-50 w-[180px] py-1 px-3 rounded-2xl bg-backgroundColor-Card placeholder:text-Text-Fivefold text-xs font-light mt-2"
-              />
+              <div className="flex items-center mt-2 gap-2">
+                <input
+                  placeholder="Enter a Time ..."
+                  className="border border-Gray-50 w-[180px] py-1 px-3 rounded-2xl bg-backgroundColor-Card placeholder:text-Text-Fivefold text-xs font-light"
+                  value={time}
+                  onChange={(e) => {
+                    setTime(e.target.value);
+                  }}
+                  type="text"
+                />
+                <div className="relative inline-block w-[80px] font-normal">
+                  <select
+                    onClick={() => setIsOpen(!isOpen)}
+                    onBlur={() => setIsOpen(false)}
+                    onChange={(e) => {
+                      setIsOpen(false);
+                      setDuration(e.target.value);
+                    }}
+                    className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
+                  >
+                    <option value="Am">Am</option>
+                    <option value="Pm">Pm</option>
+                  </select>
+                  <img
+                    className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                    src="/icons/arow-down-drop.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col mt-6 mb-6">
+              <div className="text-xs font-medium text-Text-Primary">
+                When to send reminder:
+              </div>
+              <div className="relative inline-block w-full font-normal mt-2">
+                <select
+                  onClick={() => setIsOpenEarlier(!isOpenEarlier)}
+                  onBlur={() => setIsOpenEarlier(false)}
+                  onChange={(e) => {
+                    setIsOpenEarlier(false);
+                    setEarlier(parseInt(e.target.value));
+                  }}
+                  className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
+                >
+                  <option value={30}>30 min earlier</option>
+                  <option value={60}>60 min earlier</option>
+                </select>
+                <img
+                  className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
+                    isOpenEarlier ? 'rotate-180' : ''
+                  }`}
+                  src="/icons/arow-down-drop.svg"
+                  alt=""
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -100,7 +186,31 @@ const ScheduleModalContent: FC<ScheduleModalContentProps> = ({
             Cancel
           </div>
           <div
-            className={`${selectDays.length > 0 ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+            className={`${selectDays.length > 0 && time ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+            onClick={() => {
+              if (selectDays.length > 0 && time) {
+                setCheckInLists((prev: any) =>
+                  prev.map((item: any) =>
+                    item.no === checkInListEditValue.no
+                      ? {
+                          ...item,
+                          reminder: {
+                            time: time,
+                            duration: duration,
+                            earlier: earlier,
+                            selectDays: selectDays,
+                          },
+                        }
+                      : item,
+                  ),
+                );
+              }
+              setTime('');
+              setDuration('Am');
+              setEarlier(30);
+              setSelectDays([]);
+              setShowModal(false);
+            }}
           >
             Set
           </div>

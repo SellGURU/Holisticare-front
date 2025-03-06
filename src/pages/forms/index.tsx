@@ -7,40 +7,33 @@ import Toggle from '../../Components/Toggle';
 
 const Forms = () => {
   const [active, setActive] = useState<string>('Check-In');
+  // state for check-in
   const [showModal, setShowModal] = useState(false);
   const [showModalSchedule, setShowModalSchedule] = useState(false);
   const [editModeModal, setEditModeModal] = useState(false);
   const [repositionModeModal, setRepositionModeModal] = useState(false);
   const [checkInListModal, setCheckInListModal] = useState<Array<any>>([]);
-  const [checkInLists, setCheckInLists] = useState<Array<any>>([
-    {
-      item: [
-        {
-          title: 'test 1',
-          type: 'Scale',
-          required: false,
-        },
-      ],
-      title: 'test 1',
-      questions: 1,
-      no: 1,
-    },
-    {
-      item: [
-        {
-          title: 'test 1',
-          type: 'Scale',
-          required: false,
-        },
-      ],
-      title: 'test 2',
-      questions: 1,
-      no: 2,
-    },
-  ]);
+  const [checkInLists, setCheckInLists] = useState<Array<any>>([]);
   const [checkInListEditValue, setCheckInListEditValue] = useState(null);
   const [mainTitle, setMainTitle] = useState('');
   const [selectDays, setSelectDays] = useState([]);
+  const [duration, setDuration] = useState('Am');
+  const [earlier, setEarlier] = useState(30);
+  const [time, setTime] = useState('');
+  // state for questionary
+  const [showModalQuestionary, setShowModalQuestionary] = useState(false);
+  const [editModeModalQuestionary, setEditModeModalQuestionary] =
+    useState(false);
+  const [repositionModeModalQuestionary, setRepositionModeModalQuestionary] =
+    useState(false);
+  const [questionaryListModal, setQuestionaryListModal] = useState<Array<any>>(
+    [],
+  );
+  const [questionaryLists, setQuestionaryLists] = useState<Array<any>>([]);
+  const [questionaryListEditValue, setQuestionaryListEditValue] =
+    useState(null);
+  const [mainTitleQuestionary, setMainTitleQuestionary] = useState('');
+  const [step, setStep] = useState(1);
   return (
     <>
       <div className="px-6 pt-8">
@@ -81,9 +74,34 @@ const Forms = () => {
               showModalSchedule={showModalSchedule}
               setSelectDays={setSelectDays}
               selectDays={selectDays}
+              setDuration={setDuration}
+              setEarlier={setEarlier}
+              duration={duration}
+              earlier={earlier}
+              setTime={setTime}
+              time={time}
             />
           ) : (
-            <FormsQuestionary />
+            <FormsQuestionary
+              setShowModalQuestionary={setShowModalQuestionary}
+              showModalQuestionary={showModalQuestionary}
+              editModeModalQuestionary={editModeModalQuestionary}
+              setEditModeModalQuestionary={setEditModeModalQuestionary}
+              repositionModeModalQuestionary={repositionModeModalQuestionary}
+              setRepositionModeModalQuestionary={
+                setRepositionModeModalQuestionary
+              }
+              questionaryListModal={questionaryListModal}
+              setQuestionaryListModal={setQuestionaryListModal}
+              questionaryLists={questionaryLists}
+              setQuestionaryLists={setQuestionaryLists}
+              questionaryListEditValue={questionaryListEditValue}
+              setQuestionaryListEditValue={setQuestionaryListEditValue}
+              setMainTitleQuestionary={setMainTitleQuestionary}
+              mainTitleQuestionary={mainTitleQuestionary}
+              setStep={setStep}
+              step={step}
+            />
           )}
         </div>
       </div>

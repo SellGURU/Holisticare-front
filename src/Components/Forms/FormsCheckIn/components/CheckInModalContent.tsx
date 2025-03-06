@@ -242,6 +242,8 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
                       title: mainTitle,
                       questions: checkInList.length,
                       no: prev.length + 1,
+                      created_on: new Date().toISOString().split('T')[0],
+                      created_by: 'Dr.Charlotte Walker',
                     },
                   ]);
                 }
@@ -254,7 +256,7 @@ const CheckInModalContent: FC<CheckInModalContentProps> = ({
               }
             }}
           >
-            {editModeModal ? 'Update' : 'Save'}
+            {editModeModal || repositionModeModal ? 'Update' : 'Save'}
           </div>
         </div>
       </div>

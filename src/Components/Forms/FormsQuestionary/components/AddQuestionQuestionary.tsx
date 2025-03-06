@@ -28,7 +28,7 @@ const mode = [
 
 interface AddQuestionCheckInProps {
   setAddMode: (value: boolean) => void;
-  setCheckInList: (value: any) => void;
+  setQuestionaryListModal: (value: any) => void;
   editIndex: number | null;
   setEditIndex: (value: number | null) => void;
   editTitle: string;
@@ -41,9 +41,9 @@ interface AddQuestionCheckInProps {
   editMultipleChoiceOptions: string[];
 }
 
-const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
+const AddQuestionQuestionary: FC<AddQuestionCheckInProps> = ({
   setAddMode,
-  setCheckInList,
+  setQuestionaryListModal,
   editIndex,
   editCheckboxChecked,
   editItemSelected,
@@ -80,7 +80,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
     if (!title.trim() || !itemSelected.trim()) return;
 
     if (itemSelected === 'Checkboxes') {
-      setCheckInList((prevList: any) => [
+      setQuestionaryListModal((prevList: any) => [
         {
           title,
           type: itemSelected,
@@ -91,7 +91,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
       ]);
     }
     if (itemSelected === 'Multiple choice') {
-      setCheckInList((prevList: any) => [
+      setQuestionaryListModal((prevList: any) => [
         {
           title,
           type: itemSelected,
@@ -102,7 +102,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
       ]);
     }
     if (itemSelected !== 'Checkboxes' && itemSelected !== 'Multiple choice') {
-      setCheckInList((prevList: any) => [
+      setQuestionaryListModal((prevList: any) => [
         {
           title,
           type: itemSelected,
@@ -135,7 +135,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
 
   const handleSaveEdit = (index: number) => {
     if (itemSelected === 'Checkboxes') {
-      setCheckInList((prevList: any) =>
+      setQuestionaryListModal((prevList: any) =>
         prevList.map((item: any, i: number) =>
           i === index
             ? {
@@ -150,7 +150,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
       );
     }
     if (itemSelected === 'Multiple choice') {
-      setCheckInList((prevList: any) =>
+      setQuestionaryListModal((prevList: any) =>
         prevList.map((item: any, i: number) =>
           i === index
             ? {
@@ -165,7 +165,7 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
       );
     }
     if (itemSelected !== 'Checkboxes' && itemSelected !== 'Multiple choice') {
-      setCheckInList((prevList: any) =>
+      setQuestionaryListModal((prevList: any) =>
         prevList.map((item: any, i: number) =>
           i === index
             ? {
@@ -421,4 +421,4 @@ const AddQuestionCheckIn: FC<AddQuestionCheckInProps> = ({
   );
 };
 
-export default AddQuestionCheckIn;
+export default AddQuestionQuestionary;
