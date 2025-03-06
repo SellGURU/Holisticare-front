@@ -10,7 +10,6 @@ import {
 import Actions from './Actions';
 import RecentCheckIns from './RecentCheckIns';
 
-
 const DashBoard = () => {
   // const [reports, setreports] = useState()
 
@@ -21,7 +20,6 @@ const DashBoard = () => {
   // });
 
   // Add Task Modal Section
-
 
   // End Add Task Section
 
@@ -41,9 +39,7 @@ const DashBoard = () => {
             <RecentCheckIns></RecentCheckIns>
             {/* <Reminder></Reminder> */}
 
-            <TaskManager
-             
-            />
+            <TaskManager />
           </div>
           <div className=" grid gap-4">
             <Clients></Clients>

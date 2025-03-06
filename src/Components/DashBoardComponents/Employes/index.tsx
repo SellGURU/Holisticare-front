@@ -123,7 +123,9 @@ const Employes: React.FC = () => {
       });
   }, []);
   const deleteEmployee = (employeeName: string) => {
-    setEmployees((prevEmployees) => prevEmployees.filter(employee => employee.user_name !== employeeName));
+    setEmployees((prevEmployees) =>
+      prevEmployees.filter((employee) => employee.user_name !== employeeName),
+    );
   };
   return (
     <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4">
@@ -152,18 +154,22 @@ const Employes: React.FC = () => {
       ) : (
         <ul className="space-y-3  ">
           {Employees.map((employee, index) => (
-            <EmployeeRow employee={employee} index={index} deleteStaff={deleteEmployee}></EmployeeRow>
+            <EmployeeRow
+              employee={employee}
+              index={index}
+              deleteStaff={deleteEmployee}
+            ></EmployeeRow>
           ))}
         </ul>
       )}
     </div>
   );
 };
-const EmployeeRow: React.FC<{ employee: Employee; index: number; deleteStaff:(employeeName: string)=>void }> = ({
-  employee,
-  index,
-  deleteStaff
-}) => {
+const EmployeeRow: React.FC<{
+  employee: Employee;
+  index: number;
+  deleteStaff: (employeeName: string) => void;
+}> = ({ employee, index, deleteStaff }) => {
   const [showModal, setshowModal] = useState(false);
   const modalRef = useRef(null);
   useModalAutoClose({
@@ -230,8 +236,7 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number; deleteStaff:(em
               <div
                 onClick={() => {
                   setisConfirm(true);
-                  deleteStaff(employee.user_name)
-                  
+                  deleteStaff(employee.user_name);
                 }}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
