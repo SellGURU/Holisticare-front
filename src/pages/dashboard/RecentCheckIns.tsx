@@ -183,23 +183,21 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px]">
             <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-
-         
-            <SurveySection
-              isStickMealPlan={isStickMealPlan}
-              setisStickMealPlan={setisStickMealPlan}
-              hoursSlept={hoursSlept}
-              handleSliderChange={handleSliderChange}
-              sliderBackground={sliderBackground}
-              feelings={feelings}
-              selectedFeeling={selectedFeeling}
-              handleFeelingClick={handleFeelingClick}
-              val={val}
-              setVal={setVal}
-              snackValue={snackValue}
-              workHours={workHours}
-            />
-               </div>
+              <SurveySection
+                isStickMealPlan={isStickMealPlan}
+                setisStickMealPlan={setisStickMealPlan}
+                hoursSlept={hoursSlept}
+                handleSliderChange={handleSliderChange}
+                sliderBackground={sliderBackground}
+                feelings={feelings}
+                selectedFeeling={selectedFeeling}
+                handleFeelingClick={handleFeelingClick}
+                val={val}
+                setVal={setVal}
+                snackValue={snackValue}
+                workHours={workHours}
+              />
+            </div>
             <div
               className={`flex  flex-col w-[436px]  ${!showComparisonSelect && 'hidden'}`}
             >
