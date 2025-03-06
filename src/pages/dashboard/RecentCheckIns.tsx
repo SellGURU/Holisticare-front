@@ -4,6 +4,7 @@ import { MainModal } from '../../Components';
 
 import SurveySection from './components/SurveySection';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { Dropdown } from '../../Components/DropDown';
 
 type CheckIn = {
   name: string;
@@ -58,7 +59,7 @@ const mockCheckIns: CheckIn[] = [
 ];
 interface RecentCheckInsProps {}
 const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
-  const [CheckIns] = useState<CheckIn[]>(mockCheckIns);
+  const [CheckIns,setCheckIns] = useState<CheckIn[]>(mockCheckIns);
   const [showcheckInModal, setCheckInModal] = useState(false);
   const [isStickMealPlan, setisStickMealPlan] = useState(true);
   const [hoursSlept, setHoursSlept] = useState<number>(0);
@@ -73,7 +74,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
-
+  const [currentCheckIn, setCurrentCheckIn] = useState<CheckIn | null>(null);
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -116,18 +117,59 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
     setShowComparisonSurvey(true);
     setShowSelect(false);
   };
+  const handleCheckInClick = (checkIn: CheckIn) => {
+    if (checkIn.status === 'Review Now') {
+      setCurrentCheckIn(checkIn);
+      setCheckInModal(true);
+
+    }
+  };
+
+  const handleMarkAsReviewed = () => {
+    if (currentCheckIn) {
+      setCheckIns((prevCheckIns) =>
+        prevCheckIns.map((ci) =>
+          ci.name === currentCheckIn.name ? { ...ci, status: 'Reviewed' } : ci
+        )
+      );
+      setCheckInModal(false);
+      setshowCheckICommentnModal(true);
+      resetModalStates();
+    }
+  };
+  const resetModalStates = () => {
+    setisStickMealPlan(true);
+    setHoursSlept(0);
+    setSelectedFeeling(2); 
+    setVal(55);
+    setShowComparisonSelect(false);
+    setShowComparisonSurvey(false);
+    setComparisonData(null);
+    setCompareCheckIn('');
+    setShowSelect(false);
+  };
+    const [selectedOption, setSelectedOption] = useState('Week');
+    const options = ['Day', 'Week', 'Month'];
   return (
     <>
       <MainModal
         isOpen={showcheckInModal}
         onClose={() => {
           setCheckInModal(false);
+          resetModalStates();
         }}
       >
         <div className="bg-white relative min-w-[500px] w-full h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 text-sm font-medium">
-            <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]"></div>
-            David Smith
+         
+            <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]">
+            <img
+                        src={`https://ui-avatars.com/api/?name=${currentCheckIn?.name}`}
+                        alt={currentCheckIn?.name}
+                       className='rounded-full'
+                      />
+            </div>
+            {currentCheckIn?.name}
           </div>
           <div
             className={` ${showComparisonSelect ? 'hidden' : ''} mt-4 w-full flex justify-between items-center text-xs font-medium`}
@@ -156,7 +198,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               snackValue={snackValue}
               workHours={workHours}
             />
-            <div className="flex  flex-col w-[436px]">
+            <div className={`flex  flex-col w-[436px] ${!showComparisonSelect && 'hidden'}`}>
               {showComparisonSelect && (
                 <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
                   <label className="mb-1">Select Check-In</label>
@@ -228,10 +270,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               Cancel
             </div>
             <div
-              onClick={() => {
-                setshowCheckICommentnModal(true);
-                setCheckInModal(false);
-              }}
+             onClick={handleMarkAsReviewed}
               className="text-Primary-DeepTeal cursor-pointer"
             >
               Marked as Reviewed
@@ -288,11 +327,13 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
               Recent Check-Ins{' '}
-              <span className="text-xs text-Text-Triarty -mt-1">(2)</span>
+              <span className="text-xs text-Text-Triarty -mt-1">({CheckIns.length})</span>
             </h2>
-            <div className="rounded-xl py-1 px-2 bg-backgroundColor-Main border border-Gray-50 text-Primary-DeepTeal text-[10px] flex items-center gap-2">
-              Week <img src="/icons/arrow-down-green.svg" alt="" />
-            </div>
+            <Dropdown
+                         options={options}
+                         selectedOption={selectedOption}
+                         onOptionSelect={setSelectedOption}
+                       />
           </div>
           {CheckIns.length < 1 ? (
             <div className=" w-full h-full flex flex-col items-center justify-center">
@@ -332,11 +373,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
                       {checkIn.time}
                     </td>
                     <td
-                      onClick={() => {
-                        if (checkIn.status !== 'Reviewed') {
-                          setCheckInModal(true);
-                        }
-                      }}
+                     onClick={()=>handleCheckInClick(checkIn)}
                       className="py-2"
                     >
                       <span

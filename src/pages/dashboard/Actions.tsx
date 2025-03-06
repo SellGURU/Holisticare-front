@@ -10,17 +10,16 @@ type Action = {
 };
 
 const mockActions: Action[] = [
-  // {
-  //   name: 'Esther Howard',
-  //   status: 'Resolved',
-  //   action: 'Adjust his exercise program and provide an alternative plan...',
-  // },
-  // {
-  //   name: 'Darrell Steward',
-  //   status: 'Pending',
-  //   action: 'Create a contingency plan for...',
-  // },
-  // Add more mock data as needed
+  {
+    name: 'Esther Howard',
+    status: 'Resolved',
+    action: 'Adjust his exercise program and provide an alternative plan...',
+  },
+  {
+    name: 'Darrell Steward',
+    status: 'Pending',
+    action: 'Create a contingency plan for...',
+  },
 ];
 
 const Actions: React.FC = () => {
