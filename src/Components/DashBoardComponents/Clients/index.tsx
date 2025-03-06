@@ -58,14 +58,15 @@ const RecentCheckIns: React.FC = () => {
             Recent Clients
           </h2>
         </div>
-        {
-          Clients.length < 1 ? (
-            <div className=' w-full h-full flex flex-col items-center justify-center'>
+        {Clients.length < 1 ? (
+          <div className=" w-full h-full flex flex-col items-center justify-center">
             <img src="/icons/NoClient.svg" alt="" />
-            <div className='text-xs text-Text-Primary -mt-4 text-center'>No Client Found</div>
+            <div className="text-xs text-Text-Primary -mt-4 text-center">
+              No Client Found
             </div>
-          ):(
-            <table className="w-full  ">
+          </div>
+        ) : (
+          <table className="w-full  ">
             <thead>
               <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
                 <th className="py-2 pl-2 rounded-tl-2xl ">Client Name</th>
@@ -102,9 +103,7 @@ const RecentCheckIns: React.FC = () => {
               ))}
             </tbody>
           </table>
-          )
-        }
-       
+        )}
       </div>
     </div>
   );

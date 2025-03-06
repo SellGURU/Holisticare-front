@@ -118,14 +118,11 @@ const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
       <div className="flex justify-between items-center mb-4 relative">
         <div className="flex gap-1">
           <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
-          {
-            tasks.length > 1 && (
-              <span className="text-xs font-medium text-Text-Triarty">
+          {tasks.length > 1 && (
+            <span className="text-xs font-medium text-Text-Triarty">
               ({tasks.length})
             </span>
-            )
-          }
-        
+          )}
         </div>
 
         <ButtonPrimary onClick={onAdd} size="small">
@@ -133,14 +130,15 @@ const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
           New task
         </ButtonPrimary>
       </div>
-      {
-        tasks.length < 1 ? (
-          <div className=' w-full h-full flex flex-col items-center justify-center'>
+      {tasks.length < 1 ? (
+        <div className=" w-full h-full flex flex-col items-center justify-center">
           <img src="/icons/NoTask.svg" alt="" />
-          <div className='text-xs text-Text-Primary -mt-4 text-center'>No Data Found</div>
+          <div className="text-xs text-Text-Primary -mt-4 text-center">
+            No Data Found
           </div>
-        ):(
-          <ul className="grid grid-cols-2 pr-1 gap-3 mb-4 overflow-auto h-[253px]">
+        </div>
+      ) : (
+        <ul className="grid grid-cols-2 pr-1 gap-3 mb-4 overflow-auto h-[253px]">
           {tasks.map((task) => (
             <li
               key={task.task_id}
@@ -180,7 +178,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
                       </svg>
                     )}
                   </div>
-  
+
                   <div
                     className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
                       task.checked ? 'line-through' : ''
@@ -189,7 +187,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
                     {task.title}
                   </div>
                 </label>
-  
+
                 {/* <span
                   className={`text-xs rounded-2xl py-[2px] px-[9px] text-[8px] flex items-center gap-1 ${
                     task.progress === 'AI-Defined'
@@ -233,9 +231,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ onAdd }) => {
             </li>
           ))}
         </ul>
-        )
-      }
-     
+      )}
     </div>
   );
 };

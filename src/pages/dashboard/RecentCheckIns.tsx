@@ -58,7 +58,7 @@ const mockCheckIns: CheckIn[] = [
 ];
 interface RecentCheckInsProps {}
 const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
-  const [CheckIns] = useState<CheckIn[]>(mockCheckIns)
+  const [CheckIns] = useState<CheckIn[]>(mockCheckIns);
   const [showcheckInModal, setCheckInModal] = useState(false);
   const [isStickMealPlan, setisStickMealPlan] = useState(true);
   const [hoursSlept, setHoursSlept] = useState<number>(0);
@@ -294,14 +294,15 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               Week <img src="/icons/arrow-down-green.svg" alt="" />
             </div>
           </div>
-          {
-            CheckIns.length < 1 ? (
-              <div className=' w-full h-full flex flex-col items-center justify-center'>
+          {CheckIns.length < 1 ? (
+            <div className=" w-full h-full flex flex-col items-center justify-center">
               <img src="/icons/EmptyState2.svg" alt="" />
-              <div className='text-xs text-Text-Primary -mt-4 text-center'>No Data Found</div>
+              <div className="text-xs text-Text-Primary -mt-4 text-center">
+                No Data Found
               </div>
-            ):(
-              <table className="w-full  ">
+            </div>
+          ) : (
+            <table className="w-full  ">
               <thead>
                 <tr className="text-left text-xs bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
                   <th className="py-2 pl-3 rounded-tl-2xl">Client Name</th>
@@ -357,9 +358,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
                 ))}
               </tbody>
             </table>
-            )
-          }
-       
+          )}
         </div>
       </div>
     </>
