@@ -4,15 +4,20 @@ interface RangeCardProps {
   question: string;
   value: number;
   index?: number;
-  onSubmit?:(value:number) =>void
+  onSubmit?: (value: number) => void;
 }
-const RangeCard: React.FC<RangeCardProps> = ({ question, value, index,onSubmit }) => {
+const RangeCard: React.FC<RangeCardProps> = ({
+  question,
+  value,
+  index,
+  onSubmit,
+}) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
-    if(onSubmit){
-      onSubmit(val)
+    if (onSubmit) {
+      onSubmit(val);
     }
-  },[val])
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">

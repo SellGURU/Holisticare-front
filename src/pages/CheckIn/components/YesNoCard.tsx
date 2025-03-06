@@ -4,16 +4,21 @@ interface YesNoCardProps {
   question: string;
   value: string;
   index?: number;
-  onSubmit?:(value:string) =>void
+  onSubmit?: (value: string) => void;
 }
 
-const YesNoCard: React.FC<YesNoCardProps> = ({ question, value, index,onSubmit }) => {
+const YesNoCard: React.FC<YesNoCardProps> = ({
+  question,
+  value,
+  index,
+  onSubmit,
+}) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
-    if(onSubmit){
-      onSubmit(val)
+    if (onSubmit) {
+      onSubmit(val);
     }
-  },[val])
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">

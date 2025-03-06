@@ -4,17 +4,17 @@ import { blobToBase64 } from '../../../help';
 
 interface ItemUploadProps {
   name: string;
-  onUpload?:(strem:string) => void
+  onUpload?: (strem: string) => void;
 }
 
-const ItemUpload: React.FC<ItemUploadProps> = ({ name ,onUpload}) => {
+const ItemUpload: React.FC<ItemUploadProps> = ({ name, onUpload }) => {
   const refUpload = useRef<any>(null);
   const [image, setImage] = useState<string>('');
   useEffect(() => {
-    if(onUpload ){
-      onUpload(image)
+    if (onUpload) {
+      onUpload(image);
     }
-  },[image])
+  }, [image]);
   return (
     <>
       <div>

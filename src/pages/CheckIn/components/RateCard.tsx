@@ -8,16 +8,21 @@ interface RateCardProps {
   question: string;
   value: number;
   index?: number;
-  onSubmit?:(value:any) => void
+  onSubmit?: (value: any) => void;
 }
 
-const RateCard: React.FC<RateCardProps> = ({ question, index, value,onSubmit }) => {
+const RateCard: React.FC<RateCardProps> = ({
+  question,
+  index,
+  value,
+  onSubmit,
+}) => {
   const [val, setVal] = useState<number>(value);
   useEffect(() => {
-    if(onSubmit) {
-      onSubmit(val)
+    if (onSubmit) {
+      onSubmit(val);
     }
-  },[val])
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] select-none  p-3 w-full  rounded-[12px] border border-gray-50">

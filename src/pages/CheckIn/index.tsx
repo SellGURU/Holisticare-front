@@ -26,21 +26,21 @@ const Checkin = () => {
       type: 'feeling',
       question: 'How are you feeling today?',
       value: 'Neutral',
-    },    
+    },
     {
       type: 'rate',
       question: 'Rate your workout.',
       value: '4.5',
-    },    
+    },
     {
       type: 'upload',
       question: 'Upload your progress pictures.',
       value: {
-        frontal:"",
-        Back:"",
-        side:""        
+        frontal: '',
+        Back: '',
+        side: '',
       },
-    },    
+    },
     {
       type: 'text',
       question: 'What snacks did you take today?',
@@ -53,8 +53,6 @@ const Checkin = () => {
       question: 'Weight',
       value: '60',
     },
-
-
   ]);
 
   const resolveQuestionCard = (item: any, index: number) => {
@@ -108,7 +106,7 @@ const Checkin = () => {
             question={item.question}
             value={item.value}
             onSubmit={(values) => {
-              console.log(values)
+              console.log(values);
             }}
           ></UploadCard>
         );
