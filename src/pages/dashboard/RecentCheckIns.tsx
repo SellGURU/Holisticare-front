@@ -59,7 +59,7 @@ const mockCheckIns: CheckIn[] = [
 ];
 interface RecentCheckInsProps {}
 const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
-  const [CheckIns,setCheckIns] = useState<CheckIn[]>(mockCheckIns);
+  const [CheckIns, setCheckIns] = useState<CheckIn[]>(mockCheckIns);
   const [showcheckInModal, setCheckInModal] = useState(false);
   const [isStickMealPlan, setisStickMealPlan] = useState(true);
   const [hoursSlept, setHoursSlept] = useState<number>(0);
@@ -121,7 +121,6 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
     if (checkIn.status === 'Review Now') {
       setCurrentCheckIn(checkIn);
       setCheckInModal(true);
-
     }
   };
 
@@ -129,8 +128,8 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
     if (currentCheckIn) {
       setCheckIns((prevCheckIns) =>
         prevCheckIns.map((ci) =>
-          ci.name === currentCheckIn.name ? { ...ci, status: 'Reviewed' } : ci
-        )
+          ci.name === currentCheckIn.name ? { ...ci, status: 'Reviewed' } : ci,
+        ),
       );
       setCheckInModal(false);
       setshowCheckICommentnModal(true);
@@ -140,7 +139,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
   const resetModalStates = () => {
     setisStickMealPlan(true);
     setHoursSlept(0);
-    setSelectedFeeling(2); 
+    setSelectedFeeling(2);
     setVal(55);
     setShowComparisonSelect(false);
     setShowComparisonSurvey(false);
@@ -148,8 +147,8 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
     setCompareCheckIn('');
     setShowSelect(false);
   };
-    const [selectedOption, setSelectedOption] = useState('Week');
-    const options = ['Day', 'Week', 'Month'];
+  const [selectedOption, setSelectedOption] = useState('Week');
+  const options = ['Day', 'Week', 'Month'];
   return (
     <>
       <MainModal
@@ -161,13 +160,12 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
       >
         <div className="bg-white relative min-w-[500px] w-full h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 text-sm font-medium">
-         
             <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]">
-            <img
-                        src={`https://ui-avatars.com/api/?name=${currentCheckIn?.name}`}
-                        alt={currentCheckIn?.name}
-                       className='rounded-full'
-                      />
+              <img
+                src={`https://ui-avatars.com/api/?name=${currentCheckIn?.name}`}
+                alt={currentCheckIn?.name}
+                className="rounded-full"
+              />
             </div>
             {currentCheckIn?.name}
           </div>
@@ -198,7 +196,9 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               snackValue={snackValue}
               workHours={workHours}
             />
-            <div className={`flex  flex-col w-[436px] ${!showComparisonSelect && 'hidden'}`}>
+            <div
+              className={`flex  flex-col w-[436px] ${!showComparisonSelect && 'hidden'}`}
+            >
               {showComparisonSelect && (
                 <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
                   <label className="mb-1">Select Check-In</label>
@@ -270,7 +270,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               Cancel
             </div>
             <div
-             onClick={handleMarkAsReviewed}
+              onClick={handleMarkAsReviewed}
               className="text-Primary-DeepTeal cursor-pointer"
             >
               Marked as Reviewed
@@ -327,13 +327,15 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
               Recent Check-Ins{' '}
-              <span className="text-xs text-Text-Triarty -mt-1">({CheckIns.length})</span>
+              <span className="text-xs text-Text-Triarty -mt-1">
+                ({CheckIns.length})
+              </span>
             </h2>
             <Dropdown
-                         options={options}
-                         selectedOption={selectedOption}
-                         onOptionSelect={setSelectedOption}
-                       />
+              options={options}
+              selectedOption={selectedOption}
+              onOptionSelect={setSelectedOption}
+            />
           </div>
           {CheckIns.length < 1 ? (
             <div className=" w-full h-full flex flex-col items-center justify-center">
@@ -373,7 +375,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
                       {checkIn.time}
                     </td>
                     <td
-                     onClick={()=>handleCheckInClick(checkIn)}
+                      onClick={() => handleCheckInClick(checkIn)}
                       className="py-2"
                     >
                       <span
