@@ -283,27 +283,30 @@ const DashBoard = () => {
             <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
               <div className="text-[10px]">3.How are you feeling today?</div>
               <div className="bg-white rounded-[20px] p-4 pb-2 drop-shadow mt-3 overflow-x-hidden relative">
-              <img className='absolute  inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]' src="/images/Union.svg" alt="" />
-              <div className="flex items-center justify-between overflow-auto  relative">
-              
-                {feelings.map((feeling, index) => (
-                  <div
-                    key={index}
-                    className={`flex flex-col items-center cursor-pointer ${selectedFeeling === index ? '' : ''}`}
-                    onClick={() => handleFeelingClick(index)}
-                  >
-                    <img src={feeling.emoji} alt="" />
-                    
-                      <span className={`mt-2 text-sm font-medium text-Primary-DeepTeal ${selectedFeeling === index  ? 'block' : 'invisible'}`}>
+                <img
+                  className="absolute  inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]"
+                  src="/images/Union.svg"
+                  alt=""
+                />
+                <div className="flex items-center justify-between overflow-auto  relative">
+                  {feelings.map((feeling, index) => (
+                    <div
+                      key={index}
+                      className={`flex flex-col items-center cursor-pointer ${selectedFeeling === index ? '' : ''}`}
+                      onClick={() => handleFeelingClick(index)}
+                    >
+                      <img src={feeling.emoji} alt="" />
+
+                      <span
+                        className={`mt-2 text-sm font-medium text-Primary-DeepTeal ${selectedFeeling === index ? 'block' : 'invisible'}`}
+                      >
                         {feeling.text}
                       </span>
-                  
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            </div>
-            
           </div>
         </div>
       </MainModal>

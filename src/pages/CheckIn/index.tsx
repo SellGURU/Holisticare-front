@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import {
   ArrangeCard,
+  FeelingCard,
   RangeCard,
   RateCard,
   TextCard,
@@ -41,6 +42,11 @@ const Checkin = () => {
       type: 'upload',
       question: 'Upload your progress pictures.',
       value: '60',
+    },
+    {
+      type: 'feeling',
+      question: 'How are you feeling today?',
+      value: 'Neutral',
     },
   ]);
 
@@ -96,11 +102,19 @@ const Checkin = () => {
             value={item.value}
           ></UploadCard>
         );
+      case 'feeling':
+        return (
+          <FeelingCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></FeelingCard>
+        );
     }
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3 h-screen overflow-y-auto pb-4">
+      <div className=" px-6 py-4 grid gap-3 h-svh overflow-y-auto pb-4">
         {chekinData.map((el: any, index: number) => {
           return <>{resolveQuestionCard(el, index + 1)}</>;
         })}
