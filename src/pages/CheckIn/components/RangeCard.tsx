@@ -1,15 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface RangeCardProps {
   question: string;
   value: number;
+  index?: number;
+  onSubmit?: (value: number) => void;
 }
-const RangeCard: React.FC<RangeCardProps> = ({ question, value }) => {
+const RangeCard: React.FC<RangeCardProps> = ({
+  question,
+  value,
+  index,
+  onSubmit,
+}) => {
   const [val, setVal] = useState(value);
+  useEffect(() => {
+    if (onSubmit) {
+      onSubmit(val);
+    }
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">{question}</div>
+        <div className="text-[12px] text-Text-Primary">
+          {index}. {question}
+        </div>
         <div className="w-full mt-4 px-3">
           <input
             type="range"

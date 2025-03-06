@@ -41,9 +41,6 @@ const DashBoard = () => {
   const [Priority, setPriority] = useState('High');
 
   // End Add Task Section
-  const [showCheckInModal, setshowCheckInModal] = useState(false);
-  const [checkInComment, setCheckInComment] = useState('');
-  console.log(checkInComment);
 
   return (
     <>
@@ -153,62 +150,16 @@ const DashBoard = () => {
           </div>
         </div>
       </MainModal>
-      {/* Check-In Modal */}
-      <MainModal
-        isOpen={showCheckInModal}
-        onClose={() => setshowCheckInModal(false)}
-      >
-        <div className="w-[500px] h-[324px] rounded-2xl p-6 pb-8 bg-white shadow-800 text-Text-Primary relative">
-          <div className="flex items-center w-full text-sm font-medium border-b border-Gray-50  ">
-            Check-In Review
-          </div>
-          <div className="mt-4 w-full">
-            <label className="text-xs font-medium flex items-center gap-1 mb-2">
-              Leave a Comment{' '}
-              <span className="text-Text-Secondary text-[10px] font-normal">
-                (Client can view this)
-              </span>
-            </label>
-            <textarea
-              value={checkInComment}
-              onChange={(e) => setCheckInComment(e.target.value)}
-              placeholder="Write a Comment for Client ..."
-              className="w-full h-[140px] bg-[#FDFDFD] border border-Gray-50 rounded-2xl outline-none text-xs placeholder:text-[#B0B0B0] placeholder:font-light py-1 px-3 resize-none"
-            />
-          </div>
-          <div className="flex justify-end w-full gap-2 absolute bottom-[32px] right-[24px]">
-            <div
-              onClick={() => {
-                setCheckInComment('');
-                setshowCheckInModal(false);
-              }}
-              className="text-sm font-medium text-[#909090] cursor-pointer"
-            >
-              Ignore
-            </div>
-            <div
-              onClick={() => {
-                setCheckInComment('');
-                setshowCheckInModal(false);
-              }}
-              className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
-            >
-              Save
-            </div>
-          </div>
-        </div>
-      </MainModal>
+      {/* Check-In Comment Modal */}
+
+      {/* Check in Modal */}
       <div className="px-6 py-10">
         <NumberBoxes reports={[]}></NumberBoxes>
         <div className="w-full  mt-4 grid gap-4 grid-cols-4">
           {/* <MessageList /> */}
           <Actions></Actions>
           <div className="col-span-2 grid gap-4">
-            <RecentCheckIns
-              onCheckIn={() => {
-                setshowCheckInModal(true);
-              }}
-            ></RecentCheckIns>
+            <RecentCheckIns></RecentCheckIns>
             {/* <Reminder></Reminder> */}
 
             <TaskManager

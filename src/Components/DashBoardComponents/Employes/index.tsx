@@ -36,7 +36,81 @@ const mockEmployees: Employee[] = [
     role: 'Admin',
   },
 ];
+interface CheckIn {
+  name: string;
+  id: string;
+  age: number;
+  gender: string;
+  enrollDate: string;
+  assignDate: string;
+  status: string;
+}
 
+const mockCheckIns: CheckIn[] = [
+  {
+    name: 'David Smith',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'Waiting',
+  },
+  {
+    name: 'Jane Cooper',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'Done',
+  },
+  {
+    name: 'Jacob Jones',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'In progress',
+  },
+  {
+    name: 'Jenny Wilson',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'Waiting',
+  },
+  {
+    name: 'Robert Garcia',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'In progress',
+  },
+  {
+    name: 'Sarah Thompson',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'Done',
+  },
+  {
+    name: 'Leslie Alexander',
+    id: '021548461651',
+    age: 35,
+    gender: 'Male',
+    enrollDate: '04/25/2024',
+    assignDate: '06/25/2024',
+    status: 'Waiting',
+  },
+];
 const Employes: React.FC = () => {
   const [Employees, setEmployees] = useState<Employee[]>(mockEmployees);
   useEffect(() => {
@@ -65,11 +139,20 @@ const Employes: React.FC = () => {
           />
         </ButtonPrimary>
       </div>
-      <ul className="space-y-3  ">
-        {Employees.map((employee, index) => (
-          <EmployeeRow employee={employee} index={index}></EmployeeRow>
-        ))}
-      </ul>
+      {Employees.length < 1 ? (
+        <div className=" w-full h-full flex flex-col items-center justify-center">
+          <img src="/icons/NoClient.svg" alt="" />
+          <div className="text-xs text-Text-Primary -mt-4 text-center">
+            No Staff Found
+          </div>
+        </div>
+      ) : (
+        <ul className="space-y-3  ">
+          {Employees.map((employee, index) => (
+            <EmployeeRow employee={employee} index={index}></EmployeeRow>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
@@ -85,6 +168,7 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
   });
   const [showRemoveStaffModal, setshowRemoveStaffModal] = useState(false);
   const [isConfirm, setisConfirm] = useState(false);
+  const [showAssignListModal, setshowAssignListModal] = useState(false);
   return (
     <>
       <MainModal
@@ -151,8 +235,109 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
           </div>
         )}
       </MainModal>
+      <MainModal
+        isOpen={showAssignListModal}
+        onClose={() => setshowAssignListModal(false)}
+      >
+        <div className="bg-white rounded-2xl p-6 pb-8 shadow-800 w-[706px] h-[416px]">
+          <div className="w-full border-b pb-2 border-Gray-50 text-sm font-medium">
+            Assign List
+          </div>
+          <div className="h-[256px] overflow-auto mt-4 w-full">
+            <table className="w-full  ">
+              <thead>
+                <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
+                  <th className="py-2 pl-3 w-[120px] rounded-tl-2xl">
+                    Client Name
+                  </th>
+                  <th className="py-2 w-[80px] text-center ">ID</th>
+                  <th className="py-2 w-[40px] text-center ">Age</th>
+                  <th className="py-2 w-[40px] text-center ">Gender</th>
+                  <th className="py-2 w-[80px] text-center ">Enroll Date</th>
+                  <th className="py-2 w-[80px] text-center">Assign Date</th>
+                  <th className="py-2 w-[70px] text-center rounded-tr-2xl">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="border border-t-0 border-[#E9F0F2] w-full">
+                {mockCheckIns.map((checkIn, index) => (
+                  <tr
+                    key={index}
+                    className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b w-full `}
+                  >
+                    <td className=" w-[120px] py-2 pl-3 flex items-center text-[10px] text-Text-Primary">
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${checkIn.name}`}
+                        alt={checkIn.name}
+                        className="w-8 h-8 rounded-full mr-[6px] border border-Primary-DeepTeal"
+                      />
+                      {checkIn.name}
+                    </td>
+                    <td className="py-2  text-center text-[10px] text-[#888888] ">
+                      {checkIn.id}
+                    </td>
+                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                      {checkIn.age}
+                    </td>
+                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                      {checkIn.gender}
+                    </td>
+                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                      {checkIn.enrollDate}
+                    </td>
+                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                      {checkIn.assignDate}
+                    </td>
+                    <td className="py-2 text-[10px]   text-[#888888] w-[70px]   ">
+                      <div
+                        className={`px-2 rounded-full w-fit text-[8px] ${checkIn.status == 'Waiting' ? 'bg-[#F9DEDC]' : checkIn.status == 'In progress' ? 'bg-[#E9F0F2]' : 'bg-[#DEF7EC]'}  flex items-center justify-center gap-[2px] ml-8 text-Text-Primary`}
+                      >
+                        <div
+                          className={`size-2 rounded-full ${checkIn.status == 'Waiting' ? 'bg-[#FFAB2C]' : checkIn.status == 'In progress' ? 'bg-[#4C88FF]' : 'bg-[#06C78D]'}`}
+                        ></div>{' '}
+                        {checkIn.status}
+                      </div>
+                    </td>
+
+                    {/* <td
+                  onClick={() => {
+                    if (checkIn.status !== 'Reviewed') {
+                      onCheckIn();
+                    }
+                  }}
+                  className="py-2"
+                >
+                  <span
+                    className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
+                      checkIn.status === 'Review Now'
+                        ? 'text-[#FFBD59] underline cursor-pointer'
+                        : 'bg-[#DEF7EC] '
+                    }`}
+                  >
+                    <img
+                      className={`${checkIn.status !== 'Reviewed' && 'hidden'}`}
+                      src="/icons/tick-green.svg"
+                      alt=""
+                    />
+                    {checkIn.status}
+                  </span>
+                </td> */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div
+            onClick={() => setshowAssignListModal(false)}
+            className="w-full text-end mt-10 text-sm font-medium text-[#909090] cursor-pointer"
+          >
+            close
+          </div>
+        </div>
+      </MainModal>
       <li key={index} className=" relative flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center ">
           <img
             src={
               employee.picture ||
@@ -184,7 +369,10 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
               <img src="/icons/user-minus.svg" alt="" />
               Remove
             </div>
-            <div className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer">
+            <div
+              onClick={() => setshowAssignListModal(true)}
+              className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+            >
               <img src="/icons/firstline.svg" alt="" />
               Show Assign List
             </div>

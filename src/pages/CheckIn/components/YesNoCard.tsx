@@ -1,16 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface YesNoCardProps {
   question: string;
   value: string;
+  index?: number;
+  onSubmit?: (value: string) => void;
 }
 
-const YesNoCard: React.FC<YesNoCardProps> = ({ question, value }) => {
+const YesNoCard: React.FC<YesNoCardProps> = ({
+  question,
+  value,
+  index,
+  onSubmit,
+}) => {
   const [val, setVal] = useState(value);
+  useEffect(() => {
+    if (onSubmit) {
+      onSubmit(val);
+    }
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">{question}</div>
+        <div className="text-[12px] text-Text-Primary">
+          {index}. {question}
+        </div>
         <div className="flex justify-end items-center mt-4">
           <div className="w-[96px] cursor-pointer flex justify-between items-center h-[32px] border border-gray-50 rounded-[8px]">
             <div
