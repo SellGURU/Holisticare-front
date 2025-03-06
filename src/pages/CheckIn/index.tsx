@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import {
   ArrangeCard,
+  FeelingCard,
   RangeCard,
   RateCard,
   TextCard,
@@ -22,10 +23,9 @@ const Checkin = () => {
       value: '4',
     },
     {
-      type: 'text',
-      question: 'What snacks did you take today?',
-      value: '',
-      placeHolder: 'Write the snacks you took ...',
+      type: 'feeling',
+      question: 'How are you feeling today?',
+      value: 'Neutral',
     },
     {
       type: 'rate',
@@ -33,13 +33,24 @@ const Checkin = () => {
       value: '4.5',
     },
     {
-      type: 'arrange',
-      question: 'Weight',
-      value: '60',
-    },
-    {
       type: 'upload',
       question: 'Upload your progress pictures.',
+      value: {
+        frontal: '',
+        Back: '',
+        side: '',
+      },
+    },
+    {
+      type: 'text',
+      question: 'What snacks did you take today?',
+      value: '',
+      placeHolder: 'Write the snacks you took ...',
+    },
+
+    {
+      type: 'arrange',
+      question: 'Weight',
       value: '60',
     },
   ]);
@@ -94,13 +105,24 @@ const Checkin = () => {
             index={index}
             question={item.question}
             value={item.value}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
           ></UploadCard>
+        );
+      case 'feeling':
+        return (
+          <FeelingCard
+            index={index}
+            question={item.question}
+            value={item.value}
+          ></FeelingCard>
         );
     }
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3 h-screen overflow-y-auto pb-4">
+      <div className=" px-6 py-4 grid gap-3 h-svh overflow-y-auto pb-4">
         {chekinData.map((el: any, index: number) => {
           return <>{resolveQuestionCard(el, index + 1)}</>;
         })}

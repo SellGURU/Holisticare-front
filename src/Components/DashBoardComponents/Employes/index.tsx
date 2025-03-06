@@ -122,6 +122,9 @@ const Employes: React.FC = () => {
         console.error('Error fetching tasks:', error);
       });
   }, []);
+  const deleteEmployee = (employeeName: string) => {
+    setEmployees((prevEmployees) => prevEmployees.filter(employee => employee.user_name !== employeeName));
+  };
   return (
     <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4">
       <div className="flex justify-between items-center mb-4">
@@ -139,17 +142,27 @@ const Employes: React.FC = () => {
           />
         </ButtonPrimary>
       </div>
-      <ul className="space-y-3  ">
-        {Employees.map((employee, index) => (
-          <EmployeeRow employee={employee} index={index}></EmployeeRow>
-        ))}
-      </ul>
+      {Employees.length < 1 ? (
+        <div className=" w-full h-full flex flex-col items-center justify-center">
+          <img src="/icons/NoClient.svg" alt="" />
+          <div className="text-xs text-Text-Primary -mt-4 text-center">
+            No Staff Found
+          </div>
+        </div>
+      ) : (
+        <ul className="space-y-3  ">
+          {Employees.map((employee, index) => (
+            <EmployeeRow employee={employee} index={index} deleteStaff={deleteEmployee}></EmployeeRow>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
-const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
+const EmployeeRow: React.FC<{ employee: Employee; index: number; deleteStaff:(employeeName: string)=>void }> = ({
   employee,
   index,
+  deleteStaff
 }) => {
   const [showModal, setshowModal] = useState(false);
   const modalRef = useRef(null);
@@ -174,7 +187,7 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
             <div className=" w-full flex flex-col items-center gap-4 -mt-3">
               <img
                 className="object-contain"
-                src="/public/icons/EmptyState-bg.svg"
+                src="/icons/EmptyState-bg.svg"
                 alt=""
               />
               <div className="text-xs font-medium text-center -mt-6">
@@ -217,6 +230,8 @@ const EmployeeRow: React.FC<{ employee: Employee; index: number }> = ({
               <div
                 onClick={() => {
                   setisConfirm(true);
+                  deleteStaff(employee.user_name)
+                  
                 }}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
