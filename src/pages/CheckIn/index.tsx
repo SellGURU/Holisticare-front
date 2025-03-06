@@ -23,31 +23,38 @@ const Checkin = () => {
       value: '4',
     },
     {
+      type: 'feeling',
+      question: 'How are you feeling today?',
+      value: 'Neutral',
+    },    
+    {
+      type: 'rate',
+      question: 'Rate your workout.',
+      value: '4.5',
+    },    
+    {
+      type: 'upload',
+      question: 'Upload your progress pictures.',
+      value: {
+        frontal:"",
+        Back:"",
+        side:""        
+      },
+    },    
+    {
       type: 'text',
       question: 'What snacks did you take today?',
       value: '',
       placeHolder: 'Write the snacks you took ...',
     },
-    {
-      type: 'rate',
-      question: 'Rate your workout.',
-      value: '4.5',
-    },
+
     {
       type: 'arrange',
       question: 'Weight',
       value: '60',
     },
-    {
-      type: 'upload',
-      question: 'Upload your progress pictures.',
-      value: '60',
-    },
-    {
-      type: 'feeling',
-      question: 'How are you feeling today?',
-      value: 'Neutral',
-    },
+
+
   ]);
 
   const resolveQuestionCard = (item: any, index: number) => {
@@ -100,6 +107,9 @@ const Checkin = () => {
             index={index}
             question={item.question}
             value={item.value}
+            onSubmit={(values) => {
+              console.log(values)
+            }}
           ></UploadCard>
         );
       case 'feeling':

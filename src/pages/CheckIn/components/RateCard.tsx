@@ -1,23 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // import { useState } from "react";
 interface RateCardProps {
   question: string;
   value: number;
   index?: number;
+  onSubmit?:(value:any) => void
 }
 
-const RateCard: React.FC<RateCardProps> = ({ question, index, value }) => {
+const RateCard: React.FC<RateCardProps> = ({ question, index, value,onSubmit }) => {
   const [val, setVal] = useState<number>(value);
+  useEffect(() => {
+    if(onSubmit) {
+      onSubmit(val)
+    }
+  },[val])
   return (
     <>
-      <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
+      <div className="bg-[#FCFCFC] select-none  p-3 w-full  rounded-[12px] border border-gray-50">
         <div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>
-        <div className="flex justify-center gap-2 items-center">
+        <div className="flex justify-center mt-2 gap-2 items-center">
           {Array.from({ length: 5 }).map((_, ind) => {
             return (
               <img

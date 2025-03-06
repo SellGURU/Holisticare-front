@@ -75,17 +75,17 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
   }, [active]);
   return (
     <>
-      <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
+      <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">
         <div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>
-        <div className="bg-white  w-full rounded-[20px] py-3 px-2">
+        <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
           <div
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             className="flex w-full select-none justify-center items-center gap-4"
           >
-            {Array.from({ length: 5 }).map((em, ind) => {
+            {Array.from({ length: 5 }).map((_em, ind) => {
               const itemIndex = active.order - 2 + ind;
               return (
                 <>
