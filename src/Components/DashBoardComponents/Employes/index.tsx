@@ -139,11 +139,20 @@ const Employes: React.FC = () => {
           />
         </ButtonPrimary>
       </div>
-      <ul className="space-y-3  ">
-        {Employees.map((employee, index) => (
-          <EmployeeRow employee={employee} index={index}></EmployeeRow>
-        ))}
-      </ul>
+      {Employees.length < 1 ? (
+        <div className=" w-full h-full flex flex-col items-center justify-center">
+          <img src="/icons/NoClient.svg" alt="" />
+          <div className="text-xs text-Text-Primary -mt-4 text-center">
+            No Staff Found
+          </div>
+        </div>
+      ) : (
+        <ul className="space-y-3  ">
+          {Employees.map((employee, index) => (
+            <EmployeeRow employee={employee} index={index}></EmployeeRow>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
