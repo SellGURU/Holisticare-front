@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 // import { useState } from "react";
 interface ArrangeCardProps {
@@ -15,6 +16,7 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
   value,
 }) => {
   const [val, setVal] = useState<number>(value);
+  const touchStartX = useRef(0);
   const resolveTextOpacity = (ind: number) => {
     if (ind == 0 || ind == 8) {
       return '30%';
@@ -33,6 +35,32 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
     }
     return '';
   };
+  const handleTouchStart = (e: any) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: any) => {
+    const touchMoveX = e.touches[0].clientX;
+    const diff = touchStartX.current - touchMoveX;
+
+    if (diff > 50) {
+      // Swipe Left
+      if (val + 1 <= 200) {
+        setVal(val + 1);
+      }
+      touchStartX.current = touchMoveX; // Reset start point to prevent multiple changes per swipe
+    } else if (diff < -50) {
+      // Swipe Right
+      // if(active.order-1 >=0){
+      //     setActive(emojeys.filter((el) =>el.order == active.order-1)[0]);
+
+      // }
+      if (val - 1 >= 0) {
+        setVal(val - 1);
+      }
+      touchStartX.current = touchMoveX; // Reset start point
+    }
+  };
   return (
     <>
       <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
@@ -40,7 +68,11 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
           {index}. {question}
         </div>
         <div className="w-full flex justify-center items-center">
-          <div className="flex min-w-[412px] w-min  px-2  mt-4 border border-Gray-50 h-10 rounded-[12px] justify-between items-center">
+          <div
+            onTouchMove={handleTouchMove}
+            onTouchStart={handleTouchStart}
+            className="flex w-min px-2  mt-4 border border-gray-50 h-10 rounded-[12px] justify-center items-center"
+          >
             {Array.from({
               length: 9,
             }).map((_, ind) => {

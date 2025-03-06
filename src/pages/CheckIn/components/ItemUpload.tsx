@@ -1,14 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { blobToBase64 } from '../../../help';
 
 interface ItemUploadProps {
   name: string;
+  onUpload?: (strem: string) => void;
 }
 
-const ItemUpload: React.FC<ItemUploadProps> = ({ name }) => {
+const ItemUpload: React.FC<ItemUploadProps> = ({ name, onUpload }) => {
   const refUpload = useRef<any>(null);
   const [image, setImage] = useState<string>('');
+  useEffect(() => {
+    if (onUpload) {
+      onUpload(image);
+    }
+  }, [image]);
   return (
     <>
       <div>
