@@ -63,8 +63,10 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
   const [hoursSlept, setHoursSlept] = useState<number>(0);
   const [showCheckInCommentModal, setshowCheckICommentnModal] = useState(false);
   const [checkInComment, setCheckInComment] = useState('');
-  const [showComparisonSelect, setShowComparisonSelect] = useState<boolean>(false);
-  const [showComparisonSurvey, setShowComparisonSurvey] = useState<boolean>(false);
+  const [showComparisonSelect, setShowComparisonSelect] =
+    useState<boolean>(false);
+  const [showComparisonSurvey, setShowComparisonSurvey] =
+    useState<boolean>(false);
   const [comparisonData, setComparisonData] = useState<string | null>(null);
   const [CompareCheckIn, setCompareCheckIn] = useState('');
   const selectRef = useRef(null);
@@ -115,7 +117,7 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
   };
   return (
     <>
-          <MainModal
+      <MainModal
         isOpen={showcheckInModal}
         onClose={() => {
           setCheckInModal(false);
@@ -126,7 +128,9 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
             <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]"></div>
             David Smith
           </div>
-          <div className={` ${showComparisonSelect ? 'hidden' : ''} mt-4 w-full flex justify-between items-center text-xs font-medium`}>
+          <div
+            className={` ${showComparisonSelect ? 'hidden' : ''} mt-4 w-full flex justify-between items-center text-xs font-medium`}
+          >
             Daily Check-In
             <div
               onClick={handleCompareClick}
@@ -151,75 +155,86 @@ const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
               snackValue={snackValue}
               workHours={workHours}
             />
-            <div className='flex  flex-col w-[436px]'>
-
-     
-            {showComparisonSelect &&  (
-              <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
-                <label className="mb-1">Select Check-In</label>
-                <div
-                  ref={selectButRef}
-                  onClick={() => setShowSelect(!showSelect)}
-                  className={`w-full  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${
-                    showSelect && 'rounded-b-none'
-                  } rounded-[16px] border border-[#E9EDF5]`}
-                >
-                  <div className="text-[12px] text-[#383838]">
-                    {CompareCheckIn || 'Choose one'}
-                  </div>
-                  <div>
-                    <img
-                      className={`${showSelect && 'rotate-180'}`}
-                      src="/icons/arow-down-drop.svg"
-                      alt=""
-                    />
-                  </div>
-                </div>
-                {showSelect && (
+            <div className="flex  flex-col w-[436px]">
+              {showComparisonSelect && (
+                <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
+                  <label className="mb-1">Select Check-In</label>
                   <div
-                    ref={selectRef}
-                    className="w-full z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[47px]"
+                    ref={selectButRef}
+                    onClick={() => setShowSelect(!showSelect)}
+                    className={`w-full  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${
+                      showSelect && 'rounded-b-none'
+                    } rounded-[16px] border border-[#E9EDF5]`}
                   >
-                    {['Check in 1', 'Check in 2', 'Check in 3'].map((checkIn) => (
-                      <div
-                        key={checkIn}
-                        onClick={() => {
-                          setCompareCheckIn(checkIn);
-                          handleComparisonSelect(checkIn);
-                          setShowSelect(false);
-                        }}
-                        className="text-[12px] cursor-pointer text-Text-Primary py-1"
-                      >
-                        {checkIn}
-                      </div>
-                    ))}
+                    <div className="text-[12px] text-[#383838]">
+                      {CompareCheckIn || 'Choose one'}
+                    </div>
+                    <div>
+                      <img
+                        className={`${showSelect && 'rotate-180'}`}
+                        src="/icons/arow-down-drop.svg"
+                        alt=""
+                      />
+                    </div>
                   </div>
-                )}
-              </div>
-            )}
-            {showComparisonSurvey && comparisonData && (
-              <SurveySection
-                isStickMealPlan={isStickMealPlan}
-                setisStickMealPlan={setisStickMealPlan}
-                hoursSlept={hoursSlept}
-                handleSliderChange={handleSliderChange}
-                sliderBackground={sliderBackground}
-                feelings={feelings}
-                selectedFeeling={selectedFeeling}
-                handleFeelingClick={handleFeelingClick}
-                val={val}
-                setVal={setVal}
-                snackValue={snackValue}
-                workHours={workHours}
-              />
-            )}
-                   </div>
+                  {showSelect && (
+                    <div
+                      ref={selectRef}
+                      className="w-full z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[47px]"
+                    >
+                      {['Check in 1', 'Check in 2', 'Check in 3'].map(
+                        (checkIn) => (
+                          <div
+                            key={checkIn}
+                            onClick={() => {
+                              setCompareCheckIn(checkIn);
+                              handleComparisonSelect(checkIn);
+                              setShowSelect(false);
+                            }}
+                            className="text-[12px] cursor-pointer text-Text-Primary py-1"
+                          >
+                            {checkIn}
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              {showComparisonSurvey && comparisonData && (
+                <SurveySection
+                  isStickMealPlan={isStickMealPlan}
+                  setisStickMealPlan={setisStickMealPlan}
+                  hoursSlept={hoursSlept}
+                  handleSliderChange={handleSliderChange}
+                  sliderBackground={sliderBackground}
+                  feelings={feelings}
+                  selectedFeeling={selectedFeeling}
+                  handleFeelingClick={handleFeelingClick}
+                  val={val}
+                  setVal={setVal}
+                  snackValue={snackValue}
+                  workHours={workHours}
+                />
+              )}
+            </div>
           </div>
-          <div className='w-full flex justify-end items-center gap-4 absolute right-[24px] bottom-[32px]  text-sm font-medium'>
-            <div onClick={()=>setCheckInModal(false)} className='text-[#909090] cursor-pointer'>Cancel</div>
-            <div onClick={()=>{
-              setshowCheckICommentnModal(true)
-              setCheckInModal(false)}} className='text-Primary-DeepTeal cursor-pointer'>Marked as Reviewed</div>
+          <div className="w-full flex justify-end items-center gap-4 absolute right-[24px] bottom-[32px]  text-sm font-medium">
+            <div
+              onClick={() => setCheckInModal(false)}
+              className="text-[#909090] cursor-pointer"
+            >
+              Cancel
+            </div>
+            <div
+              onClick={() => {
+                setshowCheckICommentnModal(true);
+                setCheckInModal(false);
+              }}
+              className="text-Primary-DeepTeal cursor-pointer"
+            >
+              Marked as Reviewed
+            </div>
           </div>
         </div>
       </MainModal>

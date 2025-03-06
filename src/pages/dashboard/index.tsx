@@ -15,7 +15,6 @@ import TextField from '../../Components/TextField';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
-
 const DashBoard = () => {
   // const [reports, setreports] = useState()
 
@@ -43,11 +42,6 @@ const DashBoard = () => {
 
   // End Add Task Section
 
-
-
-
-
- 
   return (
     <>
       {/* Add Task Modal */}
@@ -157,18 +151,16 @@ const DashBoard = () => {
         </div>
       </MainModal>
       {/* Check-In Comment Modal */}
-    
+
       {/* Check in Modal */}
-     
+
       <div className="px-6 py-10">
         <NumberBoxes reports={[]}></NumberBoxes>
         <div className="w-full  mt-4 grid gap-4 grid-cols-4">
           {/* <MessageList /> */}
           <Actions></Actions>
           <div className="col-span-2 grid gap-4">
-            <RecentCheckIns
-             
-            ></RecentCheckIns>
+            <RecentCheckIns></RecentCheckIns>
             {/* <Reminder></Reminder> */}
 
             <TaskManager
