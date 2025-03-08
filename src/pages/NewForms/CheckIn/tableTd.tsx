@@ -10,7 +10,7 @@ export const columns = (): ColumnDef<any>[] => [
       return (
         <div className="flex justify-start text-xs text-Text-Secondary ">
           {/* {row.original?.no || 'No Data'} */}
-          {row.index+1}
+          {row.index + 1}
         </div>
       );
     },

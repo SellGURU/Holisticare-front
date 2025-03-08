@@ -70,7 +70,7 @@ const router = createBrowserRouter([
           {
             path: '/forms2',
             element: <NewForms></NewForms>,
-          },          
+          },
         ],
       },
       {
