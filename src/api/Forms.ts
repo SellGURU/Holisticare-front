@@ -1,0 +1,17 @@
+import Api from "./api";
+
+class FormsApi extends Api {
+    static getCheckinList = () => {
+        return this.post("/forms/check_in/list_checkin_forms",{})
+    }
+
+    static addCheckin= (data:CheckinFormType) => {
+        return this.post("/forms/check_in/add_checkin_form",data)
+    }
+
+    static deleteCheckin= (id:string) => {
+        return this.post("/forms/check_in/add_checkin_form",{unique_id:id})
+    }    
+}
+
+export default FormsApi

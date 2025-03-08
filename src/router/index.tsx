@@ -24,6 +24,7 @@ import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx'
 // import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
 import GenerateActionPlan from '../Components/NewGenerateActionPlan/index2.tsx';
 import Checkin from '../pages/CheckIn/index.tsx';
+import NewForms from '../pages/NewForms/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
             path: '/forms',
             element: <Forms></Forms>,
           },
+          {
+            path: '/forms2',
+            element: <NewForms></NewForms>,
+          },          
         ],
       },
       {
