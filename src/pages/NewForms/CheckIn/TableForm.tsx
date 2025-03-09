@@ -16,7 +16,7 @@ interface TableProps {
   classData: Array<any>;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
-  onPreview:(id: string) => void
+  onPreview: (id: string) => void;
   setCheckInLists: (value: any) => void;
   setCheckInListEditValue: (value: any) => void;
   setEditModeModal: (value: boolean) => void;
@@ -127,10 +127,13 @@ const TableForm: FC<TableProps> = ({
             <img src="/icons/timer-green.svg" alt="" />
             Schedule & Reminder
           </div>
-          <div onClick={() => {
-            setshowModal(false);
-            onPreview(selectedRow.id)
-            }} className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer">
+          <div
+            onClick={() => {
+              setshowModal(false);
+              onPreview(selectedRow.id);
+            }}
+            className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
+          >
             <img src="/icons/eye-green.svg" className="w-4" alt="" />
             Preview
           </div>

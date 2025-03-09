@@ -14,7 +14,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
 }) => {
   const [options, setOptions] = useState(values);
   const addOption = () => {
-    if(options.length <4){
+    if (options.length < 4) {
       setOptions([...options, '']);
     }
   };
@@ -69,7 +69,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
             })}
           </div>
           <div
-            className={`cursor-pointer ${options.length==4&& 'opacity-50 cursor-not-allowed'} text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap cursor-pointer ml-1 mt-1`}
+            className={`cursor-pointer ${options.length == 4 && 'opacity-50 cursor-not-allowed'} text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap cursor-pointer ml-1 mt-1`}
             onClick={addOption}
           >
             <img

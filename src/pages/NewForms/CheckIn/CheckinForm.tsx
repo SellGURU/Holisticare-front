@@ -11,7 +11,7 @@ import CheckInPreview from './CheckInPreview';
 const CheckInForm = () => {
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
-  const [showPreview,setShowPreview] = useState(false)
+  const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
@@ -55,8 +55,8 @@ const CheckInForm = () => {
                 setEditFormId(id);
               }}
               onPreview={(id) => {
-                setShowPreview(true)
-                setEditFormId(id)
+                setShowPreview(true);
+                setEditFormId(id);
               }}
               setCheckInListEditValue={() => {}}
               setCheckInLists={() => {}}
@@ -125,16 +125,22 @@ const CheckInForm = () => {
         ></CheckInControllerModal>
       </MainModal>
 
-      <MainModal onClose={() => {
-        setShowPreview(false)
-        setEditFormId("")
-        }} isOpen={showPreview}>
-          <>
-          <CheckInPreview id={editFormId} onClose={() => {
-            setShowPreview(false)
-            setEditFormId("")
-          }}></CheckInPreview>
-          </>
+      <MainModal
+        onClose={() => {
+          setShowPreview(false);
+          setEditFormId('');
+        }}
+        isOpen={showPreview}
+      >
+        <>
+          <CheckInPreview
+            id={editFormId}
+            onClose={() => {
+              setShowPreview(false);
+              setEditFormId('');
+            }}
+          ></CheckInPreview>
+        </>
       </MainModal>
     </>
   );

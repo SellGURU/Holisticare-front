@@ -15,7 +15,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
 }) => {
   const [options, setOptions] = useState(values);
   const addChoiceOption = () => {
-    if(options.length<4){
+    if (options.length < 4) {
       setOptions([...options, '']);
     }
   };
@@ -72,7 +72,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
             })}
           </div>
           <div
-            className={`cursor-pointer ${options.length==4&& 'opacity-50 cursor-not-allowed'} text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap  ml-1 mt-1`}
+            className={`cursor-pointer ${options.length == 4 && 'opacity-50 cursor-not-allowed'} text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap  ml-1 mt-1`}
             onClick={addChoiceOption}
           >
             <img

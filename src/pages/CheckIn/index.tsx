@@ -11,18 +11,16 @@ import {
 import UploadCard from './components/UploadCard';
 
 interface CheckinProps {
-  upData?:Array<checkinType>
+  upData?: Array<checkinType>;
 }
 
-const Checkin:React.FC<CheckinProps> = ({
-  upData
-}) => {
-  const [chekinData,setCheckinData] = useState<Array<checkinType>>([]);
+const Checkin: React.FC<CheckinProps> = ({ upData }) => {
+  const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
   useEffect(() => {
-    if(upData){
-      setCheckinData(upData)
+    if (upData) {
+      setCheckinData(upData);
     }
-  },[upData])
+  }, [upData]);
   const resolveQuestionCard = (item: any, index: number) => {
     switch (item.type) {
       case 'Yes/No':
