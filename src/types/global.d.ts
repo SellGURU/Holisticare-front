@@ -17,6 +17,12 @@ declare global {
     questions: Array<checkinType>;
   };
 
+  type CheckinEditFormType = {
+      title: string;
+      unique_id:string;
+      questions: Array<checkinType>;
+    };  
+
   type CheckInDataRowType = {
     title: string;
     questions: number;

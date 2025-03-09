@@ -10,9 +10,12 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { columns } from './tableTd';
 import { FaSort } from 'react-icons/fa';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import FormsApi from '../../../api/Forms';
 
 interface TableProps {
   classData: Array<any>;
+  onDelete:(id:string) => void
+  onEdit:(id:string) => void
   setCheckInLists: (value: any) => void;
   setCheckInListEditValue: (value: any) => void;
   setEditModeModal: (value: boolean) => void;
@@ -33,9 +36,10 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
 
 const TableForm: FC<TableProps> = ({
   classData,
-  setCheckInLists,
+  onDelete,
+  onEdit,
+  // setCheckInLists,
   setCheckInListEditValue,
-  setEditModeModal,
   setShowModal,
   setRepositionModeModal,
   setShowModalSchedule,
@@ -72,20 +76,21 @@ const TableForm: FC<TableProps> = ({
     setshowModal(true);
   };
   const [sureRemove, setSureRemove] = useState(false);
-  const removeItemByNo = (noToRemove: number) => {
-    setCheckInLists((prevState: any[]) =>
-      prevState.filter((item) => item.no !== noToRemove),
-    );
+  const removeItemByNo = (id: string) => {
+    FormsApi.deleteCheckin(id).then(() => {
+      onDelete(id)
+    })
     setshowModal(false);
     setSelectedRow(null);
     setSureRemove(false);
   };
-  const handleEdit = () => {
-    setRepositionModeModal(false);
+  const handleEdit = (id: string) => {
+    // setRepositionModeModal(false);
     setshowModal(false);
-    setEditModeModal(true);
-    setCheckInListEditValue(selectedRow);
-    setShowModal(true);
+    onEdit(id)
+    // setEditModeModal(true);
+    // setCheckInListEditValue(selectedRow);
+    // setShowModal(true);
   };
   const handleReposition = () => {
     setshowModal(false);
@@ -126,7 +131,7 @@ const TableForm: FC<TableProps> = ({
           </div>
           <div
             className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
-            onClick={handleEdit}
+            onClick={() =>handleEdit(selectedRow.id)}
           >
             <img src="/icons/edit-green.svg" className="w-4" alt="" />
             Edit
@@ -138,7 +143,7 @@ const TableForm: FC<TableProps> = ({
                 src="/icons/tick-circle-green.svg"
                 alt=""
                 className="w-[20px] h-[20px] cursor-pointer"
-                onClick={() => removeItemByNo(selectedRow.no)}
+                onClick={() => removeItemByNo(selectedRow.id)}
               />
               <img
                 src="/icons/close-circle-red.svg"

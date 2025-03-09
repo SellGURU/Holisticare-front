@@ -5,6 +5,7 @@ import MultiChoceSelection from './MultichoiceSelection';
 interface AddQuestionsModalProps {
   onCancel: () => void;
   onSubmit: (value: checkinType) => void;
+  editQUestion?:checkinType
 }
 
 const checkInTypes = [
@@ -35,13 +36,14 @@ const checkInTypes = [
 const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   onCancel,
   onSubmit,
+  editQUestion
 }) => {
-  const [qustion, setQuestion] = useState('');
-  const [required, setRequired] = useState(false);
-  const [type, setType] = useState('');
-  const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>([]);
+  const [qustion, setQuestion] = useState(editQUestion?editQUestion?.question:'');
+  const [required, setRequired] = useState(editQUestion?editQUestion?.required:false);
+  const [type, setType] = useState(editQUestion?editQUestion.type:'');
+  const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>(editQUestion?.type=='Checkboxes'&&editQUestion.options?editQUestion.options:["",""]);
   const [multiChoiceOptions, setMutiChoiceOptions] = useState<Array<string>>(
-    [],
+    editQUestion?.type=='Multiple choice'&&editQUestion.options?editQUestion.options:["",""],
   );
   const isDisabled = () => {
     return qustion.length == 0 || type == '';
@@ -81,6 +83,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               alt=""
               className="w-[18px] h-[18px] cursor-pointer"
               onClick={() => {
+                clear()
                 onCancel();
                 // if (editIndex !== null) {
                 //     handleCancelEdit();
@@ -190,6 +193,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             );
           })}
           <CheckBoxSelection
+            values={CheckBoxoptions}
             isActive={type == 'Checkboxes'}
             toggle={() => {
               if (type == 'Checkboxes') {
@@ -204,6 +208,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
           ></CheckBoxSelection>
 
           <MultiChoceSelection
+            values={multiChoiceOptions}
             isActive={type == 'Multiple choice'}
             toggle={() => {
               if (type == 'Multiple choice') {
