@@ -57,8 +57,7 @@ const mockCheckIns: CheckIn[] = [
     status: 'Reviewed',
   },
 ];
-interface RecentCheckInsProps {}
-const RecentCheckIns: React.FC<RecentCheckInsProps> = () => {
+const RecentCheckIns = () => {
   const [CheckIns, setCheckIns] = useState<CheckIn[]>(mockCheckIns);
   const [showcheckInModal, setCheckInModal] = useState(false);
   const [isStickMealPlan, setisStickMealPlan] = useState(true);

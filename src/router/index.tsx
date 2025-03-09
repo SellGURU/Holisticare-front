@@ -18,11 +18,13 @@ import Messages from '../pages/messages/index.tsx';
 import Setting from '../pages/settings/index.tsx';
 import Reports from '../pages/reports/index.tsx';
 import { Client } from '../pages/driftAnaysis/Client.tsx';
+import Forms from '../pages/forms/index.tsx';
 import { GenerateRecommendation } from '../pages/generateRecommendation/index.tsx';
 import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
 // import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
 import GenerateActionPlan from '../Components/NewGenerateActionPlan/index2.tsx';
 import Checkin from '../pages/CheckIn/index.tsx';
+import NewForms from '../pages/NewForms/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -60,6 +62,14 @@ const router = createBrowserRouter([
           {
             path: '/reports',
             element: <Reports></Reports>,
+          },
+          {
+            path: '/forms2',
+            element: <Forms></Forms>,
+          },
+          {
+            path: '/forms',
+            element: <NewForms></NewForms>,
           },
         ],
       },

@@ -34,6 +34,45 @@ export const menus = [
       { name: 'Staff', url: '/', icon: 'sidemenu-menu-icon-Staff', active: false },
     ],
   },
+  // {
+  //   name: 'Knowledge Graph',
+  //   icon: 'sidemenu-menu-icon-trend-up',
+  //   url: '/aiKnowledge',
+  //   active: true,
+  // },
+  // {
+  //   name: 'forms',
+  //   icon: 'sidemenu-menu-icon-forms',
+  //   url: '/forms',
+  //   active: true,
+  // },
+  // {
+  //   name: 'reports',
+  //   icon: 'sidemenu-menu-icon-reports',
+  //   url: '/reports',
+  //   active: true,
+  // },
+  // {
+  //   name: 'Packages',
+  //   icon: 'sidemenu-menu-icon-packages',
+  //   url: '',
+  // },
+  // {
+  //   name: 'Setting',
+  //   icon: 'sidemenu-menu-icon-setting',
+  //   url: '/setting',
+  //   active: true,
+  // },
+  // {
+  //   name: 'info-circle',
+  //   icon: 'info-circle',
+  //   url: '/',
+  // },
+  // {
+  //   name: 'Setting',
+  //   icon: 'setting',
+  //   url: '/setting',
+  // },
 ];
 // export const menus = [
 //   // {
