@@ -11,7 +11,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   const location = useLocation();
 
   const [activeMenu, setActiveMenu] = useState(() => {
-    return menus.flatMap((menu) => menu.items).find((item) => item.url === location.pathname) || menus[0].items[0];
+    return (
+      menus
+        .flatMap((menu) => menu.items)
+        .find((item) => item.url === location.pathname) || menus[0].items[0]
+    );
   });
   //   useEffect(() => {
   //     const currentActiveMenu =
@@ -27,23 +31,31 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   };
 
   return (
-      <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
+    <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
       <div className="w-full  relative">
         <div className="px-4">
           <div className="flex items-center justify-center">
-            <img className="size-10 h-sm:size-[46px]" src="/images/new-clinic-log.svg" alt="Clinic Logo" />
+            <img
+              className="size-10 h-sm:size-[46px]"
+              src="/images/new-clinic-log.svg"
+              alt="Clinic Logo"
+            />
           </div>
         </div>
         <div className="w-full">
-          <div className=" h-fit md:h-full overflow-y-auto" style={{ height: window.innerHeight - 100 + 'px' }}>
+          <div
+            className=" h-fit md:h-full overflow-y-auto"
+            style={{ height: window.innerHeight - 100 + 'px' }}
+          >
             {menus.map((menuCategory) => (
-              <div className='mt-2' key={menuCategory.category}>
-                <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">{menuCategory.category}</div>
+              <div className="mt-2" key={menuCategory.category}>
+                <div className=" px-3 text-[#B0B0B0] text-[10px] font-medium">
+                  {menuCategory.category}
+                </div>
                 {menuCategory.items.map((menu) => (
                   <>
-                    {
-                      menu.name === "Knowledge Graph" ? (
-                        <div className="  w-full flex pl-5 mt-2 items-center">
+                    {menu.name === 'Knowledge Graph' ? (
+                      <div className="  w-full flex pl-5 mt-2 items-center">
                         {' '}
                         <div
                           onClick={() => {
@@ -89,15 +101,15 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                           {/* { activeMenu.name === graph.name && graph.name} */}
                         </div>
                       </div>
-                      ):(
-                        <div className='mt-1' key={menu.name}>
+                    ) : (
+                      <div className="mt-1" key={menu.name}>
                         <div
                           onClick={() => {
                             if (menu.active) {
                               changeMenu(menu);
                             }
                           }}
-                          className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ""} ${
+                          className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ''} ${
                             activeMenu.name === menu.name
                               ? ' bg-[#E9F0F2] border-r-2 border-Primary-DeepTeal'
                               : 'bg-white'
@@ -105,21 +117,23 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                         >
                           <div
                             className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
-                              activeMenu.name === menu.name ? 'text-Primary-DeepTeal' : 'text-[#888888]'
+                              activeMenu.name === menu.name
+                                ? 'text-Primary-DeepTeal'
+                                : 'text-[#888888]'
                             }`}
                           />
                           <div
                             className={`${
-                              activeMenu.name === menu.name ? 'text-Primary-DeepTeal' : 'text-[#888888] block '
+                              activeMenu.name === menu.name
+                                ? 'text-Primary-DeepTeal'
+                                : 'text-[#888888] block '
                             }`}
                           >
                             {menu.name}
                           </div>
                         </div>
                       </div>
-                      )
-                    }
-     
+                    )}
                   </>
                 ))}
               </div>
@@ -132,7 +146,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         </div>
         <div className="hidden absolute bottom-0 md:bottom-4 text-[8px] text-[#888888] font-medium md:flex pl-5  w-full items-end gap-1">
           Powered by
-          <img className='' src="/images/sidebar-final.svg" alt="Powered by" />
+          <img className="" src="/images/sidebar-final.svg" alt="Powered by" />
         </div>
       </div>
     </div>
