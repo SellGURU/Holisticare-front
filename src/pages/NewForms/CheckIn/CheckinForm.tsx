@@ -9,7 +9,13 @@ import { MainModal } from '../../../Components';
 import CheckInControllerModal from './CheckInControllerModal';
 import CheckInPreview from './CheckInPreview';
 
-const CheckInForm = () => {
+interface CheckInFormProps {
+  isQuestionary?:boolean
+}
+
+const CheckInForm:React.FC<CheckInFormProps> = ({
+  isQuestionary
+}) => {
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -20,9 +26,18 @@ const CheckInForm = () => {
       setCheckInList(res.data);
     });
   };
+  const getQuestionary = () => {
+    FormsApi.getQuestionaryList().then((res) => {
+      setCheckInList(res.data);
+    });
+  };  
   useEffect(() => {
-    getChechins();
-  }, []);
+    if(isQuestionary){
+      getQuestionary()
+    }else {
+      getChechins();
+    }
+  }, [isQuestionary]);
   const resolveMode = () => {
     // editFormId != '' ? 'Edit' : 'Add'
     if (editFormId == '') {
@@ -70,7 +85,7 @@ const CheckInForm = () => {
           <div className="flex flex-col w-full mt-4">
             <div className="w-full flex items-center justify-between mb-3">
               <div className="text-Text-Primary font-medium text-sm">
-                Check-In Forms
+                {isQuestionary?'Questionary Forms':'Check-In Forms'}
               </div>
               <ButtonSecondary
                 ClassName="rounded-[20px] w-[152px]"
@@ -89,8 +104,16 @@ const CheckInForm = () => {
             </div>
             <TableForm
               classData={checkInList}
-              onDelete={() => {
-                getChechins();
+              onDelete={(id) => {
+                if(isQuestionary) {
+                  FormsApi.deleteQuestionary(id).then(() => {
+                    getQuestionary();
+                  });
+                }else {
+                  FormsApi.deleteCheckin(id).then(() => {
+                    getChechins();
+                  });
+                }
               }}
               onEdit={(id) => {
                 setShowAddModal(true);
@@ -117,7 +140,7 @@ const CheckInForm = () => {
             className="mt-16"
           />
           <div className="text-Text-Primary text-base font-medium mt-9">
-            No check-in form existed yet.
+            {isQuestionary ?'No questionary form existed yet.':'No check-in form existed yet.'}
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px] w-[229px] mt-9"

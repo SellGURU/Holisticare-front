@@ -25,6 +25,16 @@ class FormsApi extends Api {
   static checkInReposition = (data: any) => {
     return this.post('/forms/check_in/reposition_questions', data);
   };
+
+  // questionary
+
+  static getQuestionaryList = () => {
+    return this.post('/forms/questionary/list_questionary_forms', {});
+  };
+
+  static deleteQuestionary = (id: string) => {
+    return this.post('/forms/questionary/delete_questionary_form', { unique_id: id });
+  };  
 }
 
 export default FormsApi;
