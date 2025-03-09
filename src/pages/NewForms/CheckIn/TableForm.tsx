@@ -17,7 +17,7 @@ interface TableProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
-  onReposition:(id:string) => void
+  onReposition: (id: string) => void;
   setCheckInLists: (value: any) => void;
   setCheckInListEditValue: (value: any) => void;
   setEditModeModal: (value: boolean) => void;
@@ -95,9 +95,9 @@ const TableForm: FC<TableProps> = ({
     // setCheckInListEditValue(selectedRow);
     // setShowModal(true);
   };
-  const handleReposition = (id:string) => {
+  const handleReposition = (id: string) => {
     setshowModal(false);
-    onReposition(id)
+    onReposition(id);
   };
   const handleSchedule = () => {
     setshowModal(false);

@@ -5,9 +5,9 @@ interface QuestionItemProps {
   index?: number;
   onRemove: () => void;
   onEdit: () => void;
-  isReposition?:boolean;
-  moveItem?:(direction: 'up' | 'down')=> void
-  length:number
+  isReposition?: boolean;
+  moveItem?: (direction: 'up' | 'down') => void;
+  length: number;
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({
@@ -17,7 +17,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   onEdit,
   isReposition,
   moveItem,
-  length
+  length,
 }) => {
   const [sureRemove, setSureRemove] = useState(false);
   return (
@@ -48,65 +48,65 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             className={`flex items-center justify-end ${sureRemove ? 'w-[35%]' : 'w-[24%]'}`}
           >
             <>
-            {isReposition?
-            <>
-              <img
-                src="./icons/arrow-circle-down.svg"
-                alt=""
-                className={`w-[16px] h-[16px] cursor-pointer ${index === length-1 && 'opacity-50'}`}
-                onClick={() => {
-                  if (index !== length-1&&moveItem ) {
-                    moveItem('down');
-                  }
-                }}
-              />
-              <img
-                src="./icons/arrow-circle-up.svg"
-                alt=""
-                className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
-                onClick={() => {
-                  if (index !== 0 && moveItem) {
-                    moveItem('up');
-                  }
-                }}
-              />
-            </>
-            :
-            <>
-              {sureRemove ? (
-                <div className="flex items-center justify-center gap-1 ml-4">
-                  <div className="text-Text-Quadruple text-xs">Sure?</div>
-                  <img
-                    src="/icons/tick-circle-green.svg"
-                    alt=""
-                    className="w-[20px] h-[20px] cursor-pointer"
-                    onClick={() => onRemove()}
-                  />
-                  <img
-                    src="/icons/close-circle-red.svg"
-                    alt=""
-                    className="w-[20px] h-[20px] cursor-pointer"
-                    onClick={() => setSureRemove(false)}
-                  />
-                </div>
-              ) : (
+              {isReposition ? (
                 <>
                   <img
-                    src="./icons/edit-blue.svg"
+                    src="./icons/arrow-circle-down.svg"
                     alt=""
-                    className="w-[16px] h-[16px] cursor-pointer"
-                    onClick={() => onEdit()}
+                    className={`w-[16px] h-[16px] cursor-pointer ${index === length - 1 && 'opacity-50'}`}
+                    onClick={() => {
+                      if (index !== length - 1 && moveItem) {
+                        moveItem('down');
+                      }
+                    }}
                   />
                   <img
-                    src="./icons/trash-blue.svg"
+                    src="./icons/arrow-circle-up.svg"
                     alt=""
-                    className="w-[16px] h-[16px] ml-2 cursor-pointer"
-                    onClick={() => setSureRemove(true)}
+                    className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
+                    onClick={() => {
+                      if (index !== 0 && moveItem) {
+                        moveItem('up');
+                      }
+                    }}
                   />
                 </>
+              ) : (
+                <>
+                  {sureRemove ? (
+                    <div className="flex items-center justify-center gap-1 ml-4">
+                      <div className="text-Text-Quadruple text-xs">Sure?</div>
+                      <img
+                        src="/icons/tick-circle-green.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer"
+                        onClick={() => onRemove()}
+                      />
+                      <img
+                        src="/icons/close-circle-red.svg"
+                        alt=""
+                        className="w-[20px] h-[20px] cursor-pointer"
+                        onClick={() => setSureRemove(false)}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <img
+                        src="./icons/edit-blue.svg"
+                        alt=""
+                        className="w-[16px] h-[16px] cursor-pointer"
+                        onClick={() => onEdit()}
+                      />
+                      <img
+                        src="./icons/trash-blue.svg"
+                        alt=""
+                        className="w-[16px] h-[16px] ml-2 cursor-pointer"
+                        onClick={() => setSureRemove(true)}
+                      />
+                    </>
+                  )}
+                </>
               )}
-            </>
-            }
             </>
           </div>
         </div>

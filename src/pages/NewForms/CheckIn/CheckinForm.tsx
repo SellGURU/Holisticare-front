@@ -14,7 +14,7 @@ const CheckInForm = () => {
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
-  const [showReposition,setShowReposition] = useState(false)
+  const [showReposition, setShowReposition] = useState(false);
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
@@ -23,32 +23,32 @@ const CheckInForm = () => {
   useEffect(() => {
     getChechins();
   }, []);
-  const resolveMode =() => {
+  const resolveMode = () => {
     // editFormId != '' ? 'Edit' : 'Add'
-    if(editFormId ==''){
-      return "Add"
+    if (editFormId == '') {
+      return 'Add';
     }
-    if(showReposition){
-      return "Reposition"
+    if (showReposition) {
+      return 'Reposition';
     }
-    return 'Edit'
-  }
-  const onsave = (values:any) => {
-    if(showReposition){
+    return 'Edit';
+  };
+  const onsave = (values: any) => {
+    if (showReposition) {
       FormsApi.checkInReposition({
         unique_id: editFormId,
-        questions:values.questions.map((el:any,index:number) => {
-          return{
+        questions: values.questions.map((el: any, index: number) => {
+          return {
             ...el,
-            order:index+1
-          }
-        })
+            order: index + 1,
+          };
+        }),
       }).then(() => {
         getChechins();
-        setShowAddModal(false);   
-        setShowReposition(false)     
-      })
-    }else if (editFormId != '') {
+        setShowAddModal(false);
+        setShowReposition(false);
+      });
+    } else if (editFormId != '') {
       FormsApi.editCheckIn({
         unique_id: editFormId,
         ...values,
@@ -62,7 +62,7 @@ const CheckInForm = () => {
         setShowAddModal(false);
       });
     }
-  }
+  };
   return (
     <>
       {checkInList.length > 0 ? (
@@ -101,8 +101,8 @@ const CheckInForm = () => {
                 setEditFormId(id);
               }}
               onReposition={(id) => {
-                setShowReposition(true)
-                setEditFormId(id)
+                setShowReposition(true);
+                setEditFormId(id);
               }}
               setCheckInListEditValue={() => {}}
               setCheckInLists={() => {}}
@@ -142,18 +142,18 @@ const CheckInForm = () => {
         onClose={() => {
           // setShowModal(false);
           setEditFormId('');
-          setShowReposition(false)
+          setShowReposition(false);
           setShowAddModal(false);
         }}
       >
         <CheckInControllerModal
           editId={editFormId}
           onClose={() => {
-          setShowReposition(false)
-          setShowAddModal(false);
+            setShowReposition(false);
+            setShowAddModal(false);
           }}
           onSave={(values) => {
-            onsave(values)
+            onsave(values);
           }}
           mode={resolveMode()}
         ></CheckInControllerModal>
