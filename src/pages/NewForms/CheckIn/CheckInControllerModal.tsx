@@ -75,6 +75,7 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
     if (editId != '' && editId) {
       FormsApi.showCheckIn(editId).then((res) => {
         setQuestions(res.data.questions);
+        setTitleForm(res.data.title)
       });
     }
   }, [editId]);

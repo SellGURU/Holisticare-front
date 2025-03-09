@@ -17,7 +17,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   return (
     <>
       <div className="flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border border-Gray-50">
-        <div className="text-Text-Quadruple text-[10px] w-[60%]">
+        <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[60%]">
           {index != undefined ? index + 1 : ''}
           {'  '}
           {question.question}

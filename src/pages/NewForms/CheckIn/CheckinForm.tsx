@@ -6,10 +6,12 @@ import TableForm from './TableForm';
 import { MainModal } from '../../../Components';
 // import AddCheckIn from "./AddCheckIn";
 import CheckInControllerModal from './CheckInControllerModal';
+import CheckInPreview from './CheckInPreview';
 
 const CheckInForm = () => {
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
+  const [showPreview,setShowPreview] = useState(false)
   const [editFormId, setEditFormId] = useState('');
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
@@ -51,6 +53,10 @@ const CheckInForm = () => {
               onEdit={(id) => {
                 setShowAddModal(true);
                 setEditFormId(id);
+              }}
+              onPreview={(id) => {
+                setShowPreview(true)
+                setEditFormId(id)
               }}
               setCheckInListEditValue={() => {}}
               setCheckInLists={() => {}}
@@ -117,6 +123,18 @@ const CheckInForm = () => {
           }}
           mode={editFormId != '' ? 'Edit' : 'Add'}
         ></CheckInControllerModal>
+      </MainModal>
+
+      <MainModal onClose={() => {
+        setShowPreview(false)
+        setEditFormId("")
+        }} isOpen={showPreview}>
+          <>
+          <CheckInPreview id={editFormId} onClose={() => {
+            setShowPreview(false)
+            setEditFormId("")
+          }}></CheckInPreview>
+          </>
       </MainModal>
     </>
   );
