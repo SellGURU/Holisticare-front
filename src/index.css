@@ -172,9 +172,108 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-Branding {
+  mask-image: url(/icons/side-menu/setting-5.svg);
+  -webkit-mask-image: url(/icons/side-menu/setting-5.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Biomarker {
+  mask-image: url(/icons/side-menu/backward-item.svg);
+  -webkit-mask-image: url(/icons/side-menu/backward-item.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Form {
+  mask-image: url(/icons/side-menu/firstline.svg);
+  -webkit-mask-image: url(/icons/side-menu/firstline.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Diet {
+  mask-image: url(/icons/side-menu/apple.svg);
+  -webkit-mask-image: url(/icons/side-menu/apple.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Activity {
+  mask-image: url(/icons/side-menu/weight.svg);
+  -webkit-mask-image: url(/icons/side-menu/weight.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Supplement {
+  mask-image: url(/icons/side-menu/pil.svg);
+  -webkit-mask-image: url(/icons/side-menu/pil.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Lifestyle {
+  mask-image: url(/icons/side-menu/wellness-svgrepo-com\ 2.svg);
+  -webkit-mask-image: url(/icons/side-menu/wellness-svgrepo-com\ 2.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 .sidemenu-menu-icon-home {
   mask-image: url(/icons/side-menu/home-2.svg);
   -webkit-mask-image: url(/icons/side-menu/home-2.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Package {
+  mask-image: url(/icons/side-menu/box.svg);
+  -webkit-mask-image: url(/icons/side-menu/box.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
+.sidemenu-menu-icon-Staff {
+  mask-image: url(/icons/side-menu/profile-2user.svg);
+  -webkit-mask-image: url(/icons/side-menu/profile-2user.svg);
   mask-size: 100%;
   -webkit-mask-size: 100%;
   mask-repeat: no-repeat;

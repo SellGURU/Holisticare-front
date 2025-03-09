@@ -34,7 +34,9 @@ const NewForms = () => {
               <CheckInForm></CheckInForm>
             </>
           ) : (
-            <></>
+            <>
+              <CheckInForm isQuestionary></CheckInForm>
+            </>
           )}
         </div>
       </div>

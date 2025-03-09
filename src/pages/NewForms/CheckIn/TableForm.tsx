@@ -10,7 +10,6 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { columns } from './tableTd';
 import { FaSort } from 'react-icons/fa';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import FormsApi from '../../../api/Forms';
 
 interface TableProps {
   classData: Array<any>;
@@ -74,9 +73,7 @@ const TableForm: FC<TableProps> = ({
   };
   const [sureRemove, setSureRemove] = useState(false);
   const removeItemByNo = (id: string) => {
-    FormsApi.deleteCheckin(id).then(() => {
-      onDelete(id);
-    });
+    onDelete(id);
     setshowModal(false);
     setSelectedRow(null);
     setSureRemove(false);
