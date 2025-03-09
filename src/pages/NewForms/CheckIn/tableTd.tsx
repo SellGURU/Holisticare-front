@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColumnDef } from '@tanstack/react-table';
+// import TooltipText from '../../../Components/TooltipText';
 
 export const columns = (): ColumnDef<any>[] => [
   {
@@ -23,8 +24,10 @@ export const columns = (): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original?.title}
+        <div className="text-xs text-Text-Secondary flex justify-center text-center ">
+          <div className="max-w-[250px] overflow-hidden text-ellipsis ">
+            {row.original?.title}
+          </div>
         </div>
       );
     },

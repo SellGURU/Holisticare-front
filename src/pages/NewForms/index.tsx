@@ -7,7 +7,7 @@ const NewForms = () => {
   const [active, setActive] = useState('Check-In');
   return (
     <>
-      <div className="px-6 pt-8">
+      <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-28">
         <div className="w-full flex justify-between items-center">
           <div className="text-Text-Primary font-medium opacity-[87%]">
             Forms
@@ -19,12 +19,16 @@ const NewForms = () => {
           />
         </div>
         <div className="w-full h-[1px] bg-white my-3 mt-5"></div>
-        <div className="w-full flex justify-center items-center flex-col">
+        <div className="w-full flex justify-center ">
           <Toggle
             active={active}
             setActive={setActive}
             value={['Check-In', 'Questionary']}
           />
+        </div>
+      </div>
+      <div className="px-6 pt-8 mt-20 ">
+        <div className="w-full flex mb-16 justify-center items-center flex-col">
           {active === 'Check-In' ? (
             <>
               <CheckInForm></CheckInForm>

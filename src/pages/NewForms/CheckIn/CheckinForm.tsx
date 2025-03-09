@@ -104,12 +104,6 @@ const CheckInForm = () => {
                 setShowReposition(true);
                 setEditFormId(id);
               }}
-              setCheckInListEditValue={() => {}}
-              setCheckInLists={() => {}}
-              setEditModeModal={() => {}}
-              setRepositionModeModal={() => {}}
-              setShowModal={() => {}}
-              setShowModalSchedule={() => {}}
             ></TableForm>
           </div>
         </>

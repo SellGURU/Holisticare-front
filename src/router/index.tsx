@@ -64,11 +64,11 @@ const router = createBrowserRouter([
             element: <Reports></Reports>,
           },
           {
-            path: '/forms',
+            path: '/forms2',
             element: <Forms></Forms>,
           },
           {
-            path: '/forms2',
+            path: '/forms',
             element: <NewForms></NewForms>,
           },
         ],

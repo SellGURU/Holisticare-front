@@ -18,12 +18,6 @@ interface TableProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onReposition: (id: string) => void;
-  setCheckInLists: (value: any) => void;
-  setCheckInListEditValue: (value: any) => void;
-  setEditModeModal: (value: boolean) => void;
-  setShowModal: (value: boolean) => void;
-  setRepositionModeModal: (value: boolean) => void;
-  setShowModalSchedule: (value: boolean) => void;
 }
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
@@ -43,9 +37,9 @@ const TableForm: FC<TableProps> = ({
   onPreview,
   onReposition,
   // setCheckInLists,
-  setCheckInListEditValue,
+  // setCheckInListEditValue,
 
-  setShowModalSchedule,
+  // setShowModalSchedule,
 }) => {
   const [data, setData] = useState(classData);
   useEffect(() => {
@@ -99,11 +93,11 @@ const TableForm: FC<TableProps> = ({
     setshowModal(false);
     onReposition(id);
   };
-  const handleSchedule = () => {
-    setshowModal(false);
-    setCheckInListEditValue(selectedRow);
-    setShowModalSchedule(true);
-  };
+  // const handleSchedule = () => {
+  //   setshowModal(false);
+  //   setCheckInListEditValue(selectedRow);
+  //   setShowModalSchedule(true);
+  // };
   return (
     <div className="flex items-center justify-center relative">
       {showModal && (
@@ -120,8 +114,8 @@ const TableForm: FC<TableProps> = ({
             Reposition
           </div>
           <div
-            className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
-            onClick={handleSchedule}
+            className="flex items-center cursor-not-allowed border-b opacity-50 border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 "
+            // onClick={handleSchedule}
           >
             <img src="/icons/timer-green.svg" alt="" />
             Schedule & Reminder
