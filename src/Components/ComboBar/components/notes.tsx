@@ -8,6 +8,9 @@ export const Notes = () => {
   const { id } = useParams<{ id: string }>();
   const [showAddNote, setShowAddNote] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   useEffect(() => {
     // setIsLoading(true);
     Application.getNotes({ member_id: id })
@@ -33,6 +36,25 @@ export const Notes = () => {
       day: 'numeric',
       month: 'long',
     });
+  };
+  const handleEditClick = (index: number, currentNote: string) => {
+    setEditIndex(index);
+    setEditText(currentNote);
+  };
+
+  const handleSaveEdit = (index: number) => {
+    const updatedData = [...data];
+    updatedData[index].note = editText;
+    setData(updatedData);
+    setEditIndex(null);
+  };
+  const handleDeleteClick = (index: number) => {
+    setDeleteIndex(index);
+  };
+
+  const handleConfirmDelete = (index: number) => {
+    setData((prevData:any) => prevData.filter((_:any, i:number) => i !== index));
+    setDeleteIndex(null);
   };
   return (
     <div className=" w-full ">
@@ -138,7 +160,7 @@ export const Notes = () => {
         </div>
       )}
       <div
-        className="flex justify-center items-center h-[200px] overflow-y-scroll"
+        className="flex justify-center items-center h-[500px] overflow-y-scroll"
         style={{
           alignItems: data?.length > 0 ? 'start' : 'center',
         }}
@@ -146,13 +168,72 @@ export const Notes = () => {
         {data?.length > 0 ? (
           <>
             <div className="w-full ">
-              {data?.map((el: any) => {
+              {data?.map((el: any, index: number) => {
                 return (
-                  <div className="w-full  my-2">
+                  <div className=" my-2">
                     <Accordion title={formatDate(el.date)}>
-                      <div className="text-[12px] text-justify w-full">
-                        {el.note}
+                    {editIndex === index ? (
+                    <textarea
+                      className="text-[12px] w-full resize-none outline-none"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                    />
+                  ) : (
+                    <p className="text-[12px]">{el.note}</p>
+                  )}
+                  <div className="flex w-full justify-end items-center gap-1">
+                    {editIndex === index ? (
+                      <div className='flex justify-end w-full items-center gap-4 mt-3'>
+                        <button className='text-xs font-medium text-[#909090] cursor-pointer' onClick={() => setEditIndex(null)}>Cancel</button>
+                        <button className='text-xs font-medium text-Primary-DeepTeal cursor-pointer' onClick={() => handleSaveEdit(index)}>
+                          Save Changes
+                        </button>
                       </div>
+                    ) : (
+                      <>
+                        {/* <img
+                          className="size-5 cursor-pointer"
+                          src="/icons/edit-green.svg"
+                          alt="Edit"
+                          onClick={() => handleEditClick(index, el.note)}
+                        /> */}
+                        {deleteIndex === index ? (
+
+                          <div className='flex w-full justify-end items-center gap-2'>
+                            <span className='text-xs  text-[#909090] '>Sure?</span>
+                            <img
+                              className="size-5 cursor-pointer"
+                              src="/icons/confirm-tick-circle.svg"
+                              alt="Confirm"
+                              onClick={() => handleConfirmDelete(index)}
+                            />
+                            <img
+                              className="size-5 cursor-pointer"
+                              src="/icons/cansel-close-circle.svg"
+                              alt="Cancel"
+                              onClick={() => setDeleteIndex(null)}
+                            />
+                        </div>
+                        ) : (
+                          <>
+
+                           <img
+                          className="size-5 cursor-pointer"
+                          src="/icons/edit-green.svg"
+                          alt="Edit"
+                          onClick={() => handleEditClick(index, el.note)}
+                        /> 
+                          <img
+                            className="size-5 cursor-pointer"
+                            src="/icons/trash-red.svg"
+                            alt="Delete"
+                            onClick={() => handleDeleteClick(index)}
+                          />
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
                     </Accordion>
                   </div>
                 );

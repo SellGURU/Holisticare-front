@@ -46,7 +46,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
       <div
         data-isActive={isActive}
         onClick={handleClick}
-        className={`flex justify-between bg-black-primary w-full min-h-[48px] h-[48px]  items-center border  border-Gray-50  px-4 py-2 cursor-pointer select-none bg-white ${
+        className={`flex justify-between bg-black-primary w-full min-h-[48px]   items-center border  border-Gray-50  px-4 py-2 cursor-pointer select-none bg-white ${
           isActive ? 'rounded-t-xl ' : 'rounded-xl'
         } `}
       >
@@ -75,7 +75,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
       >
         {isActive && (
           <div
-            className={`w-full bg-black-background h-full max-h-[420px] overflow-auto flex   flex-col gap-4 p-6 `}
+            className={` bg-black-background h-full max-h-[420px] overflow-auto flex   flex-col gap-4 p-4 `}
           >
             {children}
           </div>

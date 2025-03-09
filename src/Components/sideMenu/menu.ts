@@ -3,35 +3,105 @@ export const menus = [
   {
     category: 'MAIN',
     items: [
-      { name: 'Dashboard', url: '/dashboard', icon: 'sidemenu-menu-icon-dashboard', active: true },
-      { name: 'Client List', url: '/', icon: 'sidemenu-menu-icon-clientList', active: true },
-      { name: 'Drift Analysis', url: '/drift-analysis', icon: 'sidemenu-menu-icon-drift-analysis', active: true },
-      { name: 'Messages', url: '/messages', icon: 'sidemenu-menu-icon-messages', active: true },
-      { name: 'Knowledge Graph', url: '/aiKnowledge', icon: 'sidemenu-menu-icon-trend-up', active: true },
+      {
+        name: 'Dashboard',
+        url: '/dashboard',
+        icon: 'sidemenu-menu-icon-dashboard',
+        active: true,
+      },
+      {
+        name: 'Client List',
+        url: '/',
+        icon: 'sidemenu-menu-icon-clientList',
+        active: true,
+      },
+      {
+        name: 'Drift Analysis',
+        url: '/drift-analysis',
+        icon: 'sidemenu-menu-icon-drift-analysis',
+        active: true,
+      },
+      {
+        name: 'Messages',
+        url: '/messages',
+        icon: 'sidemenu-menu-icon-messages',
+        active: true,
+      },
+      {
+        name: 'Knowledge Graph',
+        url: '/aiKnowledge',
+        icon: 'sidemenu-menu-icon-trend-up',
+        active: true,
+      },
     ],
   },
   {
     category: 'CUSTOMIZATION',
     items: [
-      { name: 'Custom Branding', url: '/', icon: 'sidemenu-menu-icon-Branding', active: false },
-      { name: 'Custom Biomarker', url: '', icon: 'sidemenu-menu-icon-Biomarker', active: false },
-      { name: 'Custom Form', url: '/', icon: 'sidemenu-menu-icon-Form', active: false },
+      {
+        name: 'Custom Branding',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Branding',
+        active: false,
+      },
+      {
+        name: 'Custom Biomarker',
+        url: '',
+        icon: 'sidemenu-menu-icon-Biomarker',
+        active: false,
+      },
+      {
+        name: 'Custom Form',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Form',
+        active: false,
+      },
     ],
   },
   {
     category: 'LIBRARY',
     items: [
-      { name: 'Diet', url: '/', icon: 'sidemenu-menu-icon-Diet', active: false },
-      { name: 'Activity', url: '/', icon: 'sidemenu-menu-icon-Activity', active: false },
-      { name: 'Supplement', url: '/', icon: 'sidemenu-menu-icon-Supplement', active: false },
-      { name: 'Lifestyle', url: '/', icon: 'sidemenu-menu-icon-Lifestyle', active: false },
+      {
+        name: 'Diet',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Diet',
+        active: false,
+      },
+      {
+        name: 'Activity',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Activity',
+        active: false,
+      },
+      {
+        name: 'Supplement',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Supplement',
+        active: false,
+      },
+      {
+        name: 'Lifestyle',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Lifestyle',
+        active: false,
+      },
     ],
   },
   {
     category: 'MANAGE',
     items: [
-      { name: 'Package', url: '/', icon: 'sidemenu-menu-icon-Package', active: false },
-      { name: 'Staff', url: '/', icon: 'sidemenu-menu-icon-Staff', active: false },
+      {
+        name: 'Package',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Package',
+        active: false,
+      },
+      {
+        name: 'Staff',
+        url: '/',
+        icon: 'sidemenu-menu-icon-Staff',
+        active: false,
+      },
     ],
   },
   // {
