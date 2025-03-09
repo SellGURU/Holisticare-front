@@ -27,7 +27,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
   };
 
   return (
-      <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4">
+      <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
       <div className="w-full  relative">
         <div className="px-4">
           <div className="flex items-center justify-center">
@@ -97,11 +97,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                               changeMenu(menu);
                             }
                           }}
-                          className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-xs ${menu.name == ""} ${
+                          className={`h-[32px]  2xl:h-[32px] pl-5 py-4 pr-3  2xl:max-h-[32px]  w-full flex   items-center gap-x-1 text-[10px] ${menu.name == ""} ${
                             activeMenu.name === menu.name
                               ? ' bg-[#E9F0F2] border-r-2 border-Primary-DeepTeal'
                               : 'bg-white'
-                          } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] font-semibold`}
+                          } ${!menu.active ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} text-[8px] h-sm:text-[10px] `}
                         >
                           <div
                             className={`w-4 h-4 h-sm:w-4 h-sm:h-4 ${menu.icon} ${
