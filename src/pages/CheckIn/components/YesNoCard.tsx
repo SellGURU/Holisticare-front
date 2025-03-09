@@ -21,7 +21,7 @@ const YesNoCard: React.FC<YesNoCardProps> = ({
   }, [val]);
   return (
     <>
-      <div className="bg-[#FCFCFC] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
+      <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
         <div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>

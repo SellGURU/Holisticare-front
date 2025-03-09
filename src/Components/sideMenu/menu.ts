@@ -44,9 +44,10 @@ export const menus = [
     active: true,
   },
   {
-    name: 'data',
-    icon: 'sidemenu-menu-icon-money-send',
-    url: '',
+    name: 'forms',
+    icon: 'sidemenu-menu-icon-forms',
+    url: '/forms',
+    active: true,
   },
   {
     name: 'reports',

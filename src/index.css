@@ -105,6 +105,17 @@ input[type='number'] {
   -webkit-mask-position: center;
   background-color: currentColor; /* To show the icon color */
 }
+.sidemenu-menu-icon-forms {
+  mask-image: url(/icons/sidbar-menu/document-text.svg);
+  -webkit-mask-image: url(/icons/sidbar-menu/document-text.svg);
+  mask-size: 100%;
+  -webkit-mask-size: 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  background-color: currentColor; /* To show the icon color */
+}
 .sidemenu-menu-icon-reports {
   mask-image: url(/icons/side-menu/reports.svg);
   -webkit-mask-image: url(/icons/side-menu/reports.svg);

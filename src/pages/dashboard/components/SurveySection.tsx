@@ -30,7 +30,7 @@ const SurveySection: React.FC<SurveySectionProps> = ({
   workHours,
 }) => {
   return (
-    <div className="mt-4 flex flex-col gap-2 h-[370px] overflow-auto">
+    <div className="mt-4  flex flex-col gap-2 h-[370px] overflow-auto">
       <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
         <div className="text-[10px]">1. Did you stick to the Meal Plan?</div>
         <div className="mt-3 w-[96px] h-8 border border-Gray-50 flex text-[10px]">

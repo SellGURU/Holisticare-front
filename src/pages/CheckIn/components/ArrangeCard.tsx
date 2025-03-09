@@ -63,7 +63,7 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
   };
   return (
     <>
-      <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
+      <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full  rounded-[12px] border border-gray-50">
         <div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>
@@ -71,7 +71,7 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
           <div
             onTouchMove={handleTouchMove}
             onTouchStart={handleTouchStart}
-            className="flex w-min px-2  mt-4 border border-gray-50 h-10 rounded-[12px] justify-center items-center"
+            className="flex px-2 w-full  mt-4 border border-Gray-50 h-10 rounded-[12px] justify-between items-center"
           >
             {Array.from({
               length: 9,
