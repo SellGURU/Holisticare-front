@@ -4,14 +4,14 @@ interface MultiChoceSelectionProps {
   isActive: boolean;
   toggle: () => void;
   onChange: (options: Array<string>) => void;
-  values:Array<string>
+  values: Array<string>;
 }
 
 const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   isActive,
   toggle,
   onChange,
-  values
+  values,
 }) => {
   const [options, setOptions] = useState(values);
   const addChoiceOption = () => {

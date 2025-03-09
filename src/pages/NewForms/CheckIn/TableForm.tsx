@@ -14,8 +14,8 @@ import FormsApi from '../../../api/Forms';
 
 interface TableProps {
   classData: Array<any>;
-  onDelete:(id:string) => void
-  onEdit:(id:string) => void
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
   setCheckInLists: (value: any) => void;
   setCheckInListEditValue: (value: any) => void;
   setEditModeModal: (value: boolean) => void;
@@ -78,8 +78,8 @@ const TableForm: FC<TableProps> = ({
   const [sureRemove, setSureRemove] = useState(false);
   const removeItemByNo = (id: string) => {
     FormsApi.deleteCheckin(id).then(() => {
-      onDelete(id)
-    })
+      onDelete(id);
+    });
     setshowModal(false);
     setSelectedRow(null);
     setSureRemove(false);
@@ -87,7 +87,7 @@ const TableForm: FC<TableProps> = ({
   const handleEdit = (id: string) => {
     // setRepositionModeModal(false);
     setshowModal(false);
-    onEdit(id)
+    onEdit(id);
     // setEditModeModal(true);
     // setCheckInListEditValue(selectedRow);
     // setShowModal(true);
@@ -131,7 +131,7 @@ const TableForm: FC<TableProps> = ({
           </div>
           <div
             className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
-            onClick={() =>handleEdit(selectedRow.id)}
+            onClick={() => handleEdit(selectedRow.id)}
           >
             <img src="/icons/edit-green.svg" className="w-4" alt="" />
             Edit

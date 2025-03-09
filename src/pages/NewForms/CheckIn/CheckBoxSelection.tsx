@@ -4,13 +4,13 @@ interface CheckBoxSelectionProps {
   isActive: boolean;
   toggle: () => void;
   onChange: (options: Array<string>) => void;
-  values:Array<string>
+  values: Array<string>;
 }
 const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
   isActive,
   toggle,
   onChange,
-  values
+  values,
 }) => {
   const [options, setOptions] = useState(values);
   const addOption = () => {

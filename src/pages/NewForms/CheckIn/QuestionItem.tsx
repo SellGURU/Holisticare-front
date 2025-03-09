@@ -4,14 +4,14 @@ interface QuestionItemProps {
   question: checkinType;
   index?: number;
   onRemove: () => void;
-  onEdit:() =>void
+  onEdit: () => void;
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({
   question,
   index,
   onRemove,
-  onEdit
+  onEdit,
 }) => {
   const [sureRemove, setSureRemove] = useState(false);
   return (
@@ -64,7 +64,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                     src="./icons/edit-blue.svg"
                     alt=""
                     className="w-[16px] h-[16px] cursor-pointer"
-                    onClick={() =>onEdit()}
+                    onClick={() => onEdit()}
                   />
                   <img
                     src="./icons/trash-blue.svg"

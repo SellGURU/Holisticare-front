@@ -18,10 +18,10 @@ declare global {
   };
 
   type CheckinEditFormType = {
-      title: string;
-      unique_id:string;
-      questions: Array<checkinType>;
-    };  
+    title: string;
+    unique_id: string;
+    questions: Array<checkinType>;
+  };
 
   type CheckInDataRowType = {
     title: string;

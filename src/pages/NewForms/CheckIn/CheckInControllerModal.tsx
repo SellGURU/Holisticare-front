@@ -8,17 +8,17 @@ import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
 
 interface CheckInControllerModalProps {
-  editId?:string
+  editId?: string;
   mode?: 'Edit' | 'Reposition' | 'Add';
   onClose: () => void;
-  onSave:(values:any) => void
+  onSave: (values: any) => void;
 }
 
 const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
   mode,
   onClose,
   onSave,
-  editId
+  editId,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
   const resolveFormTitle = () => {
@@ -45,37 +45,39 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
       case 'Reposition':
         return 'Reposition Check-in';
       case 'Edit':
-        return <AddCheckIn
-          upQuestions={questions}
+        return (
+          <AddCheckIn
+            upQuestions={questions}
             onChange={(values) => {
               setQuestions(values);
             }}
           ></AddCheckIn>
+        );
     }
   };
   const [titleForm, setTitleForm] = useState('');
   const isDisable = () => {
     return titleForm.length == 0;
   };
-  const [isSaveLoding,setIsSaveLoading] = useState(false)
+  const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
-    setIsSaveLoading(true)
+    setIsSaveLoading(true);
     onSave({
       title: titleForm,
-      questions: questions,      
-    })
+      questions: questions,
+    });
     // FormsApi.addCheckin({
     //   title: titleForm,
     //   questions: questions,
     // });
   };
   useEffect(() => {
-    if(editId!=''&&editId){
+    if (editId != '' && editId) {
       FormsApi.showCheckIn(editId).then((res) => {
-        setQuestions(res.data.questions)
-      })
+        setQuestions(res.data.questions);
+      });
     }
-  },[editId])
+  }, [editId]);
   return (
     <>
       <div className="flex flex-col justify-between bg-white w-[664px] rounded-[20px] p-4">
@@ -120,18 +122,11 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             }}
             className={` ${isDisable() && 'opacity-50'} text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
           >
-            {isSaveLoding ?
+            {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>
-            :
-            <>
-            {mode=='Edit' ?
-            'Update'
-            :
-            'Save'
-            }
-            </>
-            
-            }
+            ) : (
+              <>{mode == 'Edit' ? 'Update' : 'Save'}</>
+            )}
           </div>
         </div>
       </div>
@@ -141,19 +136,19 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
 
 interface AddCheckInProps {
   onChange: (questions: Array<checkinType>) => void;
-  upQuestions:Array<checkinType>
+  upQuestions: Array<checkinType>;
 }
 
-const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange,upQuestions }) => {
+const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
-  const [editingQuestionIndex,setEditingQuestionIndex] = useState(-1)
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   useEffect(() => {
     onChange(questions);
   }, [questions]);
   useEffect(() => {
-    setQuestions(upQuestions)
-  },[upQuestions])
+    setQuestions(upQuestions);
+  }, [upQuestions]);
   return (
     <>
       {questions.length > 0 && (
@@ -167,8 +162,8 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange,upQuestions }) => {
                   <>
                     <QuestionItem
                       onEdit={() => {
-                        setEditingQuestionIndex(index)
-                        setAddMore(true)
+                        setEditingQuestionIndex(index);
+                        setAddMore(true);
                       }}
                       onRemove={() => {
                         setQuestions((pre) => {
@@ -220,25 +215,25 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange,upQuestions }) => {
           <AddQuestionsModal
             editQUestion={questions[editingQuestionIndex]}
             onSubmit={(value) => {
-              if(editingQuestionIndex == -1){
+              if (editingQuestionIndex == -1) {
                 setQuestions([...questions, value]);
-              }else {
+              } else {
                 setQuestions((pre) => {
-                  const old = [...pre]
-                  const resolved = old.map((el,ind) => {
-                    if(ind == editingQuestionIndex){
-                      return value
-                    }else {
-                      return el
+                  const old = [...pre];
+                  const resolved = old.map((el, ind) => {
+                    if (ind == editingQuestionIndex) {
+                      return value;
+                    } else {
+                      return el;
                     }
-                  })
-                  return resolved
-                })
+                  });
+                  return resolved;
+                });
               }
               setAddMore(false);
             }}
             onCancel={() => {
-              setEditingQuestionIndex(-1)
+              setEditingQuestionIndex(-1);
               setAddMore(false);
             }}
           ></AddQuestionsModal>

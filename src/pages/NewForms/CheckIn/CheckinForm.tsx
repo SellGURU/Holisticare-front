@@ -10,14 +10,14 @@ import CheckInControllerModal from './CheckInControllerModal';
 const CheckInForm = () => {
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
-  const [editFormId,setEditFormId] = useState("")
+  const [editFormId, setEditFormId] = useState('');
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
     });
-  }
+  };
   useEffect(() => {
-    getChechins()
+    getChechins();
   }, []);
   return (
     <>
@@ -46,11 +46,11 @@ const CheckInForm = () => {
             <TableForm
               classData={checkInList}
               onDelete={() => {
-                getChechins()
+                getChechins();
               }}
               onEdit={(id) => {
-                setShowAddModal(true)
-                setEditFormId(id)
+                setShowAddModal(true);
+                setEditFormId(id);
               }}
               setCheckInListEditValue={() => {}}
               setCheckInLists={() => {}}
@@ -89,7 +89,7 @@ const CheckInForm = () => {
         isOpen={showaddModal}
         onClose={() => {
           // setShowModal(false);
-          setEditFormId("")
+          setEditFormId('');
           setShowAddModal(false);
         }}
       >
@@ -97,25 +97,25 @@ const CheckInForm = () => {
           editId={editFormId}
           onClose={() => {
             setShowAddModal(false);
-            setEditFormId("")
+            setEditFormId('');
           }}
           onSave={(values) => {
-            if(editFormId!=''){
+            if (editFormId != '') {
               FormsApi.editCheckIn({
-                unique_id:editFormId,
-                ...values
+                unique_id: editFormId,
+                ...values,
               }).then(() => {
-                getChechins()
-                setShowAddModal(false);                
-              })
-            }else {
+                getChechins();
+                setShowAddModal(false);
+              });
+            } else {
               FormsApi.addCheckin(values).then(() => {
-                getChechins()
+                getChechins();
                 setShowAddModal(false);
               });
             }
           }}
-          mode={editFormId!=""?'Edit':'Add'}
+          mode={editFormId != '' ? 'Edit' : 'Add'}
         ></CheckInControllerModal>
       </MainModal>
     </>

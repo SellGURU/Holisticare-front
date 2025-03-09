@@ -5,7 +5,7 @@ import MultiChoceSelection from './MultichoiceSelection';
 interface AddQuestionsModalProps {
   onCancel: () => void;
   onSubmit: (value: checkinType) => void;
-  editQUestion?:checkinType
+  editQUestion?: checkinType;
 }
 
 const checkInTypes = [
@@ -36,14 +36,24 @@ const checkInTypes = [
 const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   onCancel,
   onSubmit,
-  editQUestion
+  editQUestion,
 }) => {
-  const [qustion, setQuestion] = useState(editQUestion?editQUestion?.question:'');
-  const [required, setRequired] = useState(editQUestion?editQUestion?.required:false);
-  const [type, setType] = useState(editQUestion?editQUestion.type:'');
-  const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>(editQUestion?.type=='Checkboxes'&&editQUestion.options?editQUestion.options:["",""]);
+  const [qustion, setQuestion] = useState(
+    editQUestion ? editQUestion?.question : '',
+  );
+  const [required, setRequired] = useState(
+    editQUestion ? editQUestion?.required : false,
+  );
+  const [type, setType] = useState(editQUestion ? editQUestion.type : '');
+  const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>(
+    editQUestion?.type == 'Checkboxes' && editQUestion.options
+      ? editQUestion.options
+      : ['', ''],
+  );
   const [multiChoiceOptions, setMutiChoiceOptions] = useState<Array<string>>(
-    editQUestion?.type=='Multiple choice'&&editQUestion.options?editQUestion.options:["",""],
+    editQUestion?.type == 'Multiple choice' && editQUestion.options
+      ? editQUestion.options
+      : ['', ''],
   );
   const isDisabled = () => {
     return qustion.length == 0 || type == '';
@@ -83,7 +93,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               alt=""
               className="w-[18px] h-[18px] cursor-pointer"
               onClick={() => {
-                clear()
+                clear();
                 onCancel();
                 // if (editIndex !== null) {
                 //     handleCancelEdit();

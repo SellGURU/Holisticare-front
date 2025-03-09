@@ -15,11 +15,11 @@ class FormsApi extends Api {
 
   static showCheckIn = (id: string) => {
     return this.post('/forms/check_in/show_checkin_form', { unique_id: id });
-  }
+  };
 
-  static editCheckIn =(data:CheckinEditFormType) => {
-    return this.post('/forms/check_in/edit_checkin_form',data)
-  }
+  static editCheckIn = (data: CheckinEditFormType) => {
+    return this.post('/forms/check_in/edit_checkin_form', data);
+  };
 }
 
 export default FormsApi;
