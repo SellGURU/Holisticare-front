@@ -43,7 +43,11 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
           ></AddCheckIn>
         );
       case 'Reposition':
-        return 'Reposition Check-in';
+        return <>
+              <RepositionCheckIn onChange={(values) => {
+              setQuestions(values);
+            }} upQuestions={questions}></RepositionCheckIn>
+              </>;
       case 'Edit':
         return (
           <AddCheckIn
@@ -126,7 +130,7 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>
             ) : (
-              <>{mode == 'Edit' ? 'Update' : 'Save'}</>
+              <>{mode == 'Edit'||mode=='Reposition' ? 'Update' : 'Save'}</>
             )}
           </div>
         </div>
@@ -162,6 +166,7 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
                 return (
                   <>
                     <QuestionItem
+                      length={questions.length}
                       onEdit={() => {
                         setEditingQuestionIndex(index);
                         setAddMore(true);
@@ -243,4 +248,70 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
     </>
   );
 };
+
+const RepositionCheckIn: React.FC<AddCheckInProps> = ({upQuestions,onChange}) => {
+  const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+  useEffect(() => {
+    setQuestions(upQuestions)
+  },[upQuestions])
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    setQuestions((prevList: any) => {
+      const newList = [...prevList];
+      if (direction === 'up' && index > 0) {
+        [newList[index], newList[index - 1]] = [
+          newList[index - 1],
+          newList[index],
+        ];
+      } else if (direction === 'down' && index < newList.length - 1) {
+        [newList[index], newList[index + 1]] = [
+          newList[index + 1],
+          newList[index],
+        ];
+      }
+      return newList;
+    });
+  };  
+  useEffect(() => {
+    onChange(questions)
+  },[questions])
+  return (<>
+      {questions.length > 0 && (
+        <>
+          <div
+            className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full`}
+          >
+            <div className="flex flex-col items-center justify-center gap-1 w-full">
+              {questions.map((item: any, index: number) => {
+                return (
+                  <>
+                    <QuestionItem
+                      length={questions.length}
+                      onEdit={() => {
+                        // setEditingQuestionIndex(index);
+                        // setAddMore(true);
+                      }}
+                      moveItem={(item:any) => {
+                        moveItem(index,item)
+                      }}
+                      isReposition
+                      onRemove={() => {
+                        setQuestions((pre) => {
+                          const newQuestions = pre.filter(
+                            (_el, ind) => ind != index,
+                          );
+                          return newQuestions;
+                        });
+                      }}
+                      index={index}
+                      question={item}
+                    ></QuestionItem>
+                  </>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}  
+  </>)
+}
 export default CheckInControllerModal;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import SvgIcon from '../../../utils/svgIcon';
@@ -13,6 +14,7 @@ const CheckInForm = () => {
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
+  const [showReposition,setShowReposition] = useState(false)
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
@@ -21,6 +23,46 @@ const CheckInForm = () => {
   useEffect(() => {
     getChechins();
   }, []);
+  const resolveMode =() => {
+    // editFormId != '' ? 'Edit' : 'Add'
+    if(editFormId ==''){
+      return "Add"
+    }
+    if(showReposition){
+      return "Reposition"
+    }
+    return 'Edit'
+  }
+  const onsave = (values:any) => {
+    if(showReposition){
+      FormsApi.checkInReposition({
+        unique_id: editFormId,
+        questions:values.questions.map((el:any,index:number) => {
+          return{
+            ...el,
+            order:index+1
+          }
+        })
+      }).then(() => {
+        getChechins();
+        setShowAddModal(false);   
+        setShowReposition(false)     
+      })
+    }else if (editFormId != '') {
+      FormsApi.editCheckIn({
+        unique_id: editFormId,
+        ...values,
+      }).then(() => {
+        getChechins();
+        setShowAddModal(false);
+      });
+    } else {
+      FormsApi.addCheckin(values).then(() => {
+        getChechins();
+        setShowAddModal(false);
+      });
+    }
+  }
   return (
     <>
       {checkInList.length > 0 ? (
@@ -58,6 +100,10 @@ const CheckInForm = () => {
                 setShowPreview(true);
                 setEditFormId(id);
               }}
+              onReposition={(id) => {
+                setShowReposition(true)
+                setEditFormId(id)
+              }}
               setCheckInListEditValue={() => {}}
               setCheckInLists={() => {}}
               setEditModeModal={() => {}}
@@ -92,36 +138,24 @@ const CheckInForm = () => {
         </>
       )}
       <MainModal
-        isOpen={showaddModal}
+        isOpen={showaddModal || showReposition}
         onClose={() => {
           // setShowModal(false);
           setEditFormId('');
+          setShowReposition(false)
           setShowAddModal(false);
         }}
       >
         <CheckInControllerModal
           editId={editFormId}
           onClose={() => {
-            setShowAddModal(false);
-            setEditFormId('');
+          setShowReposition(false)
+          setShowAddModal(false);
           }}
           onSave={(values) => {
-            if (editFormId != '') {
-              FormsApi.editCheckIn({
-                unique_id: editFormId,
-                ...values,
-              }).then(() => {
-                getChechins();
-                setShowAddModal(false);
-              });
-            } else {
-              FormsApi.addCheckin(values).then(() => {
-                getChechins();
-                setShowAddModal(false);
-              });
-            }
+            onsave(values)
           }}
-          mode={editFormId != '' ? 'Edit' : 'Add'}
+          mode={resolveMode()}
         ></CheckInControllerModal>
       </MainModal>
 

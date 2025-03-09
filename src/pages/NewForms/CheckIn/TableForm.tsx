@@ -17,6 +17,7 @@ interface TableProps {
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
+  onReposition:(id:string) => void
   setCheckInLists: (value: any) => void;
   setCheckInListEditValue: (value: any) => void;
   setEditModeModal: (value: boolean) => void;
@@ -40,10 +41,10 @@ const TableForm: FC<TableProps> = ({
   onDelete,
   onEdit,
   onPreview,
+  onReposition,
   // setCheckInLists,
   setCheckInListEditValue,
-  setShowModal,
-  setRepositionModeModal,
+
   setShowModalSchedule,
 }) => {
   const [data, setData] = useState(classData);
@@ -94,11 +95,9 @@ const TableForm: FC<TableProps> = ({
     // setCheckInListEditValue(selectedRow);
     // setShowModal(true);
   };
-  const handleReposition = () => {
+  const handleReposition = (id:string) => {
     setshowModal(false);
-    setRepositionModeModal(true);
-    setCheckInListEditValue(selectedRow);
-    setShowModal(true);
+    onReposition(id)
   };
   const handleSchedule = () => {
     setshowModal(false);
@@ -115,7 +114,7 @@ const TableForm: FC<TableProps> = ({
         >
           <div
             className="flex items-center gap-2 TextStyle-Body-2 text-Text-Primary pb-2 border-b border-Secondary-SelverGray cursor-pointer"
-            onClick={handleReposition}
+            onClick={() => handleReposition(selectedRow.id)}
           >
             <img src="/icons/setting-4-green.svg" alt="" className="w-4 h-4" />
             Reposition

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Api from './api';
 
 class FormsApi extends Api {
@@ -20,6 +21,10 @@ class FormsApi extends Api {
   static editCheckIn = (data: CheckinEditFormType) => {
     return this.post('/forms/check_in/edit_checkin_form', data);
   };
+
+  static checkInReposition= (data:any) => {
+   return this.post("/forms/check_in/reposition_questions",data) 
+  }
 }
 
 export default FormsApi;

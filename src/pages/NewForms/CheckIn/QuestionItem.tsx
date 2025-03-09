@@ -5,6 +5,9 @@ interface QuestionItemProps {
   index?: number;
   onRemove: () => void;
   onEdit: () => void;
+  isReposition?:boolean;
+  moveItem?:(direction: 'up' | 'down')=> void
+  length:number
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({
@@ -12,6 +15,9 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   index,
   onRemove,
   onEdit,
+  isReposition,
+  moveItem,
+  length
 }) => {
   const [sureRemove, setSureRemove] = useState(false);
   return (
@@ -41,6 +47,31 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           <div
             className={`flex items-center justify-end ${sureRemove ? 'w-[35%]' : 'w-[24%]'}`}
           >
+            <>
+            {isReposition?
+            <>
+              <img
+                src="./icons/arrow-circle-down.svg"
+                alt=""
+                className={`w-[16px] h-[16px] cursor-pointer ${index === length-1 && 'opacity-50'}`}
+                onClick={() => {
+                  if (index !== length-1&&moveItem ) {
+                    moveItem('down');
+                  }
+                }}
+              />
+              <img
+                src="./icons/arrow-circle-up.svg"
+                alt=""
+                className={`w-[16px] h-[16px] ml-2 cursor-pointer ${index === 0 && 'opacity-50'}`}
+                onClick={() => {
+                  if (index !== 0 && moveItem) {
+                    moveItem('up');
+                  }
+                }}
+              />
+            </>
+            :
             <>
               {sureRemove ? (
                 <div className="flex items-center justify-center gap-1 ml-4">
@@ -74,6 +105,8 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                   />
                 </>
               )}
+            </>
+            }
             </>
           </div>
         </div>
