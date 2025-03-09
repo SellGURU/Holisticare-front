@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrangeCard,
   FeelingCard,
@@ -10,85 +10,51 @@ import {
 } from './components';
 import UploadCard from './components/UploadCard';
 
-const Checkin = () => {
-  const [chekinData] = useState([
-    {
-      type: 'yes/no',
-      question: 'Did you stick to the Meal Plan?',
-      value: 'Yes',
-    },
-    {
-      type: 'range',
-      question: 'How many hours did you sleep yesterday?',
-      value: '4',
-    },
-    {
-      type: 'feeling',
-      question: 'How are you feeling today?',
-      value: 'Neutral',
-    },
-    {
-      type: 'rate',
-      question: 'Rate your workout.',
-      value: '4.5',
-    },
-    {
-      type: 'upload',
-      question: 'Upload your progress pictures.',
-      value: {
-        frontal: '',
-        Back: '',
-        side: '',
-      },
-    },
-    {
-      type: 'text',
-      question: 'What snacks did you take today?',
-      value: '',
-      placeHolder: 'Write the snacks you took ...',
-    },
+interface CheckinProps {
+  upData?: Array<checkinType>;
+}
 
-    {
-      type: 'arrange',
-      question: 'Weight',
-      value: '60',
-    },
-  ]);
-
+const Checkin: React.FC<CheckinProps> = ({ upData }) => {
+  const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
+  useEffect(() => {
+    if (upData) {
+      setCheckinData(upData);
+    }
+  }, [upData]);
   const resolveQuestionCard = (item: any, index: number) => {
     switch (item.type) {
-      case 'yes/no':
+      case 'Yes/No':
         return (
           <YesNoCard
             index={index}
             question={item.question}
-            value={item.value}
+            value={item.response}
           ></YesNoCard>
         );
-      case 'range':
+      case 'Scale':
         return (
           <RangeCard
             index={index}
             question={item.question}
-            value={item.value}
+            value={item.response}
           ></RangeCard>
         );
 
-      case 'text':
+      case 'Text':
         return (
           <TextCard
             index={index}
             placeHolder={item.placeHolder}
             question={item.question}
-            value={item.value}
+            value={item.response}
           ></TextCard>
         );
-      case 'rate':
+      case 'Star Rating':
         return (
           <RateCard
             index={index}
             question={item.question}
-            value={item.value}
+            value={item.response}
           ></RateCard>
         );
       case 'arrange':
@@ -99,7 +65,7 @@ const Checkin = () => {
             value={item.value}
           ></ArrangeCard>
         );
-      case 'upload':
+      case 'File Uploader':
         return (
           <UploadCard
             index={index}
@@ -110,19 +76,19 @@ const Checkin = () => {
             }}
           ></UploadCard>
         );
-      case 'feeling':
+      case 'Emojis':
         return (
           <FeelingCard
             index={index}
             question={item.question}
-            value={item.value}
+            value={item.response}
           ></FeelingCard>
         );
     }
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3 h-svh overflow-y-auto pb-4">
+      <div className=" px-6 py-4 grid gap-3 max-h-svh overflow-y-auto pb-4">
         {chekinData.map((el: any, index: number) => {
           return <>{resolveQuestionCard(el, index + 1)}</>;
         })}

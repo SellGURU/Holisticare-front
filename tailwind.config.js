@@ -36,6 +36,7 @@ export default {
           Secondary: '#38383899',
           Triarty: '#38383866',
           Quadruple: '#888888',
+          Fivefold: '#B0B0B0',
         },
         backgroundColor: {
           Main: '#F4F4F4',
