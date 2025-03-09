@@ -33,8 +33,10 @@ class FormsApi extends Api {
   };
 
   static deleteQuestionary = (id: string) => {
-    return this.post('/forms/questionary/delete_questionary_form', { unique_id: id });
-  };  
+    return this.post('/forms/questionary/delete_questionary_form', {
+      unique_id: id,
+    });
+  };
 }
 
 export default FormsApi;

@@ -87,20 +87,24 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
           ></FeelingCard>
         );
 
-      case "Checkboxes" :
+      case 'Checkboxes':
         return (
           <CheckBoxCard
             index={index}
             question={item.question}
-            value={item.response} options={item.options}></CheckBoxCard>
+            value={item.response}
+            options={item.options}
+          ></CheckBoxCard>
         );
-      case "Multiple choice" :
+      case 'Multiple choice':
         return (
           <MultiChoice
             index={index}
             question={item.question}
-            value={item.response} options={item.options}></MultiChoice>
-        );        
+            value={item.response}
+            options={item.options}
+          ></MultiChoice>
+        );
     }
   };
   return (
