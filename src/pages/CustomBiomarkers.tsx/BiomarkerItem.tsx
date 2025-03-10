@@ -28,36 +28,36 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
     }
     return '#FBAD37';
   };
-  const [values,setValues] = useState<Array<any>>([])
-  const [Editvalues,setEditValues] = useState<Array<any>>([])
+  const [values, setValues] = useState<Array<any>>([]);
+  const [Editvalues, setEditValues] = useState<Array<any>>([]);
   useEffect(() => {
     // console.log(sortKeysWithValues(data.chart_bounds))
-    setValues(sortKeysWithValues(data.chart_bounds))
-  },[])
-  const changeValue =(key:string,index:number,newValue:string) => {
-    setActive("Edited")
+    setValues(sortKeysWithValues(data.chart_bounds));
+  }, []);
+  const changeValue = (key: string, index: number, newValue: string) => {
+    setActive('Edited');
     setValues((pre) => {
       const newData = pre.map((el) => {
-        if(el.key == key){
+        if (el.key == key) {
           return {
             ...el,
-            value:el.value.map((dr:any,inde:number) => {
-              if(inde == index){
-                return newValue
-              }else {
-                return dr
+            value: el.value.map((dr: any, inde: number) => {
+              if (inde == index) {
+                return newValue;
+              } else {
+                return dr;
               }
-            })
-          }
-        }else {
-          return el
+            }),
+          };
+        } else {
+          return el;
         }
-      })
-      setEditValues(newData)
-      return newData
-    })
-  }
-  const [active,setActive] = useState("Edited")
+      });
+      setEditValues(newData);
+      return newData;
+    });
+  };
+  const [active, setActive] = useState('Edited');
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
@@ -78,20 +78,44 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
           <div className="absolute right-4 top-2">
             {activeEdit ? (
               <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
-                <div onClick={() => {
-                  setActive("Edited")
-                  setValues(Editvalues)
-                }} className='flex justify-center cursor-pointer gap-1 items-center'>
-                  <SvgIcon width='16px' height='16px' color={active == 'Edited'?"#005F73":"#888888"} src="./icons/edit-green.svg"></SvgIcon>
-                  <div className={`text-[10px] ${active == 'Edited'?'text-[#005F73]':'text-[#888888]'} `}>Edited</div>
+                <div
+                  onClick={() => {
+                    setActive('Edited');
+                    setValues(Editvalues);
+                  }}
+                  className="flex justify-center cursor-pointer gap-1 items-center"
+                >
+                  <SvgIcon
+                    width="16px"
+                    height="16px"
+                    color={active == 'Edited' ? '#005F73' : '#888888'}
+                    src="./icons/edit-green.svg"
+                  ></SvgIcon>
+                  <div
+                    className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                  >
+                    Edited
+                  </div>
                 </div>
-                <div onClick={() => {
-                  setActive("Original")
-                  setValues(sortKeysWithValues(data.chart_bounds))
-                }} className='flex justify-center cursor-pointer gap-1 items-center'>
-                  <SvgIcon width='16px' height='16px' color={active == 'Original'?"#005F73":"#888888"} src="/icons/task-square.svg"></SvgIcon>
-                  <div className={`text-[10px] ${active == 'Original'?'text-[#005F73]':'text-[#888888]'} `}>Original</div>
-                </div>                
+                <div
+                  onClick={() => {
+                    setActive('Original');
+                    setValues(sortKeysWithValues(data.chart_bounds));
+                  }}
+                  className="flex justify-center cursor-pointer gap-1 items-center"
+                >
+                  <SvgIcon
+                    width="16px"
+                    height="16px"
+                    color={active == 'Original' ? '#005F73' : '#888888'}
+                    src="/icons/task-square.svg"
+                  ></SvgIcon>
+                  <div
+                    className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                  >
+                    Original
+                  </div>
+                </div>
                 <div
                   onClick={() => {
                     setActiveEdit(false);
@@ -128,8 +152,8 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
                       type="number"
                       value={values[0].value[0]}
                       onChange={(e) => {
-                        changeValue(el.key,0,e.target.value)
-                      }}                      
+                        changeValue(el.key, 0, e.target.value);
+                      }}
                       className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
                     />
                   )}
@@ -167,9 +191,9 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
                   </div>
                   <input
                     type="number"
-                    value={values.filter((e) => e.key ==el.key)[0].value[1]}
+                    value={values.filter((e) => e.key == el.key)[0].value[1]}
                     onChange={(e) => {
-                      changeValue(el.key,1,e.target.value)
+                      changeValue(el.key, 1, e.target.value);
                     }}
                     className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
                   />
