@@ -15,8 +15,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
   setShowModalChangeRoll,
   isSuccess,
 }) => {
-  const [openRoll, setOpenRoll] = useState(false);
-  const [roll, setRoll] = useState('Admin');
+  const [selectRoll, setSelectRoll] = useState('');
   return (
     <>
       {!isSuccess ? (
@@ -45,29 +44,21 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
                 <div className="text-Text-Primary text-xs flex w-[50%] p-2">
                   {memberInfo?.roll}
                 </div>
-                <div className="text-Text-Primary text-xs flex items-center gap-2 w-[50%] p-2 border-l border-Gray-50">
-                  <div className="w-[10px] h-[10px] rounded-full border border-Primary-DeepTeal"></div>
-                  <div className="relative inline-block w-full font-normal">
-                    <select
-                      onClick={() => setOpenRoll(!openRoll)}
-                      onBlur={() => setOpenRoll(false)}
-                      onChange={(e) => {
-                        setOpenRoll(false);
-                        setRoll(e.target.value);
-                      }}
-                      value={roll}
-                      className="block appearance-none w-full bg-backgroundColor-Card py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
-                    >
-                      <option value="Admin">Admin</option>
-                      <option value="Staff">Staff</option>
-                    </select>
-                    <img
-                      className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
-                        openRoll ? 'rotate-180' : ''
-                      }`}
-                      src="/icons/arow-down-drop.svg"
-                      alt=""
-                    />
+                <div className="text-Text-Primary text-xs flex items-center w-[50%] p-2 border-l border-Gray-50">
+                  <div
+                    className={`flex items-center cursor-pointer gap-2`}
+                    onClick={() => {
+                      if (selectRoll !== 'Admin') {
+                        setSelectRoll('Admin');
+                      } else {
+                        setSelectRoll('');
+                      }
+                    }}
+                  >
+                    <div
+                      className={`w-[10px] h-[10px] rounded-full ${selectRoll === 'Admin' ? 'bg-Primary-DeepTeal' : 'border border-Primary-DeepTeal'}`}
+                    ></div>
+                    Admin
                   </div>
                 </div>
               </div>
