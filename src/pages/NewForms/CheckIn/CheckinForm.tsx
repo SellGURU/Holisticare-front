@@ -20,9 +20,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
   const [showReposition, setShowReposition] = useState(false);
-  const [showTemplates,setShowTemplates] = useState(false)
-  const [showFeedback,setShowFeedBack] = useState(false)
-  const [,setSelectedTemplate] = useState(null)
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showFeedback, setShowFeedBack] = useState(false);
+  const [, setSelectedTemplate] = useState(null);
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
@@ -150,11 +150,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
             ClassName="rounded-[20px] w-[229px] mt-9"
             onClick={() => {
               // setShowModal(true);
-              if(isQuestionary){
-                setShowTemplates(true)
-              }else {
+              if (isQuestionary) {
+                setShowTemplates(true);
+              } else {
                 setShowAddModal(true);
-
               }
             }}
           >
@@ -203,20 +202,28 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
         </>
       </MainModal>
 
-      <MainModal isOpen={showTemplates} onClose={() => {setShowTemplates(false)}}>
-        <TemplateQuestinary onselect={(values) =>{
-          setShowTemplates(false)
-          setSelectedTemplate(values)
-          setShowFeedBack(true)
-        }}></TemplateQuestinary>
+      <MainModal
+        isOpen={showTemplates}
+        onClose={() => {
+          setShowTemplates(false);
+        }}
+      >
+        <TemplateQuestinary
+          onselect={(values) => {
+            setShowTemplates(false);
+            setSelectedTemplate(values);
+            setShowFeedBack(true);
+          }}
+        ></TemplateQuestinary>
       </MainModal>
-      
-      <MainModal isOpen={showFeedback} onClose={() => {
-        setShowFeedBack(false)
-      }}>
-        <>
-        </>
 
+      <MainModal
+        isOpen={showFeedback}
+        onClose={() => {
+          setShowFeedBack(false);
+        }}
+      >
+        <></>
       </MainModal>
     </>
   );

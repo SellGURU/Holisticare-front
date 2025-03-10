@@ -38,9 +38,9 @@ class FormsApi extends Api {
     });
   };
 
-  static getCheckinTemplates =() => {
-    return this.post('/forms/questionary/show_defaults', {});    
-  }
+  static getCheckinTemplates = () => {
+    return this.post('/forms/questionary/show_defaults', {});
+  };
 }
 
 export default FormsApi;
