@@ -25,6 +25,7 @@ import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx'
 import GenerateActionPlan from '../Components/NewGenerateActionPlan/index2.tsx';
 import Checkin from '../pages/CheckIn/index.tsx';
 import NewForms from '../pages/NewForms/index.tsx';
+import PackagePage from '../pages/settings/components/Package.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
             path: '/setting',
             element: <Setting></Setting>,
           },
+          {
+            path:'/packages',
+            element:<PackagePage></PackagePage>
+          },          
           {
             path: '/reports',
             element: <Reports></Reports>,

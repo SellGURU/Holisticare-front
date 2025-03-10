@@ -92,9 +92,9 @@ export const menus = [
     items: [
       {
         name: 'Package',
-        url: '/',
+        url: '/packages',
         icon: 'sidemenu-menu-icon-Package',
-        active: false,
+        active: true,
       },
       {
         name: 'Staff',
