@@ -9,6 +9,8 @@ import {
   YesNoCard,
 } from './components';
 import UploadCard from './components/UploadCard';
+import CheckBoxCard from './components/CheckBoxCard';
+import MultiChoice from './components/MultiChoiceCard';
 
 interface CheckinProps {
   upData?: Array<checkinType>;
@@ -40,7 +42,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
           ></RangeCard>
         );
 
-      case 'Text':
+      case 'paragraph':
         return (
           <TextCard
             index={index}
@@ -84,11 +86,30 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             value={item.response}
           ></FeelingCard>
         );
+
+      case 'checkbox':
+        return (
+          <CheckBoxCard
+            index={index}
+            question={item.question}
+            value={item.response}
+            options={item.options}
+          ></CheckBoxCard>
+        );
+      case 'multiple_choice':
+        return (
+          <MultiChoice
+            index={index}
+            question={item.question}
+            value={item.response}
+            options={item.options}
+          ></MultiChoice>
+        );
     }
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3 max-h-svh overflow-y-auto pb-4">
+      <div className=" px-6 py-4 grid gap-3  pb-4">
         {chekinData.map((el: any, index: number) => {
           return <>{resolveQuestionCard(el, index + 1)}</>;
         })}

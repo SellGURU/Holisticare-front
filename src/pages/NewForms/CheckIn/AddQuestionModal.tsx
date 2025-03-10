@@ -11,7 +11,7 @@ interface AddQuestionsModalProps {
 const checkInTypes = [
   {
     icon: '/icons/textalign-justifyleft.svg',
-    title: 'Text',
+    title: 'paragraph',
     desc: 'Small or log text like title or ...',
   },
   { icon: '/icons/ruler.svg', title: 'Scale', desc: 'A Scale from 1-10' },
@@ -46,12 +46,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
   );
   const [type, setType] = useState(editQUestion ? editQUestion.type : '');
   const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>(
-    editQUestion?.type == 'Checkboxes' && editQUestion.options
+    editQUestion?.type == 'checkbox' && editQUestion.options
       ? editQUestion.options
       : ['', ''],
   );
   const [multiChoiceOptions, setMutiChoiceOptions] = useState<Array<string>>(
-    editQUestion?.type == 'Multiple choice' && editQUestion.options
+    editQUestion?.type == 'multiple_choice' && editQUestion.options
       ? editQUestion.options
       : ['', ''],
   );
@@ -65,9 +65,9 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       response: '',
       type: type,
       options:
-        type == 'Checkboxes'
+        type == 'checkbox'
           ? CheckBoxoptions
-          : type == 'Multiple choice'
+          : type == 'multiple_choice'
             ? multiChoiceOptions
             : undefined,
     };
@@ -204,12 +204,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
           })}
           <CheckBoxSelection
             values={CheckBoxoptions}
-            isActive={type == 'Checkboxes'}
+            isActive={type == 'checkbox'}
             toggle={() => {
-              if (type == 'Checkboxes') {
+              if (type == 'checkbox') {
                 setType('');
               } else {
-                setType('Checkboxes');
+                setType('checkbox');
               }
             }}
             onChange={(values) => {
@@ -219,12 +219,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
 
           <MultiChoceSelection
             values={multiChoiceOptions}
-            isActive={type == 'Multiple choice'}
+            isActive={type == 'multiple_choice'}
             toggle={() => {
-              if (type == 'Multiple choice') {
+              if (type == 'multiple_choice') {
                 setType('');
               } else {
-                setType('Multiple choice');
+                setType('multiple_choice');
               }
             }}
             onChange={(values) => {

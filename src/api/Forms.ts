@@ -25,6 +25,39 @@ class FormsApi extends Api {
   static checkInReposition = (data: any) => {
     return this.post('/forms/check_in/reposition_questions', data);
   };
+
+  // questionary
+
+  static getQuestionaryList = () => {
+    return this.post('/forms/questionary/list_questionary_forms', {});
+  };
+
+  static deleteQuestionary = (id: string) => {
+    return this.post('/forms/questionary/delete_questionary_form', {
+      unique_id: id,
+    });
+  };
+
+  static getCheckinTemplates = () => {
+    return this.post('/forms/questionary/show_defaults', {});
+  };
+
+  static addQuestionary = (data: CheckinFormType) => {
+    return this.post('/forms/questionary/add_questionary_form', data);
+  };
+  static showQuestinary = (id: string) => {
+    return this.post('/forms/questionary/show_questionary_form', {
+      unique_id: id,
+    });
+  };
+
+  static editQuestionary = (data: CheckinEditFormType) => {
+    return this.post('/forms/questionary/edit_questionary_form', data);
+  };
+
+  static QuestionaryReposition = (data: any) => {
+    return this.post('/forms/questionary/reposition_questions', data);
+  };
 }
 
 export default FormsApi;
