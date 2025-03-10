@@ -9,7 +9,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
   const [openRoll, setOpenRoll] = useState(false);
   const [role, setRole] = useState('Staff');
   const [step, setStep] = useState(1);
-  const [registered, setRegistered] = useState(false);
+  const [registered, ] = useState(false);
   return (
     <>
       {step === 1 ? (
