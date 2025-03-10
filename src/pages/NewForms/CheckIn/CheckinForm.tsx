@@ -8,6 +8,7 @@ import { MainModal } from '../../../Components';
 // import AddCheckIn from "./AddCheckIn";
 import CheckInControllerModal from './CheckInControllerModal';
 import CheckInPreview from './CheckInPreview';
+import TemplateQuestinary from './TemplateQuestionary';
 
 interface CheckInFormProps {
   isQuestionary?: boolean;
@@ -19,6 +20,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [editFormId, setEditFormId] = useState('');
   const [showReposition, setShowReposition] = useState(false);
+  const [showTemplates,setShowTemplates] = useState(false)
+  const [showFeedback,setShowFeedBack] = useState(false)
+  const [,setSelectedTemplate] = useState(null)
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
@@ -146,7 +150,12 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
             ClassName="rounded-[20px] w-[229px] mt-9"
             onClick={() => {
               // setShowModal(true);
-              setShowAddModal(true);
+              if(isQuestionary){
+                setShowTemplates(true)
+              }else {
+                setShowAddModal(true);
+
+              }
             }}
           >
             <SvgIcon src="/icons/firstline.svg" color="#FFF" />
@@ -192,6 +201,22 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
             }}
           ></CheckInPreview>
         </>
+      </MainModal>
+
+      <MainModal isOpen={showTemplates} onClose={() => {setShowTemplates(false)}}>
+        <TemplateQuestinary onselect={(values) =>{
+          setShowTemplates(false)
+          setSelectedTemplate(values)
+          setShowFeedBack(true)
+        }}></TemplateQuestinary>
+      </MainModal>
+      
+      <MainModal isOpen={showFeedback} onClose={() => {
+        setShowFeedBack(false)
+      }}>
+        <>
+        </>
+
       </MainModal>
     </>
   );

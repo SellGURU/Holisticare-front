@@ -15,7 +15,7 @@ export const menus = [
     items: [
       { name: 'Custom Branding', url: '/', icon: 'sidemenu-menu-icon-Branding', active: false },
       { name: 'Custom Biomarker', url: '', icon: 'sidemenu-menu-icon-Biomarker', active: false },
-      { name: 'Custom Form', url: '/', icon: 'sidemenu-menu-icon-Form', active: false },
+      { name: 'Custom Form', url: '/forms', icon: 'sidemenu-menu-icon-Form', active: true },
     ],
   },
   {
