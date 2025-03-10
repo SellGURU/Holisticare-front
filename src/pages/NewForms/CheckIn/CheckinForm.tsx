@@ -9,6 +9,7 @@ import { MainModal } from '../../../Components';
 import CheckInControllerModal from './CheckInControllerModal';
 import CheckInPreview from './CheckInPreview';
 import TemplateQuestinary from './TemplateQuestionary';
+import QuestionaryControllerModal from './QuestionaryControllerModal';
 
 interface CheckInFormProps {
   isQuestionary?: boolean;
@@ -22,7 +23,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
   const [showReposition, setShowReposition] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showFeedback, setShowFeedBack] = useState(false);
-  const [, setSelectedTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const getChechins = () => {
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
@@ -80,6 +81,36 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
       });
     }
   };
+  const onsaveQuestionary = (values: any) => {
+    if (showReposition) {
+      FormsApi.QuestionaryReposition({
+        unique_id: editFormId,
+        questions: values.questions.map((el: any, index: number) => {
+          return {
+            ...el,
+            order: index + 1,
+          };
+        }),
+      }).then(() => {
+        getQuestionary();
+        setShowFeedBack(false);
+        setShowReposition(false);
+      });
+    } else if (editFormId != '') {
+      FormsApi.editQuestionary({
+        unique_id: editFormId,
+        ...values,
+      }).then(() => {
+        getQuestionary();
+        setShowFeedBack(false);
+      });
+    } else {
+      FormsApi.addQuestionary(values).then(() => {
+        getQuestionary();
+        setShowFeedBack(false);
+      });
+    }
+  };
   return (
     <>
       {checkInList.length > 0 ? (
@@ -92,7 +123,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
               <ButtonSecondary
                 ClassName="rounded-[20px] w-[152px]"
                 onClick={() => {
-                  setShowAddModal(true);
+                  if (isQuestionary) {
+                    setShowTemplates(true);
+                  } else {
+                    setShowAddModal(true);
+                  }
                   // setCheckInList([]);
                   // setMainTitle('');
                   // setEditModeModal(false);
@@ -118,7 +153,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
                 }
               }}
               onEdit={(id) => {
-                setShowAddModal(true);
+                if (isQuestionary) {
+                  setShowFeedBack(true);
+                } else {
+                  setShowAddModal(true);
+                }
                 setEditFormId(id);
               }}
               onPreview={(id) => {
@@ -163,7 +202,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
         </>
       )}
       <MainModal
-        isOpen={showaddModal || showReposition}
+        isOpen={(showaddModal || showReposition) && !isQuestionary}
         onClose={() => {
           // setShowModal(false);
           setEditFormId('');
@@ -194,6 +233,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
         <>
           <CheckInPreview
             id={editFormId}
+            isQuestionary={isQuestionary}
             onClose={() => {
               setShowPreview(false);
               setEditFormId('');
@@ -218,12 +258,27 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
       </MainModal>
 
       <MainModal
-        isOpen={showFeedback}
+        isOpen={(showFeedback || showReposition) && isQuestionary}
         onClose={() => {
           setShowFeedBack(false);
+          setEditFormId('');
         }}
       >
-        <></>
+        <QuestionaryControllerModal
+          templateData={selectedTemplate}
+          onClose={() => {
+            setShowFeedBack(false);
+            setEditFormId('');
+            setSelectedTemplate(null);
+          }}
+          onSave={(values) => {
+            onsaveQuestionary(values);
+            setEditFormId('');
+            setSelectedTemplate(null);
+          }}
+          editId={editFormId}
+          mode={resolveMode()}
+        ></QuestionaryControllerModal>
       </MainModal>
     </>
   );

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import TextField from '../../../Components/TextField';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
@@ -12,6 +11,7 @@ interface QuestionaryControllerModalProps {
   mode?: 'Edit' | 'Reposition' | 'Add';
   onClose: () => void;
   onSave: (values: any) => void;
+  templateData?: any;
 }
 
 const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
@@ -19,12 +19,15 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   onClose,
   onSave,
   editId,
+  templateData,
 }) => {
-  const [questions, setQuestions] = useState<Array<checkinType>>([]);
+  const [questions, setQuestions] = useState<Array<checkinType>>(
+    templateData ? templateData.questions : [],
+  );
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
-        return 'Create a Check-In';
+        return 'Feedback';
       case 'Reposition':
         return 'Reposition Check-in';
       case 'Edit':
@@ -66,7 +69,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   };
   const [titleForm, setTitleForm] = useState('');
   const isDisable = () => {
-    return titleForm.length == 0;
+    return false;
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
@@ -82,7 +85,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   };
   useEffect(() => {
     if (editId != '' && editId) {
-      FormsApi.showCheckIn(editId).then((res) => {
+      FormsApi.showQuestinary(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
       });
@@ -98,18 +101,8 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
-          <div className="w-full mt-6">
-            <TextField
-              type="text"
-              name="formtitle"
-              label="Form Title"
-              placeholder="Enter community name..."
-              value={titleForm}
-              onChange={(e) => setTitleForm(e.target.value)}
-            />
-          </div>
           <div className="w-full text-xs text-Text-Primary font-medium mt-6">
-            Questions
+            Initial Questionnaire
           </div>
           <div className="flex flex-col w-full mt-3 items-center justify-center">
             {resolveBoxRender()}

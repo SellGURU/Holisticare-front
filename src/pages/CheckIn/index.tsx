@@ -42,7 +42,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
           ></RangeCard>
         );
 
-      case 'Text':
+      case 'paragraph':
         return (
           <TextCard
             index={index}
@@ -87,7 +87,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
           ></FeelingCard>
         );
 
-      case 'Checkboxes':
+      case 'checkbox':
         return (
           <CheckBoxCard
             index={index}
@@ -96,7 +96,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             options={item.options}
           ></CheckBoxCard>
         );
-      case 'Multiple choice':
+      case 'multiple_choice':
         return (
           <MultiChoice
             index={index}

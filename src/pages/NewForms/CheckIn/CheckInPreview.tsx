@@ -6,14 +6,25 @@ import FormsApi from '../../../api/Forms';
 interface CheckInPreviewProps {
   id: string;
   onClose: () => void;
+  isQuestionary?: boolean;
 }
 
-const CheckInPreview: React.FC<CheckInPreviewProps> = ({ id, onClose }) => {
+const CheckInPreview: React.FC<CheckInPreviewProps> = ({
+  id,
+  onClose,
+  isQuestionary,
+}) => {
   const [data, setData] = useState<any>(null);
   useEffect(() => {
-    FormsApi.showCheckIn(id).then((res) => {
-      setData(res.data);
-    });
+    if (isQuestionary) {
+      FormsApi.showQuestinary(id).then((res) => {
+        setData(res.data);
+      });
+    } else {
+      FormsApi.showCheckIn(id).then((res) => {
+        setData(res.data);
+      });
+    }
   }, []);
   return (
     <>
