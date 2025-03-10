@@ -2,7 +2,7 @@ import React from 'react';
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLDivElement> {
   checked: boolean;
-  onChange?: () => void;  // Make sure to include the onChange prop
+  onChange?: () => void; // Make sure to include the onChange prop
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, ...props }) => {
@@ -11,7 +11,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, ...props }) => {
       className={`w-3 h-3 flex items-center justify-center rounded border border-Primary-DeepTeal ${
         checked ? 'bg-Primary-DeepTeal' : 'bg-white'
       }`}
-      onClick={onChange}  // Trigger the onChange function
+      onClick={onChange} // Trigger the onChange function
       {...props}
     >
       {checked && (

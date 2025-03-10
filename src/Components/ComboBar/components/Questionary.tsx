@@ -38,17 +38,19 @@ export const Questionary = () => {
       .filter((form: any) => selectedQuestionnaires.includes(form.id))
       .map((form: any) => ({
         Data: form.name,
-        "Completed on": null, // Assuming no completion date initially
-        State: "Incomplete"
+        'Completed on': null, // Assuming no completion date initially
+        State: 'Incomplete',
       }));
 
     setData((prev: any) => [...prev, ...selectedData]);
     setSelectedQuestionnaires([]);
-    setTryComplete(false)
+    setTryComplete(false);
   };
 
   const deleteQuestionRow = (index: number) => {
-    setData((prevData:any) => prevData.filter((_:any, i:number) => i !== index));
+    setData((prevData: any) =>
+      prevData.filter((_: any, i: number) => i !== index),
+    );
   };
 
   useEffect(() => {
@@ -281,7 +283,7 @@ export const Questionary = () => {
   //   );
   //   return datas.length == 0;
   // };
-  const [activeCard, ] = useState(1);
+  const [activeCard] = useState(1);
   return (
     <div className=" w-full">
       <div
@@ -307,7 +309,7 @@ export const Questionary = () => {
               <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
                 {mockForms.map((form: any) => (
                   <div
-                  onClick={() => toggleSelection(form.id)}
+                    onClick={() => toggleSelection(form.id)}
                     key={form.id}
                     className={` ${selectedQuestionnaires.includes(form.id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
                   >
@@ -327,8 +329,9 @@ export const Questionary = () => {
               </div>
               <div className="w-full flex items-center gap-2 ">
                 <ButtonPrimary
-                  onClick={() => {setSelectedQuestionnaires([])
-                    setTryComplete(false)
+                  onClick={() => {
+                    setSelectedQuestionnaires([]);
+                    setTryComplete(false);
                   }}
                   outLine
                   style={{
@@ -441,57 +444,54 @@ export const Questionary = () => {
               </div>
             </div> */}
           </>
-        )  }
-          <>
-            {data?.length > 0 ? (
-              <>
-                <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-                  <div>Questionary Name</div>
-                  <div>State</div>
-                  <div>Action</div>
+        )}
+        <>
+          {data?.length > 0 ? (
+            <>
+              <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+                <div>Questionary Name</div>
+                <div>State</div>
+                <div>Action</div>
+              </div>
+              <div className="flex justify-center w-full items-start  ">
+                <div className="w-full mt-2 h-[600px] overflow-auto ">
+                  {data?.map((el: any, index: number) => {
+                    console.log(el);
+
+                    return (
+                      <QuestionRow
+                        el={el}
+                        id={id as string}
+                        resolveForm={resolveForm}
+                        deleteRow={() => deleteQuestionRow(index)}
+                      ></QuestionRow>
+                    );
+                  })}
                 </div>
-                <div className="flex justify-center w-full items-start  ">
-                  <div className="w-full mt-2 h-[600px] overflow-auto ">
-                    {data?.map((el: any,index:number) => {
-                      console.log(el);
-                      
-                      return (
-                        <QuestionRow
-                          el={el}
-                          id={id as string}
-                          resolveForm={resolveForm}
-                          deleteRow={() => deleteQuestionRow(index)}
-
-
-                        ></QuestionRow>
-                      );
-                    })}
+              </div>
+            </>
+          ) : (
+            <>
+              {isLaoding ? (
+                <>
+                  <div className="w-full flex justify-center items-center h-[220px]">
+                    <Circleloader></Circleloader>
                   </div>
-                </div>
-              </>
-            ) : (
-              <>
-                {isLaoding ? (
-                  <>
-                    <div className="w-full flex justify-center items-center h-[220px]">
-                      <Circleloader></Circleloader>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-[250px] ">
-                    <img
-                      className=" object-contain"
-                      src="/icons/document-text.svg"
-                      alt=""
-                    />
-                    <div className="text-[12px] text-[#383838] mt-1">
-                      No Data Found
-                    </div>
-                    <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
-                      For more accurate results, please complete the
-                      questionnaire
-                    </p>
-                    {/* <ButtonPrimary
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[250px] ">
+                  <img
+                    className=" object-contain"
+                    src="/icons/document-text.svg"
+                    alt=""
+                  />
+                  <div className="text-[12px] text-[#383838] mt-1">
+                    No Data Found
+                  </div>
+                  <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
+                    For more accurate results, please complete the questionnaire
+                  </p>
+                  {/* <ButtonPrimary
                       onClick={() => {
                         // setTryComplete(true);
                         Application.getGoogleFormEmty()
@@ -506,15 +506,12 @@ export const Questionary = () => {
                     >
                       Complete Questionary
                     </ButtonPrimary> */}
-                  </div>
-                )}
-              </>
-            )}
-          </>
-     
+                </div>
+              )}
+            </>
+          )}
+        </>
       </div>
     </div>
-
-
   );
 };

@@ -77,7 +77,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       }).then((res) => {
                         setViewQuestienry(res.data);
                         setIsView(true);
-                        setshowModal(false)
+                        setshowModal(false);
                       });
                     }}
                     className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
