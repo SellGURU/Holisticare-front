@@ -46,9 +46,9 @@ export const menus = [
       },
       {
         name: 'Custom Biomarker',
-        url: '',
+        url: '/biomarkers',
         icon: 'sidemenu-menu-icon-Biomarker',
-        active: false,
+        active: true,
       },
       {
         name: 'Custom Form',
