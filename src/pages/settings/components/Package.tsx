@@ -60,7 +60,7 @@ const PackagePage = () => {
   const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
-    <div className='w-full px-4 py-3'>
+      <div className="w-full px-4 py-3">
         <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
           <div className=" flex justify-between items-center">
             <div className="text-Text-Primary text-sm font-medium">
@@ -151,8 +151,8 @@ const PackagePage = () => {
                     Your subscription has been canceled successfully.
                   </div>
                   <div className="text-Text-Secondary text-xs mt-2 mb-4">
-                    You will retain access to free features until September 27th,
-                    2024.{' '}
+                    You will retain access to free features until September
+                    27th, 2024.{' '}
                   </div>
                   <ButtonPrimary
                     onClick={() => {
@@ -175,8 +175,8 @@ const PackagePage = () => {
                   Are you sure you want to cancel your subscription?{' '}
                 </div>
                 <div className="mt-4 text-xs text-Text-Secondary text-center">
-                  After canceling your subscription, you will still have access to
-                  features until September 27th, 2024.
+                  After canceling your subscription, you will still have access
+                  to features until September 27th, 2024.
                 </div>
                 <div className=" mt-5 w-full flex justify-end gap-3 items-center">
                   <div
@@ -289,7 +289,9 @@ const PackagePage = () => {
                             ) {
                               setshowUpgrade(true);
                             }
-                            context.PackageManager.changePackage(el.name as any);
+                            context.PackageManager.changePackage(
+                              el.name as any,
+                            );
                             // context.PackageManager.changePackage(el.name as any);
                           }}
                           ClassName="rounded-full w-full"
@@ -327,7 +329,10 @@ const PackagePage = () => {
             </div>
           </div>
         </MainModal>
-        <MainModal isOpen={showDowngrade} onClose={() => setshowDowngrade(false)}>
+        <MainModal
+          isOpen={showDowngrade}
+          onClose={() => setshowDowngrade(false)}
+        >
           {' '}
           <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[448px] h-[216px]">
             <div className="w-full flex flex-col items-center pt-3">
@@ -350,8 +355,7 @@ const PackagePage = () => {
             </div>
           </div>
         </MainModal>
-
-    </div>
+      </div>
     </>
   );
 };

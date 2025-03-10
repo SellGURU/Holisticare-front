@@ -61,9 +61,9 @@ const router = createBrowserRouter([
             element: <Setting></Setting>,
           },
           {
-            path:'/packages',
-            element:<PackagePage></PackagePage>
-          },          
+            path: '/packages',
+            element: <PackagePage></PackagePage>,
+          },
           {
             path: '/reports',
             element: <Reports></Reports>,
