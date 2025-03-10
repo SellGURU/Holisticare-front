@@ -27,6 +27,7 @@ import Checkin from '../pages/CheckIn/index.tsx';
 import NewForms from '../pages/NewForms/index.tsx';
 import PackagePage from '../pages/settings/components/Package.tsx';
 import Staff from '../pages/staff/index.tsx';
+import CustomBranding from '../pages/CustomBranding/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
           {
             path: '/staff',
             element: <Staff></Staff>,
+          },
+          {
+            path: '/custom-branding',
+            element: <CustomBranding></CustomBranding>,
           },
         ],
       },
