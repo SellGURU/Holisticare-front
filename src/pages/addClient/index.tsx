@@ -69,7 +69,13 @@ const AddClient = () => {
   const [photo, setPhoto] = useState('');
   const [memberId, setMemberID] = useState('');
   const [isLoading, setisLoading] = useState(false);
-
+  const [dateofBrith, setDateOfBrith] = useState(
+    new Date().toISOString().split('T')[0],
+  );
+  const validateDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()); // Returns true if it's a valid date
+  };
   const submit = () => {
     if (!formik.isValid) {
       return;
@@ -81,7 +87,8 @@ const AddClient = () => {
       email: formik.values.email,
       last_name: formik.values.lastName,
       picture: photo,
-      age: formik.values.age,
+      // age: formik.values.age,
+      date_of_birth: dateofBrith,
       gender: formik.values.gender,
       wearable_devices: [],
     })
@@ -291,7 +298,7 @@ const AddClient = () => {
                       </div>
                     )}
                   </div>
-                  <div className="w-full md:w-auto">
+                  {/* <div className="w-full md:w-auto">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Age
                     </label>
@@ -327,7 +334,28 @@ const AddClient = () => {
                     <div className="text-[10px] text-Text-Secondary mt-1 px-2">
                       Enter a number between 12 and 60
                     </div>
+                  </div> */}
+                  <div className="w-full  ml-2 ">
+                    <label className="text-Text-Primary text-[12px] font-medium">
+                      Date of birth
+                    </label>
+                    <input
+                      type="date"
+                      onChange={(e: any) => {
+                        // console.log(new Date(e.target.value).toISOString().split('T')[0])
+                        if (validateDate(e.target.value)) {
+                          setDateOfBrith(
+                            new Date(e.target.value)
+                              .toISOString()
+                              .split('T')[0],
+                          );
+                        }
+                      }}
+                      value={dateofBrith}
+                      className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary"
+                    />
                   </div>
+                  <div></div>
                 </div>
                 <TextField
                   {...formik.getFieldProps('email')}
