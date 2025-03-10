@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface ChangeRollModalProps {
@@ -15,6 +15,8 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
   setShowModalChangeRoll,
   isSuccess,
 }) => {
+  const [openRoll, setOpenRoll] = useState(false);
+  const [roll, setRoll] = useState('Admin');
   return (
     <>
       {!isSuccess ? (
@@ -45,7 +47,28 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
                 </div>
                 <div className="text-Text-Primary text-xs flex items-center gap-2 w-[50%] p-2 border-l border-Gray-50">
                   <div className="w-[10px] h-[10px] rounded-full border border-Primary-DeepTeal"></div>
-                  Admin
+                  <div className="relative inline-block w-full font-normal">
+                    <select
+                      onClick={() => setOpenRoll(!openRoll)}
+                      onBlur={() => setOpenRoll(false)}
+                      onChange={(e) => {
+                        setOpenRoll(false);
+                        setRoll(e.target.value);
+                      }}
+                      value={roll}
+                      className="block appearance-none w-full bg-backgroundColor-Card py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Staff">Staff</option>
+                    </select>
+                    <img
+                      className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
+                        openRoll ? 'rotate-180' : ''
+                      }`}
+                      src="/icons/arow-down-drop.svg"
+                      alt=""
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -8,7 +8,17 @@ export const columns = (): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="flex justify-start text-[10px] text-Text-Primary">
+        <div className="flex justify-start items-center gap-1 text-[10px] text-Text-Primary">
+          <div className="size-[24px] rounded-full relative">
+            <img
+              className="w-full h-full rounded-full object-cover border border-Primary-DeepTeal"
+              onError={(e: any) => {
+                e.target.src = `https://ui-avatars.com/api/?name=`;
+              }}
+              src={`https://ui-avatars.com/api/?name=`}
+              alt=""
+            />
+          </div>
           {row.original?.name || 'No Data'}
         </div>
       );
