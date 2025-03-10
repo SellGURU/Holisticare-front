@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
 // import DatePicker from 'react-datepicker';
 import Checkbox from './CheckBox';
-import SpinnerLoader from '../../SpinnerLoader';
+// import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
 // import DatePicker from '../../DatePicker';
@@ -15,9 +14,43 @@ export const Questionary = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryComplete, setTryComplete] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false);
+  // const [submitLoading, setSubmitLoading] = useState(false);
   const [isLaoding, setIsLoading] = useState(false);
-  const [questionsFormData, setQuestionsFormData] = useState<any>([]);
+  const [, setQuestionsFormData] = useState<any>([]);
+  const [mockForms] = useState<any>([
+    { id: '1', name: 'Feedback Form', questions: 9 },
+    { id: '2', name: 'Initial Questionnaire', questions: 9 },
+    { id: '3', name: 'PAR-Q', questions: 9 },
+  ]);
+
+  const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
+
+  const toggleSelection = (id: string) => {
+    setSelectedQuestionnaires((prev: any) =>
+      prev.includes(id)
+        ? prev.filter((qId: string) => qId !== id)
+        : [...prev, id],
+    );
+  };
+
+  const handleAddQuestionnaires = () => {
+    const selectedData = mockForms
+      .filter((form: any) => selectedQuestionnaires.includes(form.id))
+      .map((form: any) => ({
+        Data: form.name,
+        "Completed on": null, // Assuming no completion date initially
+        State: "Incomplete"
+      }));
+
+    setData((prev: any) => [...prev, ...selectedData]);
+    setSelectedQuestionnaires([]);
+    setTryComplete(false)
+  };
+
+  const deleteQuestionRow = (index: number) => {
+    setData((prevData:any) => prevData.filter((_:any, i:number) => i !== index));
+  };
+
   useEffect(() => {
     setIsLoading(true);
     if (!tryComplete) {
@@ -37,7 +70,7 @@ export const Questionary = () => {
           setIsLoading(false);
         });
     }
-  }, [id, tryComplete]);
+  }, [id]);
   const formValueChange = (id: string, value: any) => {
     setQuestionsFormData((prev: any) => ({
       ...prev,
@@ -242,24 +275,79 @@ export const Questionary = () => {
       );
     }
   };
-  const checkFormComplete = () => {
-    const datas = questionsFormData.questions.filter(
-      (el: any) => el.required == true && el.response.length == 0,
-    );
-    return datas.length == 0;
-  };
-  const [activeCard, setActiveCard] = useState(1);
+  // const checkFormComplete = () => {
+  //   const datas = questionsFormData.questions.filter(
+  //     (el: any) => el.required == true && el.response.length == 0,
+  //   );
+  //   return datas.length == 0;
+  // };
+  const [activeCard, ] = useState(1);
   return (
     <div className=" w-full">
-      <div className="px-2">
-        <div className="w-full text-[10px] md:text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-          <div>Questionary Name</div>
-          <div>State</div>
-          <div>Action</div>
-        </div>
-        {tryComplete ? (
+      <div
+        onClick={() => {
+          Application.getGoogleFormEmty()
+            .then((res) => {
+              setQuestionsFormData(res.data);
+              setTryComplete(true);
+            })
+            .catch((err) => {
+              console.error('Error fetching the link:', err);
+            });
+        }}
+        className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryComplete && 'hidden'} `}
+      >
+        <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+        Add Questionary
+      </div>
+      <div className=" mt-3">
+        {tryComplete && (
           <>
-            <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
+            <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
+              <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
+                {mockForms.map((form: any) => (
+                  <div
+                  onClick={() => toggleSelection(form.id)}
+                    key={form.id}
+                    className={` ${selectedQuestionnaires.includes(form.id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
+                  >
+                    <div className="flex items-center gap-1">
+                      <Checkbox
+                        checked={selectedQuestionnaires.includes(form.id)}
+                      />
+                      <div className="text-[10px] text-[#888888]">
+                        {form.name}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-[#888888]">
+                      {form.questions} Questions
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full flex items-center gap-2 ">
+                <ButtonPrimary
+                  onClick={() => {setSelectedQuestionnaires([])
+                    setTryComplete(false)
+                  }}
+                  outLine
+                  style={{
+                    backgroundColor: '#fff',
+                    color: '#005F73',
+                    width: '100%',
+                  }}
+                >
+                  Cancel
+                </ButtonPrimary>
+                <ButtonPrimary
+                  onClick={handleAddQuestionnaires}
+                  style={{ width: '100%' }}
+                >
+                  Add
+                </ButtonPrimary>
+              </div>
+            </div>
+            {/* <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
               <div className="flex justify-between items-center">
                 <div className="text-xs text-Text-Primary">Profile Data</div>
                 <ButtonSecondary
@@ -351,20 +439,30 @@ export const Questionary = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </>
-        ) : (
+        )  }
           <>
             {data?.length > 0 ? (
               <>
-                <div className="flex justify-center w-full items-start overflow-auto ">
-                  <div className="w-full mt-2">
-                    {data?.map((el: any) => {
+                <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+                  <div>Questionary Name</div>
+                  <div>State</div>
+                  <div>Action</div>
+                </div>
+                <div className="flex justify-center w-full items-start  ">
+                  <div className="w-full mt-2 h-[600px] overflow-auto ">
+                    {data?.map((el: any,index:number) => {
+                      console.log(el);
+                      
                       return (
                         <QuestionRow
                           el={el}
                           id={id as string}
                           resolveForm={resolveForm}
+                          deleteRow={() => deleteQuestionRow(index)}
+
+
                         ></QuestionRow>
                       );
                     })}
@@ -393,7 +491,7 @@ export const Questionary = () => {
                       For more accurate results, please complete the
                       questionnaire
                     </p>
-                    <ButtonPrimary
+                    {/* <ButtonPrimary
                       onClick={() => {
                         // setTryComplete(true);
                         Application.getGoogleFormEmty()
@@ -407,14 +505,16 @@ export const Questionary = () => {
                       }}
                     >
                       Complete Questionary
-                    </ButtonPrimary>
+                    </ButtonPrimary> */}
                   </div>
                 )}
               </>
             )}
           </>
-        )}
+     
       </div>
     </div>
+
+
   );
 };
