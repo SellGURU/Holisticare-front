@@ -98,9 +98,9 @@ export const menus = [
       },
       {
         name: 'Staff',
-        url: '/',
+        url: '/staff',
         icon: 'sidemenu-menu-icon-Staff',
-        active: false,
+        active: true,
       },
     ],
   },
