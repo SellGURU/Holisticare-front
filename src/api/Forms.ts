@@ -37,6 +37,10 @@ class FormsApi extends Api {
       unique_id: id,
     });
   };
+
+  static getCheckinTemplates = () => {
+    return this.post('/forms/questionary/show_defaults', {});
+  };
 }
 
 export default FormsApi;

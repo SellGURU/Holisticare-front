@@ -52,9 +52,9 @@ export const menus = [
       },
       {
         name: 'Custom Form',
-        url: '/',
+        url: '/forms',
         icon: 'sidemenu-menu-icon-Form',
-        active: false,
+        active: true,
       },
     ],
   },
