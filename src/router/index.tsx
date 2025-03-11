@@ -29,6 +29,7 @@ import PackagePage from '../pages/settings/components/Package.tsx';
 import Staff from '../pages/staff/index.tsx';
 import CustomBiomarkers from '../pages/CustomBiomarkers.tsx/index.tsx';
 import FormView from '../pages/CheckIn/FormView.tsx';
+import CustomBranding from '../pages/CustomBranding/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
           {
             path: '/biomarkers',
             element: <CustomBiomarkers></CustomBiomarkers>,
+          },
+          {
+            path: '/custom-branding',
+            element: <CustomBranding></CustomBranding>,
           },
         ],
       },

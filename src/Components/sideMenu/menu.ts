@@ -40,9 +40,9 @@ export const menus = [
     items: [
       {
         name: 'Custom Branding',
-        url: '/',
+        url: '/custom-branding',
         icon: 'sidemenu-menu-icon-Branding',
-        active: false,
+        active: true,
       },
       {
         name: 'Custom Biomarker',
