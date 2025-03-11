@@ -147,7 +147,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
             </div>
           ) : (
             <>
-              <div className="text-[10px]  text-Text-Primary w-[100px]">{el.Data}</div>
+              <div className="text-[10px]  text-Text-Primary w-[100px]">
+                {el.Data}
+              </div>
 
               <div className="text-[8px] w-[100px] text-center ">
                 {isView ? (
