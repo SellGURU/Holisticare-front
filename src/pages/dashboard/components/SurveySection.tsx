@@ -8,7 +8,9 @@ interface SurveySectionProps {
   handleSliderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sliderBackground: React.CSSProperties;
   selectedFeeling: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string;
-  setFeeling:(value:'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string)=>void;
+  setFeeling: (
+    value: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string,
+  ) => void;
   val: number;
   setVal: (value: number) => void;
   snackValue: string;
@@ -73,11 +75,14 @@ const SurveySection: React.FC<SurveySectionProps> = ({
           ))}
         </div>
       </div>
-      <FeelingCard index={3} question='How are you feeling today?' value={selectedFeeling} onSubmit={(val)=>{
-        setFeeling(val)
-      
-        
-      }} ></FeelingCard>
+      <FeelingCard
+        index={3}
+        question="How are you feeling today?"
+        value={selectedFeeling}
+        onSubmit={(val) => {
+          setFeeling(val);
+        }}
+      ></FeelingCard>
       {/* <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
         <div className="text-[10px]">3. How are you feeling today?</div>
         <div className="bg-white rounded-[20px] p-4 pb-2 drop-shadow mt-3 overflow-x-hidden relative">

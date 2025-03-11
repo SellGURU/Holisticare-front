@@ -98,7 +98,9 @@ const RecentCheckIns = () => {
   //   { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
   // ];
 
-  const [selectedFeeling, setSelectedFeeling] = useState<'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string>('Neutral'); // Default to Neutral
+  const [selectedFeeling, setSelectedFeeling] = useState<
+    'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string
+  >('Neutral'); // Default to Neutral
   const [val, setVal] = useState<number>(55);
   const [snackValue] = useState('');
   const [workHours] = useState('');
@@ -149,7 +151,7 @@ const RecentCheckIns = () => {
   const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
   console.log(selectedFeeling);
-  
+
   return (
     <>
       <MainModal
@@ -190,9 +192,8 @@ const RecentCheckIns = () => {
                 hoursSlept={hoursSlept}
                 handleSliderChange={handleSliderChange}
                 sliderBackground={sliderBackground}
-               
                 selectedFeeling={selectedFeeling}
-                setFeeling={(value)=>setSelectedFeeling(value)}
+                setFeeling={(value) => setSelectedFeeling(value)}
                 val={val}
                 setVal={setVal}
                 snackValue={snackValue}
@@ -249,16 +250,13 @@ const RecentCheckIns = () => {
               )}
               {showComparisonSurvey && comparisonData && (
                 <SurveySection
-                setFeeling={(value)=>setSelectedFeeling(value)}
-
+                  setFeeling={(value) => setSelectedFeeling(value)}
                   isStickMealPlan={isStickMealPlan}
                   setisStickMealPlan={setisStickMealPlan}
                   hoursSlept={hoursSlept}
                   handleSliderChange={handleSliderChange}
                   sliderBackground={sliderBackground}
-                 
                   selectedFeeling={selectedFeeling}
-                  
                   val={val}
                   setVal={setVal}
                   snackValue={snackValue}

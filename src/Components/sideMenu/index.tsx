@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { menus } from './menu';
@@ -17,13 +17,15 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         .find((item) => item.url === location.pathname) || menus[0].items[0]
     );
   });
-  //   useEffect(() => {
-  //     const currentActiveMenu =
-  //       menus.find((menu) => menu.url === location.pathname) || menus[0];
-  //     if (currentActiveMenu.name !== activeMenu.name) {
-  //       setActiveMenu(currentActiveMenu);
-  //     }
-  //   }, [location.pathname, activeMenu]);
+  useEffect(() => {
+    const currentActiveItem = menus
+      .flatMap((menu) => menu.items)
+      .find((item) => item.url === location.pathname) || menus[0].items[0];
+  
+    if (currentActiveItem.name !== activeMenu.name) {
+      setActiveMenu(currentActiveItem);
+    }
+  }, [location.pathname, activeMenu]);
   const changeMenu = (menu: any) => {
     setActiveMenu(menu);
     navigate(menu.url);
