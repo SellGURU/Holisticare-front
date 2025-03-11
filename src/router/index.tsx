@@ -91,7 +91,7 @@ const router = createBrowserRouter([
           {
             path: '/custom-branding',
             element: <CustomBranding></CustomBranding>,
-          }
+          },
         ],
       },
       {
