@@ -291,8 +291,6 @@ export const Questionary = () => {
     <div className=" w-full">
       <div
         onClick={() => {
-       
-        
           Application.getGoogleFormEmty()
             .then((res) => {
               setQuestionsFormData(res.data);
@@ -301,9 +299,9 @@ export const Questionary = () => {
             .catch((err) => {
               console.error('Error fetching the link:', err);
             });
-            if(tryComplete){
-              setTryComplete(false)
-            }
+          if (tryComplete) {
+            setTryComplete(false);
+          }
         }}
         className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
@@ -496,20 +494,22 @@ export const Questionary = () => {
                     <Circleloader></Circleloader>
                   </div>
                 </>
-              ) : data?.length < 1 && (
-                <div className="flex flex-col items-center justify-center h-[250px] ">
-                  <img
-                    className=" object-contain"
-                    src="/icons/document-text.svg"
-                    alt=""
-                  />
-                  <div className="text-[12px] text-[#383838] mt-1">
-                    No Data Found
-                  </div>
-                  <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
-                    For more accurate results, please complete the questionnaire
-                  </p>
-                  {/* <ButtonPrimary
+              ) : (
+                data?.length < 1 && (
+                  <div className="flex flex-col items-center justify-center h-[250px] ">
+                    <img
+                      className=" object-contain"
+                      src="/icons/document-text.svg"
+                      alt=""
+                    />
+                    <div className="text-[12px] text-[#383838] mt-1">
+                      No Data Found
+                    </div>
+                    <p className="text-[10px] text-Text-Secondary mt-4 mb-3 text-center">
+                      For more accurate results, please complete the
+                      questionnaire
+                    </p>
+                    {/* <ButtonPrimary
                       onClick={() => {
                         // setTryComplete(true);
                         Application.getGoogleFormEmty()
@@ -524,7 +524,8 @@ export const Questionary = () => {
                     >
                       Complete Questionary
                     </ButtonPrimary> */}
-                </div>
+                  </div>
+                )
               )}
             </>
           )}

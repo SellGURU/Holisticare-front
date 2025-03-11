@@ -90,22 +90,22 @@ const RecentCheckIns = () => {
     background: `linear-gradient(to right, #6CC24A ${hoursSlept * 10}%, #e5e7eb ${hoursSlept * 10}%)`,
   };
 
-  const feelings = [
-    { emoji: '/images/emoji/angry-emoji.svg', text: 'Angry' },
-    { emoji: '/images/emoji/sad-emoji.svg', text: 'Sad' },
-    { emoji: '/images/emoji/poker-emoji.svg', text: 'Neutral' },
-    { emoji: '/images/emoji/smile-emoji.svg', text: 'Happy' },
-    { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
-  ];
+  // const feelings = [
+  //   { emoji: '/images/emoji/angry-emoji.svg', text: 'Angry' },
+  //   { emoji: '/images/emoji/sad-emoji.svg', text: 'Sad' },
+  //   { emoji: '/images/emoji/poker-emoji.svg', text: 'Neutral' },
+  //   { emoji: '/images/emoji/smile-emoji.svg', text: 'Happy' },
+  //   { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
+  // ];
 
-  const [selectedFeeling, setSelectedFeeling] = useState<number | null>(2); // Default to Neutral
+  const [selectedFeeling, setSelectedFeeling] = useState<'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string>('Neutral'); // Default to Neutral
   const [val, setVal] = useState<number>(55);
   const [snackValue] = useState('');
   const [workHours] = useState('');
 
-  const handleFeelingClick = (index: number) => {
-    setSelectedFeeling(index);
-  };
+  // const handleFeelingClick = (index: number) => {
+  //   setSelectedFeeling(index);
+  // };
 
   const handleCompareClick = () => {
     setShowComparisonSelect(true);
@@ -138,7 +138,7 @@ const RecentCheckIns = () => {
   const resetModalStates = () => {
     setisStickMealPlan(true);
     setHoursSlept(0);
-    setSelectedFeeling(2);
+    setSelectedFeeling('Neutral');
     setVal(55);
     setShowComparisonSelect(false);
     setShowComparisonSurvey(false);
@@ -148,6 +148,8 @@ const RecentCheckIns = () => {
   };
   const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
+  console.log(selectedFeeling);
+  
   return (
     <>
       <MainModal
@@ -188,9 +190,9 @@ const RecentCheckIns = () => {
                 hoursSlept={hoursSlept}
                 handleSliderChange={handleSliderChange}
                 sliderBackground={sliderBackground}
-                feelings={feelings}
+               
                 selectedFeeling={selectedFeeling}
-                handleFeelingClick={handleFeelingClick}
+                setFeeling={(value)=>setSelectedFeeling(value)}
                 val={val}
                 setVal={setVal}
                 snackValue={snackValue}
@@ -247,14 +249,16 @@ const RecentCheckIns = () => {
               )}
               {showComparisonSurvey && comparisonData && (
                 <SurveySection
+                setFeeling={(value)=>setSelectedFeeling(value)}
+
                   isStickMealPlan={isStickMealPlan}
                   setisStickMealPlan={setisStickMealPlan}
                   hoursSlept={hoursSlept}
                   handleSliderChange={handleSliderChange}
                   sliderBackground={sliderBackground}
-                  feelings={feelings}
+                 
                   selectedFeeling={selectedFeeling}
-                  handleFeelingClick={handleFeelingClick}
+                  
                   val={val}
                   setVal={setVal}
                   snackValue={snackValue}
