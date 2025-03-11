@@ -77,57 +77,61 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
           )}
           <div className="absolute right-4 top-2">
             {activeEdit ? (
-              <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
-                <div
-                  onClick={() => {
-                    setActive('Edited');
-                    setValues(Editvalues);
-                  }}
-                  className="flex justify-center cursor-pointer gap-1 items-center"
-                >
-                  <SvgIcon
-                    width="16px"
-                    height="16px"
-                    color={active == 'Edited' ? '#005F73' : '#888888'}
-                    src="./icons/edit-green.svg"
-                  ></SvgIcon>
-                  <div
-                    className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                  >
-                    Edited
+              <>
+                {Editvalues.length > 0 && (
+                  <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
+                    <div
+                      onClick={() => {
+                        setActive('Edited');
+                        setValues(Editvalues);
+                      }}
+                      className="flex justify-center cursor-pointer gap-1 items-center"
+                    >
+                      <SvgIcon
+                        width="16px"
+                        height="16px"
+                        color={active == 'Edited' ? '#005F73' : '#888888'}
+                        src="./icons/edit-green.svg"
+                      ></SvgIcon>
+                      <div
+                        className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                      >
+                        Edited
+                      </div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActive('Original');
+                        setValues(sortKeysWithValues(data.chart_bounds));
+                      }}
+                      className="flex justify-center cursor-pointer gap-1 items-center"
+                    >
+                      <SvgIcon
+                        width="16px"
+                        height="16px"
+                        color={active == 'Original' ? '#005F73' : '#888888'}
+                        src="/icons/task-square.svg"
+                      ></SvgIcon>
+                      <div
+                        className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                      >
+                        Original
+                      </div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActiveEdit(false);
+                      }}
+                    >
+                      <SvgIcon
+                        color="#6CC24A"
+                        src="./icons/tick-circle-background.svg"
+                      ></SvgIcon>
+                      {/* <img src="./icons/tick-circle-background.svg" alt="" /> */}
+                    </div>
                   </div>
-                </div>
-                <div
-                  onClick={() => {
-                    setActive('Original');
-                    setValues(sortKeysWithValues(data.chart_bounds));
-                  }}
-                  className="flex justify-center cursor-pointer gap-1 items-center"
-                >
-                  <SvgIcon
-                    width="16px"
-                    height="16px"
-                    color={active == 'Original' ? '#005F73' : '#888888'}
-                    src="/icons/task-square.svg"
-                  ></SvgIcon>
-                  <div
-                    className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                  >
-                    Original
-                  </div>
-                </div>
-                <div
-                  onClick={() => {
-                    setActiveEdit(false);
-                  }}
-                >
-                  <SvgIcon
-                    color="#6CC24A"
-                    src="./icons/tick-circle-background.svg"
-                  ></SvgIcon>
-                  {/* <img src="./icons/tick-circle-background.svg" alt="" /> */}
-                </div>
-              </div>
+                )}
+              </>
             ) : (
               <div
                 onClick={() => {
