@@ -23,11 +23,12 @@ import { GenerateRecommendation } from '../pages/generateRecommendation/index.ts
 import NewGenerateHolisticPlan from '../pages/NewGenerateHolisticPlan/index.tsx';
 // import NewGenerateActionPlan from '../Components/NewGenerateActionPlan/index.tsx';
 import GenerateActionPlan from '../Components/NewGenerateActionPlan/index2.tsx';
-import Checkin from '../pages/CheckIn/index.tsx';
+// import Checkin from '../pages/CheckIn/index.tsx';
 import NewForms from '../pages/NewForms/index.tsx';
 import PackagePage from '../pages/settings/components/Package.tsx';
 import Staff from '../pages/staff/index.tsx';
 import CustomBiomarkers from '../pages/CustomBiomarkers.tsx/index.tsx';
+import FormView from '../pages/CheckIn/FormView.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -145,7 +146,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/checkin',
-    element: <Checkin></Checkin>,
+    element: <FormView></FormView>,
   },
 ]);
 

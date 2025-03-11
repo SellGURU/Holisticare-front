@@ -213,6 +213,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
         <CheckInControllerModal
           editId={editFormId}
           onClose={() => {
+            setEditFormId('');
             setShowReposition(false);
             setShowAddModal(false);
           }}
