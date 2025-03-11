@@ -9,7 +9,7 @@ interface QuestionRowProps {
   el: any;
   id: string;
   deleteRow: () => void;
-onTryComplete:()=>void
+  onTryComplete: () => void;
   resolveForm: (
     type: string,
     questionsData: any,
@@ -100,7 +100,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         //   .catch((err) => {
                         //     console.error('Error fetching the link:', err);
                         //   });
-                        onTryComplete()
+                        onTryComplete();
                         setshowModal(false);
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
@@ -147,16 +147,16 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
             </div>
           ) : (
             <>
-              <div className="text-[10px]  text-Text-Primary">{el.Data}</div>
+              <div className="text-[10px]  text-Text-Primary w-[100px]">{el.Data}</div>
 
-              <div className="text-[8px] ">
+              <div className="text-[8px] w-[100px] text-center ">
                 {isView ? (
                   <div className="text-[10px] text-[#B0B0B0] flex items-end gap-1 ">
                     Filled by: <span>Coach</span>
                   </div>
                 ) : (
                   <div
-                    className={`rounded-full  px-2.5 py-1 text-Text-Primary flex items-center gap-1 ${
+                    className={`rounded-full px-2.5 py-1 text-Text-Primary max-w-[84px] flex items-center gap-1 ${
                       el['State'] == 'Complete'
                         ? 'bg-[#DEF7EC]'
                         : 'bg-[#F9DEDC]'

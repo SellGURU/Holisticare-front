@@ -286,11 +286,13 @@ export const Questionary = () => {
     );
     return datas.length == 0;
   };
-  const [activeCard,setActiveCard] = useState(1);
+  const [activeCard, setActiveCard] = useState(1);
   return (
     <div className=" w-full">
       <div
         onClick={() => {
+       
+        
           Application.getGoogleFormEmty()
             .then((res) => {
               setQuestionsFormData(res.data);
@@ -299,6 +301,9 @@ export const Questionary = () => {
             .catch((err) => {
               console.error('Error fetching the link:', err);
             });
+            if(tryComplete){
+              setTryComplete(false)
+            }
         }}
         className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
@@ -358,7 +363,9 @@ export const Questionary = () => {
         {tryComplete && (
           <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
             <div className="flex justify-between items-center">
-              <div className="text-xs text-Text-Primary">{questionsFormData.title}</div>
+              <div className="text-xs text-Text-Primary">
+                {questionsFormData.title}
+              </div>
               <ButtonSecondary
                 disabled={!checkFormComplete()}
                 onClick={() => {
@@ -451,7 +458,7 @@ export const Questionary = () => {
           </div>
         )}
         <>
-          {data?.length > 0 ? (
+          {data?.length > 0 && !tryComplete ? (
             <>
               <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
                 <div>Questionary Name</div>
@@ -465,13 +472,12 @@ export const Questionary = () => {
 
                     return (
                       <QuestionRow
-                      onTryComplete={()=>{
-                        Application.getGoogleFormEmty()
-                        .then((res) => {
-                          setQuestionsFormData(res.data);
-                          setTryComplete(true);
-                        })
-                      }}
+                        onTryComplete={() => {
+                          Application.getGoogleFormEmty().then((res) => {
+                            setQuestionsFormData(res.data);
+                            setTryComplete(true);
+                          });
+                        }}
                         el={el}
                         id={id as string}
                         resolveForm={resolveForm}
@@ -490,7 +496,7 @@ export const Questionary = () => {
                     <Circleloader></Circleloader>
                   </div>
                 </>
-              ) : (
+              ) : data?.length < 1 && (
                 <div className="flex flex-col items-center justify-center h-[250px] ">
                   <img
                     className=" object-contain"
