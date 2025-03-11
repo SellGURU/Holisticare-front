@@ -95,7 +95,6 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             value={item.response}
             options={item.options}
           ></MultiChoice>
-
         );
       case 'multiple_choice':
         return (
