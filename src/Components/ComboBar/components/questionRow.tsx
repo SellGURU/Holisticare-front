@@ -9,7 +9,7 @@ interface QuestionRowProps {
   el: any;
   id: string;
   deleteRow: () => void;
-
+onTryComplete:()=>void
   resolveForm: (
     type: string,
     questionsData: any,
@@ -21,6 +21,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   el,
   id,
   resolveForm,
+  onTryComplete,
   deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
@@ -89,16 +90,17 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   <>
                     <div
                       onClick={() => {
-                        Application.questionaryLink({})
-                          .then((res) => {
-                            const url = res.data['Personal Information'];
-                            if (url) {
-                              window.open(url, '_blank');
-                            }
-                          })
-                          .catch((err) => {
-                            console.error('Error fetching the link:', err);
-                          });
+                        // Application.questionaryLink({})
+                        //   .then((res) => {
+                        //     const url = res.data['Personal Information'];
+                        //     if (url) {
+                        //       window.open(url, '_blank');
+                        //     }
+                        //   })
+                        //   .catch((err) => {
+                        //     console.error('Error fetching the link:', err);
+                        //   });
+                        onTryComplete()
                         setshowModal(false);
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
