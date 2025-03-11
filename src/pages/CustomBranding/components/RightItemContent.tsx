@@ -1,11 +1,41 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import ToggleCustomBranding from './Toggle';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import SvgIcon from '../../../utils/svgIcon';
 
-const RightItemContent = () => {
+interface RightItemContentProps {
+  customTheme: {
+    primaryColor: string;
+    secondaryColor: string;
+    selectedImage: string | null;
+    name: string;
+    headLine: string;
+  };
+}
+
+const Categories = [
+  {
+    title: 'Nutrition',
+    icon: '/icons/apple.svg',
+  },
+  {
+    title: 'Mind',
+    icon: '/icons/mental-disorder.svg',
+  },
+  {
+    title: 'Activity',
+    icon: '/icons/weight-mobile.svg',
+  },
+  {
+    title: 'Sleep',
+    icon: '/icons/moon.svg',
+  },
+];
+
+const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
   const [activeToggle, setActiveToggle] = useState('The App Overview');
   return (
-    <div className="w-[77%] h-[83vh] bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
+    <div className="flex-grow-[1] h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
       <div className="w-full h-full">
         <div className="text-sm font-medium text-Text-Primary">Preview</div>
         <div className="text-[10px] text-Text-Quadruple mt-3">
@@ -24,11 +54,51 @@ const RightItemContent = () => {
             ]}
           />
           {activeToggle === 'The App Overview' ? (
-            <img
-              src="/images/custom-branding/personalization-and-ease-of-use.png"
-              alt=""
-              className="w-[202.5px] h-[360px]"
-            />
+            <div className="w-[202.5px] h-[360px] rounded-[14.61px] shadow-400 p-4 border">
+              <div className="flex items-center justify-between">
+                <div className="text-[7.83px] font-medium text-Text-Primary">
+                  9:41
+                </div>
+                <img src="/icons/wi-fi-battery-celular-mobile.svg" alt="" />
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <div className="text-[7.83px] font-medium text-Text-Primary">
+                  Setting
+                </div>
+                <div className="flex items-center gap-1">
+                  <SvgIcon
+                    src="/icons/sms-notification.svg"
+                    color={customTheme.secondaryColor}
+                  />
+                  <SvgIcon
+                    src="/icons/notification-mobile.svg"
+                    color={customTheme.secondaryColor}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                {Categories.map((category, index) => {
+                  return (
+                    <div
+                      className="w-[35.22px] h-[41.35px] rounded-[7.83px] shadow-100 flex flex-col items-center justify-center gap-1 text-[5.87px] font-medium text-Text-Primary"
+                      key={index}
+                    >
+                      <SvgIcon
+                        src={category.icon}
+                        color={customTheme.primaryColor}
+                      />
+                      {category.title}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-Text-Primary text-[6.85px] font-medium">
+                  Dietary Preferences
+                </div>
+                <img src="/icons/add-button-mobile.svg" alt="" />
+              </div>
+            </div>
           ) : activeToggle === 'E-mail Overview' ? (
             <div className="w-[400px] h-[250px] rounded-[20px] bg-white border border-Gray-50 shadow-100 flex flex-col justify-between">
               <div className="flex flex-col">

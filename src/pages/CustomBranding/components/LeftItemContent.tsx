@@ -1,26 +1,43 @@
-import { useRef, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useRef } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 
-const LeftItemContent = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [defaultPrimaryColor] = useState('#6CC24A');
-  const [defaultSecondaryColor] = useState('#005F73');
-  const [primaryColor, setPrimaryColor] = useState('#6CC24A');
-  const [secondaryColor, setSecondaryColor] = useState('#005F73');
-  const [name, setName] = useState('');
-  const [headLine, setHeadLine] = useState('');
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-    }
+interface LeftItemContentProps {
+  customTheme: {
+    primaryColor: string;
+    secondaryColor: string;
+    selectedImage: string | null;
+    name: string;
+    headLine: string;
   };
+  handleImageUpload: (event: any) => void;
+  defaultPrimaryColor: string;
+  defaultSecondaryColor: string;
+  handleResetTheme: () => void;
+  updateCustomTheme: (
+    key:
+      | 'primaryColor'
+      | 'secondaryColor'
+      | 'name'
+      | 'headLine'
+      | 'selectedImage',
+    value: any,
+  ) => void;
+}
+
+const LeftItemContent: FC<LeftItemContentProps> = ({
+  customTheme,
+  handleImageUpload,
+  defaultPrimaryColor,
+  defaultSecondaryColor,
+  handleResetTheme,
+  updateCustomTheme,
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div className="w-[360px] h-[83vh] bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
+    <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
       <div>
         <div className="flex flex-col w-full">
           <div className="flex items-center justify-between">
@@ -65,9 +82,9 @@ const LeftItemContent = () => {
               className="w-[52px] h-[52px] border-[0.52px] border-Primary-DeepTeal rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden"
               onClick={() => fileInputRef.current?.click()}
             >
-              {selectedImage ? (
+              {customTheme.selectedImage ? (
                 <img
-                  src={selectedImage}
+                  src={customTheme.selectedImage}
                   alt="Uploaded"
                   className="w-full h-full object-cover"
                 />
@@ -110,8 +127,8 @@ const LeftItemContent = () => {
               type="text"
               className="w-[200px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
               placeholder="Enter chosen name..."
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={customTheme.name}
+              onChange={(e) => updateCustomTheme('name', e.target.value)}
             />
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -141,8 +158,8 @@ const LeftItemContent = () => {
               type="text"
               className="w-[200px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
               placeholder="Enter your headline..."
-              value={headLine}
-              onChange={(e) => setHeadLine(e.target.value)}
+              value={customTheme.headLine}
+              onChange={(e) => updateCustomTheme('headLine', e.target.value)}
             />
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -150,15 +167,18 @@ const LeftItemContent = () => {
               Primary Color
             </div>
             <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center justify-center border border-Gray-50 gap-2">
-              <div
-                className={`${primaryColor && `bg-[${primaryColor}]`} rounded-[4px] w-5 h-5`}
-              ></div>
               <input
-                type="text"
-                className="text-xs font-light placeholder:text-Text-Fivefold w-[60px] text-Text-Quadruple"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
+                type="color"
+                className="w-5 h-5 border-none outline-0 cursor-pointer rounded-[4px] appearance-none shadow-none p-0"
+                style={{ backgroundColor: customTheme.primaryColor }}
+                value={customTheme.primaryColor}
+                onChange={(e) =>
+                  updateCustomTheme('primaryColor', e.target.value)
+                }
               />
+              <div className="text-xs font-light text-Text-Quadruple">
+                {customTheme.primaryColor}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -166,15 +186,18 @@ const LeftItemContent = () => {
               Secondary Color
             </div>
             <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center justify-center border border-Gray-50 gap-2">
-              <div
-                className={`${secondaryColor && `bg-[${secondaryColor}]`} rounded-[4px] w-5 h-5`}
-              ></div>
               <input
-                type="text"
-                className="text-xs font-light placeholder:text-Text-Fivefold w-[60px] text-Text-Quadruple"
-                value={secondaryColor}
-                onChange={(e) => setSecondaryColor(e.target.value)}
+                type="color"
+                className="w-5 h-5 border-none outline-0 cursor-pointer rounded-[4px] appearance-none shadow-none p-0"
+                style={{ backgroundColor: customTheme.secondaryColor }}
+                value={customTheme.secondaryColor}
+                onChange={(e) =>
+                  updateCustomTheme('secondaryColor', e.target.value)
+                }
               />
+              <div className="text-xs font-light text-Text-Quadruple">
+                {customTheme.secondaryColor}
+              </div>
             </div>
           </div>
         </div>
@@ -182,28 +205,17 @@ const LeftItemContent = () => {
       <div className="flex items-center justify-end">
         <div
           className={`font-medium text-xs cursor-pointer ${
-            defaultPrimaryColor !== primaryColor ||
-            defaultSecondaryColor !== secondaryColor
+            defaultPrimaryColor !== customTheme.primaryColor ||
+            defaultSecondaryColor !== customTheme.secondaryColor
               ? 'text-Primary-EmeraldGreen'
               : 'text-Disable'
           }`}
-          onClick={() => {
-            if (
-              defaultPrimaryColor !== primaryColor ||
-              defaultSecondaryColor !== secondaryColor
-            ) {
-              setPrimaryColor(defaultPrimaryColor);
-              setSecondaryColor(defaultSecondaryColor);
-              setName('');
-              setHeadLine('');
-              setSelectedImage(null);
-            }
-          }}
+          onClick={handleResetTheme}
         >
           Back to Default
         </div>
         <ButtonSecondary
-          ClassName={`rounded-[20px] ml-10 shadow-Btn ${name && headLine && primaryColor && secondaryColor ? '' : '!bg-Disable'}`}
+          ClassName={`rounded-[20px] ml-10 shadow-Btn ${customTheme.name && customTheme.headLine && customTheme.primaryColor && customTheme.secondaryColor ? '' : '!bg-Disable'}`}
         >
           <img src="/icons/tick-square.svg" alt="" />
           Apply Changes
