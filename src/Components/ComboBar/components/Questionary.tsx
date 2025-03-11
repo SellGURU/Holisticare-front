@@ -8,15 +8,18 @@ import Checkbox from './CheckBox';
 // import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import SpinnerLoader from '../../SpinnerLoader';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const [tryAdd, setTryAdd] = useState(false);
   const [tryComplete, setTryComplete] = useState(false);
-  // const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [isLaoding, setIsLoading] = useState(false);
-  const [, setQuestionsFormData] = useState<any>([]);
+  const [questionsFormData, setQuestionsFormData] = useState<any>([]);
   const [mockForms] = useState<any>([
     { id: '1', name: 'Feedback Form', questions: 9 },
     { id: '2', name: 'Initial Questionnaire', questions: 9 },
@@ -44,7 +47,7 @@ export const Questionary = () => {
 
     setData((prev: any) => [...prev, ...selectedData]);
     setSelectedQuestionnaires([]);
-    setTryComplete(false);
+    setTryAdd(false);
   };
 
   const deleteQuestionRow = (index: number) => {
@@ -277,33 +280,38 @@ export const Questionary = () => {
       );
     }
   };
-  // const checkFormComplete = () => {
-  //   const datas = questionsFormData.questions.filter(
-  //     (el: any) => el.required == true && el.response.length == 0,
-  //   );
-  //   return datas.length == 0;
-  // };
-  const [activeCard] = useState(1);
+  const checkFormComplete = () => {
+    const datas = questionsFormData.questions.filter(
+      (el: any) => el.required == true && el.response.length == 0,
+    );
+    return datas.length == 0;
+  };
+  const [activeCard, setActiveCard] = useState(1);
   return (
     <div className=" w-full">
       <div
         onClick={() => {
+       
+        
           Application.getGoogleFormEmty()
             .then((res) => {
               setQuestionsFormData(res.data);
-              setTryComplete(true);
+              setTryAdd(true);
             })
             .catch((err) => {
               console.error('Error fetching the link:', err);
             });
+            if(tryComplete){
+              setTryComplete(false)
+            }
         }}
-        className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryComplete && 'hidden'} `}
+        className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
         Add Questionary
       </div>
       <div className=" mt-3">
-        {tryComplete && (
+        {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
               <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
@@ -331,7 +339,7 @@ export const Questionary = () => {
                 <ButtonPrimary
                   onClick={() => {
                     setSelectedQuestionnaires([]);
-                    setTryComplete(false);
+                    setTryAdd(false);
                   }}
                   outLine
                   style={{
@@ -350,103 +358,107 @@ export const Questionary = () => {
                 </ButtonPrimary>
               </div>
             </div>
-            {/* <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
-              <div className="flex justify-between items-center">
-                <div className="text-xs text-Text-Primary">Profile Data</div>
-                <ButtonSecondary
-                  disabled={!checkFormComplete()}
-                  onClick={() => {
-                    setSubmitLoading(true);
-                    Application.setGoogleFormEmty({
-                      data: questionsFormData,
-                      member_id: Number(id),
-                    })
-                      .then(() => {
-                        setTimeout(() => {
-                          setTryComplete(false);
-                        }, 300);
-                      })
-                      .finally(() => {
-                        setSubmitLoading(false);
-                      });
-                  }}
-                  ClassName="rounded-full"
-                  size="small"
-                >
-                  {submitLoading ? (
-                    <SpinnerLoader></SpinnerLoader>
-                  ) : (
-                    <img
-                      className="w-[16px]"
-                      src="/icons/tick-square.svg"
-                      alt=""
-                    />
-                  )}
-                  Submit
-                </ButtonSecondary>
-              </div>
-              <div className="mt-2">
-                <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-                  <div className="text-[12px] font-medium">
-                    {questionsFormData.questions[activeCard - 1].question}
-                  </div>
-                </div>
-                <div
-                  className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
-                >
-                  {resolveForm(
-                    questionsFormData.questions[activeCard - 1].type,
-                    questionsFormData,
-                    activeCard,
-                  )}
-                </div>
-                {questionsFormData.questions[activeCard - 1].required && (
-                  <div className="text-[10px] text-red-500 mt-1">
-                    * This question is required.
-                  </div>
-                )}
-              </div>
-
-              <div className="w-full flex justify-center pb-2 absolute bottom-0">
-                <div className="flex justify-center items-center gap-3">
-                  <div
-                    onClick={() => {
-                      if (activeCard > 1) {
-                        setActiveCard(activeCard - 1);
-                      }
-                    }}
-                    className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                  >
-                    <img
-                      className="rotate-90 w-3"
-                      src="/icons/arrow-down-green.svg"
-                      alt=""
-                    />
-                  </div>
-                  <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
-                    {activeCard} /{questionsFormData.questions.length}
-                  </div>
-                  <div
-                    onClick={() => {
-                      if (activeCard < questionsFormData.questions.length) {
-                        setActiveCard(activeCard + 1);
-                      }
-                    }}
-                    className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                  >
-                    <img
-                      className="rotate-[270deg] w-3"
-                      src="/icons/arrow-down-green.svg"
-                      alt=""
-                    />
-                  </div>
-                </div>
-              </div>
-            </div> */}
           </>
         )}
+        {tryComplete && (
+          <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
+            <div className="flex justify-between items-center">
+              <div className="text-xs text-Text-Primary">
+                {questionsFormData.title}
+              </div>
+              <ButtonSecondary
+                disabled={!checkFormComplete()}
+                onClick={() => {
+                  setSubmitLoading(true);
+                  Application.setGoogleFormEmty({
+                    data: questionsFormData,
+                    member_id: Number(id),
+                  })
+                    .then(() => {
+                      setTimeout(() => {
+                        setTryComplete(false);
+                      }, 300);
+                    })
+                    .finally(() => {
+                      setSubmitLoading(false);
+                    });
+                }}
+                ClassName="rounded-full"
+                size="small"
+              >
+                {submitLoading ? (
+                  <SpinnerLoader></SpinnerLoader>
+                ) : (
+                  <img
+                    className="w-[16px]"
+                    src="/icons/tick-square.svg"
+                    alt=""
+                  />
+                )}
+                Submit
+              </ButtonSecondary>
+            </div>
+            <div className="mt-2">
+              <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
+                <div className="text-[12px] font-medium">
+                  {questionsFormData.questions[activeCard - 1].question}
+                </div>
+              </div>
+              <div
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+              >
+                {resolveForm(
+                  questionsFormData.questions[activeCard - 1].type,
+                  questionsFormData,
+                  activeCard,
+                )}
+              </div>
+              {questionsFormData.questions[activeCard - 1].required && (
+                <div className="text-[10px] text-red-500 mt-1">
+                  * This question is required.
+                </div>
+              )}
+            </div>
+
+            <div className="w-full flex justify-center pb-2 absolute bottom-0">
+              <div className="flex justify-center items-center gap-3">
+                <div
+                  onClick={() => {
+                    if (activeCard > 1) {
+                      setActiveCard(activeCard - 1);
+                    }
+                  }}
+                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
+                >
+                  <img
+                    className="rotate-90 w-3"
+                    src="/icons/arrow-down-green.svg"
+                    alt=""
+                  />
+                </div>
+                <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
+                  {activeCard} /{questionsFormData.questions.length}
+                </div>
+                <div
+                  onClick={() => {
+                    if (activeCard < questionsFormData.questions.length) {
+                      setActiveCard(activeCard + 1);
+                    }
+                  }}
+                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
+                >
+                  <img
+                    className="rotate-[270deg] w-3"
+                    src="/icons/arrow-down-green.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <>
-          {data?.length > 0 ? (
+          {data?.length > 0 && !tryComplete ? (
             <>
               <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
                 <div>Questionary Name</div>
@@ -460,6 +472,12 @@ export const Questionary = () => {
 
                     return (
                       <QuestionRow
+                        onTryComplete={() => {
+                          Application.getGoogleFormEmty().then((res) => {
+                            setQuestionsFormData(res.data);
+                            setTryComplete(true);
+                          });
+                        }}
                         el={el}
                         id={id as string}
                         resolveForm={resolveForm}
@@ -478,7 +496,7 @@ export const Questionary = () => {
                     <Circleloader></Circleloader>
                   </div>
                 </>
-              ) : (
+              ) : data?.length < 1 && (
                 <div className="flex flex-col items-center justify-center h-[250px] ">
                   <img
                     className=" object-contain"
