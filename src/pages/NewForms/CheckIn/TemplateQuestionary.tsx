@@ -19,6 +19,17 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
       setIsLoading(false);
     });
   }, []);
+  const resolveStapImage = (ste: string) => {
+    // ""
+    switch (ste) {
+      case 'Feedback Form':
+        return '/images/forms/feedback-Form.png';
+      case 'Physical Activity Readiness Questionnaire (PAR-Q)':
+        return '/images/forms/PAR-Q.png';
+      case 'Personal Information':
+        return '/images/forms/initial-Questionnaire.png';
+    }
+  };
   return (
     <>
       <div className="flex flex-col justify-between bg-white w-[664px] rounded-[20px] p-4">
@@ -39,15 +50,12 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                 return (
                   <>
                     <div
-                      className="flex flex-col items-center w-[193px] cursor-pointer"
+                      className="flex flex-col items-center h-[352px] w-[193px] cursor-pointer"
                       onClick={() => {
                         onselect(el);
                       }}
                     >
-                      <img
-                        src="/images/forms/initial-Questionnaire.png"
-                        alt=""
-                      />
+                      <img src={resolveStapImage(el.title)} alt="" />
                       <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
                         <img
                           src="/icons/book-green.svg"
@@ -56,7 +64,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                         />
                         {el.title}
                       </div>
-                      <div className="text-[10px] text-Text-Quadruple mt-2">
+                      <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
                         {el.description}
                       </div>
                       <div className="w-full">
@@ -68,7 +76,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   </>
                 );
               })}
-              <div
+              {/* <div
                 className="flex flex-col opacity-40 items-center w-[193px]"
                 onClick={() => {}}
               >
@@ -107,7 +115,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                     08 Questions
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
         </div>
