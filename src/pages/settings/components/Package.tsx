@@ -62,9 +62,15 @@ const PackagePage = () => {
   return (
     <>
       <div className="w-full px-4 py-3">
-        <div className='w-full flex justify-between items-center mb-4'>
-          <div className='text-base font-medium text-Text-Primary'>Packages</div>
-        <SearchBox isHaveBorder onSearch={()=>{}} placeHolder='Search in Packages ...'></SearchBox>
+        <div className="w-full flex justify-between items-center mb-4">
+          <div className="text-base font-medium text-Text-Primary">
+            Packages
+          </div>
+          <SearchBox
+            isHaveBorder
+            onSearch={() => {}}
+            placeHolder="Search in Packages ..."
+          ></SearchBox>
         </div>
         <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
           <div className=" flex justify-between items-center">

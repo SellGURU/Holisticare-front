@@ -196,12 +196,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       member_id: client.member_id,
                       username: AccessUserName,
                       password: AccessPassword,
-                    }).then((res)=>{
+                    }).then((res) => {
                       console.log(res);
                       setIsShared(true);
-                      
                     });
-                
                   }}
                   className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
                 >
