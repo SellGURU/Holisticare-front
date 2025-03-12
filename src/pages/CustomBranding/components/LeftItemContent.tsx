@@ -35,6 +35,8 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   updateCustomTheme,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const colorSecondaryInputRef = useRef<HTMLInputElement | null>(null);
+  const colorPrimaryInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
@@ -166,16 +168,22 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             <div className="text-xs font-medium text-Text-Primary">
               Primary Color
             </div>
-            <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center justify-center border border-Gray-50 gap-2">
-              <input
-                type="color"
-                className="w-5 h-5 border-none outline-0 cursor-pointer rounded-[4px] appearance-none shadow-none p-0"
+            <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center border border-Gray-50 gap-2">
+              <div
+                className="rounded-[4px] w-5 h-5 cursor-pointer"
                 style={{ backgroundColor: customTheme.primaryColor }}
-                value={customTheme.primaryColor}
-                onChange={(e) =>
-                  updateCustomTheme('primaryColor', e.target.value)
-                }
-              />
+                onClick={() => colorPrimaryInputRef.current?.click()}
+              >
+                <input
+                  type="color"
+                  ref={colorPrimaryInputRef}
+                  className="invisible"
+                  value={customTheme.primaryColor}
+                  onChange={(e) =>
+                    updateCustomTheme('primaryColor', e.target.value)
+                  }
+                />
+              </div>
               <div className="text-xs font-light text-Text-Quadruple">
                 {customTheme.primaryColor}
               </div>
@@ -185,16 +193,22 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             <div className="text-xs font-medium text-Text-Primary">
               Secondary Color
             </div>
-            <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center justify-center border border-Gray-50 gap-2">
-              <input
-                type="color"
-                className="w-5 h-5 border-none outline-0 cursor-pointer rounded-[4px] appearance-none shadow-none p-0"
+            <div className="w-[114px] h-[28px] rounded-2xl px-3 flex items-center border border-Gray-50 gap-2">
+              <div
+                className="rounded-[4px] w-5 h-5 cursor-pointer"
                 style={{ backgroundColor: customTheme.secondaryColor }}
-                value={customTheme.secondaryColor}
-                onChange={(e) =>
-                  updateCustomTheme('secondaryColor', e.target.value)
-                }
-              />
+                onClick={() => colorSecondaryInputRef.current?.click()}
+              >
+                <input
+                  type="color"
+                  ref={colorSecondaryInputRef}
+                  className="invisible"
+                  value={customTheme.secondaryColor}
+                  onChange={(e) =>
+                    updateCustomTheme('secondaryColor', e.target.value)
+                  }
+                />
+              </div>
               <div className="text-xs font-light text-Text-Quadruple">
                 {customTheme.secondaryColor}
               </div>

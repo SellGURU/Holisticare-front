@@ -37,7 +37,7 @@ const CustomBrandingContent = () => {
   };
   return (
     <>
-      <div className="flex items-center justify-between w-full h-[82vh] mt-6 mb-4">
+      <div className="flex items-center justify-between w-full h-[84vh] mt-6 pb-6">
         <LeftItemContent
           customTheme={customTheme}
           handleImageUpload={handleImageUpload}
