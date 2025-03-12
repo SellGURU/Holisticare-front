@@ -21,6 +21,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   editId,
   templateData,
 }) => {
+  // console.log(templateData)
   const [questions, setQuestions] = useState<Array<checkinType>>(
     templateData ? templateData.questions : [],
   );
@@ -67,7 +68,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
         );
     }
   };
-  const [titleForm, setTitleForm] = useState('');
+  const [, setTitleForm] = useState('');
   const isDisable = () => {
     return false;
   };
@@ -75,7 +76,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   const addCheckinForm = () => {
     setIsSaveLoading(true);
     onSave({
-      title: titleForm,
+      title: templateData.title,
       questions: questions,
     });
     // FormsApi.addCheckin({

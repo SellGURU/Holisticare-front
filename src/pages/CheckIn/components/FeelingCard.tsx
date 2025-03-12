@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface FeelingCardProps {
   question: string;
-  value: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved';
+  value: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string;
   index?: number;
   onSubmit?: (value: string) => void;
 }

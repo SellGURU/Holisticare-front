@@ -1,15 +1,16 @@
 import React from 'react';
 import UploadCard from '../../CheckIn/components/UploadCard';
-import { ArrangeCard, TextCard } from '../../CheckIn/components';
+import { ArrangeCard, FeelingCard, TextCard } from '../../CheckIn/components';
 interface SurveySectionProps {
   isStickMealPlan: boolean;
   setisStickMealPlan: (value: boolean) => void;
   hoursSlept: number;
   handleSliderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sliderBackground: React.CSSProperties;
-  feelings: { emoji: string; text: string }[];
-  selectedFeeling: number | null;
-  handleFeelingClick: (index: number) => void;
+  selectedFeeling: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string;
+  setFeeling: (
+    value: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string,
+  ) => void;
   val: number;
   setVal: (value: number) => void;
   snackValue: string;
@@ -21,9 +22,8 @@ const SurveySection: React.FC<SurveySectionProps> = ({
   hoursSlept,
   handleSliderChange,
   sliderBackground,
-  feelings,
   selectedFeeling,
-  handleFeelingClick,
+  setFeeling,
   val,
   setVal,
   snackValue,
@@ -75,14 +75,22 @@ const SurveySection: React.FC<SurveySectionProps> = ({
           ))}
         </div>
       </div>
-      <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
+      <FeelingCard
+        index={3}
+        question="How are you feeling today?"
+        value={selectedFeeling}
+        onSubmit={(val) => {
+          setFeeling(val);
+        }}
+      ></FeelingCard>
+      {/* <div className="bg-[#FCFCFC] rounded-xl p-3 border border-Gray-50">
         <div className="text-[10px]">3. How are you feeling today?</div>
         <div className="bg-white rounded-[20px] p-4 pb-2 drop-shadow mt-3 overflow-x-hidden relative">
-          {/* <img
+          <img
             className="absolute inset-0 -left-2 w-full opacity-30 -z-10 h-[70px]"
             src="/images/Union.svg"
             alt=""
-          /> */}
+          />
           <div className="flex items-center justify-between overflow-auto relative">
             {feelings.map((feeling, index) => (
               <div
@@ -104,7 +112,7 @@ const SurveySection: React.FC<SurveySectionProps> = ({
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full h-[92px] rounded-[12px] border border-gray-50">
         <div className="text-[12px] text-Text-Primary">
           4. Rate your workout.
