@@ -18,10 +18,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     );
   });
   useEffect(() => {
-    const currentActiveItem = menus
-      .flatMap((menu) => menu.items)
-      .find((item) => item.url === location.pathname) || menus[0].items[0];
-  
+    const currentActiveItem =
+      menus
+        .flatMap((menu) => menu.items)
+        .find((item) => item.url === location.pathname) || menus[0].items[0];
+
     if (currentActiveItem.name !== activeMenu.name) {
       setActiveMenu(currentActiveItem);
     }
