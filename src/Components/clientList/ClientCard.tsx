@@ -8,6 +8,7 @@ import SvgIcon from '../../utils/svgIcon.tsx';
 import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteModal } from './deleteModal.tsx';
+import MainModal from '../MainModal/index.tsx';
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
@@ -102,9 +103,115 @@ const ClientCard: React.FC<ClientCardProps> = ({
     }
   };
   const { backgroundColor, ellipseColor } = getStatusStyles(client.status);
+  const [showAccessModal, setShowAccessModal] = useState(false);
+  const [AccessUserName, setAccessUserName] = useState('');
+  const [AccessPassword, setAccessPassword] = useState('');
+  const [isShared, setIsShared] = useState(false);
+  // Application.giveClientAccess({ member_id: client.member_id }).then((res) => {
+  //   console.log(res);
+
+  //   // setAccessUserName(res.username);
+  //   // setAccessPassword(res.password);
+  // });
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // Optional: Add a success notification
+      alert('Copied to clipboard!');
+      // Or use a toast notification if you have a toast library
+      // toast.success('Copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   return (
     <>
+      <MainModal isOpen={showAccessModal} onClose={() => setShowAccessModal}>
+        <>
+          {isShared ? (
+            <div className="bg-white w-[500px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+              <div className="flex flex-col gap-4 items-center w-full ">
+                <img
+                  className="w-[134px] h-[108px] -mt-3"
+                  src="/icons/tick-circle-background-new.svg"
+                  alt=""
+                />
+                <div className="text-xs font-medium -mt-6 mb-3">
+                  The username and unique code have been successfully sent to{' '}
+                  {client.name}.
+                </div>
+                <ButtonPrimary onClick={() => setShowAccessModal(false)}>
+                  <div className="w-[150px]">Got it</div>
+                </ButtonPrimary>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white w-[500px] h-[332px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+              <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
+                {' '}
+                {client.name}`s Access
+              </div>
+              <div className="mt-6 text-xs font-medium">
+                Share the username and unique code with your client to give them
+                access.
+              </div>
+              <div className="text-xs text-Text-Secondary mt-3">
+                Do not share this information with anyone else.
+              </div>
+              <div className="flex flex-col gap-2 mt-6">
+                <div className="text-xs font-medium">Username</div>
+                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
+                  <span className="text-xs select-none">{AccessUserName}</span>
+                  <img
+                    onClick={() => copyToClipboard(AccessUserName)}
+                    className="cursor-pointer"
+                    src="/icons/copy.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-6">
+                <div className="text-xs font-medium">Unique Code</div>
+                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
+                  <span className="text-xs select-none">{AccessPassword}</span>
+                  <img
+                    onClick={() => copyToClipboard(AccessPassword)}
+                    className="cursor-pointer"
+                    src="/icons/copy.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-end mt-6 gap-4 items-center">
+                <div
+                  onClick={() => setShowAccessModal(false)}
+                  className="text-sm font-medium text-Text-Secondary cursor-pointer"
+                >
+                  Cancel
+                </div>
+                <div
+                  onClick={() => {
+                    Application.shareClientAccess({
+                      member_id: client.member_id,
+                      username: AccessUserName,
+                      password: AccessPassword,
+                    }).then((res)=>{
+                      console.log(res);
+                      setIsShared(true);
+                      
+                    });
+                
+                  }}
+                  className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                >
+                  Share With Email
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      </MainModal>
       <ArchiveModal
         archived={client.archived}
         onConfirm={() => {
@@ -170,6 +277,23 @@ const ClientCard: React.FC<ClientCardProps> = ({
               {client.favorite
                 ? 'Remove from High-Priorities'
                 : 'Add to High-Priorities'}{' '}
+            </div>
+            <div
+              onClick={() => {
+                Application.giveClientAccess({
+                  member_id: client.member_id,
+                }).then((res) => {
+                  console.log(res);
+
+                  setAccessUserName(res.data.username);
+                  setAccessPassword(res.data.password);
+                  setShowAccessModal(true);
+                });
+              }}
+              className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+            >
+              <img src="/icons/keyboard-open.svg" alt="" />
+              Client Access
             </div>
             <div
               onClick={() => {
