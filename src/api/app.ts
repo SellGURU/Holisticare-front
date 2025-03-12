@@ -743,6 +743,14 @@ class Application extends Api {
     const response = this.post('/action_plan/block/calendar_view', data);
     return response;
   };
+  static giveClientAccess = (data: any) => {
+    const response = this.post('/patients/give_access/mobile_user_info', data);
+    return response;
+  };
+  static shareClientAccess = (data: any) => {
+    const response = this.post('/patients/give_access/share_with_email', data);
+    return response;
+  };
 }
 
 export default Application;

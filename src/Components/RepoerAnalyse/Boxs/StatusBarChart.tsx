@@ -4,8 +4,9 @@ import { resolveMaxValue, sortKeysWithValues } from './Help';
 
 interface StatusBarChartProps {
   data: any;
+  justView?: boolean;
 }
-const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
+const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
   const maxVal = resolveMaxValue(data.chart_bounds);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
@@ -79,8 +80,10 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                 data.chart_bounds[el.key].label.toLowerCase() !=
                   data.values[0].toLowerCase() ? (
                   <>
-                    {data.values[0] >= el.value[0] &&
-                      el.value[1] >= data.values[0] && (
+                    {((data.values[0] >= el.value[0] &&
+                      el.value[1] >= data.values[0]) ||
+                      data.status[0] == el.key) &&
+                      !justView && (
                         <div
                           className={`absolute  top-[2px]  z-10`}
                           style={{
@@ -104,22 +107,23 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
                   <>
                     {(data.chart_bounds[el.key].label.toLowerCase() ==
                       data.values[0].toLowerCase() ||
-                      el.value[0]?.toString().includes(data.values[0]) ||
-                      data.status[0] == el.key) && (
-                      <div
-                        className={`absolute  top-[2px]  z-10`}
-                        style={{
-                          left: '50%',
-                        }}
-                      >
-                        <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
-                        <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
-                        <div className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
-                          <span className="opacity-40">You: </span>
-                          {data.values[0]} <span>{data.unit}</span>
+                      // el.value[0]?.toString().includes(data.values[0]) ||
+                      data.status[0] == el.key) &&
+                      !justView && (
+                        <div
+                          className={`absolute  top-[2px]  z-10`}
+                          style={{
+                            left: '50%',
+                          }}
+                        >
+                          <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
+                          <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
+                          <div className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
+                            <span className="opacity-40">You: </span>
+                            {data.values[0]} <span>{data.unit}</span>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>

@@ -40,15 +40,15 @@ export const menus = [
     items: [
       {
         name: 'Custom Branding',
-        url: '/',
+        url: '/custom-branding',
         icon: 'sidemenu-menu-icon-Branding',
-        active: false,
+        active: true,
       },
       {
         name: 'Custom Biomarker',
-        url: '',
+        url: '/biomarkers',
         icon: 'sidemenu-menu-icon-Biomarker',
-        active: false,
+        active: true,
       },
       {
         name: 'Custom Form',

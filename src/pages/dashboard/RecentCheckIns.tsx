@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import  { useRef } from 'react';
 import { useState } from 'react';
 import { MainModal } from '../../Components';
 
-import SurveySection from './components/SurveySection';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
+import Checkin from '../CheckIn';
 
 type CheckIn = {
   name: string;
@@ -12,7 +12,56 @@ type CheckIn = {
   time: string;
   status: 'Review Now' | 'Reviewed';
 };
-
+const formData = {
+  title: 'Daily Check in',
+  questions: [
+    {
+      type: 'paragraph',
+      question: 'Did you stick to the Meal Plan?',
+      required: false,
+      response: '',
+      placeHolder: 'Write the snacks you took ...',
+    },
+    {
+      type: 'Scale',
+      question: 'How many hours did you sleep yesterday?',
+      required: false,
+      response: '',
+    },
+    {
+      type: 'Emojis',
+      question: 'How are you feeling today?',
+      required: false,
+      response: '',
+    },
+    {
+      type: 'Star Rating',
+      question: 'Rate your workout.',
+      required: false,
+      response: '',
+    },
+    {
+      type: 'File Uploader',
+      question: 'Upload your progress pictures.',
+      required: false,
+      response: '',
+    },
+    {
+      type: 'paragraph',
+      question: 'What snacks did you take today?',
+      required: false,
+      response: '',
+      placeHolder: 'Write the snacks you took ...',
+    },
+    {
+      type: 'paragraph',
+      question: 'How many hours did you work today?(Dropdown sample)',
+      required: false,
+      response: '',
+      placeHolder: 'Write the snacks you took ...',
+    },
+  ],
+}
 const mockCheckIns: CheckIn[] = [
   {
     name: 'David Smith',
@@ -60,8 +109,8 @@ const mockCheckIns: CheckIn[] = [
 const RecentCheckIns = () => {
   const [CheckIns, setCheckIns] = useState<CheckIn[]>(mockCheckIns);
   const [showcheckInModal, setCheckInModal] = useState(false);
-  const [isStickMealPlan, setisStickMealPlan] = useState(true);
-  const [hoursSlept, setHoursSlept] = useState<number>(0);
+  // const [isStickMealPlan, setisStickMealPlan] = useState(true);
+  // const [hoursSlept, setHoursSlept] = useState<number>(0);
   const [showCheckInCommentModal, setshowCheckICommentnModal] = useState(false);
   const [checkInComment, setCheckInComment] = useState('');
   const [showComparisonSelect, setShowComparisonSelect] =
@@ -82,30 +131,34 @@ const RecentCheckIns = () => {
     },
   });
 
-  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHoursSlept(Number(event.target.value));
-  };
+  // const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setHoursSlept(Number(event.target.value));
+  // };
 
-  const sliderBackground = {
-    background: `linear-gradient(to right, #6CC24A ${hoursSlept * 10}%, #e5e7eb ${hoursSlept * 10}%)`,
-  };
+  // const sliderBackground = {
+  //   background: `linear-gradient(to right, #6CC24A ${hoursSlept * 10}%, #e5e7eb ${hoursSlept * 10}%)`,
+  // };
 
-  const feelings = [
-    { emoji: '/images/emoji/angry-emoji.svg', text: 'Angry' },
-    { emoji: '/images/emoji/sad-emoji.svg', text: 'Sad' },
-    { emoji: '/images/emoji/poker-emoji.svg', text: 'Neutral' },
-    { emoji: '/images/emoji/smile-emoji.svg', text: 'Happy' },
-    { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
-  ];
+  // const feelings = [
+  //   { emoji: '/images/emoji/angry-emoji.svg', text: 'Angry' },
+  //   { emoji: '/images/emoji/sad-emoji.svg', text: 'Sad' },
+  //   { emoji: '/images/emoji/poker-emoji.svg', text: 'Neutral' },
+  //   { emoji: '/images/emoji/smile-emoji.svg', text: 'Happy' },
+  //   { emoji: '/images/emoji/loved-emoji.svg', text: 'Loved' },
+  // ];
 
-  const [selectedFeeling, setSelectedFeeling] = useState<number | null>(2); // Default to Neutral
-  const [val, setVal] = useState<number>(55);
-  const [snackValue] = useState('');
-  const [workHours] = useState('');
+  // const [selectedFeeling, setSelectedFeeling] = useState<
+  //   'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string
+  // >('Neutral'); 
+  
+  // Default to Neutral
+  // const [val, setVal] = useState<number>(55);
+  // const [snackValue] = useState('');
+  // const [workHours] = useState('');
 
-  const handleFeelingClick = (index: number) => {
-    setSelectedFeeling(index);
-  };
+  // const handleFeelingClick = (index: number) => {
+  //   setSelectedFeeling(index);
+  // };
 
   const handleCompareClick = () => {
     setShowComparisonSelect(true);
@@ -132,29 +185,30 @@ const RecentCheckIns = () => {
       );
       setCheckInModal(false);
       setshowCheckICommentnModal(true);
-      resetModalStates();
+      // resetModalStates();
     }
   };
-  const resetModalStates = () => {
-    setisStickMealPlan(true);
-    setHoursSlept(0);
-    setSelectedFeeling(2);
-    setVal(55);
-    setShowComparisonSelect(false);
-    setShowComparisonSurvey(false);
-    setComparisonData(null);
-    setCompareCheckIn('');
-    setShowSelect(false);
-  };
+  // const resetModalStates = () => {
+  //   setisStickMealPlan(true);
+  //   setHoursSlept(0);
+  //   setSelectedFeeling('Neutral');
+  //   setVal(55);
+  //   setShowComparisonSelect(false);
+  //   setShowComparisonSurvey(false);
+  //   setComparisonData(null);
+  //   setCompareCheckIn('');
+  //   setShowSelect(false);
+  // };
   const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
+
   return (
     <>
       <MainModal
         isOpen={showcheckInModal}
         onClose={() => {
           setCheckInModal(false);
-          resetModalStates();
+          // resetModalStates();
         }}
       >
         <div className="bg-white relative min-w-[500px] w-full h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
@@ -180,22 +234,22 @@ const RecentCheckIns = () => {
               Compare
             </div>
           </div>
-          <div className="flex w-full gap-5 mt-5 h-[392px]">
+          <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
             <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-              <SurveySection
+             <Checkin upData={formData.questions}></Checkin>
+              {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
                 hoursSlept={hoursSlept}
                 handleSliderChange={handleSliderChange}
                 sliderBackground={sliderBackground}
-                feelings={feelings}
                 selectedFeeling={selectedFeeling}
-                handleFeelingClick={handleFeelingClick}
+                setFeeling={(value) => setSelectedFeeling(value)}
                 val={val}
                 setVal={setVal}
                 snackValue={snackValue}
                 workHours={workHours}
-              />
+              /> */}
             </div>
             <div
               className={`flex  flex-col w-[436px]  ${!showComparisonSelect && 'hidden'}`}
@@ -246,24 +300,25 @@ const RecentCheckIns = () => {
                 </div>
               )}
               {showComparisonSurvey && comparisonData && (
-                <SurveySection
-                  isStickMealPlan={isStickMealPlan}
-                  setisStickMealPlan={setisStickMealPlan}
-                  hoursSlept={hoursSlept}
-                  handleSliderChange={handleSliderChange}
-                  sliderBackground={sliderBackground}
-                  feelings={feelings}
-                  selectedFeeling={selectedFeeling}
-                  handleFeelingClick={handleFeelingClick}
-                  val={val}
-                  setVal={setVal}
-                  snackValue={snackValue}
-                  workHours={workHours}
-                />
+                             <Checkin upData={formData.questions}></Checkin>
+
+                // <SurveySection
+                //   setFeeling={(value) => setSelectedFeeling(value)}
+                //   isStickMealPlan={isStickMealPlan}
+                //   setisStickMealPlan={setisStickMealPlan}
+                //   hoursSlept={hoursSlept}
+                //   handleSliderChange={handleSliderChange}
+                //   sliderBackground={sliderBackground}
+                //   selectedFeeling={selectedFeeling}
+                //   val={val}
+                //   setVal={setVal}
+                //   snackValue={snackValue}
+                //   workHours={workHours}
+                // />
               )}
             </div>
           </div>
-          <div className="w-full flex justify-end items-center gap-4 absolute right-[24px] bottom-[32px]  text-sm font-medium">
+          <div className="w-full flex justify-end items-center gap-4 absolute right-[24px] bottom-[24px] text-sm font-medium">
             <div
               onClick={() => setCheckInModal(false)}
               className="text-[#909090] cursor-pointer"

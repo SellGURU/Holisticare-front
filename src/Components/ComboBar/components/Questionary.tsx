@@ -3,21 +3,59 @@ import { useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
 // import DatePicker from 'react-datepicker';
 import Checkbox from './CheckBox';
-import SpinnerLoader from '../../SpinnerLoader';
+// import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import SpinnerLoader from '../../SpinnerLoader';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const [tryAdd, setTryAdd] = useState(false);
   const [tryComplete, setTryComplete] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [isLaoding, setIsLoading] = useState(false);
   const [questionsFormData, setQuestionsFormData] = useState<any>([]);
+  const [mockForms] = useState<any>([
+    { id: '1', name: 'Feedback Form', questions: 9 },
+    { id: '2', name: 'Initial Questionnaire', questions: 9 },
+    { id: '3', name: 'PAR-Q', questions: 9 },
+  ]);
+
+  const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
+
+  const toggleSelection = (id: string) => {
+    setSelectedQuestionnaires((prev: any) =>
+      prev.includes(id)
+        ? prev.filter((qId: string) => qId !== id)
+        : [...prev, id],
+    );
+  };
+
+  const handleAddQuestionnaires = () => {
+    const selectedData = mockForms
+      .filter((form: any) => selectedQuestionnaires.includes(form.id))
+      .map((form: any) => ({
+        Data: form.name,
+        'Completed on': null, // Assuming no completion date initially
+        State: 'Incomplete',
+      }));
+
+    setData((prev: any) => [...prev, ...selectedData]);
+    setSelectedQuestionnaires([]);
+    setTryAdd(false);
+  };
+
+  const deleteQuestionRow = (index: number) => {
+    setData((prevData: any) =>
+      prevData.filter((_: any, i: number) => i !== index),
+    );
+  };
+
   useEffect(() => {
     setIsLoading(true);
     if (!tryComplete) {
@@ -37,7 +75,7 @@ export const Questionary = () => {
           setIsLoading(false);
         });
     }
-  }, [id, tryComplete]);
+  }, [id]);
   const formValueChange = (id: string, value: any) => {
     setQuestionsFormData((prev: any) => ({
       ...prev,
@@ -251,135 +289,213 @@ export const Questionary = () => {
   const [activeCard, setActiveCard] = useState(1);
   return (
     <div className=" w-full">
-      <div className="px-2">
-        <div className="w-full text-[10px] md:text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-          <div>Questionary Name</div>
-          <div>State</div>
-          <div>Action</div>
-        </div>
-        {tryComplete ? (
+      <div
+        onClick={() => {
+          Application.getGoogleFormEmty()
+            .then((res) => {
+              setQuestionsFormData(res.data);
+              setTryAdd(true);
+            })
+            .catch((err) => {
+              console.error('Error fetching the link:', err);
+            });
+          if (tryComplete) {
+            setTryComplete(false);
+          }
+        }}
+        className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+      >
+        <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+        Add Questionary
+      </div>
+      <div className=" mt-3">
+        {tryAdd && (
           <>
-            <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
-              <div className="flex justify-between items-center">
-                <div className="text-xs text-Text-Primary">Profile Data</div>
-                <ButtonSecondary
-                  disabled={!checkFormComplete()}
+            <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
+              <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
+                {mockForms.map((form: any) => (
+                  <div
+                    onClick={() => toggleSelection(form.id)}
+                    key={form.id}
+                    className={` ${selectedQuestionnaires.includes(form.id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
+                  >
+                    <div className="flex items-center gap-1">
+                      <Checkbox
+                        checked={selectedQuestionnaires.includes(form.id)}
+                      />
+                      <div className="text-[10px] text-[#888888]">
+                        {form.name}
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-[#888888]">
+                      {form.questions} Questions
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full flex items-center gap-2 ">
+                <ButtonPrimary
                   onClick={() => {
-                    setSubmitLoading(true);
-                    Application.setGoogleFormEmty({
-                      data: questionsFormData,
-                      member_id: Number(id),
-                    })
-                      .then(() => {
-                        setTimeout(() => {
-                          setTryComplete(false);
-                        }, 300);
-                      })
-                      .finally(() => {
-                        setSubmitLoading(false);
-                      });
+                    setSelectedQuestionnaires([]);
+                    setTryAdd(false);
                   }}
-                  ClassName="rounded-full"
-                  size="small"
+                  outLine
+                  style={{
+                    backgroundColor: '#fff',
+                    color: '#005F73',
+                    width: '100%',
+                  }}
                 >
-                  {submitLoading ? (
-                    <SpinnerLoader></SpinnerLoader>
-                  ) : (
-                    <img
-                      className="w-[16px]"
-                      src="/icons/tick-square.svg"
-                      alt=""
-                    />
-                  )}
-                  Submit
-                </ButtonSecondary>
-              </div>
-              <div className="mt-2">
-                <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-                  <div className="text-[12px] font-medium">
-                    {questionsFormData.questions[activeCard - 1].question}
-                  </div>
-                </div>
-                <div
-                  className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                  Cancel
+                </ButtonPrimary>
+                <ButtonPrimary
+                  onClick={handleAddQuestionnaires}
+                  style={{ width: '100%' }}
                 >
-                  {resolveForm(
-                    questionsFormData.questions[activeCard - 1].type,
-                    questionsFormData,
-                    activeCard,
-                  )}
-                </div>
-                {questionsFormData.questions[activeCard - 1].required && (
-                  <div className="text-[10px] text-red-500 mt-1">
-                    * This question is required.
-                  </div>
-                )}
-              </div>
-
-              <div className="w-full flex justify-center pb-2 absolute bottom-0">
-                <div className="flex justify-center items-center gap-3">
-                  <div
-                    onClick={() => {
-                      if (activeCard > 1) {
-                        setActiveCard(activeCard - 1);
-                      }
-                    }}
-                    className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                  >
-                    <img
-                      className="rotate-90 w-3"
-                      src="/icons/arrow-down-green.svg"
-                      alt=""
-                    />
-                  </div>
-                  <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
-                    {activeCard} /{questionsFormData.questions.length}
-                  </div>
-                  <div
-                    onClick={() => {
-                      if (activeCard < questionsFormData.questions.length) {
-                        setActiveCard(activeCard + 1);
-                      }
-                    }}
-                    className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                  >
-                    <img
-                      className="rotate-[270deg] w-3"
-                      src="/icons/arrow-down-green.svg"
-                      alt=""
-                    />
-                  </div>
-                </div>
+                  Add
+                </ButtonPrimary>
               </div>
             </div>
           </>
-        ) : (
-          <>
-            {data?.length > 0 ? (
-              <>
-                <div className="flex justify-center w-full items-start overflow-auto ">
-                  <div className="w-full mt-2">
-                    {data?.map((el: any) => {
-                      return (
-                        <QuestionRow
-                          el={el}
-                          id={id as string}
-                          resolveForm={resolveForm}
-                        ></QuestionRow>
-                      );
-                    })}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                {isLaoding ? (
-                  <>
-                    <div className="w-full flex justify-center items-center h-[220px]">
-                      <Circleloader></Circleloader>
-                    </div>
-                  </>
+        )}
+        {tryComplete && (
+          <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
+            <div className="flex justify-between items-center">
+              <div className="text-xs text-Text-Primary">
+                {questionsFormData.title}
+              </div>
+              <ButtonSecondary
+                disabled={!checkFormComplete()}
+                onClick={() => {
+                  setSubmitLoading(true);
+                  Application.setGoogleFormEmty({
+                    data: questionsFormData,
+                    member_id: Number(id),
+                  })
+                    .then(() => {
+                      setTimeout(() => {
+                        setTryComplete(false);
+                      }, 300);
+                    })
+                    .finally(() => {
+                      setSubmitLoading(false);
+                    });
+                }}
+                ClassName="rounded-full"
+                size="small"
+              >
+                {submitLoading ? (
+                  <SpinnerLoader></SpinnerLoader>
                 ) : (
+                  <img
+                    className="w-[16px]"
+                    src="/icons/tick-square.svg"
+                    alt=""
+                  />
+                )}
+                Submit
+              </ButtonSecondary>
+            </div>
+            <div className="mt-2">
+              <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
+                <div className="text-[12px] font-medium">
+                  {questionsFormData.questions[activeCard - 1].question}
+                </div>
+              </div>
+              <div
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+              >
+                {resolveForm(
+                  questionsFormData.questions[activeCard - 1].type,
+                  questionsFormData,
+                  activeCard,
+                )}
+              </div>
+              {questionsFormData.questions[activeCard - 1].required && (
+                <div className="text-[10px] text-red-500 mt-1">
+                  * This question is required.
+                </div>
+              )}
+            </div>
+
+            <div className="w-full flex justify-center pb-2 absolute bottom-0">
+              <div className="flex justify-center items-center gap-3">
+                <div
+                  onClick={() => {
+                    if (activeCard > 1) {
+                      setActiveCard(activeCard - 1);
+                    }
+                  }}
+                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
+                >
+                  <img
+                    className="rotate-90 w-3"
+                    src="/icons/arrow-down-green.svg"
+                    alt=""
+                  />
+                </div>
+                <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
+                  {activeCard} /{questionsFormData.questions.length}
+                </div>
+                <div
+                  onClick={() => {
+                    if (activeCard < questionsFormData.questions.length) {
+                      setActiveCard(activeCard + 1);
+                    }
+                  }}
+                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
+                >
+                  <img
+                    className="rotate-[270deg] w-3"
+                    src="/icons/arrow-down-green.svg"
+                    alt=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        <>
+          {data?.length > 0 && !tryComplete ? (
+            <>
+              <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+                <div>Questionary Name</div>
+                <div>State</div>
+                <div>Action</div>
+              </div>
+              <div className="flex justify-center w-full items-start  ">
+                <div className="w-full mt-2 h-[600px] overflow-auto ">
+                  {data?.map((el: any, index: number) => {
+                    console.log(el);
+
+                    return (
+                      <QuestionRow
+                        onTryComplete={() => {
+                          Application.getGoogleFormEmty().then((res) => {
+                            setQuestionsFormData(res.data);
+                            setTryComplete(true);
+                          });
+                        }}
+                        el={el}
+                        id={id as string}
+                        resolveForm={resolveForm}
+                        deleteRow={() => deleteQuestionRow(index)}
+                      ></QuestionRow>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {isLaoding ? (
+                <>
+                  <div className="w-full flex justify-center items-center h-[220px]">
+                    <Circleloader></Circleloader>
+                  </div>
+                </>
+              ) : (
+                data?.length < 1 && (
                   <div className="flex flex-col items-center justify-center h-[250px] ">
                     <img
                       className=" object-contain"
@@ -393,7 +509,7 @@ export const Questionary = () => {
                       For more accurate results, please complete the
                       questionnaire
                     </p>
-                    <ButtonPrimary
+                    {/* <ButtonPrimary
                       onClick={() => {
                         // setTryComplete(true);
                         Application.getGoogleFormEmty()
@@ -407,13 +523,13 @@ export const Questionary = () => {
                       }}
                     >
                       Complete Questionary
-                    </ButtonPrimary>
+                    </ButtonPrimary> */}
                   </div>
-                )}
-              </>
-            )}
-          </>
-        )}
+                )
+              )}
+            </>
+          )}
+        </>
       </div>
     </div>
   );
