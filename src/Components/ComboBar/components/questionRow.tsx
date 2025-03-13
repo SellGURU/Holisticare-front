@@ -61,7 +61,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [isAssigned, countdown]);
 
   console.log(viewQuestienry);
-  
+
   return (
     <>
       <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -76,13 +76,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   <div
                     onClick={() => {
                       Application.PreviewQuestionary({
-                        member_id:id,
-                        q_unique_id: el.unique_id
-                      }).then((res)=>{
+                        member_id: id,
+                        q_unique_id: el.unique_id,
+                      }).then((res) => {
                         setViewQuestienry(res.data);
                         setIsView(true);
                         setshowModal(false);
-                      })
+                      });
                       // Application.Questionary_tracking_action({
                       //   form_name: el.title,
                       //   member_id: id,
@@ -122,16 +122,13 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     <div
                       onClick={() => {
                         Application.QuestionaryAction({
-                          member_id:id,
-                          q_unique_id : el.unique_id,
-                          action: "assign"
-
-
-                        }).then(()=>{
+                          member_id: id,
+                          q_unique_id: el.unique_id,
+                          action: 'assign',
+                        }).then(() => {
                           setisAssigned(true);
                           setshowModal(false);
-                        })
-                      
+                        });
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
                     >
@@ -307,11 +304,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   />
                 </div>
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
-                  {activeCard} /{viewQuestienry.questionary.length}
+                  {activeCard} /{viewQuestienry.questions.length}
                 </div>
                 <div
                   onClick={() => {
-                    if (activeCard < viewQuestienry.questionary.length) {
+                    if (activeCard < viewQuestienry.questions.length) {
                       setActiveCard(activeCard + 1);
                     }
                   }}

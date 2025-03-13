@@ -61,7 +61,7 @@ export const Questionary = () => {
       title: form.title,
       'Completed on': null, // Assuming no completion date initially
       status: 'Incomplete',
-      unique_id: form.unique_id
+      unique_id: form.unique_id,
     }));
 
     setData((prev: any) => [...prev, ...selectedData]);
@@ -401,33 +401,33 @@ export const Questionary = () => {
                 onClick={() => {
                   setSubmitLoading(true);
                   Application.SaveQuestionary({
-                    member_id:id,
+                    member_id: id,
                     q_unique_id: questionsFormData.unique_id,
-                    respond: questionsFormData.questions
-                  }) .then(() => {
-                    setTimeout(() => {
-                      setTryComplete(false);
-                    }, 300);
+                    respond: questionsFormData.questions,
                   })
-                  .finally(() => {
-                    setData((prevData: any) => {
-                      return prevData.map((form: any) => {
-                        if (form.unique_id === questionsFormData.unique_id) {
-                          return {
-                            ...form,
-                            status: 'completed', 
-                          };
-                        }
-                        return form;
+                    .then(() => {
+                      setTimeout(() => {
+                        setTryComplete(false);
+                      }, 300);
+                    })
+                    .finally(() => {
+                      setData((prevData: any) => {
+                        return prevData.map((form: any) => {
+                          if (form.unique_id === questionsFormData.unique_id) {
+                            return {
+                              ...form,
+                              status: 'completed',
+                            };
+                          }
+                          return form;
+                        });
                       });
+                      setSubmitLoading(false);
                     });
-                    setSubmitLoading(false);
-                  });
                   // Application.setGoogleFormEmty({
                   //   data: questionsFormData,
                   //   member_id: Number(id),
                   // })
-                   
                 }}
                 ClassName="rounded-full"
                 size="small"
@@ -524,12 +524,11 @@ export const Questionary = () => {
                             q_unique_id: el.unique_id,
                             action: 'fill',
                           }).then((res) => {
-                            
                             const modifiedResponseData = {
                               ...res.data,
-                              unique_id: el.unique_id, 
+                              unique_id: el.unique_id,
                             };
-                  
+
                             setQuestionsFormData(modifiedResponseData);
                             setTryComplete(true);
                           });
