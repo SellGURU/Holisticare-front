@@ -25,7 +25,10 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
   return String(rowValue).toLowerCase().includes(filterValue.toLowerCase());
 };
 
-const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({ tableData, pageType }) => {
+const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
+  tableData,
+  pageType,
+}) => {
   const [data, setData] = useState(tableData);
   useEffect(() => {
     setData(tableData);
