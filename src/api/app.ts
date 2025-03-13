@@ -751,6 +751,12 @@ class Application extends Api {
     const response = this.post('/patients/give_access/share_with_email', data);
     return response;
   };
+  static addSupplement = (data: CheckinFormType) => {
+    return this.post('/supplement_library/add_supplement', data);
+  };
+  static getSupplementList = () => {
+    return this.post('/supplement_library/supplements_list', {});
+  };
 }
 
 export default Application;
