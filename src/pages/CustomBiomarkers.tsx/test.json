@@ -1,0 +1,38 @@
+[
+  {
+    "Benchmark areas": "Diabetes & Glucose",
+    "biomarkers": [
+      {
+        "Biomarker": "Hb A1C",
+        "age_groups": [
+          {
+            "min_age": 13,
+            "max_age": 30,
+            "gender": "male",
+            "unit": "",
+            "values": ["unset"],
+            "status": ["unset"],
+            "chart_bounds": {
+              "Ok": {
+                "range": [[41, 60]],
+                "label": "Positive"
+              },
+              "Good": {
+                "range": [[21, 40]],
+                "label": "Positive"
+              },
+              "Excellent": {
+                "range": [[0, 20]],
+                "label": "Negative"
+              },
+              "Needs Focus": {
+                "range": [[61, 200]],
+                "label": "High Positive"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
