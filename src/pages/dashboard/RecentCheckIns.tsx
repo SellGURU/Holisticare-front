@@ -1,4 +1,4 @@
-import  { useRef } from 'react';
+import { useRef } from 'react';
 import { useState } from 'react';
 import { MainModal } from '../../Components';
 
@@ -61,7 +61,7 @@ const formData = {
       placeHolder: 'Write the snacks you took ...',
     },
   ],
-}
+};
 const mockCheckIns: CheckIn[] = [
   {
     name: 'David Smith',
@@ -149,8 +149,8 @@ const RecentCheckIns = () => {
 
   // const [selectedFeeling, setSelectedFeeling] = useState<
   //   'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string
-  // >('Neutral'); 
-  
+  // >('Neutral');
+
   // Default to Neutral
   // const [val, setVal] = useState<number>(55);
   // const [snackValue] = useState('');
@@ -236,7 +236,7 @@ const RecentCheckIns = () => {
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
             <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-             <Checkin upData={formData.questions}></Checkin>
+              <Checkin upData={formData.questions}></Checkin>
               {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
@@ -300,7 +300,7 @@ const RecentCheckIns = () => {
                 </div>
               )}
               {showComparisonSurvey && comparisonData && (
-                             <Checkin upData={formData.questions}></Checkin>
+                <Checkin upData={formData.questions}></Checkin>
 
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}

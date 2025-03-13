@@ -489,7 +489,8 @@ class Application extends Api {
   };
   static getQuestionary_tracking = (data: any) => {
     const response = this.post(
-      `/health_profile/questionary_tracking/list
+      `/questionary_tracking/selected_questionarries
+
 
     `,
       data,
@@ -499,6 +500,68 @@ class Application extends Api {
   static Questionary_tracking_action = (data: any) => {
     const response = this.post(
       `/health_profile/questionary_tracking/action
+
+
+    `,
+      data,
+    );
+    return response;
+  };
+  static AddQuestionaryList = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/clinic_q_list
+
+
+
+    `,
+      data,
+    );
+    return response;
+  };
+  static AddQuestionary = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/add_questionary_for_client
+
+
+
+
+
+    `,
+      data,
+    );
+    return response;
+  };
+  static SaveQuestionary = (data: any) => {
+    const response = this.post(
+      `
+/questionary_tracking/save_filled_questionary
+
+
+
+    `,
+      data,
+    );
+    return response;
+  };
+  static PreviewQuestionary = (data: any) => {
+    const response = this.post(
+      `
+/questionary_tracking/action_preview
+
+
+
+    `,
+      data,
+    );
+    return response;
+  };
+  static QuestionaryAction = (data: any) => {
+    const response = this.post(
+      `/questionary_tracking/action_assign_or_fill
+
+
+
+
 
 
     `,

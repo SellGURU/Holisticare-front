@@ -20,33 +20,52 @@ export const Questionary = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [isLaoding, setIsLoading] = useState(false);
   const [questionsFormData, setQuestionsFormData] = useState<any>([]);
-  const [mockForms] = useState<any>([
-    { id: '1', name: 'Feedback Form', questions: 9 },
-    { id: '2', name: 'Initial Questionnaire', questions: 9 },
-    { id: '3', name: 'PAR-Q', questions: 9 },
+  const [AddForms, setAddForms] = useState<any>([
+    // { id: '1', name: 'Feedback Form', questions: 9 },
+    // { id: '2', name: 'Initial Questionnaire', questions: 9 },
+    // { id: '3', name: 'PAR-Q', questions: 9 },
   ]);
 
-  const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
-
+  // const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
+  const [selectedFormIDs, setSelectedFormIDs] = useState<string[]>([]);
+  // const toggleSelection = (id: string) => {
+  //   setSelectedQuestionnaires((prev: any) =>
+  //     prev.includes(id)
+  //       ? prev.filter((qId: string) => qId !== id)
+  //       : [...prev, id],
+  //   );
+  // };
   const toggleSelection = (id: string) => {
-    setSelectedQuestionnaires((prev: any) =>
+    setSelectedFormIDs((prev: string[]) =>
       prev.includes(id)
-        ? prev.filter((qId: string) => qId !== id)
+        ? prev.filter((formId) => formId !== id)
         : [...prev, id],
     );
   };
 
   const handleAddQuestionnaires = () => {
-    const selectedData = mockForms
-      .filter((form: any) => selectedQuestionnaires.includes(form.id))
-      .map((form: any) => ({
-        Data: form.name,
-        'Completed on': null, // Assuming no completion date initially
-        State: 'Incomplete',
-      }));
+    // const selectedData = AddForms
+    //   .filter((form: any) => selectedQuestionnaires.includes(form.id))
+    //   .map((form: any) => ({
+    //     Data: form.title,
+    //     'Completed on': null, // Assuming no completion date initially
+    //     State: 'Incomplete',
+    //   }));
+    Application.AddQuestionary({
+      member_id: id,
+      q_unique_id: selectedFormIDs,
+    });
+    const selectedData = AddForms.filter((form: any) =>
+      selectedFormIDs.includes(form.unique_id),
+    ).map((form: any) => ({
+      title: form.title,
+      'Completed on': null, // Assuming no completion date initially
+      status: 'Incomplete',
+      unique_id: form.unique_id
+    }));
 
     setData((prev: any) => [...prev, ...selectedData]);
-    setSelectedQuestionnaires([]);
+    setSelectedFormIDs([]);
     setTryAdd(false);
   };
 
@@ -55,7 +74,9 @@ export const Questionary = () => {
       prevData.filter((_: any, i: number) => i !== index),
     );
   };
-
+  useEffect(() => {
+    console.log(questionsFormData);
+  }, [questionsFormData]);
   useEffect(() => {
     setIsLoading(true);
     if (!tryComplete) {
@@ -80,7 +101,7 @@ export const Questionary = () => {
     setQuestionsFormData((prev: any) => ({
       ...prev,
       questions: prev.questions.map((q: any) =>
-        q.id === id
+        q.order === id
           ? { ...q, response: q.type === 'checkbox' ? [...value] : value }
           : q,
       ),
@@ -113,7 +134,7 @@ export const Questionary = () => {
             disabled={disabled}
             onChange={(e) => {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].id,
+                questionsData.questions[activeCardNumber - 1].order,
                 e.target.value,
               );
             }}
@@ -135,7 +156,7 @@ export const Questionary = () => {
                       onClick={() => {
                         if (!disabled) {
                           formValueChange(
-                            questionsData.questions[activeCardNumber - 1].id,
+                            questionsData.questions[activeCardNumber - 1].order,
                             el,
                           );
                         }
@@ -186,7 +207,7 @@ export const Questionary = () => {
                               activeCardNumber - 1
                             ].response.filter((item: any) => item !== el); // Remove from array
                         formValueChange(
-                          questionsData.questions[activeCardNumber - 1].id,
+                          questionsData.questions[activeCardNumber - 1].order,
                           newResponses,
                         );
                       }
@@ -230,7 +251,7 @@ export const Questionary = () => {
                 if (!disabled) {
                   if (validateDate(e.target.value)) {
                     formValueChange(
-                      questionsData.questions[activeCardNumber - 1].id,
+                      questionsData.questions[activeCardNumber - 1].order,
                       new Date(e.target.value).toISOString().split('T')[0],
                     );
                   }
@@ -287,18 +308,23 @@ export const Questionary = () => {
     return datas.length == 0;
   };
   const [activeCard, setActiveCard] = useState(1);
+
   return (
     <div className=" w-full">
       <div
         onClick={() => {
-          Application.getGoogleFormEmty()
-            .then((res) => {
-              setQuestionsFormData(res.data);
-              setTryAdd(true);
-            })
-            .catch((err) => {
-              console.error('Error fetching the link:', err);
-            });
+          Application.AddQuestionaryList({}).then((res) => {
+            setAddForms(res.data);
+            setTryAdd(true);
+          });
+          // Application.getGoogleFormEmty()
+          //   .then((res) => {
+          //     setQuestionsFormData(res.data);
+          //     setTryAdd(true);
+          //   })
+          //   .catch((err) => {
+          //     console.error('Error fetching the link:', err);
+          //   });
           if (tryComplete) {
             setTryComplete(false);
           }
@@ -313,22 +339,22 @@ export const Questionary = () => {
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
               <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
-                {mockForms.map((form: any) => (
+                {AddForms.map((form: any) => (
                   <div
-                    onClick={() => toggleSelection(form.id)}
+                    onClick={() => toggleSelection(form.unique_id)}
                     key={form.id}
-                    className={` ${selectedQuestionnaires.includes(form.id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
+                    className={` ${selectedFormIDs.includes(form.unique_id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
                   >
                     <div className="flex items-center gap-1">
                       <Checkbox
-                        checked={selectedQuestionnaires.includes(form.id)}
+                        checked={selectedFormIDs.includes(form.unique_id)}
                       />
                       <div className="text-[10px] text-[#888888]">
-                        {form.name}
+                        {form.title}
                       </div>
                     </div>
                     <div className="text-[10px] text-[#888888]">
-                      {form.questions} Questions
+                      {form.num_of_questions}
                     </div>
                   </div>
                 ))}
@@ -336,7 +362,7 @@ export const Questionary = () => {
               <div className="w-full flex items-center gap-2 ">
                 <ButtonPrimary
                   onClick={() => {
-                    setSelectedQuestionnaires([]);
+                    setSelectedFormIDs([]);
                     setTryAdd(false);
                   }}
                   outLine
@@ -349,7 +375,13 @@ export const Questionary = () => {
                   Cancel
                 </ButtonPrimary>
                 <ButtonPrimary
-                  onClick={handleAddQuestionnaires}
+                  onClick={() => {
+                    handleAddQuestionnaires();
+                    // Application.AddQuestionary({
+                    //   member_id:id,
+                    //   q_unique_id:selectedFormID
+                    // })
+                  }}
                   style={{ width: '100%' }}
                 >
                   Add
@@ -359,7 +391,7 @@ export const Questionary = () => {
           </>
         )}
         {tryComplete && (
-          <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[272px] rounded-[12px] border-gray-50">
+          <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[292px] rounded-[12px] border-gray-50">
             <div className="flex justify-between items-center">
               <div className="text-xs text-Text-Primary">
                 {questionsFormData.title}
@@ -368,18 +400,34 @@ export const Questionary = () => {
                 disabled={!checkFormComplete()}
                 onClick={() => {
                   setSubmitLoading(true);
-                  Application.setGoogleFormEmty({
-                    data: questionsFormData,
-                    member_id: Number(id),
+                  Application.SaveQuestionary({
+                    member_id:id,
+                    q_unique_id: questionsFormData.unique_id,
+                    respond: questionsFormData.questions
+                  }) .then(() => {
+                    setTimeout(() => {
+                      setTryComplete(false);
+                    }, 300);
                   })
-                    .then(() => {
-                      setTimeout(() => {
-                        setTryComplete(false);
-                      }, 300);
-                    })
-                    .finally(() => {
-                      setSubmitLoading(false);
+                  .finally(() => {
+                    setData((prevData: any) => {
+                      return prevData.map((form: any) => {
+                        if (form.unique_id === questionsFormData.unique_id) {
+                          return {
+                            ...form,
+                            status: 'complete', 
+                          };
+                        }
+                        return form;
+                      });
                     });
+                    setSubmitLoading(false);
+                  });
+                  // Application.setGoogleFormEmty({
+                  //   data: questionsFormData,
+                  //   member_id: Number(id),
+                  // })
+                   
                 }}
                 ClassName="rounded-full"
                 size="small"
@@ -471,8 +519,18 @@ export const Questionary = () => {
                     return (
                       <QuestionRow
                         onTryComplete={() => {
-                          Application.getGoogleFormEmty().then((res) => {
-                            setQuestionsFormData(res.data);
+                          Application.QuestionaryAction({
+                            member_id: id,
+                            q_unique_id: el.unique_id,
+                            action: 'fill',
+                          }).then((res) => {
+                            
+                            const modifiedResponseData = {
+                              ...res.data,
+                              unique_id: el.unique_id, 
+                            };
+                  
+                            setQuestionsFormData(modifiedResponseData);
                             setTryComplete(true);
                           });
                         }}
