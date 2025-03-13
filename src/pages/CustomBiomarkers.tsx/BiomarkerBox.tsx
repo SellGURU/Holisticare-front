@@ -5,8 +5,9 @@ import BiomarkerItem from './BiomarkerItem';
 
 interface BiomarkerBoxProps {
   data: any;
+  onSave: (values: any) => void;
 }
-const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data }) => {
+const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -27,25 +28,25 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data }) => {
               >
                 <img
                   className=""
-                  src={resolveAnalyseIcon(data.subcategory)}
+                  src={resolveAnalyseIcon(data['Benchmark areas'])}
                   alt=""
                 />
               </div>
             </div>
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
-                {data.subcategories[0].subcategory}
+                {data['Benchmark areas']}
                 {/* {isOpen && <Legends></Legends>} */}
               </div>
               <div className="flex justify-start items-center">
                 <div className="TextStyle-Body-3 text-Text-Secondary">
-                  {data.subcategories[0]?.num_of_biomarkers} biomarkers
+                  {/* {data.subcategories[0]?.num_of_biomarkers} biomarkers */}
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
-                  {data.subcategories[0]?.needs_focus_count}{' '}
+                  {/* {data.subcategories[0]?.needs_focus_count}{' '}
                   {data.subcategories[0].needs_focus_count > 1
                     ? 'Needs Focus'
-                    : 'Need Focus'}{' '}
+                    : 'Need Focus'}{' '} */}
                 </div>
               </div>
             </div>
@@ -65,10 +66,26 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data }) => {
         </div>
         {isOpen && (
           <div className="mt-4 grid gap-2">
-            {data.subcategories[0].biomarkers.map((value: any) => {
+            {data.biomarkers.map((value: any) => {
               return (
                 <>
-                  <BiomarkerItem data={value}></BiomarkerItem>
+                  <BiomarkerItem
+                    OnSave={(resovle) => {
+                      // console.log(resovle)
+                      // const
+                      onSave({
+                        ...data,
+                        biomarkers: data.biomarkers.map((el: any) => {
+                          if (el.Biomarker == value.Biomarker) {
+                            return resovle;
+                          } else {
+                            return el;
+                          }
+                        }),
+                      });
+                    }}
+                    data={value}
+                  ></BiomarkerItem>
                 </>
               );
             })}

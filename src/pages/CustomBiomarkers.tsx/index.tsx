@@ -1,7 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
 import SearchBox from '../../Components/SearchBox';
 import BioMarkerBox from './BiomarkerBox';
-import mockData from './mockData.json';
+import BiomarkersApi from '../../api/Biomarkers';
+
+// import mackData from './test.json'
+
 const CustomBiomarkers = () => {
+  const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
+  useEffect(() => {
+    BiomarkersApi.getBiomarkersList().then((res) => {
+      setBiomarkers(res.data);
+    });
+  }, []);
+  useEffect(() => {
+    if (biomarkers.length > 0) {
+      BiomarkersApi.saveBiomarkersList(biomarkers);
+    }
+  }, [biomarkers]);
   return (
     <>
       <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-[200px]">
@@ -17,8 +33,24 @@ const CustomBiomarkers = () => {
         </div>
       </div>
       <div className="w-full px-6 py-[80px]">
-        {mockData.map((el) => {
-          return <BioMarkerBox data={el}></BioMarkerBox>;
+        {biomarkers.map((el) => {
+          return (
+            <BioMarkerBox
+              onSave={(values) => {
+                setBiomarkers((pre) => {
+                  const resolved = pre.map((ol) => {
+                    if (ol['Benchmark areas'] == values['Benchmark areas']) {
+                      return values;
+                    } else {
+                      return ol;
+                    }
+                  });
+                  return [...resolved];
+                });
+              }}
+              data={el}
+            ></BioMarkerBox>
+          );
         })}
       </div>
     </>
