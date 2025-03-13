@@ -415,7 +415,7 @@ export const Questionary = () => {
                         if (form.unique_id === questionsFormData.unique_id) {
                           return {
                             ...form,
-                            status: 'complete', 
+                            status: 'completed', 
                           };
                         }
                         return form;

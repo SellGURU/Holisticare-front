@@ -178,7 +178,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   </div>
                 ) : (
                   <div
-                    className={`rounded-full px-2.5 py-1 text-Text-Primary max-w-[84px] flex items-center gap-1 ${
+                    className={`rounded-full px-2.5 py-1 text-Text-Primary capitalize max-w-[84px] flex items-center justify-center gap-1 ${
                       el['status'] == 'completed'
                         ? 'bg-[#DEF7EC]'
                         : 'bg-[#F9DEDC]'
