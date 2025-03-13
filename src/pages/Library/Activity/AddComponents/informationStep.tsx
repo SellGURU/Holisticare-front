@@ -1,7 +1,5 @@
-const InformationStep =() => {
-    return (
-        <></>
-    )
-}
+const InformationStep = () => {
+  return <></>;
+};
 
-export default InformationStep
+export default InformationStep;

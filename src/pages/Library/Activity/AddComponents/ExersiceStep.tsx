@@ -1,8 +1,5 @@
 const ExersiceStep = () => {
-    return (
-        <>
-        </>
-    )
-}
+  return <></>;
+};
 
-export default ExersiceStep
+export default ExersiceStep;
