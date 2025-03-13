@@ -59,6 +59,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
       }
     };
   }, [isAssigned, countdown]);
+
+  console.log(viewQuestienry);
+
   return (
     <>
       <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -69,17 +72,25 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               className="absolute top-10 right-[16px] z-20  w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
             >
               <>
-                {el['State'] == 'Complete' ? (
+                {el.status == 'completed' ? (
                   <div
                     onClick={() => {
-                      Application.Questionary_tracking_action({
-                        form_name: el['Data'],
+                      Application.PreviewQuestionary({
                         member_id: id,
+                        q_unique_id: el.unique_id,
                       }).then((res) => {
                         setViewQuestienry(res.data);
                         setIsView(true);
                         setshowModal(false);
                       });
+                      // Application.Questionary_tracking_action({
+                      //   form_name: el.title,
+                      //   member_id: id,
+                      // }).then((res) => {
+                      //   setViewQuestienry(res.data);
+                      //   setIsView(true);
+                      //   setshowModal(false);
+                      // });
                     }}
                     className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
                   >
@@ -110,8 +121,14 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        setisAssigned(true);
-                        setshowModal(false);
+                        Application.QuestionaryAction({
+                          member_id: id,
+                          q_unique_id: el.unique_id,
+                          action: 'assign',
+                        }).then(() => {
+                          setisAssigned(true);
+                          setshowModal(false);
+                        });
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
                     >
@@ -148,18 +165,18 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
           ) : (
             <>
               <div className="text-[10px]  text-Text-Primary w-[100px]">
-                {el.Data}
+                {el.title}
               </div>
 
               <div className="text-[8px] w-[100px] text-center ">
                 {isView ? (
                   <div className="text-[10px] text-[#B0B0B0] flex items-end gap-1 ">
-                    Filled by: <span>Coach</span>
+                    Filled by: <span>{viewQuestienry.filled_by}</span>
                   </div>
                 ) : (
                   <div
-                    className={`rounded-full px-2.5 py-1 text-Text-Primary max-w-[84px] flex items-center gap-1 ${
-                      el['State'] == 'Complete'
+                    className={`rounded-full px-2.5 py-1 text-Text-Primary capitalize max-w-[84px] flex items-center justify-center gap-1 ${
+                      el['status'] == 'completed'
                         ? 'bg-[#DEF7EC]'
                         : 'bg-[#F9DEDC]'
                     }`}
@@ -172,12 +189,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   >
                     <div
                       className={`w-3 h-3 rounded-full  ${
-                        el['State'] == 'Complete'
+                        el.status == 'completed'
                           ? 'bg-[#06C78D]'
                           : 'bg-[#FFBD59]'
                       }`}
                     ></div>
-                    {el['State']}
+                    {el['status']}
                   </div>
                 )}
               </div>
