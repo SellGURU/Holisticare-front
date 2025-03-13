@@ -69,9 +69,9 @@ export const menus = [
       },
       {
         name: 'Activity',
-        url: '/',
+        url: '/activity',
         icon: 'sidemenu-menu-icon-Activity',
-        active: false,
+        active: true,
       },
       {
         name: 'Supplement',
