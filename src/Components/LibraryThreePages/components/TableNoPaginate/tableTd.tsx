@@ -2,10 +2,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Tooltip } from 'react-tooltip';
 
-export const columns = (
-  tableData: Array<any>,
-  pageType: string,
-): ColumnDef<any>[] => [
+export const columns = (pageType: string): ColumnDef<any>[] => [
   {
     accessorKey: 'Title',
     header: 'Supplement Title',
@@ -48,13 +45,33 @@ export const columns = (
     },
   },
   {
-    accessorKey: 'Dose',
-    header: 'Dose',
+    accessorKey:
+      pageType === 'Supplement'
+        ? 'Dose'
+        : pageType === 'Lifestyle'
+          ? 'Value'
+          : 'Macros Goal',
+    header:
+      pageType === 'Supplement'
+        ? 'Dose'
+        : pageType === 'Lifestyle'
+          ? 'Value'
+          : 'Macros Goal',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Quadruple">
-          {row.original?.Dose || '-'}
+          {pageType === 'Supplement' ? (
+            row.original?.Dose || '-'
+          ) : pageType === 'Lifestyle' ? (
+            row.original?.Value
+          ) : (
+            <div className="flex items-center justify-center gap-4">
+              <div>Carb: {row.original?.['Total Macros'].Carbs} gr</div>
+              <div>Pr: {row.original?.['Total Macros'].Protein} gr</div>
+              <div>Fat: {row.original?.['Total Macros'].Fats} gr</div>
+            </div>
+          )}
         </div>
       );
     },
@@ -84,35 +101,6 @@ export const columns = (
       return (
         <div className="text-xs text-Text-Quadruple">
           {row.original?.['Added on'].substring(0, 10) || '-'}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: '',
-    header: 'Action',
-    enableSorting: false,
-    cell: ({ row }) => {
-      return (
-        <div className="flex justify-center w-full gap-2">
-          <img
-            onClick={() => {}}
-            className="cursor-pointer"
-            src="/icons/eye-blue.svg"
-            alt=""
-          />
-          <img
-            onClick={() => {}}
-            src="/icons/edit-blue.svg"
-            alt=""
-            className="cursor-pointer"
-          />
-          <img
-            onClick={() => {}}
-            src="/icons/trash-blue.svg"
-            alt=""
-            className="cursor-pointer"
-          />
         </div>
       );
     },

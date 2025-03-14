@@ -814,11 +814,47 @@ class Application extends Api {
     const response = this.post('/patients/give_access/share_with_email', data);
     return response;
   };
-  static addSupplement = (data: CheckinFormType) => {
+  static addSupplement = (data: any) => {
     return this.post('/supplement_library/add_supplement', data);
+  };
+  static editSupplement = (data: any) => {
+    return this.post('/supplement_library/edit_supplement', data);
+  };
+  static deleteSupplement = (id: string) => {
+    return this.post('/supplement_library/delete_supplement', {
+      Sup_Id: id,
+    });
   };
   static getSupplementList = () => {
     return this.post('/supplement_library/supplements_list', {});
+  };
+  static addLifestyle = (data: any) => {
+    return this.post('/lifestyle_library/add_lifestyle', data);
+  };
+  static editLifestyle = (data: any) => {
+    return this.post('/lifestyle_library/edit_lifestyle', data);
+  };
+  static deleteLifestyle = (id: string) => {
+    return this.post('/lifestyle_library/delete_lifestyle', {
+      Life_Id: id,
+    });
+  };
+  static getLifestyleList = () => {
+    return this.post('/lifestyle_library/lifestyles_list', {});
+  };
+  static addDiet = (data: any) => {
+    return this.post('/diet_library/add_diet', data);
+  };
+  static editDiet = (data: any) => {
+    return this.post('/diet_library/edit_diet', data);
+  };
+  static deleteDiet = (id: string) => {
+    return this.post('/diet_library/delete_diet', {
+      Diet_Id: id,
+    });
+  };
+  static getDietList = () => {
+    return this.post('/diet_library/diets_list', {});
   };
 }
 

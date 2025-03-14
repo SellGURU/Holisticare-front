@@ -13,6 +13,8 @@ import { FaSort } from 'react-icons/fa';
 interface TableProps {
   tableData: Array<any>;
   pageType: string;
+  onDelete: (id: string) => void;
+  onEdit: (row: any) => void;
 }
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
@@ -28,6 +30,8 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
 const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   tableData,
   pageType,
+  onDelete,
+  onEdit,
 }) => {
   const [data, setData] = useState(tableData);
   useEffect(() => {
@@ -35,21 +39,18 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   }, [tableData]);
   const table = useReactTable({
     data,
-    columns: columns(tableData, pageType),
+    columns: columns(pageType),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     globalFilterFn: nestedFilter,
   });
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  const [sureRemove, setSureRemove] = useState(false);
-  const removeItemByNo = (noToRemove: number) => {
-    setSelectedRow(null);
-    setSureRemove(false);
+  const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
+  const removeItemByNo = (id: string) => {
+    onDelete(id);
+    setSureRemoveIndex(null);
   };
-  const handleEdit = () => {
-    // setEditModeModal(true);
-    // setCheckInListEditValue(selectedRow);
-    // setShowModal(true);
+  const handleEdit = (row: any) => {
+    onEdit(row);
   };
   return (
     <div className="w-full mt-6">
@@ -92,6 +93,15 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                       </div>
                     </th>
                   ))}
+                  <th
+                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer`}
+                  >
+                    <div className={`flex items-center justify-center`}>
+                      <div className="flex items-center justify-center">
+                        Action
+                      </div>
+                    </div>
+                  </th>
                 </tr>
               ))}
             </thead>
@@ -99,7 +109,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
               {table.getRowModel().rows.map((row, index) => (
                 <tr
                   className={`text-Text-Primary space-y-7 ${index % 2 === 1 ? 'bg-backgroundColor-Main' : 'bg-white'}`}
-                  key={row.id}
+                  key={row.original.Sup_Id}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
@@ -112,6 +122,62 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                       )}
                     </td>
                   ))}
+                  <td className="px-3 py-3 text-center text-nowrap text-xs">
+                    {sureRemoveIndex === index ? (
+                      <div className="flex items-center justify-center w-full gap-1">
+                        <div className="text-Text-Quadruple text-xs">Sure?</div>
+                        <img
+                          src="/icons/tick-circle-green.svg"
+                          alt=""
+                          className="w-[20px] h-[20px] cursor-pointer"
+                          onClick={() => {
+                            if (pageType === 'Supplement') {
+                              removeItemByNo(row.original.Sup_Id);
+                            } else if (pageType === 'Lifestyle') {
+                              removeItemByNo(row.original.Life_Id);
+                            } else {
+                              removeItemByNo(row.original.Diet_Id);
+                            }
+                          }}
+                        />
+                        <img
+                          src="/icons/close-circle-red.svg"
+                          alt=""
+                          className="w-[20px] h-[20px] cursor-pointer"
+                          onClick={() => setSureRemoveIndex(null)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center w-full gap-2">
+                        <img
+                          onClick={() => {}}
+                          className="cursor-pointer"
+                          src="/icons/eye-blue.svg"
+                          alt=""
+                        />
+                        <img
+                          onClick={() => {
+                            if (pageType === 'Supplement') {
+                              handleEdit(row.original);
+                            } else if (pageType === 'Lifestyle') {
+                              handleEdit(row.original);
+                            } else {
+                              handleEdit(row.original);
+                            }
+                          }}
+                          src="/icons/edit-blue.svg"
+                          alt=""
+                          className="cursor-pointer"
+                        />
+                        <img
+                          onClick={() => setSureRemoveIndex(index)}
+                          src="/icons/trash-blue.svg"
+                          alt=""
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface RangeCardProps {
   value: number;
@@ -12,6 +12,11 @@ const RangeCardLibraryThreePages: React.FC<RangeCardProps> = ({
   changeValue,
 }) => {
   const [val, setVal] = useState(value);
+  useEffect(() => {
+    if (value) {
+      setVal(value);
+    }
+  }, [value]);
   return (
     <>
       <div className="w-full">

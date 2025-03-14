@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import MainModal from '../../MainModal';
 import RangeCardLibraryThreePages from './RangeCard';
 
@@ -8,6 +8,7 @@ interface AddModalLibraryTreePagesProps {
   handleCloseModal: () => void;
   pageType: string;
   onSubmit: (value: any) => void;
+  selectedRow: any;
 }
 
 const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
@@ -15,6 +16,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   handleCloseModal,
   pageType,
   onSubmit,
+  selectedRow,
 }) => {
   const [addData, setAddData] = useState({
     title: '',
@@ -31,19 +33,51 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const [dose, setDose] = useState('');
   const [value, setValue] = useState('');
   const [totalMacros, setTotalMacros] = useState({
-    Fats: null,
-    Protein: null,
-    Carbs: null,
+    Fats: '',
+    Protein: '',
+    Carbs: '',
   });
+  useEffect(() => {
+    if (selectedRow) {
+      setAddData({
+        title: selectedRow ? selectedRow.Title : '',
+        description: selectedRow ? selectedRow.Description : '',
+        score: selectedRow ? selectedRow.Base_Score : 0,
+        instruction: selectedRow ? selectedRow.Instruction : '',
+      });
+      setDose(selectedRow ? selectedRow.Dose : '');
+      setValue(selectedRow ? selectedRow.Value : '');
+      setTotalMacros({
+        Fats: selectedRow ? selectedRow['Total Macros']?.Fats : '',
+        Protein: selectedRow ? selectedRow['Total Macros']?.Protein : '',
+        Carbs: selectedRow ? selectedRow['Total Macros']?.Carbs : '',
+      });
+    }
+  }, [selectedRow]);
+  const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
+    setTotalMacros((prevTheme) => ({
+      ...prevTheme,
+      [key]: value,
+    }));
+  };
   const notDisabled = () => {
     if (pageType === 'Supplement') {
       return (
         addData.title && addData.description && addData.instruction && dose
       );
     } else if (pageType === 'Lifestyle') {
-      return addData.title && addData.description && addData.instruction;
+      return (
+        addData.title && addData.description && addData.instruction && value
+      );
     } else {
-      return addData.title && addData.description && addData.instruction;
+      return (
+        addData.title &&
+        addData.description &&
+        addData.instruction &&
+        totalMacros.Carbs &&
+        totalMacros.Fats &&
+        totalMacros.Protein
+      );
     }
   };
   const submit = () => {
@@ -73,7 +107,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
-        Total_Macros: totalMacros,
+        Total_Macros: {
+          Fats: Number(totalMacros.Fats),
+          Protein: Number(totalMacros.Protein),
+          Carbs: Number(totalMacros.Carbs),
+        },
       };
       onSubmit(data);
       clear();
@@ -88,7 +126,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
     setDose('');
     setValue('');
-    setTotalMacros({ Carbs: null, Fats: null, Protein: null });
+    setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
   };
   return (
     <>
@@ -96,7 +134,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
-              Add {pageType}
+              {selectedRow ? 'Edit' : 'Add'} {pageType}
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="flex flex-col mt-5 w-full gap-2">
@@ -170,8 +208,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Macros Goal
                 </div>
-                <div className="flex items-center justify-between mt-3">
-                  <div className="flex flex-col">
+                <div className="flex items-center justify-between mt-3 gap-4">
+                  <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-1">
                       <div className="text-[10px] font-medium text-Text-Primary">
                         Carbs
@@ -180,6 +218,53 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         (gr)
                       </div>
                     </div>
+                    <input
+                      type="number"
+                      placeholder="Carbohydrates"
+                      value={totalMacros.Carbs}
+                      onChange={(e) =>
+                        updateTotalMacros('Carbs', Number(e.target.value))
+                      }
+                      className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <div className="text-[10px] font-medium text-Text-Primary">
+                        Proteins
+                      </div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        (gr)
+                      </div>
+                    </div>
+                    <input
+                      type="number"
+                      placeholder="Proteins"
+                      value={totalMacros.Protein}
+                      onChange={(e) =>
+                        updateTotalMacros('Protein', Number(e.target.value))
+                      }
+                      className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <div className="text-[10px] font-medium text-Text-Primary">
+                        Fats
+                      </div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        (gr)
+                      </div>
+                    </div>
+                    <input
+                      type="number"
+                      placeholder="Fats"
+                      value={totalMacros.Fats}
+                      onChange={(e) =>
+                        updateTotalMacros('Fats', Number(e.target.value))
+                      }
+                      className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                    />
                   </div>
                 </div>
               </div>
@@ -199,7 +284,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   }
                 }}
               >
-                Add
+                {selectedRow ? 'Update' : 'Add'}
               </div>
             </div>
           </div>

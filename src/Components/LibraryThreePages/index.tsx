@@ -13,12 +13,12 @@ interface LibraryThreePagesProps {
 const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const handleChangeSearch = (event: any) => {
-    setSearchQuery(event.target.value);
+  console.log('searchQuery => ', searchQuery);
+  const handleChangeSearch = (value: any) => {
+    setSearchQuery(value);
   };
-  console.log('tableData => ', tableData);
-  const [editLibraryId, setEditLibraryId] = useState(null);
   const [addShowModal, setAddShowModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const handleCloseModal = () => {
     setAddShowModal(false);
   };
@@ -30,26 +30,72 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       setTableData(res.data);
     });
   };
+  const getLifestyles = () => {
+    Application.getLifestyleList().then((res) => {
+      setTableData(res.data);
+    });
+  };
+  const getDiets = () => {
+    Application.getDietList().then((res) => {
+      setTableData(res.data);
+    });
+  };
   useEffect(() => {
     if (pageType === 'Supplement') {
       getSupplements();
+    } else if (pageType === 'Lifestyle') {
+      getLifestyles();
+    } else {
+      getDiets();
     }
   }, [pageType]);
   const onSave = (values: any) => {
-    if (editLibraryId !== null) {
-      Application.addSupplement({
-        Sup_Id: editLibraryId,
-        ...values,
-      }).then(() => {
-        setEditLibraryId(null);
-        getSupplements();
-        setAddShowModal(false);
-      });
+    if (selectedRow !== null) {
+      if (pageType === 'Supplement') {
+        Application.editSupplement({
+          Sup_Id: selectedRow.Sup_Id,
+          ...values,
+        }).then(() => {
+          setSelectedRow(null);
+          getSupplements();
+          setAddShowModal(false);
+        });
+      } else if (pageType === 'Lifestyle') {
+        Application.editLifestyle({
+          Life_Id: selectedRow.Life_Id,
+          ...values,
+        }).then(() => {
+          setSelectedRow(null);
+          getLifestyles();
+          setAddShowModal(false);
+        });
+      } else {
+        Application.editDiet({
+          Diet_Id: selectedRow.Diet_Id,
+          ...values,
+        }).then(() => {
+          setSelectedRow(null);
+          getDiets();
+          setAddShowModal(false);
+        });
+      }
     } else {
-      Application.addSupplement(values).then(() => {
-        getSupplements();
-        setAddShowModal(false);
-      });
+      if (pageType === 'Supplement') {
+        Application.addSupplement(values).then(() => {
+          getSupplements();
+          setAddShowModal(false);
+        });
+      } else if (pageType === 'Lifestyle') {
+        Application.addLifestyle(values).then(() => {
+          getLifestyles();
+          setAddShowModal(false);
+        });
+      } else {
+        Application.addDiet(values).then(() => {
+          getDiets();
+          setAddShowModal(false);
+        });
+      }
     }
   };
   const filteredData = tableData.filter((item) =>
@@ -63,7 +109,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         handleChangeSearch={handleChangeSearch}
         handleOpenModal={handleOpenModal}
       />
-      {!tableData.length ? (
+      {!filteredData.length ? (
         <div
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
@@ -93,6 +139,25 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         <TableNoPaginateForLibraryThreePages
           pageType={pageType}
           tableData={filteredData}
+          onDelete={(id) => {
+            if (pageType === 'Supplement') {
+              Application.deleteSupplement(id).then(() => {
+                getSupplements();
+              });
+            } else if (pageType === 'Lifestyle') {
+              Application.deleteLifestyle(id).then(() => {
+                getLifestyles();
+              });
+            } else {
+              Application.deleteDiet(id).then(() => {
+                getDiets();
+              });
+            }
+          }}
+          onEdit={(row) => {
+            setSelectedRow(row);
+            handleOpenModal();
+          }}
         />
       )}
       <AddModalLibraryTreePages
@@ -100,6 +165,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         handleCloseModal={handleCloseModal}
         pageType={pageType}
         onSubmit={onSave}
+        selectedRow={selectedRow}
       />
     </>
   );
