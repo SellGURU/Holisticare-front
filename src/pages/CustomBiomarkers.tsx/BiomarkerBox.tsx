@@ -5,8 +5,9 @@ import BiomarkerItem from './BiomarkerItem';
 
 interface BiomarkerBoxProps {
   data: any;
+  onSave: (values: any) => void;
 }
-const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data }) => {
+const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -68,7 +69,23 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data }) => {
             {data.biomarkers.map((value: any) => {
               return (
                 <>
-                  <BiomarkerItem data={value}></BiomarkerItem>
+                  <BiomarkerItem
+                    OnSave={(resovle) => {
+                      // console.log(resovle)
+                      // const
+                      onSave({
+                        ...data,
+                        biomarkers: data.biomarkers.map((el: any) => {
+                          if (el.Biomarker == value.Biomarker) {
+                            return resovle;
+                          } else {
+                            return el;
+                          }
+                        }),
+                      });
+                    }}
+                    data={value}
+                  ></BiomarkerItem>
                 </>
               );
             })}
