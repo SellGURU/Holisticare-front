@@ -7,7 +7,7 @@ interface StatusBarChartProps {
   justView?: boolean;
 }
 const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
-  console.log(data)
+  console.log(data);
   const maxVal = resolveMaxValue(data.chart_bounds);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
