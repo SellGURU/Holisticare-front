@@ -5,6 +5,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary';
 import AddModalLibraryTreePages from './components/AddModal';
 import Application from '../../api/app';
 import TableNoPaginateForLibraryThreePages from './components/TableNoPaginate';
+import PreviewModalLibraryTreePages from './components/PreviewModal';
 
 interface LibraryThreePagesProps {
   pageType: string;
@@ -13,18 +14,24 @@ interface LibraryThreePagesProps {
 const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  console.log('searchQuery => ', searchQuery);
   const handleChangeSearch = (value: any) => {
     setSearchQuery(value);
   };
   const [addShowModal, setAddShowModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
   const handleCloseModal = () => {
     setAddShowModal(false);
   };
   const handleOpenModal = () => {
     setAddShowModal(true);
   };
+  const [previewShowModal, setPreviewShowModal] = useState(false);
+  const handlePreviewCloseModal = () => {
+    setPreviewShowModal(false);
+  };
+  const handlePreviewOpenModal = () => {
+    setPreviewShowModal(true);
+  };
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const getSupplements = () => {
     Application.getSupplementList().then((res) => {
       setTableData(res.data);
@@ -158,6 +165,10 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             setSelectedRow(row);
             handleOpenModal();
           }}
+          onPreview={(row) => {
+            setSelectedRow(row);
+            handlePreviewOpenModal();
+          }}
         />
       )}
       <AddModalLibraryTreePages
@@ -166,6 +177,13 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         pageType={pageType}
         onSubmit={onSave}
         selectedRow={selectedRow}
+      />
+      <PreviewModalLibraryTreePages
+        previewShowModal={previewShowModal}
+        handlePreviewCloseModal={handlePreviewCloseModal}
+        pageType={pageType}
+        selectedRow={selectedRow}
+        handleOpenModal={handleOpenModal}
       />
     </>
   );
