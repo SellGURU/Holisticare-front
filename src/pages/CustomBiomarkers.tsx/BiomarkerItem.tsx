@@ -97,7 +97,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex gap-6 w-full min-h-[60px] justify-start items-center">
+        <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
           <div className="w-[200px]">
             <div className="text-[12px] font-medium text-Text-Primary">
               {data.Biomarker}
