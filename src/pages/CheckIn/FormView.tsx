@@ -9,6 +9,7 @@ import Circleloader from '../../Components/CircleLoader';
 const FormView = () => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   // const formData = {
   //   title: 'Daily Check in',
   //   questions: [
@@ -60,6 +61,7 @@ const FormView = () => {
   //   ],
   // };
   const [data, setData] = useState<any>(null);
+  const [resolvedData, setResolvedData] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
     Mobile.getQuestionaryEmpty({
@@ -70,21 +72,56 @@ const FormView = () => {
       setIsLaoding(false);
     });
   }, []);
+  const submit = () => {
+    setIsLaoding(true);
+    Mobile.fillQuestionary({
+      encoded_mi: encode,
+      unique_id: id,
+      respond: resolvedData.questions,
+    }).finally(() => {
+      if (window.flutter_inappwebview) {
+        window.flutter_inappwebview.callHandler('closeWebView');
+      } else {
+        console.warn('Flutter WebView bridge not available');
+      }
+      setIsComplete(true);
+      // window.flutter_inappwebview.callHandler('closeWebView')
+      // setIsLaoding(false)
+    });
+  };
   return (
     <>
       <div className="w-full py-3 px-4 h-svh overflow-y-scroll">
-        {isLoading ? (
-          <>
-            <div className="flex justify-center items-center mt-20">
-              <Circleloader></Circleloader>
+        {isComplete ? (
+          <div className="py-4">
+            <div className="text-[12px] text-Text-Secondary text-center">
+              This Questionary is already answered.
             </div>
-          </>
+          </div>
         ) : (
           <>
-            <Checkin upData={data?.questions}></Checkin>
-            <div className="w-full flex justify-center my-2">
-              <ButtonSecondary>save</ButtonSecondary>
-            </div>
+            {isLoading ? (
+              <>
+                <div className="flex justify-center items-center mt-20">
+                  <Circleloader></Circleloader>
+                </div>
+              </>
+            ) : (
+              <>
+                <Checkin
+                  upData={data?.questions}
+                  onChange={(questions) => {
+                    setResolvedData({
+                      ...data,
+                      questions: questions,
+                    });
+                  }}
+                ></Checkin>
+                <div className="w-full flex justify-center my-2">
+                  <ButtonSecondary onClick={submit}>save</ButtonSecondary>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
