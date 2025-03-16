@@ -171,7 +171,7 @@ const router = createBrowserRouter([
     element: <ForgetPassword></ForgetPassword>,
   },
   {
-    path: '/checkin',
+    path: '/checkin/:encode/:id',
     element: <FormView></FormView>,
   },
 ]);
