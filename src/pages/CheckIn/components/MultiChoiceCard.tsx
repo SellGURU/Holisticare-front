@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Checkbox from '../../../Components/ComboBar/components/CheckBox';
 
 interface MultiChoiceCardProps {
@@ -7,14 +7,21 @@ interface MultiChoiceCardProps {
   index?: number;
   options: Array<string>;
   onSubmit?: (value: string) => void;
+  onChange?: (value: Array<string>) => void;
 }
 const MultiChoice: React.FC<MultiChoiceCardProps> = ({
   options,
   question,
   value,
   index,
+  onChange,
 }) => {
   const [resolvedValue, setResolvedValue] = useState<Array<string>>([value]);
+  useEffect(() => {
+    if (onChange) {
+      onChange(resolvedValue.filter((el) => el != ''));
+    }
+  }, [resolvedValue]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">

@@ -1,5 +1,5 @@
 /* eslint-disable no-constant-condition */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface CheckBoxCardProps {
   question: string;
@@ -7,6 +7,7 @@ interface CheckBoxCardProps {
   index?: number;
   options: Array<string>;
   onSubmit?: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
 const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
@@ -14,8 +15,14 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
   question,
   value,
   index,
+  onChange,
 }) => {
   const [resolvedValue, setResolvedValue] = useState(value);
+  useEffect(() => {
+    if (onChange) {
+      onChange(resolvedValue);
+    }
+  }, [resolvedValue]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">
