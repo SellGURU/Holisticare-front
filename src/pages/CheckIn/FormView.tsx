@@ -9,7 +9,7 @@ import Circleloader from '../../Components/CircleLoader';
 const FormView = () => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
-  const [isComplete,setIsComplete] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   // const formData = {
   //   title: 'Daily Check in',
   //   questions: [
@@ -84,7 +84,7 @@ const FormView = () => {
       } else {
         console.warn('Flutter WebView bridge not available');
       }
-      setIsComplete(true)
+      setIsComplete(true);
       // window.flutter_inappwebview.callHandler('closeWebView')
       // setIsLaoding(false)
     });
@@ -92,11 +92,13 @@ const FormView = () => {
   return (
     <>
       <div className="w-full py-3 px-4 h-svh overflow-y-scroll">
-        {isComplete ?
-        <div className='py-4'>
-          <div className='text-[12px] text-Text-Secondary text-center'>This Questionary is already answered.</div>
-        </div>
-        :
+        {isComplete ? (
+          <div className="py-4">
+            <div className="text-[12px] text-Text-Secondary text-center">
+              This Questionary is already answered.
+            </div>
+          </div>
+        ) : (
           <>
             {isLoading ? (
               <>
@@ -121,7 +123,7 @@ const FormView = () => {
               </>
             )}
           </>
-        }
+        )}
       </div>
     </>
   );
