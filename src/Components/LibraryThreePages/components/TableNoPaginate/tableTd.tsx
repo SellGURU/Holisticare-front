@@ -36,7 +36,11 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
               : row.original?.Instruction}
           </div>
           {row.original?.Instruction.length > 47 && (
-            <Tooltip id={`tooltip-${row.original?.Sup_Id}`} place="top">
+            <Tooltip
+              id={`tooltip-${row.original?.Sup_Id}`}
+              place="top"
+              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+            >
               {row.original?.Instruction}
             </Tooltip>
           )}

@@ -15,6 +15,7 @@ interface TableProps {
   pageType: string;
   onDelete: (id: string) => void;
   onEdit: (row: any) => void;
+  onPreview: (row: any) => void;
 }
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
@@ -32,6 +33,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   pageType,
   onDelete,
   onEdit,
+  onPreview,
 }) => {
   const [data, setData] = useState(tableData);
   useEffect(() => {
@@ -51,6 +53,9 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   };
   const handleEdit = (row: any) => {
     onEdit(row);
+  };
+  const handlePreview = (row: any) => {
+    onPreview(row);
   };
   return (
     <div className="w-full mt-6">
@@ -150,21 +155,13 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     ) : (
                       <div className="flex items-center justify-center w-full gap-2">
                         <img
-                          onClick={() => {}}
+                          onClick={() => handlePreview(row.original)}
                           className="cursor-pointer"
                           src="/icons/eye-blue.svg"
                           alt=""
                         />
                         <img
-                          onClick={() => {
-                            if (pageType === 'Supplement') {
-                              handleEdit(row.original);
-                            } else if (pageType === 'Lifestyle') {
-                              handleEdit(row.original);
-                            } else {
-                              handleEdit(row.original);
-                            }
-                          }}
+                          onClick={() => handleEdit(row.original)}
                           src="/icons/edit-blue.svg"
                           alt=""
                           className="cursor-pointer"
