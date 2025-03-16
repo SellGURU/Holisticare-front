@@ -856,6 +856,12 @@ class Application extends Api {
   static getDietList = () => {
     return this.post('/diet_library/diets_list', {});
   };
+  static getShowBrandInfo = () => {
+    return this.post('/custom_branding/show_brand_info', {});
+  };
+  static saveBrandInfo = (data: any) => {
+    return this.post('/custom_branding/save_brand_info', data);
+  };
 }
 
 export default Application;
