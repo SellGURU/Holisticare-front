@@ -5,6 +5,7 @@ import TextField from '../../../Components/TextField';
 import { RangeCard } from '../../CheckIn/components';
 import CustomSelect from '../../../Components/CustomSelect';
 import Checkbox from '../../../Components/checkbox';
+import { ExerciseRow } from './AddComponents/ExerciseRow';
 interface ExerciseHandlerProps {
   data: Array<any>;
   setData: React.Dispatch<React.SetStateAction<Array<any>>>;
@@ -79,6 +80,9 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
     setVideoFile(null);
   };
   console.log(data);
+  const handleDeleteExercise = (index: number) => {
+    setData((prevData) => prevData.filter((_, i) => i !== index));
+  };
   return (
     <>
       {data.length == 0 ? (
@@ -120,51 +124,11 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
             </thead>
             <tbody className="border border-t-0 border-[#E9F0F2] ">
               {data.map((exercise, index) => (
-                <tr
-                  key={index}
-                  className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b`}
-                >
-                  <td className=" pl-4 py-3 text-xs w-[160px] text-Text-Primary">
-                    {exercise.title}
-                  </td>
-                  <td className="py-3 text-xs text-[#888888] w-[300px] text-center ">
-                    {exercise.instruction}
-                  </td>
-                  <td className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline">
-                    {exercise.youtubeLink}
-                  </td>
-                  {/* <td className="py-2 text-Text-Secondary text-[10px]">
-                    {exercise.file}
-                  </td> */}
-                  <td className="py-3  w-[47px] mx-auto text-center flex justify-center text-Text-Secondary text-[10px]">
-                    <div className="bg-red-100 rounded-full  px-2 h-[18px] flex justify-center">
-                      <div className="flex">
-                        {exercise.score}{' '}
-                        <span className="text-Text-Triarty">/10</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
-                    {exercise.addedOn}
-                  </td>
-                  <td className="py-3 w-[80px] mx-auto text-center flex items-center justify-end  gap-2">
-                    <img
-                      className="cursor-pointer"
-                      src="/icons/eye-blue.svg"
-                      alt=""
-                    />
-                    <img
-                      className="cursor-pointer"
-                      src="/icons/edit-blue.svg"
-                      alt=""
-                    />
-                    <img
-                      className="cursor-pointer"
-                      src="/icons/trash-blue.svg"
-                      alt=""
-                    />
-                  </td>
-                </tr>
+                <ExerciseRow
+                  exercise={exercise}
+                  index={index}
+                  onDelete={() => handleDeleteExercise(index)}
+                />
               ))}
             </tbody>
           </table>
