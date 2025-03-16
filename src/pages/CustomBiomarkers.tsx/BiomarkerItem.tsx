@@ -4,14 +4,16 @@ import StatusBarChart from '../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 import SvgIcon from '../../utils/svgIcon';
 import { sortKeysWithValues } from '../../Components/RepoerAnalyse/Boxs/Help';
 import TooltipText from '../../Components/TooltipText';
+import Select from '../../Components/Select';
 // import EditModal from '../generateTreatmentPlan/components/EditModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BiomarkerItemProps {
   data: any;
+  OnSave: (values: any) => void;
 }
 
-const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
+const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   const [activeEdit, setActiveEdit] = useState(false);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
@@ -30,15 +32,27 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
   };
   const [values, setValues] = useState<Array<any>>([]);
   const [Editvalues, setEditValues] = useState<Array<any>>([]);
-  const [activeBiomarker] = useState(data.age_groups[0]);
-  // const [gender,setGender] = useState(activeBiomarker.gender)
-  // const [ageRange,setAgeRange] = useState(activeBiomarker.min_age+"-"+activeBiomarker.max_age)
+  const [activeBiomarker, setActiveBiomarker] = useState(data.age_groups[0]);
+  const [gender, setGender] = useState(activeBiomarker.gender);
+  const [ageRange, setAgeRange] = useState(
+    activeBiomarker.min_age + '-' + activeBiomarker.max_age,
+  );
   useEffect(() => {
     if (activeBiomarker) {
       setValues(sortKeysWithValues(activeBiomarker.chart_bounds));
     }
   }, [activeBiomarker]);
-  const changeValue = (key: string, index: number, newValue: string) => {
+  useEffect(() => {
+    // alert(gender)
+    setEditValues([]);
+    setActiveBiomarker(
+      data.age_groups.filter(
+        (el: any) =>
+          el.gender == gender && el.min_age + '-' + el.max_age == ageRange,
+      )[0],
+    );
+  }, [gender, ageRange, data]);
+  const changeValue = (key: string, index: number, newValue: number) => {
     setActive('Edited');
     setValues((pre) => {
       const newData = pre.map((el) => {
@@ -62,10 +76,28 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
     });
   };
   const [active, setActive] = useState('Edited');
+  const avilableGenders = () => {
+    const resolvedValues: Array<string> = [];
+    data.age_groups.map((el: any) => {
+      if (!resolvedValues.includes(el.gender)) {
+        resolvedValues.push(el.gender);
+      }
+    });
+    return resolvedValues;
+  };
+  const avilableAges = () => {
+    const resolvedValues: Array<string> = [];
+    data.age_groups.map((el: any) => {
+      if (!resolvedValues.includes(el.min_age + '-' + el.max_age)) {
+        resolvedValues.push(el.min_age + '-' + el.max_age);
+      }
+    });
+    return resolvedValues;
+  };
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex gap-6 w-full min-h-[60px] justify-start items-center">
+        <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
           <div className="w-[200px]">
             <div className="text-[12px] font-medium text-Text-Primary">
               {data.Biomarker}
@@ -75,11 +107,30 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
             </div>
           </div>
           {!activeEdit && (
-            <div className="w-[70%]">
+            <div className="w-[70%] mt-20 mb-3">
               <StatusBarChart justView data={activeBiomarker}></StatusBarChart>
             </div>
           )}
-          <div className="absolute right-4 top-2">
+          <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
+            <div>
+              <Select
+                key="ages"
+                onChange={(val) => {
+                  setAgeRange(val);
+                }}
+                options={avilableAges()}
+              ></Select>
+            </div>
+            <div>
+              <Select
+                key="gender"
+                onChange={(val) => {
+                  setGender(val);
+                }}
+                options={avilableGenders()}
+              ></Select>
+            </div>
+
             {activeEdit ? (
               <>
                 {Editvalues.length > 0 && (
@@ -127,6 +178,53 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
                     <div
                       onClick={() => {
                         setActiveEdit(false);
+                        console.log(values);
+                        const groupsData = data.age_groups.map((el: any) => {
+                          if (
+                            el.gender == gender &&
+                            el.min_age + '-' + el.max_age == ageRange
+                          ) {
+                            return {
+                              ...el,
+                              chart_bounds: {
+                                ...el.chart_bounds,
+                                Ok: {
+                                  label: el.chart_bounds.Ok.label,
+                                  range: [
+                                    values.filter((e) => e.key == 'Ok')[0]
+                                      .value,
+                                  ],
+                                },
+                                'Needs Focus': {
+                                  label: el.chart_bounds['Needs Focus'].label,
+                                  range: [
+                                    values.filter(
+                                      (e) => e.key == 'Needs Focus',
+                                    )[0].value,
+                                  ],
+                                },
+                                Good: {
+                                  label: el.chart_bounds['Good'].label,
+                                  range: [
+                                    values.filter((e) => e.key == 'Good')[0]
+                                      .value,
+                                  ],
+                                },
+                                Excellent: {
+                                  label: el.chart_bounds['Excellent'].label,
+                                  range: [
+                                    values.filter(
+                                      (e) => e.key == 'Excellent',
+                                    )[0].value,
+                                  ],
+                                },
+                              },
+                            };
+                          } else {
+                            return el;
+                          }
+                        });
+                        OnSave({ ...data, age_groups: groupsData });
                       }}
                     >
                       <SvgIcon
@@ -163,7 +261,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
                         type="number"
                         value={values[0].value[0]}
                         onChange={(e) => {
-                          changeValue(el.key, 0, e.target.value);
+                          changeValue(el.key, 0, Number(e.target.value));
                         }}
                         className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
                       />
@@ -204,7 +302,21 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data }) => {
                       type="number"
                       value={values.filter((e) => e.key == el.key)[0].value[1]}
                       onChange={(e) => {
-                        changeValue(el.key, 1, e.target.value);
+                        changeValue(el.key, 1, Number(e.target.value));
+                        if (
+                          sortKeysWithValues(activeBiomarker.chart_bounds)
+                            .length -
+                            1 >
+                          index
+                        ) {
+                          changeValue(
+                            sortKeysWithValues(activeBiomarker.chart_bounds)[
+                              index + 1
+                            ].key,
+                            0,
+                            Number(e.target.value),
+                          );
+                        }
                       }}
                       className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
                     />

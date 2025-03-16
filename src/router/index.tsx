@@ -31,6 +31,9 @@ import CustomBiomarkers from '../pages/CustomBiomarkers.tsx/index.tsx';
 import FormView from '../pages/CheckIn/FormView.tsx';
 import CustomBranding from '../pages/CustomBranding/index.tsx';
 import Activity from '../pages/Library/Activity/index.tsx';
+import Supplement from '../pages/supplement/index.tsx';
+import Lifestyle from '../pages/lifestyle/index.tsx';
+import Diet from '../pages/diet/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -98,6 +101,18 @@ const router = createBrowserRouter([
             path: '/activity',
             element: <Activity></Activity>,
           },
+          {
+            path: '/supplement',
+            element: <Supplement></Supplement>,
+          },
+          {
+            path: '/lifestyle',
+            element: <Lifestyle></Lifestyle>,
+          },
+          {
+            path: '/diet',
+            element: <Diet></Diet>,
+          },
         ],
       },
       {
@@ -156,7 +171,7 @@ const router = createBrowserRouter([
     element: <ForgetPassword></ForgetPassword>,
   },
   {
-    path: '/checkin',
+    path: '/checkin/:encode/:id',
     element: <FormView></FormView>,
   },
 ]);

@@ -63,9 +63,9 @@ export const menus = [
     items: [
       {
         name: 'Diet',
-        url: '/',
+        url: '/diet',
         icon: 'sidemenu-menu-icon-Diet',
-        active: false,
+        active: true,
       },
       {
         name: 'Activity',
@@ -75,15 +75,15 @@ export const menus = [
       },
       {
         name: 'Supplement',
-        url: '/',
+        url: '/supplement',
         icon: 'sidemenu-menu-icon-Supplement',
-        active: false,
+        active: true,
       },
       {
         name: 'Lifestyle',
-        url: '/',
+        url: '/lifestyle',
         icon: 'sidemenu-menu-icon-Lifestyle',
-        active: false,
+        active: true,
       },
     ],
   },
