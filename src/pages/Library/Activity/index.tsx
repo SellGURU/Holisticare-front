@@ -7,9 +7,8 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
-  const [dataList, setDataList] = useState<Array<any>>([])
-    const [showAdd, setShowAdd] = useState(false);
-  ;
+  const [dataList, setDataList] = useState<Array<any>>([]);
+  const [showAdd, setShowAdd] = useState(false);
   return (
     <>
       <div>
@@ -35,16 +34,16 @@ const Activity = () => {
                   onSearch={() => {}}
                 />
               )}
-              {dataList.length > 0 && active == "Exercise" && (
+              {dataList.length > 0 && active == 'Exercise' && (
                 <ButtonSecondary
-                                 onClick={() => {
-                                   setShowAdd(true);
-                                 }}
-                                 ClassName="rounded-full min-w-[180px]"
-                               >
-                                 <img src="./icons/add-square.svg" alt="" />
-                                 Add Exercise
-                               </ButtonSecondary>
+                  onClick={() => {
+                    setShowAdd(true);
+                  }}
+                  ClassName="rounded-full min-w-[180px]"
+                >
+                  <img src="./icons/add-square.svg" alt="" />
+                  Add Exercise
+                </ButtonSecondary>
               )}
             </div>
           </div>
@@ -53,7 +52,12 @@ const Activity = () => {
           {active == 'Activity' ? (
             <ActivityHandler data={dataList}></ActivityHandler>
           ) : (
-            <Exercise data={dataList} setData={setDataList} showAdd={showAdd} setShowAdd={setShowAdd}></Exercise>
+            <Exercise
+              data={dataList}
+              setData={setDataList}
+              showAdd={showAdd}
+              setShowAdd={setShowAdd}
+            ></Exercise>
           )}
         </div>
       </div>

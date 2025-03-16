@@ -277,7 +277,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                   onChange={(e) => setYouTubeLink(e.target.value)}
                 ></TextField>
                 <div className="w-full text-center text-xs font-medium">OR</div>
-                <label className="w-full h-[174px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center gap-3 p-6 cursor-pointer">
+                <label className="w-full h-[174px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
                   <input
                     type="file"
                     accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv"
@@ -287,7 +287,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                   />
 
                   <img src="/icons/upload-test.svg" alt="" />
-                  <div className="text-xs text-[#888888] ">
+                  <div className="text-xs text-[#888888] text-center">
                     Supported formats: MP4, MOV, AVI,MKV,WMV
                   </div>
                   <div className="text-Primary-DeepTeal underline text-xs font-medium">
@@ -302,7 +302,12 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                         {videoFile.name}
                       </div>
                     </div>
-                    <img onClick={()=>setVideoFile(null)} className='cursor-pointer' src="/icons/trash-blue.svg" alt="" />
+                    <img
+                      onClick={() => setVideoFile(null)}
+                      className="cursor-pointer"
+                      src="/icons/trash-blue.svg"
+                      alt=""
+                    />
                   </div>
                 )}
               </div>
