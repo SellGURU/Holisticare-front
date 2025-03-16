@@ -12,7 +12,7 @@ class Mobile extends ApiMobile {
   };
   static fillQuestionary = (data: any) => {
     return this.post('/tasks/save_questionary_respond', data);
-  };  
+  };
 }
 
 export default Mobile;

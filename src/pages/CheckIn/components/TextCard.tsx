@@ -4,7 +4,7 @@ interface TextCardProps {
   value: string;
   placeHolder?: string;
   index?: number;
-  onChange?:(value:string) =>void
+  onChange?: (value: string) => void;
 }
 
 const TextCard: React.FC<TextCardProps> = ({
@@ -12,14 +12,14 @@ const TextCard: React.FC<TextCardProps> = ({
   value,
   placeHolder,
   index,
-  onChange
+  onChange,
 }) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
-    if(onChange){
-      onChange(val)
+    if (onChange) {
+      onChange(val);
     }
-  },[val])
+  }, [val]);
   return (
     <>
       <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full  rounded-[12px] border border-gray-50">

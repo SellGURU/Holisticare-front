@@ -60,7 +60,7 @@ const FormView = () => {
   //   ],
   // };
   const [data, setData] = useState<any>(null);
-  const [resolvedData,setResolvedData] = useState<any>(null)
+  const [resolvedData, setResolvedData] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
     Mobile.getQuestionaryEmpty({
@@ -72,21 +72,21 @@ const FormView = () => {
     });
   }, []);
   const submit = () => {
-    setIsLaoding(true)
+    setIsLaoding(true);
     Mobile.fillQuestionary({
-      encoded_mi:encode,
-      unique_id:id,
-      respond:resolvedData.questions
+      encoded_mi: encode,
+      unique_id: id,
+      respond: resolvedData.questions,
     }).finally(() => {
       if (window.flutter_inappwebview) {
-        window.flutter_inappwebview.callHandler("closeWebView");
+        window.flutter_inappwebview.callHandler('closeWebView');
       } else {
-        console.warn("Flutter WebView bridge not available");
-      }      
+        console.warn('Flutter WebView bridge not available');
+      }
       // window.flutter_inappwebview.callHandler('closeWebView')
       // setIsLaoding(false)
-    })
-  }
+    });
+  };
   return (
     <>
       <div className="w-full py-3 px-4 h-svh overflow-y-scroll">
@@ -98,12 +98,15 @@ const FormView = () => {
           </>
         ) : (
           <>
-            <Checkin upData={data?.questions} onChange={(questions) => {
-              setResolvedData({
-                ...data,
-                questions:questions
-              })
-            }}></Checkin>
+            <Checkin
+              upData={data?.questions}
+              onChange={(questions) => {
+                setResolvedData({
+                  ...data,
+                  questions: questions,
+                });
+              }}
+            ></Checkin>
             <div className="w-full flex justify-center my-2">
               <ButtonSecondary onClick={submit}>save</ButtonSecondary>
             </div>

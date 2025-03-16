@@ -7,21 +7,21 @@ interface MultiChoiceCardProps {
   index?: number;
   options: Array<string>;
   onSubmit?: (value: string) => void;
-  onChange?:(value:Array<string>) =>void
+  onChange?: (value: Array<string>) => void;
 }
 const MultiChoice: React.FC<MultiChoiceCardProps> = ({
   options,
   question,
   value,
   index,
-  onChange
+  onChange,
 }) => {
   const [resolvedValue, setResolvedValue] = useState<Array<string>>([value]);
   useEffect(() => {
-    if(onChange){
-      onChange(resolvedValue.filter((el) =>el!=""))
+    if (onChange) {
+      onChange(resolvedValue.filter((el) => el != ''));
     }
-  },[resolvedValue])    
+  }, [resolvedValue]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">
