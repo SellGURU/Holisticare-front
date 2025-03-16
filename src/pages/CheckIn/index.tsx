@@ -14,15 +14,36 @@ import MultiChoice from './components/MultiChoiceCard';
 
 interface CheckinProps {
   upData?: Array<checkinType>;
+  onChange?:(questions:Array<any>) => void
 }
 
-const Checkin: React.FC<CheckinProps> = ({ upData }) => {
+const Checkin: React.FC<CheckinProps> = ({ upData ,onChange}) => {
   const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
   useEffect(() => {
     if (upData) {
       setCheckinData(upData);
     }
   }, [upData]);
+  useEffect(() => {
+    if(onChange){
+      onChange(chekinData)
+    }
+  },[chekinData])
+  const updateResponse =(index:number,response:any) => {
+    setCheckinData((pre) => {
+      const newData = [...pre]
+      return newData.map((el,ind) => {
+        if(ind == index){
+          return {
+            ...el,
+            response:response
+          }
+        }else {
+          return el
+        }
+      })
+    })
+  }
   const resolveQuestionCard = (item: any, index: number) => {
     switch (item.type) {
       case 'Yes/No':
@@ -49,6 +70,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             placeHolder={item.placeHolder}
             question={item.question}
             value={item.response}
+            onChange={(value) => {
+              updateResponse(index-1,value)
+            }}
           ></TextCard>
         );
       case 'Star Rating':
@@ -94,6 +118,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             question={item.question}
             value={item.response}
             options={item.options}
+            onChange={(value) => {
+              updateResponse(index-1,value)
+            }}            
           ></MultiChoice>
         );
       case 'multiple_choice':
@@ -103,6 +130,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData }) => {
             question={item.question}
             value={item.response}
             options={item.options}
+            onChange={(value) => {
+              updateResponse(index-1,value)
+            }}
           ></CheckBoxCard>
         );
     }
