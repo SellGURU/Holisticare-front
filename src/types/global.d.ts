@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export {}; // Ensures this file is treated as a module
 
 declare global {
   type PackageTypes = 'Free' | 'Pro' | 'Plus';
-
+  interface Window {
+    flutter_inappwebview?: {
+      callHandler: (handlerName: string, ...args: any[]) => void;
+    };
+  }
   type checkinType = {
     order?: number;
     question: string;
