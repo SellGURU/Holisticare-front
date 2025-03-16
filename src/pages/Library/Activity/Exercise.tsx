@@ -83,6 +83,11 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
   const handleDeleteExercise = (index: number) => {
     setData((prevData) => prevData.filter((_, i) => i !== index));
   };
+  const handleUpdateExercise = (updatedExercise: any, index: number) => {
+    setData((prevData) =>
+      prevData.map((exercise, i) => (i === index ? updatedExercise : exercise))
+    );
+  };
   return (
     <>
       {data.length == 0 ? (
@@ -128,13 +133,15 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                   exercise={exercise}
                   index={index}
                   onDelete={() => handleDeleteExercise(index)}
+                  onUpdate={handleUpdateExercise}
+
                 />
               ))}
             </tbody>
           </table>
         </div>
       )}
-      {
+      
         <MainModal isOpen={showAdd} onClose={() => setShowAdd(false)}>
           <div className="w-[1107px] h-[473px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
             <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
@@ -292,7 +299,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
             </div>
           </div>
         </MainModal>
-      }
+      
     </>
   );
 };
