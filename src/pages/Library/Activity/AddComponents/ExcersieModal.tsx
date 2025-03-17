@@ -111,7 +111,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Instruction: instruction,
       type,
       Exercise_Filters: exerciseFilters,
-      'Added on':new  Date().toLocaleDateString(),
+      'Added on': new Date().toLocaleDateString(),
       Exercise_Location: exerciseLocation,
       Exercise_Id: '',
       //   youtubeLink: youTubeLink,

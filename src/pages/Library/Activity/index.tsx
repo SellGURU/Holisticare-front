@@ -22,7 +22,7 @@ const Activity = () => {
   useEffect(() => {
     // Filter exercises based on search query
     const filtered = ExcercisesList.filter((exercise) =>
-      exercise.Title.toLowerCase().includes(searchQuery.toLowerCase())
+      exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredExercises(filtered);
   }, [searchQuery, ExcercisesList]);

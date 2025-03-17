@@ -15,27 +15,32 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
   setShowAdd,
 }) => {
   const handleAddExercise = (newExercise: any) => {
-    Application.addExercise(newExercise).then((res) => {
-      const exerciseId = res.data; 
-  
-      const exerciseWithId = {
-        ...newExercise,
-        Exercise_Id: exerciseId,
-        "Added on": new Date().toLocaleDateString(),
-      };
-  
-      setData((prevData) => [...prevData, exerciseWithId]);
-      setShowAdd(false);
-    }).catch((error) => {
-      console.error("Error adding exercise:", error);
-    });
+    Application.addExercise(newExercise)
+      .then((res) => {
+        const exerciseId = res.data;
+
+        const exerciseWithId = {
+          ...newExercise,
+          Exercise_Id: exerciseId,
+          'Added on': new Date().toLocaleDateString(),
+        };
+
+        setData((prevData) => [...prevData, exerciseWithId]);
+        setShowAdd(false);
+      })
+      .catch((error) => {
+        console.error('Error adding exercise:', error);
+      });
   };
 
   const handleDeleteExercise = (exerciseIdToDelete: string) => {
-    Application.DeleteExercise({Exercise_Id: exerciseIdToDelete}).then(()=>{
-      setData((prevData) => prevData.filter(exercise => exercise.Exercise_Id !== exerciseIdToDelete));
-
-    })
+    Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete }).then(() => {
+      setData((prevData) =>
+        prevData.filter(
+          (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
+        ),
+      );
+    });
   };
 
   const handleUpdateExercise = (updatedExercise: any, index: number) => {
@@ -43,7 +48,6 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
       prevData.map((exercise, i) => (i === index ? updatedExercise : exercise)),
     );
   };
-
 
   return (
     <>
