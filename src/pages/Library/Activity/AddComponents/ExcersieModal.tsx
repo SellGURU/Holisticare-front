@@ -16,11 +16,11 @@ interface FileData {
   Title: string;
   Type: string;
   base64Data?: string;
- // Optional until received from the API
- Content: {
-    url?:string
+  // Optional until received from the API
+  Content: {
+    url?: string;
     file_id?: string;
- }
+  };
 }
 const ExerciseModal: React.FC<ExerciseModalProps> = ({
   isOpen,
@@ -29,26 +29,45 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   exercise = {}, // Default to an empty object for adding
   isEdit,
 }) => {
+  console.log(exercise);
+
   const [title, setTitle] = useState(exercise.Title || '');
   const [description, setDescription] = useState(exercise.Description || '');
   const [instruction, setInstruction] = useState(exercise.Instruction || '');
-  const [type, setType] = useState(exercise.type || '');
-  const [terms, setTerms] = useState(exercise.terms || '');
-  const [condition, setCondition] = useState(exercise.condition || '');
-  const [muscle, setMuscle] = useState(exercise.muscle || '');
-  const [equipment, setEquipment] = useState(exercise.equipment || '');
-  const [level, setLevel] = useState(exercise.level || '');
-  const [location, setLocation] = useState<string[]>(exercise.Exercise_Location || []);
-
-  console.log(location);
-  
+  const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
+  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || '');
+  const [condition, setCondition] = useState(
+    exercise.Exercise_Filters?.Conditions || '',
+  );
+  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || '');
+  const [equipment, setEquipment] = useState(
+    exercise.Exercise_Filters?.Equipment || '',
+  );
+  const [level, setLevel] = useState(exercise.Exercise_Filters?.Level || '');
+  const [location, setLocation] = useState<string[]>(
+    exercise.Exercise_Location || [],
+  );
   const [fileList, setFileList] = useState<FileData[]>(exercise.Files || []);
   const [score, setScore] = useState(exercise.Base_Score || 0);
-
   const [youTubeLink, setYouTubeLink] = useState<string>('');
-
+  const [ConditionsOptions, setConditionsOptions] = useState([]);
+  const [EquipmentOptions, setEquipmentOptions] = useState([]);
+  const [LevelOptions, setLevelOptions] = useState([]);
+  const [MuscleOptions, setMuscleOptions] = useState([]);
+  const [TermsOptions, setTermsOptions] = useState([]);
+  const [TypesOptions, setTypeOptions] = useState([]);
   useEffect(() => {
-    const existingLink = fileList.find(file => file.Type === 'link');
+    Application.getExerciseFilters({}).then((res) => {
+      setConditionsOptions(res.data.Conditions);
+      setEquipmentOptions(res.data.Equipment);
+      setMuscleOptions(res.data.Muscle);
+      setLevelOptions(res.data.Level);
+      setTermsOptions(res.data.Terms);
+      setTypeOptions(res.data.Type);
+    });
+  },[]);
+  useEffect(() => {
+    const existingLink = fileList.find((file) => file.Type === 'link');
     if (existingLink) {
       setYouTubeLink(existingLink.Content.url || '');
     }
@@ -57,7 +76,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setLocation((prev) =>
       prev.includes(value)
         ? prev.filter((loc) => loc !== value)
-        : [...prev, value]
+        : [...prev, value],
     );
   };
   const handleSubmit = () => {
@@ -75,12 +94,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       },
     }));
     const exerciseFilters = {
-      Conditions: condition ? [condition] : [], // Assuming condition is a single string
-      Equipment: equipment ? [equipment] : [], // Assuming equipment is a single string
-      Type: type ? [type] : [], // Assuming type is a single string
-      Terms: terms ? [terms] : [], // Assuming terms is a single string
-      Muscle: muscle ? [muscle] : [], // Assuming muscle is a single string
-      Level: level ? [level] : [], // Assuming level is a single string
+      Conditions: condition ? condition : '', // Assuming condition is a single string
+      Equipment: equipment ? equipment : '', // Assuming equipment is a single string
+      Type: type ? type : '', // Assuming type is a single string
+      Terms: terms ? terms : '', // Assuming terms is a single string
+      Muscle: muscle ? muscle : '', // Assuming muscle is a single string
+      Level: level ? level : '', // Assuming level is a single string
     };
 
     // Construct Exercise_Location array
@@ -113,7 +132,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           Title: file.name,
           Type: file.type,
           base64Data: base64Data,
-          Content: {}
+          Content: {},
         };
 
         // Add file to the list before uploading
@@ -153,22 +172,22 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     }
   };
 
-  console.log(fileList);
-
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
   };
   const handleYouTubeLinkChange = (link: string) => {
     setYouTubeLink(link);
     setFileList((prevList) => {
-      const existingLinkIndex = prevList.findIndex(file => file.Type === 'link');
+      const existingLinkIndex = prevList.findIndex(
+        (file) => file.Type === 'link',
+      );
       const newLink = {
         Title: 'YouTube Link',
         Type: 'link',
         Content: {
           url: link,
           file_id: '',
-        }
+        },
       };
 
       if (existingLinkIndex >= 0) {
@@ -184,22 +203,23 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setTitle(exercise.Title || '');
     setDescription(exercise.Description || '');
     setInstruction(exercise.Instruction || '');
-    setType(exercise.type || '');
-    setTerms(exercise.terms || '');
-    setCondition(exercise.condition || '');
-    setMuscle(exercise.muscle || '');
-    setEquipment(exercise.equipment || '');
-    setLevel(exercise.level || '');
+    setType(exercise.Exercise_Filters?.Type || '');
+    setTerms(exercise.Exercise_Filters?.Terms || '');
+    setCondition(exercise.Exercise_Filters?.Conditions|| '');
+    setMuscle(exercise.Exercise_Filters?.Muscle || '');
+    setEquipment(exercise.Exercise_Filters?.Equipment || '');
+    setLevel(exercise.Exercise_Filters?.Leve || '');
     setLocation(exercise.Exercise_Location || []);
     setFileList(exercise.Files || []);
     setScore(exercise.Base_Score || 0);
+    setYouTubeLink('');
   };
 
   return (
     <MainModal
       isOpen={isOpen}
       onClose={() => {
-       resetForm()
+        resetForm();
         onClose();
       }}
     >
@@ -245,37 +265,37 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <div className="grid grid-cols-2 gap-y-2 gap-x-">
               <CustomSelect
                 placeHolder="Type"
-                options={[]}
+                options={TypesOptions}
                 selectedOption={type}
                 onOptionSelect={(option: string) => setType(option)}
               />
               <CustomSelect
                 placeHolder="Terms"
-                options={[]}
+                options={TermsOptions}
                 selectedOption={terms}
                 onOptionSelect={(option: string) => setTerms(option)}
               />
               <CustomSelect
                 placeHolder="Condition"
-                options={[]}
+                options={ConditionsOptions}
                 selectedOption={condition}
                 onOptionSelect={(option: string) => setCondition(option)}
               />
               <CustomSelect
                 placeHolder="Muscle"
-                options={[]}
+                options={MuscleOptions}
                 selectedOption={muscle}
                 onOptionSelect={(option: string) => setMuscle(option)}
               />
               <CustomSelect
                 placeHolder="Equipment"
-                options={[]}
+                options={EquipmentOptions}
                 selectedOption={equipment}
                 onOptionSelect={(option: string) => setEquipment(option)}
               />
               <CustomSelect
                 placeHolder="Level"
-                options={[]}
+                options={LevelOptions}
                 selectedOption={level}
                 onOptionSelect={(option: string) => setLevel(option)}
               />
@@ -299,8 +319,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
-                    value={youTubeLink}
-
+              value={youTubeLink}
               newStyle
               type="text"
               label="Youtube link"
@@ -349,16 +368,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         </div>
         <div className="flex w-full justify-end gap-4 absolute right-4 bottom-4">
           <div
-            onClick={()=>{
-                resetForm()
-                onClose()
+            onClick={() => {
+              resetForm();
+              onClose();
             }}
             className="text-[#909090] text-sm font-medium cursor-pointer"
           >
             Cancel
           </div>
           <div
-            onClick={handleSubmit}
+            onClick={()=>{
+                resetForm()
+                handleSubmit()
+            }}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
             Add

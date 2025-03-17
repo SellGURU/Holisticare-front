@@ -23,7 +23,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
     setShowEditModal(false);
   };
   console.log(exercise);
-  
+
   return (
     <>
       <MainModal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
@@ -55,7 +55,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
           {exercise.Instruction}
         </td>
         <td className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline">
-          {exercise.Files[0].Title === "YouTube Link" ? "Youtube-Link" : "Uploaded Video"}
+          {exercise.Files[0].Title === 'YouTube Link'
+            ? 'Youtube-Link'
+            : 'Uploaded Video'}
         </td>
         {/* <td className="py-2 text-Text-Secondary text-[10px]">
       {exercise.file}
@@ -63,7 +65,8 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         <td className="py-3  w-[47px] mx-auto text-center flex justify-center text-Text-Secondary text-[10px]">
           <div className="bg-red-100 rounded-full  px-2 h-[18px] flex justify-center">
             <div className="flex">
-              {exercise.Base_Score} <span className="text-Text-Triarty">/10</span>
+              {exercise.Base_Score}{' '}
+              <span className="text-Text-Triarty">/10</span>
             </div>
           </div>
         </td>

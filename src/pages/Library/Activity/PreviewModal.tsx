@@ -35,7 +35,8 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             <div className="text-xs font-medium">Base Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
-                {exercise.Base_Score} <span className="text-Text-Triarty">/10</span>
+                {exercise.Base_Score}{' '}
+                <span className="text-Text-Triarty">/10</span>
               </div>
             </div>
           </div>

@@ -15,10 +15,9 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
   setShowAdd,
 }) => {
   const handleAddExercise = (newExercise: any) => {
-    Application.addExercise(newExercise).then((res)=>{
+    Application.addExercise(newExercise).then((res) => {
       console.log(res);
-      
-    })
+    });
     setData([
       ...data,
       { ...newExercise, addedOn: new Date().toLocaleDateString() },
@@ -74,7 +73,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="border border-t-0 border-[#E9F0F2] ">
+            <tbody className="border border-t-0 border-[#E9F0F2]">
               {data.map((exercise, index) => (
                 <ExerciseRow
                   exercise={exercise}
