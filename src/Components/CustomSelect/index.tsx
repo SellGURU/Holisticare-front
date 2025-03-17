@@ -46,7 +46,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {showSelect && options.length > 0 && (
         <div
           ref={selectRef}
-          className="w-[181px] z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]"
+          className="w-[181px] max-h-[380px] overflow-auto z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]"
         >
           {options.map((option) => (
             <div
