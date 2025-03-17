@@ -871,6 +871,12 @@ class Application extends Api {
   static getExerciseFilters = (data: any) => {
     return this.post('/activity_library/filters', data);
   };
+  static getExercisesList = (data: any) => {
+    return this.post('/activity_library/exercises_list', data);
+  };
+  static DeleteExercise = (data: any) => {
+    return this.post('/activity_library/delete_exercise', data);
+  };
 }
 
 export default Application;

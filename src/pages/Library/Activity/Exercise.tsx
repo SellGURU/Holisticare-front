@@ -16,17 +16,26 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
 }) => {
   const handleAddExercise = (newExercise: any) => {
     Application.addExercise(newExercise).then((res) => {
-      console.log(res);
+      const exerciseId = res.data; 
+  
+      const exerciseWithId = {
+        ...newExercise,
+        Exercise_Id: exerciseId,
+        "Added on": new Date().toLocaleDateString(),
+      };
+  
+      setData((prevData) => [...prevData, exerciseWithId]);
+      setShowAdd(false);
+    }).catch((error) => {
+      console.error("Error adding exercise:", error);
     });
-    setData([
-      ...data,
-      { ...newExercise, addedOn: new Date().toLocaleDateString() },
-    ]);
-    setShowAdd(false);
   };
 
-  const handleDeleteExercise = (index: number) => {
-    setData((prevData) => prevData.filter((_, i) => i !== index));
+  const handleDeleteExercise = (exerciseIdToDelete: string) => {
+    Application.DeleteExercise({Exercise_Id: exerciseIdToDelete}).then(()=>{
+      setData((prevData) => prevData.filter(exercise => exercise.Exercise_Id !== exerciseIdToDelete));
+
+    })
   };
 
   const handleUpdateExercise = (updatedExercise: any, index: number) => {
@@ -34,6 +43,8 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
       prevData.map((exercise, i) => (i === index ? updatedExercise : exercise)),
     );
   };
+
+
   return (
     <>
       {data.length == 0 ? (
@@ -59,7 +70,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
           </div>
         </div>
       ) : (
-        <div className="mt-6">
+        <div className="mt-6 h-[540px] overflow-auto">
           <table className="w-full  ">
             <thead className="w-full">
               <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
@@ -78,7 +89,7 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
                 <ExerciseRow
                   exercise={exercise}
                   index={index}
-                  onDelete={() => handleDeleteExercise(index)}
+                  onDelete={() => handleDeleteExercise(exercise.Exercise_Id)}
                   onUpdate={handleUpdateExercise}
                 />
               ))}

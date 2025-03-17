@@ -71,7 +71,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
           </div>
         </td>
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
-          {exercise.addedOn}
+          {exercise["Added on"]}
         </td>
         <td className="py-3 w-[80px] mx-auto text-center flex items-center justify-end  gap-2">
           {ConfirmDelete ? (

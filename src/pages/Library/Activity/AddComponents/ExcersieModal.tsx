@@ -65,7 +65,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       setTermsOptions(res.data.Terms);
       setTypeOptions(res.data.Type);
     });
-  },[]);
+  }, []);
   useEffect(() => {
     const existingLink = fileList.find((file) => file.Type === 'link');
     if (existingLink) {
@@ -94,12 +94,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       },
     }));
     const exerciseFilters = {
-      Conditions: condition ? condition : '', // Assuming condition is a single string
-      Equipment: equipment ? equipment : '', // Assuming equipment is a single string
-      Type: type ? type : '', // Assuming type is a single string
-      Terms: terms ? terms : '', // Assuming terms is a single string
-      Muscle: muscle ? muscle : '', // Assuming muscle is a single string
-      Level: level ? level : '', // Assuming level is a single string
+      Conditions: condition || '',
+      Equipment: equipment || '',
+      Type: type || '',
+      Terms: terms || '',
+      Muscle: muscle || '',
+      Level: level || '',
     };
 
     // Construct Exercise_Location array
@@ -111,8 +111,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Instruction: instruction,
       type,
       Exercise_Filters: exerciseFilters,
-
+      'Added on':new  Date().toLocaleDateString(),
       Exercise_Location: exerciseLocation,
+      Exercise_Id: '',
       //   youtubeLink: youTubeLink,
       Files: filesData,
       Base_Score: score,
@@ -205,7 +206,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setInstruction(exercise.Instruction || '');
     setType(exercise.Exercise_Filters?.Type || '');
     setTerms(exercise.Exercise_Filters?.Terms || '');
-    setCondition(exercise.Exercise_Filters?.Conditions|| '');
+    setCondition(exercise.Exercise_Filters?.Conditions || '');
     setMuscle(exercise.Exercise_Filters?.Muscle || '');
     setEquipment(exercise.Exercise_Filters?.Equipment || '');
     setLevel(exercise.Exercise_Filters?.Leve || '');
@@ -377,9 +378,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             Cancel
           </div>
           <div
-            onClick={()=>{
-                resetForm()
-                handleSubmit()
+            onClick={() => {
+              resetForm();
+              handleSubmit();
             }}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
