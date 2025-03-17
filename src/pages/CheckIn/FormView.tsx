@@ -3,8 +3,9 @@ import { useParams } from 'react-router-dom';
 import Checkin from '.';
 import { useEffect, useState } from 'react';
 import Mobile from '../../api/mobile';
-import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+// import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import Circleloader from '../../Components/CircleLoader';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 
 const FormView = () => {
   const { encode, id } = useParams();
@@ -74,6 +75,7 @@ const FormView = () => {
   }, []);
   const submit = () => {
     setIsLaoding(true);
+    // window.close();
     Mobile.fillQuestionary({
       encoded_mi: encode,
       unique_id: id,
@@ -91,7 +93,7 @@ const FormView = () => {
   };
   return (
     <>
-      <div className="w-full py-3 px-4 h-svh overflow-y-scroll">
+      <div className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll">
         {isComplete ? (
           <div className="py-4">
             <div className="text-[12px] text-Text-Secondary text-center">
@@ -117,8 +119,11 @@ const FormView = () => {
                     });
                   }}
                 ></Checkin>
-                <div className="w-full flex justify-center my-2">
-                  <ButtonSecondary onClick={submit}>save</ButtonSecondary>
+                <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
+                  <div className='w-full px-6'>
+                    <ButtonPrimary ClassName='w-full' onClick={submit}>save</ButtonPrimary>
+
+                  </div>
                 </div>
               </>
             )}
