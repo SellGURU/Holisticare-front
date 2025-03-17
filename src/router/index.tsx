@@ -177,7 +177,7 @@ const router = createBrowserRouter([
   {
     path: '/questionary/:encode/:id',
     element: <FormView></FormView>,
-  },  
+  },
 ]);
 
 export default router;

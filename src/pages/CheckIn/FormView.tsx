@@ -120,9 +120,10 @@ const FormView = () => {
                   }}
                 ></Checkin>
                 <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
-                  <div className='w-full px-6'>
-                    <ButtonPrimary ClassName='w-full' onClick={submit}>save</ButtonPrimary>
-
+                  <div className="w-full px-6">
+                    <ButtonPrimary ClassName="w-full" onClick={submit}>
+                      save
+                    </ButtonPrimary>
                   </div>
                 </div>
               </>
