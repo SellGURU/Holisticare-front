@@ -8,6 +8,8 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
   const [dataList, setDataList] = useState<Array<any>>([]);
+  console.log(dataList);
+  
   const [showAdd, setShowAdd] = useState(false);
   return (
     <>
