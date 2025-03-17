@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useState } from 'react';
 import InformationStep from './AddComponents/informationStep';
 import ExersiceStep from './AddComponents/ExersiceStep';
 
@@ -6,14 +7,33 @@ interface AddActivityProps {
   onClose: () => void;
 }
 
-const AddActivity: React.FC<AddActivityProps> = ({ onClose }) => {
+const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
   const [step, setStep] = useState(0);
   const nextStep = () => {
-    if (step == 0) {
+    if (step === 0) {
       setStep(step + 1);
     } else {
       console.log('save');
     }
+  };
+  const [addData, setAddData] = useState({
+    title: '',
+    description: '',
+    score: 0,
+    instruction: '',
+    type: '',
+    terms: '',
+    condition: '',
+    muscle: '',
+    equipment: '',
+    level: '',
+    location: '',
+  });
+  const updateAddData = (key: keyof typeof addData, value: any) => {
+    setAddData((prevTheme) => ({
+      ...prevTheme,
+      [key]: value,
+    }));
   };
   return (
     <>
@@ -25,13 +45,13 @@ const AddActivity: React.FC<AddActivityProps> = ({ onClose }) => {
         </div>
         <div className="w-full h-[1px] bg-Boarder my-3"></div>
         <div className="min-h-[300px]">
-          {step == 0 ? (
-            <InformationStep></InformationStep>
+          {step === 0 ? (
+            <InformationStep addData={addData} updateAddData={updateAddData} />
           ) : (
-            <ExersiceStep></ExersiceStep>
+            <ExersiceStep />
           )}
         </div>
-        <div className="flex justify-end items-center gap-3">
+        <div className="flex justify-end items-center gap-3 mb-1 mt-4">
           <div
             onClick={() => {
               onClose();
@@ -44,7 +64,7 @@ const AddActivity: React.FC<AddActivityProps> = ({ onClose }) => {
             onClick={nextStep}
             className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
           >
-            {step == 0 ? 'Next' : 'Save'}
+            {step === 0 ? 'Next' : 'Save'}
           </div>
         </div>
       </div>

@@ -1,15 +1,21 @@
-import { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FC, useState } from 'react';
 import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import AddActivity from './AddActivity';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface ActivityHandlerProps {
   data: Array<any>;
 }
 
-const ActivityHandler: React.FC<ActivityHandlerProps> = ({ data }) => {
+const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
   const [showAdd, setShowAdd] = useState(false);
+  const handleCloseShowAdd = () => {
+    setShowAdd(false);
+  };
+  const handleOpenShowAdd = () => {
+    setShowAdd(true);
+  };
 
   return (
     <>
@@ -24,9 +30,7 @@ const ActivityHandler: React.FC<ActivityHandlerProps> = ({ data }) => {
                 </div>
                 <div className="flex justify-center mt-4">
                   <ButtonSecondary
-                    onClick={() => {
-                      setShowAdd(true);
-                    }}
+                    onClick={handleOpenShowAdd}
                     ClassName="rounded-full min-w-[180px]"
                   >
                     <img src="./icons/add-square.svg" alt="" />
@@ -38,17 +42,8 @@ const ActivityHandler: React.FC<ActivityHandlerProps> = ({ data }) => {
           </div>
         </>
       )}
-      <MainModal
-        isOpen={showAdd}
-        onClose={() => {
-          setShowAdd(false);
-        }}
-      >
-        <AddActivity
-          onClose={() => {
-            setShowAdd(false);
-          }}
-        ></AddActivity>
+      <MainModal isOpen={showAdd} onClose={handleCloseShowAdd}>
+        <AddActivity onClose={handleCloseShowAdd} />
       </MainModal>
     </>
   );
