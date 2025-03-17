@@ -1,6 +1,7 @@
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { ExerciseRow } from './AddComponents/ExerciseRow';
 import ExerciseModal from './AddComponents/ExcersieModal';
+import Application from '../../../api/app';
 interface ExerciseHandlerProps {
   data: Array<any>;
   setData: React.Dispatch<React.SetStateAction<Array<any>>>;
@@ -14,6 +15,10 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
   setShowAdd,
 }) => {
   const handleAddExercise = (newExercise: any) => {
+    Application.addExercise(newExercise).then((res)=>{
+      console.log(res);
+      
+    })
     setData([
       ...data,
       { ...newExercise, addedOn: new Date().toLocaleDateString() },
