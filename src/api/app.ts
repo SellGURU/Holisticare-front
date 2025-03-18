@@ -862,6 +862,21 @@ class Application extends Api {
   static saveBrandInfo = (data: any) => {
     return this.post('/custom_branding/save_brand_info', data);
   };
+  static saveExcerciseFille = (data: any) => {
+    return this.post('/activity_library/save_exercise_file', data);
+  };
+  static addExercise = (data: any) => {
+    return this.post('/activity_library/add_exercise', data);
+  };
+  static getExerciseFilters = (data: any) => {
+    return this.post('/activity_library/filters', data);
+  };
+  static getExercisesList = (data: any) => {
+    return this.post('/activity_library/exercises_list', data);
+  };
+  static DeleteExercise = (data: any) => {
+    return this.post('/activity_library/delete_exercise', data);
+  };
 }
 
 export default Application;
