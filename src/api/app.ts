@@ -874,8 +874,15 @@ class Application extends Api {
   static getExercisesList = (data: any) => {
     return this.post('/activity_library/exercises_list', data);
   };
+
   static DeleteExercise = (data: any) => {
     return this.post('/activity_library/delete_exercise', data);
+  };
+  static updateExercise = (data: any) => {
+    return this.post('/activity_library/edit_exercise', data);
+  };
+  static showExerciseFille = (data: any) => {
+    return this.post('/activity_library/show_exercise_file', data);
   };
 }
 
