@@ -55,7 +55,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
           {exercise.Instruction}
         </td>
         <td className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline">
-          {exercise.Files[0].Title === 'YouTube Link'
+          {exercise?.Files[0]?.Title === 'YouTube Link'
             ? 'Youtube-Link'
             : 'Uploaded Video'}
         </td>
@@ -79,7 +79,10 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
               Sure?
               <img
                 className="cursor-pointer"
-                onClick={onDelete}
+                onClick={()=>{
+                  onDelete()
+                  setConfirmDelete(false)
+                }}
                 src="/icons/confirm-tick-circle.svg"
                 alt=""
               />
