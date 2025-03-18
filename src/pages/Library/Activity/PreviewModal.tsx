@@ -58,8 +58,11 @@ const [isLoading, setIsLoading] = useState(false);
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
       <div className="bg-white rounded-2xl p-4 w-[500px] h-[440px] shadow-800 relative">
-        <div className="w-full flex justify-between items-center border-b border-Gray-50 pb-2">
-          {exercise.Title}
+        <div className="w-full flex justify-between items-center border-b border-Gray-50 pb-2" title={exercise.Title.length > 30 ? exercise.Title : undefined} 
+        >
+          {exercise.Title.length > 30
+            ? `${exercise.Title.substring(0, 30)}...`
+            : exercise.Title}
           <img
             onClick={onEdit}
             className="size-6 cursor-pointer"
