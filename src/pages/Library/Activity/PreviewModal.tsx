@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MainModal } from '../../../Components';
 import Application from '../../../api/app';
+import Circleloader from '../../../Components/CircleLoader';
 
 interface ViewExerciseModalProps {
   isOpen: boolean;
@@ -17,31 +18,42 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
 }) => {
   console.log(exercise);
   const [videoData, setVideoData] = useState<
-    { file_id: string; base64: string }[]
-  >([]);
-
+  { file_id: string; base64: string; url?: string }[]
+>([]);
+const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchVideos = async () => {
+      setIsLoading(true); 
       const videoFiles = exercise.Files.filter(
-        (file: any) => file.Type === 'Video',
+        (file: any) => file.Type === 'Video' || file.Type === 'link'
       );
-      const videoPromises = videoFiles.map((file: any) =>
-        Application.showExerciseFille({ file_id: file.Content.file_id }).then(
-          (res) => ({
+
+      const videoPromises = videoFiles.map((file: any) => {
+        if (file.Type === 'Video') {
+          return Application.showExerciseFille({ file_id: file.Content.file_id }).then(
+            (res) => ({
+              file_id: file.Content.file_id,
+              base64: res.data.base_64_data,
+            })
+          );
+        } else if (file.Type === 'link') {
+          return Promise.resolve({
             file_id: file.Content.file_id,
-            base64: res.data.base_64_data,
-          }),
-        ),
-      );
+            url: file.Content.url, // Use the URL directly for link type
+          });
+        }
+      });
+
       const videos = await Promise.all(videoPromises);
       setVideoData(videos);
+      setIsLoading(false);
     };
 
-    if (exercise.Files && exercise.Files.length > 0) {
+    if (isOpen && exercise.Files && exercise.Files.length > 0) {
       fetchVideos();
     }
-  }, [exercise.Files]);
-  console.log(exercise);
+  }, [isOpen, exercise.Files]);
+
 
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
@@ -76,18 +88,24 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
           <div className="flex w-full justify-between items-start gap-3">
             <div className="text-xs font-medium">File</div>
             <div className="h-[200px] overflow-auto flex flex-col gap-1">
-              {videoData.map((video) => (
-                <video
-                  key={video.file_id}
-                  className="rounded-xl border border-Gray-50"
-                  controls
-                  width="370px"
-                  height="200px"
-                  src={video.base64}
-                >
-                  Your browser does not support the video tag.
-                </video>
-              ))}
+            {isLoading ? (
+                <div className="w-[370px] h-[200px] flex justify-center items-center">
+                  <Circleloader />
+                </div>
+              ) : (
+                videoData.map((video) => (
+                  <video
+                    key={video.file_id}
+                    className="rounded-xl border border-Gray-50"
+                    controls
+                    width="370px"
+                    height="200px"
+                    src={video.base64 || video.url}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ))
+              )}
             </div>
           </div>
         </div>

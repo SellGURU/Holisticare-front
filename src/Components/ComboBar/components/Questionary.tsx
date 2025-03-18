@@ -150,7 +150,7 @@ export const Questionary = () => {
           <div>
             <div>
               {questionsData.questions[activeCardNumber - 1]?.options?.map(
-                (el: any, index:number) => {
+                (el: any, index: number) => {
                   const optionLabel = String.fromCharCode(65 + index);
 
                   return (
@@ -176,7 +176,8 @@ export const Questionary = () => {
                       <div
                         className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response == el ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                       >
-                         <span className='mr-1'>{optionLabel}.</span>{el}
+                        <span className="mr-1">{optionLabel}.</span>
+                        {el}
                       </div>
                     </div>
                   );
@@ -377,7 +378,7 @@ export const Questionary = () => {
                   Cancel
                 </ButtonPrimary>
                 <ButtonPrimary
-                disabled={selectedFormIDs.length == 0}
+                  disabled={selectedFormIDs.length == 0}
                   onClick={() => {
                     handleAddQuestionnaires();
                     // Application.AddQuestionary({
@@ -393,7 +394,7 @@ export const Questionary = () => {
             </div>
           </>
         )}
-        {tryComplete &&  (
+        {tryComplete && (
           <div className="bg-white select-none relative border mt-4 py-3 px-3  min-h-[292px] rounded-[12px] border-gray-50">
             <div className="flex justify-between items-center">
               <div className="text-xs text-Text-Primary">
@@ -471,11 +472,16 @@ export const Questionary = () => {
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
               <div className="flex w-[95px] justify-center items-center gap-3">
-                <img className='cursor-pointer' onClick={() => {
+                <img
+                  className="cursor-pointer"
+                  onClick={() => {
                     if (activeCard > 1) {
                       setActiveCard(activeCard - 1);
                     }
-                  }} src="/icons/arrow-circle-left.svg" alt="" />
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
@@ -493,11 +499,16 @@ export const Questionary = () => {
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
-                <img className='cursor-pointer rotate-180'  onClick={() => {
+                <img
+                  className="cursor-pointer rotate-180"
+                  onClick={() => {
                     if (activeCard < questionsFormData.questions.length) {
                       setActiveCard(activeCard + 1);
                     }
-                  }} src="/icons/arrow-circle-left.svg" alt="" />
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
                 {/* <div
                   onClick={() => {
                     if (activeCard < questionsFormData.questions.length) {
@@ -565,7 +576,8 @@ export const Questionary = () => {
                   </div>
                 </>
               ) : (
-                data?.length < 1 && !tryAdd && (
+                data?.length < 1 &&
+                !tryAdd && (
                   <div className="flex flex-col items-center justify-center h-[250px] ">
                     <img
                       className=" object-contain"

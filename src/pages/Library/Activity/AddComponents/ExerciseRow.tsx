@@ -66,7 +66,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         <td className="py-3 text-xs text-[#888888] w-[300px] text-center ">
           {exercise.Instruction}
         </td>
-        <td className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline">
+        <td onClick={()=>{
+          setViewModal(true)
+        }} className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline">
           {exercise?.Files[0]?.Title === 'YouTube Link'
             ? 'Youtube-Link'
             : 'Uploaded Video'}
