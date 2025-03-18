@@ -27,8 +27,8 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
     templateData ? templateData.questions : [],
   );
   const resolveFormTitle = () => {
-    if(templateData == null && mode =="Add") {
-      return "Create Custom "
+    if (templateData == null && mode == 'Add') {
+      return 'Create Custom ';
     }
     switch (mode) {
       case 'Add':
@@ -74,9 +74,9 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   };
   const [titleForm, setTitleForm] = useState('');
   const isDisable = () => {
-    if(templateData ==null){
-      if(titleForm.length == 0){
-        return true
+    if (templateData == null) {
+      if (titleForm.length == 0) {
+        return true;
       }
     }
     return false;
@@ -85,7 +85,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   const addCheckinForm = () => {
     setIsSaveLoading(true);
     onSave({
-      title:templateData!=null? templateData.title:titleForm,
+      title: templateData != null ? templateData.title : titleForm,
       questions: questions,
     });
     // FormsApi.addCheckin({
@@ -111,7 +111,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
-          {templateData == null && mode =="Add" &&
+          {templateData == null && mode == 'Add' && (
             <div className="w-full mt-6">
               <TextField
                 type="text"
@@ -121,10 +121,10 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
                 value={titleForm}
                 onChange={(e) => setTitleForm(e.target.value)}
               />
-            </div>           
-          }
+            </div>
+          )}
           <div className="w-full text-xs text-Text-Primary font-medium mt-6">
-            {templateData ==null?'Questions':'Initial Questionnaire'}
+            {templateData == null ? 'Questions' : 'Initial Questionnaire'}
           </div>
           <div className="flex flex-col w-full mt-3 items-center justify-center">
             {resolveBoxRender()}

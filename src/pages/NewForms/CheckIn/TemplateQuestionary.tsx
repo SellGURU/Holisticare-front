@@ -82,22 +82,17 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   onselect(null);
                 }}
               >
-                <div className='flex justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]'>
+                <div className="flex justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
                   <img src={'./icons/EmptyStateForm.svg'} alt="" />
-
                 </div>
                 <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
-                  <img
-                    src="/icons/book-green.svg"
-                    alt=""
-                    className="w-4 h-4"
-                  />
+                  <img src="/icons/book-green.svg" alt="" className="w-4 h-4" />
                   Custom Form
                   {/* {el.title} */}
                 </div>
                 <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
-                  {/* {el.description} */}
-                  A personalized form to track users' activities
+                  {/* {el.description} */}A personalized form to track users'
+                  activities
                 </div>
                 <div className="w-full">
                   <div className="w-[93px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
