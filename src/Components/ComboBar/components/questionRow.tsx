@@ -157,7 +157,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   Assigned to client!
                 </span>
               </div>
-              <div className="text-[10px] text-[#B0B0B0]">
+              <div className=" invisible text-[10px] text-[#B0B0B0]">
                 {' '}
                 {countdown > 0 ? `00:0${countdown}S` : null}
               </div>
@@ -273,7 +273,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
         {isView && (
           <div className="mt-2 select-none">
             <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-              <div className="text-[12px] font-medium">
+              <div className="text-[12px]  font-medium">
                 {viewQuestienry.questions[activeCard - 1].question}
               </div>
             </div>
