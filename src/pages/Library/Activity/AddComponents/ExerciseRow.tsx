@@ -6,7 +6,7 @@ interface ExerciseRowProps {
   exercise: any;
   index: number;
   onDelete: () => void;
-  onUpdate: (updatedExercise: any, index: number) => void;
+  onUpdate: (updatedExercise: any) => void;
 }
 export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   exercise,
@@ -19,7 +19,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   const [showEditModal, setShowEditModal] = useState(false);
 
   const handleUpdate = (updatedExercise: any) => {
-    onUpdate(updatedExercise, index);
+    onUpdate(updatedExercise);
     setShowEditModal(false);
   };
   console.log(exercise);
@@ -78,16 +78,16 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?
               <img
-                className="cursor-pointer"
-                onClick={()=>{
-                  onDelete()
-                  setConfirmDelete(false)
+                className="cursor-pointer size-4"
+                onClick={() => {
+                  onDelete();
+                  setConfirmDelete(false);
                 }}
                 src="/icons/confirm-tick-circle.svg"
                 alt=""
               />
               <img
-                className="cursor-pointer"
+                className="cursor-pointer size-4"
                 onClick={() => setConfirmDelete(false)}
                 src="/icons/cansel-close-circle.svg"
                 alt=""
@@ -97,7 +97,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <>
               <img
                 onClick={() => setViewModal(true)}
-                className="cursor-pointer"
+                className="cursor-pointer size-4"
                 src="/icons/eye-blue.svg"
                 alt=""
               />

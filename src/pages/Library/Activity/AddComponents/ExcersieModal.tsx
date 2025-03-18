@@ -111,9 +111,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Instruction: instruction,
       type,
       Exercise_Filters: exerciseFilters,
-      'Added on': new Date().toLocaleDateString(),
+      'Added on': new Date(),
       Exercise_Location: exerciseLocation,
-      Exercise_Id: '',
+      Exercise_Id: exercise.Exercise_Id,
       //   youtubeLink: youTubeLink,
       Files: filesData,
       Base_Score: score,
@@ -384,7 +384,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             }}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
-            Add
+            {
+              isEdit ? "Save" : "Add"
+            }
+            
           </div>
         </div>
       </div>
