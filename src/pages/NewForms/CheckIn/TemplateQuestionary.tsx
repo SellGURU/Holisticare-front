@@ -32,7 +32,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
   };
   return (
     <>
-      <div className="flex flex-col justify-between bg-white w-[664px] rounded-[20px] p-4">
+      <div className="flex flex-col justify-between bg-white w-[864px] rounded-[20px] p-4">
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
@@ -76,46 +76,31 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   </>
                 );
               })}
-              {/* <div
-                className="flex flex-col opacity-40 items-center w-[193px]"
-                onClick={() => {}}
+              <div
+                className="flex flex-col items-center h-[352px] w-[193px] cursor-pointer"
+                onClick={() => {
+                  onselect(null);
+                }}
               >
-                <img src="/images/forms/PAR-Q.png" alt="" />
-                <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
-                  <img
-                    src="/icons/activity-green.svg"
-                    alt=""
-                    className="w-4 h-4"
-                  />
-                  PAR-Q
+                <div className="flex justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
+                  <img src={'./icons/EmptyStateForm.svg'} alt="" />
                 </div>
-                <div className="text-[10px] text-Text-Quadruple mt-2">
-                  A form to access the user`s physical activity readiness
+                <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
+                  <img src="/icons/book-green.svg" alt="" className="w-4 h-4" />
+                  Custom Form
+                  {/* {el.title} */}
+                </div>
+                <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">
+                  {/* {el.description} */}A personalized form to track users'
+                  activities
                 </div>
                 <div className="w-full">
-                  <div className="w-[64px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
-                    11 Questions
+                  <div className="w-[93px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
+                    {/* {el.questions.length} Questions */}
+                    Unlimited Questions
                   </div>
                 </div>
               </div>
-              <div
-                className="flex flex-col items-center opacity-40 w-[193px] "
-                onClick={() => {}}
-              >
-                <img src="/images/forms/feedback-Form.png" alt="" />
-                <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
-                  <img src="/icons/star-green.svg" alt="" className="w-4 h-4" />
-                  Feedback Form
-                </div>
-                <div className="text-[10px] text-Text-Quadruple mt-2">
-                  A form to collect user`s feedback and satisfaction
-                </div>
-                <div className="w-full">
-                  <div className="w-[64px] h-[16px] rounded-xl bg-Primary-DeepTeal bg-opacity-10 text-[8px] text-Primary-DeepTeal flex items-center justify-center mt-2">
-                    08 Questions
-                  </div>
-                </div>
-              </div> */}
             </div>
           )}
         </div>
