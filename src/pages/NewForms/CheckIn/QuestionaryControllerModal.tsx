@@ -5,6 +5,7 @@ import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
 import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
+import TextField from '../../../Components/TextField';
 
 interface QuestionaryControllerModalProps {
   editId?: string;
@@ -26,6 +27,9 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
     templateData ? templateData.questions : [],
   );
   const resolveFormTitle = () => {
+    if (templateData == null && mode == 'Add') {
+      return 'Create Custom ';
+    }
     switch (mode) {
       case 'Add':
         return 'Feedback';
@@ -68,15 +72,20 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
         );
     }
   };
-  const [, setTitleForm] = useState('');
+  const [titleForm, setTitleForm] = useState('');
   const isDisable = () => {
+    if (templateData == null) {
+      if (titleForm.length == 0) {
+        return true;
+      }
+    }
     return false;
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
     setIsSaveLoading(true);
     onSave({
-      title: templateData.title,
+      title: templateData != null ? templateData.title : titleForm,
       questions: questions,
     });
     // FormsApi.addCheckin({
@@ -102,8 +111,20 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
+          {templateData == null && mode == 'Add' && (
+            <div className="w-full mt-6">
+              <TextField
+                type="text"
+                name="formtitle"
+                label="Form Title"
+                placeholder="Enter form title..."
+                value={titleForm}
+                onChange={(e) => setTitleForm(e.target.value)}
+              />
+            </div>
+          )}
           <div className="w-full text-xs text-Text-Primary font-medium mt-6">
-            Initial Questionnaire
+            {templateData == null ? 'Questions' : 'Initial Questionnaire'}
           </div>
           <div className="flex flex-col w-full mt-3 items-center justify-center">
             {resolveBoxRender()}

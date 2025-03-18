@@ -6,12 +6,14 @@ import AddModalLibraryTreePages from './components/AddModal';
 import Application from '../../api/app';
 import TableNoPaginateForLibraryThreePages from './components/TableNoPaginate';
 import PreviewModalLibraryTreePages from './components/PreviewModal';
+import Circleloader from '../CircleLoader';
 
 interface LibraryThreePagesProps {
   pageType: string;
 }
 
 const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
+  const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const handleChangeSearch = (value: any) => {
@@ -35,16 +37,19 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   const getSupplements = () => {
     Application.getSupplementList().then((res) => {
       setTableData(res.data);
+      setLoading(false);
     });
   };
   const getLifestyles = () => {
     Application.getLifestyleList().then((res) => {
       setTableData(res.data);
+      setLoading(false);
     });
   };
   const getDiets = () => {
     Application.getDietList().then((res) => {
       setTableData(res.data);
+      setLoading(false);
     });
   };
   useEffect(() => {
@@ -110,6 +115,11 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   );
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <HeaderLibraryTreePages
         pageType={pageType}
         tableDataLength={tableData.length}
