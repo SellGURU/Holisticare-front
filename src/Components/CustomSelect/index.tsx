@@ -17,10 +17,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const [showSelect, setShowSelect] = useState(false);
   const selectButRef = useRef(null);
   const selectRef = useRef(null);
-useModalAutoClose({
-  refrence:selectRef,
-  close: ()=>setShowSelect(false)
-})
+  useModalAutoClose({
+    refrence: selectRef,
+    close: () => setShowSelect(false),
+  });
   return (
     <div className="flex flex-col relative min-w-[181px] text-xs font-medium">
       {label && <label className="mb-1">{label}</label>}

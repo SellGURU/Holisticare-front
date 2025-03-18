@@ -16,17 +16,22 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   onEdit,
 }) => {
   console.log(exercise);
-  const [videoData, setVideoData] = useState<{ file_id: string; base64: string }[]>([]);
-
+  const [videoData, setVideoData] = useState<
+    { file_id: string; base64: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const videoFiles = exercise.Files.filter((file: any) => file.Type === 'Video');
+      const videoFiles = exercise.Files.filter(
+        (file: any) => file.Type === 'Video',
+      );
       const videoPromises = videoFiles.map((file: any) =>
-        Application.showExerciseFille({ file_id: file.Content.file_id }).then((res) => ({
-          file_id: file.Content.file_id,
-          base64: res.data.base_64_data,
-        }))
+        Application.showExerciseFille({ file_id: file.Content.file_id }).then(
+          (res) => ({
+            file_id: file.Content.file_id,
+            base64: res.data.base_64_data,
+          }),
+        ),
       );
       const videos = await Promise.all(videoPromises);
       setVideoData(videos);
@@ -37,7 +42,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
     }
   }, [exercise.Files]);
   console.log(exercise);
-  
+
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
       <div className="bg-white rounded-2xl p-4 w-[500px] h-[440px] shadow-800 relative">
@@ -70,8 +75,8 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
           </div>
           <div className="flex w-full justify-between items-start gap-3">
             <div className="text-xs font-medium">File</div>
-            <div className='h-[200px] overflow-auto flex flex-col gap-1'>
-            {videoData.map((video) => (
+            <div className="h-[200px] overflow-auto flex flex-col gap-1">
+              {videoData.map((video) => (
                 <video
                   key={video.file_id}
                   className="rounded-xl border border-Gray-50"
