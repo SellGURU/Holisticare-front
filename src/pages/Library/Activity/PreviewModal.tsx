@@ -18,24 +18,24 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
 }) => {
   console.log(exercise);
   const [videoData, setVideoData] = useState<
-  { file_id: string; base64: string; url?: string }[]
->([]);
-const [isLoading, setIsLoading] = useState(false);
+    { file_id: string; base64: string; url?: string }[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchVideos = async () => {
-      setIsLoading(true); 
+      setIsLoading(true);
       const videoFiles = exercise.Files.filter(
-        (file: any) => file.Type === 'Video' || file.Type === 'link'
+        (file: any) => file.Type === 'Video' || file.Type === 'link',
       );
 
       const videoPromises = videoFiles.map((file: any) => {
         if (file.Type === 'Video') {
-          return Application.showExerciseFille({ file_id: file.Content.file_id }).then(
-            (res) => ({
-              file_id: file.Content.file_id,
-              base64: res.data.base_64_data,
-            })
-          );
+          return Application.showExerciseFille({
+            file_id: file.Content.file_id,
+          }).then((res) => ({
+            file_id: file.Content.file_id,
+            base64: res.data.base_64_data,
+          }));
         } else if (file.Type === 'link') {
           return Promise.resolve({
             file_id: file.Content.file_id,
@@ -54,11 +54,12 @@ const [isLoading, setIsLoading] = useState(false);
     }
   }, [isOpen, exercise.Files]);
 
-
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
       <div className="bg-white rounded-2xl p-4 w-[500px] h-[440px] shadow-800 relative">
-        <div className="w-full flex justify-between items-center border-b border-Gray-50 pb-2" title={exercise.Title.length > 30 ? exercise.Title : undefined} 
+        <div
+          className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
+          title={exercise.Title.length > 30 ? exercise.Title : undefined}
         >
           {exercise.Title.length > 30
             ? `${exercise.Title.substring(0, 30)}...`
@@ -91,7 +92,7 @@ const [isLoading, setIsLoading] = useState(false);
           <div className="flex w-full justify-between items-start gap-3">
             <div className="text-xs font-medium">File</div>
             <div className="h-[200px] overflow-auto flex flex-col gap-1">
-            {isLoading ? (
+              {isLoading ? (
                 <div className="w-[370px] h-[200px] flex justify-center items-center">
                   <Circleloader />
                 </div>
