@@ -16,6 +16,11 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
       console.log('save');
     }
   };
+  const backStep = () => {
+    if (step === 1) {
+      setStep(step - 1);
+    }
+  };
   const [addData, setAddData] = useState({
     title: '',
     description: '',
@@ -37,7 +42,9 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
   };
   return (
     <>
-      <div className="w-full bg-white min-w-[780px] p-4 rounded-[16px] h-full">
+      <div
+        className={`bg-white ${step === 0 ? 'w-[784px]' : 'w-[884px]'} p-4 rounded-[16px] h-full`}
+      >
         <div className="flex w-full  justify-start">
           <div className="text-[14px] font-medium text-Text-Primary">
             Add Activity
@@ -51,20 +58,32 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
             <ExersiceStep />
           )}
         </div>
-        <div className="flex justify-end items-center gap-3 mb-1 mt-4">
-          <div
-            onClick={() => {
-              onClose();
-            }}
-            className="text-Disable text-[14px] cursor-pointer font-medium"
-          >
-            Cancel
-          </div>
-          <div
-            onClick={nextStep}
-            className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
-          >
-            {step === 0 ? 'Next' : 'Save'}
+        <div
+          className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
+        >
+          {step !== 0 && (
+            <div
+              onClick={backStep}
+              className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
+            >
+              <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
+              Back
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <div
+              onClick={onClose}
+              className="text-Disable text-[14px] cursor-pointer font-medium"
+            >
+              Cancel
+            </div>
+            <div
+              onClick={nextStep}
+              className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
+            >
+              {step === 0 ? 'Next' : 'Save'}
+            </div>
           </div>
         </div>
       </div>
