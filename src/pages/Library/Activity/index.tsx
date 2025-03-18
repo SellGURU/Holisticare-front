@@ -7,26 +7,26 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Application from '../../../api/app';
 
 const Activity = () => {
-  useEffect(() => {
-    Application.getExercisesList({}).then((res) => {
-      setExcercisesList(res.data);
-      setFilteredExercises(res.data);
-    });
-  }, []);
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
   const [dataList] = useState<Array<any>>([]);
   const [ExcercisesList, setExcercisesList] = useState<Array<any>>([]);
-  const [filteredExercises, setFilteredExercises] = useState<Array<any>>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAdd, setShowAdd] = useState(false);
-  useEffect(() => {
-    // Filter exercises based on search query
-    const filtered = ExcercisesList.filter((exercise) =>
+  const getFilteredExercises = () => {
+    return ExcercisesList.filter((exercise) =>
       exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-    setFilteredExercises(filtered);
-  }, [searchQuery, ExcercisesList]);
-
+  };
+  useEffect(() => {
+    if (active == 'Exercise') {
+      getExercisesList();
+    }
+  }, [active]);
+  const getExercisesList = () => {
+    Application.getExercisesList({}).then((res) => {
+      setExcercisesList(res.data);
+    });
+  };
   return (
     <>
       <div>
@@ -71,8 +71,8 @@ const Activity = () => {
             <ActivityHandler data={dataList}></ActivityHandler>
           ) : (
             <Exercise
-              data={filteredExercises}
-              setData={setExcercisesList}
+              data={getFilteredExercises()}
+              onAdd={getExercisesList}
               showAdd={showAdd}
               setShowAdd={setShowAdd}
             ></Exercise>

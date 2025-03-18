@@ -4,28 +4,20 @@ import ExerciseModal from './AddComponents/ExcersieModal';
 import Application from '../../../api/app';
 interface ExerciseHandlerProps {
   data: Array<any>;
-  setData: React.Dispatch<React.SetStateAction<Array<any>>>;
+  onAdd: () => void;
   showAdd: boolean;
   setShowAdd: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const Exercise: React.FC<ExerciseHandlerProps> = ({
   data,
-  setData,
+  onAdd,
   showAdd,
   setShowAdd,
 }) => {
   const handleAddExercise = (newExercise: any) => {
     Application.addExercise(newExercise)
-      .then((res) => {
-        const exerciseId = res.data;
-
-        const exerciseWithId = {
-          ...newExercise,
-          Exercise_Id: exerciseId,
-          'Added on': new Date().toLocaleDateString(),
-        };
-
-        setData((prevData) => [...prevData, exerciseWithId]);
+      .then(() => {
+        onAdd();
         setShowAdd(false);
       })
       .catch((error) => {
@@ -35,18 +27,22 @@ export const Exercise: React.FC<ExerciseHandlerProps> = ({
 
   const handleDeleteExercise = (exerciseIdToDelete: string) => {
     Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete }).then(() => {
-      setData((prevData) =>
-        prevData.filter(
-          (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
-        ),
-      );
+      // setData((prevData) =>
+      //   prevData.filter(
+      //     (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
+      //   ),
+      // );
+      onAdd();
     });
   };
 
-  const handleUpdateExercise = (updatedExercise: any, index: number) => {
-    setData((prevData) =>
-      prevData.map((exercise, i) => (i === index ? updatedExercise : exercise)),
-    );
+  const handleUpdateExercise = (updatedExercise: any) => {
+    Application.updateExercise(updatedExercise).then(() => {
+      onAdd();
+    });
+    // setData((prevData) =>
+    //   prevData.map((exercise, i) => (i === index ? updatedExercise : exercise)),
+    // );
   };
 
   return (
