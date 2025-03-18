@@ -11,6 +11,7 @@ const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [isChanged, setIsChanged] = useState(false);
   useEffect(() => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
@@ -22,8 +23,10 @@ const CustomBiomarkers = () => {
       });
   }, []);
   useEffect(() => {
-    if (biomarkers.length > 0) {
-      BiomarkersApi.saveBiomarkersList(biomarkers);
+    if (biomarkers.length > 0 && isChanged) {
+      BiomarkersApi.saveBiomarkersList({
+        new_ranges: biomarkers,
+      });
     }
   }, [biomarkers]);
   const filteredBiomarkers = () => {
@@ -89,6 +92,7 @@ const CustomBiomarkers = () => {
             return (
               <BioMarkerBox
                 onSave={(values) => {
+                  setIsChanged(true);
                   setBiomarkers((pre) => {
                     const resolved = pre.map((ol) => {
                       if (ol['Benchmark areas'] == values['Benchmark areas']) {

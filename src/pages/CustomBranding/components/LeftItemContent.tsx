@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useRef } from 'react';
+import { FC, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import SpinnerLoader from '../../../Components/SpinnerLoader';
 
 interface LeftItemContentProps {
   customTheme: {
@@ -10,6 +11,7 @@ interface LeftItemContentProps {
     selectedImage: string | null;
     name: string;
     headLine: string;
+    lastUpdate: string;
   };
   handleImageUpload: (event: any) => void;
   defaultPrimaryColor: string;
@@ -24,6 +26,8 @@ interface LeftItemContentProps {
       | 'selectedImage',
     value: any,
   ) => void;
+  onSave: () => void;
+  loading: boolean;
 }
 
 const LeftItemContent: FC<LeftItemContentProps> = ({
@@ -33,10 +37,36 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   defaultSecondaryColor,
   handleResetTheme,
   updateCustomTheme,
+  onSave,
+  loading,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorSecondaryInputRef = useRef<HTMLInputElement | null>(null);
   const colorPrimaryInputRef = useRef<HTMLInputElement | null>(null);
+  const [errorHeadLine, setErrorHeadLine] = useState('');
+  const [errorName, setErrorName] = useState('');
+  const handleChangeHeadLine = (e: any) => {
+    const value = e.target.value;
+    if (value.length < 3 || value.length > 25) {
+      setErrorHeadLine('Must be between 3 and 25 characters.');
+    } else {
+      setErrorHeadLine('');
+    }
+    if (value.length <= 25) {
+      updateCustomTheme('headLine', value);
+    }
+  };
+  const handleChangeName = (e: any) => {
+    const value = e.target.value;
+    if (value.length < 3 || value.length > 15) {
+      setErrorName('Must be between 3 and 15 characters.');
+    } else {
+      setErrorName('');
+    }
+    if (value.length <= 15) {
+      updateCustomTheme('name', value);
+    }
+  };
 
   return (
     <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
@@ -47,7 +77,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               Brand Elements
             </div>
             <div className="text-Text-Quadruple text-[10px]">
-              Last Update: 2024/02/02
+              Last Update: {customTheme.lastUpdate.substring(0, 10)}
             </div>
           </div>
           <div className="text-[10px] text-Text-Quadruple mt-1">
@@ -125,13 +155,18 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 </div>
               </Tooltip>
             </div>
-            <input
-              type="text"
-              className="w-[200px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
-              placeholder="Enter chosen name..."
-              value={customTheme.name}
-              onChange={(e) => updateCustomTheme('name', e.target.value)}
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                className={`w-[200px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+                placeholder="Enter chosen name..."
+                value={customTheme.name}
+                onChange={handleChangeName}
+              />
+              {errorName && (
+                <div className="text-Red text-[8px] mt-1 ml-3">{errorName}</div>
+              )}
+            </div>
           </div>
           <div className="flex items-center justify-between mt-6">
             <div className="flex items-center">
@@ -156,13 +191,20 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 </div>
               </Tooltip>
             </div>
-            <input
-              type="text"
-              className="w-[200px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
-              placeholder="Enter your headline..."
-              value={customTheme.headLine}
-              onChange={(e) => updateCustomTheme('headLine', e.target.value)}
-            />
+            <div className="flex flex-col">
+              <input
+                type="text"
+                className={`w-[200px] h-[28px] border ${errorHeadLine ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+                placeholder="Enter your headline..."
+                value={customTheme.headLine}
+                onChange={handleChangeHeadLine}
+              />
+              {errorHeadLine && (
+                <div className="text-Red text-[8px] mt-1 ml-3">
+                  {errorHeadLine}
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center justify-between mt-6">
             <div className="text-xs font-medium text-Text-Primary">
@@ -229,10 +271,17 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
           Back to Default
         </div>
         <ButtonSecondary
-          ClassName={`rounded-[20px] ml-10 shadow-Btn ${customTheme.name && customTheme.headLine && customTheme.primaryColor && customTheme.secondaryColor ? '' : '!bg-Disable'}`}
+          ClassName={`rounded-[20px] !w-[160px] ml-10 text-nowrap shadow-Btn ${customTheme.name ? '' : '!bg-Disable'}`}
+          onClick={onSave}
         >
-          <img src="/icons/tick-square.svg" alt="" />
-          Apply Changes
+          {loading ? (
+            <SpinnerLoader />
+          ) : (
+            <>
+              <img src="/icons/tick-square.svg" alt="" />
+              Apply Changes
+            </>
+          )}
         </ButtonSecondary>
       </div>
     </div>

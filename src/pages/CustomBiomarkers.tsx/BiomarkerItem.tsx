@@ -44,6 +44,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   }, [activeBiomarker]);
   useEffect(() => {
     // alert(gender)
+    console.log(sortKeysWithValues(activeBiomarker.chart_bounds));
     setEditValues([]);
     setActiveBiomarker(
       data.age_groups.filter(
@@ -52,7 +53,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
       )[0],
     );
   }, [gender, ageRange, data]);
-  const changeValue = (key: string, index: number, newValue: number) => {
+  const changeValue = (key: string, index: number, newValue: any) => {
     setActive('Edited');
     setValues((pre) => {
       const newData = pre.map((el) => {
@@ -188,36 +189,45 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                               ...el,
                               chart_bounds: {
                                 ...el.chart_bounds,
-                                Ok: {
-                                  label: el.chart_bounds.Ok.label,
-                                  range: [
-                                    values.filter((e) => e.key == 'Ok')[0]
-                                      .value,
-                                  ],
-                                },
-                                'Needs Focus': {
-                                  label: el.chart_bounds['Needs Focus'].label,
-                                  range: [
-                                    values.filter(
-                                      (e) => e.key == 'Needs Focus',
-                                    )[0].value,
-                                  ],
-                                },
-                                Good: {
-                                  label: el.chart_bounds['Good'].label,
-                                  range: [
-                                    values.filter((e) => e.key == 'Good')[0]
-                                      .value,
-                                  ],
-                                },
-                                Excellent: {
-                                  label: el.chart_bounds['Excellent'].label,
-                                  range: [
-                                    values.filter(
-                                      (e) => e.key == 'Excellent',
-                                    )[0].value,
-                                  ],
-                                },
+                                ...(el.chart_bounds.Ok && {
+                                  Ok: {
+                                    label: el.chart_bounds.Ok.label,
+                                    range: [
+                                      values.filter((e) => e.key == 'Ok')[0]
+                                        .value,
+                                    ],
+                                  },
+                                }),
+                                ...(el.chart_bounds['Needs Focus'] && {
+                                  'Needs Focus': {
+                                    label:
+                                      el.chart_bounds['Needs Focus']?.label,
+                                    range: [
+                                      values.filter(
+                                        (e) => e.key == 'Needs Focus',
+                                      )[0].value,
+                                    ],
+                                  },
+                                }),
+                                ...(el.chart_bounds['Good'] && {
+                                  Good: {
+                                    label: el.chart_bounds['Good']?.label,
+                                    range: [
+                                      values.filter((e) => e.key == 'Good')[0]
+                                        .value,
+                                    ],
+                                  },
+                                }),
+                                ...(el.chart_bounds['Excellent'] && {
+                                  Excellent: {
+                                    label: el.chart_bounds['Excellent']?.label,
+                                    range: [
+                                      values.filter(
+                                        (e) => e.key == 'Excellent',
+                                      )[0].value,
+                                    ],
+                                  },
+                                }),
                               },
                             };
                           } else {
@@ -249,80 +259,161 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
           </div>
         </div>
         {activeEdit && (
-          <div className="flex justify-center items-center px-4 mt-10">
-            {sortKeysWithValues(activeBiomarker.chart_bounds).map(
-              (el, index: number) => {
-                return (
-                  <>
-                    {/* <div className='w-[48px] h-6 rounded-[8px] bg-white overflow-hidden border border-gray-50 mx-1'>
-                    </div> */}
-                    {index == 0 && (
-                      <input
-                        type="number"
-                        value={values[0].value[0]}
-                        onChange={(e) => {
-                          changeValue(el.key, 0, Number(e.target.value));
-                        }}
-                        className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
-                      />
-                    )}
-                    <div
-                      className={` relative border-l-2 flex-grow border-white  h-[8px] ${index == sortKeysWithValues(activeBiomarker.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
-                      style={{
-                        backgroundColor: resolveColor(el.key),
-                      }}
-                    >
-                      <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
-                        <TooltipText
-                          tooltipValue={
-                            activeBiomarker.chart_bounds[el.key].label +
-                            ' ' +
-                            '(' +
-                            el.value[0] +
-                            (el.value[1] != undefined
-                              ? ' - ' + el.value[1]
-                              : '') +
-                            ')'
-                          }
+          <div
+            className={`flex justify-center items-center px-4 ${sortKeysWithValues(activeBiomarker.chart_bounds)[0].value.length > 1 ? 'mt-10' : 'mt-3 mb-8'} `}
+          >
+            {sortKeysWithValues(activeBiomarker.chart_bounds)[0].value.length >
+            1 ? (
+              <>
+                {sortKeysWithValues(activeBiomarker.chart_bounds).map(
+                  (el, index: number) => {
+                    return (
+                      <>
+                        {/* <div className='w-[48px] h-6 rounded-[8px] bg-white overflow-hidden border border-gray-50 mx-1'>
+                      </div> */}
+                        {index == 0 && (
+                          <input
+                            type="number"
+                            value={values[0].value[0]}
+                            onChange={(e) => {
+                              changeValue(el.key, 0, Number(e.target.value));
+                            }}
+                            className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
+                          />
+                        )}
+                        <div
+                          className={` relative border-l-2 flex-grow border-white  h-[8px] ${index == sortKeysWithValues(activeBiomarker.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+                          style={{
+                            backgroundColor: resolveColor(el.key),
+                          }}
                         >
-                          <>
-                            {activeBiomarker.chart_bounds[el.key].label +
-                              ' ' +
-                              '(' +
-                              el.value[0] +
-                              (el.value[1] != undefined
-                                ? ' - ' + el.value[1]
-                                : '') +
-                              ')'}
-                          </>
-                        </TooltipText>
-                      </div>
-                    </div>
-                    <input
-                      type="number"
-                      value={values.filter((e) => e.key == el.key)[0].value[1]}
-                      onChange={(e) => {
-                        changeValue(el.key, 1, Number(e.target.value));
-                        if (
-                          sortKeysWithValues(activeBiomarker.chart_bounds)
-                            .length -
-                            1 >
-                          index
-                        ) {
-                          changeValue(
-                            sortKeysWithValues(activeBiomarker.chart_bounds)[
-                              index + 1
-                            ].key,
-                            0,
-                            Number(e.target.value),
-                          );
-                        }
-                      }}
-                      className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
-                    />
-                  </>
-                );
-              },
+                          <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
+                            <TooltipText
+                              tooltipValue={
+                                activeBiomarker.chart_bounds[el.key].label +
+                                ' ' +
+                                '(' +
+                                el.value[0] +
+                                (el.value[1] != undefined
+                                  ? ' - ' + el.value[1]
+                                  : '') +
+                                ')'
+                              }
+                            >
+                              <>
+                                {activeBiomarker.chart_bounds[el.key].label +
+                                  ' ' +
+                                  '(' +
+                                  el.value[0] +
+                                  (el.value[1] != undefined
+                                    ? ' - ' + el.value[1]
+                                    : '') +
+                                  ')'}
+                              </>
+                            </TooltipText>
+                          </div>
+                        </div>
+                        <input
+                          type="number"
+                          value={
+                            values.filter((e) => e.key == el.key)[0].value[1]
+                          }
+                          onChange={(e) => {
+                            changeValue(el.key, 1, Number(e.target.value));
+                            if (
+                              sortKeysWithValues(activeBiomarker.chart_bounds)
+                                .length -
+                                1 >
+                              index
+                            ) {
+                              changeValue(
+                                sortKeysWithValues(
+                                  activeBiomarker.chart_bounds,
+                                )[index + 1].key,
+                                0,
+                                Number(e.target.value),
+                              );
+                            }
+                          }}
+                          className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
+                        />
+                      </>
+                    );
+                  },
+                )}
+              </>
+            ) : (
+              <>
+                {sortKeysWithValues(activeBiomarker.chart_bounds).map(
+                  (el, index: number) => {
+                    return (
+                      <>
+                        {/* <div className='w-[48px] h-6 rounded-[8px] bg-white overflow-hidden border border-gray-50 mx-1'>
+                      </div> */}
+                        <div
+                          className={` relative border-l-2 flex-grow border-white  h-[8px] ${index == sortKeysWithValues(activeBiomarker.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+                          style={{
+                            backgroundColor: resolveColor(el.key),
+                          }}
+                        >
+                          <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
+                            <TooltipText
+                              tooltipValue={
+                                activeBiomarker.chart_bounds[el.key].label +
+                                ' ' +
+                                '(' +
+                                el.value[0] +
+                                (el.value[1] != undefined
+                                  ? ' - ' + el.value[1]
+                                  : '') +
+                                ')'
+                              }
+                            >
+                              <>
+                                {activeBiomarker.chart_bounds[el.key].label +
+                                  ' ' +
+                                  '(' +
+                                  el.value[0] +
+                                  (el.value[1] != undefined
+                                    ? ' - ' + el.value[1]
+                                    : '') +
+                                  ')'}
+                              </>
+                            </TooltipText>
+                          </div>
+                          <div className=" absolute top-3  w-full flex justify-center">
+                            <input
+                              type="text"
+                              value={
+                                values.filter((e) => e.key == el.key)[0]
+                                  .value[0]
+                              }
+                              onChange={(e) => {
+                                changeValue(el.key, 0, e.target.value);
+                                // if (
+                                //   sortKeysWithValues(activeBiomarker.chart_bounds)
+                                //     .length -
+                                //     1 >
+                                //   index
+                                // ) {
+                                //   changeValue(
+                                //     sortKeysWithValues(activeBiomarker.chart_bounds)[
+                                //       index + 1
+                                //     ].key,
+                                //     0,
+                                //     Number(e.target.value),
+                                //   );
+                                // }
+                              }}
+                              className="w-[100px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    );
+                  },
+                )}
+              </>
             )}
           </div>
         )}
