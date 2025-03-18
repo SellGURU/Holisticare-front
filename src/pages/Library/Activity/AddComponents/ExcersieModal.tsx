@@ -122,28 +122,63 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     onClose();
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  // const handleFileChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  // ) => {
+  //   const files = event.target.files;
+  //   if (files) {
+  //     Array.from(files).forEach(async (file) => {
+  //       const base64Data = await convertToBase64(file);
+  //       const fileData: FileData = {
+  //         Title: file.name,
+  //         Type: file.type,
+  //         base64Data: base64Data,
+  //         Content: {},
+  //       };
+
+  //       // Add file to the list before uploading
+  //       setFileList((prevList) => [...prevList, fileData]);
+
+  //       uploadFile(fileData);
+  //     });
+  //   }
+  // };
+  const handleFileUpload = async (event: any) => {
     const files = event.target.files;
     if (files) {
-      Array.from(files).forEach(async (file) => {
-        const base64Data = await convertToBase64(file);
-        const fileData: FileData = {
-          Title: file.name,
-          Type: file.type,
-          base64Data: base64Data,
-          Content: {},
-        };
+      const file = files[0];
+      const base64Data = await convertToBase64(file);
+      const fileData: FileData = {
+        Title: file.name,
+        Type: file.type,
+        base64Data: base64Data,
+        Content: {},
+      };
 
-        // Add file to the list before uploading
-        setFileList((prevList) => [...prevList, fileData]);
+      // Start the progress bar
+      setUploadProgress(10); // Start at 10% to indicate the start of the process
+      const incrementProgress = setInterval(() => {
+        setUploadProgress((prevProgress) => {
+          if (prevProgress >= 90) {
+            clearInterval(incrementProgress);
+            return prevProgress;
+          }
+          return prevProgress + 10; // Increment progress during the wait
+        });
+      }, 500);
 
-        uploadFile(fileData);
-      });
+      // Upload the file and wait for the response
+      try {
+        await uploadFile(fileData);
+      } finally {
+        clearInterval(incrementProgress);
+      }
     }
   };
 
+  const handleCancelUpload = () => {
+    setUploadProgress(0);
+  };
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -163,16 +198,16 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
       const { file_id } = response.data;
       // Update file with fileId after uploading
-      setFileList((prevList) =>
-        prevList.map((file) =>
-          file.Title === fileData.Type ? { ...file, file_id } : file,
-        ),
-      );
+      setFileList((prevList) => [
+        ...prevList,
+        { ...fileData, Content: { ...fileData.Content, file_id } },
+      ]);
+      setUploadProgress(100); // Set progress to 100% once complete
     } catch (error) {
       console.error('Error uploading file:', error);
+      setUploadProgress(0); // Reset progress on error
     }
   };
-
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
   };
@@ -215,6 +250,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setScore(exercise.Base_Score || 0);
     setYouTubeLink('');
   };
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   return (
     <MainModal
@@ -331,10 +367,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <label className="w-full h-[174px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
               <input
                 type="file"
-                accept="image/*,video/mp4,video/mov,video/avi,video/mkv,video/wmv"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv"
                 style={{ display: 'none' }}
                 id="video-upload"
-                onChange={handleFileChange}
+                onChange={handleFileUpload}
+
+                // onChange={handleFileChange}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-xs text-[#888888] text-center">
@@ -344,26 +382,63 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 Upload Video
               </div>
             </label>
-            <div className="flex flex-col gap-1 h-[75px] overflow-auto">
-              {fileList
-                .filter((file) => file.Type !== 'link') // Filter out YouTube links
-                .map((file) => (
-                  <div
-                    key={file.Type}
-                    className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
-                  >
-                    <div className="flex gap-2 items-start">
-                      <img src="/icons/pngwing.com (4) 2.svg" alt="" />
-                      <div className="text-xs font-semibold">{file.Title}</div>
+            <div className="overflow-auto h-[75px]">
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
+                  <div className="w-full flex justify-between">
+                    <div>
+                      <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                        Uploading...
+                      </div>
+                      <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                        {uploadProgress}% • 30 seconds remaining
+                      </div>
                     </div>
                     <img
-                      onClick={() => removeFile(file.Title)}
+                      onClick={handleCancelUpload}
                       className="cursor-pointer"
-                      src="/icons/trash-blue.svg"
+                      src="/icons/close.svg"
                       alt=""
                     />
                   </div>
-                ))}
+                  <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                    <div
+                      className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                      style={{ width: uploadProgress + '%' }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-col gap-1 h-[75px] overflow-auto">
+                {fileList
+                  .filter((file) => file.Type !== 'link') // Filter out YouTube links
+                  .map((file) => (
+                    <div
+                      key={file.Type}
+                      className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
+                    >
+                      <div className="flex gap-2 items-start">
+                        <img src="/icons/pngwing.com (4) 2.svg" alt="" />
+                        <div
+                          className="text-xs font-semibold select-none"
+                          title={
+                            file.Title.length > 20 ? file.Title : undefined
+                          } // Tooltip for long titles
+                        >
+                          {file.Title.length > 20
+                            ? `${file.Title.substring(0, 20)}...`
+                            : file.Title}
+                        </div>{' '}
+                      </div>
+                      <img
+                        onClick={() => removeFile(file.Title)}
+                        className="cursor-pointer size-4"
+                        src="/icons/trash-blue.svg"
+                        alt=""
+                      />
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>
@@ -384,10 +459,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             }}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
-            {
-              isEdit ? "Save" : "Add"
-            }
-            
+            {isEdit ? 'Save' : 'Add'}
           </div>
         </div>
       </div>

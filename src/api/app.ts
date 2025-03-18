@@ -881,6 +881,9 @@ class Application extends Api {
   static updateExercise = (data: any) => {
     return this.post('/activity_library/edit_exercise', data);
   };
+  static showExerciseFille = (data: any) => {
+    return this.post('/activity_library/show_exercise_file', data);
+  };
 }
 
 export default Application;
