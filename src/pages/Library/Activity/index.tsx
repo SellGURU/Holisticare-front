@@ -1,14 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Toggle from '../../../Components/Toggle';
 import SearchBox from '../../../Components/SearchBox';
 import ActivityHandler from './ActivityHandler';
 import { Exercise } from './Exercise';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import Application from '../../../api/app';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
-  const [dataList, setDataList] = useState<Array<any>>([]);
+  const [dataList] = useState<Array<any>>([]);
+  const [ExcercisesList, setExcercisesList] = useState<Array<any>>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAdd, setShowAdd] = useState(false);
+  const getFilteredExercises = () => {
+    return ExcercisesList.filter((exercise) =>
+      exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  };
+  useEffect(() => {
+    if (active == 'Exercise') {
+      getExercisesList();
+    }
+  }, [active]);
+  const getExercisesList = () => {
+    Application.getExercisesList({}).then((res) => {
+      setExcercisesList(res.data);
+    });
+  };
   return (
     <>
       <div>
@@ -27,14 +45,14 @@ const Activity = () => {
               {active}
             </div>
             <div className="flex items-center gap-2">
-              {dataList.length > 0 && (
+              {ExcercisesList.length > 0 && (
                 <SearchBox
                   ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
                   placeHolder={`Search in ${active.toLowerCase()}...`}
-                  onSearch={() => {}}
+                  onSearch={(query) => setSearchQuery(query)}
                 />
               )}
-              {dataList.length > 0 && active == 'Exercise' && (
+              {ExcercisesList.length > 0 && active == 'Exercise' && (
                 <ButtonSecondary
                   onClick={() => {
                     setShowAdd(true);
@@ -53,8 +71,8 @@ const Activity = () => {
             <ActivityHandler data={dataList}></ActivityHandler>
           ) : (
             <Exercise
-              data={dataList}
-              setData={setDataList}
+              data={getFilteredExercises()}
+              onAdd={getExercisesList}
               showAdd={showAdd}
               setShowAdd={setShowAdd}
             ></Exercise>

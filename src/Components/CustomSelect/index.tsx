@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 interface CustomSelectProps {
   label?: string;
   options: Array<string>;
@@ -16,7 +17,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const [showSelect, setShowSelect] = useState(false);
   const selectButRef = useRef(null);
   const selectRef = useRef(null);
-
+  useModalAutoClose({
+    refrence: selectRef,
+    close: () => setShowSelect(false),
+  });
   return (
     <div className="flex flex-col relative min-w-[181px] text-xs font-medium">
       {label && <label className="mb-1">{label}</label>}
@@ -46,7 +50,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {showSelect && options.length > 0 && (
         <div
           ref={selectRef}
-          className="w-[181px] z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]"
+          className="w-[181px] max-h-[380px] overflow-auto z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]"
         >
           {options.map((option) => (
             <div
