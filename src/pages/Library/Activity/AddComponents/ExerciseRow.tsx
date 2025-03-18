@@ -79,9 +79,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
               Sure?
               <img
                 className="cursor-pointer"
-                onClick={()=>{
-                  onDelete()
-                  setConfirmDelete(false)
+                onClick={() => {
+                  onDelete();
+                  setConfirmDelete(false);
                 }}
                 src="/icons/confirm-tick-circle.svg"
                 alt=""
