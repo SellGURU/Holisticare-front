@@ -96,7 +96,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?
               <img
-                className="cursor-pointer size-4"
+                className="cursor-pointer"
                 onClick={() => {
                   onDelete();
                   setConfirmDelete(false);
