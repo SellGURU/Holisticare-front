@@ -32,6 +32,7 @@ interface PerformanceChartProps {
   dataPoints: number[]; // Data for the line chart
   statusBar: any;
   mode?: string;
+  isStringValues?: boolean;
 }
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({
@@ -39,6 +40,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   mode,
   dataPoints,
   statusBar,
+  isStringValues,
 }) => {
   // const maxVal = resolveMaxValue(statusBar);
   const [themeColor, setThemeColor] = useState(
@@ -47,6 +49,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   const [, setXLabelColor] = useState(
     themeColor === 'dark' ? '#FFFFFFDE' : '#262626',
   );
+  console.log(statusBar);
+  console.log(sortKeysWithValues(statusBar));
   useEffect(() => {
     const handleThemeChange = () => {
       const newThemeColor = localStorage.getItem('theme-base') || 'light';
@@ -262,11 +266,28 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         <div style={{ width: '100%', height: '90px' }}>
           {' '}
           {/* Set container height to 64px */}
-          <Line
-            data={data}
-            options={options}
-            plugins={[backgroundLayerPlugin]}
-          />
+          {isStringValues ? (
+            <>
+              {sortKeysWithValues(statusBar).map((el) => {
+                return (
+                  <>
+                    <div className="w-full h-[30px]  ">
+                      <div
+                        className="w-full h-full opacity-15"
+                        style={{ backgroundColor: resolveColor(el.key) }}
+                      ></div>
+                    </div>
+                  </>
+                );
+              })}
+            </>
+          ) : (
+            <Line
+              data={data}
+              options={options}
+              plugins={[backgroundLayerPlugin]}
+            />
+          )}
         </div>
       )}
     </>
