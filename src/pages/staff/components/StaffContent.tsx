@@ -1,26 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MemberCard from './MemberCard';
 import SelectBoxStaff from './SelectBox';
+import Application from '../../../api/app';
+import Circleloader from '../../../Components/CircleLoader';
 
 const StaffContent = () => {
-  const [members] = useState([
-    {
-      isOnline: true,
-      fullname: 'Isabella Moore',
-      email: 'Samplemail3@gmail.com',
-      roll: 'Staff',
-      star: '8.5',
-    },
-    {
-      isOnline: false,
-      fullname: 'Isabella Moore',
-      email: 'Samplemail3@gmail.com',
-      roll: 'Staff',
-      star: '8.5',
-    },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [members, setMembers] = useState([]);
+  const getStaffs = () => {
+    Application.getStaffList().then((res) => {
+      setMembers(res.data);
+      setLoading(false);
+    });
+  };
+  useEffect(() => {
+    getStaffs();
+  }, []);
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="w-full flex items-center justify-between mt-4">
         <div className="w-[404px] h-[60px] rounded-2xl py-2 px-4 bg-white shadow-100 flex items-center">
           <img src="/images/staff/icon-clinic-profile.png" alt="" />

@@ -25,27 +25,24 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo }) => {
             <div className="size-[48px] xs:size-[58px] md:size-[64px] rounded-full relative">
               <img
                 className="w-full h-full rounded-full object-cover"
-                onError={(e: any) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=`;
-                }}
-                src={`https://ui-avatars.com/api/?name=`}
+                src={memberInfo?.picture}
                 alt=""
               />
               <div
-                className={`absolute bottom-0 left-0 w-[46px] h-[16px] text-[8px] text-white rounded-[10px] flex items-center justify-center ${memberInfo?.isOnline ? 'bg-Green' : 'bg-Disable'}`}
+                className={`absolute bottom-0 left-0 w-[46px] h-[16px] text-[8px] text-white rounded-[10px] flex items-center justify-center ${memberInfo?.online ? 'bg-Green' : 'bg-Disable'}`}
               >
-                {memberInfo?.isOnline ? 'Online' : 'Offline'}
+                {memberInfo?.online ? 'Online' : 'Offline'}
               </div>
             </div>
             <div className="flex flex-col justify-center gap-1 ml-2">
               <div className="text-Text-Primary text-xs font-medium">
-                {memberInfo?.fullname}
+                {memberInfo?.user_name}
               </div>
               <div className="text-Text-Quadruple text-[10px]">
                 {memberInfo?.email}
               </div>
               <div className="text-Text-Quadruple text-[10px]">
-                {memberInfo?.roll}
+                {memberInfo?.role}
               </div>
             </div>
           </div>
