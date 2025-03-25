@@ -16,8 +16,6 @@ interface DetiledAnalyseProps {
 
 const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
-  console.log(data);
-  console.log(refrences);
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
@@ -257,7 +255,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             </div>
                             <div className="  cursor-pointer ">
                               <div
-                                className={` ${isChartDataEmpty && 'opacity-50 pointer-events-none'} flex gap-2 justify-end items-center`}
+                                className={`  flex gap-2 justify-end items-center`}
                               >
                                 <div
                                   className={`TextStyle-Headline-6 text-nowrap text-Text-Primary `}
@@ -315,6 +313,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className="mt-0 relative">
                           {active && (
                             <StatusChart
+                              isStringValues={isChartDataEmpty}
                               mode={
                                 active.chart_bounds['Needs Focus'].length > 1 &&
                                 active.chart_bounds['Ok'].length > 1
