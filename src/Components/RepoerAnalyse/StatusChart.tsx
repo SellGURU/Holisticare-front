@@ -43,6 +43,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   isStringValues,
 }) => {
   // const maxVal = resolveMaxValue(statusBar);
+  console.log(dataPoints)
   const [themeColor, setThemeColor] = useState(
     localStorage.getItem('theme-base') || 'light',
   );
@@ -246,6 +247,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     },
   };
   const [isLoading, setIsLoading] = useState(false);
+  const [hoveredPoint, setHoveredPoint] = useState<{index: number, value: number} | null>(null);
   useEffect(() => {
     setIsLoading(true);
   }, [dataPoints]);
@@ -271,15 +273,45 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
               {sortKeysWithValues(statusBar).map((el) => {
                 return (
                   <>
-                    <div className="w-full h-[30px]  ">
+                    <div className="w-full relative" style={{height:70/sortKeysWithValues(statusBar).length+"px"}}>
                       <div
-                        className="w-full h-full opacity-15"
+                        className="w-full h-full opacity-15 "
                         style={{ backgroundColor: resolveColor(el.key) }}
                       ></div>
+                      <div className='w-full h-full absolute border-r-[5px] top-0 items-center gap-2 flex justify-between' style={{borderColor: resolveColor(el.key) }}>
+                        {dataPoints.map((point, index) => (
+                          <div
+                            key={index}
+                            style={{ backgroundColor: resolveColor(el.key) }}
+                            className={`w-2 h-2 border border-gray-50 rounded-full relative ${
+                              String(point).toLowerCase() === String(el.value[0]).toLowerCase() ? `` : 'bg-transparent invisible'
+                            }`}
+                            onMouseEnter={() => setHoveredPoint({index, value: point})}
+                            onMouseLeave={() => setHoveredPoint(null)}
+                          >
+                            {hoveredPoint?.index === index && (
+                              <div 
+                                className="absolute -top-6 left-1/2 transform text-[8px] text-Text-Primary -translate-x-1/2 bg-[#8ECAE6]  text-xs px-3 py-1 rounded whitespace-nowrap z-10"
+                              >
+                                {point}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </>
                 );
               })}
+              <div>
+                <div className="flex flex-col w-full mt-1">
+                  {labels.map((label, index) => (
+                    <div key={index} className="text-[10px] text-[#005F73]">
+                      {label}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </>
           ) : (
             <Line
