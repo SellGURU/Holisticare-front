@@ -472,19 +472,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
-                    <div className='text-nowrap' title={client['Check-in']}>
-                    {client.Questionary.length > 15
+                    <div className="text-nowrap" title={client['Check-in']}>
+                      {client.Questionary.length > 15
                         ? `${client['Check-in'].substring(0, 15)}...`
                         : client['Check-in']}
                     </div>
-                   
                   </div>
                   <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionary
                     </div>
-                    <div className='text-nowrap text-ellipsis' title={client.Questionary}>
+                    <div
+                      className="text-nowrap text-ellipsis"
+                      title={client.Questionary}
+                    >
                       {client.Questionary.length > 15
                         ? `${client.Questionary.substring(0, 15)}...`
                         : client.Questionary}

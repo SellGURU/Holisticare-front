@@ -152,16 +152,16 @@ const AddClient = () => {
                   </div>
                   <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
-                    style={{width: '188ppx'}}
+                      style={{ width: '188ppx' }}
                       size="small"
                       onClick={() => {
-                        setIsAdded(false);
-                        formik.resetForm();
-                        setPhoto('');
+                        // setIsAdded(false);
+                        // formik.resetForm();
+                        // setPhoto('');
+                        navigate('/')
                       }}
                       outLine
                     >
-                      
                       <img
                         src={'/icons/arrow-back.svg'}
                         className={'md:w-5 md:h-5 h-4 w-4'}
