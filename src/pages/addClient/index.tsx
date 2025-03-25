@@ -158,7 +158,7 @@ const AddClient = () => {
                         // setIsAdded(false);
                         // formik.resetForm();
                         // setPhoto('');
-                        navigate('/')
+                        navigate('/');
                       }}
                       outLine
                     >
