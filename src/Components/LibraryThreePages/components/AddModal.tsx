@@ -97,7 +97,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
-        Value: value,
+        Value: Number(value),
       };
       onSubmit(data);
       clear();
@@ -198,6 +198,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 <input
                   placeholder="Enter Value..."
                   value={value}
+                  type="number"
                   onChange={(e) => setValue(e.target.value)}
                   className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
                 />

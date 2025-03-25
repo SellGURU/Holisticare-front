@@ -143,6 +143,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   //     });
   //   }
   // };
+  const [fileUploaded, setFileUploaded] = useState(false);
+
   const handleFileUpload = async (event: any) => {
     const files = event.target.files;
     if (files) {
@@ -178,6 +180,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
   const handleCancelUpload = () => {
     setUploadProgress(0);
+    setFileUploaded(false);
   };
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -198,6 +201,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
       const { file_id } = response.data;
       // Update file with fileId after uploading
+      setFileUploaded(true);
       setFileList((prevList) => [
         ...prevList,
         { ...fileData, Content: { ...fileData.Content, file_id } },
@@ -210,6 +214,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
+    setFileUploaded(false);
   };
   const handleYouTubeLinkChange = (link: string) => {
     setYouTubeLink(link);
@@ -356,6 +361,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
+              disabled={fileUploaded}
               value={youTubeLink}
               newStyle
               type="text"

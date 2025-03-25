@@ -150,7 +150,9 @@ export const Questionary = () => {
           <div>
             <div>
               {questionsData.questions[activeCardNumber - 1]?.options?.map(
-                (el: any) => {
+                (el: any, index: number) => {
+                  const optionLabel = String.fromCharCode(65 + index);
+
                   return (
                     <div
                       onClick={() => {
@@ -161,7 +163,7 @@ export const Questionary = () => {
                           );
                         }
                       }}
-                      className="flex items-center gap-2 mb-2"
+                      className="flex items-center gap-[6px] mb-2"
                     >
                       <div
                         className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${questionsData.questions[activeCard - 1].response == el ? 'border-Primary-DeepTeal' : 'border-Text-Secondary '} bg-white border-[1.4px] rounded-full`}
@@ -174,6 +176,7 @@ export const Questionary = () => {
                       <div
                         className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response == el ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                       >
+                        <span className="mr-1">{optionLabel}.</span>
                         {el}
                       </div>
                     </div>
@@ -375,6 +378,7 @@ export const Questionary = () => {
                   Cancel
                 </ButtonPrimary>
                 <ButtonPrimary
+                  disabled={selectedFormIDs.length == 0}
                   onClick={() => {
                     handleAddQuestionnaires();
                     // Application.AddQuestionary({
@@ -446,7 +450,7 @@ export const Questionary = () => {
             </div>
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-                <div className="text-[12px] font-medium">
+                <div className="text-[12px] text-Primary-DeepTeal font-medium">
                   {questionsFormData.questions[activeCard - 1].question}
                 </div>
               </div>
@@ -467,8 +471,18 @@ export const Questionary = () => {
             </div>
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
-              <div className="flex justify-center items-center gap-3">
-                <div
+              <div className="flex w-[95px] justify-center items-center gap-3">
+                <img
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (activeCard > 1) {
+                      setActiveCard(activeCard - 1);
+                    }
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
+                {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
                       setActiveCard(activeCard - 1);
@@ -481,11 +495,21 @@ export const Questionary = () => {
                     src="/icons/arrow-down-green.svg"
                     alt=""
                   />
-                </div>
+                </div> */}
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
-                <div
+                <img
+                  className="cursor-pointer rotate-180"
+                  onClick={() => {
+                    if (activeCard < questionsFormData.questions.length) {
+                      setActiveCard(activeCard + 1);
+                    }
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
+                {/* <div
                   onClick={() => {
                     if (activeCard < questionsFormData.questions.length) {
                       setActiveCard(activeCard + 1);
@@ -498,7 +522,7 @@ export const Questionary = () => {
                     src="/icons/arrow-down-green.svg"
                     alt=""
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -552,7 +576,8 @@ export const Questionary = () => {
                   </div>
                 </>
               ) : (
-                data?.length < 1 && (
+                data?.length < 1 &&
+                !tryAdd && (
                   <div className="flex flex-col items-center justify-center h-[250px] ">
                     <img
                       className=" object-contain"
