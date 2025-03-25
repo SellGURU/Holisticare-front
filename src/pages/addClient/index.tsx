@@ -152,6 +152,7 @@ const AddClient = () => {
                   </div>
                   <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
+                    style={{width: '188ppx'}}
                       size="small"
                       onClick={() => {
                         setIsAdded(false);
@@ -160,12 +161,13 @@ const AddClient = () => {
                       }}
                       outLine
                     >
+                      
                       <img
-                        src={'/icons/add-blue.svg'}
+                        src={'/icons/arrow-back.svg'}
                         className={'md:w-5 md:h-5 h-4 w-4'}
                       />
-                      <div className=" text-nowrap text-[10px] md:text-xs md:w-[140px] ">
-                        Add Another Client
+                      <div className=" text-nowrap text-[10px] md:text-xs  ">
+                        Back to Client List
                       </div>
                     </ButtonPrimary>
                     <ButtonPrimary

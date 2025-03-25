@@ -202,6 +202,21 @@ const ForgetPassword = () => {
               )}
             </ButtonSecondary>
           </div>
+          <div className="flex justify-center items-center gap-1 mt-5">
+              <img
+                className="w-5 cursor-pointer"
+                src="./icons/arrow-back.svg"
+                alt=""
+              />
+              <div
+                onClick={() => {
+                  navigate('/login');
+                }}
+                className="text-[12px] cursor-pointer hover:opacity-90 font-medium text-Primary-DeepTeal"
+              >
+                Back to log in
+              </div>
+            </div>
         </div>
       );
     }
@@ -266,6 +281,21 @@ const ForgetPassword = () => {
                 'Reset password'
               )}
             </ButtonSecondary>
+            <div className="flex justify-center items-center gap-1 ">
+              <img
+                className="w-5 cursor-pointer"
+                src="./icons/arrow-back.svg"
+                alt=""
+              />
+              <div
+                onClick={() => {
+                  navigate('/login');
+                }}
+                className="text-[12px] cursor-pointer hover:opacity-90 font-medium text-Primary-DeepTeal"
+              >
+                Back to log in
+              </div>
+            </div>
           </div>
         </>
       );

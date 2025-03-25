@@ -160,7 +160,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 Do not share this information with anyone else.
               </div>
               <div className="flex flex-col gap-2 mt-6">
-                <div className="text-xs font-medium">Username</div>
+                <div className="text-xs font-medium">Email Address</div>
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
                   <span className="text-xs select-none">{AccessUserName}</span>
                   <img
@@ -172,7 +172,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-6">
-                <div className="text-xs font-medium">Unique Code</div>
+                <div className="text-xs font-medium">Password</div>
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
                   <span className="text-xs select-none">{AccessPassword}</span>
                   <img
@@ -466,6 +466,29 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       Age
                     </div>
                     {client.age} Years Old
+                  </div>
+                  <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
+                    <div className="flex items-center gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
+                      <img src="/icons/sms-edit-2.svg" alt="" />
+                      Check-in
+                    </div>
+                    <div className='text-nowrap' title={client['Check-in']}>
+                    {client.Questionary.length > 15
+                        ? `${client['Check-in'].substring(0, 15)}...`
+                        : client['Check-in']}
+                    </div>
+                   
+                  </div>
+                  <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
+                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
+                      <img src="/icons/note-2.svg" alt="" />
+                      Questionary
+                    </div>
+                    <div className='text-nowrap text-ellipsis' title={client.Questionary}>
+                      {client.Questionary.length > 15
+                        ? `${client.Questionary.substring(0, 15)}...`
+                        : client.Questionary}
+                    </div>
                   </div>
                 </div>
               </div>
