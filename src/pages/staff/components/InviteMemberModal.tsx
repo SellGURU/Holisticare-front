@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from 'react';
+import Application from '../../../api/app';
+import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface InviteMemberModalProps {
   setShowModal: (value: boolean) => void;
@@ -10,6 +13,15 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
   const [role, setRole] = useState('Staff');
   const [step, setStep] = useState(1);
   const [registered] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const onSave = (values: any) => {
+    setLoading(true);
+    Application.inviteStaffMember(values).then(() => {
+      setLoading(false);
+      setRole('Staff');
+      setStep(3);
+    });
+  };
   return (
     <>
       {step === 1 ? (
@@ -34,7 +46,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
               </div>
               <div className="flex flex-col w-full">
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
-                  Roll
+                  Role
                 </div>
                 <div className="relative inline-block w-full font-normal">
                   <select
@@ -81,7 +93,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
             </div>
           </div>
         </div>
-      ) : (
+      ) : step === 2 ? (
         <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
@@ -93,7 +105,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
                 <img src="/images/staff/avatar-black.png" alt="" />
                 <div className="flex flex-col justify-center ml-2 gap-1 w-full">
                   <div className="text-Text-Primary text-xs font-medium">
-                    {title}
+                    {title.length > 20 ? title.substring(0, 20) + '...' : title}
                   </div>
                   <div className="flex items-center justify-between w-full">
                     <div className="text-Text-Primary text-[10px]">{role}</div>
@@ -131,7 +143,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
                   Invoice amount:
                 </div>
                 <div className="text-center text-Text-Primary text-xl font-medium">
-                  120$
+                  Free
                 </div>
                 <div className="text-Primary-DeepTeal text-xs font-medium text-center mt-5 cursor-pointer">
                   Learn more
@@ -149,11 +161,41 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
                 Cancel
               </div>
               <div
-                className={`text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
+                className={`${loading ? 'text-Disable' : 'text-Primary-DeepTeal'} text-sm font-medium cursor-pointer`}
+                onClick={() => {
+                  if (title && role) {
+                    onSave({
+                      email: title,
+                      role: role,
+                    });
+                  }
+                }}
               >
                 Check out
               </div>
             </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col justify-between bg-white w-[421px] rounded-[16px] p-4">
+          <div className="w-full h-full flex flex-col items-center">
+            <img src="/icons/tick-circle-background-new.svg" alt="" />
+            <div className="text-xs font-medium text-Text-Primary text-center">
+              Your invitation process has been successfully completed.
+            </div>
+            <div className="text-xs text-Text-Quadruple mt-2 text-nowrap flex items-center gap-1">
+              The invitation link has been sent to this email:
+              <div className="text-Primary-DeepTeal">{title}</div>
+            </div>
+            <ButtonPrimary
+              ClassName="mt-5 w-[150px]"
+              onClick={() => {
+                setShowModal(false);
+                setTitle('');
+              }}
+            >
+              Got it
+            </ButtonPrimary>
           </div>
         </div>
       )}

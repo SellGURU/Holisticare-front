@@ -1,19 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState } from 'react';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface ChangeRollModalProps {
-  memberInfo: any;
-  setShowModalChangeRoll: (value: boolean) => void;
+  memberInfo: {
+    email: string;
+    role: string;
+    score: number;
+    user_id: string;
+    picture: string;
+    online: boolean;
+    user_name: string;
+  };
   setChangeRollSuccess: (value: boolean) => void;
   isSuccess: boolean;
+  handleChangeRole: (userId: string, role: string) => void;
+  submitLoading: boolean;
+  handleCloseModalChangeRoll: () => void;
 }
 
 const ChangeRollModal: FC<ChangeRollModalProps> = ({
   memberInfo,
   setChangeRollSuccess,
-  setShowModalChangeRoll,
   isSuccess,
+  handleChangeRole,
+  submitLoading,
+  handleCloseModalChangeRoll,
 }) => {
   const [selectRoll, setSelectRoll] = useState('');
   return (
@@ -26,7 +37,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="text-Text-Primary text-xs font-medium text-center mt-5">
-              Are you sure you want to change {memberInfo?.fullname}’s role?
+              Are you sure you want to change {memberInfo?.user_name}’s role?
             </div>
             <div className="text-xs text-Text-Quadruple text-center mt-2">
               This action may affect her permissions.
@@ -34,7 +45,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
             <div className="flex flex-col rounded-2xl border border-Gray-50 mt-4">
               <div className="flex items-center">
                 <div className="text-Text-Quadruple text-xs flex items-center justify-center w-[50%] border-r border-b border-Gray-50 pt-1">
-                  Current Roll
+                  Current Role
                 </div>
                 <div className="text-Text-Quadruple text-xs flex items-center justify-center w-[50%] pt-1 border-b border-Gray-50">
                   Change to
@@ -42,23 +53,47 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
               </div>
               <div className="flex items-center">
                 <div className="text-Text-Primary text-xs flex w-[50%] p-2">
-                  {memberInfo?.roll}
+                  {memberInfo?.role}
                 </div>
                 <div className="text-Text-Primary text-xs flex items-center w-[50%] p-2 border-l border-Gray-50">
-                  <div
-                    className={`flex items-center cursor-pointer gap-2`}
-                    onClick={() => {
-                      if (selectRoll !== 'Admin') {
-                        setSelectRoll('Admin');
-                      } else {
-                        setSelectRoll('');
-                      }
-                    }}
-                  >
-                    <div
-                      className={`w-[10px] h-[10px] rounded-full ${selectRoll === 'Admin' ? 'bg-Primary-DeepTeal' : 'border border-Primary-DeepTeal'}`}
-                    ></div>
-                    Admin
+                  <div className="flex flex-col gap-2">
+                    {memberInfo?.role === 'Admin' ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          id="staff"
+                          name="role"
+                          value="Staff"
+                          checked={selectRoll === 'Staff'}
+                          onChange={(e) => setSelectRoll(e.target.value)}
+                          className="w-[10px] h-[10px] accent-Primary-DeepTeal cursor-pointer"
+                        />
+                        <label
+                          htmlFor="staff"
+                          className="text-xs cursor-pointer"
+                        >
+                          Staff
+                        </label>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          id="admin"
+                          name="role"
+                          value="Admin"
+                          checked={selectRoll === 'Admin'}
+                          onChange={(e) => setSelectRoll(e.target.value)}
+                          className="w-[10px] h-[10px] accent-Primary-DeepTeal cursor-pointer"
+                        />
+                        <label
+                          htmlFor="admin"
+                          className="text-xs cursor-pointer"
+                        >
+                          Admin
+                        </label>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -66,16 +101,16 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
             <div className="w-full flex justify-end items-center p-2 mt-5">
               <div
                 className="text-Disable text-sm font-medium mr-4 cursor-pointer"
-                onClick={() => {
-                  setShowModalChangeRoll(false);
-                }}
+                onClick={handleCloseModalChangeRoll}
               >
                 Cancel
               </div>
               <div
-                className={`text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
+                className={`${selectRoll && !submitLoading ? 'text-Primary-DeepTeal' : 'text-Disable'} text-sm font-medium cursor-pointer`}
                 onClick={() => {
-                  setChangeRollSuccess(true);
+                  if (!submitLoading) {
+                    handleChangeRole(memberInfo?.user_id, selectRoll);
+                  }
                 }}
               >
                 Update
@@ -88,13 +123,13 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
           <div className="w-full h-full flex flex-col items-center">
             <img src="/icons/tick-circle-background-new.svg" alt="" />
             <div className="text-xs font-medium text-Text-Primary text-center">
-              {memberInfo?.fullname}’s role has been successfully updated.
+              {memberInfo?.user_name}’s role has been successfully updated.
             </div>
             <ButtonPrimary
               ClassName="mt-5 w-[150px]"
               onClick={() => {
                 setChangeRollSuccess(false);
-                setShowModalChangeRoll(false);
+                handleCloseModalChangeRoll();
               }}
             >
               Got it

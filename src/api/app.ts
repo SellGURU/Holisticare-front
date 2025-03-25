@@ -887,6 +887,18 @@ class Application extends Api {
   static getStaffList = () => {
     return this.post('/settings/staff_list', {});
   };
+  static inviteStaffMember = (data: any) => {
+    return this.post('/settings/staff_list', data);
+  };
+  static getStaffAssignedClients = (data: any) => {
+    return this.post('/settings/staffs/assigned_clients', data);
+  };
+  static RemoveUserStaff = (data: any) => {
+    return this.post('/settings/remove_staff', data);
+  };
+  static ChangeRoleUserStaff = (data: any) => {
+    return this.post('/settings/change_role', data);
+  };
 }
 
 export default Application;
