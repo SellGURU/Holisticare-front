@@ -1,7 +1,12 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 
-const TabNavigation = () => {
-  const [activeTab, setActiveTab] = useState('Warm-Up');
+interface TabNavigationProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
+  // const [activeTab, setActiveTab] = useState('Warm-Up');
 
   const tabs = [
     'Warm-Up',
