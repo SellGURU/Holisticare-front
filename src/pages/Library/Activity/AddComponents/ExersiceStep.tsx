@@ -37,7 +37,7 @@ interface ExerciseGroup {
 interface ExersiceStepProps {
   onChange: (data: Array<ExerciseGroup>) => void;
 }
-const ExersiceStep: React.FC<ExersiceStepProps> = ({onChange}) => {
+const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>([]);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
@@ -68,8 +68,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({onChange}) => {
   //   setExercises((prevExercises) => prevExercises.filter((_, i) => i !== index));
   // };
   useEffect(() => {
-    onChange(exercises)
-  },[exercises, onChange])
+    onChange(exercises);
+  }, [exercises, onChange]);
 
   return (
     <>

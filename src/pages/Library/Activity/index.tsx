@@ -9,7 +9,7 @@ import Application from '../../../api/app';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
-  const [dataList,setDataList] = useState<Array<any>>([]);
+  const [dataList, setDataList] = useState<Array<any>>([]);
   const [ExcercisesList, setExcercisesList] = useState<Array<any>>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAdd, setShowAdd] = useState(false);
@@ -21,8 +21,8 @@ const Activity = () => {
   useEffect(() => {
     if (active == 'Exercise') {
       getExercisesList();
-    }else {
-      getActivityList()
+    } else {
+      getActivityList();
     }
   }, [active]);
   const getExercisesList = () => {
@@ -34,7 +34,7 @@ const Activity = () => {
     Application.activityList().then((res) => {
       setDataList(res.data);
     });
-  };  
+  };
   return (
     <>
       <div>
