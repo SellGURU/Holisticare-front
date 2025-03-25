@@ -87,7 +87,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           ? 'link'
           : file.Type.startsWith('video/')
             ? 'Video'
-            : 'Picture',
+            : 'Video',
       Content: {
         url: file.Content.url || '',
         file_id: file.Content.file_id || '',
@@ -361,7 +361,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
-            disabled={fileUploaded}
+              disabled={fileUploaded}
               value={youTubeLink}
               newStyle
               type="text"
