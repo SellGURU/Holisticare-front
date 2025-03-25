@@ -81,8 +81,8 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                 data.chart_bounds[el.key].label.toLowerCase() !=
                   data.values[0].toLowerCase() ? (
                   <>
-                    {((data.values[0] >= el.value[0] &&
-                      el.value[1] >= data.values[0])) &&
+                    {data.values[0] >= el.value[0] &&
+                      el.value[1] >= data.values[0] &&
                       !justView && (
                         <div
                           className={`absolute  top-[2px]  z-10`}
