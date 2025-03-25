@@ -35,9 +35,9 @@ interface ExerciseGroup {
 }
 
 interface ExersiceStepProps {
-  onChange:(data:Array<ExerciseGroup>) => void
+  onChange: (data: Array<ExerciseGroup>) => void;
 }
-const ExersiceStep:React.FC<ExersiceStepProps> = () => {
+const ExersiceStep: React.FC<ExersiceStepProps> = () => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>([]);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
@@ -49,15 +49,17 @@ const ExersiceStep:React.FC<ExersiceStepProps> = () => {
 
   const addExercise = (exercise: Exercise) => {
     const resolveExercise: ExerciseGroup = {
-      Type: "Normalset",
+      Type: 'Normalset',
       Section: activeTab,
-      Sets: "",
-      Exercises: [{
-        Exercise: exercise,
-        Weight: "",
-        Reps: "",
-        Rest: ""
-      }]
+      Sets: '',
+      Exercises: [
+        {
+          Exercise: exercise,
+          Weight: '',
+          Reps: '',
+          Rest: '',
+        },
+      ],
     };
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
   };
@@ -82,13 +84,18 @@ const ExersiceStep:React.FC<ExersiceStepProps> = () => {
                 </div>
               </>
             )}
-            <div className='grid gap-2 w-full'>
-              {exercises.filter((el:any) => el.Section === activeTab).map((exercise:any, index:any) => {
-                return (
-                  <ExerciseItem key={index} index={index} exercise={exercise} />
-                );
-              })}
-
+            <div className="grid gap-2 w-full">
+              {exercises
+                .filter((el: any) => el.Section === activeTab)
+                .map((exercise: any, index: any) => {
+                  return (
+                    <ExerciseItem
+                      key={index}
+                      index={index}
+                      exercise={exercise}
+                    />
+                  );
+                })}
             </div>
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
@@ -107,7 +114,7 @@ const ExersiceStep:React.FC<ExersiceStepProps> = () => {
               onSearch={() => {}}
             />
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-1">
-              {exerciseList.map((el:any) => {
+              {exerciseList.map((el: any) => {
                 return (
                   <>
                     <div className="w-full h-[40px] bg-white px-2 py-1 rounded-xl flex items-center justify-between">
@@ -124,7 +131,9 @@ const ExersiceStep:React.FC<ExersiceStepProps> = () => {
                             className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
                           />
                         </div>
-                        <div className="text-xs text-Text-Primary">{el.Title}</div>
+                        <div className="text-xs text-Text-Primary">
+                          {el.Title}
+                        </div>
                         <div className="text-[8px] text-Text-Quadruple">
                           (2 Videos)
                         </div>
@@ -137,7 +146,7 @@ const ExersiceStep:React.FC<ExersiceStepProps> = () => {
                       />
                     </div>
                   </>
-                )
+                );
               })}
             </div>
           </div>

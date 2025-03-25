@@ -46,13 +46,13 @@ const InformationStep: FC<InformationStepProps> = ({
   const [LevelOptions, setLevelOptions] = useState([]);
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
-  const [TypesOptions, setTypeOptions] = useState([]); 
+  const [TypesOptions, setTypeOptions] = useState([]);
   // const [type, setType] = useState('');
   // const [terms, setTerms] = useState('');
   // const [condition, setCondition] = useState('');
   // const [muscle, setMuscle] = useState('');
   // const [equipment, setEquipment] = useState('');
-  // const [level, setLevel] = useState('');   
+  // const [level, setLevel] = useState('');
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -62,7 +62,7 @@ const InformationStep: FC<InformationStepProps> = ({
       setTermsOptions(res.data.Terms);
       setTypeOptions(res.data.Type);
     });
-  }, []);  
+  }, []);
   const handleCheckboxChange = (value: string) => {
     updateAddData('location', addData.location === value ? '' : value);
   };
@@ -114,44 +114,54 @@ const InformationStep: FC<InformationStepProps> = ({
         <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-">
-              <CustomSelect
-                placeHolder="Type"
-                options={TypesOptions}
-                selectedOption={addData.type}
-                onOptionSelect={(option: string) =>updateAddData('type', option)}
-              />
-              <CustomSelect
-                placeHolder="Terms"
-                options={TermsOptions}
-                selectedOption={addData.terms}
-                onOptionSelect={(option: string) =>updateAddData('terms', option)}
-              />
-              <CustomSelect
-                placeHolder="Condition"
-                options={ConditionsOptions}
-                selectedOption={addData.condition}
-                onOptionSelect={(option: string) =>updateAddData('condition', option)}
-              />
-              <CustomSelect
-                placeHolder="Muscle"
-                options={MuscleOptions}
-                selectedOption={addData.muscle}
-                onOptionSelect={(option: string) =>updateAddData('muscle', option)}
-              />
-              <CustomSelect
-                placeHolder="Equipment"
-                options={EquipmentOptions}
-                selectedOption={addData.equipment}
-                onOptionSelect={(option: string) =>updateAddData('equipment', option)}
-              />
-              <CustomSelect
-                placeHolder="Level"
-                options={LevelOptions}
-                selectedOption={addData.level}
-                onOptionSelect={(option: string) =>updateAddData('level', option)}
-              />
-            </div>
+          <div className="grid grid-cols-2 gap-y-2 gap-x-">
+            <CustomSelect
+              placeHolder="Type"
+              options={TypesOptions}
+              selectedOption={addData.type}
+              onOptionSelect={(option: string) => updateAddData('type', option)}
+            />
+            <CustomSelect
+              placeHolder="Terms"
+              options={TermsOptions}
+              selectedOption={addData.terms}
+              onOptionSelect={(option: string) =>
+                updateAddData('terms', option)
+              }
+            />
+            <CustomSelect
+              placeHolder="Condition"
+              options={ConditionsOptions}
+              selectedOption={addData.condition}
+              onOptionSelect={(option: string) =>
+                updateAddData('condition', option)
+              }
+            />
+            <CustomSelect
+              placeHolder="Muscle"
+              options={MuscleOptions}
+              selectedOption={addData.muscle}
+              onOptionSelect={(option: string) =>
+                updateAddData('muscle', option)
+              }
+            />
+            <CustomSelect
+              placeHolder="Equipment"
+              options={EquipmentOptions}
+              selectedOption={addData.equipment}
+              onOptionSelect={(option: string) =>
+                updateAddData('equipment', option)
+              }
+            />
+            <CustomSelect
+              placeHolder="Level"
+              options={LevelOptions}
+              selectedOption={addData.level}
+              onOptionSelect={(option: string) =>
+                updateAddData('level', option)
+              }
+            />
+          </div>
           <div className="flex flex-col text-xs gap-3 mt-2">
             Exercise Location
             <div className="flex gap-6">

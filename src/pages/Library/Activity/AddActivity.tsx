@@ -10,27 +10,26 @@ interface AddActivityProps {
 
 const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
   const [step, setStep] = useState(0);
-  const [sectionList,setSectionList] = useState([])
+  const [sectionList, setSectionList] = useState([]);
   const nextStep = () => {
     if (step === 0) {
       setStep(step + 1);
     } else {
       Application.addActivity({
-        "Title": addData.title,
-        "Description": addData.description,
-        "Base_Score": addData.score,
-        "Instruction": addData.instruction,
-        "Sections": sectionList,
-        "Activity_Filters": {
-          "Conditions":addData.condition,
-          "Equipment":addData.equipment,
-          "Level":addData.level,
-          "Muscle":addData.muscle,
-          "Terms":addData.terms,
+        Title: addData.title,
+        Description: addData.description,
+        Base_Score: addData.score,
+        Instruction: addData.instruction,
+        Sections: sectionList,
+        Activity_Filters: {
+          Conditions: addData.condition,
+          Equipment: addData.equipment,
+          Level: addData.level,
+          Muscle: addData.muscle,
+          Terms: addData.terms,
         },
-        "Activity_Location": [addData.location]
-
-      })
+        Activity_Location: [addData.location],
+      });
       console.log('save');
     }
   };
@@ -73,9 +72,11 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
           {step === 0 ? (
             <InformationStep addData={addData} updateAddData={updateAddData} />
           ) : (
-            <ExersiceStep onChange={(values:any) => {
-              setSectionList(values)
-            }} />
+            <ExersiceStep
+              onChange={(values: any) => {
+                setSectionList(values);
+              }}
+            />
           )}
         </div>
         <div

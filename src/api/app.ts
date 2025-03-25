@@ -890,7 +890,7 @@ class Application extends Api {
   };
   static activityList = () => {
     return this.post('/activity_library/activities_list');
-  }
+  };
 }
 
 export default Application;
