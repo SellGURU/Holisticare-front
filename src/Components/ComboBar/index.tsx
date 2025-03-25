@@ -31,7 +31,7 @@ export const ComboBar = () => {
     { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
     { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
     { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
-    { name: 'Change Client', url: '/icons/sidbar-menu/repeat.svg' },
+    { name: 'Select Client', url: '/icons/sidbar-menu/repeat.svg' },
   ];
   const [patientInfo, setPatientInfo] = useState({
     name: '',
@@ -136,7 +136,7 @@ export const ComboBar = () => {
         return <TimeLine />;
       case 'Client’s Chat History':
         return <ChatModal memberId={id} info={patientInfo}></ChatModal>;
-      case 'Change Client':
+      case 'Select Client':
         return <SwitchClient></SwitchClient>;
       default:
         return <div>No Content</div>;
