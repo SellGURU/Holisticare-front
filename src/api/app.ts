@@ -888,6 +888,9 @@ class Application extends Api {
   static addActivity = (data: any) => {
     return this.post('/activity_library/add_activity', data);
   };
+  static deleteActivity = (Act_Id: string) => {
+    return this.post('/activity_library/delete_activity', {Act_Id:Act_Id});
+  };  
   static activityList = () => {
     return this.post('/activity_library/activities_list');
   };
