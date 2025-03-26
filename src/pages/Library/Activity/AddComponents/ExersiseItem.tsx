@@ -7,6 +7,7 @@ interface ExerciseItemProps {
   index: number;
   exercise: any;
   onDelete: () => void;
+  toSuperSet:() => void;
   onChange: (index: number, field: string, value: string) => void;
 }
 
@@ -15,6 +16,7 @@ const ExerciseItem = ({
   exercise,
   onChange,
   onDelete,
+  toSuperSet
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,7 @@ const ExerciseItem = ({
     <>
       <div
         key={index}
-        className="w-full min-h-[172px] relative border border-Gray-50 rounded-2xl bg-backgroundColor-Card p-3"
+        className="w-full min-h-[172px] z-10 relative border border-Gray-50 rounded-2xl bg-backgroundColor-Card p-3"
       >
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center">
@@ -43,7 +45,7 @@ const ExerciseItem = ({
               />
             </div>
             <div className="text-xs ml-2 font-medium text-Text-Primary">
-              {exercise.Exercises[0].Exercise.Title}
+              {exercise.Exercise.Title}
             </div>
           </div>
           <img
@@ -57,12 +59,29 @@ const ExerciseItem = ({
               ref={menuRef}
               className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-3 top-10"
             >
+              {index > 0 &&
+                <div
+                  onClick={() => {
+                    toSuperSet()
+                    setShowMenu(false);
+                  }}
+                  className="flex justify-start py-2 borer border-b border-gray-50 items-center cursor-pointer gap-2"
+                >
+                  <SvgIcon
+                    src="./icons/link.svg"
+                    color="#6CC24A"
+                    width="16px"
+                    height="16px"
+                  ></SvgIcon>
+                  <div className="text-[12px] text-Text-Primary">Superset with above</div>
+                </div>              
+              }
               <div
                 onClick={() => {
                   onDelete();
                   setShowMenu(false);
                 }}
-                className="flex justify-start items-center cursor-pointer gap-2"
+                className="flex justify-start py-2 items-center cursor-pointer gap-2"
               >
                 <SvgIcon
                   src="./icons/delete.svg"
@@ -80,11 +99,11 @@ const ExerciseItem = ({
             <span className="font-medium text-Text-Secondary">
               Instruction:
             </span>{' '}
-            {exercise.Exercises[0].Exercise.Instruction}
+            {exercise.Exercise.Instruction}
           </div>
         </div>
         <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
-          {Object.entries(exercise.Exercises[0].Exercise.Exercise_Filters).map(
+          {Object.entries(exercise.Exercise.Exercise_Filters).map(
             ([key, value]) => (
               <div
                 key={key}
@@ -101,7 +120,7 @@ const ExerciseItem = ({
             <div className="text-center text-[8px] text-Text-Primary">set</div>
             <input
               type="number"
-              value={exercise.Sets}
+              // value={exercise.Sets}
               onChange={(e) => onChange(index, 'Sets', e.target.value)}
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
@@ -110,7 +129,7 @@ const ExerciseItem = ({
             <div className="text-center text-[8px] text-Text-Primary">Reps</div>
             <input
               type="number"
-              value={exercise.Exercises[0].Reps}
+              value={exercise.Reps}
               onChange={(e) => onChange(index, 'Reps', e.target.value)}
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
@@ -121,7 +140,7 @@ const ExerciseItem = ({
             </div>
             <input
               type="number"
-              value={exercise.Exercises[0].Weight}
+              value={exercise.Weight}
               onChange={(e) => onChange(index, 'Weight', e.target.value)}
               className="w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
@@ -135,7 +154,7 @@ const ExerciseItem = ({
             </div>
             <input
               type="number"
-              value={exercise.Exercises[0].Rest}
+              value={exercise.Rest}
               onChange={(e) => onChange(index, 'Rest', e.target.value)}
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />

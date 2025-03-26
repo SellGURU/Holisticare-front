@@ -4,6 +4,7 @@ import SearchBox from '../../../../Components/SearchBox';
 import TabNavigation from './TabNavigation';
 import Application from '../../../../api/app';
 import ExerciseItem from './ExersiseItem';
+import SuperSetExersiseItem from './SuperSetExersiseItem';
 
 interface Exercise {
   Title: string;
@@ -106,9 +107,24 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     });
   };
 
-  // const removeExercise = (index: number) => {
-  //   setExercises((prevExercises) => prevExercises.filter((_, i) => i !== index));
+  // const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
+  //   const activeTabExercises = exercises.filter((el: any) => el.Section === activeTab);
+  //   const previousExercise = activeTabExercises[index - 1];
+
+  //   if (!previousExercise) return;
+
+  //   const resolveSuperSet = {
+  //     ...previousExercise,
+  //     Type: 'Superset',
+  //     Exercises: [...previousExercise.Exercises, ...exercise.Exercises]
+  //   };
+
+  //   setExercises((prevExercises) => {
+  //     const resolved = prevExercises.filter((_, i) => i !== index && i !== index - 1);
+  //     return [...resolved, resolveSuperSet];
+  //   });
   // };
+
   useEffect(() => {
     onChange(exercises);
   }, [exercises, onChange]);
@@ -138,17 +154,36 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                 .filter((el: any) => el.Section === activeTab)
                 .map((exercise: any, index: any) => {
                   return (
-                    <ExerciseItem
-                      onDelete={() => {
-                        setExercises((prevExercises) =>
-                          prevExercises.filter((_, i) => i !== index),
-                        );
-                      }}
-                      key={index}
-                      index={index}
-                      exercise={exercise}
-                      onChange={handleExerciseChange}
-                    />
+                    <>
+                    {exercise.Type === 'Superset' ? (
+                      <SuperSetExersiseItem 
+                        onDelete={() => {
+                          setExercises((prevExercises) =>
+                            prevExercises.filter((_, i) => i !== index),
+                          );
+                        }}
+                        key={index}
+                        index={index}
+                        exercise={exercise}
+                        onChange={handleExerciseChange}
+                        toSuperSet={() => {}}                      
+                      />
+                    ):(
+                      <ExerciseItem
+                        onDelete={() => {
+                          setExercises((prevExercises) =>
+                            prevExercises.filter((_, i) => i !== index),
+                          );
+                        }}
+                        key={index}
+                        index={index}
+                        exercise={exercise.Exercises[0]}
+                        onChange={handleExerciseChange}
+                        toSuperSet={() => {}}
+                      />
+                    )}
+                    </>
+
                   );
                 })}
             </div>
