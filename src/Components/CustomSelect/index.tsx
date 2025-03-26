@@ -33,7 +33,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         className={`w-full md:w-[181px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
       >
         {selectedOption ? (
-          <div className="text-[12px] text-[#383838] max-w-[140px] truncate">{selectedOption}</div>
+          <div className="text-[12px] text-[#383838] max-w-[140px] truncate">
+            {selectedOption}
+          </div>
         ) : (
           <div className="text-[12px] text-[#B0B0B0] font-light">
             {placeHolder}

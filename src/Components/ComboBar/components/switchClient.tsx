@@ -149,8 +149,8 @@ export const SwitchClient = () => {
             </>
           </div>
           <div className="w-full flex justify-center mt-3 md:mt-6">
-            <ButtonPrimary size='small' onClick={handleSaveChanges}>
-              <img className='size-4' src="/icons/tick-square.svg" alt="" />
+            <ButtonPrimary size="small" onClick={handleSaveChanges}>
+              <img className="size-4" src="/icons/tick-square.svg" alt="" />
               Select Client
             </ButtonPrimary>
           </div>

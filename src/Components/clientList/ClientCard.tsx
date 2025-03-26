@@ -127,7 +127,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
 
   return (
     <>
-      <MainModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)}>
+      <MainModal
+        isOpen={showAccessModal}
+        onClose={() => setShowAccessModal(false)}
+      >
         <>
           {isShared ? (
             <div className="bg-white w-[500px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">

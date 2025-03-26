@@ -597,7 +597,11 @@ const AiKnowledge = () => {
                           {doc.date}
                         </td>
                         <td className="py-2 pr-2 w-[40px] text-center">
-                          <button onClick={() => toggleDisable(doc.id, "System Uploads")}>
+                          <button
+                            onClick={() =>
+                              toggleDisable(doc.id, 'System Uploads')
+                            }
+                          >
                             {doc.disabled ? (
                               <img src="/icons/eye-slash-blue.svg" alt="" /> // Eye icon for disabled
                             ) : (
