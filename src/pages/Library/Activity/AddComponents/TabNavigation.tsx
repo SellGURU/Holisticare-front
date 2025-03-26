@@ -1,7 +1,7 @@
 // import { useState } from 'react';
 
-import { useState } from "react";
-import SectionOrderModal from "./SectionOrder";
+import { useState } from 'react';
+import SectionOrderModal from './SectionOrder';
 
 interface TabNavigationProps {
   activeTab: string;
@@ -52,9 +52,9 @@ const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
         onClose={() => setShowSectionOrder(false)}
         onConfirm={(values) => {
           setTabs(values);
-          setShowSectionOrder(false)
+          setShowSectionOrder(false);
         }}
-      />      
+      />
     </>
   );
 };

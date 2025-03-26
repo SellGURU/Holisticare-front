@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { MainModal } from "../../../../Components";
+import { useState } from 'react';
+import { MainModal } from '../../../../Components';
 
-interface SectionOrderModal{
-    isOpen: boolean;
-    onClose: () => void;
-    onConfirm: (values:Array<string>) => void;
+interface SectionOrderModal {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: (values: Array<string>) => void;
 }
 
 interface CategoryState {
@@ -20,39 +20,35 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Finisher', visible: true },
 ];
 
-const SectionOrderModal:React.FC<SectionOrderModal> = ({
-    isOpen,
-    onClose,
-    onConfirm,
+const SectionOrderModal: React.FC<SectionOrderModal> = ({
+  isOpen,
+  onClose,
+  onConfirm,
 }) => {
-    const [categories, ] =
-    useState<CategoryState[]>(initialCategoryState);
-    const [localCategories, setLocalCategories] = useState<CategoryState[]>([
-        ...categories,
-    ]);    
-    const handleOrderChange = (index: number, direction: 'up' | 'down') => {
-        const newCategories = [...localCategories];
-        const targetIndex = direction === 'up' ? index - 1 : index + 1;
-        if (targetIndex < 0 || targetIndex >= newCategories.length) return;
+  const [categories] = useState<CategoryState[]>(initialCategoryState);
+  const [localCategories, setLocalCategories] = useState<CategoryState[]>([
+    ...categories,
+  ]);
+  const handleOrderChange = (index: number, direction: 'up' | 'down') => {
+    const newCategories = [...localCategories];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newCategories.length) return;
 
-        [newCategories[index], newCategories[targetIndex]] = [
-        newCategories[targetIndex],
-        newCategories[index],
-        ];
-        setLocalCategories(newCategories);
-    };   
-    const toggleVisibility = (index: number) => {
-        const newCategories = localCategories.map((cat, i) =>
-        i === index ? { ...cat, visible: !cat.visible } : cat,
-        );
-        setLocalCategories(newCategories);
-    };     
+    [newCategories[index], newCategories[targetIndex]] = [
+      newCategories[targetIndex],
+      newCategories[index],
+    ];
+    setLocalCategories(newCategories);
+  };
+  const toggleVisibility = (index: number) => {
+    const newCategories = localCategories.map((cat, i) =>
+      i === index ? { ...cat, visible: !cat.visible } : cat,
+    );
+    setLocalCategories(newCategories);
+  };
   return (
     <>
-      <MainModal
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+      <MainModal isOpen={isOpen} onClose={onClose}>
         <div className=" w-full relative h-[380px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             Section Order
@@ -125,10 +121,9 @@ const SectionOrderModal:React.FC<SectionOrderModal> = ({
             </button>
           </div>
         </div>
-      </MainModal>    
+      </MainModal>
     </>
-  )
+  );
 };
 
 export default SectionOrderModal;
-

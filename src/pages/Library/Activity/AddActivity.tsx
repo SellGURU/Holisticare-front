@@ -77,7 +77,6 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
             <InformationStep addData={addData} updateAddData={updateAddData} />
           ) : (
             <ExersiceStep
-              
               onChange={(values: any) => {
                 setSectionList(values);
               }}
@@ -113,7 +112,6 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
           </div>
         </div>
       </div>
-
     </>
   );
 };

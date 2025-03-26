@@ -114,7 +114,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   }, [exercises, onChange]);
 
   const filteredExerciseList = exerciseList.filter((exercise) =>
-    exercise.Title.toLowerCase().includes(searchValue.toLowerCase())
+    exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
   return (
@@ -167,7 +167,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"
               placeHolder="Search ..."
               value={searchValue}
-              onSearch={(value:any) => setSearchValue(value)}
+              onSearch={(value: any) => setSearchValue(value)}
             />
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-1">
               {filteredExerciseList.map((el: any) => {
