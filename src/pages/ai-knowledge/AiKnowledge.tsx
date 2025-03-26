@@ -239,74 +239,31 @@ const AiKnowledge = () => {
     disabled: boolean;
   };
 
-  const [systemDocs, setSystemDocs] = useState<Document[]>([
-    {
-      id: 1,
-      type: 'Diseases and Conditions',
-      date: '04/25/2024',
-      disabled: false,
-    },
-    { id: 2, type: 'Symptoms', date: '04/25/2024', disabled: false },
-    // Add more mock data as needed
-  ]);
+  // const [systemDocs, ] = useState<Document[]>([
+  //   {
+  //     id: 1,
+  //     type: 'Diseases and Conditions',
+  //     date: '04/25/2024',
+  //     disabled: false,
+  //   },
+  //   { id: 2, type: 'Symptoms', date: '04/25/2024', disabled: false },
+  //   // Add more mock data as needed
+  // ]);
 
-  const [userUploads, setUserUploads] = useState<Document[]>([
-    { id: 1, type: 'Uploaded Document 1', date: '03/15/2024', disabled: false },
-    { id: 2, type: 'Uploaded Document 2', date: '03/16/2024', disabled: false },
-    // Add more mock data as needed
-  ]);
+
+  const [userUploads, setUserUploads] = useState<Document[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 13;
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const toggleDisable = (id: number, tab: string) => {
-    if (tab === 'System Docs') {
-      setSystemDocs((prevDocs) =>
-        prevDocs.map((doc) =>
-          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-        ),
-      );
-    } else if (tab === 'User Uploads') {
-      setUserUploads((prevDocs) =>
-        prevDocs.map((doc) =>
-          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-        ),
-      );
-    }
-  };
-
-  const deleteDocument = (id: number) => {
-    setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
-    setConfirmDeleteId(null);
-  };
-
-  const currentDocuments =
-    activaTab === 'System Docs'
-      ? systemDocs.slice(
-          (currentPage - 1) * itemsPerPage,
-          currentPage * itemsPerPage,
-        )
-      : userUploads.slice(
-          (currentPage - 1) * itemsPerPage,
-          currentPage * itemsPerPage,
-        );
-
-  const totalPages =
-    activaTab === 'System Docs'
-      ? Math.ceil(systemDocs.length / itemsPerPage)
-      : Math.ceil(userUploads.length / itemsPerPage);
   const [AddFilleModal, setAddFilleModal] = useState(false);
-  const [FilleType] = useState('Activty');
+  const [FilleType] = useState('Activity');
   const [fileTitle, setFileTitle] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadComplete, setUploadComplete] = useState(false);
-  const handleFileUpload = (event: any) => {
-    const file = event.target.files[0];
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setUploadComplete(false);
@@ -321,6 +278,18 @@ const AiKnowledge = () => {
         if (prev >= 100) {
           clearInterval(interval);
           setUploadComplete(true);
+          // Add file to user uploads
+          if (selectedFile) {
+            setUserUploads((prevUploads) => [
+              ...prevUploads,
+              {
+                id: prevUploads.length + 1,
+                type: selectedFile.name,
+                date: new Date().toLocaleDateString(),
+                disabled: false,
+              },
+            ]);
+          }
           return prev;
         }
         return prev + 10;
@@ -341,14 +310,64 @@ const AiKnowledge = () => {
     setUploadComplete(false);
     setFileTitle('');
   };
+
   const formatFileSize = (size: number): string => {
     if (size === 0) return '0 B';
     const i = Math.floor(Math.log(size) / Math.log(1024));
     const sizeInUnits = (size / Math.pow(1024, i)).toFixed(2);
     return `${sizeInUnits} ${['B', 'kB', 'MB', 'GB', 'TB'][i]}`;
   };
-  console.log(fileTitle);
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const toggleDisable = (id: number, tab: string) => {
+    if (tab === 'System Docs') {
+      // setSystemDocs((prevDocs) =>
+      //   prevDocs.map((doc) =>
+      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+      //   ),
+      // );
+    } else if (tab === 'User Uploads') {
+      setUserUploads((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+        ),
+      );
+    }
+  };
+
+  const deleteDocument = (id: number) => {
+    setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
+    setConfirmDeleteId(null);
+  };
+
+  // const currentDocuments =
+  //   activaTab === 'System Docs'
+  //     ? systemDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  //     : userUploads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const totalPages =
+    activaTab === 'System Docs'
+      ? Math.ceil([
+        ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+      ].length / itemsPerPage)
+      : Math.ceil(userUploads.length / itemsPerPage);
+      const handleAddFile = () => {
+        if (selectedFile) {
+          setUserUploads((prevUploads) => [
+            ...prevUploads,
+            {
+              id: prevUploads.length + 1,
+              type: fileTitle,
+              date: new Date().toLocaleDateString(),
+              disabled: false,
+            },
+          ]);
+          closeModal();
+        }
+      };
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
@@ -376,7 +395,7 @@ const AiKnowledge = () => {
             <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
               <input
                 type="file"
-                accept=".rdf,.owl,.csv,.json,.pdf"
+                // accept=".rdf,.owl,.csv,.json,.pdf"
                 style={{ display: 'none' }}
                 id="file-upload"
                 onChange={handleFileUpload}
@@ -442,7 +461,7 @@ const AiKnowledge = () => {
               Cancel
             </div>
             <div
-              onClick={closeModal}
+              onClick={handleAddFile}
               className="text-Primary-DeepTeal cursor-pointer "
             >
               Add
@@ -463,21 +482,24 @@ const AiKnowledge = () => {
           ></ActivityMenu>
         </div>
         <div className=" w-full flex  justify-center items-start">
-        <SigmaContainer
-          settings={sigmaSetting}
-          id="sigma-container"
-          className={' !bg-bg-color'}
-          style={{ height: window.innerHeight - 50, width: window.innerWidth }}
-        >
-          {isLoading && <Circleloader></Circleloader>}
-          <LoadGraph
-            graphData={graphData}
-            activeFilters={activeFilters}
-            isInitialLoad={isInitialLoad}
-          />
-          <GraphEvents setisLoading={setisLoading} />
-        </SigmaContainer>
-      </div>
+          <SigmaContainer
+            settings={sigmaSetting}
+            id="sigma-container"
+            className={' !bg-bg-color'}
+            style={{
+              height: window.innerHeight - 50,
+              width: window.innerWidth,
+            }}
+          >
+            {isLoading && <Circleloader></Circleloader>}
+            <LoadGraph
+              graphData={graphData}
+              activeFilters={activeFilters}
+              isInitialLoad={isInitialLoad}
+            />
+            <GraphEvents setisLoading={setisLoading} />
+          </SigmaContainer>
+        </div>
 
         <div className="w-full absolute bottom-6 flex md:hidden justify-center ">
           <ButtonSecondary
@@ -637,19 +659,19 @@ const AiKnowledge = () => {
                         <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
                           Date of Update
                         </th>
-                        <th className="w-[60px] text-right py-2 pr-2 text-xs font-medium text-Text-Primary">
+                        <th className="w-[60px] text-right py-2 pr-3 text-xs font-medium text-Text-Primary">
                           Action
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {currentDocuments.map((doc, index) => (
+                      {userUploads.map((doc, index) => (
                         <tr
                           key={doc.id}
                           className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
                         >
                           <td
-                            className={`pl-2 py-2 w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                            className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
                           >
                             {doc.type}
                           </td>
@@ -721,8 +743,11 @@ const AiKnowledge = () => {
               </>
             ) : (
               <>
-                <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
-                  <table className="min-w-full bg-white">
+                <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px] ">
+                  <div className='max-h-[510px] overflow-auto'>
+
+              
+                  <table className="min-w-full bg-white ">
                     <thead>
                       <tr className="bg-[#E5E5E5]">
                         <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
@@ -737,40 +762,45 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentDocuments.map((doc, index) => (
+                    {[
+                  ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+                ].map((doc: any, index:number) => {
+                  return(
                         <tr
                           key={doc.id}
                           className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
                         >
                           <td
-                            className={`pl-2 py-2 w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                            className={`pl-2 py-2 max-w-[140px] truncate w-[140px] ${!activeFilters.includes(doc)? 'opacity-40' : ''}`}
                           >
-                            {doc.type}
+                            {doc}
                           </td>
                           <td
-                            className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
+                            className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
                           >
-                            {doc.date}
+                            {doc.date || "No Date"}
                           </td>
                           <td className="py-2 pr-2 w-[40px] text-center">
                             <button
                               onClick={() =>
-                                toggleDisable(doc.id, 'System Uploads')
+                                // toggleDisable(doc.id, 'System Uploads')
+                                handleButtonClick(doc)
                               }
                             >
-                              {doc.disabled ? (
-                                <img src="/icons/eye-slash-blue.svg" alt="" /> // Eye icon for disabled
-                              ) : (
-                                <img src="/icons/eye-blue.svg" alt="" />
+                              {activeFilters.includes(doc) ? (
+                                  <img src="/icons/eye-blue.svg" alt="" />
+                               // Eye icon for disabled
+                              ) : ( <img src="/icons/eye-slash-blue.svg" alt="" /> 
+                              
                               )}
                             </button>
                           </td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
-
-                  <div className="flex justify-center pb-4 absolute bottom-0 w-full">
+                  </div>
+                  <div className="hidden justify-center pb-4 absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
