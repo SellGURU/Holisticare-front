@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import SvgIcon from "../../../../utils/svgIcon";
-import useModalAutoClose from "../../../../hooks/UseModalAutoClose";
+import { useRef, useState } from 'react';
+import SvgIcon from '../../../../utils/svgIcon';
+import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ExerciseItemProps {
@@ -10,12 +10,17 @@ interface ExerciseItemProps {
   onChange: (index: number, field: string, value: string) => void;
 }
 
-const ExerciseItem = ({ index, exercise, onChange,onDelete }: ExerciseItemProps) => {
+const ExerciseItem = ({
+  index,
+  exercise,
+  onChange,
+  onDelete,
+}: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
-    close:() => setShowMenu(false),
-    refrence:menuRef
+    close: () => setShowMenu(false),
+    refrence: menuRef,
   });
   return (
     <>
@@ -47,19 +52,28 @@ const ExerciseItem = ({ index, exercise, onChange,onDelete }: ExerciseItemProps)
             alt=""
             className="w-4 h-4 cursor-pointer"
           />
-          {showMenu &&
-            <div ref={menuRef} className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-3 top-10">
-              <div onClick={() => {
-                onDelete();
-                setShowMenu(false);
-              }} className="flex justify-start items-center cursor-pointer gap-2">
-                <SvgIcon src="./icons/delete.svg" color="#6CC24A" width="16px" height="16px">
-                </SvgIcon>
+          {showMenu && (
+            <div
+              ref={menuRef}
+              className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-3 top-10"
+            >
+              <div
+                onClick={() => {
+                  onDelete();
+                  setShowMenu(false);
+                }}
+                className="flex justify-start items-center cursor-pointer gap-2"
+              >
+                <SvgIcon
+                  src="./icons/delete.svg"
+                  color="#6CC24A"
+                  width="16px"
+                  height="16px"
+                ></SvgIcon>
                 <div className="text-[12px] text-Text-Primary">Delete</div>
-                
               </div>
             </div>
-          }
+          )}
         </div>
         <div>
           <div className="text-xs max-w-[450px] text-nowrap overflow-hidden text-ellipsis text-Text-Primary mt-2">
@@ -70,11 +84,16 @@ const ExerciseItem = ({ index, exercise, onChange,onDelete }: ExerciseItemProps)
           </div>
         </div>
         <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
-          {Object.entries(exercise.Exercises[0].Exercise.Exercise_Filters).map(([key, value]) => (
-            <div key={key} className="text-[10px] text-[#005F73] bg-[#E9F0F2] rounded-full px-2 ">
-              {String(value)}
-            </div>
-          ))}
+          {Object.entries(exercise.Exercises[0].Exercise.Exercise_Filters).map(
+            ([key, value]) => (
+              <div
+                key={key}
+                className="text-[10px] text-[#005F73] bg-[#E9F0F2] rounded-full px-2 "
+              >
+                {String(value)}
+              </div>
+            ),
+          )}
         </div>
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">

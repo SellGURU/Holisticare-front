@@ -23,7 +23,7 @@ const Activity = () => {
     return dataList.filter((exercise) =>
       exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  };  
+  };
   useEffect(() => {
     if (active == 'Exercise') {
       getExercisesList();
