@@ -155,35 +155,34 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                 .map((exercise: any, index: any) => {
                   return (
                     <>
-                    {exercise.Type === 'Superset' ? (
-                      <SuperSetExersiseItem 
-                        onDelete={() => {
-                          setExercises((prevExercises) =>
-                            prevExercises.filter((_, i) => i !== index),
-                          );
-                        }}
-                        key={index}
-                        index={index}
-                        exercise={exercise}
-                        onChange={handleExerciseChange}
-                        toSuperSet={() => {}}                      
-                      />
-                    ):(
-                      <ExerciseItem
-                        onDelete={() => {
-                          setExercises((prevExercises) =>
-                            prevExercises.filter((_, i) => i !== index),
-                          );
-                        }}
-                        key={index}
-                        index={index}
-                        exercise={exercise.Exercises[0]}
-                        onChange={handleExerciseChange}
-                        toSuperSet={() => {}}
-                      />
-                    )}
+                      {exercise.Type === 'Superset' ? (
+                        <SuperSetExersiseItem
+                          onDelete={() => {
+                            setExercises((prevExercises) =>
+                              prevExercises.filter((_, i) => i !== index),
+                            );
+                          }}
+                          key={index}
+                          index={index}
+                          exercise={exercise}
+                          onChange={handleExerciseChange}
+                          toSuperSet={() => {}}
+                        />
+                      ) : (
+                        <ExerciseItem
+                          onDelete={() => {
+                            setExercises((prevExercises) =>
+                              prevExercises.filter((_, i) => i !== index),
+                            );
+                          }}
+                          key={index}
+                          index={index}
+                          exercise={exercise.Exercises[0]}
+                          onChange={handleExerciseChange}
+                          toSuperSet={() => {}}
+                        />
+                      )}
                     </>
-
                   );
                 })}
             </div>

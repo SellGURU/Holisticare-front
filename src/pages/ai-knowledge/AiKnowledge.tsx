@@ -463,21 +463,24 @@ const AiKnowledge = () => {
           ></ActivityMenu>
         </div>
         <div className=" w-full flex  justify-center items-start">
-        <SigmaContainer
-          settings={sigmaSetting}
-          id="sigma-container"
-          className={' !bg-bg-color'}
-          style={{ height: window.innerHeight - 50, width: window.innerWidth }}
-        >
-          {isLoading && <Circleloader></Circleloader>}
-          <LoadGraph
-            graphData={graphData}
-            activeFilters={activeFilters}
-            isInitialLoad={isInitialLoad}
-          />
-          <GraphEvents setisLoading={setisLoading} />
-        </SigmaContainer>
-      </div>
+          <SigmaContainer
+            settings={sigmaSetting}
+            id="sigma-container"
+            className={' !bg-bg-color'}
+            style={{
+              height: window.innerHeight - 50,
+              width: window.innerWidth,
+            }}
+          >
+            {isLoading && <Circleloader></Circleloader>}
+            <LoadGraph
+              graphData={graphData}
+              activeFilters={activeFilters}
+              isInitialLoad={isInitialLoad}
+            />
+            <GraphEvents setisLoading={setisLoading} />
+          </SigmaContainer>
+        </div>
 
         <div className="w-full absolute bottom-6 flex md:hidden justify-center ">
           <ButtonSecondary
