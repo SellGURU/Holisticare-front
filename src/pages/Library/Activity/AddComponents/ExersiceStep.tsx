@@ -64,6 +64,36 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
   };
 
+  const handleExerciseChange = (index: number, field: string, value: string) => {
+    setExercises((prevExercises) => {
+      const updatedExercises = [...prevExercises];
+      // Find the exercise in the current active tab
+      const activeTabExercises = updatedExercises.filter((el: any) => el.Section === activeTab);
+      const exerciseToUpdate = activeTabExercises[index];
+      
+      if (!exerciseToUpdate) return prevExercises;
+
+      // Find the original index of the exercise in the full array
+      const originalIndex = updatedExercises.findIndex((el: any) => el === exerciseToUpdate);
+      
+      if (field === 'Sets') {
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Sets: value
+        };
+      } else {
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Exercises: updatedExercises[originalIndex].Exercises.map(exercise => ({
+            ...exercise,
+            [field]: value
+          }))
+        };
+      }
+      return updatedExercises;
+    });
+  };
+
   // const removeExercise = (index: number) => {
   //   setExercises((prevExercises) => prevExercises.filter((_, i) => i !== index));
   // };
@@ -93,9 +123,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                 .map((exercise: any, index: any) => {
                   return (
                     <ExerciseItem
+                      onDelete={() => {
+                        setExercises((prevExercises) => prevExercises.filter((_, i) => i !== index));
+                      }}
                       key={index}
                       index={index}
                       exercise={exercise}
+                      onChange={handleExerciseChange}
                     />
                   );
                 })}

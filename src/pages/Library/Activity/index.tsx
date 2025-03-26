@@ -19,6 +19,11 @@ const Activity = () => {
       exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   };
+  const getFilteredActivity = () => {
+    return dataList.filter((exercise) =>
+      exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  };  
   useEffect(() => {
     if (active == 'Exercise') {
       getExercisesList();
@@ -95,7 +100,7 @@ const Activity = () => {
               onDelete={() => {
                 getActivityList();
               }}
-              data={dataList}
+              data={getFilteredActivity()}
             ></ActivityHandler>
           ) : (
             <Exercise
