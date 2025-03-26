@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import AddActivity from './AddActivity';
@@ -8,10 +8,13 @@ import Application from '../../../api/app';
 
 interface ActivityHandlerProps {
   data: Array<any>;
+  onDelete: () => void;
+  isShowAddActivity: boolean;
+  setShowAddActivity: (show: boolean) => void;
 }
 
-const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
-  const [showAdd, setShowAdd] = useState(false);
+const ActivityHandler: FC<ActivityHandlerProps> = ({ data,onDelete,isShowAddActivity,setShowAddActivity }) => {
+  const [showAdd, setShowAdd] = useState(isShowAddActivity);
   const handleCloseShowAdd = () => {
     setShowAdd(false);
   };
@@ -19,6 +22,12 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
     setShowAdd(true);
   };
 
+  useEffect(() => {
+    setShowAdd(isShowAddActivity);
+  }, [isShowAddActivity]);
+  useEffect(() => {
+    setShowAddActivity(showAdd);
+  }, [showAdd]);
   return (
     <>
       {data.length == 0 && (
@@ -51,8 +60,8 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
               <thead className="w-full">
                 <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
                   <th className="py-3 pl-4 w-[160px] rounded-tl-2xl">Title</th>
-                  <th className="py-3 w-[300px] text-center">Instruction</th>
-                  <th className="py-3 w-[100px] text-center pl-2">Section</th>
+                  <th className="py-3 w-[250px] text-center">Instruction</th>
+                  <th className="py-3 w-[150px] text-center pl-2">Section</th>
                   <th className="py-3 w-[66px] text-center pl-3">Base Score</th>
                   <th className="py-3 w-[100px] text-center pl-3">Added on</th>
                   <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl">
@@ -68,7 +77,9 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
                     index={index}
                     onDelete={() => {
                       Application.deleteActivity(exercise.Act_Id).then(
-                        () => {},
+                        () => {
+                          onDelete();
+                        },
                       );
                     }}
                     onUpdate={() => {}}
@@ -80,7 +91,10 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data }) => {
         </>
       )}
       <MainModal isOpen={showAdd} onClose={handleCloseShowAdd}>
-        <AddActivity onClose={handleCloseShowAdd} />
+        <AddActivity onSave={() => {
+            handleCloseShowAdd();
+            onDelete()
+        }} onClose={handleCloseShowAdd} />
       </MainModal>
     </>
   );

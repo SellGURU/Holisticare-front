@@ -6,9 +6,10 @@ import Application from '../../../api/app';
 
 interface AddActivityProps {
   onClose: () => void;
+  onSave: () => void;
 }
 
-const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
+const AddActivity: FC<AddActivityProps> = ({ onClose,onSave }) => {
   const [step, setStep] = useState(0);
   const [sectionList, setSectionList] = useState([]);
   const nextStep = () => {
@@ -28,9 +29,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
           Muscle: addData.muscle,
           Terms: addData.terms,
         },
-        Activity_Location: [addData.location],
+        Activity_Location: addData.location,
+      }).then(() => {
+        onSave();
       });
-      console.log('save');
     }
   };
   const backStep = () => {
@@ -49,7 +51,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose }) => {
     muscle: '',
     equipment: '',
     level: '',
-    location: '',
+    location: [],
   });
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({

@@ -64,18 +64,23 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             ? `${exercise.Title.substring(0, 30)}...`
             : exercise.Title}
         </td>
-        <td className="py-3 text-xs text-[#888888] w-[300px] text-center ">
+        <td className="py-3 text-xs text-nowrap overflow-hidden max-w-[250px] text-ellipsis text-[#888888] w-[300px] text-center ">
           {exercise.Instruction}
         </td>
         <td
-          onClick={() => {
-            setViewModal(true);
-          }}
-          className="py-3 w-[100px] text-center text-[#4C88FF] text-[10px] underline"
+          className="py-3 w-[150px] text-center  text-[10px] "
         >
-          {/* {exercise?.Files[0]?.Title === 'YouTube Link'
-            ? 'Youtube-Link'
-            : 'Uploaded Video'} */}
+          <div className='flex justify-center items-center gap-1'>
+            {exercise.Sections.slice(0, 2).map((el: any) => {
+              return <div className='bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px]'>{el}</div>;
+            })}
+            {exercise.Sections.length > 2 && (
+              <div className="bg-[#E9F0F2] px-2 py-[0px] text-[10px] text-[#005F73] rounded-[16px]">
+                +{exercise.Sections.length - 2}
+              </div>
+            )}
+
+          </div>
         </td>
         {/* <td className="py-2 text-Text-Secondary text-[10px]">
       {exercise.file}
@@ -89,7 +94,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
           </div>
         </td>
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
-          {formatDate(exercise['Added on'])}
+          {formatDate(exercise['Added On'])}
         </td>
         <td className="py-3 w-[80px] mx-auto text-center flex items-center justify-end  gap-2">
           {ConfirmDelete ? (

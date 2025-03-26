@@ -18,7 +18,7 @@ interface InformationStepProps {
     muscle: string;
     equipment: string;
     level: string;
-    location: string;
+    location: Array<string>;
   };
   updateAddData: (
     key:
@@ -64,7 +64,7 @@ const InformationStep: FC<InformationStepProps> = ({
     });
   }, []);
   const handleCheckboxChange = (value: string) => {
-    updateAddData('location', addData.location === value ? '' : value);
+    updateAddData('location', addData.location.includes(value)? addData.location.filter((item: string) => item !== value) : [...addData.location, value]);
   };
   return (
     <>
@@ -163,15 +163,15 @@ const InformationStep: FC<InformationStepProps> = ({
             />
           </div>
           <div className="flex flex-col text-xs gap-3 mt-2">
-            Exercise Location
+            Activity Location
             <div className="flex gap-6">
               <Checkbox
-                checked={addData.location === 'Home'}
+                checked={addData.location.includes("Home")}
                 onChange={() => handleCheckboxChange('Home')}
                 label="Home"
               />
               <Checkbox
-                checked={addData.location === 'Gym'}
+                checked={addData.location.includes("Gym")}
                 onChange={() => handleCheckboxChange('Gym')}
                 label="Gym"
               />
