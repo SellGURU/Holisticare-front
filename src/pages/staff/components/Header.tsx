@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { MainModal } from '../../../Components';
 import InviteMemberModal from './InviteMemberModal';
 
-const HeaderStaff = () => {
+interface HeaderStaffProps {
+  getStaffs: () => void;
+}
+
+const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs }) => {
   const [showModal, setShowModal] = useState(false);
   return (
     <>
@@ -43,7 +47,7 @@ const HeaderStaff = () => {
           setShowModal(false);
         }}
       >
-        <InviteMemberModal setShowModal={setShowModal} />
+        <InviteMemberModal setShowModal={setShowModal} getStaffs={getStaffs} />
       </MainModal>
     </>
   );

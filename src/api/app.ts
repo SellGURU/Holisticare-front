@@ -884,15 +884,20 @@ class Application extends Api {
   static showExerciseFille = (data: any) => {
     return this.post('/activity_library/show_exercise_file', data);
   };
-
-  static addActivity = (data: any) => {
-    return this.post('/activity_library/add_activity', data);
+  static getStaffList = () => {
+    return this.post('/settings/staff_list', {});
   };
-  static deleteActivity = (Act_Id: string) => {
-    return this.post('/activity_library/delete_activity', { Act_Id: Act_Id });
+  static inviteStaffMember = (data: any) => {
+    return this.post('/settings/invite_staff', data);
   };
-  static activityList = () => {
-    return this.post('/activity_library/activities_list');
+  static getStaffAssignedClients = (data: any) => {
+    return this.post('/settings/staffs/assigned_clients', data);
+  };
+  static RemoveUserStaff = (data: any) => {
+    return this.post('/settings/remove_staff', data);
+  };
+  static ChangeRoleUserStaff = (data: any) => {
+    return this.post('/settings/change_role', data);
   };
 }
 

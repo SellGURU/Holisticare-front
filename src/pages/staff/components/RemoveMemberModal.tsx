@@ -1,19 +1,30 @@
 import { FC } from 'react';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface RemoveMemberModalProps {
-  memberInfo: any;
-  setShowModalRemove: (value: boolean) => void;
+  memberInfo: {
+    email: string;
+    role: string;
+    score: number;
+    user_id: string;
+    picture: string;
+    online: boolean;
+    user_name: string;
+  };
   isSuccess: boolean;
   setSuccessRemove: (value: boolean) => void;
+  handleCloseModalRemove: () => void;
+  handleRemoveMember: (userId: string) => void;
+  submitLoading: boolean;
 }
 
 const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
   memberInfo,
-  setShowModalRemove,
   isSuccess,
   setSuccessRemove,
+  handleCloseModalRemove,
+  handleRemoveMember,
+  submitLoading,
 }) => {
   return (
     <>
@@ -28,7 +39,7 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="text-xs text-Text-Primary font-medium text-center mt-5">
-              Are you sure you want to remove {memberInfo?.fullname}?
+              Are you sure you want to remove {memberInfo?.user_name}?
             </div>
             <div className="text-Text-Quadruple text-xs text-center mt-3">
               By removing her, she will no longer have access to her portal.
@@ -36,15 +47,17 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
             <div className="w-full flex justify-end items-center p-2 mt-5">
               <div
                 className="text-Disable text-sm font-medium mr-4 cursor-pointer"
-                onClick={() => {
-                  setShowModalRemove(false);
-                }}
+                onClick={handleCloseModalRemove}
               >
                 Cancel
               </div>
               <div
-                className={`text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
-                onClick={() => setSuccessRemove(true)}
+                className={`${submitLoading ? 'text-Disable' : 'text-Primary-DeepTeal'} text-sm font-medium cursor-pointer`}
+                onClick={() => {
+                  if (!submitLoading) {
+                    handleRemoveMember(memberInfo?.user_id);
+                  }
+                }}
               >
                 Confirm
               </div>
@@ -56,12 +69,12 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
           <div className="w-full h-full flex flex-col items-center">
             <img src="/icons/tick-circle-background-new.svg" alt="" />
             <div className="text-xs font-medium text-Text-Primary text-center">
-              {memberInfo?.fullname} has been successfully removed.
+              {memberInfo?.user_name} has been successfully removed.
             </div>
             <ButtonPrimary
               ClassName="mt-5 w-[150px]"
               onClick={() => {
-                setShowModalRemove(false);
+                handleCloseModalRemove();
                 setSuccessRemove(false);
               }}
             >
