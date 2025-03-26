@@ -29,11 +29,7 @@ const LibBox: React.FC<LibBoxProps> = ({
               alt=""
             />
             <div className="text-[12px] text-Text-Primary w-[200px] overflow-hidden text-nowrap text-ellipsis">
-              {
-                data.Recommendation.split('*')[
-                  data.Recommendation.split('*').length - 1
-                ]
-              }
+              {data.Title}
             </div>
           </div>
           <img
@@ -47,25 +43,6 @@ const LibBox: React.FC<LibBoxProps> = ({
         </div>
         {showMore && (
           <div className=" mt-2">
-            <div className=" flex justify-start text-nowrap items-center">
-              <div className="text-Text-Secondary text-[10px]">
-                • Hierarchy:
-              </div>
-              <div className="text-[10px] text-Text-Primary ml-1">
-                {data.Recommendation.split('*')[0]}
-              </div>
-              <img
-                src="/icons/arrow-right.svg"
-                alt=""
-                className="mr-1 ml-1 w-[16px] h-[16px]"
-              />
-              <div
-                className="text-[10px] text-Text-Primary whitespace-nowrap truncate flex-1"
-                title={data.Recommendation.split('*')[1]}
-              >
-                {data.Recommendation.split('*')[1]}
-              </div>
-            </div>
             <div className=" flex justify-start mt-1 items-start">
               <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
                 • Instruction:

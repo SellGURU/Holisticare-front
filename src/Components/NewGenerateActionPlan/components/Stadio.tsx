@@ -11,6 +11,7 @@ import { AlertModal } from '../../AlertModal';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import ActionEditModal from './ActionEditModal';
 import BasedOnModal from './BasedOnModal';
+import Sort from './Sort';
 
 interface StadioProps {
   data: Array<any>;
@@ -88,12 +89,27 @@ const Stadio: React.FC<StadioProps> = ({
   const filteredData = data.filter(
     (el) =>
       el.Category == selectCategory &&
-      el.Recommendation.toLowerCase().includes(searchValue.toLowerCase()),
+      el.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
   const [showAddModal, setshowAddModal] = useState(false);
   const [showBasedOn, setShowBasedOn] = useState(false);
   const [valueBasedOn, setValueBasedOn] = useState([]);
-
+  const [sortBy, setSortBy] = useState('System Score');
+  const handleChangeSort = (value: string) => {
+    setSortBy(value);
+  };
+  const options = [
+    {
+      label: 'System Score',
+      value: 'System Score',
+      color: 'bg-Primary-DeepTeal',
+    },
+    {
+      label: 'Base Score',
+      value: 'Base Score',
+      color: 'bg-Primary-EmeraldGreen',
+    },
+  ];
   return (
     <>
       <ActionEditModal
@@ -217,6 +233,11 @@ const Stadio: React.FC<StadioProps> = ({
                 setSearchValue(value);
               }}
             ></SearchBox>
+            <Sort
+              options={options}
+              handleChangeSort={handleChangeSort}
+              sortBy={sortBy}
+            />
             <div>
               <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
                 {AllCategories.map((cat) => {
@@ -232,7 +253,7 @@ const Stadio: React.FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[390px] overflow-y-auto">
+              <div className="w-full h-[360px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredData.map((value: any) => {
                     return (

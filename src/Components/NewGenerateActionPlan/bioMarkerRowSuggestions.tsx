@@ -50,10 +50,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     );
   };
 
-  const RecommendationParts = value.Recommendation?.split('*').map(
-    (part: string) => part.trim(),
-  );
-
   const [expandedItems, setExpandedItems] = useState<{
     [key: number]: boolean;
   }>({});
@@ -88,7 +84,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
-                {RecommendationParts[2]}
+                {value.Title}
               </div>
               <div className="flex items-center">
                 <ChoosingDaysWeek
@@ -133,22 +129,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </div>
                 <div
-                  className={`flex items-center mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
-                >
-                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
-                    • Hierarchy:
-                  </div>
-                  <div className="flex items-center text-Text-Primary text-[12px] ml-1">
-                    {RecommendationParts[0]}
-                    <img
-                      src="/icons/arrow-right.svg"
-                      alt=""
-                      className="mr-1 ml-1 w-[16px] h-[16px]"
-                    />
-                    {RecommendationParts[1]}
-                  </div>
-                </div>
-                <div
                   className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
@@ -160,11 +140,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
               </div>
               <div className="flex">
-                <div
+                {/* <div
                   className={`text-Text-Quadruple text-xs text-nowrap capitalize ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value.Times.join(' & ')}
-                </div>
+                </div> */}
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >

@@ -38,7 +38,7 @@ const GenerateActionPlan = () => {
       percents: newPlans,
     })
       .then((res) => {
-        setCategories(res.data.action_db);
+        setCategories(res.data);
         setIsWeighted(true);
       })
       .finally(() => {
