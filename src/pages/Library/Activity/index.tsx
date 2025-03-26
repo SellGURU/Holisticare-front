@@ -12,7 +12,7 @@ const Activity = () => {
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [ExcercisesList, setExcercisesList] = useState<Array<any>>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAdd, setShowAdd] = useState(false);  
+  const [showAdd, setShowAdd] = useState(false);
   const [showAddActivity, setShowAddActivity] = useState(false);
   const getFilteredExercises = () => {
     return ExcercisesList.filter((exercise) =>
@@ -54,7 +54,8 @@ const Activity = () => {
               {active}
             </div>
             <div className="flex items-center gap-2">
-              {((ExcercisesList.length > 0 && active == 'Exercise') || (dataList.length > 0 && active == 'Activity')) && (
+              {((ExcercisesList.length > 0 && active == 'Exercise') ||
+                (dataList.length > 0 && active == 'Activity')) && (
                 <SearchBox
                   ClassName="rounded-xl h-6 !py-[0px] !px-3 !shadow-[unset]"
                   placeHolder={`Search in ${active.toLowerCase()}...`}
@@ -82,15 +83,20 @@ const Activity = () => {
                   <img src="./icons/add-square.svg" alt="" />
                   Add Activity
                 </ButtonSecondary>
-              )}              
+              )}
             </div>
           </div>
         </div>
         <div className="pt-[100px] px-6">
           {active == 'Activity' ? (
-            <ActivityHandler setShowAddActivity={setShowAddActivity}  isShowAddActivity={showAddActivity} onDelete={() => {
-              getActivityList();
-            }} data={dataList}></ActivityHandler>
+            <ActivityHandler
+              setShowAddActivity={setShowAddActivity}
+              isShowAddActivity={showAddActivity}
+              onDelete={() => {
+                getActivityList();
+              }}
+              data={dataList}
+            ></ActivityHandler>
           ) : (
             <Exercise
               data={getFilteredExercises()}

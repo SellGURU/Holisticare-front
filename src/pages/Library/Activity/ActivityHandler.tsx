@@ -13,7 +13,12 @@ interface ActivityHandlerProps {
   setShowAddActivity: (show: boolean) => void;
 }
 
-const ActivityHandler: FC<ActivityHandlerProps> = ({ data,onDelete,isShowAddActivity,setShowAddActivity }) => {
+const ActivityHandler: FC<ActivityHandlerProps> = ({
+  data,
+  onDelete,
+  isShowAddActivity,
+  setShowAddActivity,
+}) => {
   const [showAdd, setShowAdd] = useState(isShowAddActivity);
   const handleCloseShowAdd = () => {
     setShowAdd(false);
@@ -76,11 +81,9 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data,onDelete,isShowAddActi
                     exercise={exercise}
                     index={index}
                     onDelete={() => {
-                      Application.deleteActivity(exercise.Act_Id).then(
-                        () => {
-                          onDelete();
-                        },
-                      );
+                      Application.deleteActivity(exercise.Act_Id).then(() => {
+                        onDelete();
+                      });
                     }}
                     onUpdate={() => {}}
                   />
@@ -91,10 +94,13 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({ data,onDelete,isShowAddActi
         </>
       )}
       <MainModal isOpen={showAdd} onClose={handleCloseShowAdd}>
-        <AddActivity onSave={() => {
+        <AddActivity
+          onSave={() => {
             handleCloseShowAdd();
-            onDelete()
-        }} onClose={handleCloseShowAdd} />
+            onDelete();
+          }}
+          onClose={handleCloseShowAdd}
+        />
       </MainModal>
     </>
   );

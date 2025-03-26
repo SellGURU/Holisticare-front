@@ -64,7 +64,12 @@ const InformationStep: FC<InformationStepProps> = ({
     });
   }, []);
   const handleCheckboxChange = (value: string) => {
-    updateAddData('location', addData.location.includes(value)? addData.location.filter((item: string) => item !== value) : [...addData.location, value]);
+    updateAddData(
+      'location',
+      addData.location.includes(value)
+        ? addData.location.filter((item: string) => item !== value)
+        : [...addData.location, value],
+    );
   };
   return (
     <>
@@ -166,12 +171,12 @@ const InformationStep: FC<InformationStepProps> = ({
             Activity Location
             <div className="flex gap-6">
               <Checkbox
-                checked={addData.location.includes("Home")}
+                checked={addData.location.includes('Home')}
                 onChange={() => handleCheckboxChange('Home')}
                 label="Home"
               />
               <Checkbox
-                checked={addData.location.includes("Gym")}
+                checked={addData.location.includes('Gym')}
                 onChange={() => handleCheckboxChange('Gym')}
                 label="Gym"
               />

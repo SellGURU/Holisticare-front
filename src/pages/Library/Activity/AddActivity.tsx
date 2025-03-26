@@ -9,7 +9,7 @@ interface AddActivityProps {
   onSave: () => void;
 }
 
-const AddActivity: FC<AddActivityProps> = ({ onClose,onSave }) => {
+const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
   const [step, setStep] = useState(0);
   const [sectionList, setSectionList] = useState([]);
   const nextStep = () => {
