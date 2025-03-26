@@ -900,7 +900,6 @@ class Application extends Api {
     return this.post('/settings/change_role', data);
   };
 
-
   static addActivity = (data: any) => {
     return this.post('/activity_library/add_activity', data);
   };
@@ -909,7 +908,7 @@ class Application extends Api {
   };
   static activityList = () => {
     return this.post('/activity_library/activities_list');
-  };  
+  };
 }
 
 export default Application;
