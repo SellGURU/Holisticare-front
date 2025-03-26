@@ -114,7 +114,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   };
 
   const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
-    const activeTabExercises = exercises.filter((el: any) => el.Section === activeTab);
+    const activeTabExercises = exercises.filter(
+      (el: any) => el.Section === activeTab,
+    );
     const previousExercise = activeTabExercises[index - 1];
 
     if (!previousExercise) return;
@@ -122,11 +124,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     const resolveSuperSet = {
       ...previousExercise,
       Type: 'Superset',
-      Exercises: [...previousExercise.Exercises, ...exercise.Exercises]
+      Exercises: [...previousExercise.Exercises, ...exercise.Exercises],
     };
 
     setExercises((prevExercises) => {
-      const resolved = prevExercises.filter((_, i) => i !== index && i !== index - 1);
+      const resolved = prevExercises.filter(
+        (_, i) => i !== index && i !== index - 1,
+      );
       return [...resolved, resolveSuperSet];
     });
   };

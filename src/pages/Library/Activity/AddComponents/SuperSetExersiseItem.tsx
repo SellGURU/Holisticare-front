@@ -6,7 +6,12 @@ interface SuperSetExersiseItemProps {
   exercise: any;
   onDelete: () => void;
   toSuperSet: () => void;
-  onChange: (index: number, field: string, value: string, exersiseIndex: number) => void;
+  onChange: (
+    index: number,
+    field: string,
+    value: string,
+    exersiseIndex: number,
+  ) => void;
 }
 
 const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
@@ -19,7 +24,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
   return (
     <>
       <div className="flex flex-col ml-2 gap-2 relative">
-        {exercise.Exercises.map((el: any,ind:number) => (
+        {exercise.Exercises.map((el: any, ind: number) => (
           <ExerciseItem
             sets={exercise.Sets}
             exesiseIndex={ind}
