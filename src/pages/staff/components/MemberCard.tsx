@@ -67,7 +67,9 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
     Application.RemoveUserStaff({ user_id: userId }).then(() => {
       setSuccessRemove(true);
       setSubmitLoading(false);
-      getStaffs();
+      setTimeout(() => {
+        getStaffs();
+      }, 3000);
     });
   };
   const handleChangeRole = (userId: string, role: string) => {
@@ -93,7 +95,14 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
             <div className="size-[48px] xs:size-[58px] md:size-[64px] rounded-full relative">
               <img
                 className="w-full h-full rounded-full object-cover"
-                src={memberInfo.picture}
+                onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${memberInfo.email.split('@')[0]}`;
+                }}
+                src={
+                  memberInfo.picture
+                    ? memberInfo.picture
+                    : `https://ui-avatars.com/api/?name=${memberInfo.email.split('@')[0]}`
+                }
                 alt=""
               />
               <div

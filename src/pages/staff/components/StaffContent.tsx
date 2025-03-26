@@ -111,11 +111,19 @@ const StaffContent = () => {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-2 mt-4">
-        {filteredMembers.map((member, index) => {
-          return (
-            <MemberCard memberInfo={member} key={index} getStaffs={getStaffs} />
-          );
-        })}
+        {filteredMembers.length > 0 && (
+          <>
+            {filteredMembers.map((member, index) => {
+              return (
+                <MemberCard
+                  memberInfo={member}
+                  key={index}
+                  getStaffs={getStaffs}
+                />
+              );
+            })}
+          </>
+        )}
       </div>
     </>
   );

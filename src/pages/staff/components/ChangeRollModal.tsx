@@ -53,18 +53,19 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
               </div>
               <div className="flex items-center">
                 <div className="text-Text-Primary text-xs flex w-[50%] p-2">
-                  {memberInfo?.role}
+                  {memberInfo?.role.charAt(0).toUpperCase() +
+                    memberInfo?.role.slice(1)}
                 </div>
                 <div className="text-Text-Primary text-xs flex items-center w-[50%] p-2 border-l border-Gray-50">
                   <div className="flex flex-col gap-2">
-                    {memberInfo?.role === 'Admin' ? (
+                    {memberInfo?.role === 'admin' ? (
                       <div className="flex items-center gap-2">
                         <input
                           type="radio"
                           id="staff"
                           name="role"
-                          value="Staff"
-                          checked={selectRoll === 'Staff'}
+                          value="staff"
+                          checked={selectRoll === 'staff'}
                           onChange={(e) => setSelectRoll(e.target.value)}
                           className="w-[10px] h-[10px] accent-Primary-DeepTeal cursor-pointer"
                         />
@@ -81,8 +82,8 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
                           type="radio"
                           id="admin"
                           name="role"
-                          value="Admin"
-                          checked={selectRoll === 'Admin'}
+                          value="admin"
+                          checked={selectRoll === 'admin'}
                           onChange={(e) => setSelectRoll(e.target.value)}
                           className="w-[10px] h-[10px] accent-Primary-DeepTeal cursor-pointer"
                         />

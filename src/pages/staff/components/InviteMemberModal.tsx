@@ -12,7 +12,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   setShowModal,
   getStaffs,
 }) => {
-  const [title, setTitle] = useState('');
+  const [email, setEmail] = useState('');
   const [openRoll, setOpenRoll] = useState(false);
   const [role, setRole] = useState('staff');
   const [step, setStep] = useState(1);
@@ -24,6 +24,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
       setLoading(false);
       setRole('staff');
       setStep(3);
+      getStaffs();
     });
   };
   return (
@@ -42,10 +43,10 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 </div>
                 <input
                   placeholder="Write email member ..."
-                  className="w-[304px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  className={`w-[304px] h-[28px] border ${!email.includes('@') && email.length > 0 ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="flex flex-col w-full">
@@ -85,9 +86,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 Cancel
               </div>
               <div
-                className={`${title && role ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+                className={`${email.includes('@') && role ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
                 onClick={() => {
-                  if (title && role) {
+                  if (email.includes('@') && role) {
                     setStep(2);
                   }
                 }}
@@ -109,7 +110,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 <img src="/images/staff/avatar-black.png" alt="" />
                 <div className="flex flex-col justify-center ml-2 gap-1 w-full">
                   <div className="text-Text-Primary text-xs font-medium">
-                    {title.length > 20 ? title.substring(0, 20) + '...' : title}
+                    {email.length > 20 ? email.substring(0, 20) + '...' : email}
                   </div>
                   <div className="flex items-center justify-between w-full">
                     <div className="text-Text-Primary text-[10px]">{role}</div>
@@ -167,9 +168,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               <div
                 className={`${loading ? 'text-Disable' : 'text-Primary-DeepTeal'} text-sm font-medium cursor-pointer`}
                 onClick={() => {
-                  if (title && role) {
+                  if (email && role) {
                     onSave({
-                      email: title,
+                      email: email,
                       role: role,
                     });
                   }
@@ -189,14 +190,13 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
             </div>
             <div className="text-xs text-Text-Quadruple mt-2 text-nowrap flex items-center gap-1">
               The invitation link has been sent to this email:
-              <div className="text-Primary-DeepTeal">{title}</div>
+              <div className="text-Primary-DeepTeal">{email}</div>
             </div>
             <ButtonPrimary
               ClassName="mt-5 w-[150px]"
               onClick={() => {
                 setShowModal(false);
-                setTitle('');
-                getStaffs();
+                setEmail('');
               }}
             >
               Got it
