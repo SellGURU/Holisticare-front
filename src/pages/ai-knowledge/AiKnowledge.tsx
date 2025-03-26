@@ -300,12 +300,12 @@ const AiKnowledge = () => {
       ? Math.ceil(systemDocs.length / itemsPerPage)
       : Math.ceil(userUploads.length / itemsPerPage);
   const [AddFilleModal, setAddFilleModal] = useState(false);
-  const [FilleType, ] = useState('Activty');
-  const [fileTitle,setFileTitle ] = useState('')
+  const [FilleType] = useState('Activty');
+  const [fileTitle, setFileTitle] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [uploadComplete, setUploadComplete] = useState(false);
-  const handleFileUpload = (event:any) => {
+  const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
@@ -332,7 +332,6 @@ const AiKnowledge = () => {
     setUploadProgress(0);
     setSelectedFile(null);
     setUploadComplete(false);
-
   };
 
   const closeModal = () => {
@@ -340,9 +339,7 @@ const AiKnowledge = () => {
     setUploadProgress(0);
     setSelectedFile(null);
     setUploadComplete(false);
-    setFileTitle('')
-  
-
+    setFileTitle('');
   };
   const formatFileSize = (size: number): string => {
     if (size === 0) return '0 B';
@@ -351,17 +348,17 @@ const AiKnowledge = () => {
     return `${sizeInUnits} ${['B', 'kB', 'MB', 'GB', 'TB'][i]}`;
   };
   console.log(fileTitle);
-  
+
   return (
     <>
-      <MainModal isOpen={AddFilleModal}onClose={closeModal}>
-      <div className="w-[434px] bg-white h-[500px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary">
+      <MainModal isOpen={AddFilleModal} onClose={closeModal}>
+        <div className="w-[434px] bg-white h-[500px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary">
           <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
             Add New Document
           </div>
           <div className="mt-6 w-full flex-col flex gap-6">
             <CustomSelect
-            wfull
+              wfull
               selectedOption={FilleType}
               onOptionSelect={() => {}}
               options={[]}
@@ -369,12 +366,12 @@ const AiKnowledge = () => {
               placeHolder="Activity"
             />
             <TextField
-            value={fileTitle}
-            onChange={(e)=>setFileTitle(e.target.value)}
+              value={fileTitle}
+              onChange={(e) => setFileTitle(e.target.value)}
               newStyle
-              type='text'
-              label='Title'
-              placeholder='Enter title name ...'
+              type="text"
+              label="Title"
+              placeholder="Enter title name ..."
             />
             <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
               <input
@@ -425,7 +422,9 @@ const AiKnowledge = () => {
                     <img src="/icons/PDF_file_icon.svg 1.svg" alt="PDF Icon" />
                     <div className="flex flex-col">
                       <span className="text-xs">{selectedFile.name}</span>
-                      <span className="text-xs text-[#888888]">{formatFileSize(selectedFile.size)}</span>
+                      <span className="text-xs text-[#888888]">
+                        {formatFileSize(selectedFile.size)}
+                      </span>
                     </div>
                   </div>
                   <img
@@ -438,9 +437,16 @@ const AiKnowledge = () => {
               )}
             </div>
           </div>
-          <div className='w-full flex items-center justify-end gap-2 text-sm font-medium'>
-            <div onClick={closeModal} className='text-[#909090] cursor-pointer' >Cancel</div>
-            <div onClick={closeModal} className='text-Primary-DeepTeal cursor-pointer '>Add</div>
+          <div className="w-full flex items-center justify-end gap-2 text-sm font-medium">
+            <div onClick={closeModal} className="text-[#909090] cursor-pointer">
+              Cancel
+            </div>
+            <div
+              onClick={closeModal}
+              className="text-Primary-DeepTeal cursor-pointer "
+            >
+              Add
+            </div>
           </div>
         </div>
       </MainModal>
@@ -456,12 +462,12 @@ const AiKnowledge = () => {
             onChangeMenuAction={(menu) => setActiveMenu(menu)}
           ></ActivityMenu>
         </div>
-        {/* <div className=" w-full flex  justify-center items-start">
+        <div className=" w-full flex  justify-center items-start">
         <SigmaContainer
           settings={sigmaSetting}
           id="sigma-container"
           className={' !bg-bg-color'}
-          style={{ height: window.innerHeight - 50, width: windAow.innerWidth }}
+          style={{ height: window.innerHeight - 50, width: window.innerWidth }}
         >
           {isLoading && <Circleloader></Circleloader>}
           <LoadGraph
@@ -471,7 +477,7 @@ const AiKnowledge = () => {
           />
           <GraphEvents setisLoading={setisLoading} />
         </SigmaContainer>
-      </div> */}
+      </div>
 
         <div className="w-full absolute bottom-6 flex md:hidden justify-center ">
           <ButtonSecondary

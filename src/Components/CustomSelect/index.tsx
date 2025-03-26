@@ -6,7 +6,7 @@ interface CustomSelectProps {
   selectedOption: string;
   onOptionSelect: (options: string) => void;
   placeHolder?: string;
-  wfull ?: boolean
+  wfull?: boolean;
 }
 const CustomSelect: React.FC<CustomSelectProps> = ({
   label,
@@ -14,8 +14,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   selectedOption,
   onOptionSelect,
   placeHolder,
-  wfull
-
+  wfull,
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const selectButRef = useRef(null);
@@ -29,14 +28,16 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {label && <label className="mb-1">{label}</label>}
 
       <div
-        ref={selectButRef} 
+        ref={selectButRef}
         onClick={() => {
           setShowSelect(!showSelect);
         }}
         className={`w-full ${wfull ? 'md:w-full' : 'md:w-[181px]'}  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
       >
         {selectedOption ? (
-          <div className="text-[12px] text-[#383838] max-w-[140px] truncate">{selectedOption}</div>
+          <div className="text-[12px] text-[#383838] max-w-[140px] truncate">
+            {selectedOption}
+          </div>
         ) : (
           <div className="text-[12px] text-[#B0B0B0] font-light">
             {placeHolder}

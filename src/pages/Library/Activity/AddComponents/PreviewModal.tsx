@@ -102,7 +102,6 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                     key={video.file_id}
                     className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
                     controls
-                
                     src={video.base64 || video.url}
                   >
                     Your browser does not support the video tag.
