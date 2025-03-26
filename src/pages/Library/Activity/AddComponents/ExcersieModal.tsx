@@ -87,7 +87,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           ? 'link'
           : file.Type.startsWith('video/')
             ? 'Video'
-            : 'Picture',
+            : 'Video',
       Content: {
         url: file.Content.url || '',
         file_id: file.Content.file_id || '',

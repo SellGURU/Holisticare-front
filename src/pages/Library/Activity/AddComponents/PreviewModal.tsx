@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MainModal } from '../../../Components';
-import Application from '../../../api/app';
-import Circleloader from '../../../Components/CircleLoader';
+import { MainModal } from '../../../../Components';
+import Application from '../../../../api/app';
+import Circleloader from '../../../../Components/CircleLoader';
 
 interface ViewExerciseModalProps {
   isOpen: boolean;
@@ -91,7 +91,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
           </div>
           <div className="flex w-full justify-between items-start gap-3">
             <div className="text-xs font-medium">File</div>
-            <div className="h-[200px] overflow-auto flex flex-col gap-1">
+            <div className="h-[150px] overflow-auto flex flex-col gap-1">
               {isLoading ? (
                 <div className="w-[370px] h-[200px] flex justify-center items-center">
                   <Circleloader />
@@ -100,10 +100,9 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 videoData.map((video) => (
                   <video
                     key={video.file_id}
-                    className="rounded-xl border border-Gray-50"
+                    className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
                     controls
-                    width="370px"
-                    height="200px"
+                
                     src={video.base64 || video.url}
                   >
                     Your browser does not support the video tag.

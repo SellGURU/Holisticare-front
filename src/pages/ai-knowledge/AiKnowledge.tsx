@@ -15,6 +15,8 @@ import Circleloader from '../../Components/CircleLoader/index.tsx';
 import ActivityMenu from '../../Components/ActivityMenu/index.tsx';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary.tsx';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
+import Toggle from '../../Components/Toggle/index.tsx';
+import Pagination from '../../Components/pagination/index.tsx';
 
 interface LoadGraphProps {
   activeFilters: string[];
@@ -224,6 +226,77 @@ const AiKnowledge = () => {
     buttonRefrence: btnRef,
     close: () => setShowDoc(false),
   });
+
+  const [activaTab, setActiveTab] = useState('System Docs');
+
+  type Document = {
+    id: number;
+    type: string;
+    date: string;
+    disabled: boolean;
+  };
+
+  const [systemDocs, setSystemDocs] = useState<Document[]>([
+    {
+      id: 1,
+      type: 'Diseases and Conditions',
+      date: '04/25/2024',
+      disabled: false,
+    },
+    { id: 2, type: 'Symptoms', date: '04/25/2024', disabled: false },
+    // Add more mock data as needed
+  ]);
+
+  const [userUploads, setUserUploads] = useState<Document[]>([
+    { id: 1, type: 'Uploaded Document 1', date: '03/15/2024', disabled: false },
+    { id: 2, type: 'Uploaded Document 2', date: '03/16/2024', disabled: false },
+    // Add more mock data as needed
+  ]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 13;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const toggleDisable = (id: number, tab: string) => {
+    if (tab === 'System Docs') {
+      setSystemDocs((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+        ),
+      );
+    } else if (tab === 'User Uploads') {
+      setUserUploads((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+        ),
+      );
+    }
+  };
+
+  const deleteDocument = (id: number) => {
+    setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
+    setConfirmDeleteId(null);
+  };
+
+  const currentDocuments =
+    activaTab === 'System Docs'
+      ? systemDocs.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage,
+        )
+      : userUploads.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage,
+        );
+
+  const totalPages =
+    activaTab === 'System Docs'
+      ? Math.ceil(systemDocs.length / itemsPerPage)
+      : Math.ceil(userUploads.length / itemsPerPage);
+
   return (
     <div className="relative text-primary-text md:flex justify-center w-full h-[90vh] md:h-[80vh] pt-5 md:pt-0 ">
       <div className=" w-full flex md:hidden items-center justify-start gap-2 text-sm font-medium text-Text-Primary">
@@ -284,6 +357,11 @@ const AiKnowledge = () => {
               placeHolder="Search for document ..."
               onSearch={() => {}}
             ></SearchBox>
+            <ActivityMenu
+              activeMenu={activeMenu}
+              menus={menus}
+              onChangeMenuAction={(menu) => setActiveMenu(menu)}
+            />
             <button
               className={
                 'mt-3 w-full border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
@@ -373,13 +451,177 @@ const AiKnowledge = () => {
           </div>
         </div>
       ) : (
-        <div className=" hidden fixed right-5 top-[8%] w-[400px] h-[80vh] text-primary-text overflow-y-auto overscroll-y-auto  md:flex flex-col ">
+        <div className=" hidden fixed right-5 top-[8%] w-[315px] h-[80vh] text-primary-text  md:flex flex-col ">
           <SearchBox
             ClassName="rounded-[12px]"
             placeHolder="Search for document ..."
             onSearch={() => {}}
           ></SearchBox>
-          <div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
+          <div className="mt-3 w-full">
+            <Toggle
+              active={activaTab}
+              value={['System Docs', 'User Uploads']}
+              setActive={(menu) => setActiveTab(menu)}
+            ></Toggle>
+          </div>
+          {activaTab == 'User Uploads' ? (
+            <>
+              <button
+                className={
+                  'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
+                }
+              >
+                <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
+                Add New Document
+              </button>
+              <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                <table className="min-w-full bg-white ">
+                  <thead>
+                    <tr className="bg-[#E5E5E5]">
+                      <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
+                        Node Type
+                      </th>
+                      <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
+                        Date of Update
+                      </th>
+                      <th className="w-[60px] text-right py-2 pr-2 text-xs font-medium text-Text-Primary">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentDocuments.map((doc, index) => (
+                      <tr
+                        key={doc.id}
+                        className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                      >
+                        <td
+                          className={`pl-2 py-2 w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                        >
+                          {doc.type}
+                        </td>
+                        <td
+                          className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
+                        >
+                          {doc.date}
+                        </td>
+                        <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
+                          {confirmDeleteId === doc.id ? (
+                            <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
+                              Sure?
+                              <img
+                                className="cursor-pointer size-4"
+                                onClick={() => deleteDocument(doc.id)}
+                                src="/icons/confirm-tick-circle.svg"
+                                alt="Confirm"
+                              />
+                              <img
+                                className="cursor-pointer size-4 "
+                                onClick={() => setConfirmDeleteId(null)}
+                                src="/icons/cansel-close-circle.svg"
+                                alt="Cancel"
+                              />
+                            </div>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() =>
+                                  toggleDisable(doc.id, 'User Uploads')
+                                }
+                              >
+                                {doc.disabled ? (
+                                  <img
+                                    src="/icons/eye-slash-blue.svg"
+                                    alt="Disabled"
+                                  />
+                                ) : (
+                                  <img
+                                    src="/icons/eye-blue.svg"
+                                    alt="Enabled"
+                                  />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeleteId(doc.id)}
+                              >
+                                <img src="/icons/trash-blue.svg" alt="Delete" />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="flex justify-center pb-4 absolute bottom-0 w-full">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                <table className="min-w-full bg-white">
+                  <thead>
+                    <tr className="bg-[#E5E5E5]">
+                      <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
+                        Node Type
+                      </th>
+                      <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
+                        Date of Update
+                      </th>
+                      <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentDocuments.map((doc, index) => (
+                      <tr
+                        key={doc.id}
+                        className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                      >
+                        <td
+                          className={`pl-2 py-2 w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                        >
+                          {doc.type}
+                        </td>
+                        <td
+                          className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
+                        >
+                          {doc.date}
+                        </td>
+                        <td className="py-2 pr-2 w-[40px] text-center">
+                          <button onClick={() => toggleDisable(doc.id, "System Uploads")}>
+                            {doc.disabled ? (
+                              <img src="/icons/eye-slash-blue.svg" alt="" /> // Eye icon for disabled
+                            ) : (
+                              <img src="/icons/eye-blue.svg" alt="" />
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="flex justify-center pb-4 absolute bottom-0 w-full">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/*<div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
             <div className="mb-4">
               <h3 className="text-lg text-light-secandary-text mb-2">
                 Documents
@@ -432,7 +674,7 @@ const AiKnowledge = () => {
                         </span>
                       </label>
 
-                      {/* <div className="flex mb-2 justify-start items-center">
+                       <div className="flex mb-2 justify-start items-center">
                                             <input checked={activeFilters.includes(el)} onChange={() => {
                                                 handleButtonClick(el)
                                             }} type="checkbox"
@@ -450,22 +692,14 @@ const AiKnowledge = () => {
                                                 </div>
                                             </label>
 
-                                        </div> */}
+                                        </div> 
                     </>
                   );
                 })}
               </div>
             </div>
             <div></div>
-          </div>
-          <button
-            className={
-              'mt-3 border-dashed flex items-center justify-center gap-2 text-Primary-DeepTeal TextStyle-Button px-8 py-1 border bg-white rounded-2xl border-Primary-DeepTeal '
-            }
-          >
-            <img className={'w-5 h-5'} src={'/icons/add-blue.svg'} />
-            Add New Document
-          </button>
+          </div> */}
         </div>
       )}
     </div>

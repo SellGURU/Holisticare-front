@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MainModal } from '../../../../Components';
 import ExerciseModal from './ExcersieModal';
-import PreviewExerciseModal from '../PreviewModal';
+import PreviewExerciseModal from './PreviewModal';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
@@ -96,7 +96,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?
               <img
-                className="cursor-pointer size-4"
+                className="cursor-pointer"
                 onClick={() => {
                   onDelete();
                   setConfirmDelete(false);
