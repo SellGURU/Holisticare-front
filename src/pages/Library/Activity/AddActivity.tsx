@@ -3,6 +3,7 @@ import { FC, useState } from 'react';
 import InformationStep from './AddComponents/informationStep';
 import ExersiceStep from './AddComponents/ExersiceStep';
 import Application from '../../../api/app';
+// import SectionOrderModal from './AddComponents/SectionOrder';
 
 interface AddActivityProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface AddActivityProps {
 
 const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
   const [step, setStep] = useState(0);
+  // const [showSectionOrder, setShowSectionOrder] = useState(false);
   const [sectionList, setSectionList] = useState([]);
   const nextStep = () => {
     if (step === 0) {
@@ -75,6 +77,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
             <InformationStep addData={addData} updateAddData={updateAddData} />
           ) : (
             <ExersiceStep
+              
               onChange={(values: any) => {
                 setSectionList(values);
               }}
@@ -110,6 +113,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave }) => {
           </div>
         </div>
       </div>
+
     </>
   );
 };

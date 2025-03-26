@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MainModal } from '../../../../Components';
 import ExerciseModal from './ExcersieModal';
-import PreviewExerciseModal from '../PreviewModal';
+import PreviewExerciseModal from './PreviewModal';
 interface ActivityRowProps {
   exercise: any;
   index: number;

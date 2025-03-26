@@ -41,6 +41,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>([]);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
+  const [searchValue, setSearchValue] = useState('');
+
   useEffect(() => {
     Application.getExercisesList({}).then((res) => {
       setExerciseList(res.data);
@@ -111,6 +113,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     onChange(exercises);
   }, [exercises, onChange]);
 
+  const filteredExerciseList = exerciseList.filter((exercise) =>
+    exercise.Title.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
     <>
       <div className="w-full mt-6">
@@ -160,10 +166,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
             <SearchBox
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"
               placeHolder="Search ..."
-              onSearch={() => {}}
+              value={searchValue}
+              onSearch={(value:any) => setSearchValue(value)}
             />
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-1">
-              {exerciseList.map((el: any) => {
+              {filteredExerciseList.map((el: any) => {
                 return (
                   <>
                     <div className="w-full h-[40px] bg-white px-2 py-1 rounded-xl flex items-center justify-between">
