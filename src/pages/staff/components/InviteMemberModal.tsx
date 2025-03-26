@@ -41,7 +41,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   E-mail
                 </div>
                 <input
-                  placeholder="Write your task title ..."
+                  placeholder="Write email member ..."
                   className="w-[304px] h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold"
                   type="text"
                   value={title}
