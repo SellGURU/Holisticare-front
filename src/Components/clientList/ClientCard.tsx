@@ -127,7 +127,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
 
   return (
     <>
-      <MainModal isOpen={showAccessModal} onClose={() => setShowAccessModal}>
+      <MainModal
+        isOpen={showAccessModal}
+        onClose={() => setShowAccessModal(false)}
+      >
         <>
           {isShared ? (
             <div className="bg-white w-[500px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">
@@ -468,28 +471,27 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     {client.age} Years Old
                   </div>
                   <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
+                    <div className="flex items-center gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px]">
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
-                    <div className="text-nowrap" title={client['Check-in']}>
-                      {client.Questionary.length > 15
-                        ? `${client['Check-in'].substring(0, 15)}...`
-                        : client['Check-in']}
+                    <div
+                      className="text-nowrap max-w-[100px] ml-[28px]    truncate"
+                      title={client['Check-in']}
+                    >
+                      {client['Check-in']}
                     </div>
                   </div>
-                  <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
+                  <div className="flex w-full  text-Text-Primary   text-[10px] sm:text-xs capitalize">
+                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionary
                     </div>
                     <div
-                      className="text-nowrap text-ellipsis"
+                      className="text-nowrap max-w-[100px] ml-[13px] truncate"
                       title={client.Questionary}
                     >
-                      {client.Questionary.length > 15
-                        ? `${client.Questionary.substring(0, 15)}...`
-                        : client.Questionary}
+                      {client.Questionary}
                     </div>
                   </div>
                 </div>
