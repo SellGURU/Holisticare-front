@@ -6,6 +6,7 @@ interface CustomSelectProps {
   selectedOption: string;
   onOptionSelect: (options: string) => void;
   placeHolder?: string;
+  wfull ?: boolean
 }
 const CustomSelect: React.FC<CustomSelectProps> = ({
   label,
@@ -13,6 +14,8 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   selectedOption,
   onOptionSelect,
   placeHolder,
+  wfull
+
 }) => {
   const [showSelect, setShowSelect] = useState(false);
   const selectButRef = useRef(null);
@@ -22,15 +25,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     close: () => setShowSelect(false),
   });
   return (
-    <div className="flex flex-col relative min-w-[181px] text-xs font-medium">
+    <div className="flex flex-col relative min-w-[181px]  text-xs font-medium">
       {label && <label className="mb-1">{label}</label>}
 
       <div
-        ref={selectButRef}
+        ref={selectButRef} 
         onClick={() => {
           setShowSelect(!showSelect);
         }}
-        className={`w-full md:w-[181px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
+        className={`w-full ${wfull ? 'md:w-full' : 'md:w-[181px]'}  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
       >
         {selectedOption ? (
           <div className="text-[12px] text-[#383838] max-w-[140px] truncate">{selectedOption}</div>
@@ -41,7 +44,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         )}
         <div>
           <img
-            className={`${showSelect && 'rotate-180'}`}
+            className={`${showSelect && options.length > 1 && 'rotate-180'}`}
             src="/icons/arow-down-drop.svg"
             alt=""
           />
@@ -50,7 +53,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
       {showSelect && options.length > 0 && (
         <div
           ref={selectRef}
-          className="w-[181px] max-h-[380px] overflow-auto z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]"
+          className={` w-[181px] ${wfull ? 'md:w-full' : 'md:w-[181px]'} max-h-[380px] overflow-auto z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[28px]`}
         >
           {options.map((option) => (
             <div
