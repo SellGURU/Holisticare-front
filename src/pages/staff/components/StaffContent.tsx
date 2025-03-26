@@ -3,6 +3,7 @@ import MemberCard from './MemberCard';
 import SelectBoxStaff from './SelectBox';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
+import HeaderStaff from './Header';
 
 type StaffMember = {
   email: string;
@@ -49,6 +50,7 @@ const StaffContent = () => {
     }[]
   >([]);
   const getStaffs = () => {
+    setLoading(true);
     Application.getStaffList().then((res) => {
       const clinicUser = res.data.find(
         (user: StaffMember) => user.you_tag === true,
@@ -80,6 +82,7 @@ const StaffContent = () => {
   };
   return (
     <>
+      <HeaderStaff getStaffs={getStaffs} />
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>

@@ -888,7 +888,7 @@ class Application extends Api {
     return this.post('/settings/staff_list', {});
   };
   static inviteStaffMember = (data: any) => {
-    return this.post('/settings/staff_list', data);
+    return this.post('/settings/invite_staff', data);
   };
   static getStaffAssignedClients = (data: any) => {
     return this.post('/settings/staffs/assigned_clients', data);

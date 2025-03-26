@@ -5,12 +5,16 @@ import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
 interface InviteMemberModalProps {
   setShowModal: (value: boolean) => void;
+  getStaffs: () => void;
 }
 
-const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
+const InviteMemberModal: FC<InviteMemberModalProps> = ({
+  setShowModal,
+  getStaffs,
+}) => {
   const [title, setTitle] = useState('');
   const [openRoll, setOpenRoll] = useState(false);
-  const [role, setRole] = useState('Staff');
+  const [role, setRole] = useState('staff');
   const [step, setStep] = useState(1);
   const [registered] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,7 +22,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
     setLoading(true);
     Application.inviteStaffMember(values).then(() => {
       setLoading(false);
-      setRole('Staff');
+      setRole('staff');
       setStep(3);
     });
   };
@@ -58,8 +62,8 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
                     }}
                     className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                   >
-                    <option value="Staff">Staff</option>
-                    <option value="Admin">Admin</option>
+                    <option value="staff">Staff</option>
+                    <option value="admin">Admin</option>
                   </select>
                   <img
                     className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
@@ -177,7 +181,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col justify-between bg-white w-[421px] rounded-[16px] p-4">
+        <div className="flex flex-col justify-between bg-white rounded-[16px] p-4">
           <div className="w-full h-full flex flex-col items-center">
             <img src="/icons/tick-circle-background-new.svg" alt="" />
             <div className="text-xs font-medium text-Text-Primary text-center">
@@ -192,6 +196,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({ setShowModal }) => {
               onClick={() => {
                 setShowModal(false);
                 setTitle('');
+                getStaffs();
               }}
             >
               Got it
