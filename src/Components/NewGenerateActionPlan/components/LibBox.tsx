@@ -1,21 +1,31 @@
-import { useState } from 'react';
-import SvgIcon from '../../../utils/svgIcon';
+import { FC, useEffect, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 // import BasedOnModal from './BasedOnModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
   data: any;
   onAdd: () => void;
-  setShowBasedOn: (value: boolean) => void;
-  setValueBasedOn: (value: []) => void;
 }
 
-const LibBox: React.FC<LibBoxProps> = ({
-  data,
-  onAdd,
-  setShowBasedOn,
-  setValueBasedOn,
-}) => {
+const LibBox: FC<LibBoxProps> = ({ data, onAdd }) => {
+  const [valueData, setValueData] = useState('');
+  useEffect(() => {
+    switch (data.Category) {
+      case 'Diet':
+        setValueData('Macros');
+        break;
+      case 'Supplement':
+        setValueData('Dose');
+        break;
+      case 'Lifestyle':
+        setValueData('Value');
+        break;
+      case 'Activity':
+        setValueData('File');
+        break;
+    }
+  }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   return (
     <>
@@ -28,9 +38,28 @@ const LibBox: React.FC<LibBoxProps> = ({
               src="/icons/add-square-green.svg"
               alt=""
             />
-            <div className="text-[12px] text-Text-Primary w-[200px] overflow-hidden text-nowrap text-ellipsis">
-              {data.Title}
+            <div
+              data-tooltip-id={`tooltip-${data.Category}-${data.Title}`}
+              className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden"
+              style={{
+                textWrap: 'nowrap',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {data.Title.length > 43
+                ? data.Title.substring(0, 43) + '...'
+                : data.Title}
             </div>
+            {data.Title.length > 43 && (
+              <Tooltip
+                id={`tooltip-${data.Category}-${data.Title}`}
+                place="top"
+                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+              >
+                {data.Title}
+              </Tooltip>
+            )}
           </div>
           <img
             onClick={() => {
@@ -41,9 +70,25 @@ const LibBox: React.FC<LibBoxProps> = ({
             alt=""
           />
         </div>
+        <div
+          className={`flex items-center mt-2 gap-1 ${showMore ? '' : 'ml-6'}`}
+        >
+          <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+            <span
+              className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
+            />
+            {data['System Score']}
+          </div>
+          <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+            <span
+              className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
+            />
+            {data.Base_Score}
+          </div>
+        </div>
         {showMore && (
-          <div className=" mt-2">
-            <div className=" flex justify-start mt-1 items-start">
+          <div className="mt-2">
+            <div className="flex justify-start mt-1 items-start">
               <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
                 • Instruction:
               </div>
@@ -51,28 +96,29 @@ const LibBox: React.FC<LibBoxProps> = ({
                 {data.Instruction}
               </div>
             </div>
-            <div className=" flex justify-start mt-1 flex-wrap  gap-2 items-center">
+            <div className="flex justify-start mt-1 items-start">
               <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
-                • Score
+                • {valueData}:
               </div>
-              <div className="rounded-[12px] text-[10px] text-Text-Primary py-1 px-2 bg-red-100">
-                {data.Score} <span className="text-Text-Secondary">/ 10</span>
-              </div>
-              <div
-                onClick={() => {
-                  setValueBasedOn(data['Practitioner Comments']);
-                  setShowBasedOn(true);
-                }}
-                className="flex justify-start gap-1 items-center"
-              >
-                <div className="text-[10px] text-Text-Secondary">
-                  {' '}
-                  Based on:
-                </div>
-                <div className="text-Primary-DeepTeal text-[10px] flex items-center ml-1 gap-2 cursor-pointer">
-                  {data['Based on']}
-                </div>
-                <SvgIcon src="/icons/export.svg" color="#005F73" />
+              <div className="text-[10px] text-Text-Primary text-justify ml-1">
+                {valueData === 'Macros' ? (
+                  <div className="flex justify-start items-center gap-4">
+                    <div className="flex justify-start items-center">
+                      Carbs: {data['Total Macros']?.Carbs}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      Protein: {data['Total Macros']?.Protein}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      Fat: {data['Total Macros']?.Fats}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                  </div>
+                ) : (
+                  data[valueData]
+                )}
               </div>
             </div>
           </div>

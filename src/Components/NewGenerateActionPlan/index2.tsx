@@ -31,6 +31,14 @@ const GenerateActionPlan = () => {
       });
   }, []);
   const [categories, setCategories] = useState([]);
+  const checkSelectedTaskConflict = (newPlans: any) => {
+    Application.checkSelectedTaskConflict({
+      member_id: id,
+      tasks: newPlans,
+    }).then((res) => {
+      setCategories(res.data);
+    });
+  };
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
@@ -38,12 +46,12 @@ const GenerateActionPlan = () => {
       percents: newPlans,
     })
       .then((res) => {
+        checkSelectedTaskConflict(res.data);
         setCategories(res.data);
         setIsWeighted(true);
       })
       .finally(() => {
         setIsLoadingPlans(false);
-        // setSelectPlanView(true);
       });
   };
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
