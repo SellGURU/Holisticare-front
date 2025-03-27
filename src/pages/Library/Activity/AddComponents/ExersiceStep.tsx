@@ -114,24 +114,35 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   };
 
   const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
-    const activeTabExercises = exercises.filter(
-      (el: any) => el.Section === activeTab,
-    );
-    const previousExercise = activeTabExercises[index - 1];
-
-    if (!previousExercise) return;
-
-    const resolveSuperSet = {
-      ...previousExercise,
-      Type: 'Superset',
-      Exercises: [...previousExercise.Exercises, ...exercise.Exercises],
-    };
-
     setExercises((prevExercises) => {
-      const resolved = prevExercises.filter(
-        (_, i) => i !== index && i !== index - 1,
+      const updatedExercises = [...prevExercises];
+      
+      // Find the exercises in the current active tab
+      const activeTabExercises = updatedExercises.filter(
+        (el: any) => el.Section === activeTab,
       );
-      return [...resolved, resolveSuperSet];
+      
+      // Get the previous exercise from the active tab
+      const previousExercise = activeTabExercises[index - 1];
+      if (!previousExercise) return prevExercises;
+
+      // Find the original indices in the full array
+      const previousIndex = updatedExercises.findIndex(el => el === previousExercise);
+      const currentIndex = updatedExercises.findIndex(el => el === exercise);
+
+      const resolveSuperSet = {
+        ...previousExercise,
+        Type: 'Superset',
+        Exercises: [...previousExercise.Exercises, ...exercise.Exercises],
+      };
+
+      // Remove both exercises and insert the superset at the correct position
+      const resolved = updatedExercises.filter(
+        (_, i) => i !== currentIndex && i !== previousIndex
+      );
+      resolved.splice(previousIndex, 0, resolveSuperSet);
+      
+      return resolved;
     });
   };
 
@@ -167,10 +178,34 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                     <>
                       {exercise.Type === 'Superset' ? (
                         <SuperSetExersiseItem
-                          onDelete={() => {
-                            setExercises((prevExercises) =>
-                              prevExercises.filter((_, i) => i !== index),
-                            );
+                          onDelete={(exersiseIndex: number) => {
+                            setExercises((prevExercises) => {
+                              const updatedExercises = [...prevExercises];
+                              // Find the exercise in the current active tab
+                              const activeTabExercises = updatedExercises.filter(
+                                (el: any) => el.Section === activeTab,
+                              );
+                              const exerciseToUpdate = activeTabExercises[index];
+                              
+                              // Find the original index in the full array
+                              const originalIndex = updatedExercises.findIndex(
+                                (el: any) => el === exerciseToUpdate,
+                              );
+
+                              if (exerciseToUpdate.Exercises.length > 1) {
+                                // If there are multiple exercises, remove the specific one
+                                updatedExercises[originalIndex] = {
+                                  ...updatedExercises[originalIndex],
+                                  Exercises: updatedExercises[originalIndex].Exercises.filter(
+                                    (_, i) => i !== exersiseIndex
+                                  ),
+                                };
+                              } else {
+                                // If this is the last exercise, remove the entire group
+                                updatedExercises.splice(originalIndex, 1);
+                              }
+                              return updatedExercises;
+                            });
                           }}
                           key={index}
                           index={index}
@@ -183,9 +218,23 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                           exesiseIndex={0}
                           sets={exercise.Sets}
                           onDelete={() => {
-                            setExercises((prevExercises) =>
-                              prevExercises.filter((_, i) => i !== index),
-                            );
+                            setExercises((prevExercises) => {
+                              const updatedExercises = [...prevExercises];
+                              // Find the exercise in the current active tab
+                              const activeTabExercises = updatedExercises.filter(
+                                (el: any) => el.Section === activeTab,
+                              );
+                              const exerciseToDelete = activeTabExercises[index];
+                              
+                              // Find the original index in the full array
+                              const originalIndex = updatedExercises.findIndex(
+                                (el: any) => el === exerciseToDelete,
+                              );
+                              
+                              // Remove the exercise at the correct index
+                              updatedExercises.splice(originalIndex, 1);
+                              return updatedExercises;
+                            });
                           }}
                           key={index}
                           index={index}
