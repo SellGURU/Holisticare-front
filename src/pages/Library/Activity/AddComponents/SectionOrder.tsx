@@ -4,7 +4,7 @@ import { MainModal } from '../../../../Components';
 interface SectionOrderModal {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (values: Array<string>) => void;
+  onConfirm: (values: Array<CategoryState>) => void;
 }
 
 interface CategoryState {
@@ -115,7 +115,7 @@ const SectionOrderModal: React.FC<SectionOrderModal> = ({
             </button>
             <button
               className="text-sm font-medium text-Primary-DeepTeal"
-              onClick={() => onConfirm(localCategories.map((cat) => cat.name))}
+              onClick={() => onConfirm(localCategories)}
             >
               Confirm
             </button>

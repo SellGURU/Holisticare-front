@@ -5,6 +5,7 @@ interface YesNoCardProps {
   value: string;
   index?: number;
   onSubmit?: (value: string) => void;
+  hideQuestions?: boolean;
 }
 
 const YesNoCard: React.FC<YesNoCardProps> = ({
@@ -12,6 +13,7 @@ const YesNoCard: React.FC<YesNoCardProps> = ({
   value,
   index,
   onSubmit,
+  hideQuestions,
 }) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
@@ -22,9 +24,12 @@ const YesNoCard: React.FC<YesNoCardProps> = ({
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">
-          {index}. {question}
-        </div>
+        {!hideQuestions && (
+          <div className="text-[12px] text-Text-Primary">
+            {index}. {question}
+          </div>
+        )}
+
         <div className="flex justify-end items-center mt-4">
           <div className="w-[96px] cursor-pointer flex justify-between items-center h-[32px] border border-gray-50 rounded-[8px]">
             <div

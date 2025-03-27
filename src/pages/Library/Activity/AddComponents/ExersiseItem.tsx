@@ -4,11 +4,12 @@ import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ExerciseItemProps {
+  isSuperSet?: boolean;
   index: number;
   exercise: any;
   sets: number;
   exesiseIndex: number;
-  onDelete: () => void;
+  onDelete: (exersiseIndex: number) => void;
   toSuperSet: () => void;
   onChange: (
     index: number,
@@ -25,6 +26,7 @@ const ExerciseItem = ({
   onChange,
   onDelete,
   toSuperSet,
+  isSuperSet,
   sets,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -68,7 +70,7 @@ const ExerciseItem = ({
               ref={menuRef}
               className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-3 top-10"
             >
-              {index > 0 && (
+              {index > 0 && !isSuperSet && (
                 <div
                   onClick={() => {
                     toSuperSet();
@@ -89,7 +91,7 @@ const ExerciseItem = ({
               )}
               <div
                 onClick={() => {
-                  onDelete();
+                  onDelete(exesiseIndex);
                   setShowMenu(false);
                 }}
                 className="flex justify-start py-2 items-center cursor-pointer gap-2"
@@ -127,7 +129,9 @@ const ExerciseItem = ({
         </div>
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">
-          <div className="mt-2">
+          <div
+            className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
+          >
             <div className="text-center text-[8px] text-Text-Primary">set</div>
             <input
               type="number"

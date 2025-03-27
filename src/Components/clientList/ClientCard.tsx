@@ -350,7 +350,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
             }}
             className="pl-2 flex flex-col mt-4"
           >
-            <div className="text-Text-Primary text-xs sm:text-[14px] font-medium text-nowrap mb-2">
+            <div
+              title={client.name}
+              className="text-Text-Primary truncate max-w-[160px] text-xs sm:text-[14px] font-medium text-nowrap mb-2"
+            >
               {client.name}
             </div>
             {/* <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
