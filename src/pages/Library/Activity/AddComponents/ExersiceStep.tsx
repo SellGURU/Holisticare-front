@@ -164,10 +164,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
 
       if (exerciseToUpdate.Exercises.length > 1) {
         // If there are multiple exercises, remove the specific one
-        const remainingExercises = updatedExercises[originalIndex].Exercises.filter(
-          (_, i) => i !== exersiseIndex,
-        );
-        
+        const remainingExercises = updatedExercises[
+          originalIndex
+        ].Exercises.filter((_, i) => i !== exersiseIndex);
+
         // If only one exercise remains, convert to normal set
         if (remainingExercises.length === 1) {
           updatedExercises[originalIndex] = {
@@ -222,7 +222,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                     <>
                       {exercise.Type === 'Superset' ? (
                         <SuperSetExersiseItem
-                          onDelete={(exersiseIndex: number) => handleSuperSetDelete(index, exersiseIndex)}
+                          onDelete={(exersiseIndex: number) =>
+                            handleSuperSetDelete(index, exersiseIndex)
+                          }
                           key={index}
                           index={index}
                           exercise={exercise}
