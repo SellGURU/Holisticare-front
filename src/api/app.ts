@@ -909,6 +909,14 @@ class Application extends Api {
   static activityList = () => {
     return this.post('/activity_library/activities_list');
   };
+  static getActivity = (Act_Id: string) => {
+    return this.post('/activity_library/show_activity_details', {
+      Act_Id: Act_Id,
+    });
+  };
+  static editActivity = (data: any) => {
+    return this.post('/activity_library/edit_activity', data);
+  };
 }
 
 export default Application;

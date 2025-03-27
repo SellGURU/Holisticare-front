@@ -37,9 +37,13 @@ interface ExerciseGroup {
 
 interface ExersiceStepProps {
   onChange: (data: Array<ExerciseGroup>) => void;
+  sectionList: Array<ExerciseGroup>;
 }
-const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
-  const [exercises, setExercises] = useState<ExerciseGroup[]>([]);
+const ExersiceStep: React.FC<ExersiceStepProps> = ({
+  onChange,
+  sectionList,
+}) => {
+  const [exercises, setExercises] = useState<ExerciseGroup[]>(sectionList);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
   const [searchValue, setSearchValue] = useState('');

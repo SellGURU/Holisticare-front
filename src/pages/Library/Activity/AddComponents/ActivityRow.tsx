@@ -1,29 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { MainModal } from '../../../../Components';
-import ExerciseModal from './ExcersieModal';
 import PreviewExerciseModal from './PreviewModal';
 interface ActivityRowProps {
   exercise: any;
   index: number;
   onDelete: () => void;
-  onUpdate: (updatedExercise: any) => void;
+  onEdit: () => void;
 }
 export const ActivityRow: React.FC<ActivityRowProps> = ({
   exercise,
   index,
   onDelete,
-  onUpdate,
+  onEdit,
 }) => {
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [viewModal, setViewModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
 
-  const handleUpdate = (updatedExercise: any) => {
-    onUpdate(updatedExercise);
-    setShowEditModal(false);
-  };
-  console.log(exercise);
   const formatDate = (isoString: any) => {
     const date = new Date(isoString);
     const year = date.getFullYear();
@@ -34,22 +26,12 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
   };
   return (
     <>
-      <MainModal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
-        <ExerciseModal
-          isEdit
-          exercise={exercise}
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-          onSubmit={handleUpdate}
-        />
-      </MainModal>
       <PreviewExerciseModal
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
         exercise={exercise}
         onEdit={() => {
           setViewModal(false);
-          setShowEditModal(true);
         }}
       />
       <tr
@@ -126,7 +108,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
                 alt=""
               />
               <img
-                // onClick={() => setShowEditModal(true)}
+                onClick={() => onEdit()}
                 className="cursor-pointer"
                 src="/icons/edit-blue.svg"
                 alt=""

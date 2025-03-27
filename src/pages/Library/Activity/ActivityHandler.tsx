@@ -22,6 +22,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
   const [showAdd, setShowAdd] = useState(isShowAddActivity);
   const handleCloseShowAdd = () => {
     setShowAdd(false);
+    setEditid(null);
   };
   const handleOpenShowAdd = () => {
     setShowAdd(true);
@@ -33,6 +34,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
   useEffect(() => {
     setShowAddActivity(showAdd);
   }, [showAdd]);
+  const [editid, setEditid] = useState<string | null>(null);
   return (
     <>
       {data.length == 0 && (
@@ -85,7 +87,10 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                         onDelete();
                       });
                     }}
-                    onUpdate={() => {}}
+                    onEdit={() => {
+                      setShowAdd(true);
+                      setEditid(exercise.Act_Id);
+                    }}
                   />
                 ))}
               </tbody>
@@ -95,6 +100,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
       )}
       <MainModal isOpen={showAdd} onClose={handleCloseShowAdd}>
         <AddActivity
+          editid={editid}
           onSave={() => {
             handleCloseShowAdd();
             onDelete();
