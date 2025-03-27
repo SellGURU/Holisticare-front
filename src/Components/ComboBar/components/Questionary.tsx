@@ -10,6 +10,8 @@ import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
+import { FeelingCard, RangeCard, RateCard, YesNoCard } from '../../../pages/CheckIn/components';
+import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
@@ -97,16 +99,33 @@ export const Questionary = () => {
         });
     }
   }, [id]);
+  // const formValueChange = (id: string, value: any) => {
+  //   setQuestionsFormData((prev: any) => ({
+  //     ...prev,
+  //     questions: prev.questions.map((q: any) =>
+  //       q.order === id
+  //         ? { ...q, response: q.type === 'checkbox' ? [...value] : value }
+  //         : q,
+  //     ),
+  //   }));
+  // };
   const formValueChange = (id: string, value: any) => {
     setQuestionsFormData((prev: any) => ({
-      ...prev,
-      questions: prev.questions.map((q: any) =>
-        q.order === id
-          ? { ...q, response: q.type === 'checkbox' ? [...value] : value }
-          : q,
-      ),
+        ...prev,
+        questions: prev.questions.map((q: any) =>
+            q.order === id
+                ? { 
+                    ...q, 
+                    response: q.type === 'checkbox' 
+                        ? Array.isArray(value) ? [...value] : [] 
+                        : value 
+                  }
+                : q
+        ),
     }));
-  };
+};
+console.log(questionsFormData);
+
   const validateDate = (dateString: string) => {
     const date = new Date(dateString);
     return !isNaN(date.getTime()); // Returns true if it's a valid date
@@ -236,6 +255,97 @@ export const Questionary = () => {
         </>
       );
     }
+    if (type === 'Scale') {
+      return (
+          <RangeCard
+          hideQuestions
+              question={questionsData.questions[activeCardNumber - 1].question}
+              value={questionsData.questions[activeCardNumber - 1].response || 0}
+              index={activeCardNumber}
+              onSubmit={(value) => {
+                  if (!disabled) {
+                      formValueChange(
+                          questionsData.questions[activeCardNumber - 1].order,
+                          value
+                      );
+                  }
+              }}
+          />
+      );
+  }
+  if (type === 'Emojis') {
+    return (
+        <FeelingCard
+        hideQuestions
+            question={questionsData.questions[activeCardNumber - 1].question}
+            value={questionsData.questions[activeCardNumber - 1].response || 'Neutral'}
+            index={activeCardNumber}
+            onSubmit={(value) => {
+                if (!disabled) {
+                    formValueChange(
+                        questionsData.questions[activeCardNumber - 1].order,
+                        value
+                    );
+                }
+            }}
+        />
+    );
+}
+if (type === 'Yes/No') {
+  return (
+      <YesNoCard
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response || 'No'}
+          index={activeCardNumber}
+          onSubmit={(value) => {
+              if (!disabled) {
+                  formValueChange(
+                      questionsData.questions[activeCardNumber - 1].order,
+                      value
+                  );
+              }
+          }}
+      />
+  );
+}
+
+if (type === 'Star Rating') {
+  return (
+      <RateCard
+      hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response || 0}
+          index={activeCardNumber}
+          onSubmit={(value) => {
+              if (!disabled) {
+                  formValueChange(
+                      questionsData.questions[activeCardNumber - 1].order,
+                      value
+                  );
+              }
+          }}
+      />
+  );
+}
+
+if (type === 'File Uploader') {
+  return (
+      <UploadCard
+      hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response}
+          index={activeCardNumber}
+          onSubmit={(values) => {
+              if (!disabled) {
+                  formValueChange(
+                      questionsData.questions[activeCardNumber - 1].order,
+                      values
+                  );
+              }
+          }}
+      />
+  );
+}
     if (type == 'date') {
       return (
         <>
@@ -455,7 +565,7 @@ export const Questionary = () => {
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[180px] min-h-[100px]   max-h-[180px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {resolveForm(
                   questionsFormData.questions[activeCard - 1].type,

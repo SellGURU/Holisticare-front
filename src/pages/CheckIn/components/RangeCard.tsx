@@ -5,12 +5,14 @@ interface RangeCardProps {
   value: number;
   index?: number;
   onSubmit?: (value: number) => void;
+  hideQuestions?:boolean
 }
 const RangeCard: React.FC<RangeCardProps> = ({
   question,
   value,
   index,
   onSubmit,
+  hideQuestions
 }) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
@@ -21,9 +23,14 @@ const RangeCard: React.FC<RangeCardProps> = ({
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">
-          {index ? index + '.' : ''} {question}
-        </div>
+        {
+          !hideQuestions && (
+            <div className="text-[12px] text-Text-Primary">
+            {index ? index + '.' : ''} {question}
+          </div>
+          )
+        }
+       
         <div className="w-full mt-4 px-3">
           <input
             type="range"

@@ -35,11 +35,11 @@ const ItemUpload: React.FC<ItemUploadProps> = ({ name, onUpload }) => {
                 }}
                 className="absolute shadow-200 top-1 z-20 flex justify-center items-center right-1 bg-white w-[20px] h-[20px] rounded-[4px]"
               >
-                <img className="w-[12px]" src="./icons/trash-red.svg" alt="" />
+                <img className="w-[12px]" src="/icons/trash-red.svg" alt="" />
               </div>
             </>
           ) : (
-            <img src="./icons/uploadEmty.svg" alt="" />
+            <img src="/icons/uploadEmty.svg" alt="" />
           )}
           <input
             onChange={(e) => {

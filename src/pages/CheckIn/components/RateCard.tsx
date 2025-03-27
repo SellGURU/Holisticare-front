@@ -9,6 +9,7 @@ interface RateCardProps {
   value: number;
   index?: number;
   onSubmit?: (value: any) => void;
+  hideQuestions?:boolean,
 }
 
 const RateCard: React.FC<RateCardProps> = ({
@@ -16,6 +17,7 @@ const RateCard: React.FC<RateCardProps> = ({
   index,
   value,
   onSubmit,
+  hideQuestions
 }) => {
   const [val, setVal] = useState<number>(value);
   useEffect(() => {
@@ -26,9 +28,14 @@ const RateCard: React.FC<RateCardProps> = ({
   return (
     <>
       <div className="bg-[#FCFCFC] select-none  p-3 w-full  rounded-[12px] border border-gray-50">
-        <div className="text-[12px] text-Text-Primary">
+        {
+  !hideQuestions && (
+<div className="text-[12px] text-Text-Primary">
           {index}. {question}
         </div>
+  )
+        }
+        
         <div className="flex justify-center mt-2 gap-2 items-center">
           {Array.from({ length: 5 }).map((_, ind) => {
             return (
@@ -39,8 +46,8 @@ const RateCard: React.FC<RateCardProps> = ({
                 className="cursor-pointer"
                 src={
                   ind + 1 <= Number(val)
-                    ? './icons/starFull.svg'
-                    : './icons/starEmpty.svg'
+                    ? '/icons/starFull.svg'
+                    : '/icons/starEmpty.svg'
                 }
                 alt=""
               />

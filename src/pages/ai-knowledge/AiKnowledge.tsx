@@ -250,7 +250,6 @@ const AiKnowledge = () => {
   //   // Add more mock data as needed
   // ]);
 
-
   const [userUploads, setUserUploads] = useState<Document[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -350,24 +349,25 @@ const AiKnowledge = () => {
 
   const totalPages =
     activaTab === 'System Docs'
-      ? Math.ceil([
-        ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-      ].length / itemsPerPage)
+      ? Math.ceil(
+          [...new Set(graphData?.nodes.map((e: any) => e.category2))].length /
+            itemsPerPage,
+        )
       : Math.ceil(userUploads.length / itemsPerPage);
-      const handleAddFile = () => {
-        if (selectedFile) {
-          setUserUploads((prevUploads) => [
-            ...prevUploads,
-            {
-              id: prevUploads.length + 1,
-              type: fileTitle,
-              date: new Date().toLocaleDateString(),
-              disabled: false,
-            },
-          ]);
-          closeModal();
-        }
-      };
+  const handleAddFile = () => {
+    if (selectedFile) {
+      setUserUploads((prevUploads) => [
+        ...prevUploads,
+        {
+          id: prevUploads.length + 1,
+          type: fileTitle,
+          date: new Date().toLocaleDateString(),
+          disabled: false,
+        },
+      ]);
+      closeModal();
+    }
+  };
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
@@ -744,61 +744,65 @@ const AiKnowledge = () => {
             ) : (
               <>
                 <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px] ">
-                  <div className='max-h-[510px] overflow-auto'>
-
-              
-                  <table className="min-w-full bg-white ">
-                    <thead>
-                      <tr className="bg-[#E5E5E5]">
-                        <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
-                          Node Type
-                        </th>
-                        <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
-                          Date of Update
-                        </th>
-                        <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {[
-                  ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-                ].map((doc: any, index:number) => {
-                  return(
-                        <tr
-                          key={doc.id}
-                          className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
-                        >
-                          <td
-                            className={`pl-2 py-2 max-w-[140px] truncate w-[140px] ${!activeFilters.includes(doc)? 'opacity-40' : ''}`}
-                          >
-                            {doc}
-                          </td>
-                          <td
-                            className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
-                          >
-                            {doc.date || "No Date"}
-                          </td>
-                          <td className="py-2 pr-2 w-[40px] text-center">
-                            <button
-                              onClick={() =>
-                                // toggleDisable(doc.id, 'System Uploads')
-                                handleButtonClick(doc)
-                              }
-                            >
-                              {activeFilters.includes(doc) ? (
-                                  <img src="/icons/eye-blue.svg" alt="" />
-                               // Eye icon for disabled
-                              ) : ( <img src="/icons/eye-slash-blue.svg" alt="" /> 
-                              
-                              )}
-                            </button>
-                          </td>
+                  <div className="max-h-[510px] overflow-auto">
+                    <table className="min-w-full bg-white ">
+                      <thead>
+                        <tr className="bg-[#E5E5E5]">
+                          <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
+                            Node Type
+                          </th>
+                          <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
+                            Date of Update
+                          </th>
+                          <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
+                            Action
+                          </th>
                         </tr>
-                      )})}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {[
+                          ...new Set(
+                            graphData?.nodes.map((e: any) => e.category2),
+                          ),
+                        ].map((doc: any, index: number) => {
+                          return (
+                            <tr
+                              key={doc.id}
+                              className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                            >
+                              <td
+                                className={`pl-2 py-2 max-w-[140px] truncate w-[140px] ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
+                              >
+                                {doc}
+                              </td>
+                              <td
+                                className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
+                              >
+                                {doc.date || 'No Date'}
+                              </td>
+                              <td className="py-2 pr-2 w-[40px] text-center">
+                                <button
+                                  onClick={() =>
+                                    // toggleDisable(doc.id, 'System Uploads')
+                                    handleButtonClick(doc)
+                                  }
+                                >
+                                  {activeFilters.includes(doc) ? (
+                                    <img src="/icons/eye-blue.svg" alt="" />
+                                  ) : (
+                                    // Eye icon for disabled
+                                    <img
+                                      src="/icons/eye-slash-blue.svg"
+                                      alt=""
+                                    />
+                                  )}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                   <div className="hidden justify-center pb-4 absolute bottom-0 w-full">
                     <Pagination
