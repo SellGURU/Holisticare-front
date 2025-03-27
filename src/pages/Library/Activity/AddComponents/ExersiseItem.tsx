@@ -129,8 +129,9 @@ const ExerciseItem = ({
         </div>
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">
-
-          <div className={`mt-2 ${exesiseIndex == 0 ?'visible':'invisible'}`}>
+          <div
+            className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
+          >
             <div className="text-center text-[8px] text-Text-Primary">set</div>
             <input
               type="number"

@@ -39,8 +39,11 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
         ))}
         <div className="absolute z-[1] h-[85%] top-[25px] left-[-8px]">
           <div className="w-[20px] relative h-full rounded-[16px]  bg-white border-2 border-gray-300 border-r-white">
-            <img className="absolute top-[48%] left-[-8px] bg-white py-1" src={'./icons/link.svg'} alt="super set" />
-
+            <img
+              className="absolute top-[48%] left-[-8px] bg-white py-1"
+              src={'./icons/link.svg'}
+              alt="super set"
+            />
           </div>
         </div>
       </div>

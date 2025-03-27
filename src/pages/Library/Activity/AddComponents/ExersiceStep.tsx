@@ -116,19 +116,21 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
   const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
     setExercises((prevExercises) => {
       const updatedExercises = [...prevExercises];
-      
+
       // Find the exercises in the current active tab
       const activeTabExercises = updatedExercises.filter(
         (el: any) => el.Section === activeTab,
       );
-      
+
       // Get the previous exercise from the active tab
       const previousExercise = activeTabExercises[index - 1];
       if (!previousExercise) return prevExercises;
 
       // Find the original indices in the full array
-      const previousIndex = updatedExercises.findIndex(el => el === previousExercise);
-      const currentIndex = updatedExercises.findIndex(el => el === exercise);
+      const previousIndex = updatedExercises.findIndex(
+        (el) => el === previousExercise,
+      );
+      const currentIndex = updatedExercises.findIndex((el) => el === exercise);
 
       const resolveSuperSet = {
         ...previousExercise,
@@ -138,10 +140,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
 
       // Remove both exercises and insert the superset at the correct position
       const resolved = updatedExercises.filter(
-        (_, i) => i !== currentIndex && i !== previousIndex
+        (_, i) => i !== currentIndex && i !== previousIndex,
       );
       resolved.splice(previousIndex, 0, resolveSuperSet);
-      
+
       return resolved;
     });
   };
@@ -182,11 +184,13 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                             setExercises((prevExercises) => {
                               const updatedExercises = [...prevExercises];
                               // Find the exercise in the current active tab
-                              const activeTabExercises = updatedExercises.filter(
-                                (el: any) => el.Section === activeTab,
-                              );
-                              const exerciseToUpdate = activeTabExercises[index];
-                              
+                              const activeTabExercises =
+                                updatedExercises.filter(
+                                  (el: any) => el.Section === activeTab,
+                                );
+                              const exerciseToUpdate =
+                                activeTabExercises[index];
+
                               // Find the original index in the full array
                               const originalIndex = updatedExercises.findIndex(
                                 (el: any) => el === exerciseToUpdate,
@@ -196,8 +200,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                                 // If there are multiple exercises, remove the specific one
                                 updatedExercises[originalIndex] = {
                                   ...updatedExercises[originalIndex],
-                                  Exercises: updatedExercises[originalIndex].Exercises.filter(
-                                    (_, i) => i !== exersiseIndex
+                                  Exercises: updatedExercises[
+                                    originalIndex
+                                  ].Exercises.filter(
+                                    (_, i) => i !== exersiseIndex,
                                   ),
                                 };
                               } else {
@@ -221,16 +227,18 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                             setExercises((prevExercises) => {
                               const updatedExercises = [...prevExercises];
                               // Find the exercise in the current active tab
-                              const activeTabExercises = updatedExercises.filter(
-                                (el: any) => el.Section === activeTab,
-                              );
-                              const exerciseToDelete = activeTabExercises[index];
-                              
+                              const activeTabExercises =
+                                updatedExercises.filter(
+                                  (el: any) => el.Section === activeTab,
+                                );
+                              const exerciseToDelete =
+                                activeTabExercises[index];
+
                               // Find the original index in the full array
                               const originalIndex = updatedExercises.findIndex(
                                 (el: any) => el === exerciseToDelete,
                               );
-                              
+
                               // Remove the exercise at the correct index
                               updatedExercises.splice(originalIndex, 1);
                               return updatedExercises;
