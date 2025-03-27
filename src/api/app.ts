@@ -899,6 +899,7 @@ class Application extends Api {
   static ChangeRoleUserStaff = (data: any) => {
     return this.post('/settings/change_role', data);
   };
+
   static addActivity = (data: any) => {
     return this.post('/activity_library/add_activity', data);
   };

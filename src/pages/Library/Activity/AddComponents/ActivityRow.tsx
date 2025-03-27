@@ -120,13 +120,13 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
           ) : (
             <>
               <img
-                onClick={() => setViewModal(true)}
+                // onClick={() => setViewModal(true)}
                 className="cursor-pointer size-4"
                 src="/icons/eye-blue.svg"
                 alt=""
               />
               <img
-                onClick={() => setShowEditModal(true)}
+                // onClick={() => setShowEditModal(true)}
                 className="cursor-pointer"
                 src="/icons/edit-blue.svg"
                 alt=""

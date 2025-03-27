@@ -113,7 +113,7 @@ const TableAssignList: React.FC<TableProps> = ({ classData }) => {
             </table>
           ) : (
             <div className="w-full h-full flex items-center justify-center flex-col">
-              <p className="text-Text-Primary mt-[8px] text-[16px]">
+              <p className="text-[#ffffffa4] mt-[8px] text-[16px]">
                 No Result to Show
               </p>
             </div>

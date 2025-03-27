@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 export const columns = (): ColumnDef<any>[] => [
   {
-    accessorKey: 'first name',
+    accessorKey: 'name',
     header: 'Client Name',
     enableSorting: false,
     cell: ({ row }) => {
@@ -12,85 +12,86 @@ export const columns = (): ColumnDef<any>[] => [
           <div className="size-[24px] rounded-full relative">
             <img
               className="w-full h-full rounded-full object-cover border border-Primary-DeepTeal"
-              src={row.original?.picture}
+              onError={(e: any) => {
+                e.target.src = `https://ui-avatars.com/api/?name=`;
+              }}
+              src={`https://ui-avatars.com/api/?name=`}
               alt=""
             />
           </div>
-          {row.original?.['first name'] && row.original?.['last name']
-            ? `${row.original?.['first name']} ${row.original?.['last name']}`
-            : '-'}
+          {row.original?.name || 'No Data'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'ID',
+    accessorKey: 'id',
     header: 'ID',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-[10px] text-Text-Quadruple ">
-          {row.original?.ID || '-'}
+          {row.original?.id || '-'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'Age',
+    accessorKey: 'age',
     header: 'Age',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-[10px] text-Text-Quadruple ">
-          {row.original?.Age || '-'}
+          {row.original?.age || '-'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'Gender',
+    accessorKey: 'gender',
     header: 'Gender',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-[10px] text-Text-Quadruple ">
-          {row.original?.Gender || '-'}
+          {row.original?.gender || '-'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'Enroll Date',
+    accessorKey: 'enroll_date',
     header: 'Enroll Date',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-[10px] text-Text-Quadruple ">
-          {row.original?.['Enroll Date'] || '-'}
+          {row.original?.enroll_date || '-'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'Assign Date',
+    accessorKey: 'assign_date',
     header: 'Assign Date',
     enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-[10px] text-Text-Quadruple flex items-center justify-center">
-          {row.original?.['Assign Date'] || '-'}
+          {row.original?.assign_date || '-'}
         </div>
       );
     },
   },
   {
-    accessorKey: 'Status',
+    accessorKey: 'status',
     header: 'Status',
     enableSorting: false,
     cell: ({ row }) => {
       let bgColor;
       let bgActive;
-      switch (row.original?.Status) {
+      switch (row.original?.status) {
         case 'Waiting':
           bgColor = '#F9DEDC';
           bgActive = '#FFAB2C';
@@ -109,8 +110,10 @@ export const columns = (): ColumnDef<any>[] => [
           <div
             className={`text-[8px] text-Text-Primary bg-[${bgColor}] rounded-3xl px-2 flex items-center justify-center gap-1`}
           >
-            <div className={`w-2 h-2 rounded-full bg-[${bgActive}]`}></div>
-            {row.original?.Status || '-'}
+            <div
+              className={`w-2 h-2 rounded-full bg-[${bgActive}] ${row.original?.status === 'Waiting'}`}
+            ></div>
+            {row.original?.status || '-'}
           </div>
         </div>
       );

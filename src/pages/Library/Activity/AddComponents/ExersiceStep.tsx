@@ -71,6 +71,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     index: number,
     field: string,
     value: string,
+    exersiseIndex: number,
   ) => {
     setExercises((prevExercises) => {
       const updatedExercises = [...prevExercises];
@@ -96,10 +97,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
         updatedExercises[originalIndex] = {
           ...updatedExercises[originalIndex],
           Exercises: updatedExercises[originalIndex].Exercises.map(
-            (exercise) => ({
-              ...exercise,
-              [field]: value,
-            }),
+            (exercise, ind) => {
+              if (exersiseIndex == ind) {
+                return {
+                  ...exercise,
+                  [field]: value,
+                };
+              }
+              return exercise;
+            },
           ),
         };
       }
@@ -107,23 +113,27 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     });
   };
 
-  // const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
-  //   const activeTabExercises = exercises.filter((el: any) => el.Section === activeTab);
-  //   const previousExercise = activeTabExercises[index - 1];
+  const handleSuperSet = (index: number, exercise: ExerciseGroup) => {
+    const activeTabExercises = exercises.filter(
+      (el: any) => el.Section === activeTab,
+    );
+    const previousExercise = activeTabExercises[index - 1];
 
-  //   if (!previousExercise) return;
+    if (!previousExercise) return;
 
-  //   const resolveSuperSet = {
-  //     ...previousExercise,
-  //     Type: 'Superset',
-  //     Exercises: [...previousExercise.Exercises, ...exercise.Exercises]
-  //   };
+    const resolveSuperSet = {
+      ...previousExercise,
+      Type: 'Superset',
+      Exercises: [...previousExercise.Exercises, ...exercise.Exercises],
+    };
 
-  //   setExercises((prevExercises) => {
-  //     const resolved = prevExercises.filter((_, i) => i !== index && i !== index - 1);
-  //     return [...resolved, resolveSuperSet];
-  //   });
-  // };
+    setExercises((prevExercises) => {
+      const resolved = prevExercises.filter(
+        (_, i) => i !== index && i !== index - 1,
+      );
+      return [...resolved, resolveSuperSet];
+    });
+  };
 
   useEffect(() => {
     onChange(exercises);
@@ -170,6 +180,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                         />
                       ) : (
                         <ExerciseItem
+                          exesiseIndex={0}
+                          sets={exercise.Sets}
                           onDelete={() => {
                             setExercises((prevExercises) =>
                               prevExercises.filter((_, i) => i !== index),
@@ -179,7 +191,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                           index={index}
                           exercise={exercise.Exercises[0]}
                           onChange={handleExerciseChange}
-                          toSuperSet={() => {}}
+                          toSuperSet={() => handleSuperSet(index, exercise)}
                         />
                       )}
                     </>

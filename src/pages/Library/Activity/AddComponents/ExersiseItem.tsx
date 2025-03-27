@@ -6,17 +6,26 @@ import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 interface ExerciseItemProps {
   index: number;
   exercise: any;
+  sets: number;
+  exesiseIndex: number;
   onDelete: () => void;
   toSuperSet: () => void;
-  onChange: (index: number, field: string, value: string) => void;
+  onChange: (
+    index: number,
+    field: string,
+    value: string,
+    exersiseIndex: number,
+  ) => void;
 }
 
 const ExerciseItem = ({
   index,
+  exesiseIndex,
   exercise,
   onChange,
   onDelete,
   toSuperSet,
+  sets,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -122,8 +131,10 @@ const ExerciseItem = ({
             <div className="text-center text-[8px] text-Text-Primary">set</div>
             <input
               type="number"
-              // value={exercise.Sets}
-              onChange={(e) => onChange(index, 'Sets', e.target.value)}
+              value={sets}
+              onChange={(e) =>
+                onChange(index, 'Sets', e.target.value, exesiseIndex)
+              }
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
           </div>
@@ -132,7 +143,9 @@ const ExerciseItem = ({
             <input
               type="number"
               value={exercise.Reps}
-              onChange={(e) => onChange(index, 'Reps', e.target.value)}
+              onChange={(e) =>
+                onChange(index, 'Reps', e.target.value, exesiseIndex)
+              }
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
           </div>
@@ -143,7 +156,9 @@ const ExerciseItem = ({
             <input
               type="number"
               value={exercise.Weight}
-              onChange={(e) => onChange(index, 'Weight', e.target.value)}
+              onChange={(e) =>
+                onChange(index, 'Weight', e.target.value, exesiseIndex)
+              }
               className="w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
             <div className="absolute right-2 top-[18px] text-[10px] text-Text-Secondary">
@@ -157,7 +172,9 @@ const ExerciseItem = ({
             <input
               type="number"
               value={exercise.Rest}
-              onChange={(e) => onChange(index, 'Rest', e.target.value)}
+              onChange={(e) =>
+                onChange(index, 'Rest', e.target.value, exesiseIndex)
+              }
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
           </div>
