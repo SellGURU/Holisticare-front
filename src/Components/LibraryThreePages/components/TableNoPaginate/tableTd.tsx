@@ -23,7 +23,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
       return (
         <>
           <div
-            data-tooltip-id={`tooltip-${row.original?.Sup_Id}`}
+            data-tooltip-id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
             className="overflow-hidden select-none text-xs text-Text-Quadruple"
             style={{
               textWrap: 'nowrap',
@@ -37,7 +37,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Instruction.length > 47 && (
             <Tooltip
-              id={`tooltip-${row.original?.Sup_Id}`}
+              id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
               place="top"
               className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
             >
