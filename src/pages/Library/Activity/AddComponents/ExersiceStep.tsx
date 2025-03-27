@@ -148,6 +148,48 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
     });
   };
 
+  const handleSuperSetDelete = (index: number, exersiseIndex: number) => {
+    setExercises((prevExercises) => {
+      const updatedExercises = [...prevExercises];
+      // Find the exercise in the current active tab
+      const activeTabExercises = updatedExercises.filter(
+        (el: any) => el.Section === activeTab,
+      );
+      const exerciseToUpdate = activeTabExercises[index];
+
+      // Find the original index in the full array
+      const originalIndex = updatedExercises.findIndex(
+        (el: any) => el === exerciseToUpdate,
+      );
+
+      if (exerciseToUpdate.Exercises.length > 1) {
+        // If there are multiple exercises, remove the specific one
+        const remainingExercises = updatedExercises[originalIndex].Exercises.filter(
+          (_, i) => i !== exersiseIndex,
+        );
+        
+        // If only one exercise remains, convert to normal set
+        if (remainingExercises.length === 1) {
+          updatedExercises[originalIndex] = {
+            ...updatedExercises[originalIndex],
+            Type: 'Normalset',
+            Exercises: remainingExercises,
+          };
+        } else {
+          // Keep as superset with remaining exercises
+          updatedExercises[originalIndex] = {
+            ...updatedExercises[originalIndex],
+            Exercises: remainingExercises,
+          };
+        }
+      } else {
+        // If this is the last exercise, remove the entire group
+        updatedExercises.splice(originalIndex, 1);
+      }
+      return updatedExercises;
+    });
+  };
+
   useEffect(() => {
     onChange(exercises);
   }, [exercises, onChange]);
@@ -180,39 +222,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                     <>
                       {exercise.Type === 'Superset' ? (
                         <SuperSetExersiseItem
-                          onDelete={(exersiseIndex: number) => {
-                            setExercises((prevExercises) => {
-                              const updatedExercises = [...prevExercises];
-                              // Find the exercise in the current active tab
-                              const activeTabExercises =
-                                updatedExercises.filter(
-                                  (el: any) => el.Section === activeTab,
-                                );
-                              const exerciseToUpdate =
-                                activeTabExercises[index];
-
-                              // Find the original index in the full array
-                              const originalIndex = updatedExercises.findIndex(
-                                (el: any) => el === exerciseToUpdate,
-                              );
-
-                              if (exerciseToUpdate.Exercises.length > 1) {
-                                // If there are multiple exercises, remove the specific one
-                                updatedExercises[originalIndex] = {
-                                  ...updatedExercises[originalIndex],
-                                  Exercises: updatedExercises[
-                                    originalIndex
-                                  ].Exercises.filter(
-                                    (_, i) => i !== exersiseIndex,
-                                  ),
-                                };
-                              } else {
-                                // If this is the last exercise, remove the entire group
-                                updatedExercises.splice(originalIndex, 1);
-                              }
-                              return updatedExercises;
-                            });
-                          }}
+                          onDelete={(exersiseIndex: number) => handleSuperSetDelete(index, exersiseIndex)}
                           key={index}
                           index={index}
                           exercise={exercise}
@@ -261,10 +271,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise
               </div>
-              <div className="flex items-center gap-1 text-Primary-DeepTeal font-medium text-xs cursor-pointer">
+              {/* <div className="flex items-center gap-1 text-Primary-DeepTeal font-medium text-xs cursor-pointer">
                 <img src="/icons/add-blue.svg" alt="" className="w-5 h-5" />
                 Add Exercise
-              </div>
+              </div> */}
             </div>
             <SearchBox
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"
@@ -272,7 +282,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
               value={searchValue}
               onSearch={(value: any) => setSearchValue(value)}
             />
-            <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-1">
+            <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-2">
               {filteredExerciseList.map((el: any) => {
                 return (
                   <>
@@ -294,7 +304,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({ onChange }) => {
                           {el.Title}
                         </div>
                         <div className="text-[8px] text-Text-Quadruple">
-                          (2 Videos)
+                          ({el.Files.length} Videos)
                         </div>
                       </div>
                       <img
