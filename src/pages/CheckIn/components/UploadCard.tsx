@@ -9,14 +9,14 @@ interface UploadCardProps {
   value?: number;
   index?: number;
   onSubmit?: (values: any) => void;
-  hideQuestions?:boolean
+  hideQuestions?: boolean;
 }
 
 const UploadCard: React.FC<UploadCardProps> = ({
   index,
   question,
   onSubmit,
-  hideQuestions
+  hideQuestions,
 }) => {
   const [frontal, setFrotal] = useState('');
   const [back, setBack] = useState('');
@@ -36,14 +36,11 @@ const UploadCard: React.FC<UploadCardProps> = ({
     <>
       <div className="bg-[#FCFCFC] p-3 w-full h-full rounded-[12px] border border-gray-50">
         <div className="flex justify-between items-center">
-          {
-            !hideQuestions && (
-              <div className="text-[12px] text-Text-Primary">
+          {!hideQuestions && (
+            <div className="text-[12px] text-Text-Primary">
               {index}. {question}
             </div>
-            )
-          }
-         
+          )}
 
           <div
             onClick={() => setISCanUpload(true)}

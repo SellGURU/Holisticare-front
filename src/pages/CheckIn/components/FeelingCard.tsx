@@ -6,7 +6,7 @@ interface FeelingCardProps {
   value: 'Angry' | 'Sad' | 'Neutral' | 'Smile' | 'Loved' | string;
   index?: number;
   onSubmit?: (value: string) => void;
-  hideQuestions?:boolean
+  hideQuestions?: boolean;
 }
 
 const FeelingCard: React.FC<FeelingCardProps> = ({
@@ -14,7 +14,7 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
   index,
   onSubmit,
   value,
-  hideQuestions
+  hideQuestions,
 }) => {
   const touchStartX = useRef(0);
   // const touchEndX = useRef(0);
@@ -71,7 +71,7 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
   //   value ? emojeys.filter((el) => el.name == value)[0] : emojeys[2],
   // );
   const [active, setActive] = useState(() => {
-    const initial = emojeys.find(el => el.name === value) || emojeys[2];
+    const initial = emojeys.find((el) => el.name === value) || emojeys[2];
     return initial;
   });
   useEffect(() => {
@@ -80,18 +80,16 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
     }
   }, [active]);
   console.log(active);
-  
+
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">
-        {
-          !hideQuestions &&(
-            <div className="text-[12px] text-Text-Primary">
+        {!hideQuestions && (
+          <div className="text-[12px] text-Text-Primary">
             {index}. {question}
           </div>
-          )
-        }
-       
+        )}
+
         <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
           <div
             onTouchStart={handleTouchStart}
