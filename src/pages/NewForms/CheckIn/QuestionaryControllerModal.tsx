@@ -242,19 +242,21 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
           <AddQuestionsModal
             editQUestion={questions[editingQuestionIndex]}
             onSubmit={(value) => {
-              const updatedQuestions = editingQuestionIndex === -1
+              const updatedQuestions =
+                editingQuestionIndex === -1
                   ? [...questions, value]
-                  : questions.map((el, ind) => (ind === editingQuestionIndex ? value : el));
-      
-              
+                  : questions.map((el, ind) =>
+                      ind === editingQuestionIndex ? value : el,
+                    );
+
               const questionsWithOrder = updatedQuestions.map((q, index) => ({
-                  ...q,
-                  order: index + 1,
+                ...q,
+                order: index + 1,
               }));
-      
+
               setQuestions(questionsWithOrder);
               setAddMore(false);
-          }}
+            }}
             onCancel={() => {
               setEditingQuestionIndex(-1);
               setAddMore(false);

@@ -461,7 +461,7 @@ export const Questionary = () => {
         {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
-              <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
+              <div className="flex flex-col gap-2 h-[150px]  overflow-y-auto">
                 {AddForms.map((form: any) => (
                   <div
                     onClick={() => toggleSelection(form.unique_id)}
@@ -482,7 +482,7 @@ export const Questionary = () => {
                   </div>
                 ))}
               </div>
-              <div className="w-full flex items-center gap-2 ">
+              <div className="w-full flex items-center gap-2  mt-4">
                 <ButtonPrimary
                   onClick={() => {
                     setSelectedFormIDs([]);
@@ -584,14 +584,14 @@ export const Questionary = () => {
                 )}
               </div>
               {questionsFormData.questions[activeCard - 1].required && (
-                <div className="text-[10px] text-red-500 mt-1">
+                <div className="text-[10px] text-red-500 mt-1 mb-5">
                   * This question is required.
                 </div>
               )}
             </div>
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
-              <div className="flex w-[95px] justify-center items-center gap-3">
+              <div className="flex  w-[95px] justify-center items-center gap-3">
                 <img
                   className="cursor-pointer"
                   onClick={() => {
@@ -616,7 +616,7 @@ export const Questionary = () => {
                     alt=""
                   />
                 </div> */}
-                <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
+                <div className="text-[10px] w-[40px] text-center text-Text-Secondary text-nowrap">
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
                 <img
