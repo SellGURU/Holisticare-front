@@ -42,7 +42,7 @@ const UploadCard: React.FC<UploadCardProps> = ({
   const hasFiles = frontal || back || side;
 
   return (
-    <div className="bg-[#FCFCFC] p-3 w-full h-full rounded-[12px] border border-gray-50">
+    <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
       <div className="flex justify-between items-center">
         {!hideQuestions && (
           <div className="text-[12px] text-Text-Primary">
@@ -61,7 +61,7 @@ const UploadCard: React.FC<UploadCardProps> = ({
       </div>
       {isCanUpload ? (
         <>
-          <div className="w-full bg-white rounded-[8px] p-2 mt-4">
+          <div className="w-full bg-white rounded-[8px]  p-2 mt-4">
             <div className="flex justify-between">
               <div className="text-[12px] text-[#B0B0B0]">Jan 27, 2024</div>
               <div className="flex justify-end items-center gap-2">
