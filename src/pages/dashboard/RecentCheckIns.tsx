@@ -1,113 +1,73 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { MainModal } from '../../Components';
 
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
 import Checkin from '../CheckIn';
+import DashboardApi from '../../api/Dashboard';
 
 type CheckIn = {
   name: string;
-  type: string;
-  time: string;
-  status: 'Review Now' | 'Reviewed';
+  picture:string
+  Type: string;
+  filled_checkin_id:string,
+  Time: string;
+  Status: 'Review Now' | 'Reviewed';
 };
-const formData = {
-  title: 'Daily Check in',
-  questions: [
-    {
-      type: 'paragraph',
-      question: 'Did you stick to the Meal Plan?',
-      required: false,
-      response: '',
-      placeHolder: 'Write the snacks you took ...',
-    },
-    {
-      type: 'Scale',
-      question: 'How many hours did you sleep yesterday?',
-      required: false,
-      response: '',
-    },
-    {
-      type: 'Emojis',
-      question: 'How are you feeling today?',
-      required: false,
-      response: '',
-    },
-    {
-      type: 'Star Rating',
-      question: 'Rate your workout.',
-      required: false,
-      response: '',
-    },
-    {
-      type: 'File Uploader',
-      question: 'Upload your progress pictures.',
-      required: false,
-      response: '',
-    },
-    {
-      type: 'paragraph',
-      question: 'What snacks did you take today?',
-      required: false,
-      response: '',
-      placeHolder: 'Write the snacks you took ...',
-    },
-    {
-      type: 'paragraph',
-      question: 'How many hours did you work today?(Dropdown sample)',
-      required: false,
-      response: '',
-      placeHolder: 'Write the snacks you took ...',
-    },
-  ],
-};
-const mockCheckIns: CheckIn[] = [
-  {
-    name: 'David Smith',
-    type: 'Daily Check-In',
-    time: '24 Mins ago',
-    status: 'Review Now',
-  },
-  {
-    name: 'Jane Cooper',
-    type: 'Weekly Check-In',
-    time: '31 Mins ago',
-    status: 'Reviewed',
-  },
-  {
-    name: 'Jacob Jones',
-    type: 'Daily Check-In',
-    time: '39 Mins ago',
-    status: 'Review Now',
-  },
-  {
-    name: 'Jenny Wilson',
-    type: 'Daily Check-In',
-    time: '46 Mins ago',
-    status: 'Reviewed',
-  },
-  {
-    name: 'Robert Garcia',
-    type: 'Weekly Check-In',
-    time: '53 Mins ago',
-    status: 'Reviewed',
-  },
-  {
-    name: 'Sarah Thompson',
-    type: 'Daily Check-In',
-    time: '2 Hours ago',
-    status: 'Reviewed',
-  },
-  {
-    name: 'Leslie Alexander',
-    type: 'Daily Check-In',
-    time: '1 Day ago',
-    status: 'Reviewed',
-  },
-];
+// const formData = {
+//   title: 'Daily Check in',
+//   questions: [
+//     {
+//       type: 'paragraph',
+//       question: 'Did you stick to the Meal Plan?',
+//       required: false,
+//       response: '',
+//       placeHolder: 'Write the snacks you took ...',
+//     },
+//     {
+//       type: 'Scale',
+//       question: 'How many hours did you sleep yesterday?',
+//       required: false,
+//       response: '',
+//     },
+//     {
+//       type: 'Emojis',
+//       question: 'How are you feeling today?',
+//       required: false,
+//       response: '',
+//     },
+//     {
+//       type: 'Star Rating',
+//       question: 'Rate your workout.',
+//       required: false,
+//       response: '',
+//     },
+//     {
+//       type: 'File Uploader',
+//       question: 'Upload your progress pictures.',
+//       required: false,
+//       response: '',
+//     },
+//     {
+//       type: 'paragraph',
+//       question: 'What snacks did you take today?',
+//       required: false,
+//       response: '',
+//       placeHolder: 'Write the snacks you took ...',
+//     },
+//     {
+//       type: 'paragraph',
+//       question: 'How many hours did you work today?(Dropdown sample)',
+//       required: false,
+//       response: '',
+//       placeHolder: 'Write the snacks you took ...',
+//     },
+//   ],
+// };
+
 const RecentCheckIns = () => {
-  const [CheckIns, setCheckIns] = useState<CheckIn[]>(mockCheckIns);
+  const [CheckIns, setCheckIns] = useState<CheckIn[]>([]);
   const [showcheckInModal, setCheckInModal] = useState(false);
   // const [isStickMealPlan, setisStickMealPlan] = useState(true);
   // const [hoursSlept, setHoursSlept] = useState<number>(0);
@@ -123,6 +83,9 @@ const RecentCheckIns = () => {
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
   const [currentCheckIn, setCurrentCheckIn] = useState<CheckIn | null>(null);
+  const [selectedOption, setSelectedOption] = useState('Week');
+  const options = ['Day', 'Week', 'Month'];
+  const [Questions, setQuestions] = useState<any[]>([])
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -130,7 +93,11 @@ const RecentCheckIns = () => {
       setShowSelect(false);
     },
   });
-
+useEffect(()=>{DashboardApi.getCheckinList({
+  time_filter: selectedOption
+}).then((res)=>{
+  setCheckIns(res.data)
+})}, [selectedOption])
   // const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setHoursSlept(Number(event.target.value));
   // };
@@ -170,19 +137,30 @@ const RecentCheckIns = () => {
     setShowSelect(false);
   };
   const handleCheckInClick = (checkIn: CheckIn) => {
-    if (checkIn.status === 'Review Now') {
-      setCurrentCheckIn(checkIn);
-      setCheckInModal(true);
+    if (checkIn.Status === 'Review Now') {
+      DashboardApi.getFilledCheckin({
+        filled_checkin_id: checkIn.filled_checkin_id
+      }).then((res)=>{
+        setQuestions(res.data)
+        setCurrentCheckIn(checkIn);
+        setCheckInModal(true);
+      })
+    
     }
   };
 
   const handleMarkAsReviewed = () => {
     if (currentCheckIn) {
-      setCheckIns((prevCheckIns) =>
-        prevCheckIns.map((ci) =>
-          ci.name === currentCheckIn.name ? { ...ci, status: 'Reviewed' } : ci,
-        ),
-      );
+      // setCheckIns((prevCheckIns) =>
+      //   prevCheckIns.map((ci) =>
+      //     ci.name === currentCheckIn.name ? { ...ci, Status: 'Reviewed' } : ci,
+      //   ),
+      // );
+      // DashboardApi.markAsReviewd({filled_checkin_id:
+      //   currentCheckIn.filled_checkin_id
+      // }).then(()=>{
+
+      // })
       setCheckInModal(false);
       setshowCheckICommentnModal(true);
       // resetModalStates();
@@ -199,8 +177,7 @@ const RecentCheckIns = () => {
   //   setCompareCheckIn('');
   //   setShowSelect(false);
   // };
-  const [selectedOption, setSelectedOption] = useState('Week');
-  const options = ['Day', 'Week', 'Month'];
+
 
   return (
     <>
@@ -236,7 +213,7 @@ const RecentCheckIns = () => {
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
             <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-              <Checkin upData={formData.questions}></Checkin>
+              <Checkin upData={Questions}></Checkin>
               {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
@@ -300,7 +277,7 @@ const RecentCheckIns = () => {
                 </div>
               )}
               {showComparisonSurvey && comparisonData && (
-                <Checkin upData={formData.questions}></Checkin>
+                <Checkin upData={Questions}></Checkin>
 
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}
@@ -368,8 +345,14 @@ const RecentCheckIns = () => {
             </div>
             <div
               onClick={() => {
-                setCheckInComment('');
-                setshowCheckICommentnModal(false);
+                DashboardApi.saveCoachComment({
+                  filled_checkin_id: currentCheckIn?.filled_checkin_id,
+                  coach_comment: checkInComment
+                }).then(()=>{
+                  setCheckInComment('');
+                  setshowCheckICommentnModal(false);
+                })
+              
               }}
               className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
             >
@@ -425,10 +408,10 @@ const RecentCheckIns = () => {
                       {checkIn.name}
                     </td>
                     <td className="py-2 text-Text-Secondary text-[10px]">
-                      {checkIn.type}
+                      {checkIn.Type}
                     </td>
                     <td className="py-2 text-Text-Secondary text-[10px]">
-                      {checkIn.time}
+                      {checkIn.Time}
                     </td>
                     <td
                       onClick={() => handleCheckInClick(checkIn)}
@@ -436,17 +419,17 @@ const RecentCheckIns = () => {
                     >
                       <span
                         className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
-                          checkIn.status === 'Review Now'
+                          checkIn.Status === 'Review Now'
                             ? 'text-[#FFBD59] underline cursor-pointer'
                             : 'bg-[#DEF7EC] '
                         }`}
                       >
                         <img
-                          className={`${checkIn.status !== 'Reviewed' && 'hidden'}`}
+                          className={`${checkIn.Status !== 'Reviewed' && 'hidden'}`}
                           src="/icons/tick-green.svg"
                           alt=""
                         />
-                        {checkIn.status}
+                        {checkIn.Status}
                       </span>
                     </td>
                   </tr>

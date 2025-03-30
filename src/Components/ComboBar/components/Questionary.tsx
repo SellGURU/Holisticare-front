@@ -304,7 +304,7 @@ export const Questionary = () => {
     if (type === 'Yes/No') {
       return (
         <YesNoCard
-        hideQuestions
+          hideQuestions
           question={questionsData.questions[activeCardNumber - 1].question}
           value={questionsData.questions[activeCardNumber - 1].response || 'No'}
           index={activeCardNumber}

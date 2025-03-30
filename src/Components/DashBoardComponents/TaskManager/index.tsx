@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Application from '../../../api/app';
 // import AddFilter from './addFilter';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import MainModal from '../../MainModal';
 import TextField from '../../TextField';
 import SimpleDatePicker from '../../SimpleDatePicker';
+import DashboardApi from '../../../api/Dashboard';
 // Define the new Task type
 type Task = {
-  task_id: string;
+  task_id?: string;
   title: string;
-  date: string;
-  progress: string;
+  deadline: string;
+  progress: number;
   priority: string;
   checked: boolean;
-  ai?: boolean;
+  ai_defined?: boolean;
 };
 
 // type Filters = {
@@ -26,79 +26,14 @@ type Task = {
 interface TaskManagerProps {}
 const TaskManager: React.FC<TaskManagerProps> = () => {
   const [tasks, setTasks] = useState<Task[]>([
-    {
-      task_id: '1',
-      title: 'Update Sam action plan',
-      date: 'February 28, 2025',
-      progress: 'AI-Defined',
-      priority: 'Low Priority',
-      checked: false,
-    },
-    {
-      task_id: '2',
-      title: 'Attach guide pdf to Sarah’s...',
-      date: 'February 28, 2025',
-      progress: '',
-      priority: 'High Priority',
-      checked: false,
-    },
-    {
-      task_id: '3',
-      title: 'Sync with James via Leo...',
-      date: 'February 27, 2025',
-      progress: '',
-      priority: 'High Priority',
-      checked: true,
-      ai: true,
-    },
-    {
-      task_id: '4',
-      title: 'Organize new clients prof...',
-      date: 'February 27, 2025',
-      progress: '',
-      priority: 'Low Priority',
-      checked: true,
-    },
-    {
-      task_id: '5',
-      title: 'Download client app and...',
-      date: 'February 26, 2025',
-      progress: 'AI-Defined',
-      priority: 'Low Priority',
-      checked: true,
-    },
-    {
-      task_id: '6',
-      title: 'Assign Guy to Floyd in or...',
-      date: 'February 25, 2025',
-      progress: 'AI-Defined',
-      priority: 'Medium Priority',
-      checked: true,
-    },
-    {
-      task_id: '7',
-      title: 'Check Daniel progress to...',
-      date: 'February 25, 2025',
-      progress: 'AI-Defined',
-      priority: 'Low Priority',
-      checked: true,
-    },
-    {
-      task_id: '8',
-      title: 'Set priorities to make sur...',
-      date: 'February 24, 2025',
-      progress: '',
-      priority: 'Medium Priority',
-      checked: true,
-    },
   ]);
 
   useEffect(() => {
-    Application.dashboardTasks()
+    DashboardApi.getTasksList({})
       .then((response) => {
         console.log(response);
 
-        // setTasks(response.data);
+        setTasks(response.data);
       })
       .catch((error) => {
         console.error('Error fetching tasks:', error);
@@ -107,12 +42,37 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
   // const [currentTasks, setCurrentTasks] = useState(tasks);
 
-  const handleCheckBoxChange = (task_id: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.task_id === task_id ? { ...task, checked: !task.checked } : task,
-      ),
-    );
+//   const handleCheckBoxChange = (task_id: string| undefined) => {
+//     DashboardApi.checkTask({
+//       task_id: task_id
+//     }).then(()=>{
+//  setTasks(
+//       tasks.map((task) =>
+//         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
+//       ),
+//     );
+//     })
+   
+//   };
+  const handleCheckBoxChange = (task_id: string | undefined) => {
+    // Find the task to check its current status
+    const taskToUpdate = tasks.find(task => task.task_id === task_id);
+  
+    // Proceed only if the task is found and it's not already checked
+    if (taskToUpdate && !taskToUpdate.checked) {
+      DashboardApi.checkTask({
+        task_id: task_id
+      }).then(() => {
+        setTasks(
+          tasks.map((task) =>
+            task.task_id === task_id ? { ...task, checked: true } : task,
+          ),
+        );
+      }).catch((error) => {
+        console.error('Error checking task:', error);
+        alert('Failed to check the task. Please try again.');
+      });
+    }
   };
   const [showAddTaskModal, setshowAddTaskModal] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
@@ -135,24 +95,27 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
     }
 
     const newTask: Task = {
-      task_id: (tasks.length + 1).toString(), // Generate a new unique ID
       title: taskTitle,
-      date: deadline.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
+      deadline: deadline.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
         year: 'numeric',
       }),
-      progress: '',
-      priority: `${Priority} Priority`,
+      progress: 0,
+      priority: Priority,
       checked: false,
     };
+DashboardApi.AddTask(newTask).then(()=>{
+  setTasks((prevTasks) => [...prevTasks, newTask]);
+  setshowAddTaskModal(false);
+  setTaskTitle('');
+  setDeadline(null);
+  setPriority('High');
+})
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    setshowAddTaskModal(false);
-    setTaskTitle('');
-    setDeadline(null);
-    setPriority('High');
+   
   };
+  console.log(tasks);
   return (
     <>
       <MainModal
@@ -355,10 +318,10 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                 </div>
                 <div className="w-full flex items-center justify-between  px-3">
                   <div className="text-[10px] text-Text-Triarty pl-3">
-                    {task.date}
+                    {task.deadline}
                   </div>
                   <div className="flex flex-col justify-between gap-3 absolute top-2 right-2">
-                    {task.ai && (
+                    {task.ai_defined && (
                       <div className="bg-[#E9F0F2] px-[9px] py-[2px] rounded-2xl flex justify-center items-center gap-1 text-[8px] text-[#267E95]">
                         <img src="/icons/ai-icon.svg" alt="" />
                         AI-Defined
