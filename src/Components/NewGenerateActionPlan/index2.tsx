@@ -19,7 +19,10 @@ const GenerateActionPlan = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
   const [isWeighted, setIsWeighted] = useState(false);
-  const [actions, setActions] = useState<Array<any>>([]);
+  const [actions, setActions] = useState<any>({
+    checkIn: [],
+    category: [],
+  });
   useEffect(() => {
     setIsLoadingPlans(true);
     Application.getActionPlanMethodsNew()
@@ -30,29 +33,47 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any>({
+    checkIn: [],
+    category: [],
+  });
   const checkSelectedTaskConflict = (newPlans: any) => {
+    setIsLoadingPlans(true);
     Application.checkSelectedTaskConflict({
       member_id: id,
       tasks: newPlans,
-    }).then((res) => {
-      setCategories(res.data);
-    });
+    })
+      .then((res) => {
+        setCategories((prevCategories: any) => ({
+          ...prevCategories,
+          category: res.data,
+        }));
+      })
+      .finally(() => {
+        setIsLoadingPlans(false);
+      });
   };
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       percents: newPlans,
-    })
-      .then((res) => {
-        checkSelectedTaskConflict(res.data);
-        setCategories(res.data);
-        setIsWeighted(true);
-      })
-      .finally(() => {
-        setIsLoadingPlans(false);
+    }).then((res) => {
+      const checkInItems = res.data.filter(
+        (item: any) => item.Task_Type === 'Checkin',
+      );
+      const categoryItems = res.data.filter(
+        (item: any) => item.Task_Type !== 'Checkin',
+      );
+
+      setCategories({
+        checkIn: checkInItems,
+        category: categoryItems,
       });
+
+      setIsWeighted(true);
+      checkSelectedTaskConflict(res.data);
+    });
   };
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const navigate = useNavigate();

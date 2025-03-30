@@ -6,9 +6,10 @@ import { Tooltip } from 'react-tooltip';
 interface LibBoxProps {
   data: any;
   onAdd: () => void;
+  checkIn?: boolean;
 }
 
-const LibBox: FC<LibBoxProps> = ({ data, onAdd }) => {
+const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
   const [valueData, setValueData] = useState('');
   useEffect(() => {
     switch (data.Category) {
@@ -61,31 +62,48 @@ const LibBox: FC<LibBoxProps> = ({ data, onAdd }) => {
               </Tooltip>
             )}
           </div>
-          <img
-            onClick={() => {
-              setShowMore(!showMore);
-            }}
-            className={`cursor-pointer ${showMore ? 'rotate-180' : ''}`}
-            src="/icons/arrow-down-blue.svg"
-            alt=""
-          />
-        </div>
-        <div
-          className={`flex items-center mt-2 gap-1 ${showMore ? '' : 'ml-6'}`}
-        >
-          <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
-            <span
-              className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
+          {!checkIn && (
+            <img
+              onClick={() => {
+                setShowMore(!showMore);
+              }}
+              className={`cursor-pointer ${showMore ? 'rotate-180' : ''}`}
+              src="/icons/arrow-down-blue.svg"
+              alt=""
             />
-            {data['System Score']}
-          </div>
-          <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
-            <span
-              className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
-            />
-            {data.Base_Score}
-          </div>
+          )}
         </div>
+        {!checkIn && (
+          <div
+            className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6`}
+          >
+            <div className={`flex items-center gap-1`}>
+              <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                <span
+                  className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
+                />
+                {data['System Score']}
+              </div>
+              <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                <span
+                  className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
+                />
+                {data.Base_Score}
+              </div>
+            </div>
+            {data.flag && data.flag.conflicts.length > 0 && (
+              <div className="flex items-center gap-1 cursor-pointer">
+                <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
+                <div className="text-[10px] text-[#FFAB2C] underline">
+                  Conflict
+                </div>
+                <div className="text-[10px] text-[#FFAB2C]">
+                  ({data.flag.conflicts.length})
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         {showMore && (
           <div className="mt-2">
             <div className="flex justify-start mt-1 items-start">
