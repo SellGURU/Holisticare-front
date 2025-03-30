@@ -5,7 +5,7 @@ interface numberBoxProps {
   title: string;
   icon: string;
   value: number;
-  mode: 'increase' | 'reduction' | 'added';
+  mode: string;
 }
 
 const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {

@@ -30,7 +30,9 @@ const YesNoCard: React.FC<YesNoCardProps> = ({
           </div>
         )}
 
-        <div className="flex justify-end items-center mt-4">
+        <div
+          className={`flex ${hideQuestions ? 'justify-center' : 'justify-end'}  items-center mt-4`}
+        >
           <div className="w-[96px] cursor-pointer flex justify-between items-center h-[32px] border border-gray-50 rounded-[8px]">
             <div
               onClick={() => {

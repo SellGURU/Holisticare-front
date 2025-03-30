@@ -304,6 +304,7 @@ export const Questionary = () => {
     if (type === 'Yes/No') {
       return (
         <YesNoCard
+          hideQuestions
           question={questionsData.questions[activeCardNumber - 1].question}
           value={questionsData.questions[activeCardNumber - 1].response || 'No'}
           index={activeCardNumber}
@@ -575,7 +576,7 @@ export const Questionary = () => {
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[180px] min-h-[100px]   max-h-[180px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[250px] min-h-[100px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {resolveForm(
                   questionsFormData.questions[activeCard - 1].type,

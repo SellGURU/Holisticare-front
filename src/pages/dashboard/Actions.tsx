@@ -1,35 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
+import DashboardApi from '../../api/Dashboard';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
-  name: string;
-  status: 'Resolved' | 'Pending';
-  action: string;
+  patient_name: string;
+  state: 'Resolved' | 'Pending';
+  alert: string;
 };
 
-const mockActions: Action[] = [
-  {
-    name: 'Esther Howard',
-    status: 'Resolved',
-    action: 'Adjust his exercise program and provide an alternative plan...',
-  },
-  {
-    name: 'Darrell Steward',
-    status: 'Pending',
-    action: 'Create a contingency plan for...',
-  },
-];
+// const mockActions: Action[] = [
+//   {
+//     name: 'Esther Howard',
+//     status: 'Resolved',
+//     action: 'Adjust his exercise program and provide an alternative plan...',
+//   },
+//   {
+//     name: 'Darrell Steward',
+//     status: 'Pending',
+//     action: 'Create a contingency plan for...',
+//   },
+// ];
 
 const Actions: React.FC = () => {
+  const [Actions, setActions] = useState<Action[]>([])
+  const [selectedOption, setSelectedOption] = useState('Week');
+
+  useEffect(()=>{
+    DashboardApi.getActionsList({
+      time_filter: selectedOption
+    }).then((res)=>{
+      setActions(res.data)
+      
+    })
+  },[selectedOption])
   const [filter, setFilter] = useState<'All' | 'Resolved' | 'Pending'>('All');
   const [isLoading] = useState<boolean>(false);
 
-  const filteredActions = mockActions.filter((action) =>
-    filter === 'All' ? true : action.status === filter,
+  const filteredActions = Actions.filter((action) =>
+    filter === 'All' ? true : action.state === filter,
   );
-  const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
   return (
     <>
@@ -81,37 +92,43 @@ const Actions: React.FC = () => {
               </div>
             </div>
           ) : (
-            <ul className="mt-5 w-full h-full max-h-[540px] overflow-y-scroll">
+            <ul className="mt-5 w-full h-full max-h-[540px] overflow-y-scroll pr-2">
               {filteredActions.map((action, index) => (
                 <li
                   key={index}
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
-                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px] font-medium text-Text-Primary">
-                    {action.name}
+                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary">
+                    <div title={action.patient_name} className='truncate max-w-[160px]'>
+                    {action.patient_name}
+                    </div>
+                  
 
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
                         {action.status}
                       </div> */}
                     <div
-                      className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.status === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
+                      className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.state === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
                     >
                       <div
-                        className={` w-3 h-3 rounded-full  ${action.status === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
+                        className={` w-3 h-3 rounded-full  ${action.state === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
                       ></div>
-                      {action.status}
+                      {action.state}
                     </div>
                   </div>
-                  <div className="text-[10px] text-Text-Secondary px-4 flex justify-between items-center mt-2 text-ellipsis ">
-                    {action.action}
+                  <div className="text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ">
+                    <div className='max-w-[237px]'>
+                    {action.alert}
+                    </div>
+                  
                     <div className="flex items-center gap-2">
-                      {action.status === 'Pending' && (
+                      {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
                           Proceed{' '}
                           <img
                             className="rotate-180 size-4"
-                            src="/public/icons/arrow-back.svg"
+                            src="/icons/arrow-back.svg"
                             alt=""
                           />
                         </div>
