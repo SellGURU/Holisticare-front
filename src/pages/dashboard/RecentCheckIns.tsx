@@ -9,9 +9,9 @@ import DashboardApi from '../../api/Dashboard';
 
 type CheckIn = {
   name: string;
-  picture:string
+  picture: string;
   Type: string;
-  filled_checkin_id:string,
+  filled_checkin_id: string;
   Time: string;
   Status: 'Review Now' | 'Reviewed';
 };
@@ -85,7 +85,7 @@ const RecentCheckIns = () => {
   const [currentCheckIn, setCurrentCheckIn] = useState<CheckIn | null>(null);
   const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
-  const [Questions, setQuestions] = useState<any[]>([])
+  const [Questions, setQuestions] = useState<any[]>([]);
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -93,11 +93,13 @@ const RecentCheckIns = () => {
       setShowSelect(false);
     },
   });
-useEffect(()=>{DashboardApi.getCheckinList({
-  time_filter: selectedOption
-}).then((res)=>{
-  setCheckIns(res.data)
-})}, [selectedOption])
+  useEffect(() => {
+    DashboardApi.getCheckinList({
+      time_filter: selectedOption,
+    }).then((res) => {
+      setCheckIns(res.data);
+    });
+  }, [selectedOption]);
   // const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setHoursSlept(Number(event.target.value));
   // };
@@ -139,13 +141,12 @@ useEffect(()=>{DashboardApi.getCheckinList({
   const handleCheckInClick = (checkIn: CheckIn) => {
     if (checkIn.Status === 'Review Now') {
       DashboardApi.getFilledCheckin({
-        filled_checkin_id: checkIn.filled_checkin_id
-      }).then((res)=>{
-        setQuestions(res.data)
+        filled_checkin_id: checkIn.filled_checkin_id,
+      }).then((res) => {
+        setQuestions(res.data);
         setCurrentCheckIn(checkIn);
         setCheckInModal(true);
-      })
-    
+      });
     }
   };
 
@@ -177,7 +178,6 @@ useEffect(()=>{DashboardApi.getCheckinList({
   //   setCompareCheckIn('');
   //   setShowSelect(false);
   // };
-
 
   return (
     <>
@@ -347,12 +347,11 @@ useEffect(()=>{DashboardApi.getCheckinList({
               onClick={() => {
                 DashboardApi.saveCoachComment({
                   filled_checkin_id: currentCheckIn?.filled_checkin_id,
-                  coach_comment: checkInComment
-                }).then(()=>{
+                  coach_comment: checkInComment,
+                }).then(() => {
                   setCheckInComment('');
                   setshowCheckICommentnModal(false);
-                })
-              
+                });
               }}
               className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
             >
