@@ -34,8 +34,13 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 }
                 alt={`${row.original?.name} image`}
               />
-              <div className="font-meidum text-xs text-Text-Primary text-nowrap flex items-center gap-3">
-                {row.original?.name || 'No Data'}
+              <div
+                title={row.original?.name}
+                className="font-meidum text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
+              >
+                <div className="truncate max-w-[90px] xl:max-w-[160px]">
+                  {row.original?.name || 'No Data'}
+                </div>
                 <FiExternalLink />
               </div>
             </div>

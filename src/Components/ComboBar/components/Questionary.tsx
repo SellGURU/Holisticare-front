@@ -10,6 +10,13 @@ import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
+import {
+  FeelingCard,
+  RangeCard,
+  RateCard,
+  YesNoCard,
+} from '../../../pages/CheckIn/components';
+import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
@@ -97,16 +104,36 @@ export const Questionary = () => {
         });
     }
   }, [id]);
+  // const formValueChange = (id: string, value: any) => {
+  //   setQuestionsFormData((prev: any) => ({
+  //     ...prev,
+  //     questions: prev.questions.map((q: any) =>
+  //       q.order === id
+  //         ? { ...q, response: q.type === 'checkbox' ? [...value] : value }
+  //         : q,
+  //     ),
+  //   }));
+  // };
   const formValueChange = (id: string, value: any) => {
     setQuestionsFormData((prev: any) => ({
       ...prev,
       questions: prev.questions.map((q: any) =>
         q.order === id
-          ? { ...q, response: q.type === 'checkbox' ? [...value] : value }
+          ? {
+              ...q,
+              response:
+                q.type === 'checkbox'
+                  ? Array.isArray(value)
+                    ? [...value]
+                    : []
+                  : value,
+            }
           : q,
       ),
     }));
   };
+  console.log(questionsFormData);
+
   const validateDate = (dateString: string) => {
     const date = new Date(dateString);
     return !isNaN(date.getTime()); // Returns true if it's a valid date
@@ -236,6 +263,100 @@ export const Questionary = () => {
         </>
       );
     }
+    if (type === 'Scale') {
+      return (
+        <RangeCard
+          hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response || 0}
+          index={activeCardNumber}
+          onSubmit={(value) => {
+            if (!disabled) {
+              formValueChange(
+                questionsData.questions[activeCardNumber - 1].order,
+                value,
+              );
+            }
+          }}
+        />
+      );
+    }
+    if (type === 'Emojis') {
+      return (
+        <FeelingCard
+          hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={
+            questionsData.questions[activeCardNumber - 1].response || 'Neutral'
+          }
+          index={activeCardNumber}
+          onSubmit={(value) => {
+            if (!disabled) {
+              formValueChange(
+                questionsData.questions[activeCardNumber - 1].order,
+                value,
+              );
+            }
+          }}
+        />
+      );
+    }
+    if (type === 'Yes/No') {
+      return (
+        <YesNoCard
+          hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response || 'No'}
+          index={activeCardNumber}
+          onSubmit={(value) => {
+            if (!disabled) {
+              formValueChange(
+                questionsData.questions[activeCardNumber - 1].order,
+                value,
+              );
+            }
+          }}
+        />
+      );
+    }
+
+    if (type === 'Star Rating') {
+      return (
+        <RateCard
+          hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response || 0}
+          index={activeCardNumber}
+          onSubmit={(value) => {
+            if (!disabled) {
+              formValueChange(
+                questionsData.questions[activeCardNumber - 1].order,
+                value,
+              );
+            }
+          }}
+        />
+      );
+    }
+
+    if (type === 'File Uploader') {
+      return (
+        <UploadCard
+          hideQuestions
+          question={questionsData.questions[activeCardNumber - 1].question}
+          value={questionsData.questions[activeCardNumber - 1].response}
+          index={activeCardNumber}
+          onSubmit={(values) => {
+            if (!disabled) {
+              formValueChange(
+                questionsData.questions[activeCardNumber - 1].order,
+                values,
+              );
+            }
+          }}
+        />
+      );
+    }
     if (type == 'date') {
       return (
         <>
@@ -341,7 +462,7 @@ export const Questionary = () => {
         {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
-              <div className="flex flex-col gap-2 h-[130px] overflow-y-auto">
+              <div className="flex flex-col gap-2 h-[150px]  overflow-y-auto">
                 {AddForms.map((form: any) => (
                   <div
                     onClick={() => toggleSelection(form.unique_id)}
@@ -362,7 +483,7 @@ export const Questionary = () => {
                   </div>
                 ))}
               </div>
-              <div className="w-full flex items-center gap-2 ">
+              <div className="w-full flex items-center gap-2  mt-4">
                 <ButtonPrimary
                   onClick={() => {
                     setSelectedFormIDs([]);
@@ -455,7 +576,7 @@ export const Questionary = () => {
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[250px] min-h-[100px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {resolveForm(
                   questionsFormData.questions[activeCard - 1].type,
@@ -464,14 +585,14 @@ export const Questionary = () => {
                 )}
               </div>
               {questionsFormData.questions[activeCard - 1].required && (
-                <div className="text-[10px] text-red-500 mt-1">
+                <div className="text-[10px] text-red-500 mt-1 mb-5">
                   * This question is required.
                 </div>
               )}
             </div>
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
-              <div className="flex w-[95px] justify-center items-center gap-3">
+              <div className="flex  w-[95px] justify-center items-center gap-3">
                 <img
                   className="cursor-pointer"
                   onClick={() => {
@@ -496,7 +617,7 @@ export const Questionary = () => {
                     alt=""
                   />
                 </div> */}
-                <div className="text-[10px] w-[40px] text-center text-Text-Secondary">
+                <div className="text-[10px] w-[40px] text-center text-Text-Secondary text-nowrap">
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
                 <img

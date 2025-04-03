@@ -1,55 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CircularProgressBar from '../../charts/CircularProgressBar';
+import DashboardApi from '../../../api/Dashboard';
 
 type client = {
+  picture: string;
   name: string;
-  Enroll_date: string;
+  ID: string;
+  ['Enroll Date']: string;
   Progress: number;
+  Gender: string;
 };
 
-const Clients: client[] = [
-  {
-    name: 'David Smith',
-    Enroll_date: '2025/1/12',
-    Progress: 43,
-  },
-  {
-    name: 'Jane Cooper',
-    Enroll_date: '2025/1/12',
-    Progress: 43,
-  },
-  {
-    name: 'Jacob Jones',
-
-    Enroll_date: '2025/9/2',
-    Progress: 88,
-  },
-  {
-    name: 'Jenny Wilson',
-
-    Enroll_date: '2025/9/2',
-    Progress: 88,
-  },
-  {
-    name: 'Robert Garcia',
-
-    Enroll_date: '2025/9/2',
-    Progress: 88,
-  },
-  {
-    name: 'Sarah Thompson',
-
-    Enroll_date: '2025/9/2',
-    Progress: 88,
-  },
-  {
-    name: 'Leslie Alexander',
-    Enroll_date: '2025/9/2',
-    Progress: 88,
-  },
-];
-
 const RecentCheckIns: React.FC = () => {
+  const [Clients, setClients] = useState<client[]>([]);
+
+  useEffect(() => {
+    DashboardApi.getCLientsList({}).then((res) => {
+      setClients(res.data.client_list);
+    });
+  }, []);
   return (
     <div className="w-full h-[328px] bg-white rounded-2xl shadow-200 p-4 pr-2 ">
       <div className=" overflow-y-scroll pb-3 h-[300px] pr-[2px] ">
@@ -75,7 +44,7 @@ const RecentCheckIns: React.FC = () => {
               </tr>
             </thead>
             <tbody className="border border-t-0 border-[#E9F0F2] ">
-              {Clients.map((client, index) => (
+              {Clients?.map((client, index) => (
                 <tr
                   key={index}
                   className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-Text-Primary border-b`}
@@ -86,14 +55,14 @@ const RecentCheckIns: React.FC = () => {
                       alt={client.name}
                       className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                     />
-                    {client.name}
+                    <div className="truncate max-w-[160px]"> {client.name}</div>
                   </td>
                   <td className="py-2 pl-[10px] text-Text-Secondary text-[10px]">
-                    {client.Enroll_date}
+                    {client['Enroll Date']}
                   </td>
                   <td className="py-2 text-Text-Secondary text-[10px]">
                     <CircularProgressBar
-                      percentage={client.Progress}
+                      percentage={client.Progress || 0}
                       startColor="#E742EB"
                       endColor="#3D70F1"
                       size={26}
