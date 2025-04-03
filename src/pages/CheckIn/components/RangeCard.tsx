@@ -20,6 +20,9 @@ const RangeCard: React.FC<RangeCardProps> = ({
       onSubmit(val);
     }
   }, [val]);
+  useEffect(()=>{
+    setVal(value)
+  },[value])
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">

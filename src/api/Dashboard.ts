@@ -17,6 +17,9 @@ class DashboardApi extends Api {
   static compareCheckin =(data:any) => {
     return this.post('/dashboard/checkin/compare_checkins', data);
   };
+  static showCompareCheckin =(data:any) => {
+    return this.post('/dashboard/checkin/show_filled_checkin', data);
+  };
   static saveCoachComment =(data:any) => {
     return this.post('/dashboard/checkin/save_coach_comment', data);
   };
