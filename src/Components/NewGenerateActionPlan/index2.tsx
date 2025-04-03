@@ -80,10 +80,15 @@ const GenerateActionPlan = () => {
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   const saveChanges = () => {
+    const prepareDataForBackend = (data: any) => {
+      return [...data.checkIn, ...data.category];
+    };
+
+    const flattenedData = prepareDataForBackend(actions);
     setISLoadingSaveChanges(true);
     Application.getActionPlanBlockSaveTasksNew({
       member_id: id,
-      tasks: actions,
+      tasks: flattenedData,
       duration: duration,
       plan_objective: planObjective,
     })

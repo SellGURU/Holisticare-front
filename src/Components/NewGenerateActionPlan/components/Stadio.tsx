@@ -199,15 +199,19 @@ const Stadio: React.FC<StadioProps> = ({
         onSubmit={(addData) => {
           const newData = {
             Category: addData.Category,
-            Recommendation: addData.Recommendation || '',
+            Title: addData.Title || '',
             'Based on': '',
             'Practitioner Comments': addData['Practitioner Comments'] || [],
             Instruction: addData.Instruction || '',
             Times: addData.Times || [],
+            Value: addData.Value || null,
             Dose: addData.Dose || null,
+            'Total Macros': addData['Total Macros'] || null,
             'Client Notes': addData['Client Notes'] || [],
-            Score: 10,
-            Days: addData.Days || [],
+            Score: addData.Score ?? '',
+            Days: addData.Days ?? [],
+            Description: addData.Description ?? '',
+            Base_Score: addData.Base_Score ?? '',
             Layers: {
               first_layer: '',
               second_layer: '',

@@ -15,6 +15,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   index,
   onRemove,
 }) => {
+  console.log('value', value);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
@@ -106,11 +107,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
-                <div className="flex justify-start items-start">
-                  <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
+                <div className="flex justify-start items-start ml-2">
+                  <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
                     • {valueData}:
                   </div>
-                  <div className="text-[10px] text-Text-Primary text-justify ml-1">
+                  <div className="text-xs text-Text-Primary text-justify ml-1">
                     {valueData === 'Macros' ? (
                       <div className="flex justify-start items-center gap-4">
                         <div className="flex justify-start items-center">
@@ -130,7 +131,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       value[valueData]
                     )}
                   </div>
-                  <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap ml-5 mr-2">
+                  <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-5 mr-2">
                     • Score:
                   </div>
                   <div className={`flex items-center gap-1`}>
@@ -162,10 +163,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  <div className="flex items-center text-Text-Quadruple text-[12px] text-nowrap">
+                  <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
                     • Instruction:
                   </div>
-                  <div className="flex items-center text-Text-Primary text-[12px] ml-1 text-wrap">
+                  <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
                     {value.Instruction}
                   </div>
                 </div>
@@ -249,32 +250,83 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         onAddNotes={() => {}}
         onSubmit={(editedData) => {
           setValues((prevData: any) => {
-            return prevData.map((item: any, idx: number) => {
-              // استفاده از ایندکس برای شناسایی آیتم مورد نظر
-              if (idx === index) {
-                return {
-                  ...item,
-                  Category: editedData.Category,
-                  Recommendation: editedData.Recommendation || '',
-                  'Based on': item['Based on'],
-                  'Practitioner Comments':
-                    editedData['Practitioner Comments'] || [],
-                  Instruction: editedData.Instruction || '',
-                  Times: editedData.Times || [],
-                  Dose: editedData.Dose || null,
-                  'Client Notes': editedData['Client Notes'] || [],
-                  Score: item.Score,
-                  Days: editedData.Days || [],
-                  Layers: {
-                    first_layer: '',
-                    second_layer: '',
-                    third_layer: '',
-                  },
-                };
-              }
-              return item;
-            });
+            const updatedData = { ...prevData };
+
+            const checkInIndex = updatedData.checkIn.findIndex(
+              (_item: any, idx: number) => idx === index,
+            );
+
+            const categoryIndex = updatedData.category.findIndex(
+              (_item: any, idx: number) => idx === index,
+            );
+
+            const updatedItem = {
+              ...((checkInIndex !== -1
+                ? updatedData.checkIn[checkInIndex]
+                : updatedData.category[categoryIndex]) || {}),
+              Category: editedData.Category ?? '',
+              Title: editedData.Title ?? '',
+              'Based on': editedData['Based on'] ?? '',
+              'Practitioner Comments':
+                editedData['Practitioner Comments'] ?? [],
+              Description: editedData.Description ?? '',
+              Base_Score: editedData.Base_Score ?? '',
+              Instruction: editedData.Instruction ?? '',
+              Times: editedData.Times ?? [],
+              Dose: editedData.Dose ?? null,
+              Value: editedData.Value ?? null,
+              'Total Macros': editedData['Total Macros'] ?? null,
+              'Client Notes': editedData['Client Notes'] ?? [],
+              Score: editedData.Score ?? '',
+              Days: editedData.Days ?? [],
+              Layers: {
+                first_layer: editedData.Layers?.first_layer ?? '',
+                second_layer: editedData.Layers?.second_layer ?? '',
+                third_layer: editedData.Layers?.third_layer ?? '',
+              },
+              Frequency_Type: editedData.frequencyType ?? '',
+              Frequency_Dates: editedData.frequencyDates ?? [],
+            };
+
+            if (checkInIndex !== -1) {
+              updatedData.checkIn[checkInIndex] = updatedItem;
+            } else if (categoryIndex !== -1) {
+              updatedData.category[categoryIndex] = updatedItem;
+            }
+
+            return updatedData;
           });
+          // setValues((prevData: any) => {
+          //   return prevData.map((item: any, idx: number) => {
+          //     // استفاده از ایندکس برای شناسایی آیتم مورد نظر
+          //     if (idx === index) {
+          //       return {
+          //         ...item,
+          //         Category: editedData.Category,
+          //         Title: editedData.title || '',
+          //         'Based on': item['Based on'],
+          //         'Practitioner Comments':
+          //           editedData['Practitioner Comments'] || [],
+          //         Description: editedData.Description || '',
+          //         Base_Score: editedData.Base_Score || '',
+          //         Instruction: editedData.Instruction || '',
+          //         Times: editedData.Times || [],
+          //         Dose: editedData.Dose || null,
+          //         Value: editedData.Value || null,
+          //         'Total Macros': editedData['Total Macros'] || null,
+          //         'Client Notes': editedData['Client Notes'] || [],
+          //         Score: item.Score,
+          //         Days: editedData.Days || [],
+          //         Layers: {
+          //           first_layer: '',
+          //           second_layer: '',
+          //           third_layer: '',
+          //         },
+          //       };
+          //     }
+          //     return item;
+          //   });
+          // });
           setShowEditModal(false);
         }}
       />
