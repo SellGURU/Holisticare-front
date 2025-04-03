@@ -14,15 +14,15 @@ const RangeCard: React.FC<RangeCardProps> = ({
   onSubmit,
   hideQuestions,
 }) => {
-  const [val, setVal] = useState(value);
+  const [val, setVal] = useState(value || 0);
   useEffect(() => {
     if (onSubmit) {
       onSubmit(val);
     }
   }, [val]);
-  useEffect(()=>{
-    setVal(value)
-  },[value])
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">

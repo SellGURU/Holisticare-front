@@ -24,17 +24,16 @@ type Action = {
 // ];
 
 const Actions: React.FC = () => {
-  const [Actions, setActions] = useState<Action[]>([])
+  const [Actions, setActions] = useState<Action[]>([]);
   const [selectedOption, setSelectedOption] = useState('Week');
 
-  useEffect(()=>{
+  useEffect(() => {
     DashboardApi.getActionsList({
-      time_filter: selectedOption
-    }).then((res)=>{
-      setActions(res.data)
-      
-    })
-  },[selectedOption])
+      time_filter: selectedOption,
+    }).then((res) => {
+      setActions(res.data);
+    });
+  }, [selectedOption]);
   const [filter, setFilter] = useState<'All' | 'Resolved' | 'Pending'>('All');
   const [isLoading] = useState<boolean>(false);
 
@@ -45,9 +44,7 @@ const Actions: React.FC = () => {
   const [expandedCards, setExpandedCards] = useState<number[]>([]);
   const toggleExpand = (index: number) => {
     setExpandedCards((prev) =>
-      prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : [...prev, index]
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
 
@@ -108,38 +105,39 @@ const Actions: React.FC = () => {
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
                   <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary">
-                    <div title={action.patient_name} className='truncate max-w-[160px]'>
-                    {action.patient_name}
+                    <div
+                      title={action.patient_name}
+                      className="truncate max-w-[160px]"
+                    >
+                      {action.patient_name}
                     </div>
-                  
 
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
                         {action.status}
                       </div> */}
-                      <div className='flex items-center gap-3'>
+                    <div className="flex items-center gap-3">
                       <div
-                      className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.state === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
-                    >
-                      <div
-                        className={` w-3 h-3 rounded-full  ${action.state === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
-                      ></div>
-                      {action.state}
-                    </div>
-                    <img
+                        className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.state === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
+                      >
+                        <div
+                          className={` w-3 h-3 rounded-full  ${action.state === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
+                        ></div>
+                        {action.state}
+                      </div>
+                      <img
                         className={`size-3 cursor-pointer transform transition-transform ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
                         src="/icons/arrow-down-blue.svg"
                         alt=""
                         onClick={() => toggleExpand(index)}
                       />
-                      </div>
-                   
-                  </div>
-                  <div className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}>
-                    <div className='max-w-[237px]'>
-                    {action.alert}
                     </div>
-                  
+                  </div>
+                  <div
+                    className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}
+                  >
+                    <div className="max-w-[237px]">{action.alert}</div>
+
                     <div className="flex items-center gap-2">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">

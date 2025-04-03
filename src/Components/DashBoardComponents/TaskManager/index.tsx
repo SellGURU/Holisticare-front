@@ -25,8 +25,7 @@ type Task = {
 
 interface TaskManagerProps {}
 const TaskManager: React.FC<TaskManagerProps> = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     DashboardApi.getTasksList({})
@@ -42,41 +41,43 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
   // const [currentTasks, setCurrentTasks] = useState(tasks);
 
-//   const handleCheckBoxChange = (task_id: string| undefined) => {
-//     DashboardApi.checkTask({
-//       task_id: task_id
-//     }).then(()=>{
-//  setTasks(
-//       tasks.map((task) =>
-//         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
-//       ),
-//     );
-//     })
-   
-//   };
+  //   const handleCheckBoxChange = (task_id: string| undefined) => {
+  //     DashboardApi.checkTask({
+  //       task_id: task_id
+  //     }).then(()=>{
+  //  setTasks(
+  //       tasks.map((task) =>
+  //         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
+  //       ),
+  //     );
+  //     })
+
+  //   };
   const handleCheckBoxChange = (task_id: string | undefined) => {
     // Find the task to check its current status
-    const taskToUpdate = tasks.find(task => task.task_id === task_id);
-  
+    const taskToUpdate = tasks.find((task) => task.task_id === task_id);
+
     // Proceed only if the task is found and it's not already checked
     if (taskToUpdate && !taskToUpdate.checked) {
       DashboardApi.checkTask({
-        task_id: task_id
-      }).then(() => {
-        setTasks(
-          tasks.map((task) =>
-            task.task_id === task_id ? { ...task, checked: true } : task,
-          ),
-        );
-      }).catch((error) => {
-        console.error('Error checking task:', error);
-        alert('Failed to check the task. Please try again.');
-      });
+        task_id: task_id,
+      })
+        .then(() => {
+          setTasks(
+            tasks.map((task) =>
+              task.task_id === task_id ? { ...task, checked: true } : task,
+            ),
+          );
+        })
+        .catch((error) => {
+          console.error('Error checking task:', error);
+          alert('Failed to check the task. Please try again.');
+        });
     }
   };
   const [showAddTaskModal, setshowAddTaskModal] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
-  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [deadline, setDeadline] = useState<Date | null>(new Date());
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
@@ -105,15 +106,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       priority: Priority,
       checked: false,
     };
-DashboardApi.AddTask(newTask).then(()=>{
-  setTasks((prevTasks) => [...prevTasks, newTask]);
-  setshowAddTaskModal(false);
-  setTaskTitle('');
-  setDeadline(null);
-  setPriority('High');
-})
-
-   
+    DashboardApi.AddTask(newTask).then(() => {
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+      setshowAddTaskModal(false);
+      setTaskTitle('');
+      setDeadline(null);
+      setPriority('High');
+    });
   };
   console.log(tasks);
   return (
@@ -149,8 +148,7 @@ DashboardApi.AddTask(newTask).then(()=>{
                 isLarge
                 date={deadline}
                 setDate={setDeadline}
-                placeholder="Deadline"
-              />
+                          />
             </div>
             <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
               <label className="mb-1">Priority</label>

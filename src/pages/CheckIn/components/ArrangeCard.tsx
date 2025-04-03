@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { useRef, useState,useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 // import { useState } from "react";
 interface ArrangeCardProps {
@@ -15,9 +15,9 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
   index,
   value,
 }) => {
-    useEffect(()=>{
-      setVal(value)
-    },[value])
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
   const [val, setVal] = useState<number>(value);
   const touchStartX = useRef(0);
   const resolveTextOpacity = (ind: number) => {

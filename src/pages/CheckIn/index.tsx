@@ -18,8 +18,6 @@ interface CheckinProps {
 }
 
 const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
-
-  
   const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
   console.log(chekinData);
   useEffect(() => {
@@ -143,11 +141,11 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
   };
   return (
     <>
-       <div className="px-6 py-4 grid gap-3 pb-4">
-      {chekinData.map((el: any, index: number) => (
-        <div key={index+1}>{resolveQuestionCard(el, index)}</div>
-      ))}
-    </div>
+      <div className="px-6 py-4 grid gap-3 pb-4">
+        {chekinData.map((el: any, index: number) => (
+          <div key={index + 1}>{resolveQuestionCard(el, index)}</div>
+        ))}
+      </div>
     </>
   );
 };

@@ -17,11 +17,11 @@ const UploadCard: React.FC<UploadCardProps> = ({
   onSubmit,
   hideQuestions,
 }) => {
-  useEffect(()=>{
- setBack(value?.back || '')
- setFrontal(value?.frontal || '')
- setSide(value?.side || '')
-  },[value])
+  useEffect(() => {
+    setBack(value?.back || '');
+    setFrontal(value?.frontal || '');
+    setSide(value?.side || '');
+  }, [value]);
   const [frontal, setFrontal] = useState(value?.frontal || '');
   const [back, setBack] = useState(value?.back || '');
   const [side, setSide] = useState(value?.side || '');

@@ -8,8 +8,8 @@ interface Staff {
   picture: string;
   user_name: string;
   role: string;
-  ["clients assigned"]:number
-  user_id:number
+  ['clients assigned']: number;
+  user_id: number;
 }
 
 // const mockEmployees: Employee[] = [
@@ -40,16 +40,15 @@ interface Staff {
 //   },
 // ];
 interface Client {
-  picture:string
-  ["Client Name"]: string;
+  picture: string;
+  ['Client Name']: string;
   ID: number;
   Age: number;
   Gender: string;
-  ["Enroll Date"]: string;
-  ["Assign Date"]: string;
+  ['Enroll Date']: string;
+  ['Assign Date']: string;
   Status: string;
 }
-
 
 const Employes: React.FC = () => {
   const [Employees, setEmployees] = useState<Staff[]>([]);
@@ -62,7 +61,7 @@ const Employes: React.FC = () => {
         console.error('Error fetching tasks:', error);
       });
   }, []);
- 
+
   return (
     <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4 ">
       <div className="flex justify-between items-center mb-4">
@@ -90,10 +89,7 @@ const Employes: React.FC = () => {
       ) : (
         <ul className="space-y-3 max-h-[260px] overflow-auto pr-1 ">
           {Employees.map((employee, index) => (
-            <EmployeeRow
-              employee={employee}
-              index={index}
-            ></EmployeeRow>
+            <EmployeeRow employee={employee} index={index}></EmployeeRow>
           ))}
         </ul>
       )}
@@ -109,13 +105,13 @@ const EmployeeRow: React.FC<{
   const moreRef = useRef(null);
   useModalAutoClose({
     refrence: modalRef,
-    buttonRefrence:moreRef,
+    buttonRefrence: moreRef,
     close: () => setshowModal(false),
   });
   const [showRemoveStaffModal, setshowRemoveStaffModal] = useState(false);
   const [isConfirm, setisConfirm] = useState(false);
   const [showAssignListModal, setshowAssignListModal] = useState(false);
-  const [AssignedClients, setAssignedClients] = useState<Client[]>([])
+  const [AssignedClients, setAssignedClients] = useState<Client[]>([]);
   return (
     <>
       <MainModal
@@ -156,9 +152,12 @@ const EmployeeRow: React.FC<{
               Remove Staff
             </div>
             <div className="text-center text-xs font-medium">
-            Are you sure you want to remove this staff?          </div>
+              Are you sure you want to remove this staff?{' '}
+            </div>
             <div className="text-xs text-center text-[#888888] mt-4">
-            By removing this staff, they will no longer have access to the portal.            </div>
+              By removing this staff, they will no longer have access to the
+              portal.{' '}
+            </div>
             <div className="w-full mt-8 flex justify-end items-center gap-3">
               <div
                 onClick={() => {
@@ -171,10 +170,10 @@ const EmployeeRow: React.FC<{
               <div
                 onClick={() => {
                   Application.RemoveUserStaff({
-                    user_id: employee.user_id
-                  }).then(()=>{setisConfirm(true)})
-                  
-                  
+                    user_id: employee.user_id,
+                  }).then(() => {
+                    setisConfirm(true);
+                  });
                 }}
                 className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
               >
@@ -297,11 +296,13 @@ const EmployeeRow: React.FC<{
           />
           <div>
             <p className="text-[10px] text-[#383838]">{employee.user_name}</p>
-            <p className="text-[8px] text-[#888888]">Clients Assigned: {employee["clients assigned"]}</p>
+            <p className="text-[8px] text-[#888888]">
+              Clients Assigned: {employee['clients assigned']}
+            </p>
           </div>
         </div>
         <img
-        ref={moreRef}
+          ref={moreRef}
           onClick={() => setshowModal(!showModal)}
           className={'cursor-pointer'}
           src="/icons/client-card/more.svg"
@@ -314,7 +315,7 @@ const EmployeeRow: React.FC<{
           >
             <div
               onClick={() => {
-                setshowRemoveStaffModal(true)
+                setshowRemoveStaffModal(true);
               }}
               className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
             >
@@ -322,14 +323,14 @@ const EmployeeRow: React.FC<{
               Remove
             </div>
             <div
-              onClick={() => 
+              onClick={() =>
                 Application.getStaffAssignedClients({
-                  user_id:employee.user_id
-                }).then((res)=>{
-                  setAssignedClients(res.data)
-                  setshowAssignListModal(true)
+                  user_id: employee.user_id,
+                }).then((res) => {
+                  setAssignedClients(res.data);
+                  setshowAssignListModal(true);
                 })
-                }
+              }
               className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
             >
               <img src="/icons/firstline.svg" alt="" />

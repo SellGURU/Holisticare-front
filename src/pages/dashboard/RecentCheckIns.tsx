@@ -139,10 +139,6 @@ const RecentCheckIns = () => {
     });
   };
 
-
- 
-
-
   const handleCheckInClick = (checkIn: CheckIn) => {
     // if (checkIn.Status === 'Review Now') {
     DashboardApi.getFilledCheckin({
@@ -184,7 +180,7 @@ const RecentCheckIns = () => {
   //   setCompareCheckIn('');
   //   setShowSelect(false);
   // };
-console.log(CompareQuestions);
+  console.log(CompareQuestions);
 
   return (
     <>
@@ -272,10 +268,10 @@ console.log(CompareQuestions);
                               filled_checkin_id: checkIn.filled_checkin_id,
                             }).then((res) => {
                               setCompareCheckIn(checkIn.filled_checkin_name);
-                              setCompareQuestions(res.data)
+                              setCompareQuestions(res.data);
                               setShowComparisonSurvey(true);
                               setShowSelect(false);
-                            
+
                               setShowSelect(false);
                             });
                           }}
