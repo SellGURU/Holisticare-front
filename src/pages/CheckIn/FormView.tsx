@@ -90,9 +90,10 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const submit = () => {
     setIsLaoding(true);
     // window.close();
-    Mobile.fillQuestionary({
-      encoded_mi: encode,
-      unique_id: id,
+    if (mode == 'questionary') {
+      Mobile.fillQuestionary({
+        encoded_mi: encode,
+        unique_id: id,
       respond: resolvedData.questions,
     }).finally(() => {
       if (window.flutter_inappwebview) {
@@ -104,6 +105,20 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       // window.flutter_inappwebview.callHandler('closeWebView')
       // setIsLaoding(false)
     });
+    } else {
+      Mobile.fillCheckin({
+        encoded_mi: encode,
+        unique_id: id,
+        respond: resolvedData.questions,
+      }).finally(() => {
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('closeWebView');
+        } else {
+          console.warn('Flutter WebView bridge not available');
+        }
+        setIsComplete(true);
+      });
+    }
   };
   return (
     <>
@@ -111,7 +126,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         {isComplete ? (
           <div className="py-4">
             <div className="text-[12px] text-Text-Secondary text-center">
-              This Questionary is already answered.
+              {mode == 'questionary' ? 'This Questionary is already answered.' : 'This Checkin is already answered.'}
             </div>
           </div>
         ) : (
@@ -127,6 +142,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                 <Checkin
                   upData={data?.questions}
                   onChange={(questions) => {
+                    console.log(questions);
                     setResolvedData({
                       ...data,
                       questions: questions,
