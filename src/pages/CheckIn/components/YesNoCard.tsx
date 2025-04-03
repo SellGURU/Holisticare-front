@@ -6,7 +6,7 @@ interface YesNoCardProps {
   index?: number;
   onSubmit?: (value: string) => void;
   hideQuestions?: boolean;
-  onChange?: (value: string) => void; 
+  onChange?: (value: string) => void;
 }
 
 const YesNoCard: React.FC<YesNoCardProps> = ({
@@ -22,7 +22,7 @@ const YesNoCard: React.FC<YesNoCardProps> = ({
     if (onChange) {
       onChange(val);
     }
-  }, [val]);  
+  }, [val]);
   useEffect(() => {
     if (onSubmit) {
       onSubmit(val);

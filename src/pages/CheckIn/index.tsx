@@ -54,7 +54,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             value={item.response}
             onChange={(value) => {
               updateResponse(index - 1, value);
-            }}            
+            }}
           ></YesNoCard>
         );
       case 'Scale':
@@ -86,7 +86,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
           <RateCard
             index={index}
             question={item.question}
-            value={item.response} 
+            value={item.response}
             onSubmit={(value) => {
               updateResponse(index - 1, value);
             }}

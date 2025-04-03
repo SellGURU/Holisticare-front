@@ -18,7 +18,7 @@ class Mobile extends ApiMobile {
   };
   static fillCheckin = (data: any) => {
     return this.post('/tasks/save_checkin_respond', data);
-  };  
+  };
 }
 
 export default Mobile;
