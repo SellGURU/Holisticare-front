@@ -24,17 +24,16 @@ type Action = {
 // ];
 
 const Actions: React.FC = () => {
-  const [Actions, setActions] = useState<Action[]>([])
+  const [Actions, setActions] = useState<Action[]>([]);
   const [selectedOption, setSelectedOption] = useState('Week');
 
-  useEffect(()=>{
+  useEffect(() => {
     DashboardApi.getActionsList({
-      time_filter: selectedOption
-    }).then((res)=>{
-      setActions(res.data)
-      
-    })
-  },[selectedOption])
+      time_filter: selectedOption,
+    }).then((res) => {
+      setActions(res.data);
+    });
+  }, [selectedOption]);
   const [filter, setFilter] = useState<'All' | 'Resolved' | 'Pending'>('All');
   const [isLoading] = useState<boolean>(false);
 
@@ -99,10 +98,12 @@ const Actions: React.FC = () => {
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
                   <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary">
-                    <div title={action.patient_name} className='truncate max-w-[160px]'>
-                    {action.patient_name}
+                    <div
+                      title={action.patient_name}
+                      className="truncate max-w-[160px]"
+                    >
+                      {action.patient_name}
                     </div>
-                  
 
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
@@ -118,10 +119,8 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ">
-                    <div className='max-w-[237px]'>
-                    {action.alert}
-                    </div>
-                  
+                    <div className="max-w-[237px]">{action.alert}</div>
+
                     <div className="flex items-center gap-2">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">

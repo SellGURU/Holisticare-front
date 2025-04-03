@@ -172,11 +172,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/checkin/:encode/:id',
-    element: <FormView mode='checkin'></FormView>,
+    element: <FormView mode="checkin"></FormView>,
   },
   {
     path: '/questionary/:encode/:id',
-    element: <FormView mode='questionary'></FormView>,
+    element: <FormView mode="questionary"></FormView>,
   },
 ]);
 

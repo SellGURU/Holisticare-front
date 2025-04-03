@@ -12,7 +12,7 @@ class Mobile extends ApiMobile {
   };
   static getCheckInEmpty = (data: getQuestionaryEmptyData) => {
     return this.post('/tasks/show_checkin_questions', data);
-  };  
+  };
   static fillQuestionary = (data: any) => {
     return this.post('/tasks/save_questionary_respond', data);
   };

@@ -3,25 +3,22 @@ import CircularProgressBar from '../../charts/CircularProgressBar';
 import DashboardApi from '../../../api/Dashboard';
 
 type client = {
-  picture:string
+  picture: string;
   name: string;
-  ID:string
-  ["Enroll Date"]: string;
+  ID: string;
+  ['Enroll Date']: string;
   Progress: number;
-  Gender:string
+  Gender: string;
 };
 
-
-
-
 const RecentCheckIns: React.FC = () => {
-  const [Clients, setClients] = useState<client[]>([])
+  const [Clients, setClients] = useState<client[]>([]);
 
-useEffect(()=>{
-  DashboardApi.getCLientsList({}).then((res)=>{
-    setClients(res.data.client_list)
-  })
-},[])
+  useEffect(() => {
+    DashboardApi.getCLientsList({}).then((res) => {
+      setClients(res.data.client_list);
+    });
+  }, []);
   return (
     <div className="w-full h-[328px] bg-white rounded-2xl shadow-200 p-4 pr-2 ">
       <div className=" overflow-y-scroll pb-3 h-[300px] pr-[2px] ">
@@ -58,8 +55,7 @@ useEffect(()=>{
                       alt={client.name}
                       className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                     />
-                    <div className='truncate max-w-[160px]'>  {client.name}</div>
-                  
+                    <div className="truncate max-w-[160px]"> {client.name}</div>
                   </td>
                   <td className="py-2 pl-[10px] text-Text-Secondary text-[10px]">
                     {client['Enroll Date']}

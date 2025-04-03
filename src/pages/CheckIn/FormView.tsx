@@ -8,10 +8,10 @@ import Circleloader from '../../Components/CircleLoader';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 
 interface FormViewProps {
-  mode?:'questionary'|'checkin'
+  mode?: 'questionary' | 'checkin';
 }
 
-const FormView:React.FC<FormViewProps> = ({mode}) => {
+const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -69,7 +69,7 @@ const FormView:React.FC<FormViewProps> = ({mode}) => {
   const [resolvedData, setResolvedData] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
-    if(mode == 'questionary'){
+    if (mode == 'questionary') {
       Mobile.getQuestionaryEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
@@ -77,14 +77,14 @@ const FormView:React.FC<FormViewProps> = ({mode}) => {
         setData(e.data);
         setIsLaoding(false);
       });
-    }else {
+    } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
       }).then((e) => {
         setData(e.data);
         setIsLaoding(false);
-      });      
+      });
     }
   }, []);
   const submit = () => {
