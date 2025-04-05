@@ -105,9 +105,14 @@ const GenerateActionPlan = () => {
   useEffect(() => {
     if (calendarView) {
       setIsLoadingPlans(true);
+      const prepareDataForBackend = (data: any) => {
+        return [...data.checkIn, ...data.category];
+      };
+
+      const flattenedData = prepareDataForBackend(actions);
       Application.getActionPlanBlockCalendarView({
         member_id: id,
-        tasks: actions,
+        tasks: flattenedData,
         duration: duration,
       })
         .then((res) => {

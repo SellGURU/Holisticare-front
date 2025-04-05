@@ -23,7 +23,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   // onAddNotes,
   isAdd,
 }) => {
-  console.log('defalts', defalts);
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
       setGroups(res.data);
@@ -78,7 +77,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
-  const [baseScore, setBaseScore] = useState(defalts?.Base_Score);
+  const [baseScore, setBaseScore] = useState(defalts?.Base_Score || 5);
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
     if (defalts) {
@@ -101,6 +100,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setSelectedDaysMonth(defalts?.Frequency_Dates || []);
     }
   }, [defalts]);
+  useEffect(() => {
+    if (frequencyType) {
+      setSelectedDays([]);
+      setSelectedDaysMonth([]);
+    }
+  }, [frequencyType]);
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);

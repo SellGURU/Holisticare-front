@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
+import MonthShows from './components/MonthShows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -15,14 +16,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   index,
   onRemove,
 }) => {
-  console.log('value', value);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
 
   useEffect(() => {
     if (value) {
-      setSelectedDays(value.Days || []);
+      setSelectedDays(value.Frequency_Dates || []);
     }
   }, [value]);
 
@@ -77,10 +77,44 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
               <div className="flex items-center">
                 {value.Frequency_Type === 'weekly' && (
-                  <ChoosingDaysWeek
-                    selectedDays={selectedDays}
-                    toggleDaySelection={toggleDaySelection}
-                  />
+                  <>
+                    <div className="w-[76px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
+                      <img
+                        src="/icons/calendar-2.svg"
+                        alt=""
+                        className="w-3 h-3"
+                      />
+                      Weekly
+                    </div>
+                    <ChoosingDaysWeek
+                      selectedDays={selectedDays}
+                      toggleDaySelection={toggleDaySelection}
+                      ClassName="lg:ml-1"
+                    />
+                  </>
+                )}
+                {value.Frequency_Type === 'monthly' && (
+                  <>
+                    <div className="w-[80px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
+                      <img
+                        src="/icons/calendar-2.svg"
+                        alt=""
+                        className="w-3 h-3"
+                      />
+                      Monthly
+                    </div>
+                    <MonthShows days={selectedDays} />
+                  </>
+                )}
+                {value.Frequency_Type === 'daily' && (
+                  <div className="w-[65px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
+                    <img
+                      src="/icons/calendar-2.svg"
+                      alt=""
+                      className="w-3 h-3"
+                    />
+                    Daily
+                  </div>
                 )}
                 {!value.Frequency_Type && (
                   <div className="flex items-center gap-1 text-xs text-[#FFAB2C]">

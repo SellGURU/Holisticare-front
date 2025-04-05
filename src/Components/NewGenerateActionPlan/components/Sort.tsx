@@ -29,7 +29,7 @@ const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
                 options.find((opt) => opt.value === sortBy)?.color || ''
               }`}
             />
-            {sortBy}
+            {options.find((opt) => opt.value === sortBy)?.label}
           </span>
         </button>
         <img

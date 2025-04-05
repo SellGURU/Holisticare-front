@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import SearchBox from '../../SearchBox';
-import LibBox from './LibBox';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
-import SpinnerLoader from '../../SpinnerLoader';
-import ActionCard from './ActionCard';
-import Application from '../../../api/app';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Application from '../../../api/app';
 import { AlertModal } from '../../AlertModal';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
+import SearchBox from '../../SearchBox';
+import SpinnerLoader from '../../SpinnerLoader';
+import ActionCard from './ActionCard';
 import ActionEditModal from './ActionEditModal';
+import LibBox from './LibBox';
 import Sort from './Sort';
 
 interface StadioProps {
@@ -26,7 +26,7 @@ interface StadioProps {
   setCalendarView: (value: boolean) => void;
 }
 
-const Stadio: React.FC<StadioProps> = ({
+const Stadio: FC<StadioProps> = ({
   data,
   setData,
   setActions,
@@ -133,20 +133,29 @@ const Stadio: React.FC<StadioProps> = ({
     setIsAutoGenerate(true);
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
-      tasks: data,
     })
       .then((res) => {
-        setActions(res.data);
+        setActions((prevCategories: any) => ({
+          ...prevCategories,
+          category: res.data,
+        }));
       })
       .finally(() => {
         setIsAutoGenerate(false);
       });
   };
   const conflicCheck = () => {
+    const prepareDataForBackend = (data: any) => {
+      return [...data.checkIn, ...data.category];
+    };
+
+    const flattenedActions = prepareDataForBackend(actions);
+    const flattenedData = prepareDataForBackend(data);
     if (actions.checkIn.length > 1 || actions.category.length > 1) {
       Application.checkConflicActionPlan({
         member_id: id,
-        tasks: actions,
+        tasks: flattenedActions,
+        percents: flattenedData,
       }).then((res) => {
         if (res.data.conflicts != 'No conflicts detected.') {
           setHaveConflic(true);
@@ -160,21 +169,30 @@ const Stadio: React.FC<StadioProps> = ({
   useEffect(() => {
     conflicCheck();
   }, [actions]);
-  const filteredDataCategory = data.category.filter(
-    (el: any) =>
-      el.Category == selectCategory &&
-      el.Title.toLowerCase().includes(searchValue.toLowerCase()),
-  );
+  const [sortBy, setSortBy] = useState('System Score');
+  const handleChangeSort = (value: string) => {
+    setSortBy(value);
+  };
+  // const filteredDataCategory = data.category.filter(
+  //   (el: any) =>
+  //     el.Category == selectCategory &&
+  //     el.Title.toLowerCase().includes(searchValue.toLowerCase()),
+  // );
+  const filteredDataCategory = useMemo(() => {
+    return data.category
+      .filter(
+        (el: any) =>
+          el.Category === selectCategory &&
+          el.Title.toLowerCase().includes(searchValue.toLowerCase()),
+      )
+      .sort((a: any, b: any) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  }, [data.category, selectCategory, searchValue, sortBy]);
   const filteredDataCheckIn = data.checkIn.filter(
     (el: any) =>
       el.Task_Type == selectCategory &&
       el.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
   const [showAddModal, setshowAddModal] = useState(false);
-  const [sortBy, setSortBy] = useState('System Score');
-  const handleChangeSort = (value: string) => {
-    setSortBy(value);
-  };
   const options = [
     {
       label: 'System Score',
@@ -183,7 +201,7 @@ const Stadio: React.FC<StadioProps> = ({
     },
     {
       label: 'Base Score',
-      value: 'Base Score',
+      value: 'Base_Score',
       color: 'bg-Primary-EmeraldGreen',
     },
   ];
@@ -236,21 +254,49 @@ const Stadio: React.FC<StadioProps> = ({
               />
             </div>
           )}
-          <div className="w-full flex justify-end mb-2">
+          <div className="w-full flex justify-end mb-2 gap-3">
             {actions.checkIn.length !== 0 ||
               (actions.category.length !== 0 && (
                 <div
-                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal mr-4 cursor-pointer"
+                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
                   onClick={() => setCalendarView(true)}
                 >
                   <img src="/icons/calendar-date.svg" alt="" className="w-5" />
                   Calendar View
                 </div>
               ))}
-            <ButtonPrimary onClick={() => setshowAddModal(true)}>
-              {' '}
-              <img src="/icons/add-square.svg" alt="" /> Add
-            </ButtonPrimary>
+            {selectCategory != 'Checkin' && (
+              <>
+                {actions.checkIn.length !== 0 ||
+                  (actions.category.length !== 0 && (
+                    <ButtonSecondary
+                      ClassName="rounded-[30px] w-[141px] text-nowrap"
+                      onClick={() => {
+                        AutoGenerate();
+                      }}
+                    >
+                      {isAutoGenerate ? (
+                        <SpinnerLoader />
+                      ) : (
+                        <>
+                          <img
+                            src="/icons/tree-start-white.svg"
+                            alt=""
+                            className="mr-2"
+                          />
+                          Generate by AI
+                        </>
+                      )}
+                    </ButtonSecondary>
+                  ))}
+                <ButtonPrimary
+                  onClick={() => setshowAddModal(true)}
+                  ClassName="w-[108px]"
+                >
+                  <img src="/icons/add-square.svg" alt="" /> Add
+                </ButtonPrimary>
+              </>
+            )}
           </div>
           <div
             className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.checkIn.length == 0 && actions.category.length == 0 && ''} `}
