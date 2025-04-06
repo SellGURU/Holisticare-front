@@ -77,7 +77,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
   };
   const [showAddTaskModal, setshowAddTaskModal] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
-  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [deadline, setDeadline] = useState<Date | null>(new Date());
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
@@ -148,8 +148,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                 isLarge
                 date={deadline}
                 setDate={setDeadline}
-                placeholder="Deadline"
-              />
+                          />
             </div>
             <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
               <label className="mb-1">Priority</label>

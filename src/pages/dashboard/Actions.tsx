@@ -41,6 +41,13 @@ const Actions: React.FC = () => {
     filter === 'All' ? true : action.state === filter,
   );
   const options = ['Day', 'Week', 'Month'];
+  const [expandedCards, setExpandedCards] = useState<number[]>([]);
+  const toggleExpand = (index: number) => {
+    setExpandedCards((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
+
   return (
     <>
       {isLoading ? (
@@ -109,16 +116,26 @@ const Actions: React.FC = () => {
                         <div className="rounded-full size-2 bg-red-500"></div>
                         {action.status}
                       </div> */}
-                    <div
-                      className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.state === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
-                    >
+                    <div className="flex items-center gap-3">
                       <div
-                        className={` w-3 h-3 rounded-full  ${action.state === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
-                      ></div>
-                      {action.state}
+                        className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${action.state === 'Resolved' ? 'bg-[#DEF7EC]' : 'bg-[#F9DEDC]'}`}
+                      >
+                        <div
+                          className={` w-3 h-3 rounded-full  ${action.state === 'Resolved' ? 'bg-[#06C78D]' : 'bg-[#FFBD59]'}`}
+                        ></div>
+                        {action.state}
+                      </div>
+                      <img
+                        className={`size-3 cursor-pointer transform transition-transform ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
+                        src="/icons/arrow-down-blue.svg"
+                        alt=""
+                        onClick={() => toggleExpand(index)}
+                      />
                     </div>
                   </div>
-                  <div className="text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ">
+                  <div
+                    className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}
+                  >
                     <div className="max-w-[237px]">{action.alert}</div>
 
                     <div className="flex items-center gap-2">

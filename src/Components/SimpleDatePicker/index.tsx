@@ -5,7 +5,7 @@ import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 interface DatePickerProps {
   date: Date | null;
   setDate: (date: Date | null) => void;
-  placeholder: string;
+  placeholder?: string;
   isLarge?: boolean;
 }
 
@@ -52,7 +52,7 @@ export default function SimpleDatePicker({
         className={`w-[110px] xs:w-[145px] ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
          px-2 py-1 bg-backgroundColor-Card border border-Gray-50 flex items-center justify-between text-[10px] text-Text-Secondary`}
       >
-        {date ? `${placeholder} ${date.toLocaleDateString()}` : placeholder}
+        {date ? ` ${date.toLocaleDateString()}` : placeholder}
         <img src="/icons/calendar-3.svg" alt="Calendar" />
       </button>
 
