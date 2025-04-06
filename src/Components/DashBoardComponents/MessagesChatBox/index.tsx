@@ -22,8 +22,6 @@ type SendMessage = {
 };
 
 const MessagesChatBox = () => {
-
-  
   const [messages, setMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
@@ -32,7 +30,7 @@ const MessagesChatBox = () => {
   const [Images, setImages] = useState<string[]>([]); // Use string[] to store base64 strings
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-  const [conversationId, ] = useState<number>(1);
+  const [conversationId] = useState<number>(1);
 
   const usernameParams = searchParams.get('username');
   const userMessagesList = (member_id: number) => {

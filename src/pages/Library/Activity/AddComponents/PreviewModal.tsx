@@ -8,7 +8,7 @@ interface ViewExerciseModalProps {
   onClose: () => void;
   exercise: any;
   onEdit: () => void;
-  isActivty?:boolean
+  isActivty?: boolean;
 }
 
 const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
@@ -16,7 +16,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   onClose,
   exercise,
   onEdit,
-  isActivty
+  isActivty,
 }) => {
   console.log(exercise);
   const [videoData, setVideoData] = useState<
@@ -55,10 +55,20 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       fetchVideos();
     }
   }, [isOpen, exercise.Files]);
+  const [Sections, setSections] = useState<any[]>([])
+useEffect(()=>{
+if(isActivty && isOpen){
+    Application.getActivity(exercise.Act_Id).then((res)=>{
+      setSections(res.data.Sections)
+    })
+  }
+
+}, [isOpen,exercise])
+console.log(Sections);
 
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-2xl p-4 w-[500px] h-[440px] shadow-800 relative">
+      <div className={`bg-white rounded-2xl p-4 w-[500px] ${isActivty? 'h-[666px]' : 'h-[440px]'}  shadow-800 relative`}>
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
           title={exercise.Title.length > 30 ? exercise.Title : undefined}
@@ -92,12 +102,46 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             <div className="text-xs text-[#888888]">{exercise.Instruction}</div>
           </div>
           <div className="flex w-full justify-between items-start gap-3">
-            <div className="text-xs font-medium"> {isActivty ? 'Sections' : 'File'}</div>
-            {
-              isActivty ? (
-                <div></div>
-              ):(
-                <div className="h-[150px] overflow-auto flex flex-col gap-1">
+            <div className="text-xs font-medium">
+              {' '}
+              {isActivty ? 'Sections' : 'File'}
+            </div>
+            {isActivty ? (
+              <div className="h-[330px] w-full overflow-auto flex flex-col gap-1 rounded-2xl border border-Gray-50 p-3 bg-[#E9F0F2]">
+                {Sections?.map((section, index) => (
+                  <div key={index}>
+                    <div className="text-xs font-medium text-[#383838]">{index + 1}. {section.Section}</div>
+                    {section.Exercises.map((exercise: any, exIndex: number) => (
+                      <div key={exIndex} className="py-2 px-3 rounded-2xl bg-white my-2">
+                        <div className="flex items-center gap-2">
+                          <img src="/icons/video-preview.svg" className="size-8 rounded-md" alt="Video" />
+                          <div className="text-xs text-[#383838] font-medium">{exercise.Exercise.Title}</div>
+                        </div>
+                        <div className='pt-1 border-t mt-2 border-Gray-50 w-full flex justify-between text-Text-Primary'>
+                          <div className='flex flex-col justify-between items-center text-[10px] '>
+                            <span className='text-[8px] text-Text-Secondary'>Set</span>
+                            {section.Sets}
+                          </div>
+                          <div className='flex flex-col justify-between items-center text-[10px] '>
+                            <span className='text-[8px] text-Text-Secondary'>Reps</span>
+                            {exercise.Reps}
+                          </div>
+                          <div className='flex flex-col justify-between items-center text-[10px] '>
+                            <span className='text-[8px] text-Text-Secondary'>Weight </span>
+                            {exercise.Weight}
+                          </div>
+                          <div className='flex flex-col justify-between items-center text-[10px] '>
+                            <span className='text-[8px] text-Text-Secondary'>Rest (min) </span>
+                            {exercise.Rest}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-[150px] overflow-auto flex flex-col gap-1">
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
                     <Circleloader />
@@ -115,9 +159,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                   ))
                 )}
               </div>
-              )
-            }
-           
+            )}
           </div>
         </div>
         <div

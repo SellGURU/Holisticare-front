@@ -3,7 +3,7 @@
 // import { useConstructor } from '../../help';
 // import { useState } from 'react';
 
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
 interface InputMentionsProps {
   value: string;
@@ -35,7 +35,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   onChange,
   onSubmit,
   changeBenchMarks,
-  onUpload
+  onUpload,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -123,13 +123,12 @@ const InputMentions: React.FC<InputMentionsProps> = ({
     <>
       <div className="w-[98%]  bg-[#E9F0F2] left-1 md:left-2  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
         <img
-
           className="cursor-default"
           src="/icons/attach-svgrepo-com 1.svg"
           alt=""
           onClick={handleAttachClick}
         />
-          <input
+        <input
           className="hidden"
           type="file"
           accept="image/png, image/jpeg, image/jpg, image/gif"
@@ -165,23 +164,23 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           /> */}
           <img
             className="cursor-pointer"
-            onClick={()=>{
-              onSubmit()
-              setImagePreview(null)
+            onClick={() => {
+              onSubmit();
+              setImagePreview(null);
             }}
             src="/icons/send.svg"
             alt=""
           />
         </div>
         {imagePreview && (
-        <div className="absolute bottom-10 left-1 md:left-2 mb-2">
-          <img
-            src={imagePreview}
-            alt="Image Preview"
-            className="h-20 w-20 object-cover rounded-md"
-          />
-        </div>
-      )}
+          <div className="absolute bottom-10 left-1 md:left-2 mb-2">
+            <img
+              src={imagePreview}
+              alt="Image Preview"
+              className="h-20 w-20 object-cover rounded-md"
+            />
+          </div>
+        )}
       </div>
       {/* {isShowMentions && suggestions.length > 0 && (
         <>
