@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
-import Application from '../../../api/app';
-import RangeCardLibraryThreePages from '../../LibraryThreePages/components/RangeCard';
 import Checkbox from '../../checkbox';
+import RangeCard from './RangeCard';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -83,20 +83,20 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (defalts) {
       setSelectedDays(defalts?.Frequency_Dates || []);
       setSelectedGroup(defalts.Category || null);
-      setTitle(defalts.Title);
-      setDose(defalts.Dose);
-      setValue(defalts.Value);
+      setTitle(defalts.Title || '');
+      setDose(defalts.Dose || null);
+      setValue(defalts.Value || null);
       setTotalMacros({
-        Fats: defalts?.['Total Macros']?.Fats,
-        Protein: defalts?.['Total Macros']?.Protein,
-        Carbs: defalts?.['Total Macros']?.Carbs,
+        Fats: defalts?.['Total Macros']?.Fats || 0,
+        Protein: defalts?.['Total Macros']?.Protein || 0,
+        Carbs: defalts?.['Total Macros']?.Carbs || 0,
       });
-      setInstructions(defalts.Instruction);
+      setInstructions(defalts.Instruction || '');
       setSelectedTimes(defalts.Times || []);
       setNotes(defalts['Client Notes'] || []);
       setDescription(defalts.Description || '');
-      setBaseScore(defalts.Base_Score);
-      setFrequencyType(defalts?.Frequency_Type);
+      setBaseScore(defalts.Base_Score || 5);
+      setFrequencyType(defalts?.Frequency_Type || null);
       setSelectedDaysMonth(defalts?.Frequency_Dates || []);
     }
   }, [defalts]);
@@ -153,6 +153,28 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
   };
+  const onReset = () => {
+    setSelectedDays([]);
+    setSelectedDaysMonth([]);
+    setSelectedGroup(null);
+    setTotalMacros({
+      Fats: 0,
+      Protein: 0,
+      Carbs: 0,
+    });
+    setInstructions('');
+    setSelectedTimes([]);
+    setNotes([]);
+    setDescription('');
+    setBaseScore(5);
+    setFrequencyType(null);
+    setPractitionerComments([]);
+    setPractitionerComment('');
+    setNewNote('');
+    setTitle('');
+    setDose(null);
+    setValue(null);
+  };
 
   const handleApply = () => {
     if (selectedGroup === 'Supplement') {
@@ -165,10 +187,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Dose: dose,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+          selectedDays.length > 0
+            ? selectedDays
+            : selectedDaysMonth.length > 0
+              ? selectedDaysMonth
+              : null,
         Description: description,
         Base_Score: baseScore,
         frequencyType: frequencyType,
+        Task_Type: 'Action',
       });
     } else if (selectedGroup === 'Lifestyle') {
       onSubmit({
@@ -180,10 +207,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Value: value,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+          selectedDays.length > 0
+            ? selectedDays
+            : selectedDaysMonth.length > 0
+              ? selectedDaysMonth
+              : null,
         Description: description,
         Base_Score: baseScore,
         frequencyType: frequencyType,
+        Task_Type: 'Action',
       });
     } else if (selectedGroup === 'Diet') {
       onSubmit({
@@ -195,10 +227,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         'Total Macros': totalMacros,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+          selectedDays.length > 0
+            ? selectedDays
+            : selectedDaysMonth.length > 0
+              ? selectedDaysMonth
+              : null,
         Description: description,
         Base_Score: baseScore,
         frequencyType: frequencyType,
+        Task_Type: 'Action',
       });
     } else if (selectedGroup === 'Activity') {
       onSubmit({
@@ -209,13 +246,19 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Times: selectedTimes,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+          selectedDays.length > 0
+            ? selectedDays
+            : selectedDaysMonth.length > 0
+              ? selectedDaysMonth
+              : null,
         Description: description,
         Base_Score: baseScore,
         frequencyType: frequencyType,
+        Task_Type: 'Action',
       });
     }
     onClose();
+    onReset();
   };
   const handleDeleteComment = (index: number) => {
     const updatedComments = practitionerComments.filter((_, i) => i !== index);
@@ -323,10 +366,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           <div className="text-xs font-medium text-Text-Primary">
             Base Score
           </div>
-          <RangeCardLibraryThreePages
-            value={baseScore}
-            changeValue={setBaseScore}
-          />
+          <RangeCard value={baseScore} changeValue={setBaseScore} />
         </div>
         <div className="mb-4">
           <label className="flex w-full justify-between items-center text-xs font-medium">
@@ -358,7 +398,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               placeholder="Enter Value..."
               value={value}
               type="number"
-              onChange={(e) => setValue(e.target.value)}
+              onChange={(e) => setValue(Number(e.target.value))}
               className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
             />
           </div>
@@ -616,7 +656,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-2 ">
+        <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
             className="text-sm font-medium text-[#909090] cursor-pointer"
@@ -624,10 +664,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             Cancel
           </button>
           <button
-            onClick={handleApply}
-            className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
+            onClick={() => {
+              if (isAdd && selectedGroup && title) {
+                handleApply();
+              }
+            }}
+            className={`${
+              isAdd && selectedGroup && title
+                ? 'text-Primary-DeepTeal'
+                : 'text-Disable'
+            } text-sm font-medium cursor-pointer`}
           >
-            {isAdd ? 'Save' : 'Update'}
+            {isAdd ? 'Add' : 'Update'}
           </button>
         </div>
       </div>
