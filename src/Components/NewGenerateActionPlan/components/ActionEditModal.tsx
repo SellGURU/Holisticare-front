@@ -31,12 +31,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-  const [selectedDays, setSelectedDays] = useState<string[]>(
-    defalts?.Frequency_Dates || [],
-  );
-  const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>(
-    defalts?.Frequency_Dates || [],
-  );
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);  
+  const [title, setTitle] = useState(defalts?.Title);
+  const [dose, setDose] = useState(defalts?.Dose);
+  const [value, setValue] = useState(defalts?.Value);
+  const [totalMacros, setTotalMacros] = useState({
+    Fats: defalts?.['Total Macros']?.Fats,
+    Protein: defalts?.['Total Macros']?.Protein,
+    Carbs: defalts?.['Total Macros']?.Carbs,
+  });  
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -49,18 +54,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     );
   };
   const [groups, setGroups] = useState<any[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(
-    defalts?.Category || null,
-  );
+
   const [newNote, setNewNote] = useState('');
-  const [title, setTitle] = useState(defalts?.Title);
-  const [dose, setDose] = useState(defalts?.Dose);
-  const [value, setValue] = useState(defalts?.Value);
-  const [totalMacros, setTotalMacros] = useState({
-    Fats: defalts?.['Total Macros']?.Fats,
-    Protein: defalts?.['Total Macros']?.Protein,
-    Carbs: defalts?.['Total Macros']?.Carbs,
-  });
+
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
       ...prevTheme,
@@ -72,7 +68,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     defalts ? defalts.Times : [],
   );
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
-    defalts ? defalts.Times : [],
+    defalts ? defalts?.Activity_Location : [],
   );
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
@@ -83,14 +79,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
-  const [sectionList, setSectionList] = useState([]);
+  const [sectionList, setSectionList] = useState([])
   const [addData, setAddData] = useState({
-    type: '',
-    terms: '',
-    condition: '',
-    muscle: '',
-    equipment: '',
-    level: '',
+    type: defalts?.Activity_Filters?.Type || '',
+    terms: defalts?.Activity_Filters?.Terms || '',
+    condition: defalts?.Activity_Filters?.Conditions || '',
+    muscle: defalts?.Activity_Filters?.Muscle || '',
+    equipment: defalts?.Activity_Filters?.Equipment || '',
+    level: defalts?.Activity_Filters?.Level || '',
   });
   const [step, setStep] = useState(0);
   const updateAddData = (key: keyof typeof addData, value: any) => {
@@ -122,6 +118,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   useEffect(() => {
     if (defalts) {
       setSelectedDays(defalts?.Frequency_Dates || []);
+      setSelectedDaysMonth(defalts?.Frequency_Dates || []);
       setSelectedGroup(defalts.Category || null);
       setTitle(defalts.Title || '');
       setDose(defalts.Dose || null);
@@ -138,14 +135,40 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setBaseScore(defalts.Base_Score || 5);
       setFrequencyType(defalts?.Frequency_Type || null);
       setSelectedDaysMonth(defalts?.Frequency_Dates || []);
+      setAddData({
+        type: defalts?.Activity_Filters?.Type || '',
+        terms: defalts?.Activity_Filters?.Terms || '',
+        condition: defalts?.Activity_Filters?.Conditions || '',
+        muscle: defalts?.Activity_Filters?.Muscle || '',
+        equipment: defalts?.Activity_Filters?.Equipment || '',
+        level: defalts?.Activity_Filters?.Level || '',      
+      });
     }
+    setSelectedLocations(defalts?.Activity_Location || []);
+    setSectionList(
+      defalts?.Sections?.map((item: any) => {
+            return {
+              ...item,
+              Exercises: item.Exercises.map((val: any) => {
+                return {
+                  Reps: val.Reps,
+                  Rest: val.Rest,
+                  Weight: val.Weight,
+                  Exercise: {
+                    ...val,
+                  },
+                };
+              }),
+            };
+      }) || [],
+    )
   }, [defalts]);
-  useEffect(() => {
-    if (frequencyType) {
-      setSelectedDays([]);
-      setSelectedDaysMonth([]);
-    }
-  }, [frequencyType]);
+  // useEffect(() => {
+  //   if (frequencyType) {
+  //     setSelectedDays([]);
+  //     setSelectedDaysMonth([]);
+  //   }
+  // }, [frequencyType]);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -181,6 +204,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Sections: rsolveSectionListforSendToApi(),
       Task_Type: 'Action',
     });
+    onClose();
+    onReset(); 
+    setStep(0);
   };
   const selectRef = useRef(null);
   const modalRef = useRef(null);
@@ -631,7 +657,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       return (
                         <Checkbox
                           key={index}
-                          checked={selectedLocations.includes(item)}
+                          checked={selectedLocations?.includes(item)}
                           onChange={() => toggleLocationSelection(item)}
                           label={item}
                         />
@@ -879,7 +905,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <div
                 onClick={() => {
                   setStep(0);
-                  onReset();
                 }}
                 className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
               >
@@ -893,7 +918,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 onClick={() => {
                   onClose();
                   setStep(0);
-                  onReset();
                 }}
                 className="text-Disable text-[14px] cursor-pointer font-medium"
               >
