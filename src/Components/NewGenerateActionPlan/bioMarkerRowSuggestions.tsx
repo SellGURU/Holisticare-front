@@ -218,39 +218,44 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </div>
                 {value.Category === 'Activity' && (
-                  <div className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2 ${expandedItems[index] ? '' : 'hidden'}`}>
-                    {value.Sections.map((el: any,index:number) => {
-                      return(
+                  <div
+                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  >
+                    {value.Sections.map((el: any, index: number) => {
+                      return (
                         <>
-                          <div className='p-4 '>
-                            <div className='flex justify-between items-start'>
-                              <div className='text-[12px] text-Text-Primary font-medium'>{index+1}. {el.Section}</div>
-                              <div className='w-[80%] gap-2 grid'>
-                                {el.Exercises.map((val:any) => {
+                          <div className="p-4 ">
+                            <div className="flex justify-between items-start">
+                              <div className="text-[12px] text-Text-Primary font-medium">
+                                {index + 1}. {el.Section}
+                              </div>
+                              <div className="w-[80%] gap-2 grid">
+                                {el.Exercises.map((val: any) => {
                                   return (
                                     <>
-                                        <div className='w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50'>
-                                          <div  className='flex items-center justify-between'>
-                                            <div className='flex justify-start items-center'>
-                                                <div className='relative'>
-                                                  <img src="/images/activity/activity-demo.png" alt="" />
-
-                                                </div>
-                                                <div className='text-[12px] text-Text-Primary ml-2 font-medium'>
-                                                  {val?.Exercise?.Title}
-                                                </div>
-
+                                      <div className="w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex justify-start items-center">
+                                            <div className="relative">
+                                              <img
+                                                src="/images/activity/activity-demo.png"
+                                                alt=""
+                                              />
+                                            </div>
+                                            <div className="text-[12px] text-Text-Primary ml-2 font-medium">
+                                              {val?.Exercise?.Title}
                                             </div>
                                           </div>
-                                        </div>                      
+                                        </div>
+                                      </div>
                                     </>
-                                  )
+                                  );
                                 })}
                               </div>
                             </div>
                           </div>
                         </>
-                      )
+                      );
                     })}
                   </div>
                 )}
