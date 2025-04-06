@@ -74,7 +74,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type || value.Frequency_Type.length === 0 ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
@@ -121,11 +121,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     Daily
                   </div>
                 )}
-                {!value.Frequency_Type && (
+                {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
                   <div className="flex items-center gap-1 text-xs text-[#FC5474]">
                     <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                     No Scheduled
                   </div>
+                ) : (
+                  ''
                 )}
                 <img
                   src="/icons/arrow-down-blue.svg"
@@ -222,12 +224,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
                 {value.Category === 'Activity' && (
                   <div
-                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] overflow-y-auto mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
                   >
                     {value.Sections.map((el: any, index: number) => {
                       return (
                         <>
-                          <div className="p-4 ">
+                          <div className="p-4">
                             <div className="flex justify-between items-start">
                               <div className="text-[12px] text-Text-Primary font-medium">
                                 {index + 1}. {el.Section}
@@ -297,6 +299,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         onClick={() => {
                           onRemove();
                           setSureRemoveIndex(null);
+                          toggleExpand(index);
                         }}
                       />
                       <img
