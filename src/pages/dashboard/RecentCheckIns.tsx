@@ -141,14 +141,13 @@ const RecentCheckIns = () => {
 
   const handleCheckInClick = (checkIn: CheckIn) => {
     if (checkIn.Status === 'Review Now') {
-    DashboardApi.getFilledCheckin({
-      filled_checkin_id: checkIn.filled_checkin_id,
-    }).then((res) => {
-      setQuestions(res.data);
-      setCurrentCheckIn(checkIn);
-      setCheckInModal(true);
-    });
-
+      DashboardApi.getFilledCheckin({
+        filled_checkin_id: checkIn.filled_checkin_id,
+      }).then((res) => {
+        setQuestions(res.data);
+        setCurrentCheckIn(checkIn);
+        setCheckInModal(true);
+      });
     }
   };
 
@@ -264,6 +263,7 @@ const RecentCheckIns = () => {
                         <div
                           key={checkIn}
                           onClick={() => {
+                            setShowComparisonSurvey(false);
                             DashboardApi.showCompareCheckin({
                               filled_checkin_id: checkIn.filled_checkin_id,
                             }).then((res) => {
