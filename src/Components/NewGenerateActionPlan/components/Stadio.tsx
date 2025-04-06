@@ -24,6 +24,7 @@ interface StadioProps {
   setActions: (data: any) => void;
   setData: (values: any) => void;
   setCalendarView: (value: boolean) => void;
+  plans: any;
 }
 
 const Stadio: FC<StadioProps> = ({
@@ -32,6 +33,7 @@ const Stadio: FC<StadioProps> = ({
   setActions,
   actions,
   setCalendarView,
+  plans,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
@@ -150,12 +152,11 @@ const Stadio: FC<StadioProps> = ({
     };
 
     const flattenedActions = prepareDataForBackend(actions);
-    const flattenedData = prepareDataForBackend(data);
     if (actions.checkIn.length > 1 || actions.category.length > 1) {
       Application.checkConflicActionPlan({
         member_id: id,
         tasks: flattenedActions,
-        percents: flattenedData,
+        percents: plans,
       }).then((res) => {
         if (res.data.conflicts != 'No conflicts detected.') {
           setHaveConflic(true);
@@ -214,6 +215,7 @@ const Stadio: FC<StadioProps> = ({
           setshowAddModal(false);
         }}
         onAddNotes={() => {}}
+        defalts={null}
         onSubmit={(addData) => {
           const newData = {
             Category: addData.Category,
@@ -226,17 +228,25 @@ const Stadio: FC<StadioProps> = ({
             Dose: addData.Dose || null,
             'Total Macros': addData['Total Macros'] || null,
             'Client Notes': addData['Client Notes'] || [],
-            Score: addData.Score ?? '',
+            Score: addData.Score ?? 0,
             Days: addData.Days ?? [],
             Description: addData.Description ?? '',
-            Base_Score: addData.Base_Score ?? '',
+            Base_Score: addData.Base_Score ?? 0,
+            'System Score': 0,
+            Task_Type: 'Action',
             Layers: {
               first_layer: '',
               second_layer: '',
               third_layer: '',
             },
+            Frequency_Type: addData.frequencyType ?? '',
+            Frequency_Dates: addData.frequencyDates ?? [],
           };
-          setData((prevData: any) => [...prevData, newData]);
+
+          setData((prevData: any) => ({
+            ...prevData,
+            category: [newData, ...prevData.category],
+          }));
           setshowAddModal(false);
         }}
       />
@@ -255,40 +265,43 @@ const Stadio: FC<StadioProps> = ({
             </div>
           )}
           <div className="w-full flex justify-end mb-2 gap-3">
-            {actions.checkIn.length !== 0 ||
-              (actions.category.length !== 0 && (
-                <div
-                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
-                  onClick={() => setCalendarView(true)}
-                >
-                  <img src="/icons/calendar-date.svg" alt="" className="w-5" />
-                  Calendar View
-                </div>
-              ))}
+            {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
+              <div
+                className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                onClick={() => setCalendarView(true)}
+              >
+                <img src="/icons/calendar-date.svg" alt="" className="w-5" />
+                Calendar View
+              </div>
+            ) : (
+              ''
+            )}
             {selectCategory != 'Checkin' && (
               <>
                 {actions.checkIn.length !== 0 ||
-                  (actions.category.length !== 0 && (
-                    <ButtonSecondary
-                      ClassName="rounded-[30px] w-[141px] text-nowrap"
-                      onClick={() => {
-                        AutoGenerate();
-                      }}
-                    >
-                      {isAutoGenerate ? (
-                        <SpinnerLoader />
-                      ) : (
-                        <>
-                          <img
-                            src="/icons/tree-start-white.svg"
-                            alt=""
-                            className="mr-2"
-                          />
-                          Generate by AI
-                        </>
-                      )}
-                    </ButtonSecondary>
-                  ))}
+                actions.category.length !== 0 ? (
+                  <ButtonSecondary
+                    ClassName="rounded-[30px] w-[141px] text-nowrap"
+                    onClick={() => {
+                      AutoGenerate();
+                    }}
+                  >
+                    {isAutoGenerate ? (
+                      <SpinnerLoader />
+                    ) : (
+                      <>
+                        <img
+                          src="/icons/tree-start-white.svg"
+                          alt=""
+                          className="mr-2"
+                        />
+                        Generate by AI
+                      </>
+                    )}
+                  </ButtonSecondary>
+                ) : (
+                  ''
+                )}
                 <ButtonPrimary
                   onClick={() => setshowAddModal(true)}
                   ClassName="w-[108px]"
@@ -343,6 +356,7 @@ const Stadio: FC<StadioProps> = ({
                           setActions={setActions}
                           key={index}
                           index={index}
+                          checkIn={true}
                         />
                       </>
                     );
