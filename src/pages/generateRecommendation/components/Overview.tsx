@@ -10,6 +10,16 @@ export const Overview: React.FC<OverviewProps> = ({
   treatmentPlanData,
   suggestionsChecked,
 }) => {
+  const getAllCheckedCategories = () => {
+    const checkedCategories: string[] = [];
+    suggestionsChecked.forEach((el: any) => {
+      if (el.checked) {
+        checkedCategories.push(el.Category);
+      }
+    });
+    return checkedCategories;
+  };
+  console.log(getAllCheckedCategories());
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
@@ -32,7 +42,11 @@ export const Overview: React.FC<OverviewProps> = ({
           );
         })}
         {treatmentPlanData['suggestion_tab']
-          .filter((el: any) => el.checked == true)
+          .filter(
+            (el: any) =>
+              el.checked == true &&
+              !getAllCheckedCategories().includes(el.Category),
+          )
           .map((el: any, suggestionIndex: number) => {
             return (
               <>

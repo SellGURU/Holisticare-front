@@ -51,6 +51,7 @@ const ItemUpload: React.FC<ItemUploadProps> = ({ name, onUpload }) => {
             }}
             ref={refUpload}
             type="file"
+            accept="image/png, image/jpeg, image/jpg, image/gif"
             className="invisible w-full h-full top-0 left-0 absolute"
           />
         </div>
