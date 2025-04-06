@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
 import MonthShows from './components/MonthShows';
+import SvgIcon from '../../utils/svgIcon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -72,7 +73,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
-          <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
+          <div className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type?'border-red-500':'border-Gray-50' }  rounded-[16px]`}>
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
                 {value.Title}
@@ -119,12 +120,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
                 {!value.Frequency_Type && (
-                  <div className="flex items-center gap-1 text-xs text-[#FFAB2C]">
-                    <img
-                      src="/icons/danger-new.svg"
-                      alt=""
-                      className="w-4 h-4"
-                    />
+                  <div className="flex items-center gap-1 text-xs text-[#FC5474]">
+                    <SvgIcon src='/icons/danger-new.svg' color='#FC5474' />
                     No Scheduled
                   </div>
                 )}
@@ -208,6 +205,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     {value.Instruction}
                   </div>
                 </div>
+                <div
+                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                >
+                  <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
+                    • Description:
+                  </div>
+                  <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
+                    {value.Description}
+                  </div>
+                </div> 
+                {value.Category === 'Activity' && (
+                  <div className='w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2'></div>                                 
+                )}
               </div>
               <div className="flex">
                 <div
