@@ -1,4 +1,5 @@
 import BioMarkerRowSuggestions from '../bioMarkerRowSuggestions';
+import BioMarkerRowSuggestionsCheckIn from './bioMarkerRowSuggestionsCheckIn';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ActionCardProps {
@@ -17,13 +18,21 @@ const ActionCard: React.FC<ActionCardProps> = ({
 }) => {
   return (
     <>
-      <BioMarkerRowSuggestions
-        index={index}
-        value={data}
-        onRemove={onRemove}
-        setValues={setActions}
-        checkIn={checkIn}
-      />
+      {!checkIn ? (
+        <BioMarkerRowSuggestions
+          index={index}
+          value={data}
+          onRemove={onRemove}
+          setValues={setActions}
+        />
+      ) : (
+        <BioMarkerRowSuggestionsCheckIn
+          index={index}
+          value={data}
+          onRemove={onRemove}
+          setValues={setActions}
+        />
+      )}
     </>
   );
 };

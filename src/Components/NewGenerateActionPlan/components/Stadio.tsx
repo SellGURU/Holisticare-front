@@ -25,6 +25,7 @@ interface StadioProps {
   setData: (values: any) => void;
   setCalendarView: (value: boolean) => void;
   plans: any;
+  handleShowConflictsModal: () => void;
 }
 
 const Stadio: FC<StadioProps> = ({
@@ -34,6 +35,7 @@ const Stadio: FC<StadioProps> = ({
   actions,
   setCalendarView,
   plans,
+  handleShowConflictsModal,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
@@ -416,6 +418,7 @@ const Stadio: FC<StadioProps> = ({
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
+                          handleShowConflictsModal={handleShowConflictsModal}
                         />
                       </>
                     );

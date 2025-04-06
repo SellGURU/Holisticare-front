@@ -3,6 +3,7 @@ import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
 import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
+import ConflictsModal from './components/ConflictsModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -10,14 +11,12 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
-  checkIn?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   setValues,
   index,
   onRemove,
-  checkIn,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -68,6 +67,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         break;
     }
   }, [value.Category]);
+  const [showConflicts, setShowConflicts] = useState(false);
 
   return (
     <>
@@ -127,19 +127,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     No Scheduled
                   </div>
                 )}
-                {!checkIn && (
-                  <img
-                    src="/icons/arrow-down-blue.svg"
-                    alt=""
-                    className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
-                    onClick={() => toggleExpand(index)}
-                    style={{
-                      transform: expandedItems[index]
-                        ? 'rotate(180deg)'
-                        : 'rotate(0deg)',
-                    }}
-                  />
-                )}
+                <img
+                  src="/icons/arrow-down-blue.svg"
+                  alt=""
+                  className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
+                  onClick={() => toggleExpand(index)}
+                  style={{
+                    transform: expandedItems[index]
+                      ? 'rotate(180deg)'
+                      : 'rotate(0deg)',
+                  }}
+                />
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
@@ -186,7 +184,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </div>
                   </div>
                   {value.flag && value.flag.conflicts.length > 0 && (
-                    <div className="flex items-center gap-1 cursor-pointer ml-7">
+                    <div
+                      className="flex items-center gap-1 cursor-pointer ml-7"
+                      onClick={() => {
+                        setShowConflicts(true);
+                      }}
+                    >
                       <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
                       <div className="text-[10px] text-[#FFAB2C] underline">
                         Conflict
@@ -267,7 +270,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {value?.Times?.join(' & ')}
                 </div>
                 <div
-                  className={`flex flex-col items-center ${!checkIn ? (expandedItems[index] ? '' : 'hidden') : ''}`}
+                  className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   {!sureRemove ? (
                     <>
@@ -278,7 +281,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         onClick={() => setShowEditModal(true)}
                       />
                       <img
-                        src="/icons/trash-red.svg"
+                        src="/icons/trash-blue.svg"
                         alt=""
                         className="w-[24px] h-[24px] cursor-pointer mt-2"
                         onClick={() => setSureRemove(true)}
@@ -332,6 +335,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         setShowModal={setShowBasedOn}
         showModal={showBasedOn}
       /> */}
+      {value.flag && value.flag.conflicts.length > 0 && (
+        <ConflictsModal
+          conflicts={value.flag.conflicts}
+          setShowModal={setShowConflicts}
+          showModal={showConflicts}
+        />
+      )}
       <ActionEditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
@@ -385,37 +395,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
             return updatedData;
           });
-          // setValues((prevData: any) => {
-          //   return prevData.map((item: any, idx: number) => {
-          //     // استفاده از ایندکس برای شناسایی آیتم مورد نظر
-          //     if (idx === index) {
-          //       return {
-          //         ...item,
-          //         Category: editedData.Category,
-          //         Title: editedData.title || '',
-          //         'Based on': item['Based on'],
-          //         'Practitioner Comments':
-          //           editedData['Practitioner Comments'] || [],
-          //         Description: editedData.Description || '',
-          //         Base_Score: editedData.Base_Score || '',
-          //         Instruction: editedData.Instruction || '',
-          //         Times: editedData.Times || [],
-          //         Dose: editedData.Dose || null,
-          //         Value: editedData.Value || null,
-          //         'Total Macros': editedData['Total Macros'] || null,
-          //         'Client Notes': editedData['Client Notes'] || [],
-          //         Score: item.Score,
-          //         Days: editedData.Days || [],
-          //         Layers: {
-          //           first_layer: '',
-          //           second_layer: '',
-          //           third_layer: '',
-          //         },
-          //       };
-          //     }
-          //     return item;
-          //   });
-          // });
           setShowEditModal(false);
         }}
       />

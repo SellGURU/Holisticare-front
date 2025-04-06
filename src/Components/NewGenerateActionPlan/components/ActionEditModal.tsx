@@ -659,20 +659,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="text-sm font-medium text-[#909090] cursor-pointer"
+            className="text-sm font-medium text-Disable cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={() => {
-              if (isAdd && selectedGroup && title) {
+              if (selectedGroup && title) {
                 handleApply();
               }
             }}
             className={`${
-              isAdd && selectedGroup && title
-                ? 'text-Primary-DeepTeal'
-                : 'text-Disable'
+              selectedGroup && title ? 'text-Primary-DeepTeal' : 'text-Disable'
             } text-sm font-medium cursor-pointer`}
           >
             {isAdd ? 'Add' : 'Update'}
