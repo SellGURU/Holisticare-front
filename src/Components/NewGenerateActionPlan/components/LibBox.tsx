@@ -1,15 +1,21 @@
 import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-// import BasedOnModal from './BasedOnModal';
+import ConflictsModal from './ConflictsModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
   data: any;
   onAdd: () => void;
   checkIn?: boolean;
+  handleShowConflictsModal?: () => void;
 }
 
-const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
+const LibBox: FC<LibBoxProps> = ({
+  data,
+  onAdd,
+  checkIn,
+  handleShowConflictsModal,
+}) => {
   const [valueData, setValueData] = useState('');
   useEffect(() => {
     switch (data.Category) {
@@ -28,6 +34,7 @@ const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
     }
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
+  const [showConflicts, setShowConflicts] = useState(false);
   return (
     <>
       <div className="w-full overflow-hidden bg-white border border-gray-50 rounded-[12px] py-3 px-3">
@@ -92,7 +99,15 @@ const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
               </div>
             </div>
             {data.flag && data.flag.conflicts.length > 0 && (
-              <div className="flex items-center gap-1 cursor-pointer">
+              <div
+                className="flex items-center gap-1 cursor-pointer"
+                onClick={() => {
+                  if (handleShowConflictsModal) {
+                    handleShowConflictsModal();
+                  }
+                  setShowConflicts(true);
+                }}
+              >
                 <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
                 <div className="text-[10px] text-[#FFAB2C] underline">
                   Conflict
@@ -142,6 +157,14 @@ const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
           </div>
         )}
       </div>
+      {data.flag && data.flag.conflicts.length > 0 && (
+        <ConflictsModal
+          conflicts={data.flag.conflicts}
+          setShowModal={setShowConflicts}
+          showModal={showConflicts}
+          handleShowConflictsModal={handleShowConflictsModal}
+        />
+      )}
     </>
   );
 };
