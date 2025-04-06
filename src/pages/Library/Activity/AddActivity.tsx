@@ -16,20 +16,20 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   // const [showSectionOrder, setShowSectionOrder] = useState(false);
   const [sectionList, setSectionList] = useState([]);
   const rsolveSectionListforSendToApi = () => {
-    return sectionList.map((item:any) => {
+    return sectionList.map((item: any) => {
       return {
         ...item,
-        "Exercises": item.Exercises.map((val:any) => {
+        Exercises: item.Exercises.map((val: any) => {
           return {
-              "Exercise_Id":val.Exercise.Exercise_Id,
-              "Weight": val.Weight,
-              "Reps": val.Reps,
-              "Rest": val.Rest
-          }
-        })
-      }
-    })
-  }
+            Exercise_Id: val.Exercise.Exercise_Id,
+            Weight: val.Weight,
+            Reps: val.Reps,
+            Rest: val.Rest,
+          };
+        }),
+      };
+    });
+  };
   const nextStep = () => {
     if (step === 0) {
       setStep(step + 1);
@@ -44,8 +44,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: [addData.condition],
             Equipment: [addData.equipment],
-            Type:[addData.type],
-            Level:[addData.level],
+            Type: [addData.type],
+            Level: [addData.level],
             Muscle: [addData.muscle],
             Terms: [addData.terms],
           },
@@ -64,8 +64,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Filters: {
             Conditions: [addData.condition],
             Equipment: [addData.equipment],
-            Type:[addData.type],
-            Level:[addData.level],
+            Type: [addData.type],
+            Level: [addData.level],
             Muscle: [addData.muscle],
             Terms: [addData.terms],
           },
@@ -97,21 +97,23 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           level: res.data.Activity_Filters.Level,
           location: res.data.Activity_Location,
         });
-        setSectionList(res.data.Sections.map((item:any) => {
-          return {
-            ...item,
-            Exercises:item.Exercises.map((val:any) => {
-              return {
-                "Reps": val.Reps,
-                "Rest": val.Rest,
-                "Weight": val.Weight,
-                Exercise:{
-                  ...val
-                }
-              }
-            })
-          }
-        }));
+        setSectionList(
+          res.data.Sections.map((item: any) => {
+            return {
+              ...item,
+              Exercises: item.Exercises.map((val: any) => {
+                return {
+                  Reps: val.Reps,
+                  Rest: val.Rest,
+                  Weight: val.Weight,
+                  Exercise: {
+                    ...val,
+                  },
+                };
+              }),
+            };
+          }),
+        );
       });
     }
   }, [editid]);
