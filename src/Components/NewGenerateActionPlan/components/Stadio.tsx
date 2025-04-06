@@ -241,6 +241,7 @@ const Stadio: FC<StadioProps> = ({
               second_layer: '',
               third_layer: '',
             },
+            Sections: addData.Sections ?? [],
             Frequency_Type: addData.frequencyType ?? '',
             Frequency_Dates: addData.frequencyDates ?? [],
           };
