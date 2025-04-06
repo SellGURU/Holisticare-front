@@ -263,6 +263,7 @@ const RecentCheckIns = () => {
                         <div
                           key={checkIn}
                           onClick={() => {
+                            setShowComparisonSurvey(false);
                             DashboardApi.showCompareCheckin({
                               filled_checkin_id: checkIn.filled_checkin_id,
                             }).then((res) => {

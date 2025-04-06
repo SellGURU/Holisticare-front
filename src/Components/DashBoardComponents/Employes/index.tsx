@@ -191,7 +191,7 @@ const EmployeeRow: React.FC<{
           <div className="w-full border-b pb-2 border-Gray-50 text-sm font-medium">
             Assign List
           </div>
-          <div className="h-[256px] overflow-auto mt-4 w-full">
+          <div className="h-[256px] overflow-auto mt-4 w-full pr-[6px]">
             <table className="w-full  ">
               <thead>
                 <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
@@ -214,7 +214,7 @@ const EmployeeRow: React.FC<{
                     key={index}
                     className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b w-full `}
                   >
-                    <td className=" w-[120px] py-2 pl-3 flex items-center text-[10px] text-Text-Primary">
+                    <td className=" w-[120px] py-1 pl-3 flex items-center text-[10px] text-Text-Primary">
                       <img
                         src={`https://ui-avatars.com/api/?name=${client['Client Name']}`}
                         alt={client['Client Name']}
@@ -222,16 +222,16 @@ const EmployeeRow: React.FC<{
                       />
                       {client['Client Name']}
                     </td>
-                    <td className="py-2  text-center text-[10px] text-[#888888] ">
+                    <td className="py-1  text-center text-[10px] text-[#888888] ">
                       {client.ID}
                     </td>
-                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                    <td className="py-1 text-[10px] text-center text-[#888888]">
                       {client.Age}
                     </td>
-                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                    <td className="py-1 text-[10px] text-center text-[#888888]">
                       {client.Gender}
                     </td>
-                    <td className="py-2 text-[10px] text-center text-[#888888]">
+                    <td className="py-1 text-[10px] text-center text-[#888888]">
                       {client['Enroll Date']}
                     </td>
                     <td className="py-2 text-[10px] text-center text-[#888888]">
