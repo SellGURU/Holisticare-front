@@ -20,6 +20,10 @@ const TextCard: React.FC<TextCardProps> = ({
       onChange(val);
     }
   }, [val]);
+
+  useEffect(() => {
+    setVal(value);
+  }, [value]);
   return (
     <>
       <div className="bg-[#FCFCFC] min-h-[100px] p-3 w-full  rounded-[12px] border border-gray-50">

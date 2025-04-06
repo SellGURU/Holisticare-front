@@ -9,7 +9,7 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import SearchBox from '../SearchBox';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import SpinnerLoader from '../SpinnerLoader';
-import BioMarkerRowSuggestions from './bioMarkerRowSuggestions';
+// import BioMarkerRowSuggestions from './bioMarkerRowSuggestions';
 
 const NewGenerateActionPlan = () => {
   const navigate = useNavigate();
@@ -258,7 +258,7 @@ const NewGenerateActionPlan = () => {
                   <div>
                     <div className="flex flex-col">
                       <div className="grid gap-1 pt-5">
-                        {selectedCategory.map((el: any, index: number) => (
+                        {/* {selectedCategory.map((el: any, index: number) => (
                           <BioMarkerRowSuggestions
                             onRemove={() => {}}
                             setValues={() => {}}
@@ -275,7 +275,7 @@ const NewGenerateActionPlan = () => {
                             category={el.Category}
                             value={el}
                           />
-                        ))}
+                        ))} */}
                       </div>
                     </div>
                   </div>
