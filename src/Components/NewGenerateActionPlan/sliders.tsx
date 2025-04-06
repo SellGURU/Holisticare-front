@@ -48,11 +48,11 @@ export default function Sliders({ data, setData }: SlidersProps) {
     <div className="w-[60%] mt-8">
       {sliders.map((slider, index) => (
         <div key={index} className="mb-4">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-Text-Quadruple text-xs font-medium">
+          <div className="flex justify-between items-center mb-[1px]">
+            <span className="text-Text-Quadruple text-xs font-medium ml-1">
               {slider.name}
             </span>
-            <span className="text-Primary-DeepTeal text-xs font-medium">
+            <span className="text-Primary-DeepTeal text-xs font-medium mr-1">
               {slider.value}%
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function Sliders({ data, setData }: SlidersProps) {
             max="100"
             value={slider.value}
             onChange={(e) => handleChange(index, parseInt(e.target.value))}
-            className="w-full cursor-pointer appearance-none h-2 rounded-full"
+            className="!w-full !cursor-pointer !appearance-none !h-[6px] !rounded-full"
             style={{
               background: `linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%) 0% / ${slider.value}% 100% no-repeat, #d1d5db`,
               WebkitAppearance: 'none',

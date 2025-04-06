@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
+import RangeCardLibraryThreePages from '../../LibraryThreePages/components/RangeCard';
+import Checkbox from '../../checkbox';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -23,17 +25,23 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 }) => {
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
-      console.log(res.data);
-
       setGroups(res.data);
     });
   }, []);
   const [selectedDays, setSelectedDays] = useState<string[]>(
-    defalts?.Days || [],
+    defalts?.Frequency_Dates || [],
+  );
+  const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>(
+    defalts?.Frequency_Dates || [],
   );
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
+  const toggleDayMonthSelection = (day: number) => {
+    setSelectedDaysMonth((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
@@ -42,8 +50,20 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     defalts?.Category || null,
   );
   const [newNote, setNewNote] = useState('');
-  const [recommendation, setRecommendation] = useState(defalts?.Recommendation);
+  const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
+  const [value, setValue] = useState(defalts?.Value);
+  const [totalMacros, setTotalMacros] = useState({
+    Fats: defalts?.['Total Macros']?.Fats,
+    Protein: defalts?.['Total Macros']?.Protein,
+    Carbs: defalts?.['Total Macros']?.Carbs,
+  });
+  const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
+    setTotalMacros((prevTheme) => ({
+      ...prevTheme,
+      [key]: value,
+    }));
+  };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     defalts ? defalts.Times : [],
@@ -52,23 +72,40 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     defalts ? defalts['Client Notes'] : [],
   );
   const [showSelect, setShowSelect] = useState(false);
-  // const [group, setGroup] = useState(defalts?.Category);
   const [practitionerComment, setPractitionerComment] = useState('');
-
+  const [description, setDescription] = useState('');
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
+  const [baseScore, setBaseScore] = useState(defalts?.Base_Score || 5);
+  const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
     if (defalts) {
-      setSelectedDays(defalts.Days || []);
+      setSelectedDays(defalts?.Frequency_Dates || []);
       setSelectedGroup(defalts.Category || null);
-      setRecommendation(defalts.Recommendation);
+      setTitle(defalts.Title);
       setDose(defalts.Dose);
+      setValue(defalts.Value);
+      setTotalMacros({
+        Fats: defalts?.['Total Macros']?.Fats,
+        Protein: defalts?.['Total Macros']?.Protein,
+        Carbs: defalts?.['Total Macros']?.Carbs,
+      });
       setInstructions(defalts.Instruction);
       setSelectedTimes(defalts.Times || []);
       setNotes(defalts['Client Notes'] || []);
+      setDescription(defalts.Description || '');
+      setBaseScore(defalts.Base_Score);
+      setFrequencyType(defalts?.Frequency_Type);
+      setSelectedDaysMonth(defalts?.Frequency_Dates || []);
     }
   }, [defalts]);
+  useEffect(() => {
+    if (frequencyType) {
+      setSelectedDays([]);
+      setSelectedDaysMonth([]);
+    }
+  }, [frequencyType]);
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);
@@ -118,16 +155,66 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   };
 
   const handleApply = () => {
-    onSubmit({
-      Category: selectedGroup,
-      Recommendation: recommendation,
-      'Practitioner Comments': practitionerComments,
-      Instruction: instructions,
-      Times: selectedTimes,
-      Dose: dose,
-      'Client Notes': notes,
-      Days: selectedDays,
-    });
+    if (selectedGroup === 'Supplement') {
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        'Practitioner Comments': practitionerComments,
+        Instruction: instructions,
+        Times: selectedTimes,
+        Dose: dose,
+        'Client Notes': notes,
+        frequencyDates:
+          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+        Description: description,
+        Base_Score: baseScore,
+        frequencyType: frequencyType,
+      });
+    } else if (selectedGroup === 'Lifestyle') {
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        'Practitioner Comments': practitionerComments,
+        Instruction: instructions,
+        Times: selectedTimes,
+        Value: value,
+        'Client Notes': notes,
+        frequencyDates:
+          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+        Description: description,
+        Base_Score: baseScore,
+        frequencyType: frequencyType,
+      });
+    } else if (selectedGroup === 'Diet') {
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        'Practitioner Comments': practitionerComments,
+        Instruction: instructions,
+        Times: selectedTimes,
+        'Total Macros': totalMacros,
+        'Client Notes': notes,
+        frequencyDates:
+          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+        Description: description,
+        Base_Score: baseScore,
+        frequencyType: frequencyType,
+      });
+    } else if (selectedGroup === 'Activity') {
+      onSubmit({
+        Category: selectedGroup,
+        Title: title,
+        'Practitioner Comments': practitionerComments,
+        Instruction: instructions,
+        Times: selectedTimes,
+        'Client Notes': notes,
+        frequencyDates:
+          selectedDays.length > 0 ? selectedDays : selectedDaysMonth,
+        Description: description,
+        Base_Score: baseScore,
+        frequencyType: frequencyType,
+      });
+    }
     onClose();
   };
   const handleDeleteComment = (index: number) => {
@@ -144,16 +231,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   };
 
   const times = ['morning', 'midday', 'night'];
-  //               "morning",
-  // "midday",
-  // "night"
-  // const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
-
-  const selectedGroupDose = selectedGroup
-    ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
-        .Dose
-    : false;
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+  const dayMonth = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30,
+  ];
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -162,23 +244,28 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
-            {/* <img src="/icons/danger.svg" alt="" />{' '} */}
             {isAdd ? 'Add Action' : 'Edit Action'}
           </div>
         </h2>
-        <div className=" w-full relative overflow-visible mt-2 mb-4">
-          <label className="text-xs font-medium text-Text-Primary">Group</label>
+        <div
+          className={`w-full relative overflow-visible mt-2 mb-4 ${defalts?.Category ? 'opacity-50' : 'opacity-100'}`}
+        >
+          <label className="text-xs font-medium text-Text-Primary">
+            Category
+          </label>
           <div
             ref={selectButRef}
-            onClick={() => setShowSelect(!showSelect)}
+            onClick={() => {
+              if (!defalts?.Category) {
+                setShowSelect(!showSelect);
+              }
+            }}
             className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
           >
             {selectedGroup ? (
-              <div className="text-[12px] text-Text-Primary">
-                {selectedGroup}
-              </div>
+              <div className="text-xs text-Text-Primary">{selectedGroup}</div>
             ) : (
-              <div className="text-[12px] text-gray-400">Select Group</div>
+              <div className="text-xs text-gray-400">Select Category</div>
             )}
             <div>
               <img
@@ -208,131 +295,255 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   </div>
                 );
               })}
-              {/* <div
-                          onClick={() => {
-                            formik.setFieldValue('gender', 'Male');
-                            setShowSelect(false);
-                          }}
-                          className="text-[12px] cursor-pointer text-Text-Primary py-1 border-b border-gray-100"
-                        >
-                          Male
-                        </div>
-                        <div
-                          onClick={() => {
-                            formik.setFieldValue('gender', 'Female');
-                            setShowSelect(false);
-                          }}
-                          className="text-[12px] cursor-pointer text-Text-Primary py-1"
-                        >
-                          Female
-                        </div> */}
             </div>
           )}
         </div>
-        {/* <div className="my-4">
-          <label className="block text-xs font-medium">Group</label>
-          <select
-            value={group}
-            onChange={(e) => setGroup(e.target.value)}
-            className="mt-1 text-xs block w-full py-1 px-3 bg-backgroundColor-Card border border-Gray-50 outline-none rounded-2xl"
-          >
-            <option>Diet</option>
-          </select>
-        </div> */}
         <div className="mb-4">
-          <label className="block text-xs font-medium">Recommendation</label>
+          <label className="block text-xs font-medium">Title</label>
           <input
-            value={recommendation}
-            onChange={(e) => setRecommendation(e.target.value)}
-            placeholder="Write Recommendation"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Write the action’s title..."
             type="text"
             className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
           />
-
-          {/* {selectedGroupDose && ( */}
-
-          {/* )} */}
         </div>
-        <div
-          className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
-        >
-          <label className="block text-xs font-medium">Dose</label>
-          <input
-            value={dose}
-            disabled={!selectedGroupDose}
-            onChange={(e) => setDose(e.target.value)}
-            placeholder="Write Dose"
-            type="text"
-            className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+        <div className={`mb-4`}>
+          <label className="block text-xs font-medium">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onKeyDown={handleNoteKeyDown}
+            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
+            rows={6}
+            placeholder="Write the action’s description..."
+          />
+        </div>
+        <div className="mb-4">
+          <div className="text-xs font-medium text-Text-Primary">
+            Base Score
+          </div>
+          <RangeCardLibraryThreePages
+            value={baseScore}
+            changeValue={setBaseScore}
           />
         </div>
         <div className="mb-4">
           <label className="flex w-full justify-between items-center text-xs font-medium">
-            Instructions
-            {/* <div className="flex mt-2 space-x-4">
-              <Checkbox
-                label="Morning"
-                checked={morning}
-                onChange={() => setMorning(!morning)}
-              />
-              <Checkbox
-                label="MidDay"
-                checked={midDay}
-                onChange={() => setMidDay(!midDay)}
-              />
-              <Checkbox
-                label="Night"
-                checked={night}
-                onChange={() => setNight(!night)}
-              />
-            </div> */}
+            Instruction
           </label>
-          <input
+          <textarea
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
-            placeholder="Write Instructions"
-            type="text"
-            className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            placeholder="Write the action’s instruction..."
+            className="mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            rows={6}
           />
         </div>
-        <div className="mb-4 flex w-full items-center justify-between">
-          <div className="">
-            <label className="text-xs font-medium">Times</label>
-
-            <div className="flex w-full mt-2 ">
-              {times.map((time, index) => (
-                <div
-                  key={time}
-                  onClick={() => toggleTimeSelection(time)}
-                  className={`cursor-pointer capitalize py-2 px-2.5 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
-                    selectedTimes.includes(time)
-                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                      : 'bg-backgroundColor-Card text-Text-Secondary'
-                  }`}
-                >
-                  {time}
+        {selectedGroup === 'Supplement' && (
+          <div className="flex flex-col mb-4 w-full gap-2">
+            <div className="text-xs font-medium text-Text-Primary">Dose</div>
+            <input
+              placeholder="Write the supplement’s dose..."
+              value={dose}
+              onChange={(e) => setDose(e.target.value)}
+              className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+            />
+          </div>
+        )}
+        {selectedGroup === 'Lifestyle' && (
+          <div className="flex flex-col mb-4 w-full gap-2">
+            <div className="text-xs font-medium text-Text-Primary">Value</div>
+            <input
+              placeholder="Enter Value..."
+              value={value}
+              type="number"
+              onChange={(e) => setValue(e.target.value)}
+              className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+            />
+          </div>
+        )}
+        {selectedGroup === 'Diet' && (
+          <div className="flex flex-col w-full mb-4">
+            <div className="font-medium text-Text-Primary text-xs">
+              Macros Goal
+            </div>
+            <div className="flex items-center justify-between mt-3 gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <div className="text-[10px] font-medium text-Text-Primary">
+                    Carbs
+                  </div>
+                  <div className="text-[10px] text-Text-Quadruple">(gr)</div>
                 </div>
-              ))}
+                <input
+                  type="number"
+                  placeholder="Carbohydrates"
+                  value={totalMacros.Carbs}
+                  onChange={(e) =>
+                    updateTotalMacros('Carbs', Number(e.target.value))
+                  }
+                  className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <div className="text-[10px] font-medium text-Text-Primary">
+                    Proteins
+                  </div>
+                  <div className="text-[10px] text-Text-Quadruple">(gr)</div>
+                </div>
+                <input
+                  type="number"
+                  placeholder="Proteins"
+                  value={totalMacros.Protein}
+                  onChange={(e) =>
+                    updateTotalMacros('Protein', Number(e.target.value))
+                  }
+                  className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <div className="text-[10px] font-medium text-Text-Primary">
+                    Fats
+                  </div>
+                  <div className="text-[10px] text-Text-Quadruple">(gr)</div>
+                </div>
+                <input
+                  type="number"
+                  placeholder="Fats"
+                  value={totalMacros.Fats}
+                  onChange={(e) =>
+                    updateTotalMacros('Fats', Number(e.target.value))
+                  }
+                  className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                />
+              </div>
             </div>
           </div>
-          <div className=" ">
-            <label className="text-xs font-medium">Days</label>
-
-            <div className="  mt-2 w-full  flex ">
-              {days.map((day, index) => (
-                <div
-                  key={index}
-                  onClick={() => toggleDaySelection(day)}
-                  className={`cursor-pointer capitalize border border-Gray-50 ${index == days.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} py-2 px-2 text-xs text-center ${
-                    selectedDays.includes(day)
-                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                      : 'text-Text-Secondary bg-backgroundColor-Card'
-                  }`}
-                >
-                  {day}
-                </div>
-              ))}
+        )}
+        <div className="mb-4">
+          <label className="text-xs font-medium">Frequency</label>
+          <div className="flex items-center gap-6 mt-2">
+            <div className="flex items-center gap-1">
+              <input
+                type="radio"
+                id="daily"
+                name="frequency"
+                value="daily"
+                checked={frequencyType === 'daily'}
+                onChange={(e) => setFrequencyType(e.target.value)}
+                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+              />
+              <label htmlFor="daily" className="text-xs cursor-pointer">
+                Daily
+              </label>
             </div>
+            <div className="flex items-center gap-1">
+              <input
+                type="radio"
+                id="weekly"
+                name="frequency"
+                value="weekly"
+                checked={frequencyType === 'weekly'}
+                onChange={(e) => setFrequencyType(e.target.value)}
+                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+              />
+              <label htmlFor="weekly" className="text-xs cursor-pointer">
+                Weekly
+              </label>
+            </div>
+            <div className="flex items-center gap-1">
+              <input
+                type="radio"
+                id="monthly"
+                name="frequency"
+                value="monthly"
+                checked={frequencyType === 'monthly'}
+                onChange={(e) => setFrequencyType(e.target.value)}
+                className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
+              />
+              <label htmlFor="monthly" className="text-xs cursor-pointer">
+                Monthly
+              </label>
+            </div>
+          </div>
+          {frequencyType === 'weekly' && (
+            <div className="mt-3">
+              <div className="text-xs text-Text-Quadruple">
+                Please select the days of the week you prefer:
+              </div>
+              <div className="mt-1 flex">
+                {days.map((day, index) => (
+                  <div
+                    key={index}
+                    onClick={() => toggleDaySelection(day)}
+                    className={`cursor-pointer capitalize border border-Gray-50 ${index == days.length - 1 && 'rounded-r-[4px]'} ${index == 0 && 'rounded-l-[4px]'} py-2 px-2 text-xs text-center ${
+                      selectedDays.includes(day)
+                        ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                        : 'text-Text-Secondary bg-backgroundColor-Card'
+                    }`}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {frequencyType === 'monthly' && (
+            <div className="mt-3">
+              <div className="text-xs text-Text-Quadruple">
+                Please select the days of the month you prefer:
+              </div>
+              <div className="mt-1 flex flex-col">
+                <div className="flex">
+                  {dayMonth.slice(0, 15).map((day, index) => (
+                    <div
+                      key={index}
+                      onClick={() => toggleDayMonthSelection(day)}
+                      className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-b-0 border-Gray-50 ${index == dayMonth.slice(0, 15).length - 1 && 'rounded-tr-[8px]'} ${index == 0 && 'rounded-tl-[8px]'} text-xs text-center ${
+                        selectedDaysMonth.includes(day)
+                          ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                          : 'text-Text-Secondary bg-backgroundColor-Card'
+                      }`}
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex">
+                  {dayMonth.slice(15).map((day, index) => (
+                    <div
+                      key={index}
+                      onClick={() => toggleDayMonthSelection(day)}
+                      className={`w-[24px] h-[32px] flex items-center justify-center cursor-pointer capitalize border border-Gray-50 ${index == dayMonth.slice(15).length - 1 && 'rounded-br-[8px]'} ${index == 0 && 'rounded-bl-[8px]'} text-xs text-center ${
+                        selectedDaysMonth.includes(day)
+                          ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                          : 'text-Text-Secondary bg-backgroundColor-Card'
+                      }`}
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="text-xs font-medium">Times</label>
+          <div className="flex w-full mt-2 gap-2">
+            {times.map((item, index) => {
+              return (
+                <Checkbox
+                  key={index}
+                  checked={selectedTimes.includes(item)}
+                  onChange={() => toggleTimeSelection(item)}
+                  label={item}
+                />
+              );
+            })}
           </div>
         </div>
         <div className="mb-4">
@@ -346,7 +557,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             placeholder="Write notes ..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
+        <div
+          className={`${
+            notes.length > 0 ? 'mb-4' : ''
+          } flex flex-col gap-2 max-h-[50px] overflow-auto`}
+        >
           {notes.map((note, index) => (
             <div
               key={index}
@@ -412,7 +627,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             onClick={handleApply}
             className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
           >
-            Save
+            {isAdd ? 'Save' : 'Update'}
           </button>
         </div>
       </div>

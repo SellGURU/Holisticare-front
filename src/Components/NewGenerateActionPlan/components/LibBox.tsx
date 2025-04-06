@@ -1,21 +1,32 @@
-import { useState } from 'react';
-import SvgIcon from '../../../utils/svgIcon';
+import { FC, useEffect, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 // import BasedOnModal from './BasedOnModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface LibBoxProps {
   data: any;
   onAdd: () => void;
-  setShowBasedOn: (value: boolean) => void;
-  setValueBasedOn: (value: []) => void;
+  checkIn?: boolean;
 }
 
-const LibBox: React.FC<LibBoxProps> = ({
-  data,
-  onAdd,
-  setShowBasedOn,
-  setValueBasedOn,
-}) => {
+const LibBox: FC<LibBoxProps> = ({ data, onAdd, checkIn }) => {
+  const [valueData, setValueData] = useState('');
+  useEffect(() => {
+    switch (data.Category) {
+      case 'Diet':
+        setValueData('Macros');
+        break;
+      case 'Supplement':
+        setValueData('Dose');
+        break;
+      case 'Lifestyle':
+        setValueData('Value');
+        break;
+      case 'Activity':
+        setValueData('File');
+        break;
+    }
+  }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   return (
     <>
@@ -28,45 +39,74 @@ const LibBox: React.FC<LibBoxProps> = ({
               src="/icons/add-square-green.svg"
               alt=""
             />
-            <div className="text-[12px] text-Text-Primary w-[200px] overflow-hidden text-nowrap text-ellipsis">
-              {
-                data.Recommendation.split('*')[
-                  data.Recommendation.split('*').length - 1
-                ]
-              }
+            <div
+              data-tooltip-id={`tooltip-${data.Category}-${data.Title}`}
+              className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden"
+              style={{
+                textWrap: 'nowrap',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {data.Title.length > 43
+                ? data.Title.substring(0, 43) + '...'
+                : data.Title}
             </div>
-          </div>
-          <img
-            onClick={() => {
-              setShowMore(!showMore);
-            }}
-            className={`cursor-pointer ${showMore ? 'rotate-180' : ''}`}
-            src="/icons/arrow-down-blue.svg"
-            alt=""
-          />
-        </div>
-        {showMore && (
-          <div className=" mt-2">
-            <div className=" flex justify-start text-nowrap items-center">
-              <div className="text-Text-Secondary text-[10px]">
-                • Hierarchy:
-              </div>
-              <div className="text-[10px] text-Text-Primary ml-1">
-                {data.Recommendation.split('*')[0]}
-              </div>
-              <img
-                src="/icons/arrow-right.svg"
-                alt=""
-                className="mr-1 ml-1 w-[16px] h-[16px]"
-              />
-              <div
-                className="text-[10px] text-Text-Primary whitespace-nowrap truncate flex-1"
-                title={data.Recommendation.split('*')[1]}
+            {data.Title.length > 43 && (
+              <Tooltip
+                id={`tooltip-${data.Category}-${data.Title}`}
+                place="top"
+                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
               >
-                {data.Recommendation.split('*')[1]}
+                {data.Title}
+              </Tooltip>
+            )}
+          </div>
+          {!checkIn && (
+            <img
+              onClick={() => {
+                setShowMore(!showMore);
+              }}
+              className={`cursor-pointer ${showMore ? 'rotate-180' : ''}`}
+              src="/icons/arrow-down-blue.svg"
+              alt=""
+            />
+          )}
+        </div>
+        {!checkIn && (
+          <div
+            className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6`}
+          >
+            <div className={`flex items-center gap-1`}>
+              <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                <span
+                  className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
+                />
+                {data['System Score']}
+              </div>
+              <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                <span
+                  className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
+                />
+                {data.Base_Score}
               </div>
             </div>
-            <div className=" flex justify-start mt-1 items-start">
+            {data.flag && data.flag.conflicts.length > 0 && (
+              <div className="flex items-center gap-1 cursor-pointer">
+                <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
+                <div className="text-[10px] text-[#FFAB2C] underline">
+                  Conflict
+                </div>
+                <div className="text-[10px] text-[#FFAB2C]">
+                  ({data.flag.conflicts.length})
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        {showMore && (
+          <div className="mt-2">
+            <div className="flex justify-start mt-1 items-start">
               <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
                 • Instruction:
               </div>
@@ -74,28 +114,29 @@ const LibBox: React.FC<LibBoxProps> = ({
                 {data.Instruction}
               </div>
             </div>
-            <div className=" flex justify-start mt-1 flex-wrap  gap-2 items-center">
+            <div className="flex justify-start mt-1 items-start">
               <div className="text-Text-Secondary text-[10px]  flex justify-start items-center text-nowrap">
-                • Score
+                • {valueData}:
               </div>
-              <div className="rounded-[12px] text-[10px] text-Text-Primary py-1 px-2 bg-red-100">
-                {data.Score} <span className="text-Text-Secondary">/ 10</span>
-              </div>
-              <div
-                onClick={() => {
-                  setValueBasedOn(data['Practitioner Comments']);
-                  setShowBasedOn(true);
-                }}
-                className="flex justify-start gap-1 items-center"
-              >
-                <div className="text-[10px] text-Text-Secondary">
-                  {' '}
-                  Based on:
-                </div>
-                <div className="text-Primary-DeepTeal text-[10px] flex items-center ml-1 gap-2 cursor-pointer">
-                  {data['Based on']}
-                </div>
-                <SvgIcon src="/icons/export.svg" color="#005F73" />
+              <div className="text-[10px] text-Text-Primary text-justify ml-1">
+                {valueData === 'Macros' ? (
+                  <div className="flex justify-start items-center gap-4">
+                    <div className="flex justify-start items-center">
+                      Carbs: {data['Total Macros']?.Carbs}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      Protein: {data['Total Macros']?.Protein}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      Fat: {data['Total Macros']?.Fats}
+                      <div className="text-Text-Quadruple">gr</div>
+                    </div>
+                  </div>
+                ) : (
+                  data[valueData]
+                )}
               </div>
             </div>
           </div>

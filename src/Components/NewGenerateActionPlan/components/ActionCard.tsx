@@ -16,7 +16,6 @@ const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <>
       <BioMarkerRowSuggestions
-        category={data.Category}
         index={index}
         value={data}
         onRemove={onRemove}

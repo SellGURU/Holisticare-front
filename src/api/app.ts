@@ -909,6 +909,9 @@ class Application extends Api {
   static activityList = () => {
     return this.post('/activity_library/activities_list');
   };
+  static checkSelectedTaskConflict = (data: any) => {
+    return this.post('/action_plan/check_selected_task_conflict', data);
+  };
   static getActivity = (Act_Id: string) => {
     return this.post('/activity_library/show_activity_details', {
       Act_Id: Act_Id,

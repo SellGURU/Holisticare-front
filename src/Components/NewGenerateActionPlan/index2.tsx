@@ -19,7 +19,10 @@ const GenerateActionPlan = () => {
   const { id } = useParams<{ id: string }>();
   const [isLoadingPlans, setIsLoadingPlans] = useState(false);
   const [isWeighted, setIsWeighted] = useState(false);
-  const [actions, setActions] = useState<Array<any>>([]);
+  const [actions, setActions] = useState<any>({
+    checkIn: [],
+    category: [],
+  });
   useEffect(() => {
     setIsLoadingPlans(true);
     Application.getActionPlanMethodsNew()
@@ -30,31 +33,62 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   }, []);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any>({
+    checkIn: [],
+    category: [],
+  });
+  const checkSelectedTaskConflict = (newPlans: any) => {
+    setIsLoadingPlans(true);
+    Application.checkSelectedTaskConflict({
+      member_id: id,
+      tasks: newPlans,
+    })
+      .then((res) => {
+        setCategories((prevCategories: any) => ({
+          ...prevCategories,
+          category: res.data,
+        }));
+      })
+      .finally(() => {
+        setIsLoadingPlans(false);
+      });
+  };
   const savePlan = (newPlans: any) => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       percents: newPlans,
-    })
-      .then((res) => {
-        setCategories(res.data.action_db);
-        setIsWeighted(true);
-      })
-      .finally(() => {
-        setIsLoadingPlans(false);
-        // setSelectPlanView(true);
+    }).then((res) => {
+      const checkInItems = res.data.filter(
+        (item: any) => item.Task_Type === 'Checkin',
+      );
+      const categoryItems = res.data.filter(
+        (item: any) => item.Task_Type !== 'Checkin',
+      );
+
+      setCategories({
+        checkIn: checkInItems,
+        category: categoryItems,
       });
+
+      setIsWeighted(true);
+      checkSelectedTaskConflict(res.data);
+    });
   };
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const navigate = useNavigate();
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   const saveChanges = () => {
+    const prepareDataForBackend = (data: any) => {
+      return [...data.checkIn, ...data.category];
+    };
+
+    const flattenedData = prepareDataForBackend(actions);
     setISLoadingSaveChanges(true);
     Application.getActionPlanBlockSaveTasksNew({
       member_id: id,
-      tasks: actions,
+      tasks: flattenedData,
       duration: duration,
       plan_objective: planObjective,
     })
@@ -71,9 +105,14 @@ const GenerateActionPlan = () => {
   useEffect(() => {
     if (calendarView) {
       setIsLoadingPlans(true);
+      const prepareDataForBackend = (data: any) => {
+        return [...data.checkIn, ...data.category];
+      };
+
+      const flattenedData = prepareDataForBackend(actions);
       Application.getActionPlanBlockCalendarView({
         member_id: id,
-        tasks: actions,
+        tasks: flattenedData,
         duration: duration,
       })
         .then((res) => {
