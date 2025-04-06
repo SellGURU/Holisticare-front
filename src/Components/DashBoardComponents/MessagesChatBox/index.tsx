@@ -18,16 +18,22 @@ type SendMessage = {
   receiver_id: number;
   message_text: string;
   replied_conv_id?: number;
+  images: string[];
 };
 
 const MessagesChatBox = () => {
+
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [Images, setImages] = useState<string[]>([]); // Use string[] to store base64 strings
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
+  const [conversationId, ] = useState<number>(1);
+
   const usernameParams = searchParams.get('username');
   const userMessagesList = (member_id: number) => {
     Application.userMessagesList({ member_id: member_id })
@@ -56,7 +62,6 @@ const MessagesChatBox = () => {
       setMessages([]);
     }
   }, [id, usernameParams]);
-  // const [conversationId, setConversationId] = useState<number>(1);
   const [selectedBenchMarks, setSelectedBenchMarks] = useState<Array<string>>(
     [],
   );
@@ -66,6 +71,8 @@ const MessagesChatBox = () => {
       const newMessage: SendMessage = {
         message_text: input,
         receiver_id: memberId,
+        images: Images,
+        conversation_id: conversationId,
       };
       // setMessages([...messages, newMessage]);
       setInput('');
@@ -109,6 +116,15 @@ const MessagesChatBox = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  const handleUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string; // Convert to base64 string
+      setImages((prevImages) => [...prevImages, base64String]); // Store base64 string
+    };
+    reader.readAsDataURL(file); // Read the file as a data URL
+  };
+  console.log(Images);
   return (
     <>
       <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
@@ -210,6 +226,7 @@ const MessagesChatBox = () => {
             {messages.length !== 0 && (
               <div className="px-2">
                 <InputMentions
+                  onUpload={handleUpload}
                   changeBenchMarks={(val: Array<string>) => {
                     setSelectedBenchMarks(val);
                   }}

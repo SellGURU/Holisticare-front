@@ -8,6 +8,7 @@ interface ViewExerciseModalProps {
   onClose: () => void;
   exercise: any;
   onEdit: () => void;
+  isActivty?:boolean
 }
 
 const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
@@ -15,6 +16,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   onClose,
   exercise,
   onEdit,
+  isActivty
 }) => {
   console.log(exercise);
   const [videoData, setVideoData] = useState<
@@ -90,25 +92,32 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             <div className="text-xs text-[#888888]">{exercise.Instruction}</div>
           </div>
           <div className="flex w-full justify-between items-start gap-3">
-            <div className="text-xs font-medium">File</div>
-            <div className="h-[150px] overflow-auto flex flex-col gap-1">
-              {isLoading ? (
-                <div className="w-[370px] h-[200px] flex justify-center items-center">
-                  <Circleloader />
-                </div>
-              ) : (
-                videoData.map((video) => (
-                  <video
-                    key={video.file_id}
-                    className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
-                    controls
-                    src={video.base64 || video.url}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                ))
-              )}
-            </div>
+            <div className="text-xs font-medium"> {isActivty ? 'Sections' : 'File'}</div>
+            {
+              isActivty ? (
+                <div></div>
+              ):(
+                <div className="h-[150px] overflow-auto flex flex-col gap-1">
+                {isLoading ? (
+                  <div className="w-[370px] h-[200px] flex justify-center items-center">
+                    <Circleloader />
+                  </div>
+                ) : (
+                  videoData.map((video) => (
+                    <video
+                      key={video.file_id}
+                      className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
+                      controls
+                      src={video.base64 || video.url}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  ))
+                )}
+              </div>
+              )
+            }
+           
           </div>
         </div>
         <div

@@ -3,11 +3,14 @@
 // import { useConstructor } from '../../help';
 // import { useState } from 'react';
 
+import { useRef, useState } from "react";
+
 interface InputMentionsProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
   changeBenchMarks: (benchs: Array<string>) => void;
+  onUpload?: (file: File) => void;
 }
 // const mentions = [
 //   { id: '1', name: 'Time Priorities ' },
@@ -32,6 +35,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   onChange,
   onSubmit,
   changeBenchMarks,
+  onUpload
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -93,15 +97,45 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   //   // onChange(newText);
   //   // setIsShowMentions(false);
   // };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImagePreview(base64String); // Update preview state
+        if (onUpload) {
+          onUpload(file);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleAttachClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
   return (
     <>
       <div className="w-[98%]  bg-[#E9F0F2] left-1 md:left-2  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
-        {/* <img
+        <img
+
           className="cursor-default"
           src="/icons/attach-svgrepo-com 1.svg"
           alt=""
-        /> */}
+          onClick={handleAttachClick}
+        />
+          <input
+          className="hidden"
+          type="file"
+          accept="image/png, image/jpeg, image/jpg, image/gif"
+          ref={fileInputRef} // Reference the file input
+          onChange={handleFileChange} // Handle file changes
+        />
         <input
           className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Primary"
           type="text"
@@ -131,11 +165,23 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           /> */}
           <img
             className="cursor-pointer"
-            onClick={onSubmit}
+            onClick={()=>{
+              onSubmit()
+              setImagePreview(null)
+            }}
             src="/icons/send.svg"
             alt=""
           />
         </div>
+        {imagePreview && (
+        <div className="absolute bottom-10 left-1 md:left-2 mb-2">
+          <img
+            src={imagePreview}
+            alt="Image Preview"
+            className="h-20 w-20 object-cover rounded-md"
+          />
+        </div>
+      )}
       </div>
       {/* {isShowMentions && suggestions.length > 0 && (
         <>

@@ -29,6 +29,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
       <PreviewExerciseModal
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
+        isActivty
         exercise={exercise}
         onEdit={() => {
           setViewModal(false);
