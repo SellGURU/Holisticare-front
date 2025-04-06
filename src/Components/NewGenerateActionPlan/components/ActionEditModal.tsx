@@ -83,7 +83,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
-   const [sectionList, setSectionList] = useState([]);
+  const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
     type: '',
     terms: '',
@@ -92,7 +92,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     equipment: '',
     level: '',
   });
-  const [step,setStep] = useState(0)
+  const [step, setStep] = useState(0);
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
       ...prevTheme,
@@ -160,28 +160,28 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         }),
       };
     });
-  };  
+  };
   const saveActivity = () => {
-      onSubmit({
-        Category: selectedGroup,
-        Title: title,
-        'Practitioner Comments': practitionerComments,
-        Instruction: instructions,
-        Times: selectedTimes,
-        'Client Notes': notes,
-        frequencyDates:
-          selectedDays.length > 0
-            ? selectedDays
-            : selectedDaysMonth.length > 0
-              ? selectedDaysMonth
-              : null,
-        Description: description,
-        Base_Score: baseScore,
-        frequencyType: frequencyType,
-        Sections: rsolveSectionListforSendToApi(),
-        Task_Type: 'Action',
-      });
-  }
+    onSubmit({
+      Category: selectedGroup,
+      Title: title,
+      'Practitioner Comments': practitionerComments,
+      Instruction: instructions,
+      Times: selectedTimes,
+      'Client Notes': notes,
+      frequencyDates:
+        selectedDays.length > 0
+          ? selectedDays
+          : selectedDaysMonth.length > 0
+            ? selectedDaysMonth
+            : null,
+      Description: description,
+      Base_Score: baseScore,
+      frequencyType: frequencyType,
+      Sections: rsolveSectionListforSendToApi(),
+      Task_Type: 'Action',
+    });
+  };
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);
@@ -363,7 +363,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30,
   ];
-  
+
   return (
     <MainModal onClose={onClose} isOpen={isOpen}>
       <div
@@ -374,7 +374,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             {isAdd ? 'Add Action' : 'Edit Action'}
           </div>
         </h2>
-        {step == 0 &&
+        {step == 0 && (
           <div
             className={`grid ${selectedGroup == 'Activity' && 'grid-cols-2 gap-4'} `}
           >
@@ -623,7 +623,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             <div>
               {selectedGroup === 'Activity' && (
                 <div className="my-4">
-                  <label className="text-xs font-medium">Activity Location</label>
+                  <label className="text-xs font-medium">
+                    Activity Location
+                  </label>
                   <div className="flex w-full mt-2 gap-2">
                     {locations.map((item, index) => {
                       return (
@@ -859,7 +861,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               </div>
             </div>
           </div>
-        }
+        )}
         {step === 1 && (
           <ExersiceStep
             sectionList={sectionList}
@@ -870,48 +872,48 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         )}
 
         {selectedGroup === 'Activity' && (
-        <div
-          className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
-        >
-          {step !== 0 && (
-            <div
-              onClick={() => {
-                setStep(0)
-                onReset()
-              }}
-              className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
-            >
-              <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
-              Back
-            </div>
-          )}
+          <div
+            className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} items-center mb-1 mt-4`}
+          >
+            {step !== 0 && (
+              <div
+                onClick={() => {
+                  setStep(0);
+                  onReset();
+                }}
+                className="text-Disable text-[14px] cursor-pointer font-medium flex items-center gap-1"
+              >
+                <img src="/icons/arrow-left.svg" alt="" className="w-5 h-5" />
+                Back
+              </div>
+            )}
 
-          <div className="flex items-center gap-3">
-            <div
-              onClick={() => {
-                onClose()
-                setStep(0)
-                onReset()
-              }}
-              className="text-Disable text-[14px] cursor-pointer font-medium"
-            >
-              Cancel
-            </div>
-            <div
-              onClick={() => {
-                if(step == 0){
-                  setStep(step + 1)
-                  // saveActivity()
-                }else{
-                  saveActivity()
-                }
-              }}
-              className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
-            >
-              {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
+            <div className="flex items-center gap-3">
+              <div
+                onClick={() => {
+                  onClose();
+                  setStep(0);
+                  onReset();
+                }}
+                className="text-Disable text-[14px] cursor-pointer font-medium"
+              >
+                Cancel
+              </div>
+              <div
+                onClick={() => {
+                  if (step == 0) {
+                    setStep(step + 1);
+                    // saveActivity()
+                  } else {
+                    saveActivity();
+                  }
+                }}
+                className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
+              >
+                {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
+              </div>
             </div>
           </div>
-        </div>
         )}
       </div>
     </MainModal>
