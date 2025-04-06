@@ -4,10 +4,7 @@ interface RangeCardProps {
   value: number;
   changeValue: (value: number) => void;
 }
-const RangeCard: React.FC<RangeCardProps> = ({
-  value,
-  changeValue,
-}) => {
+const RangeCard: React.FC<RangeCardProps> = ({ value, changeValue }) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
     if (value) {
