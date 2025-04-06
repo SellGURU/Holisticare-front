@@ -255,40 +255,43 @@ const Stadio: FC<StadioProps> = ({
             </div>
           )}
           <div className="w-full flex justify-end mb-2 gap-3">
-            {actions.checkIn.length !== 0 ||
-              (actions.category.length !== 0 && (
-                <div
-                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
-                  onClick={() => setCalendarView(true)}
-                >
-                  <img src="/icons/calendar-date.svg" alt="" className="w-5" />
-                  Calendar View
-                </div>
-              ))}
+            {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
+              <div
+                className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                onClick={() => setCalendarView(true)}
+              >
+                <img src="/icons/calendar-date.svg" alt="" className="w-5" />
+                Calendar View
+              </div>
+            ) : (
+              ''
+            )}
             {selectCategory != 'Checkin' && (
               <>
                 {actions.checkIn.length !== 0 ||
-                  (actions.category.length !== 0 && (
-                    <ButtonSecondary
-                      ClassName="rounded-[30px] w-[141px] text-nowrap"
-                      onClick={() => {
-                        AutoGenerate();
-                      }}
-                    >
-                      {isAutoGenerate ? (
-                        <SpinnerLoader />
-                      ) : (
-                        <>
-                          <img
-                            src="/icons/tree-start-white.svg"
-                            alt=""
-                            className="mr-2"
-                          />
-                          Generate by AI
-                        </>
-                      )}
-                    </ButtonSecondary>
-                  ))}
+                actions.category.length !== 0 ? (
+                  <ButtonSecondary
+                    ClassName="rounded-[30px] w-[141px] text-nowrap"
+                    onClick={() => {
+                      AutoGenerate();
+                    }}
+                  >
+                    {isAutoGenerate ? (
+                      <SpinnerLoader />
+                    ) : (
+                      <>
+                        <img
+                          src="/icons/tree-start-white.svg"
+                          alt=""
+                          className="mr-2"
+                        />
+                        Generate by AI
+                      </>
+                    )}
+                  </ButtonSecondary>
+                ) : (
+                  ''
+                )}
                 <ButtonPrimary
                   onClick={() => setshowAddModal(true)}
                   ClassName="w-[108px]"
@@ -343,6 +346,7 @@ const Stadio: FC<StadioProps> = ({
                           setActions={setActions}
                           key={index}
                           index={index}
+                          checkIn={true}
                         />
                       </>
                     );

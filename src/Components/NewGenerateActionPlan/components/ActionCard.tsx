@@ -6,12 +6,14 @@ interface ActionCardProps {
   onRemove: () => void;
   setActions: (data: any) => void;
   index: number;
+  checkIn?: boolean;
 }
 const ActionCard: React.FC<ActionCardProps> = ({
   data,
   onRemove,
   setActions,
   index,
+  checkIn,
 }) => {
   return (
     <>
@@ -20,6 +22,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
         value={data}
         onRemove={onRemove}
         setValues={setActions}
+        checkIn={checkIn}
       />
     </>
   );

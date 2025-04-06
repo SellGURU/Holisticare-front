@@ -9,12 +9,14 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
+  checkIn?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   setValues,
   index,
   onRemove,
+  checkIn,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -126,17 +128,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     No Scheduled
                   </div>
                 )}
-                <img
-                  src="/icons/arrow-down-blue.svg"
-                  alt=""
-                  className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
-                  onClick={() => toggleExpand(index)}
-                  style={{
-                    transform: expandedItems[index]
-                      ? 'rotate(180deg)'
-                      : 'rotate(0deg)',
-                  }}
-                />
+                {!checkIn && (
+                  <img
+                    src="/icons/arrow-down-blue.svg"
+                    alt=""
+                    className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
+                    onClick={() => toggleExpand(index)}
+                    style={{
+                      transform: expandedItems[index]
+                        ? 'rotate(180deg)'
+                        : 'rotate(0deg)',
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
@@ -212,7 +216,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {value?.Times?.join(' & ')}
                 </div>
                 <div
-                  className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex flex-col items-center ${!checkIn ? (expandedItems[index] ? '' : 'hidden') : ''}`}
                 >
                   {!sureRemove ? (
                     <>
