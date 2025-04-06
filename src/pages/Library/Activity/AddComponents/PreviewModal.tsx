@@ -68,7 +68,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
       <div
-        className={`bg-white rounded-2xl p-4 w-[500px] ${isActivty ? 'h-[666px]' : 'h-[440px]'}  shadow-800 relative`}
+        className={`bg-white rounded-2xl p-4 w-[500px] ${isActivty ? 'h-[566px]' : 'h-[440px]'}  shadow-800 relative`}
       >
         <div
           className="w-full flex justify-between items-center border-b border-Gray-50 pb-2"
@@ -108,7 +108,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               {isActivty ? 'Sections' : 'File'}
             </div>
             {isActivty ? (
-              <div className="h-[330px] w-full overflow-auto flex flex-col gap-1 rounded-2xl border border-Gray-50 p-3 bg-[#E9F0F2]">
+              <div className="h-[330px] w-full overflow-auto  flex flex-col gap-1 rounded-2xl border border-Gray-50 p-3 bg-[#E9F0F2]">
                 {Sections?.map((section, index) => (
                   <div key={index}>
                     <div className="text-xs font-medium text-[#383838]">

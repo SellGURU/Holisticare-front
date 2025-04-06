@@ -33,6 +33,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
         exercise={exercise}
         onEdit={() => {
           setViewModal(false);
+          onEdit()
         }}
       />
       <tr
