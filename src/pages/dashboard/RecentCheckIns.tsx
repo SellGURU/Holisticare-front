@@ -77,8 +77,8 @@ const RecentCheckIns = () => {
     useState<boolean>(false);
   const [showComparisonSurvey, setShowComparisonSurvey] =
     useState<boolean>(false);
-  const [comparisonData, setComparisonData] = useState<string | null>(null);
   const [CompareCheckIn, setCompareCheckIn] = useState('');
+  const [CompareCheckinsList, setCompareCheckinsList] = useState<any[]>([]);
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
@@ -86,6 +86,7 @@ const RecentCheckIns = () => {
   const [selectedOption, setSelectedOption] = useState('Week');
   const options = ['Day', 'Week', 'Month'];
   const [Questions, setQuestions] = useState<any[]>([]);
+  const [CompareQuestions, setCompareQuestions] = useState<any[]>([]);
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -131,13 +132,13 @@ const RecentCheckIns = () => {
 
   const handleCompareClick = () => {
     setShowComparisonSelect(true);
+    DashboardApi.compareCheckin({
+      filled_checkin_id: currentCheckIn?.filled_checkin_id,
+    }).then((res) => {
+      setCompareCheckinsList(res.data);
+    });
   };
 
-  const handleComparisonSelect = (data: string) => {
-    setComparisonData(data);
-    setShowComparisonSurvey(true);
-    setShowSelect(false);
-  };
   const handleCheckInClick = (checkIn: CheckIn) => {
     if (checkIn.Status === 'Review Now') {
       DashboardApi.getFilledCheckin({
@@ -178,6 +179,7 @@ const RecentCheckIns = () => {
   //   setCompareCheckIn('');
   //   setShowSelect(false);
   // };
+  console.log(CompareQuestions);
 
   return (
     <>
@@ -257,27 +259,33 @@ const RecentCheckIns = () => {
                       ref={selectRef}
                       className="w-full z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[47px]"
                     >
-                      {['Check in 1', 'Check in 2', 'Check in 3'].map(
-                        (checkIn) => (
-                          <div
-                            key={checkIn}
-                            onClick={() => {
-                              setCompareCheckIn(checkIn);
-                              handleComparisonSelect(checkIn);
+                      {CompareCheckinsList.map((checkIn) => (
+                        <div
+                          key={checkIn}
+                          onClick={() => {
+                            setShowComparisonSurvey(false);
+                            DashboardApi.showCompareCheckin({
+                              filled_checkin_id: checkIn.filled_checkin_id,
+                            }).then((res) => {
+                              setCompareCheckIn(checkIn.filled_checkin_name);
+                              setCompareQuestions(res.data);
+                              setShowComparisonSurvey(true);
                               setShowSelect(false);
-                            }}
-                            className="text-[12px] cursor-pointer text-Text-Primary py-1"
-                          >
-                            {checkIn}
-                          </div>
-                        ),
-                      )}
+
+                              setShowSelect(false);
+                            });
+                          }}
+                          className="text-[12px] cursor-pointer text-Text-Primary py-1"
+                        >
+                          {checkIn.filled_checkin_name}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
               )}
-              {showComparisonSurvey && comparisonData && (
-                <Checkin upData={Questions}></Checkin>
+              {showComparisonSurvey && CompareQuestions && (
+                <Checkin upData={CompareQuestions}></Checkin>
 
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}
@@ -386,10 +394,14 @@ const RecentCheckIns = () => {
             <table className="w-full  ">
               <thead>
                 <tr className="text-left text-xs bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
-                  <th className="py-2 pl-3 rounded-tl-2xl">Client Name</th>
-                  <th className="py-2 pl-2">Type</th>
-                  <th className="py-2 pl-2">Time</th>
-                  <th className="py-2 pl-3 rounded-tr-2xl">Status</th>
+                  <th className="py-2 pl-3  text-[10px] rounded-tl-2xl">
+                    Client Name
+                  </th>
+                  <th className="py-2 pl-2 text-[10px]">Title</th>
+                  <th className="py-2 pl-2 text-[10px]">Time</th>
+                  <th className="py-2 pl-3 rounded-tr-2xl text-[10px] ">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="border border-t-0 border-[#E9F0F2] ">

@@ -19,9 +19,11 @@ interface CheckinProps {
 
 const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
   const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
+  console.log(chekinData);
   useEffect(() => {
     if (upData) {
       setCheckinData(upData);
+      console.log('Updated checkinData:', upData);
     }
   }, [upData]);
   useEffect(() => {
@@ -152,10 +154,10 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
   };
   return (
     <>
-      <div className=" px-6 py-4 grid gap-3  pb-4">
-        {chekinData.map((el: any, index: number) => {
-          return <>{resolveQuestionCard(el, index + 1)}</>;
-        })}
+      <div className="px-6 py-4 grid gap-3 pb-4">
+        {chekinData.map((el: any, index: number) => (
+          <div key={index + 1}>{resolveQuestionCard(el, index)}</div>
+        ))}
       </div>
     </>
   );

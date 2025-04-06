@@ -22,6 +22,9 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
       onChange(resolvedValue.filter((el) => el != ''));
     }
   }, [resolvedValue]);
+  useEffect(() => {
+    setResolvedValue([value]);
+  }, [value]);
   return (
     <>
       <div className="bg-[#FCFCFC] p-3 w-full  h-full rounded-[12px] border border-gray-50">

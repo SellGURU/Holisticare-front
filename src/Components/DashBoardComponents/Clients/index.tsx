@@ -19,12 +19,23 @@ const RecentCheckIns: React.FC = () => {
       setClients(res.data.client_list);
     });
   }, []);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date);
+  };
   return (
     <div className="w-full h-[328px] bg-white rounded-2xl shadow-200 p-4 pr-2 ">
       <div className=" overflow-y-scroll pb-3 h-[300px] pr-[2px] ">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm text-Text-Primary font-medium">
+          <h2 className="text-sm text-Text-Primary font-medium flex items-center">
             Recent Clients
+            <span className="ml-1 text-[#B0B0B0] text-xs font-medium">
+              ({Clients.length})
+            </span>
           </h2>
         </div>
         {Clients.length < 1 ? (
@@ -58,7 +69,7 @@ const RecentCheckIns: React.FC = () => {
                     <div className="truncate max-w-[160px]"> {client.name}</div>
                   </td>
                   <td className="py-2 pl-[10px] text-Text-Secondary text-[10px]">
-                    {client['Enroll Date']}
+                    {formatDate(client['Enroll Date'])}
                   </td>
                   <td className="py-2 text-Text-Secondary text-[10px]">
                     <CircularProgressBar

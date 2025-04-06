@@ -57,7 +57,15 @@ export const GenerateRecommendation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
-
+  const getAllCheckedCategories = () => {
+    const checkedCategories: string[] = [];
+    checkedSuggestions.forEach((el: any) => {
+      if (el.checked) {
+        checkedCategories.push(el.Category);
+      }
+    });
+    return checkedCategories;
+  };
   const generatePaln = () => {
     setIsLoading(true);
     Application.generateTreatmentPlan({
@@ -81,7 +89,7 @@ export const GenerateRecommendation = () => {
     generatePaln();
   }, []);
   const [isButtonLoading, setisButtonLoading] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [, setScrollPosition] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +101,7 @@ export const GenerateRecommendation = () => {
         // Add null check here
         const position = container.scrollTop;
         setScrollPosition(position);
-        console.log('scroll position:', position);
+        // console.log('scroll position:', position);
       }
     };
 
@@ -107,7 +115,7 @@ export const GenerateRecommendation = () => {
       }
     };
   }, []);
-  useEffect(() => console.log(scrollPosition), [scrollPosition]);
+  // useEffect(() => console.log(scrollPosition), [scrollPosition]);
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
@@ -166,7 +174,9 @@ export const GenerateRecommendation = () => {
                       suggestion_tab: [
                         ...checkedSuggestions,
                         ...treatmentPlanData.suggestion_tab.filter(
-                          (el: any) => el.checked == true,
+                          (el: any) =>
+                            el.checked == true &&
+                            !getAllCheckedCategories().includes(el.Category),
                         ),
                       ],
                     })
@@ -259,6 +269,8 @@ export const GenerateRecommendation = () => {
                 });
               }}
               storeChecked={(data) => {
+                console.log('storedata:');
+                console.log(data);
                 setCheckedSuggestion([...checkedSuggestions, ...data]);
               }}
               checkeds={checkedSuggestions}
