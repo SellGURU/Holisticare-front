@@ -7,7 +7,11 @@ import Mobile from '../../api/mobile';
 import Circleloader from '../../Components/CircleLoader';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 
-const FormView = () => {
+interface FormViewProps {
+  mode?: 'questionary' | 'checkin';
+}
+
+const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -65,31 +69,56 @@ const FormView = () => {
   const [resolvedData, setResolvedData] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
-    Mobile.getQuestionaryEmpty({
-      encoded_mi: encode as string,
-      unique_id: id as string,
-    }).then((e) => {
-      setData(e.data);
-      setIsLaoding(false);
-    });
+    if (mode == 'questionary') {
+      Mobile.getQuestionaryEmpty({
+        encoded_mi: encode as string,
+        unique_id: id as string,
+      }).then((e) => {
+        setData(e.data);
+        setIsLaoding(false);
+      });
+    } else {
+      Mobile.getCheckInEmpty({
+        encoded_mi: encode as string,
+        unique_id: id as string,
+      }).then((e) => {
+        setData(e.data);
+        setIsLaoding(false);
+      });
+    }
   }, []);
   const submit = () => {
     setIsLaoding(true);
     // window.close();
-    Mobile.fillQuestionary({
-      encoded_mi: encode,
-      unique_id: id,
-      respond: resolvedData.questions,
-    }).finally(() => {
-      if (window.flutter_inappwebview) {
-        window.flutter_inappwebview.callHandler('closeWebView');
-      } else {
-        console.warn('Flutter WebView bridge not available');
-      }
-      setIsComplete(true);
-      // window.flutter_inappwebview.callHandler('closeWebView')
-      // setIsLaoding(false)
-    });
+    if (mode == 'questionary') {
+      Mobile.fillQuestionary({
+        encoded_mi: encode,
+        unique_id: id,
+        respond: resolvedData.questions,
+      }).finally(() => {
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('closeWebView');
+        } else {
+          console.warn('Flutter WebView bridge not available');
+        }
+        setIsComplete(true);
+        // window.flutter_inappwebview.callHandler('closeWebView')
+        // setIsLaoding(false)
+      });
+    } else {
+      Mobile.fillCheckin({
+        encoded_mi: encode,
+        unique_id: id,
+        respond: resolvedData.questions,
+      }).finally(() => {
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('closeWebView');
+        } else {
+          console.warn('Flutter WebView bridge not available');
+        }
+        setIsComplete(true);
+      });
+    }
   };
   return (
     <>
@@ -97,7 +126,9 @@ const FormView = () => {
         {isComplete ? (
           <div className="py-4">
             <div className="text-[12px] text-Text-Secondary text-center">
-              This Questionary is already answered.
+              {mode == 'questionary'
+                ? 'This Questionary is already answered.'
+                : 'This Checkin is already answered.'}
             </div>
           </div>
         ) : (
@@ -113,6 +144,7 @@ const FormView = () => {
                 <Checkin
                   upData={data?.questions}
                   onChange={(questions) => {
+                    console.log(questions);
                     setResolvedData({
                       ...data,
                       questions: questions,

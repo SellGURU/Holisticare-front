@@ -140,7 +140,7 @@ const RecentCheckIns = () => {
   };
 
   const handleCheckInClick = (checkIn: CheckIn) => {
-    // if (checkIn.Status === 'Review Now') {
+    if (checkIn.Status === 'Review Now') {
     DashboardApi.getFilledCheckin({
       filled_checkin_id: checkIn.filled_checkin_id,
     }).then((res) => {
@@ -149,7 +149,7 @@ const RecentCheckIns = () => {
       setCheckInModal(true);
     });
 
-    // }
+    }
   };
 
   const handleMarkAsReviewed = () => {

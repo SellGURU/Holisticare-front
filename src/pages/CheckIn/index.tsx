@@ -54,6 +54,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
+            onChange={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></YesNoCard>
         );
       case 'Scale':
@@ -62,6 +65,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
+            onSubmit={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></RangeCard>
         );
 
@@ -83,6 +89,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
+            onSubmit={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></RateCard>
         );
       case 'arrange':
@@ -100,7 +109,8 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             question={item.question}
             value={item.value}
             onSubmit={(values) => {
-              console.log(values);
+              updateResponse(index - 1, values);
+              // console.log(values);
             }}
           ></UploadCard>
         );
@@ -110,6 +120,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
+            onSubmit={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></FeelingCard>
         );
 
