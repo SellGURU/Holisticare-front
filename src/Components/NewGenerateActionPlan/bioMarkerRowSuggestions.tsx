@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
 import MonthShows from './components/MonthShows';
+import SvgIcon from '../../utils/svgIcon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -9,12 +10,14 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
+  checkIn?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   setValues,
   index,
   onRemove,
+  checkIn,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -70,7 +73,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
-          <div className="w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border border-Gray-50 rounded-[16px]">
+          <div
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+          >
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
                 {value.Title}
@@ -117,26 +122,24 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
                 {!value.Frequency_Type && (
-                  <div className="flex items-center gap-1 text-xs text-[#FFAB2C]">
-                    <img
-                      src="/icons/danger-new.svg"
-                      alt=""
-                      className="w-4 h-4"
-                    />
+                  <div className="flex items-center gap-1 text-xs text-[#FC5474]">
+                    <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                     No Scheduled
                   </div>
                 )}
-                <img
-                  src="/icons/arrow-down-blue.svg"
-                  alt=""
-                  className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
-                  onClick={() => toggleExpand(index)}
-                  style={{
-                    transform: expandedItems[index]
-                      ? 'rotate(180deg)'
-                      : 'rotate(0deg)',
-                  }}
-                />
+                {!checkIn && (
+                  <img
+                    src="/icons/arrow-down-blue.svg"
+                    alt=""
+                    className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
+                    onClick={() => toggleExpand(index)}
+                    style={{
+                      transform: expandedItems[index]
+                        ? 'rotate(180deg)'
+                        : 'rotate(0deg)',
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
@@ -204,6 +207,58 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     {value.Instruction}
                   </div>
                 </div>
+                <div
+                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                >
+                  <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
+                    • Description:
+                  </div>
+                  <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
+                    {value.Description}
+                  </div>
+                </div>
+                {value.Category === 'Activity' && (
+                  <div
+                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  >
+                    {value.Sections.map((el: any, index: number) => {
+                      return (
+                        <>
+                          <div className="p-4 ">
+                            <div className="flex justify-between items-start">
+                              <div className="text-[12px] text-Text-Primary font-medium">
+                                {index + 1}. {el.Section}
+                              </div>
+                              <div className="w-[80%] gap-2 grid">
+                                {el.Exercises.map((val: any) => {
+                                  return (
+                                    <>
+                                      <div className="w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex justify-start items-center">
+                                            <div className="relative">
+                                              <img
+                                                src="/images/activity/activity-demo.png"
+                                                alt=""
+                                              />
+                                            </div>
+                                            <div className="text-[12px] text-Text-Primary ml-2 font-medium">
+                                              {val?.Exercise?.Title}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               <div className="flex">
                 <div
@@ -212,7 +267,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {value?.Times?.join(' & ')}
                 </div>
                 <div
-                  className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex flex-col items-center ${!checkIn ? (expandedItems[index] ? '' : 'hidden') : ''}`}
                 >
                   {!sureRemove ? (
                     <>

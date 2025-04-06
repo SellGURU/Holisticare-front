@@ -210,8 +210,9 @@ const GenerateActionPlan = () => {
                     data={plans}
                     onSubmit={(values) => {
                       savePlan(values);
+                      setPlans(values);
                     }}
-                  ></CategorieyWeight>
+                  />
                 </div>
               </>
             ) : (
@@ -223,7 +224,8 @@ const GenerateActionPlan = () => {
                     setData={setCategories}
                     data={categories}
                     setCalendarView={setCalendarView}
-                  ></Stadio>
+                    plans={plans}
+                  />
                 </div>
               </>
             )}
