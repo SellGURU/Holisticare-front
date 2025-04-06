@@ -33,7 +33,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   }, []);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);  
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
   const [value, setValue] = useState(defalts?.Value);
@@ -41,7 +41,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Fats: defalts?.['Total Macros']?.Fats,
     Protein: defalts?.['Total Macros']?.Protein,
     Carbs: defalts?.['Total Macros']?.Carbs,
-  });  
+  });
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -79,7 +79,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
-  const [sectionList, setSectionList] = useState([])
+  const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
     type: defalts?.Activity_Filters?.Type || '',
     terms: defalts?.Activity_Filters?.Terms || '',
@@ -141,27 +141,27 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         condition: defalts?.Activity_Filters?.Conditions || '',
         muscle: defalts?.Activity_Filters?.Muscle || '',
         equipment: defalts?.Activity_Filters?.Equipment || '',
-        level: defalts?.Activity_Filters?.Level || '',      
+        level: defalts?.Activity_Filters?.Level || '',
       });
     }
     setSelectedLocations(defalts?.Activity_Location || []);
     setSectionList(
       defalts?.Sections?.map((item: any) => {
+        return {
+          ...item,
+          Exercises: item.Exercises.map((val: any) => {
             return {
-              ...item,
-              Exercises: item.Exercises.map((val: any) => {
-                return {
-                  Reps: val.Reps,
-                  Rest: val.Rest,
-                  Weight: val.Weight,
-                  Exercise: {
-                    ...val,
-                  },
-                };
-              }),
+              Reps: val.Reps,
+              Rest: val.Rest,
+              Weight: val.Weight,
+              Exercise: {
+                ...val,
+              },
             };
+          }),
+        };
       }) || [],
-    )
+    );
   }, [defalts]);
   // useEffect(() => {
   //   if (frequencyType) {
@@ -205,7 +205,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Task_Type: 'Action',
     });
     onClose();
-    onReset(); 
+    onReset();
     setStep(0);
   };
   const selectRef = useRef(null);
