@@ -65,10 +65,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   useEffect(() => console.log(value), [value]);
   const splitInstructions = (instruction: string) => {
-    const positiveMatch = instruction.match(
+    const positiveMatch = instruction?.match(
       /Positive:\s*(.+?)(?=\s*Negative:|$)/,
     );
-    const negativeMatch = instruction.match(/Negative:\s*(.+)/);
+    const negativeMatch = instruction?.match(/Negative:\s*(.+)/);
     return {
       positive: positiveMatch ? positiveMatch[1].trim() : '',
       negative: negativeMatch ? negativeMatch[1].trim() : '',
