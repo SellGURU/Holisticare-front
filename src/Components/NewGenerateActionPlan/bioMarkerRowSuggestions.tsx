@@ -43,7 +43,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       [index]: !prev[index],
     }));
   };
-  const [sureRemove, setSureRemove] = useState(false);
+  const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   // const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
@@ -272,7 +272,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  {!sureRemove ? (
+                  {sureRemoveIndex !== index ? (
                     <>
                       <img
                         src="/icons/edit.svg"
@@ -284,7 +284,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         src="/icons/trash-blue.svg"
                         alt=""
                         className="w-[24px] h-[24px] cursor-pointer mt-2"
-                        onClick={() => setSureRemove(true)}
+                        onClick={() => setSureRemoveIndex(index)}
                       />
                     </>
                   ) : (
@@ -294,13 +294,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         src="/icons/tick-circle-green.svg"
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={onRemove}
+                        onClick={() => {
+                          onRemove();
+                          setSureRemoveIndex(null);
+                        }}
                       />
                       <img
                         src="/icons/close-circle-red.svg"
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => setSureRemove(false)}
+                        onClick={() => setSureRemoveIndex(null)}
                       />
                     </>
                   )}
@@ -351,50 +354,43 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
 
-            const checkInIndex = updatedData.checkIn.findIndex(
-              (_item: any, idx: number) => idx === index,
-            );
-
             const categoryIndex = updatedData.category.findIndex(
               (_item: any, idx: number) => idx === index,
             );
 
-            const updatedItem = {
-              ...((checkInIndex !== -1
-                ? updatedData.checkIn[checkInIndex]
-                : updatedData.category[categoryIndex]) || {}),
-              Category: editedData.Category ?? '',
-              Title: editedData.Title ?? '',
-              'Based on': editedData['Based on'] ?? '',
-              'Practitioner Comments':
-                editedData['Practitioner Comments'] ?? [],
-              Description: editedData.Description ?? '',
-              Base_Score: editedData.Base_Score ?? '',
-              Instruction: editedData.Instruction ?? '',
-              Times: editedData.Times ?? [],
-              Dose: editedData.Dose ?? null,
-              Value: editedData.Value ?? null,
-              'Total Macros': editedData['Total Macros'] ?? null,
-              'Client Notes': editedData['Client Notes'] ?? [],
-              Score: editedData.Score ?? '',
-              Days: editedData.Days ?? [],
-              Layers: {
-                first_layer: editedData.Layers?.first_layer ?? '',
-                second_layer: editedData.Layers?.second_layer ?? '',
-                third_layer: editedData.Layers?.third_layer ?? '',
-              },
-              Frequency_Type: editedData.frequencyType ?? '',
-              Frequency_Dates: editedData.frequencyDates ?? [],
-            };
+            if (categoryIndex !== -1) {
+              const updatedItem = {
+                ...updatedData.category[categoryIndex],
+                Category: editedData.Category ?? '',
+                Title: editedData.Title ?? '',
+                'Based on': editedData['Based on'] ?? '',
+                'Practitioner Comments':
+                  editedData['Practitioner Comments'] ?? [],
+                Description: editedData.Description ?? '',
+                Base_Score: editedData.Base_Score ?? '',
+                Instruction: editedData.Instruction ?? '',
+                Times: editedData.Times ?? [],
+                Dose: editedData.Dose ?? null,
+                Value: editedData.Value ?? null,
+                'Total Macros': editedData['Total Macros'] ?? null,
+                'Client Notes': editedData['Client Notes'] ?? [],
+                Score: editedData.Score ?? '',
+                Days: editedData.Days ?? [],
+                Layers: {
+                  first_layer: editedData.Layers?.first_layer ?? '',
+                  second_layer: editedData.Layers?.second_layer ?? '',
+                  third_layer: editedData.Layers?.third_layer ?? '',
+                },
+                Frequency_Type: editedData.frequencyType ?? '',
+                Frequency_Dates: editedData.frequencyDates ?? [],
+              };
 
-            if (checkInIndex !== -1) {
-              updatedData.checkIn[checkInIndex] = updatedItem;
-            } else if (categoryIndex !== -1) {
               updatedData.category[categoryIndex] = updatedItem;
             }
 
             return updatedData;
           });
+
           setShowEditModal(false);
         }}
       />

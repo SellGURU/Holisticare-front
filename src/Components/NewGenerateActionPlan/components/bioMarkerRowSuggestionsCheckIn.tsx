@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ChoosingDaysWeek from './ChoosingDaysWeek';
-import ActionEditModal from './ActionEditModal';
-import MonthShows from './MonthShows';
 import SvgIcon from '../../../utils/svgIcon';
+import ActionEditCheckInModal from './ActionEditCheckInModal';
+import ChoosingDaysWeek from './ChoosingDaysWeek';
+import MonthShows from './MonthShows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsCheckInProps {
@@ -30,7 +30,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
     );
   };
 
-  const [sureRemove, setSureRemove] = useState(false);
+  const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   // const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
@@ -132,7 +132,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
               </div>
             </div>
             <div className={`flex flex-col items-center ml-4`}>
-              {!sureRemove ? (
+              {sureRemoveIndex !== index ? (
                 <>
                   <img
                     src="/icons/edit.svg"
@@ -144,7 +144,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                     src="/icons/trash-blue.svg"
                     alt=""
                     className="w-[24px] h-[24px] cursor-pointer mt-2"
-                    onClick={() => setSureRemove(true)}
+                    onClick={() => setSureRemoveIndex(index)}
                   />
                 </>
               ) : (
@@ -160,7 +160,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                     src="/icons/close-circle-red.svg"
                     alt=""
                     className="w-[20px] h-[20px] cursor-pointer mt-2"
-                    onClick={() => setSureRemove(false)}
+                    onClick={() => setSureRemoveIndex(null)}
                   />
                 </>
               )}
@@ -168,11 +168,10 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
           </div>
         </div>
       </div>
-      <ActionEditModal
+      <ActionEditCheckInModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         defalts={newValue}
-        onAddNotes={() => {}}
         onSubmit={(editedData) => {
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
@@ -181,46 +180,31 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
               (_item: any, idx: number) => idx === index,
             );
 
-            const categoryIndex = updatedData.category.findIndex(
-              (_item: any, idx: number) => idx === index,
-            );
-
-            const updatedItem = {
-              ...((checkInIndex !== -1
-                ? updatedData.checkIn[checkInIndex]
-                : updatedData.category[categoryIndex]) || {}),
-              Category: editedData.Category ?? '',
-              Title: editedData.Title ?? '',
-              'Based on': editedData['Based on'] ?? '',
-              'Practitioner Comments':
-                editedData['Practitioner Comments'] ?? [],
-              Description: editedData.Description ?? '',
-              Base_Score: editedData.Base_Score ?? '',
-              Instruction: editedData.Instruction ?? '',
-              Times: editedData.Times ?? [],
-              Dose: editedData.Dose ?? null,
-              Value: editedData.Value ?? null,
-              'Total Macros': editedData['Total Macros'] ?? null,
-              'Client Notes': editedData['Client Notes'] ?? [],
-              Score: editedData.Score ?? '',
-              Days: editedData.Days ?? [],
-              Layers: {
-                first_layer: editedData.Layers?.first_layer ?? '',
-                second_layer: editedData.Layers?.second_layer ?? '',
-                third_layer: editedData.Layers?.third_layer ?? '',
-              },
-              Frequency_Type: editedData.frequencyType ?? '',
-              Frequency_Dates: editedData.frequencyDates ?? [],
-            };
-
             if (checkInIndex !== -1) {
-              updatedData.checkIn[checkInIndex] = updatedItem;
-            } else if (categoryIndex !== -1) {
-              updatedData.category[categoryIndex] = updatedItem;
+              const originalItem = updatedData.checkIn[checkInIndex];
+
+              const isCheckInItem =
+                originalItem?.Check_in_id &&
+                originalItem?.Estimated_time &&
+                originalItem?.Questions_Count &&
+                originalItem?.Task_Type &&
+                originalItem?.Title;
+
+              if (isCheckInItem) {
+                const updatedItem = {
+                  ...originalItem,
+                  Frequency_Type: editedData.frequencyType ?? '',
+                  Frequency_Dates: editedData.frequencyDates ?? [],
+                  Times: editedData.Times ?? [],
+                };
+
+                updatedData.checkIn[checkInIndex] = updatedItem;
+              }
             }
 
             return updatedData;
           });
+
           setShowEditModal(false);
         }}
       />
