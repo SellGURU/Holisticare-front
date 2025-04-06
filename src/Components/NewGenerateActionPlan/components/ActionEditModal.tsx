@@ -317,7 +317,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         : [...prevTimes, time],
     );
   };
-  
+
   const times = ['morning', 'midday', 'night'];
   const locations = ['Home', 'Gym'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
@@ -328,15 +328,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   return (
     <MainModal onClose={onClose} isOpen={isOpen}>
       <div
-        className={`bg-white p-6 pb-8 rounded-2xl shadow-800 ${selectedGroup=='Activity' ?'w-[800px]':'w-[530px]'}  text-Text-Primary overflow-auto max-h-[660px]`}
+        className={`bg-white p-6 pb-8 rounded-2xl shadow-800 ${selectedGroup == 'Activity' ? 'w-[800px]' : 'w-[530px]'}  text-Text-Primary overflow-auto max-h-[660px]`}
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
             {isAdd ? 'Add Action' : 'Edit Action'}
           </div>
         </h2>
-        <div className={`grid ${selectedGroup=='Activity' && 'grid-cols-2 gap-4'} `}>
-          <div className=''>
+        <div
+          className={`grid ${selectedGroup == 'Activity' && 'grid-cols-2 gap-4'} `}
+        >
+          <div className="">
             <div
               className={`w-full relative overflow-visible mt-2 mb-4 ${defalts?.Category ? 'opacity-50' : 'opacity-100'}`}
             >
@@ -353,7 +355,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
               >
                 {selectedGroup ? (
-                  <div className="text-xs text-Text-Primary">{selectedGroup}</div>
+                  <div className="text-xs text-Text-Primary">
+                    {selectedGroup}
+                  </div>
                 ) : (
                   <div className="text-xs text-gray-400">Select Category</div>
                 )}
@@ -429,7 +433,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             </div>
             {selectedGroup === 'Supplement' && (
               <div className="flex flex-col mb-4 w-full gap-2">
-                <div className="text-xs font-medium text-Text-Primary">Dose</div>
+                <div className="text-xs font-medium text-Text-Primary">
+                  Dose
+                </div>
                 <input
                   placeholder="Write the supplement’s dose..."
                   value={dose}
@@ -440,7 +446,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             )}
             {selectedGroup === 'Lifestyle' && (
               <div className="flex flex-col mb-4 w-full gap-2">
-                <div className="text-xs font-medium text-Text-Primary">Value</div>
+                <div className="text-xs font-medium text-Text-Primary">
+                  Value
+                </div>
                 <input
                   placeholder="Enter Value..."
                   value={value}
@@ -461,7 +469,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <div className="text-[10px] font-medium text-Text-Primary">
                         Carbs
                       </div>
-                      <div className="text-[10px] text-Text-Quadruple">(gr)</div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        (gr)
+                      </div>
                     </div>
                     <input
                       type="number"
@@ -478,7 +488,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <div className="text-[10px] font-medium text-Text-Primary">
                         Proteins
                       </div>
-                      <div className="text-[10px] text-Text-Quadruple">(gr)</div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        (gr)
+                      </div>
                     </div>
                     <input
                       type="number"
@@ -495,7 +507,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <div className="text-[10px] font-medium text-Text-Primary">
                         Fats
                       </div>
-                      <div className="text-[10px] text-Text-Quadruple">(gr)</div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        (gr)
+                      </div>
                     </div>
                     <input
                       type="number"
@@ -514,75 +528,76 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <>
                 <div className="text-xs font-medium">Filters</div>
                 <div className="grid grid-cols-2 gap-y-2 gap-x-">
-                <CustomSelect
-                  placeHolder="Type"
-                  options={TypesOptions}
-                  selectedOption={addData.type}
-                  onOptionSelect={(option: string) => updateAddData('type', option)}
-                />
-                <CustomSelect
-                  placeHolder="Terms"
-                  options={TermsOptions}
-                  selectedOption={addData.terms}
-                  onOptionSelect={(option: string) =>
-                    updateAddData('terms', option)
-                  }
-                />
-                <CustomSelect
-                  placeHolder="Condition"
-                  options={ConditionsOptions}
-                  selectedOption={addData.condition}
-                  onOptionSelect={(option: string) =>
-                    updateAddData('condition', option)
-                  }
-                />
-                <CustomSelect
-                  placeHolder="Muscle"
-                  options={MuscleOptions}
-                  selectedOption={addData.muscle}
-                  onOptionSelect={(option: string) =>
-                    updateAddData('muscle', option)
-                  }
-                />
-                <CustomSelect
-                  placeHolder="Equipment"
-                  options={EquipmentOptions}
-                  selectedOption={addData.equipment}
-                  onOptionSelect={(option: string) =>
-                    updateAddData('equipment', option)
-                  }
-                />
-                <CustomSelect
-                  placeHolder="Level"
-                  options={LevelOptions}
-                  selectedOption={addData.level}
-                  onOptionSelect={(option: string) =>
-                    updateAddData('level', option)
-                  }
-                />
+                  <CustomSelect
+                    placeHolder="Type"
+                    options={TypesOptions}
+                    selectedOption={addData.type}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('type', option)
+                    }
+                  />
+                  <CustomSelect
+                    placeHolder="Terms"
+                    options={TermsOptions}
+                    selectedOption={addData.terms}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('terms', option)
+                    }
+                  />
+                  <CustomSelect
+                    placeHolder="Condition"
+                    options={ConditionsOptions}
+                    selectedOption={addData.condition}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('condition', option)
+                    }
+                  />
+                  <CustomSelect
+                    placeHolder="Muscle"
+                    options={MuscleOptions}
+                    selectedOption={addData.muscle}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('muscle', option)
+                    }
+                  />
+                  <CustomSelect
+                    placeHolder="Equipment"
+                    options={EquipmentOptions}
+                    selectedOption={addData.equipment}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('equipment', option)
+                    }
+                  />
+                  <CustomSelect
+                    placeHolder="Level"
+                    options={LevelOptions}
+                    selectedOption={addData.level}
+                    onOptionSelect={(option: string) =>
+                      updateAddData('level', option)
+                    }
+                  />
                 </div>
-            </>
+              </>
             )}
           </div>
           <div>
-             {selectedGroup === 'Activity' && (
-                <div className="my-4">
-                  <label className="text-xs font-medium">Activity Location</label>
-                  <div className="flex w-full mt-2 gap-2">
-                    {locations.map((item, index) => {
-                      return (
-                        <Checkbox
-                          key={index}
-                          checked={selectedLocations.includes(item)}
-                          onChange={() => toggleLocationSelection(item)}
-                          label={item}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>            
-
-             )}
+            {selectedGroup === 'Activity' && (
+              <div className="my-4">
+                <label className="text-xs font-medium">Activity Location</label>
+                <div className="flex w-full mt-2 gap-2">
+                  {locations.map((item, index) => {
+                    return (
+                      <Checkbox
+                        key={index}
+                        checked={selectedLocations.includes(item)}
+                        onChange={() => toggleLocationSelection(item)}
+                        label={item}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <div className="mb-4">
               <label className="text-xs font-medium">Frequency</label>
               <div className="flex items-center gap-6 mt-2">
@@ -779,52 +794,53 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             <div className="flex justify-end gap-3">
               {selectedGroup !== 'Activity' && (
                 <>
-                <button
-                  onClick={onClose}
-                  className="text-sm font-medium text-Disable cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    if (selectedGroup && title) {
-                      handleApply();
-                    }
-                  }}
-                className={`${
-                  selectedGroup && title ? 'text-Primary-DeepTeal' : 'text-Disable'
-                } text-sm font-medium cursor-pointer`}
-              >
-                {isAdd ? 'Add' : 'Update'}
-                </button>
+                  <button
+                    onClick={onClose}
+                    className="text-sm font-medium text-Disable cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (selectedGroup && title) {
+                        handleApply();
+                      }
+                    }}
+                    className={`${
+                      selectedGroup && title
+                        ? 'text-Primary-DeepTeal'
+                        : 'text-Disable'
+                    } text-sm font-medium cursor-pointer`}
+                  >
+                    {isAdd ? 'Add' : 'Update'}
+                  </button>
                 </>
               )}
-            </div>            
-          </div>     
+            </div>
+          </div>
         </div>
-        <div className=' flex justify-end gap-3'>
-            <button
-              onClick={onClose}
-              className="text-sm font-medium text-Disable cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                if (selectedGroup && title) {
-                  // handleApply();
-                }
-              }}
+        <div className=" flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="text-sm font-medium text-Disable cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              if (selectedGroup && title) {
+                // handleApply();
+              }
+            }}
             className={`${
               selectedGroup && title ? 'text-Primary-DeepTeal' : 'text-Disable'
             } text-sm font-medium cursor-pointer`}
           >
             Next
-            </button>          
+          </button>
         </div>
       </div>
     </MainModal>
-
   );
 };
 
