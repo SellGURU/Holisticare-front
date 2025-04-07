@@ -71,7 +71,9 @@ const NewGenerateHolisticPlan = () => {
     return treatmentPlanData['need_focus_benchmarks_list'];
     // return "scdc"
   };
-  const [isSaving, setIsSaving] = useState<'default' | 'saving'|'completed'>('default');
+  const [isSaving, setIsSaving] = useState<'default' | 'saving' | 'completed'>(
+    'default',
+  );
   const resoveSubctegoriesSubs = () => {
     const subs: any = [];
     // treatmentPlanData['result_tab'][0].subcategories
@@ -107,12 +109,12 @@ const NewGenerateHolisticPlan = () => {
   );
   console.log(activeEl);
   useEffect(() => {
-    if(isSaving =='saving'){
+    if (isSaving == 'saving') {
       setTimeout(() => {
         setIsSaving('completed');
       }, 1000);
     }
-    if(isSaving =='completed'){
+    if (isSaving == 'completed') {
       setTimeout(() => {
         setIsSaving('default');
       }, 1000);
@@ -391,7 +393,9 @@ const NewGenerateHolisticPlan = () => {
                                 </div>
                                 <ButtonSecondary
                                   onClick={() => {
-                                    navigate(`/report/Generate-Recommendation/${id}`)
+                                    navigate(
+                                      `/report/Generate-Recommendation/${id}`,
+                                    );
                                     // setshowAutoGenerateModal(true)
                                   }}
                                   ClassName="w-full md:w-fit"
@@ -716,7 +720,7 @@ const NewGenerateHolisticPlan = () => {
           }}
           headline="Analysis"
         >
-          <div className='relative'>
+          <div className="relative">
             <div className="flex mb-4 justify-between items-center">
               <div
                 onClick={() => {
@@ -812,25 +816,28 @@ const NewGenerateHolisticPlan = () => {
                         }}  value={resolveNeedFocusText()} /> */}
               </div>
             )}
-            {(isSaving =='saving' || isSaving =='completed') &&
+            {(isSaving == 'saving' || isSaving == 'completed') && (
               <div className="absolute bottom-[-50px] flex items-center mt-4 gap-1 left-0 right-0">
-                {isSaving == 'saving' ?
-                  <div className='flex justify-center items-center'>
-                    <SpinnerLoader color='#383838'></SpinnerLoader>
+                {isSaving == 'saving' ? (
+                  <div className="flex justify-center items-center">
+                    <SpinnerLoader color="#383838"></SpinnerLoader>
                   </div>
-                :
-                <div className='flex justify-center items-center'>
-                  <img  src="/icons/tick-square.svg" alt="" />
-                </div>
-                }
-                {isSaving == 'saving' ?
-                <div  className="text-xs text-Text-Secondary ">Changes will save Automaticlly</div>
-                :
-                <div  className="text-xs text-Text-Secondary ">Changes saved Automaticlly</div>
-                }
-
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <img src="/icons/tick-square.svg" alt="" />
+                  </div>
+                )}
+                {isSaving == 'saving' ? (
+                  <div className="text-xs text-Text-Secondary ">
+                    Changes will save Automaticlly
+                  </div>
+                ) : (
+                  <div className="text-xs text-Text-Secondary ">
+                    Changes saved Automaticlly
+                  </div>
+                )}
               </div>
-            }
+            )}
           </div>
         </SlideOutPanel>
       </div>
