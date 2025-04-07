@@ -35,7 +35,7 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
               <div className="flex flex-col items-center">
                 <img src="/icons/done.svg" alt="" />
                 <div className="text-center text-xs font-medium text-Text-Primary mt-3 mb-6">
-                  Michael Brown has been successfully removed from archive list.
+                  {name} has been successfully removed from archive list.
                 </div>
                 <ButtonPrimary
                   onClick={() => {

@@ -13,13 +13,6 @@ type CategoryState = {
   visible: boolean;
 };
 
-const initialCategoryState: CategoryState[] = [
-  { name: 'Activity', visible: true },
-  { name: 'Diet', visible: true },
-  { name: 'Supplement', visible: true },
-  { name: 'Lifestyle', visible: true },
-];
-
 interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
@@ -28,6 +21,8 @@ interface SetOrdersProps {
   checkeds: Array<any>;
   reset: () => void;
   defaultSuggestions: Array<any>;
+  visibleCategoriy: CategoryState[];
+  setVisibleCategorieys: (value: CategoryState[]) => void;
   // resolvedSuggestions:(data:any) => void
 }
 
@@ -39,6 +34,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   checkeds,
   reset,
   defaultSuggestions,
+  visibleCategoriy,
+  setVisibleCategorieys,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('Activity');
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
@@ -49,7 +46,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
-    useState<CategoryState[]>(initialCategoryState);
+    useState<CategoryState[]>(visibleCategoriy);
 
   useEffect(() => {
     setData(defaultSuggestions);
@@ -197,6 +194,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
   const handleConfirm = () => {
     setCategories(localCategories);
+    setVisibleCategorieys(localCategories);
     setActiveCategory(localCategories[0].name);
     setshowchangeOrders(false);
   };
@@ -272,7 +270,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
               Cancel
             </button>
             <button
-              className="text-sm font-medium text-Primary-DeepTeal"
+              className={`${localCategories.filter((el) => el.visible).length === 0 ? 'opacity-50 pointer-events-none' : ''} text-sm font-medium text-Primary-DeepTeal`}
               onClick={handleConfirm}
             >
               Confirm
@@ -329,7 +327,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
         <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
           {data
-            .filter((el: any) => el.Category == activeCategory)
+            ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => (
               <div className="flex items-center gap-2 mb-3">
                 <Checkbox

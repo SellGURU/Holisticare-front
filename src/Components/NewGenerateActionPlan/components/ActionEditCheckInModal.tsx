@@ -19,7 +19,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   const [selectedDays, setSelectedDays] = useState<string[]>(
     defalts?.Frequency_Dates || [],
   );
-  const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>(
+  const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>(
     defalts?.Frequency_Dates || [],
   );
 
@@ -28,7 +28,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
-  const toggleDayMonthSelection = (day: number) => {
+  const toggleDayMonthSelection = (day: string) => {
     setSelectedDaysMonth((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
@@ -38,16 +38,18 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   );
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
-    if (frequencyType) {
-      setSelectedDays([]);
-      setSelectedDaysMonth([]);
-    }
-  }, [frequencyType]);
-  useEffect(() => {
     if (defalts) {
-      setSelectedDays(defalts?.Frequency_Dates || []);
+      if (defalts.Frequency_Type == 'weekly') {
+        setSelectedDays(defalts?.Frequency_Dates || []);
+        setSelectedDaysMonth([]);
+      } else if (defalts.Frequency_Type == 'monthly') {
+        setSelectedDaysMonth(defalts?.Frequency_Dates || []);
+        setSelectedDays([]);
+      } else {
+        setSelectedDays([]);
+        setSelectedDaysMonth([]);
+      }
       setFrequencyType(defalts?.Frequency_Type || null);
-      setSelectedDaysMonth(defalts?.Frequency_Dates || []);
       setSelectedTimes(defalts.Times || []);
     }
   }, [defalts]);
@@ -73,9 +75,9 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
     onSubmit({
       Times: selectedTimes,
       frequencyDates:
-        selectedDays.length > 0
+        frequencyType == 'weekly'
           ? selectedDays
-          : selectedDaysMonth.length > 0
+          : frequencyType == 'monthly'
             ? selectedDaysMonth
             : null,
       frequencyType: frequencyType,
@@ -94,10 +96,13 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
 
   const times = ['morning', 'midday', 'night'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
-  const dayMonth = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30,
-  ];
+  const dayMonth = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(i + 1).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -117,7 +122,11 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 name="frequency"
                 value="daily"
                 checked={frequencyType === 'daily'}
-                onChange={(e) => setFrequencyType(e.target.value)}
+                onChange={(e) => {
+                  setFrequencyType(e.target.value);
+                  setSelectedDays([]);
+                  setSelectedDaysMonth([]);
+                }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
               <label htmlFor="daily" className="text-xs cursor-pointer">
@@ -131,7 +140,14 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 name="frequency"
                 value="weekly"
                 checked={frequencyType === 'weekly'}
-                onChange={(e) => setFrequencyType(e.target.value)}
+                onChange={(e) => {
+                  setFrequencyType(e.target.value);
+                  if (frequencyType == 'weekly') {
+                    setSelectedDaysMonth([]);
+                  } else {
+                    setSelectedDays([]);
+                  }
+                }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
               <label htmlFor="weekly" className="text-xs cursor-pointer">
@@ -145,7 +161,14 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 name="frequency"
                 value="monthly"
                 checked={frequencyType === 'monthly'}
-                onChange={(e) => setFrequencyType(e.target.value)}
+                onChange={(e) => {
+                  setFrequencyType(e.target.value);
+                  if (frequencyType == 'monthly') {
+                    setSelectedDays([]);
+                  } else {
+                    setSelectedDaysMonth([]);
+                  }
+                }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
               <label htmlFor="monthly" className="text-xs cursor-pointer">
@@ -192,7 +215,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                           : 'text-Text-Secondary bg-backgroundColor-Card'
                       }`}
                     >
-                      {day}
+                      {day.split('-')[2]}
                     </div>
                   ))}
                 </div>
@@ -207,7 +230,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                           : 'text-Text-Secondary bg-backgroundColor-Card'
                       }`}
                     >
-                      {day}
+                      {day.split('-')[2]}
                     </div>
                   ))}
                 </div>

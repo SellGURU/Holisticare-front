@@ -15,7 +15,7 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
             index !== days.length - 1 ? 'border-r border-Gray-50' : ''
           }`}
         >
-          {day}
+          {day.split('-')[2]}
         </div>
       ))}
     </div>
