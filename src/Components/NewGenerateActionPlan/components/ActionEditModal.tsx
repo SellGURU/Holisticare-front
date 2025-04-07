@@ -26,7 +26,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   // onAddNotes,
   isAdd,
 }) => {
-  console.log('defalts', defalts);
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
       setGroups(res.data);
@@ -117,15 +116,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [baseScore, setBaseScore] = useState(defalts?.Base_Score || 5);
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
-    if (frequencyType) {
-      setSelectedDays([]);
-      setSelectedDaysMonth([]);
-    }
-  }, [frequencyType]);
-  useEffect(() => {
     if (defalts) {
-      setSelectedDays(defalts?.Frequency_Dates || []);
-      setSelectedDaysMonth(defalts?.Frequency_Dates || []);
+      if (defalts.Frequency_Type == 'weekly') {
+        setSelectedDays(defalts.Frequency_Dates || []);
+        setSelectedDaysMonth([]);
+      } else if (defalts.Frequency_Type == 'monthly') {
+        setSelectedDaysMonth(defalts.Frequency_Dates || []);
+        setSelectedDays([]);
+      } else {
+        setSelectedDays([]);
+        setSelectedDaysMonth([]);
+      }
       setSelectedGroup(defalts.Category || null);
       setTitle(defalts.Title || '');
       setDose(defalts.Dose || null);
@@ -141,7 +142,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setDescription(defalts.Description || '');
       setBaseScore(defalts.Base_Score || 5);
       setFrequencyType(defalts?.Frequency_Type || null);
-      setSelectedDaysMonth(defalts?.Frequency_Dates || []);
       setAddData({
         type: defalts?.Activity_Filters?.Type || '',
         terms: defalts?.Activity_Filters?.Terms || '',
@@ -195,15 +195,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Instruction: instructions,
       Times: selectedTimes,
       'Client Notes': notes,
+      frequencyType: frequencyType,
       frequencyDates:
-        selectedDays.length > 0
+        frequencyType == 'weekly'
           ? selectedDays
-          : selectedDaysMonth.length > 0
+          : frequencyType == 'monthly'
             ? selectedDaysMonth
             : null,
       Description: description,
       Base_Score: baseScore,
-      frequencyType: frequencyType,
       Sections: rsolveSectionListforSendToApi(),
       Task_Type: 'Action',
     });
@@ -292,9 +292,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Dose: dose,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0
+          frequencyType == 'weekly'
             ? selectedDays
-            : selectedDaysMonth.length > 0
+            : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
         Description: description,
@@ -312,9 +312,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Value: value,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0
+          frequencyType == 'weekly'
             ? selectedDays
-            : selectedDaysMonth.length > 0
+            : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
         Description: description,
@@ -332,9 +332,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         'Total Macros': totalMacros,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0
+          frequencyType == 'weekly'
             ? selectedDays
-            : selectedDaysMonth.length > 0
+            : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
         Description: description,
@@ -351,9 +351,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Times: selectedTimes,
         'Client Notes': notes,
         frequencyDates:
-          selectedDays.length > 0
+          frequencyType == 'weekly'
             ? selectedDays
-            : selectedDaysMonth.length > 0
+            : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
         Description: description,
@@ -682,7 +682,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       name="frequency"
                       value="daily"
                       checked={frequencyType === 'daily'}
-                      onChange={(e) => setFrequencyType(e.target.value)}
+                      onChange={(e) => {
+                        setFrequencyType(e.target.value);
+                        setSelectedDays([]);
+                        setSelectedDaysMonth([]);
+                      }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
                     <label htmlFor="daily" className="text-xs cursor-pointer">
@@ -696,7 +700,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       name="frequency"
                       value="weekly"
                       checked={frequencyType === 'weekly'}
-                      onChange={(e) => setFrequencyType(e.target.value)}
+                      onChange={(e) => {
+                        setFrequencyType(e.target.value);
+                        if (frequencyType == 'weekly') {
+                          setSelectedDaysMonth([]);
+                        } else {
+                          setSelectedDays([]);
+                        }
+                      }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
                     <label htmlFor="weekly" className="text-xs cursor-pointer">
@@ -710,7 +721,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       name="frequency"
                       value="monthly"
                       checked={frequencyType === 'monthly'}
-                      onChange={(e) => setFrequencyType(e.target.value)}
+                      onChange={(e) => {
+                        setFrequencyType(e.target.value);
+                        if (frequencyType == 'monthly') {
+                          setSelectedDays([]);
+                        } else {
+                          setSelectedDaysMonth([]);
+                        }
+                      }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
                     <label htmlFor="monthly" className="text-xs cursor-pointer">
