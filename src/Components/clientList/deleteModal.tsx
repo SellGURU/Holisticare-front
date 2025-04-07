@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
+import MainModal from '../MainModal';
 interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;
@@ -23,16 +24,13 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
   if (!isOpen) return null;
   return (
     <>
-      <div className="w-full h-screen flex justify-center fixed z-[120] top-0 left-0 items-center">
-        <div
-          ref={modalRefrence}
-          className="bg-[#FFFFFF66] min-w-[450px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
-        >
-          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[196px]">
+    
+      <MainModal isOpen={isOpen} onClose={()=>onClose}>
+          <div className={`rounded-2xl p-6 pb-8 bg-white shadow-800 ${isComplete? 'w-[303px]' : 'w-[500px]'}  h-[196px]`}>
             {isComplete ? (
               <div className="flex flex-col items-center">
-                <img src="/icons/done.svg" alt="" />
-                <div className="text-center text-xs font-medium text-Text-Primary mt-3 mb-6">
+                <img className='-mt-5' src="/icons/tick-circle-background-new.svg" alt="" />
+                <div className="text-center text-xs font-medium text-Text-Primary -mt-3 mb-6">
                   {name} has been successfully deleted.
                 </div>
                 <ButtonPrimary
@@ -51,11 +49,10 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
                   Delete
                 </div>
                 <div className="mt-5 text-center text-xs font-medium">
-                  Are you sure you want to delete client {name}?
+                Are you sure you want to delete client {name}?
                 </div>
                 <div className="mt-4 text-xs text-Text-Secondary text-center">
-                  After deleting, you will not be able to return this client.
-                </div>
+                After deleting, you will not be able to return this client.                </div>
                 <div className=" mt-5 w-full flex justify-end gap-3 items-center">
                   <div
                     onClick={onClose}
@@ -77,9 +74,9 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
               </>
             )}
           </div>
-        </div>
-      </div>
-      <div className="w-full h-full min-h-screen fixed top-0 left-0 bg-black opacity-30 z-[100]"></div>
+          </MainModal>
+    
+      {/* <div className="w-full h-full min-h-screen fixed top-0 left-0 bg-black opacity-30 z-[100]"></div> */}
     </>
   );
 };
