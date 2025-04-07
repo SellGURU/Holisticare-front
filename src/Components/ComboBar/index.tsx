@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PopUpChat } from '../popupChat';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import { useParams } from 'react-router-dom';
 import { SlideOutPanel } from '../SlideOutPanel';
@@ -17,8 +17,10 @@ import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import SvgIcon from '../../utils/svgIcon.tsx';
 // import { Tooltip } from 'react-tooltip';
-
-export const ComboBar = () => {
+interface ComboBarProps {
+  isHolisticPlan?: boolean;
+}
+export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
@@ -115,6 +117,9 @@ export const ComboBar = () => {
     handleItemClick('Questionary Tracking');
   });
   const handleItemClick = (name: string) => {
+    if (isHolisticPlan && name !== 'Expert’s Note') {
+      return; // Prevent click action if isHolisticPlan is true and it's not the Expert's Note
+    }
     setActiveItem(name);
     setIsSlideOutPanel(true);
   };
@@ -144,7 +149,7 @@ export const ComboBar = () => {
   };
   console.log(isSlideOutPanel);
   return (
-    <>
+    <div className="h-full flex flex-col justify-between items-center">
       <SlideOutPanel
         isOpen={isSlideOutPanel}
         isCombo={true}
@@ -209,7 +214,7 @@ export const ComboBar = () => {
                 // data-tooltip-content={el.name}
                 key={index}
                 onClick={() => {
-                  if (el.name == 'Questionary Tracking') {
+                  if (el.name == 'Questionary Tracking' && !isHolisticPlan) {
                     setIsSlideOutPanel(true);
                     setUpdated(false);
                   }
@@ -219,9 +224,11 @@ export const ComboBar = () => {
                   updated &&
                   el.name == 'Questionary Tracking' &&
                   'border-2 border-Orange'
-                }
-                 
-                `}
+                } ${
+                  isHolisticPlan && el.name !== 'Expert’s Note'
+                    ? 'opacity-50 cursor-not-allowed'
+                    : ''
+                }`}
               >
                 <SvgIcon src={el.url} width="16" height="16" color="#005F73" />
                 {/* <img src={el.url} className={'w-5 h-5 object-cover'} /> */}
@@ -246,7 +253,7 @@ export const ComboBar = () => {
       <div className={' hidden md:block space-y-1'}>
         <div
           className={
-            'w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center'
+            'w-8 h-8 rounded-md flex invisible bg-Primary-EmeraldGreen items-center justify-center'
           }
         >
           <img src={'/icons/add.svg'} />
@@ -272,6 +279,6 @@ export const ComboBar = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
