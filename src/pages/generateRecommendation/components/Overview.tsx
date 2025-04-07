@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import BioMarkerRowSuggestions from '../../generateTreatmentPlan/components/BiomarkerRow';
+type CategoryState = {
+  name: string;
+  visible: boolean;
+};
 
 interface OverviewProps {
   treatmentPlanData: any;
   suggestionsChecked: Array<any>;
+  visibleCategoriy: CategoryState[];
 }
 export const Overview: React.FC<OverviewProps> = ({
+  visibleCategoriy,
   treatmentPlanData,
   suggestionsChecked,
 }) => {
@@ -45,7 +51,11 @@ export const Overview: React.FC<OverviewProps> = ({
           .filter(
             (el: any) =>
               el.checked == true &&
-              !getAllCheckedCategories().includes(el.Category),
+              !getAllCheckedCategories().includes(el.Category) &&
+              visibleCategoriy
+                .filter((el) => el.visible)
+                .map((el) => el.name)
+                .includes(el.Category),
           )
           .map((el: any, suggestionIndex: number) => {
             return (
