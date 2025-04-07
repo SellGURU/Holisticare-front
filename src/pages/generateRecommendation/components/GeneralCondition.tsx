@@ -127,7 +127,57 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   useEffect(() => console.log(data), [data]);
   return (
     <div>
-      <div className="flex justify-between gap-y-3 flex-wrap">
+      <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-Primary-EmeraldGreen shadow-200 min-w-[449px] text-Text-Primary">
+        <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
+          <div className="flex items-center text-Primary-DeepTeal gap-2">
+            {/* <img src="/icons/lamp-on.svg" alt="" /> */}
+            {/* Looking Forwards */}
+            Completion Suggestions
+          </div>
+          {editMode.completionSuggestions ? (
+            <div
+              className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex items-center justify-center cursor-pointer"
+              onClick={() => handleSave('completionSuggestions')}
+            >
+              <img src="/icons/tick-square-blue.svg" alt="" />
+            </div>
+          ) : (
+            <img
+              src="/icons/edit-2.svg"
+              alt=""
+              onClick={() => handleEdit('lookingForwards')}
+              style={{ cursor: 'pointer' }}
+            />
+          )}
+        </div>
+        <ul className="mt-4 px-6">
+          {(editMode.completionSuggestions
+            ? tempData.completionSuggestions
+            : data.completionSuggestions
+          )?.map((item, index) => (
+            <React.Fragment key={index}>
+              {editMode.completionSuggestions ? (
+                <textarea
+                  value={item}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    handleContentChange(
+                      'completionSuggestions',
+                      index,
+                      e.target.value,
+                    );
+                    e.target.style.height = 'auto';
+                    e.target.style.height = `${e.target.scrollHeight}px`;
+                  }}
+                  className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50 text-xs resize-none outline-none  mb-2"
+                />
+              ) : (
+                <li className="list-disc text-xs mt-2">{item}</li>
+              )}
+            </React.Fragment>
+          ))}
+        </ul>
+      </div>      
+      <div className="flex justify-between gap-y-3 mt-3 flex-wrap">
         <Card
           title="Biomarkers"
           content={editMode.biomarkers ? tempData.biomarkers : data.biomarkers}
@@ -139,17 +189,17 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           }
         />
         <Card
-          title="Completion Suggestions"
+          title="Looking Forwards"
           content={
-            editMode.completionSuggestions
-              ? tempData.completionSuggestions
-              : data.completionSuggestions
+            editMode.lookingForwards
+              ? tempData.lookingForwards
+              : data.lookingForwards
           }
-          isEditing={editMode.completionSuggestions}
-          onEdit={() => handleEdit('completionSuggestions')}
-          onSave={() => handleSave('completionSuggestions')}
+          isEditing={editMode.lookingForwards}
+          onEdit={() => handleEdit('lookingForwards')}
+          onSave={() => handleSave('lookingForwards')}
           onContentChange={(index, value) =>
-            handleContentChange('completionSuggestions', index, value)
+            handleContentChange('lookingForwards', index, value)
           }
         />
         <Card
@@ -167,55 +217,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           }
         />
       </div>
-      <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-Primary-EmeraldGreen shadow-200 min-w-[449px] text-Text-Primary">
-        <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-          <div className="flex items-center text-Primary-DeepTeal gap-2">
-            <img src="/icons/lamp-on.svg" alt="" />
-            Looking Forwards
-          </div>
-          {editMode.lookingForwards ? (
-            <div
-              className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex items-center justify-center cursor-pointer"
-              onClick={() => handleSave('lookingForwards')}
-            >
-              <img src="/icons/tick-square-blue.svg" alt="" />
-            </div>
-          ) : (
-            <img
-              src="/icons/edit-2.svg"
-              alt=""
-              onClick={() => handleEdit('lookingForwards')}
-              style={{ cursor: 'pointer' }}
-            />
-          )}
-        </div>
-        <ul className="mt-4 px-6">
-          {(editMode.lookingForwards
-            ? tempData.lookingForwards
-            : data.lookingForwards
-          )?.map((item, index) => (
-            <React.Fragment key={index}>
-              {editMode.lookingForwards ? (
-                <textarea
-                  value={item}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    handleContentChange(
-                      'lookingForwards',
-                      index,
-                      e.target.value,
-                    );
-                    e.target.style.height = 'auto';
-                    e.target.style.height = `${e.target.scrollHeight}px`;
-                  }}
-                  className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50 text-xs resize-none outline-none  mb-2"
-                />
-              ) : (
-                <li className="list-disc text-xs mt-2">{item}</li>
-              )}
-            </React.Fragment>
-          ))}
-        </ul>
-      </div>
+
     </div>
   );
 };
