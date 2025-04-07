@@ -157,7 +157,7 @@ const MessagesChatBox = () => {
             )}
             <div
               id="userChat"
-              className="p-4 space-y-4 h-[85%] overflow-y-scroll"
+              className="p-4 space-y-4 h-[80%] overflow-y-scroll"
             >
               {messages.map((message, index: number) => (
                 <>

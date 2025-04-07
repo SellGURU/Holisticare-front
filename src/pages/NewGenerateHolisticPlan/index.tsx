@@ -71,6 +71,9 @@ const NewGenerateHolisticPlan = () => {
     return treatmentPlanData['need_focus_benchmarks_list'];
     // return "scdc"
   };
+  const [isSaving, setIsSaving] = useState<'default' | 'saving' | 'completed'>(
+    'default',
+  );
   const resoveSubctegoriesSubs = () => {
     const subs: any = [];
     // treatmentPlanData['result_tab'][0].subcategories
@@ -105,7 +108,18 @@ const NewGenerateHolisticPlan = () => {
     (value: string) => !isNaN(parseFloat(value)),
   );
   console.log(activeEl);
-
+  useEffect(() => {
+    if (isSaving == 'saving') {
+      setTimeout(() => {
+        setIsSaving('completed');
+      }, 1000);
+    }
+    if (isSaving == 'completed') {
+      setTimeout(() => {
+        setIsSaving('default');
+      }, 1000);
+    }
+  }, [isSaving]);
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -378,7 +392,12 @@ const NewGenerateHolisticPlan = () => {
                                   {/* Start creating your Holistic Plan */}
                                 </div>
                                 <ButtonSecondary
-                                  onClick={() => setshowAutoGenerateModal(true)}
+                                  onClick={() => {
+                                    navigate(
+                                      `/report/Generate-Recommendation/${id}`,
+                                    );
+                                    // setshowAutoGenerateModal(true)
+                                  }}
                                   ClassName="w-full md:w-fit"
                                 >
                                   <img src="/icons/tick-square.svg" alt="" />{' '}
@@ -561,7 +580,10 @@ const NewGenerateHolisticPlan = () => {
                           Start creating your holistic plan
                         </div>
                         <ButtonSecondary
-                          onClick={() => setshowAutoGenerateModal(true)}
+                          onClick={() => {
+                            navigate(`/report/Generate-Recommendation/${id}`);
+                          }}
+                          // onClick={() => setshowAutoGenerateModal(true)}
                           ClassName="w-full md:w-fit rounded-full"
                         >
                           <img src="/icons/tick-square.svg" alt="" /> Auto
@@ -698,7 +720,7 @@ const NewGenerateHolisticPlan = () => {
           }}
           headline="Analysis"
         >
-          <div>
+          <div className="relative">
             <div className="flex mb-4 justify-between items-center">
               <div
                 onClick={() => {
@@ -766,6 +788,7 @@ const NewGenerateHolisticPlan = () => {
                   isNeedFocus
                   label=""
                   onChange={(e) => {
+                    setIsSaving('saving');
                     updateClientConditionInsights(e);
                   }}
                   value={treatmentPlanData['medical_summary']}
@@ -784,12 +807,35 @@ const NewGenerateHolisticPlan = () => {
                   label=""
                   onChange={(e) => {
                     updateNeedFocus(e);
+                    setIsSaving('saving');
                   }}
                   value={resolveNeedFocusText()}
                 />
                 {/* <textarea  className="w-full h-[250px] hidden-scrollbar outline-none p-1 bg-backgroundColor-Card text-[12px]" onChange={(e) =>{
                         updateNeedFocus(e.target.value);
                         }}  value={resolveNeedFocusText()} /> */}
+              </div>
+            )}
+            {(isSaving == 'saving' || isSaving == 'completed') && (
+              <div className="absolute bottom-[-50px] flex items-center mt-4 gap-1 left-0 right-0">
+                {isSaving == 'saving' ? (
+                  <div className="flex justify-center items-center">
+                    <SpinnerLoader color="#383838"></SpinnerLoader>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <img src="/icons/tick-square.svg" alt="" />
+                  </div>
+                )}
+                {isSaving == 'saving' ? (
+                  <div className="text-xs text-Text-Secondary ">
+                    Changes will save Automaticlly
+                  </div>
+                ) : (
+                  <div className="text-xs text-Text-Secondary ">
+                    Changes saved Automaticlly
+                  </div>
+                )}
               </div>
             )}
           </div>

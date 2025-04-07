@@ -22,7 +22,7 @@
   height: 4.47px;
   top: 0;
   left: 50%;
-  background-color: #ffffff; /* Teal color */
+  background-color: var(--spinner-color, #ffffff); /* Teal color */
   border-radius: 50%;
   transform: translateX(-50%);
   opacity: 1; /* Initial opacity */
