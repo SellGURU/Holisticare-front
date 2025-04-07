@@ -142,9 +142,12 @@ const NewGenerateHolisticPlan = () => {
           </div>
         </div>
         <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px]">
-        
-          <div className={`w-full px-4 ${treatmentPlanData && 'pr-12'}  py-6 relative h-full `}>
-            <div className="lg:fixed lg:top-13 lg:z-[7] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8 lg:pr-9 lg:ml-[-32px] lg:mt-[-13px]">
+          <div
+            className={`w-full px-4 ${treatmentPlanData && 'pr-12'}  py-6 relative h-full `}
+          >
+            <div
+              className={`lg:fixed lg:top-13 lg:z-[7] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8  ${treatmentPlanData ? 'lg:pr-3' : 'pr-8'} lg:ml-[-32px] lg:mt-[-13px]`}
+            >
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
                   onClick={() => {
@@ -490,9 +493,7 @@ const NewGenerateHolisticPlan = () => {
                                       ></StatusBarChart>
                                     </div>
                                   </div>
-                                  <div
-                                    className={`lg:w-[50%] ${isChartDataEmpty && 'invisible'}`}
-                                  >
+                                  <div className={`lg:w-[50%]`}>
                                     <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
                                       <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
                                         Historical Data
@@ -517,6 +518,7 @@ const NewGenerateHolisticPlan = () => {
                                       </div>
                                       <div className="mt-0 relative">
                                         <StatusChart
+                                          isStringValues={isChartDataEmpty}
                                           mode={
                                             activeEl.chart_bounds['Needs Focus']
                                               .length > 1 &&
@@ -601,7 +603,9 @@ const NewGenerateHolisticPlan = () => {
               </ButtonPrimary>
             </div>
           </div>
-          <div className={`lg:pt-[30px] h-[660px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}>
+          <div
+            className={`lg:pt-[30px] h-[660px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+          >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
         </div>

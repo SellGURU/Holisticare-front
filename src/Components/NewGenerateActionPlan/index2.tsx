@@ -12,6 +12,7 @@ import Stadio from './components/Stadio';
 // import dataJson from './data.json';
 import SpinnerLoader from '../SpinnerLoader';
 import CalenderComponent from '../CalendarComponent/CalendarComponent';
+import { ComboBar } from '../ComboBar';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
@@ -158,7 +159,7 @@ const GenerateActionPlan = () => {
               {!calendarView && (
                 <>
                   {isWeighted && (
-                    <div>
+                    <div className="pr-[70px]">
                       <ButtonPrimary onClick={saveChanges}>
                         {isLoadingSaveChanges ? (
                           <>
@@ -180,7 +181,7 @@ const GenerateActionPlan = () => {
               <>
                 {isWeighted && (
                   <>
-                    <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center">
+                    <div className="flex pb-3 justify-between gap-4 mx-8 mt-4 items-center pr-[70px]">
                       <div className="flex-grow">
                         <PlanObjective
                           value={planObjective}
@@ -225,7 +226,7 @@ const GenerateActionPlan = () => {
               </>
             ) : (
               <>
-                <div className=" w-full h-full mt-[190px] ">
+                <div className=" w-full h-full mt-[190px] pr-[70px] ">
                   <Stadio
                     actions={actions}
                     setActions={setActions}
@@ -235,6 +236,9 @@ const GenerateActionPlan = () => {
                     plans={plans}
                     handleShowConflictsModal={handleShowConflictsModal}
                   />
+                  <div className="absolute right-5 top-[75px] z-50">
+                    <ComboBar isHolisticPlan></ComboBar>
+                  </div>
                 </div>
               </>
             )}

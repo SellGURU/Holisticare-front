@@ -17,10 +17,10 @@ import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import SvgIcon from '../../utils/svgIcon.tsx';
 // import { Tooltip } from 'react-tooltip';
-interface ComboBarProps{
-  isHolisticPlan?:boolean
+interface ComboBarProps {
+  isHolisticPlan?: boolean;
 }
-export const ComboBar: React.FC<ComboBarProps> = ({isHolisticPlan}) => {
+export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
@@ -149,7 +149,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({isHolisticPlan}) => {
   };
   console.log(isSlideOutPanel);
   return (
-    <div className='h-full flex flex-col justify-between items-center'>
+    <div className="h-full flex flex-col justify-between items-center">
       <SlideOutPanel
         isOpen={isSlideOutPanel}
         isCombo={true}
@@ -253,7 +253,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({isHolisticPlan}) => {
       <div className={' hidden md:block space-y-1'}>
         <div
           className={
-            'w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center'
+            'w-8 h-8 rounded-md flex invisible bg-Primary-EmeraldGreen items-center justify-center'
           }
         >
           <img src={'/icons/add.svg'} />
