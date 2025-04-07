@@ -159,7 +159,7 @@ const GenerateActionPlan = () => {
               {!calendarView && (
                 <>
                   {isWeighted && (
-                    <div className='pr-[70px]'>
+                    <div className="pr-[70px]">
                       <ButtonPrimary onClick={saveChanges}>
                         {isLoadingSaveChanges ? (
                           <>
@@ -236,9 +236,8 @@ const GenerateActionPlan = () => {
                     plans={plans}
                     handleShowConflictsModal={handleShowConflictsModal}
                   />
-                  <div className='absolute right-5 top-[75px] z-50'>
-                      <ComboBar isHolisticPlan></ComboBar>                  
-
+                  <div className="absolute right-5 top-[75px] z-50">
+                    <ComboBar isHolisticPlan></ComboBar>
                   </div>
                 </div>
               </>
