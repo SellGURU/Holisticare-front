@@ -142,8 +142,9 @@ const NewGenerateHolisticPlan = () => {
           </div>
         </div>
         <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px]">
-        
-          <div className={`w-full px-4 ${treatmentPlanData && 'pr-12'}  py-6 relative h-full `}>
+          <div
+            className={`w-full px-4 ${treatmentPlanData && 'pr-12'}  py-6 relative h-full `}
+          >
             <div className="lg:fixed lg:top-13 lg:z-[7] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8 lg:pr-9 lg:ml-[-32px] lg:mt-[-13px]">
               <div className="hidden lg:flex w-full items-center gap-3">
                 <div
@@ -601,7 +602,9 @@ const NewGenerateHolisticPlan = () => {
               </ButtonPrimary>
             </div>
           </div>
-          <div className={`lg:pt-[30px] h-[660px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}>
+          <div
+            className={`lg:pt-[30px] h-[660px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+          >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
         </div>

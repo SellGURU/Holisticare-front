@@ -30,7 +30,7 @@ const MessagesChatBox = () => {
   const [Images, setImages] = useState<string[]>([]); // Use string[] to store base64 strings
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-  const [conversationId] = useState<number>(1);
+  // const [conversationId] = useState<number>(1);
 
   const usernameParams = searchParams.get('username');
   const userMessagesList = (member_id: number) => {
@@ -66,11 +66,15 @@ const MessagesChatBox = () => {
   console.log(selectedBenchMarks);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
+      const lastConversationId =
+        messages.length > 0
+          ? messages[messages.length - 1].conversation_id
+          : undefined;
       const newMessage: SendMessage = {
         message_text: input,
         receiver_id: memberId,
         images: Images,
-        conversation_id: conversationId,
+        conversation_id: lastConversationId,
       };
       // setMessages([...messages, newMessage]);
       setInput('');
@@ -157,7 +161,7 @@ const MessagesChatBox = () => {
             >
               {messages.map((message, index: number) => (
                 <>
-                  {message.sender_id === memberId ? (
+                  {message.sender_type === 'patient' ? (
                     <>
                       {index == messages.length - 1 && (
                         <div ref={messagesEndRef}></div>
@@ -178,7 +182,7 @@ const MessagesChatBox = () => {
                             </span>
                           </div>
                           <div
-                            className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
+                            className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
                             style={{ lineHeight: '26px' }}
                           >
                             {formatText(message.message_text)}
@@ -196,7 +200,7 @@ const MessagesChatBox = () => {
                               {message.time}
                             </span>
                           </div>
-                          <div className="max-w-[500px] bg-[#005F7340] bg-opacity-25  p-4 text-justify mt-1 border-Gray-50 border text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                          <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
                             {formatText(message.message_text)}
                           </div>
                         </div>
