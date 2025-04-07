@@ -386,6 +386,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 },
                 Frequency_Type: editedData.frequencyType ?? '',
                 Frequency_Dates: editedData.frequencyDates ?? [],
+                Sections: editedData.Sections ?? [],
               };
 
               updatedData.category[categoryIndex] = updatedItem;

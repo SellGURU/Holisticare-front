@@ -33,7 +33,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     });
   }, []);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [selectedDaysMonth, setSelectedDaysMonth] = useState<number[]>([]);
+  const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
@@ -49,7 +49,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
   };
-  const toggleDayMonthSelection = (day: number) => {
+  const toggleDayMonthSelection = (day: string) => {
     setSelectedDaysMonth((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
     );
@@ -181,6 +181,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             Weight: val.Weight,
             Reps: val.Reps,
             Rest: val.Rest,
+            ...val.Exercise,
           };
         }),
       };
@@ -387,10 +388,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const times = ['morning', 'midday', 'night'];
   const locations = ['Home', 'Gym'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
-  const dayMonth = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30,
-  ];
+  const dayMonth = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(i + 1).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
 
   return (
     <MainModal onClose={onClose} isOpen={isOpen}>
@@ -465,7 +469,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Write the action’s title..."
+                  placeholder="Write the action's title..."
                   type="text"
                   className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                 />
@@ -478,7 +482,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   onKeyDown={handleNoteKeyDown}
                   className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
                   rows={6}
-                  placeholder="Write the action’s description..."
+                  placeholder="Write the action's description..."
                 />
               </div>
               <div className="mb-4">
@@ -494,7 +498,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <textarea
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  placeholder="Write the action’s instruction..."
+                  placeholder="Write the action's instruction..."
                   className="mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                   rows={6}
                 />
@@ -505,7 +509,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     Dose
                   </div>
                   <input
-                    placeholder="Write the supplement’s dose..."
+                    placeholder="Write the supplement's dose..."
                     value={dose}
                     onChange={(e) => setDose(e.target.value)}
                     className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
@@ -753,7 +757,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                 : 'text-Text-Secondary bg-backgroundColor-Card'
                             }`}
                           >
-                            {day}
+                            {day.split('-')[2]}
                           </div>
                         ))}
                       </div>
@@ -768,7 +772,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                 : 'text-Text-Secondary bg-backgroundColor-Card'
                             }`}
                           >
-                            {day}
+                            {day.split('-')[2]}
                           </div>
                         ))}
                       </div>
