@@ -253,7 +253,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       <div className={' hidden md:block space-y-1'}>
         <div
           className={
-            'w-8 h-8 rounded-md flex bg-Primary-EmeraldGreen items-center justify-center'
+            'w-8 h-8 rounded-md flex invisible bg-Primary-EmeraldGreen items-center justify-center'
           }
         >
           <img src={'/icons/add.svg'} />
