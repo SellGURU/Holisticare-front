@@ -121,7 +121,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
                   <tr className="text-Text-Primary space-y-7  " key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td
-                        className={`px-3 py-3 text-center text-nowrap text-xs  `}
+                        className={`px-3 py-3 text-center text-nowrap text-xs max-w-[80px]  `}
                         key={cell.id}
                       >
                         {flexRender(

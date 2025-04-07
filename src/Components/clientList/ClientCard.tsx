@@ -214,6 +214,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
         </>
       </MainModal>
       <ArchiveModal
+
         archived={client.archived}
         onConfirm={() => {
           Application.archivePatient({
@@ -248,71 +249,109 @@ const ClientCard: React.FC<ClientCardProps> = ({
         {showModal && (
           <div
             ref={showModalRefrence}
-            className="absolute top-7 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+            className="absolute top-12 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
             {/* <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
               <img src="/icons/assign-green.svg" alt="" />
               Assign to ...
             </div> */}
+            {client.archived ? (
+              <>
+                <div
+                  onClick={() => {
+                    setshowModal(false);
+                    setshowArchiveModal(true);
+                    // Application.archivePatient({
+                    //   member_id: client.member_id,
+                    // });
+                    // onarchive(client.member_id);
+                    // ondelete(client.member_id);
+                  }}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                >
+                  <img src="/icons/directbox-send.svg" alt="" />
+                   Unarchive
+                </div>
+                <div
+                  onClick={() => {
+                    setshowDeleteModal(true);
+                  }}
+                  // onClick={() => {
+                  //   setshowModal(false);
+                  //   Application.deletePatient({
+                  //     member_id: client.member_id,
+                  //   });
+                  //   // onarchive(client.member_id)
+                  //   ondelete(client.member_id);
+                  // }}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
+                >
+                  <img src="/icons/delete-green.svg" className="w-4" alt="" />
+                  Delete
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  onClick={() => {
+                    setshowModal(false);
+                    setshowArchiveModal(true);
+                    // Application.archivePatient({
+                    //   member_id: client.member_id,
+                    // });
+                    // onarchive(client.member_id);
+                    // ondelete(client.member_id);
+                  }}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                >
+                  <img src="/icons/directbox-send.svg" alt="" />
+                 Send to Archieve
+                </div>
+                <div
+                  onClick={handleToggleFavoriteAndHighPriority}
+                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                >
+                  <img src="/icons/star.svg" alt="" />
+                  {client.favorite
+                    ? 'Remove from High-Priorities'
+                    : 'Add to High-Priorities'}{' '}
+                </div>
+                <div
+                  onClick={() => {
+                    Application.giveClientAccess({
+                      member_id: client.member_id,
+                    }).then((res) => {
+                      console.log(res);
 
-            <div
-              onClick={() => {
-                setshowModal(false);
-                setshowArchiveModal(true);
-                // Application.archivePatient({
-                //   member_id: client.member_id,
-                // });
-                // onarchive(client.member_id);
-                // ondelete(client.member_id);
-              }}
-              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
-            >
-              <img src="/icons/directbox-send.svg" alt="" />
-              {client.archived ? 'Unarchive' : 'Send to Archieve'}
-            </div>
-            <div
-              onClick={handleToggleFavoriteAndHighPriority}
-              className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
-            >
-              <img src="/icons/star.svg" alt="" />
-              {client.favorite
-                ? 'Remove from High-Priorities'
-                : 'Add to High-Priorities'}{' '}
-            </div>
-            <div
-              onClick={() => {
-                Application.giveClientAccess({
-                  member_id: client.member_id,
-                }).then((res) => {
-                  console.log(res);
-
-                  setAccessUserName(res.data.username);
-                  setAccessPassword(res.data.password);
-                  setShowAccessModal(true);
-                });
-              }}
-              className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
-            >
-              <img src="/icons/keyboard-open.svg" alt="" />
-              Client Access
-            </div>
-            <div
-              onClick={() => {
-                setshowDeleteModal(true);
-              }}
-              // onClick={() => {
-              //   setshowModal(false);
-              //   Application.deletePatient({
-              //     member_id: client.member_id,
-              //   });
-              //   // onarchive(client.member_id)
-              //   ondelete(client.member_id);
-              // }}
-              className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
-            >
-              <img src="/icons/delete-green.svg" className="w-4" alt="" />
-              Delete
-            </div>
+                      setAccessUserName(res.data.username);
+                      setAccessPassword(res.data.password);
+                      setShowAccessModal(true);
+                    });
+                  }}
+                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                >
+                  <img src="/icons/keyboard-open.svg" alt="" />
+                  Client Access
+                </div>
+                <div
+                  onClick={() => {
+                    setshowDeleteModal(true);
+                  }}
+                  // onClick={() => {
+                  //   setshowModal(false);
+                  //   Application.deletePatient({
+                  //     member_id: client.member_id,
+                  //   });
+                  //   // onarchive(client.member_id)
+                  //   ondelete(client.member_id);
+                  // }}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
+                >
+                  <img src="/icons/delete-green.svg" className="w-4" alt="" />
+                  Delete
+                </div>
+              </>
+            )}
           </div>
         )}
         <div
@@ -385,11 +424,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
           </div>
         </div>
         <div
+          ref={showModalButtonRefrence}
           onClick={(e) => {
             e.stopPropagation();
             setshowModal(!showModal);
           }}
-          className="absolute top-3 right-2 cursor-pointer"
+          className="absolute top-7 right-2 cursor-pointer"
         >
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
@@ -471,7 +511,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
-                    {client.age} Years Old
+                    {client.age ? client.age + ' Years Old' : null}
+                    {/* {client.age}  */}
                   </div>
                   <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px]">
@@ -479,7 +520,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       Check-in
                     </div>
                     <div
-                      className="text-nowrap max-w-[100px] ml-[28px]    truncate"
+                      className="text-nowrap max-w-[110px] ml-[28px]    truncate"
                       title={client['Check-in']}
                     >
                       {client['Check-in']}

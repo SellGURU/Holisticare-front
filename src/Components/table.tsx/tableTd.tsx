@@ -136,7 +136,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       console.log(row);
 
       return (
-        <div className="items-center justify-center text-xs text-Text-Secondary   flex ">
+        <div className="items-center justify-center text-xs text-Text-Secondary capitalize  flex ">
           <Badge status={row.original.status || 'at-risk'}>
             {row.original.status || 'No Data'}
           </Badge>
@@ -228,21 +228,21 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Action',
     enableSorting: false,
     cell: ({ row }) => {
-      const handleInvitation = (type: string) => {
-        publish(`send${type}`, {
-          id: row.original.member_id,
-          name: row.original.name,
-          email: row.original.email,
-        });
-      };
+      // const handleInvitation = (type: string) => {
+      //   publish(`send${type}`, {
+      //     id: row.original.member_id,
+      //     name: row.original.name,
+      //     email: row.original.email,
+      //   });
+      // };
       return (
         <div className="flex justify-center w-full gap-2">
-          <img
+          {/* <img
             onClick={() => handleInvitation('Email')}
             src="/icons/sms-tracking.svg"
             alt=""
             className="cursor-pointer"
-          />
+          /> */}
           <img
             onClick={() => {
               publish('confirmDelete', {
