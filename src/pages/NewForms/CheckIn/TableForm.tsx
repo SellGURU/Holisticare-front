@@ -65,8 +65,26 @@ const TableForm: FC<TableProps> = ({
   const [modalPosition, setModalPosition] = useState({ top: 0 });
   const handleOpenModal = (e: React.MouseEvent<HTMLImageElement>, row: any) => {
     const rect = e.currentTarget.getBoundingClientRect();
+    const modalHeight = 250; // Approximate height of the modal
+    const windowHeight = window.innerHeight;
+    
+    // Calculate the initial top position
+    let topPosition = rect.top + window.scrollY - 200;
+    
+    // Check if the modal would go off the bottom of the screen
+    if (topPosition + modalHeight > windowHeight + window.scrollY) {
+      // Position the modal with less top offset when near the bottom of the screen
+      // This will make it appear closer to the click point
+      topPosition = rect.top + window.scrollY - 100;
+    }
+    
+    // If top position is more than 230px, show the modal above the click point
+    if (topPosition > 230) {
+      topPosition = rect.top + window.scrollY - modalHeight - 80;
+    }
+    
     setModalPosition({
-      top: rect.top + window.scrollY - 200,
+      top: topPosition,
     });
     setSelectedRow(row.original);
     setshowModal(true);
