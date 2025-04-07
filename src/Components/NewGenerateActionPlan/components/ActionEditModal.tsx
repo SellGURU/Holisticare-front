@@ -26,6 +26,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   // onAddNotes,
   isAdd,
 }) => {
+  console.log('defalts', defalts);
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
       setGroups(res.data);
@@ -116,6 +117,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [baseScore, setBaseScore] = useState(defalts?.Base_Score || 5);
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
+    if (frequencyType) {
+      setSelectedDays([]);
+      setSelectedDaysMonth([]);
+    }
+  }, [frequencyType]);
+  useEffect(() => {
     if (defalts) {
       setSelectedDays(defalts?.Frequency_Dates || []);
       setSelectedDaysMonth(defalts?.Frequency_Dates || []);
@@ -143,6 +150,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         equipment: defalts?.Activity_Filters?.Equipment || '',
         level: defalts?.Activity_Filters?.Level || '',
       });
+      setPractitionerComments(defalts['Practitioner Comments'] || []);
     }
     setSelectedLocations(defalts?.Activity_Location || []);
     setSectionList(
@@ -163,12 +171,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }) || [],
     );
   }, [defalts]);
-  // useEffect(() => {
-  //   if (frequencyType) {
-  //     setSelectedDays([]);
-  //     setSelectedDaysMonth([]);
-  //   }
-  // }, [frequencyType]);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {

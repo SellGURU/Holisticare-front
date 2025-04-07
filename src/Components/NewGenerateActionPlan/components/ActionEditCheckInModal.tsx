@@ -16,7 +16,6 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  console.log('defalts', defalts);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     defalts?.Frequency_Dates || [],
   );
@@ -39,6 +38,12 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   );
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
+    if (frequencyType) {
+      setSelectedDays([]);
+      setSelectedDaysMonth([]);
+    }
+  }, [frequencyType]);
+  useEffect(() => {
     if (defalts) {
       setSelectedDays(defalts?.Frequency_Dates || []);
       setFrequencyType(defalts?.Frequency_Type || null);
@@ -46,12 +51,6 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
       setSelectedTimes(defalts.Times || []);
     }
   }, [defalts]);
-  useEffect(() => {
-    if (frequencyType) {
-      setSelectedDays([]);
-      setSelectedDaysMonth([]);
-    }
-  }, [frequencyType]);
   const modalRef = useRef(null);
 
   useModalAutoClose({
