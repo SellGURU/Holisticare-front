@@ -24,8 +24,8 @@ const AddClient = () => {
     validationSchema: yup.object({
       age: yup.number().min(12).max(60),
       email: YoupValidation('email'),
-      firstName: yup.string().required(),
-      lastName: yup.string().required(),
+      firstName: yup.string().required('First name is required'),
+      lastName: yup.string().required('Last name is required'),
       gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
     }),
     onSubmit: () => {
@@ -221,23 +221,32 @@ const AddClient = () => {
                 className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
               >
                 <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
-                  <div className=" w-full md:w-[220px]">
-                    <TextField
-                      type="text"
-                      {...formik.getFieldProps('firstName')}
-                      name="firstName"
-                      label="First Name"
-                      placeholder="Enter client’s first name..."
-                    />
+                <div className="w-full md:w-[220px]">
+                <TextField
+                  type="text"
+                  {...formik.getFieldProps('firstName')}
+                  label="First Name"
+                  placeholder="Enter client’s first name..."
+                />
+                {formik.touched.firstName && formik.errors.firstName ? (
+                  <div className="text-Red text-[10px] mt-[2px]">
+                    {formik.errors.firstName}
                   </div>
-                  <div className=" w-full md:w-[220px]">
-                    <TextField
-                      type="text"
-                      {...formik.getFieldProps('lastName')}
-                      label="Last Name"
-                      placeholder="Enter client’s last name..."
-                    />
+                ) : null}
+              </div>
+              <div className="w-full md:w-[220px]">
+                <TextField
+                  type="text"
+                  {...formik.getFieldProps('lastName')}
+                  label="Last Name"
+                  placeholder="Enter client’s last name..."
+                />
+                {formik.touched.lastName && formik.errors.lastName ? (
+                  <div className="text-Red text-[10px] mt-[2px]">
+                    {formik.errors.lastName}
                   </div>
+                ) : null}
+              </div>
                 </div>
                 <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
                   <div className=" w-full relative md:h-[28px] overflow-visible mb-4">

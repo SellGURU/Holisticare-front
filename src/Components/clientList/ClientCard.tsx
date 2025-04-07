@@ -214,7 +214,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
         </>
       </MainModal>
       <ArchiveModal
-
         archived={client.archived}
         onConfirm={() => {
           Application.archivePatient({
@@ -270,7 +269,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
-                   Unarchive
+                  Unarchive
                 </div>
                 <div
                   onClick={() => {
@@ -305,7 +304,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
-                 Send to Archieve
+                  Send to Archieve
                 </div>
                 <div
                   onClick={handleToggleFavoriteAndHighPriority}

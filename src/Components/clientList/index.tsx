@@ -91,7 +91,7 @@ const ClientList = () => {
   const handleSearch = (searchTerm: string) => {
     // Remove spaces from the search term
     const sanitizedSearchTerm = searchTerm.replace(/\s+/g, '').toLowerCase();
-  
+
     // Determine the current list to search within based on the active state
     let listToSearch = clientList;
     if (active === 'High-Priority') {
@@ -99,12 +99,15 @@ const ClientList = () => {
     } else if (active === 'Archived') {
       listToSearch = clientList.filter((client) => client.archived);
     }
-  
+
     // Perform the search within the determined list
     const searchResult = listToSearch.filter((client) =>
-      client.name.replace(/\s+/g, '').toLowerCase().includes(sanitizedSearchTerm),
+      client.name
+        .replace(/\s+/g, '')
+        .toLowerCase()
+        .includes(sanitizedSearchTerm),
     );
-  
+
     setFilteredClientList(searchResult);
   };
   const [isLoading, setIsLoading] = useState(true);
