@@ -176,7 +176,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
             </React.Fragment>
           ))}
         </ul>
-      </div>      
+      </div>
       <div className="flex justify-between gap-y-3 mt-3 flex-wrap">
         <Card
           title="Biomarkers"
@@ -217,7 +217,6 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           }
         />
       </div>
-
     </div>
   );
 };
