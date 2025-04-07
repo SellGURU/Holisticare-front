@@ -18,6 +18,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   index,
   onRemove,
 }) => {
+  console.log('value', value);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
@@ -239,16 +240,36 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                   return (
                                     <>
                                       <div className="w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between w-full">
                                           <div className="flex justify-start items-center">
                                             <div className="relative">
                                               <img
                                                 src="/images/activity/activity-demo.png"
                                                 alt=""
+                                                className="w-[32px] h-[32px] rounded-[6.4px]"
+                                              />
+                                              <img
+                                                src="/icons/youtube.svg"
+                                                alt=""
+                                                className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
                                               />
                                             </div>
-                                            <div className="text-[12px] text-Text-Primary ml-2 font-medium">
-                                              {val?.Exercise?.Title}
+                                            <div className="text-xs text-Text-Primary ml-2 font-medium">
+                                              {val?.Title}
+                                            </div>
+                                          </div>
+                                          <div className="flex items-center w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
+                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                              Set {el?.Sets}
+                                            </div>
+                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                              Reps {val?.Reps}
+                                            </div>
+                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                              Weight {val?.Weight} g
+                                            </div>
+                                            <div className="w-[25%] flex items-center justify-center">
+                                              Rest {val?.Rest} s
                                             </div>
                                           </div>
                                         </div>
