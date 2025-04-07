@@ -123,10 +123,18 @@ const GenerateActionPlan = () => {
         });
     }
   }, [calendarView]);
+  const [showConflictsModal, setShowConflictsModal] = useState(false);
+  const handleShowConflictsModal = () => {
+    setShowConflictsModal(!showConflictsModal);
+  };
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll">
-        <div className="w-full fixed top-0  hidden bg-[#E9F0F2] lg:flex lg:z-[9]">
+        <div
+          className={`w-full fixed top-0 hidden bg-[#E9F0F2] lg:flex ${
+            showConflictsModal ? 'lg:z-0' : 'lg:z-[9]'
+          }`}
+        >
           <div className="w-full ">
             <TopBar></TopBar>
             <div className="flex justify-between items-center mt-9 mx-8">
@@ -225,6 +233,7 @@ const GenerateActionPlan = () => {
                     data={categories}
                     setCalendarView={setCalendarView}
                     plans={plans}
+                    handleShowConflictsModal={handleShowConflictsModal}
                   />
                 </div>
               </>

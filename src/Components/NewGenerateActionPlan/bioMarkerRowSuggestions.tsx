@@ -3,6 +3,7 @@ import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
 import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
+import ConflictsModal from './components/ConflictsModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
@@ -10,14 +11,12 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
-  checkIn?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   value,
   setValues,
   index,
   onRemove,
-  checkIn,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -44,7 +43,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       [index]: !prev[index],
     }));
   };
-  const [sureRemove, setSureRemove] = useState(false);
+  const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   // const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
@@ -68,13 +67,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         break;
     }
   }, [value.Category]);
+  const [showConflicts, setShowConflicts] = useState(false);
 
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type || value.Frequency_Type.length === 0 ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary text-sm font-medium">
@@ -121,25 +121,25 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     Daily
                   </div>
                 )}
-                {!value.Frequency_Type && (
+                {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
                   <div className="flex items-center gap-1 text-xs text-[#FC5474]">
                     <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                     No Scheduled
                   </div>
+                ) : (
+                  ''
                 )}
-                {!checkIn && (
-                  <img
-                    src="/icons/arrow-down-blue.svg"
-                    alt=""
-                    className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
-                    onClick={() => toggleExpand(index)}
-                    style={{
-                      transform: expandedItems[index]
-                        ? 'rotate(180deg)'
-                        : 'rotate(0deg)',
-                    }}
-                  />
-                )}
+                <img
+                  src="/icons/arrow-down-blue.svg"
+                  alt=""
+                  className="w-[24px] h-[24px] cursor-pointer transform transition-transform ml-3"
+                  onClick={() => toggleExpand(index)}
+                  style={{
+                    transform: expandedItems[index]
+                      ? 'rotate(180deg)'
+                      : 'rotate(0deg)',
+                  }}
+                />
               </div>
             </div>
             <div className="flex justify-between w-full mt-1.5">
@@ -186,7 +186,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </div>
                   </div>
                   {value.flag && value.flag.conflicts.length > 0 && (
-                    <div className="flex items-center gap-1 cursor-pointer ml-7">
+                    <div
+                      className="flex items-center gap-1 cursor-pointer ml-7"
+                      onClick={() => {
+                        setShowConflicts(true);
+                      }}
+                    >
                       <img src="/icons/alarm.svg" alt="" className="w-3 h-3" />
                       <div className="text-[10px] text-[#FFAB2C] underline">
                         Conflict
@@ -219,12 +224,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
                 {value.Category === 'Activity' && (
                   <div
-                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                    className={`w-full h-[150px] bg-[#E9F0F2] rounded-[16px] overflow-y-auto mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
                   >
                     {value.Sections.map((el: any, index: number) => {
                       return (
                         <>
-                          <div className="p-4 ">
+                          <div className="p-4">
                             <div className="flex justify-between items-start">
                               <div className="text-[12px] text-Text-Primary font-medium">
                                 {index + 1}. {el.Section}
@@ -267,9 +272,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {value?.Times?.join(' & ')}
                 </div>
                 <div
-                  className={`flex flex-col items-center ${!checkIn ? (expandedItems[index] ? '' : 'hidden') : ''}`}
+                  className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
-                  {!sureRemove ? (
+                  {sureRemoveIndex !== index ? (
                     <>
                       <img
                         src="/icons/edit.svg"
@@ -278,10 +283,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         onClick={() => setShowEditModal(true)}
                       />
                       <img
-                        src="/icons/trash-red.svg"
+                        src="/icons/trash-blue.svg"
                         alt=""
                         className="w-[24px] h-[24px] cursor-pointer mt-2"
-                        onClick={() => setSureRemove(true)}
+                        onClick={() => setSureRemoveIndex(index)}
                       />
                     </>
                   ) : (
@@ -291,13 +296,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         src="/icons/tick-circle-green.svg"
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={onRemove}
+                        onClick={() => {
+                          onRemove();
+                          setSureRemoveIndex(null);
+                          toggleExpand(index);
+                        }}
                       />
                       <img
                         src="/icons/close-circle-red.svg"
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer mt-2"
-                        onClick={() => setSureRemove(false)}
+                        onClick={() => setSureRemoveIndex(null)}
                       />
                     </>
                   )}
@@ -332,6 +341,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         setShowModal={setShowBasedOn}
         showModal={showBasedOn}
       /> */}
+      {value.flag && value.flag.conflicts.length > 0 && (
+        <ConflictsModal
+          conflicts={value.flag.conflicts}
+          setShowModal={setShowConflicts}
+          showModal={showConflicts}
+        />
+      )}
       <ActionEditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
@@ -341,81 +357,43 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           setValues((prevData: any) => {
             const updatedData = { ...prevData };
 
-            const checkInIndex = updatedData.checkIn.findIndex(
-              (_item: any, idx: number) => idx === index,
-            );
-
             const categoryIndex = updatedData.category.findIndex(
               (_item: any, idx: number) => idx === index,
             );
 
-            const updatedItem = {
-              ...((checkInIndex !== -1
-                ? updatedData.checkIn[checkInIndex]
-                : updatedData.category[categoryIndex]) || {}),
-              Category: editedData.Category ?? '',
-              Title: editedData.Title ?? '',
-              'Based on': editedData['Based on'] ?? '',
-              'Practitioner Comments':
-                editedData['Practitioner Comments'] ?? [],
-              Description: editedData.Description ?? '',
-              Base_Score: editedData.Base_Score ?? '',
-              Instruction: editedData.Instruction ?? '',
-              Times: editedData.Times ?? [],
-              Dose: editedData.Dose ?? null,
-              Value: editedData.Value ?? null,
-              'Total Macros': editedData['Total Macros'] ?? null,
-              'Client Notes': editedData['Client Notes'] ?? [],
-              Score: editedData.Score ?? '',
-              Days: editedData.Days ?? [],
-              Layers: {
-                first_layer: editedData.Layers?.first_layer ?? '',
-                second_layer: editedData.Layers?.second_layer ?? '',
-                third_layer: editedData.Layers?.third_layer ?? '',
-              },
-              Frequency_Type: editedData.frequencyType ?? '',
-              Frequency_Dates: editedData.frequencyDates ?? [],
-            };
+            if (categoryIndex !== -1) {
+              const updatedItem = {
+                ...updatedData.category[categoryIndex],
+                Category: editedData.Category ?? '',
+                Title: editedData.Title ?? '',
+                'Based on': editedData['Based on'] ?? '',
+                'Practitioner Comments':
+                  editedData['Practitioner Comments'] ?? [],
+                Description: editedData.Description ?? '',
+                Base_Score: editedData.Base_Score ?? '',
+                Instruction: editedData.Instruction ?? '',
+                Times: editedData.Times ?? [],
+                Dose: editedData.Dose ?? null,
+                Value: editedData.Value ?? null,
+                'Total Macros': editedData['Total Macros'] ?? null,
+                'Client Notes': editedData['Client Notes'] ?? [],
+                Score: editedData.Score ?? '',
+                Days: editedData.Days ?? [],
+                Layers: {
+                  first_layer: editedData.Layers?.first_layer ?? '',
+                  second_layer: editedData.Layers?.second_layer ?? '',
+                  third_layer: editedData.Layers?.third_layer ?? '',
+                },
+                Frequency_Type: editedData.frequencyType ?? '',
+                Frequency_Dates: editedData.frequencyDates ?? [],
+              };
 
-            if (checkInIndex !== -1) {
-              updatedData.checkIn[checkInIndex] = updatedItem;
-            } else if (categoryIndex !== -1) {
               updatedData.category[categoryIndex] = updatedItem;
             }
 
             return updatedData;
           });
-          // setValues((prevData: any) => {
-          //   return prevData.map((item: any, idx: number) => {
-          //     // استفاده از ایندکس برای شناسایی آیتم مورد نظر
-          //     if (idx === index) {
-          //       return {
-          //         ...item,
-          //         Category: editedData.Category,
-          //         Title: editedData.title || '',
-          //         'Based on': item['Based on'],
-          //         'Practitioner Comments':
-          //           editedData['Practitioner Comments'] || [],
-          //         Description: editedData.Description || '',
-          //         Base_Score: editedData.Base_Score || '',
-          //         Instruction: editedData.Instruction || '',
-          //         Times: editedData.Times || [],
-          //         Dose: editedData.Dose || null,
-          //         Value: editedData.Value || null,
-          //         'Total Macros': editedData['Total Macros'] || null,
-          //         'Client Notes': editedData['Client Notes'] || [],
-          //         Score: item.Score,
-          //         Days: editedData.Days || [],
-          //         Layers: {
-          //           first_layer: '',
-          //           second_layer: '',
-          //           third_layer: '',
-          //         },
-          //       };
-          //     }
-          //     return item;
-          //   });
-          // });
+
           setShowEditModal(false);
         }}
       />
