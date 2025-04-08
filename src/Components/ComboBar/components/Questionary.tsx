@@ -175,55 +175,55 @@ export const Questionary = () => {
     if (type == 'multiple_choice') {
       return (
         <>
-            <div>
           <div>
-            {questionsData.questions[activeCardNumber - 1]?.options?.map(
-              (el: any, index: number) => {
-                const optionLabel = String.fromCharCode(65 + index);
+            <div>
+              {questionsData.questions[activeCardNumber - 1]?.options?.map(
+                (el: any, index: number) => {
+                  const optionLabel = String.fromCharCode(65 + index);
 
-                return (
-                  <div
-                    onClick={() => {
-                      if (!disabled) {
-                        formValueChange(
-                          questionsData.questions[activeCardNumber - 1].order,
-                          el,
-                        );
-                      }
-                    }}
-                    className="flex items-center gap-[6px] mb-2"
-                  >
+                  return (
                     <div
-                      className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${
-                        questionsData.questions[activeCard - 1].response == el
-                          ? 'border-Primary-DeepTeal'
-                          : 'border-Text-Secondary '
-                      } bg-white border-[1.4px] rounded-full`}
+                      onClick={() => {
+                        if (!disabled) {
+                          formValueChange(
+                            questionsData.questions[activeCardNumber - 1].order,
+                            el,
+                          );
+                        }
+                      }}
+                      className="flex items-center gap-[6px] mb-2"
                     >
-                      {questionsData.questions[activeCardNumber - 1]
-                        .response == el && (
-                        <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
-                      )}
+                      <div
+                        className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${
+                          questionsData.questions[activeCard - 1].response == el
+                            ? 'border-Primary-DeepTeal'
+                            : 'border-Text-Secondary '
+                        } bg-white border-[1.4px] rounded-full`}
+                      >
+                        {questionsData.questions[activeCardNumber - 1]
+                          .response == el && (
+                          <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
+                        )}
+                      </div>
+                      <div
+                        className={`text-[10px] cursor-pointer ${
+                          questionsData.questions[activeCardNumber - 1]
+                            .response == el
+                            ? 'text-Text-Primary'
+                            : 'text-Text-Secondary'
+                        } `}
+                      >
+                        {!isNumericString(el) && (
+                          <span className="mr-1">{optionLabel}.</span>
+                        )}
+                        {el}
+                      </div>
                     </div>
-                    <div
-                      className={`text-[10px] cursor-pointer ${
-                        questionsData.questions[activeCardNumber - 1].response ==
-                        el
-                          ? 'text-Text-Primary'
-                          : 'text-Text-Secondary'
-                      } `}
-                    >
-                      {!isNumericString(el) && (
-                        <span className="mr-1">{optionLabel}.</span>
-                      )}
-                      {el}
-                    </div>
-                  </div>
-                );
-              },
-            )}
+                  );
+                },
+              )}
+            </div>
           </div>
-        </div>
         </>
       );
     }
