@@ -305,7 +305,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {activeTreatment == card.t_plan_id &&
+                          {
                             index === cardData.length - 1 && (
                               <img
                                 onClick={() => setShowModalIndex(index)}

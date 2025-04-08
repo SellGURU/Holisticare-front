@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tooltip';
 export const columns = (pageType: string): ColumnDef<any>[] => [
   {
     accessorKey: 'Title',
-    header: 'Supplement Title',
+    header: 'Title',
     enableSorting: false,
     cell: ({ row }) => {
       return (
