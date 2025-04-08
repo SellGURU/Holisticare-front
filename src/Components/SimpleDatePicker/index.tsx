@@ -7,7 +7,7 @@ interface DatePickerProps {
   setDate: (date: Date | null) => void;
   placeholder?: string;
   isLarge?: boolean;
-  isAddClient?:boolean
+  isAddClient?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -15,7 +15,7 @@ export default function SimpleDatePicker({
   setDate,
   placeholder,
   isLarge,
-  isAddClient
+  isAddClient,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -52,7 +52,7 @@ export default function SimpleDatePicker({
       <button
         onClick={() => setOpen(!open)}
         className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ' border border-Gray-50 '}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
-         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient? "xs:w-full": ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary`}
+         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary`}
       >
         {date ? ` ${date.toLocaleDateString()}` : placeholder}
         <img src="/icons/calendar-3.svg" alt="Calendar" />

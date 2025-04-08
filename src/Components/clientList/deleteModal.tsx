@@ -1,4 +1,4 @@
-import React, {  useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import MainModal from '../MainModal';
@@ -18,13 +18,17 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
 }) => {
   const modalRefrence = useRef(null);
   const [isComplete, setisComplete] = useState(false);
-  const [currentName,] = useState(name);
+  const [currentName,setCurrentName] = useState(name);
   const isNameTooLong = currentName.length > 20;
   useModalAutoClose({
     refrence: modalRefrence,
     close: onClose,
   });
-
+console.log(name);
+console.log(currentName);
+useEffect(()=>{
+  setCurrentName(name)
+},[isOpen,name])
   if (!isOpen) return null;
 
   return (
@@ -40,9 +44,14 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
                 src="/icons/tick-circle-background-new.svg"
                 alt=""
               />
-              <div                 data-tooltip-id="name-tooltip"
- className="text-center text-xs font-medium text-Text-Primary -mt-3 mb-6">
-              {isNameTooLong ? `${currentName.substring(0, 17)}...` : currentName} has been successfully deleted. has been successfully deleted.
+              <div
+                data-tooltip-id="name-tooltip"
+                className="text-center text-xs font-medium text-Text-Primary -mt-3 mb-6"
+              >
+                {isNameTooLong
+                  ? `${currentName.substring(0, 17)}...`
+                  : currentName}{' '}
+                has been successfully deleted. has been successfully deleted.
               </div>
               <ButtonPrimary
                 onClick={() => {
@@ -59,9 +68,15 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
                 <img src="/icons/danger.svg" alt="" />
                 Delete
               </div>
-              <div                 data-tooltip-id="name-tooltip" className="mt-5 text-center text-xs font-medium">
-              Are you sure you want to delete client{' '}
-              {isNameTooLong ? `${currentName.substring(0, 17)}...` : currentName}?
+              <div
+                data-tooltip-id="name-tooltip"
+                className="mt-5 text-center text-xs font-medium"
+              >
+                Are you sure you want to delete client{' '}
+                {isNameTooLong
+                  ? `${currentName.substring(0, 17)}...`
+                  : currentName}
+                ?
               </div>
               <div className="mt-4 text-xs text-Text-Secondary text-center">
                 After deleting, you will not be able to return this client.{' '}
@@ -88,9 +103,13 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
           )}
         </div>
       </MainModal>
-      <div className='z-[999]'>
-      <Tooltip id="name-tooltip" place="top"  content={isNameTooLong ? currentName : undefined} /> 
+      <div className="z-[999]">
+        <Tooltip
+          id="name-tooltip"
+          place="top"
+          content={isNameTooLong ? currentName : undefined}
+        />
       </div>
-     </>
+    </>
   );
 };

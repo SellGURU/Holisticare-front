@@ -348,21 +348,17 @@ const AddClient = () => {
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Date of birth
                     </label>
-                    <div className=' rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary'>
-                    <SimpleDatePicker
-                    isAddClient
-                    
-                      date={dateOfBirth}
-                      setDate={(date) => {
-                        if (validateDate(date)) {
-                          setDateOfBirth(date);
-                        }
-                      }}
-                   
-                     
-                    />
+                    <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
+                      <SimpleDatePicker
+                        isAddClient
+                        date={dateOfBirth}
+                        setDate={(date) => {
+                          if (validateDate(date)) {
+                            setDateOfBirth(date);
+                          }
+                        }}
+                      />
                     </div>
-                   
                   </div>
                   <div></div>
                 </div>

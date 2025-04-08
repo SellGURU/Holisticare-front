@@ -462,7 +462,7 @@ export const Questionary = () => {
         {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
-              <div className="flex flex-col gap-2 h-[150px]  overflow-y-auto">
+              <div className="flex flex-col gap-2 h-[150px] pr-[6px] custom-scrollbar  overflow-y-auto">
                 {AddForms.map((form: any) => (
                   <div
                     onClick={() => toggleSelection(form.unique_id)}
@@ -657,7 +657,7 @@ export const Questionary = () => {
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">
-                <div className="w-full mt-2 h-[600px] overflow-auto ">
+                <div className="w-full mt-2 h-[500px] overflow-auto ">
                   {data?.map((el: any, index: number) => {
                     console.log(el);
 
