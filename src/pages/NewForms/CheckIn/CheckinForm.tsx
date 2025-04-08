@@ -13,9 +13,10 @@ import QuestionaryControllerModal from './QuestionaryControllerModal';
 
 interface CheckInFormProps {
   isQuestionary?: boolean;
+  search?: string;
 }
 
-const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
+const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -140,7 +141,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary }) => {
               </ButtonSecondary>
             </div>
             <TableForm
-              classData={checkInList}
+              classData={checkInList.filter((el) =>
+                el.title.toLowerCase().includes(search?.toLowerCase() || ''),
+              )}
               onDelete={(id) => {
                 if (isQuestionary) {
                   FormsApi.deleteQuestionary(id).then(() => {
