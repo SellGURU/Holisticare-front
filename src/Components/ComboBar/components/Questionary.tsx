@@ -197,7 +197,7 @@ export const Questionary = () => {
                       >
                         {questionsData.questions[activeCardNumber - 1]
                           .response == el && (
-                          <div className="w-[7px] h-[7px] bg-Primary-DeepTeal rounded-full"></div>
+                          <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
                         )}
                       </div>
                       <div
@@ -576,7 +576,7 @@ export const Questionary = () => {
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[250px] min-h-[100px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {resolveForm(
                   questionsFormData.questions[activeCard - 1].type,
@@ -593,16 +593,14 @@ export const Questionary = () => {
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
               <div className="flex  w-[95px] justify-center items-center gap-3">
-                <img
-                  className="cursor-pointer"
-                  onClick={() => {
-                    if (activeCard > 1) {
-                      setActiveCard(activeCard - 1);
-                    }
-                  }}
-                  src="/icons/arrow-circle-left.svg"
-                  alt=""
-                />
+                {activeCard > 1 && (
+                  <img
+                    className="cursor-pointer"
+                    onClick={() => setActiveCard(activeCard - 1)}
+                    src="/icons/arrow-circle-left.svg"
+                    alt=""
+                  />
+                )}
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
@@ -621,7 +619,7 @@ export const Questionary = () => {
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
                 <img
-                  className="cursor-pointer rotate-180"
+                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData.questions.length && 'invisible'}`}
                   onClick={() => {
                     if (activeCard < questionsFormData.questions.length) {
                       setActiveCard(activeCard + 1);

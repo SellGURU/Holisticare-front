@@ -352,7 +352,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   return (
     <>
       {loading ? (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-70 backdrop-blur-md z-20">
           <Circleloader></Circleloader>
         </div>
       ) : (
