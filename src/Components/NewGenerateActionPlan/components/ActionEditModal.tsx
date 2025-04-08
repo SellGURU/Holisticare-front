@@ -31,7 +31,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-  console.log(defalts)
+  console.log(defalts);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
