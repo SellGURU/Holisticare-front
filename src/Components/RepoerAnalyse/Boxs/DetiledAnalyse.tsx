@@ -131,7 +131,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               </div>
               <div className="flex justify-start items-center">
                 <div className="TextStyle-Body-3 text-Text-Secondary">
-                  {data?.num_of_biomarkers} biomarkers
+                  {data?.num_of_biomarkers} Biomarkers
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
                   {data?.out_of_ref}{' '}
