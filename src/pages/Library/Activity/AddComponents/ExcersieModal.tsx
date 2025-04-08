@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import TextField from '../../../../Components/TextField';
 import { RangeCard } from '../../../CheckIn/components';
@@ -94,12 +95,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       },
     }));
     const exerciseFilters = {
-      Conditions: condition || '',
-      Equipment: equipment || '',
-      Type: type || '',
-      Terms: terms || '',
-      Muscle: muscle || '',
-      Level: level || '',
+      Conditions: [condition],
+      Equipment: [equipment]  ,
+      Type: [type],
+      Terms: [terms],
+      Muscle: [muscle],
+      Level: [level],
     };
 
     // Construct Exercise_Location array

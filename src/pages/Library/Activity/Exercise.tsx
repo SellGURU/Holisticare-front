@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { ExerciseRow } from './AddComponents/ExerciseRow';
 import ExerciseModal from './AddComponents/ExcersieModal';
