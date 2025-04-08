@@ -234,7 +234,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
             member_id: client.member_id,
           }).then(()=>{
             ondelete(client.member_id);
-            setshowModal(false);
+            // setshowModal(false);
 
           })
           // onarchive(client.member_id)

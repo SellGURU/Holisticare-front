@@ -28,7 +28,7 @@ console.log(name);
 console.log(currentName);
 useEffect(()=>{
   setCurrentName(name)
-},[isOpen,name])
+},[isOpen])
   if (!isOpen) return null;
 
   return (
