@@ -390,7 +390,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                       Application.driftAction({ member_id: memberID })
                         .then((res) => {
                           setData(res.data.plan);
-                           setblockID(res.data.block_id);
+                          setblockID(res.data.block_id);
                         })
                         .catch((err) => console.log(err))
                         .finally(() => setshowModal(true));
@@ -454,7 +454,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 No drift analysis yet.
               </div>
               <div className="text-xs text-Text-Secondary dark:text-secondary-text t mt-1">
-               This client does not have a holistic plan.
+                This client does not have a holistic plan.
               </div>
             </div>
           </div>
