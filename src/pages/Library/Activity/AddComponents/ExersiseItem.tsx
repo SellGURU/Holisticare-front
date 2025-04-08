@@ -155,7 +155,7 @@ const ExerciseItem = ({
           </div>
           <div className="mt-2 relative">
             <div className="text-center text-[8px] text-Text-Primary">
-              setWeight
+              Weight 
             </div>
             <input
               type="number"
