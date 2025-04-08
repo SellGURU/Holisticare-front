@@ -44,7 +44,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
           <div className="w-[20px] relative h-full rounded-[16px]  bg-white border-2 border-gray-300 border-r-white">
             <img
               className="absolute top-[48%] left-[-8px] bg-white py-1"
-              src={'./icons/link.svg'}
+              src="/icons/link.svg"
               alt="super set"
             />
           </div>

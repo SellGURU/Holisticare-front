@@ -227,6 +227,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     refrence: modalRef,
     close: () => {
       onClose();
+      onReset();
     },
   });
 
@@ -397,7 +398,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   });
 
   return (
-    <MainModal onClose={onClose} isOpen={isOpen}>
+    <MainModal
+      onClose={() => {
+        onClose();
+        onReset();
+      }}
+      isOpen={isOpen}
+    >
       <div
         className={`bg-white p-6 pb-8 rounded-2xl shadow-800 ${selectedGroup == 'Activity' ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary overflow-auto max-h-[660px]`}
       >
@@ -887,7 +894,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 {selectedGroup !== 'Activity' && (
                   <>
                     <button
-                      onClick={onClose}
+                      onClick={() => {
+                        onClose();
+                        onReset();
+                      }}
                       className="text-sm font-medium text-Disable cursor-pointer"
                     >
                       Cancel
@@ -941,6 +951,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <div
                 onClick={() => {
                   onClose();
+                  onReset();
                   setStep(0);
                 }}
                 className="text-Disable text-[14px] cursor-pointer font-medium"

@@ -251,7 +251,7 @@ const Stadio: FC<StadioProps> = ({
             Frequency_Dates: addData.frequencyDates ?? [],
           };
 
-          setData((prevData: any) => ({
+          setActions((prevData: any) => ({
             ...prevData,
             category: [newData, ...prevData.category],
           }));

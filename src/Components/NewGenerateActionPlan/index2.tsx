@@ -207,10 +207,7 @@ const GenerateActionPlan = () => {
         </div>
 
         {isLoadingPlans && (
-          <LoaderBox
-            text="We are generating tailored methods aligned with your Action Plan .
-                    This may take a moment."
-          />
+          <LoaderBox text="We are generating your Action Plan. This may take a moment." />
         )}
         {isLoadingCalendarView && <LoaderBox />}
 
