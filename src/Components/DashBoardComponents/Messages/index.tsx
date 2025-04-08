@@ -54,8 +54,8 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     filter === 'All'
       ? true
       : filter === 'Read'
-        ? message.unread
-        : !message.unread,
+        ? message.unread === false
+        : message.unread === true,
   );
   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
 
@@ -140,13 +140,13 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                   )}
                 </div>
 
-                {!showSearch && (
+                {/* {!showSearch && (
                   <img
                     className="cursor-pointer"
                     src="/icons/setting-2.svg"
                     alt=""
                   />
-                )}
+                )} */}
               </div>
             )}
           </div>
@@ -182,9 +182,9 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                       );
                     }
                   }}
-                  className={`mb-5 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl '}`}
+                  className={`mb-5 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl p-2 '}`}
                 >
-                  <div className="flex justify-between ">
+                  <div className="flex justify-start">
                     <div
                       style={{
                         backgroundColor: hexToRGBA(
@@ -200,7 +200,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                     >
                       {message.name.charAt(0)}
                     </div>
-                    <div className="border-b border-Boarder pb-2">
+                    <div className="border-b w-full border-Boarder pb-2">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
                           <div className="text-[10px] font-medium text-Text-Primary">
@@ -213,7 +213,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                           )}
                         </div>
 
-                        {expandedMessage === message.member_id ? (
+                        {/* {expandedMessage === message.member_id ? (
                           <div className="flex items-center gap-1">
                             <img
                               className="w-4 h-4 object-contain"
@@ -230,7 +230,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                           <div className="text-[8px] text-Text-Secondary">
                             {message.Date}
                           </div>
-                        )}
+                        )} */}
                       </div>
                       <div
                         className={`text-[10px] text-Text-Secondary   ${

@@ -220,7 +220,7 @@ const MessagesChatBox = () => {
                 </>
               ))}
               {messages.length === 0 && (
-                <div className="flex items-center justify-center w-full h-full text-[28px] text-Text-Secondary">
+                <div className="flex items-center justify-center w-full h-full text-[14px] text-Text-Secondary">
                   No items have been selected to display the chat.
                 </div>
               )}
