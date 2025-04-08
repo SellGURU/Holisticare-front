@@ -2,7 +2,7 @@ import React from 'react';
 import Circleloader from '../../CircleLoader';
 
 interface LoaderBoxProps {
-  text: string;
+  text?: string;
 }
 
 const LoaderBox: React.FC<LoaderBoxProps> = ({ text }) => {

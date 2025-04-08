@@ -36,7 +36,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) => {
         )}
       </div>
       <span
-        className={`text-xs ${checked ? 'text-Primary-DeepTeal' : 'text-Text-Secondary'} ml-[6px]`}
+        className={`text-xs ${checked ? 'text-Primary-DeepTeal' : 'text-Text-Secondary'} ml-[6px] capitalize`}
       >
         {label}
       </span>

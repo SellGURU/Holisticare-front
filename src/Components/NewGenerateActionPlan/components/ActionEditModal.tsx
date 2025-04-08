@@ -800,7 +800,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               </div>
               <div className="mb-4">
                 <label className="text-xs font-medium">Times</label>
-                <div className="flex w-full mt-2 gap-2">
+                <div className="flex w-full mt-2 gap-6">
                   {times.map((item, index) => {
                     return (
                       <Checkbox

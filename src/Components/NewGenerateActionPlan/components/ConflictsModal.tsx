@@ -25,7 +25,7 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
           }
         }}
       >
-        <div className="bg-white min-h-[400px] overflow-auto w-[500px] p-6 pb-5 rounded-2xl shadow-800 flex flex-col justify-between">
+        <div className="bg-white max-h-[400px] overflow-auto w-[500px] p-6 pb-5 rounded-2xl shadow-800 flex flex-col justify-between">
           <div>
             <div className="border-b border-Gray-50 pb-2 w-full text-sm font-medium text-Text-Primary">
               Conflict
@@ -44,7 +44,7 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
               ))}
             </div>
           </div>
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 mt-4">
             <button
               onClick={() => {
                 setShowModal(false);

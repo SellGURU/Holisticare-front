@@ -79,6 +79,7 @@ const GenerateActionPlan = () => {
     });
   };
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
+  const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
@@ -107,7 +108,7 @@ const GenerateActionPlan = () => {
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {
-      setIsLoadingPlans(true);
+      setIsLoadingCalendarView(true);
       const prepareDataForBackend = (data: any) => {
         return [...data.checkIn, ...data.category];
       };
@@ -122,7 +123,7 @@ const GenerateActionPlan = () => {
           setCalendarViewData(res.data);
         })
         .finally(() => {
-          setIsLoadingPlans(false);
+          setIsLoadingCalendarView(false);
         });
     }
   }, [calendarView]);
@@ -207,10 +208,11 @@ const GenerateActionPlan = () => {
 
         {isLoadingPlans && (
           <LoaderBox
-            text="We are generating tailored methods aligned with your Holistic Plan .
+            text="We are generating tailored methods aligned with your Action Plan .
                     This may take a moment."
-          ></LoaderBox>
+          />
         )}
+        {isLoadingCalendarView && <LoaderBox />}
 
         {!calendarView ? (
           <>
