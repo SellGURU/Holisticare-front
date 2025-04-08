@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import ChoosingDaysWeek from './components/ChoosingDaysWeek';
 import ActionEditModal from './components/ActionEditModal';
 import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
 import ConflictsModal from './components/ConflictsModal';
+import BasedOnModal from './components/BasedOnModal';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface BioMarkerRowSuggestionsProps {
   value: any;
   setValues: (data: any) => void;
@@ -45,7 +46,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }));
   };
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
-  // const [showBasedOn, setShowBasedOn] = useState(false);
+  const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
   useEffect(() => {
@@ -204,7 +205,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   )}
                 </div>
                 <div
-                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
                     • Instruction:
@@ -214,13 +215,42 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </div>
                 <div
-                  className={`flex items-start mt-1.5 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                  className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
                     • Description:
                   </div>
                   <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
                     {value.Description}
+                  </div>
+                </div>
+                <div
+                  className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                >
+                  <div className="flex items-center text-nowrap text-Primary-DeepTeal text-xs">
+                    <img
+                      src="/icons/comment.svg"
+                      alt=""
+                      className="w-4 h-4 mr-1.5 -ml-1"
+                    />
+                    Practitioner Comment:
+                  </div>
+                  <div className="flex items-center text-Text-Quadruple text-xs ml-1 text-wrap">
+                    {value['Practitioner Comments'][0].length > 185 ? (
+                      <>
+                        {value['Practitioner Comments'][0].slice(0, 185)}
+                        <div
+                          onClick={() => {
+                            setShowBasedOn(true);
+                          }}
+                          className="ml-1.5 text-Primary-DeepTeal text-xs font-medium cursor-pointer underline text-nowrap"
+                        >
+                          see more
+                        </div>
+                      </>
+                    ) : (
+                      value['Practitioner Comments'][0]
+                    )}
                   </div>
                 </div>
                 {value.Category === 'Activity' && (
@@ -336,7 +366,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             {value['Client Notes'] && value['Client Notes'].length > 0 && (
               <div
-                className={`h-[1px] bg-Boarder w-full mt-4 mb-2 ${expandedItems[index] ? '' : 'hidden'}`}
+                className={`h-[1px] bg-Gray-50 w-full mt-4 mb-2 ${expandedItems[index] ? '' : 'hidden'}`}
               ></div>
             )}
             <div
@@ -357,11 +387,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
         </div>
       </div>
-      {/* <BasedOnModal
+      <BasedOnModal
         value={value['Practitioner Comments']}
         setShowModal={setShowBasedOn}
         showModal={showBasedOn}
-      /> */}
+      />
       {value.flag && value.flag.conflicts.length > 0 && (
         <ConflictsModal
           conflicts={value.flag.conflicts}

@@ -264,7 +264,7 @@ const Stadio: FC<StadioProps> = ({
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
-                heading="Alert heading"
+                heading="Alert"
                 text={haveConflicText}
                 onClose={() => {
                   setHaveConflic(false);
@@ -402,7 +402,7 @@ const Stadio: FC<StadioProps> = ({
               onSearch={(value) => {
                 setSearchValue(value);
               }}
-            ></SearchBox>
+            />
             <Sort
               options={options}
               handleChangeSort={handleChangeSort}
