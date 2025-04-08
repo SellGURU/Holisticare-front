@@ -90,7 +90,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
   }, [MessageData]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-full  ">
       {MessageData.length < 1 ? (
         <div className="relative h-[85vh]">
           {' '}
@@ -108,7 +108,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
           </div>
         </div>
       ) : (
-        <div className={'   flex flex-col justify-between'}>
+        <div className={'  h-[84vh] flex flex-col justify-between'}>
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
           <div
             className={
@@ -142,7 +142,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
 
             <div ref={messagesEndRef}></div>
           </div>
-          <div className="w-full">
+          <div className="w-full ">
             <InputChat
               onChange={(event) => setInput(event.target.value)}
               sendHandler={handleSend}

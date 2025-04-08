@@ -20,7 +20,7 @@ export const InputChat: FC<IInputChat> = ({ onChange, sendHandler }) => {
   return (
     <div
       className={
-        'flex items-center justify-center rounded-xl py-3 px-2 shadow-chat-input w-full'
+        'flex items-center justify-center rounded-xl py-3 px-2 chat-shadow-box w-full'
       }
     >
       <input
