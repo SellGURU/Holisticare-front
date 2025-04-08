@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 // import { useNavigate } from "react-router-dom";
 import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
@@ -82,6 +84,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         });
 
         if (response && response.data && response.data.State) {
+          setemptyActionPlan(false);
           setDescription(response.data.State.description);
           // setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
@@ -94,6 +97,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
 
         console.log(response);
       } catch (err: any) {
+        setemptyActionPlan(true);
         console.error('Error fetching data:', err);
         const errorMessage =
           err.detail || 'An error occurred while fetching data.';
@@ -150,6 +154,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [blockID, setblockID] = useState();
   const [buttonLoading, setbuttonLoading] = useState(false);
   const [isloadingAi, setisloadingAi] = useState(false);
+  const [emptyActionPlan, setemptyActionPlan] = useState(false);
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
@@ -384,7 +389,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                     onClick={() => {
                       Application.driftAction({ member_id: memberID })
                         .then((res) => {
-                          setData(res.data.plan), setblockID(res.data.block_id);
+                          setData(res.data.plan);
+                           setblockID(res.data.block_id);
                         })
                         .catch((err) => console.log(err))
                         .finally(() => setshowModal(true));
@@ -437,6 +443,19 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                   />
                 ),
               )}
+            </div>
+          </div>
+        )}
+        {emptyActionPlan && (
+          <div className="w-full flex justify-center items-center  h-[550px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+            <div>
+              <img src="./icons/rafiki.svg" alt="" />
+              <div className="text-base font-medium text-center mt-2">
+                No drift analysis yet.
+              </div>
+              <div className="text-xs text-Text-Secondary dark:text-secondary-text t mt-1">
+               This client does not have a holistic plan.
+              </div>
             </div>
           </div>
         )}
