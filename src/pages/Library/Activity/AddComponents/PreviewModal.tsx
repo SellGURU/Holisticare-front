@@ -21,7 +21,8 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
 }) => {
   const getYouTubeEmbedUrl = (url: string) => {
     // Handle different YouTube URL formats
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11
       ? `https://www.youtube.com/embed/${match[2]}`
@@ -180,7 +181,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                     <Circleloader />
                   </div>
                 ) : (
-                  videoData.map((video) => (
+                  videoData.map((video) =>
                     video.url ? (
                       isYouTubeShorts(video.url) ? (
                         <div className="rounded-xl h-[200px] w-[370px] border border-Gray-50 flex flex-col items-center justify-center p-4">
@@ -189,7 +190,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                             className="size-12 mb-4"
                             alt="Video"
                           />
-                          <a 
+                          <a
                             href={video.url}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -218,8 +219,8 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                       >
                         Your browser does not support the video tag.
                       </video>
-                    )
-                  ))
+                    ),
+                  )
                 )}
               </div>
             )}
