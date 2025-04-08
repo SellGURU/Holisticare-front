@@ -80,7 +80,10 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                         src="/icons/tick-circle-green.svg"
                         alt=""
                         className="w-[20px] h-[20px] cursor-pointer"
-                        onClick={() => onRemove()}
+                        onClick={() => {
+                          setSureRemove(false);
+                          onRemove();
+                        }}
                       />
                       <img
                         src="/icons/close-circle-red.svg"

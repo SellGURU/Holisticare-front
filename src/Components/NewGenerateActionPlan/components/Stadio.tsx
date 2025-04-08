@@ -49,6 +49,7 @@ const Stadio: FC<StadioProps> = ({
   ];
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
+  const [isAutoGenerateComplete, setIsAutoGenerateComplete] = useState(false);
   // const addToActions = (item: any) => {
   //   setActions((prev: any) => [item, ...prev]);
   //   setData((prev: Array<any>) => {
@@ -146,6 +147,10 @@ const Stadio: FC<StadioProps> = ({
       })
       .finally(() => {
         setIsAutoGenerate(false);
+        setIsAutoGenerateComplete(true);
+        setTimeout(() => {
+          setIsAutoGenerateComplete(false);
+        }, 5000);
       });
   };
   const conflicCheck = () => {
@@ -283,25 +288,32 @@ const Stadio: FC<StadioProps> = ({
               <>
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
-                  <ButtonSecondary
-                    ClassName="rounded-[30px] w-[141px] text-nowrap"
-                    onClick={() => {
-                      AutoGenerate();
-                    }}
-                  >
-                    {isAutoGenerate ? (
-                      <SpinnerLoader />
-                    ) : (
-                      <>
-                        <img
-                          src="/icons/tree-start-white.svg"
-                          alt=""
-                          className="mr-2"
-                        />
-                        Generate by AI
-                      </>
-                    )}
-                  </ButtonSecondary>
+                  !isAutoGenerateComplete ? (
+                    <ButtonSecondary
+                      ClassName="rounded-[30px] w-[141px] text-nowrap"
+                      onClick={() => {
+                        AutoGenerate();
+                      }}
+                    >
+                      {isAutoGenerate ? (
+                        <SpinnerLoader />
+                      ) : (
+                        <>
+                          <img
+                            src="/icons/tree-start-white.svg"
+                            alt=""
+                            className="mr-2"
+                          />
+                          Generate by AI
+                        </>
+                      )}
+                    </ButtonSecondary>
+                  ) : (
+                    <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
+                      <img src="/icons/tick-circle-bg.svg" alt="" />
+                      Generated
+                    </div>
+                  )
                 ) : (
                   ''
                 )}

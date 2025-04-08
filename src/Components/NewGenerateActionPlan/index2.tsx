@@ -13,6 +13,8 @@ import Stadio from './components/Stadio';
 import SpinnerLoader from '../SpinnerLoader';
 import CalenderComponent from '../CalendarComponent/CalendarComponent';
 import { ComboBar } from '../ComboBar';
+import SemiCircularProgressBar from './components/SemiCircularProgressBar';
+import CircularProgressBar from './components/CircularProgressBar';
 // import { AlertModal } from '../AlertModal';
 
 const GenerateActionPlan = () => {
@@ -226,7 +228,7 @@ const GenerateActionPlan = () => {
               </>
             ) : (
               <>
-                <div className=" w-full h-full mt-[190px] pr-[70px] ">
+                <div className="w-full h-full mt-[190px] pr-[70px] ">
                   <Stadio
                     actions={actions}
                     setActions={setActions}
@@ -246,9 +248,67 @@ const GenerateActionPlan = () => {
         ) : (
           <>
             {calendarViewData && (
-              <div className="px-8 py-6">
-                {calendarViewData.length > 0 && (
-                  <CalenderComponent data={calendarViewData} />
+              <div className="w-full h-full px-8 mt-[125px]">
+                <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
+                  <div className="flex flex-col h-full justify-between">
+                    <div className="font-medium text-sm text-Text-Primary">
+                      Progress
+                    </div>
+                    <div className="text-[10px] text-Text-Primary">
+                      Monitor your clients' wellness progress with clear
+                      insights and visual updates. Track key health metrics to
+                      keep them motivated and support informed, healthy choices.
+                    </div>
+                  </div>
+                  <div className="flex h-full gap-8">
+                    <div className="h-full w-[1px] bg-Gray-50"></div>
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-sm text-Text-Primary -mb-3">
+                        Total
+                      </div>
+                      <SemiCircularProgressBar
+                        percentage={calendarViewData.progress}
+                      />
+                    </div>
+                    <div className="h-full w-[1px] bg-Gray-50"></div>
+                  </div>
+                  <div className="flex h-full gap-8">
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-sm text-Text-Primary -mb-2">
+                        Diet
+                      </div>
+                      <CircularProgressBar
+                        percentage={calendarViewData.score.diet}
+                      />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-sm text-Text-Primary -mb-2">
+                        Activity
+                      </div>
+                      <CircularProgressBar
+                        percentage={calendarViewData.score.activity}
+                      />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-sm text-Text-Primary -mb-2">
+                        Supplement
+                      </div>
+                      <CircularProgressBar
+                        percentage={calendarViewData.score.supplement}
+                      />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-sm text-Text-Primary -mb-2">
+                        Lifestyle
+                      </div>
+                      <CircularProgressBar
+                        percentage={calendarViewData.score.lifestyle}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {calendarViewData?.scheduled_tasks.length > 0 && (
+                  <CalenderComponent data={calendarViewData?.scheduled_tasks} />
                 )}
               </div>
             )}

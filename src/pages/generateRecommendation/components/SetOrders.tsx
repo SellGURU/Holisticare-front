@@ -13,13 +13,6 @@ type CategoryState = {
   visible: boolean;
 };
 
-const initialCategoryState: CategoryState[] = [
-  { name: 'Activity', visible: true },
-  { name: 'Diet', visible: true },
-  { name: 'Supplement', visible: true },
-  { name: 'Lifestyle', visible: true },
-];
-
 interface SetOrdersProps {
   data: any;
   treatMentPlanData: any;
@@ -28,6 +21,8 @@ interface SetOrdersProps {
   checkeds: Array<any>;
   reset: () => void;
   defaultSuggestions: Array<any>;
+  visibleCategoriy: CategoryState[];
+  setVisibleCategorieys: (value: CategoryState[]) => void;
   // resolvedSuggestions:(data:any) => void
 }
 
@@ -39,8 +34,12 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   checkeds,
   reset,
   defaultSuggestions,
+  visibleCategoriy,
+  setVisibleCategorieys,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<string>('Activity');
+  const [activeCategory, setActiveCategory] = useState<string>(
+    visibleCategoriy[0].name || 'Activity',
+  );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
   const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
@@ -49,7 +48,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [categories, setCategories] =
-    useState<CategoryState[]>(initialCategoryState);
+    useState<CategoryState[]>(visibleCategoriy);
 
   useEffect(() => {
     setData(defaultSuggestions);
@@ -197,6 +196,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
   const handleConfirm = () => {
     setCategories(localCategories);
+    setVisibleCategorieys(localCategories);
     setActiveCategory(localCategories[0].name);
     setshowchangeOrders(false);
   };
@@ -272,7 +272,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
               Cancel
             </button>
             <button
-              className="text-sm font-medium text-Primary-DeepTeal"
+              className={`${localCategories.filter((el) => el.visible).length === 0 ? 'opacity-50 pointer-events-none' : ''} text-sm font-medium text-Primary-DeepTeal`}
               onClick={handleConfirm}
             >
               Confirm
@@ -315,21 +315,38 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div
-            className={`w-[50%] justify-end ${!isStarted ? 'flex' : 'hidden'}`}
-          >
-            <img
-              className="cursor-pointer"
-              src="/icons/setting-4.svg"
-              alt=""
-              onClick={() => setshowchangeOrders(true)}
-            />
+          <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+            {activeCategory !=
+              categories.filter((el) => el.visible)[0].name && (
+              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
+                <div onClick={handleReset}>Reset</div>
+              </div>
+            )}
+            {activeCategory !=
+              categories.filter((el) => el.visible)[
+                categories.filter((el) => el.visible).length - 1
+              ].name &&
+              visibleCategoriy.filter((el) => el.visible).length > 1 && (
+                <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+                  <div onClick={handleContinue}>Continue</div>
+                </div>
+              )}
+            <div
+              className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
+            >
+              <img
+                className="cursor-pointer"
+                src="/icons/setting-4.svg"
+                alt=""
+                onClick={() => setshowchangeOrders(true)}
+              />
+            </div>
           </div>
         </div>
 
         <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
           {data
-            .filter((el: any) => el.Category == activeCategory)
+            ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => (
               <div className="flex items-center gap-2 mb-3">
                 <Checkbox
@@ -360,22 +377,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 </ul>
               </div>
             ))}
-          <div className=" absolute bottom-3 gap-2 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
-            {activeCategory !=
-              categories.filter((el) => el.visible)[0].name && (
-              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
-                <div onClick={handleReset}>Reset</div>
-              </div>
-            )}
-            {activeCategory !=
-              categories.filter((el) => el.visible)[
-                categories.filter((el) => el.visible).length - 1
-              ].name && (
-              <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-                <div onClick={handleContinue}>Continue</div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
       {showModal && (

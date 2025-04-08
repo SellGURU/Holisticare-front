@@ -11,12 +11,25 @@ import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+
+type CategoryState = {
+  name: string;
+  visible: boolean;
+};
+
+const initialCategoryState: CategoryState[] = [
+  { name: 'Activity', visible: true },
+  { name: 'Diet', visible: true },
+  { name: 'Supplement', visible: true },
+  { name: 'Lifestyle', visible: true },
+];
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
   const steps = ['General Condition', 'Set orders', 'Overview'];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const { setTreatmentId } = useContext(AppContext);
-
+  const [VisibleCategories, setVisibleCategories] =
+    useState<CategoryState[]>(initialCategoryState);
   const handleNext = () => {
     if (currentStepIndex < steps.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
@@ -73,7 +86,7 @@ export const GenerateRecommendation = () => {
     })
       .then((res) => {
         setTratmentPlanData({ ...res.data, member_id: id });
-        setTreatmentId(res.data.treatment_id);
+        // setTreatmentId(res.data.treatment_id);
         setSuggestionsDefualt(res.data.suggestion_tab);
       })
       .finally(() => {
@@ -176,11 +189,16 @@ export const GenerateRecommendation = () => {
                         ...treatmentPlanData.suggestion_tab.filter(
                           (el: any) =>
                             el.checked == true &&
-                            !getAllCheckedCategories().includes(el.Category),
+                            !getAllCheckedCategories().includes(el.Category) &&
+                            VisibleCategories.filter((el) => el.visible)
+                              .map((el) => el.name)
+                              .includes(el.Category),
                         ),
                       ],
                     })
-                      .then((res) => console.log(res))
+                      .then(() => {
+                        setTreatmentId(treatmentPlanData.treatment_id);
+                      })
                       .finally(() => {
                         setisButtonLoading(false);
                         navigate(`/report/Generate-Holistic-Plan/${id}`);
@@ -257,6 +275,8 @@ export const GenerateRecommendation = () => {
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
+              visibleCategoriy={VisibleCategories}
+              setVisibleCategorieys={setVisibleCategories}
               defaultSuggestions={suggestionsDefualt}
               reset={() => {
                 setCheckedSuggestion([]);
@@ -288,6 +308,7 @@ export const GenerateRecommendation = () => {
             ></SetOrders>
           ) : (
             <Overview
+              visibleCategoriy={VisibleCategories}
               suggestionsChecked={checkedSuggestions}
               treatmentPlanData={treatmentPlanData}
             ></Overview>
