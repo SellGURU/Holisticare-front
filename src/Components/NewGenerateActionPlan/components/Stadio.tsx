@@ -264,7 +264,7 @@ const Stadio: FC<StadioProps> = ({
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
-                heading="Alert"
+                heading="Conflict"
                 text={haveConflicText}
                 onClose={() => {
                   setHaveConflic(false);

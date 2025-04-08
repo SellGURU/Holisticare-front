@@ -501,7 +501,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               </div>
               <div className="mb-4">
                 <label className="flex w-full justify-between items-center text-xs font-medium">
-                  Instruction
+                  Instruction <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={instructions}
@@ -510,6 +510,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   className="mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                   rows={6}
                 />
+                {!instructions && <span className="text-xs text-red-500">Instruction is required .</span>}
               </div>
               {selectedGroup === 'Supplement' && (
                 <div className="flex flex-col mb-4 w-full gap-2">
@@ -681,7 +682,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 </div>
               )}
               <div className="mb-4">
-                <label className="text-xs font-medium">Frequency</label>
+                <label className="text-xs font-medium">Frequency <span className="text-red-500">*</span></label>
                 <div className="flex items-center gap-6 mt-2">
                   <div className="flex items-center gap-1">
                     <input
@@ -744,6 +745,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </label>
                   </div>
                 </div>
+                {!frequencyType && <span className="text-xs text-red-500">Frequency is required .</span>}
                 {frequencyType === 'weekly' && (
                   <div className="mt-3">
                     <div className="text-xs text-Text-Quadruple">
@@ -905,12 +907,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        if (selectedGroup && title) {
+                        if (selectedGroup && title && frequencyType && instructions) {
                           handleApply();
                         }
                       }}
                       className={`${
-                        selectedGroup && title
+                        selectedGroup && title && frequencyType && instructions
                           ? 'text-Primary-DeepTeal'
                           : 'text-Disable'
                       } text-sm font-medium cursor-pointer`}
@@ -962,13 +964,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <div
                 onClick={() => {
                   if (step == 0) {
-                    setStep(step + 1);
-                    // saveActivity()
+                    if (frequencyType && instructions) {
+                      setStep(step + 1);
+                    }
                   } else {
                     saveActivity();
                   }
                 }}
-                className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
+                className={`${
+                  step === 0 && (!frequencyType || !instructions)
+                    ? 'text-Disable'
+                    : 'text-Primary-DeepTeal'
+                } text-[14px] cursor-pointer font-medium`}
               >
                 {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
               </div>
