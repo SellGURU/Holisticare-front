@@ -31,6 +31,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
+  console.log(defalts)
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -170,7 +171,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         };
       }) || [],
     );
-  }, [defalts]);
+  }, [defalts, isOpen]);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -834,7 +835,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <div
                 className={`${
                   notes.length > 0 ? 'mb-4' : ''
-                } flex flex-col gap-2 max-h-[50px] overflow-auto`}
+                } flex flex-col gap-2 max-h-[100px] overflow-auto`}
               >
                 {notes.map((note, index) => (
                   <div
@@ -869,7 +870,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   placeholder="Enter internal observations or comments..."
                 />
               </div>
-              <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
+              <div className="mb-4 flex flex-col gap-2 max-h-[250px] overflow-auto ">
                 {practitionerComments?.map((comment, index) => (
                   <div
                     key={index}

@@ -231,24 +231,24 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     <img
                       src="/icons/comment.svg"
                       alt=""
-                      className="w-4 h-4 mr-1.5 -ml-1"
+                      className="w-4 h-4 mr-1.5 "
                     />
                     Practitioner Comment:
                   </div>
                   <div className="flex items-center text-Text-Quadruple text-xs ml-1 text-wrap">
                     {value['Practitioner Comments'].length > 0 ? (
                       value['Practitioner Comments'][0].length > 185 ? (
-                        <>
+                        <div className="ml-4">
                           {value['Practitioner Comments'][0].slice(0, 185)}
                           <div
                             onClick={() => {
                               setShowBasedOn(true);
                             }}
-                            className="ml-1.5 text-Primary-DeepTeal text-xs font-medium cursor-pointer underline text-nowrap"
+                            className=" text-Primary-DeepTeal text-xs font-medium cursor-pointer underline text-nowrap"
                           >
                             see more
                           </div>
-                        </>
+                        </div>
                       ) : (
                         value['Practitioner Comments'][0]
                       )
