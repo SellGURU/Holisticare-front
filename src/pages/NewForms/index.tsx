@@ -5,6 +5,7 @@ import CheckInForm from './CheckIn/CheckinForm';
 
 const NewForms = () => {
   const [active, setActive] = useState('Check-In');
+  const [search, setSearch] = useState('');
   return (
     <>
       <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-[200px]">
@@ -15,7 +16,7 @@ const NewForms = () => {
           <SearchBox
             ClassName="rounded-xl !h-6 !py-[0px] !px-3 !shadow-[unset]"
             placeHolder="Search in Forms ..."
-            onSearch={() => {}}
+            onSearch={(e) => setSearch(e)}
           />
         </div>
         <div className="w-full h-[1px] bg-white my-3 mt-5"></div>
@@ -31,11 +32,11 @@ const NewForms = () => {
         <div className="w-full flex mb-16 justify-center items-center flex-col">
           {active === 'Check-In' ? (
             <>
-              <CheckInForm></CheckInForm>
+              <CheckInForm search={search}></CheckInForm>
             </>
           ) : (
             <>
-              <CheckInForm isQuestionary></CheckInForm>
+              <CheckInForm search={search} isQuestionary></CheckInForm>
             </>
           )}
         </div>

@@ -11,10 +11,11 @@ import SvgIcon from '../../utils/svgIcon.tsx';
 import Table from '../table.tsx/index.tsx';
 import FilterModal from '../FilterModal/index.tsx';
 import { subscribe } from '../../utils/event.ts';
-import ConfirmModal from './ConfirmModal.tsx';
+// import ConfirmModal from './ConfirmModal.tsx';
 import Circleloader from '../CircleLoader/index.tsx';
 import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
 import Toggle from '../Toggle/index.tsx';
+import { DeleteModal } from './deleteModal.tsx';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -178,10 +179,10 @@ const ClientList = () => {
   const [removeId, setRemoveId] = useState();
   const [removeName, setRemoveName] = useState('');
   const [isOpenConfirm, setISOpenConfirm] = useState(false);
-  const [UserMail, setUserMail] = useState('');
-  const [actionType, setActionType] = useState<'Delete' | 'Email' | 'SMS'>(
-    'Delete',
-  );
+  const [, setUserMail] = useState('');
+  const [, setActionType] = useState<'Delete' | 'Email' | 'SMS'>('Delete');
+  console.log(removeName);
+
   useEffect(() => {
     const handleDelete = (value: any) => {
       setRemoveId(value.detail.id);
@@ -459,7 +460,23 @@ const ClientList = () => {
           )}
         </div>
       )}
-      <ConfirmModal
+      <DeleteModal
+        name={removeName}
+        isOpen={isOpenConfirm}
+        onClose={() => {
+          setISOpenConfirm(false);
+        }}
+        onConfirm={() => {
+          Application.deleteClinic({
+            member_id: removeId,
+          }).then(() => {
+            setClientList((prevList) =>
+              prevList.filter((client) => client.member_id !== removeId),
+            );
+          });
+        }}
+      ></DeleteModal>
+      {/* <ConfirmModal
         email={UserMail}
         actionType={actionType}
         clientName={removeName}
@@ -482,7 +499,7 @@ const ClientList = () => {
         onClose={() => {
           setISOpenConfirm(false);
         }}
-      ></ConfirmModal>
+      ></ConfirmModal> */}
     </>
   );
 };

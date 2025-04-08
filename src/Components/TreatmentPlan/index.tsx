@@ -305,15 +305,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {activeTreatment == card.t_plan_id &&
-                            index === cardData.length - 1 && (
-                              <img
-                                onClick={() => setShowModalIndex(index)}
-                                className="-mr-5 ml-3 cursor-pointer"
-                                src="/icons/dots.svg"
-                                alt=""
-                              />
-                            )}
+                          {index === cardData.length - 1 && (
+                            <img
+                              onClick={() => setShowModalIndex(index)}
+                              className="-mr-5 ml-3 cursor-pointer"
+                              src="/icons/dots.svg"
+                              alt=""
+                            />
+                          )}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">

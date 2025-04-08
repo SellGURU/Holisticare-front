@@ -56,7 +56,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence }) => {
             }}
             className="flex gap-1 cursor-pointer"
           >
-            <img src="./icons/logout.svg" alt="" />
+            <img src="/icons/logout.svg" alt="" />
             <div className="text-[12px] font-medium text-Primary-DeepTeal">
               Log out
             </div>

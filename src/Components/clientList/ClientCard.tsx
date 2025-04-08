@@ -230,12 +230,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
         onClose={() => setshowDeleteModal(false)}
         name={client.name}
         onConfirm={() => {
-          setshowModal(false);
           Application.deletePatient({
             member_id: client.member_id,
+          }).then(() => {
+            ondelete(client.member_id);
+            // setshowModal(false);
           });
           // onarchive(client.member_id)
-          ondelete(client.member_id);
         }}
       ></DeleteModal>
       <div

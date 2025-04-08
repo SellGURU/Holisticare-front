@@ -37,7 +37,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   visibleCategoriy,
   setVisibleCategorieys,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<string>('Activity');
+  const [activeCategory, setActiveCategory] = useState<string>(
+    visibleCategoriy[0].name || 'Activity',
+  );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
   const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
@@ -313,15 +315,32 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div
-            className={`w-[50%] justify-end ${!isStarted ? 'flex' : 'hidden'}`}
-          >
-            <img
-              className="cursor-pointer"
-              src="/icons/setting-4.svg"
-              alt=""
-              onClick={() => setshowchangeOrders(true)}
-            />
+          <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+            {activeCategory !=
+              categories.filter((el) => el.visible)[0].name && (
+              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
+                <div onClick={handleReset}>Reset</div>
+              </div>
+            )}
+            {activeCategory !=
+              categories.filter((el) => el.visible)[
+                categories.filter((el) => el.visible).length - 1
+              ].name &&
+              visibleCategoriy.filter((el) => el.visible).length > 1 && (
+                <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+                  <div onClick={handleContinue}>Continue</div>
+                </div>
+              )}
+            <div
+              className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
+            >
+              <img
+                className="cursor-pointer"
+                src="/icons/setting-4.svg"
+                alt=""
+                onClick={() => setshowchangeOrders(true)}
+              />
+            </div>
           </div>
         </div>
 
@@ -358,22 +377,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 </ul>
               </div>
             ))}
-          <div className=" absolute bottom-3 gap-2 text-[12px] right-6 w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
-            {activeCategory !=
-              categories.filter((el) => el.visible)[0].name && (
-              <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
-                <div onClick={handleReset}>Reset</div>
-              </div>
-            )}
-            {activeCategory !=
-              categories.filter((el) => el.visible)[
-                categories.filter((el) => el.visible).length - 1
-              ].name && (
-              <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-                <div onClick={handleContinue}>Continue</div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
       {showModal && (

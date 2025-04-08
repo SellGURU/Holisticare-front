@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { MainModal } from '../../../../Components';
 import Application from '../../../../api/app';
@@ -18,7 +19,20 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   onEdit,
   isActivty,
 }) => {
-  console.log(exercise);
+  const getYouTubeEmbedUrl = (url: string) => {
+    // Handle different YouTube URL formats
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11
+      ? `https://www.youtube.com/embed/${match[2]}`
+      : url;
+  };
+
+  const isYouTubeShorts = (url: string) => {
+    return url.includes('/shorts/');
+  };
+
   const [videoData, setVideoData] = useState<
     { file_id: string; base64: string; url?: string }[]
   >([]);
@@ -161,22 +175,52 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="h-[150px] overflow-auto flex flex-col gap-1">
+              <div className="h-[220px] overflow-auto flex flex-col gap-1">
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
                     <Circleloader />
                   </div>
                 ) : (
-                  videoData.map((video) => (
-                    <video
-                      key={video.file_id}
-                      className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
-                      controls
-                      src={video.base64 || video.url}
-                    >
-                      Your browser does not support the video tag.
-                    </video>
-                  ))
+                  videoData.map((video) =>
+                    video.url ? (
+                      isYouTubeShorts(video.url) ? (
+                        <div className="rounded-xl h-[200px] w-[370px] border border-Gray-50 flex flex-col items-center justify-center p-4">
+                          <img
+                            src="/icons/video-preview.svg"
+                            className="size-12 mb-4"
+                            alt="Video"
+                          />
+                          <a
+                            href={video.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline text-sm font-medium"
+                          >
+                            Watch on YouTube
+                          </a>
+                        </div>
+                      ) : (
+                        <iframe
+                          key={video.file_id}
+                          className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
+                          src={getYouTubeEmbedUrl(video.url)}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      )
+                    ) : (
+                      <video
+                        key={video.file_id}
+                        className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
+                        controls
+                        src={video.base64}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    ),
+                  )
                 )}
               </div>
             )}

@@ -153,6 +153,7 @@ export const Questionary = () => {
     activeCardNumber: number,
     disabled?: boolean,
   ) => {
+    const isNumericString = (str: string) => !isNaN(Number(str));
     if (type == 'short_answer' || type == 'paragraph') {
       return (
         <>
@@ -174,44 +175,55 @@ export const Questionary = () => {
     if (type == 'multiple_choice') {
       return (
         <>
-          <div>
             <div>
-              {questionsData.questions[activeCardNumber - 1]?.options?.map(
-                (el: any, index: number) => {
-                  const optionLabel = String.fromCharCode(65 + index);
+          <div>
+            {questionsData.questions[activeCardNumber - 1]?.options?.map(
+              (el: any, index: number) => {
+                const optionLabel = String.fromCharCode(65 + index);
 
-                  return (
+                return (
+                  <div
+                    onClick={() => {
+                      if (!disabled) {
+                        formValueChange(
+                          questionsData.questions[activeCardNumber - 1].order,
+                          el,
+                        );
+                      }
+                    }}
+                    className="flex items-center gap-[6px] mb-2"
+                  >
                     <div
-                      onClick={() => {
-                        if (!disabled) {
-                          formValueChange(
-                            questionsData.questions[activeCardNumber - 1].order,
-                            el,
-                          );
-                        }
-                      }}
-                      className="flex items-center gap-[6px] mb-2"
+                      className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${
+                        questionsData.questions[activeCard - 1].response == el
+                          ? 'border-Primary-DeepTeal'
+                          : 'border-Text-Secondary '
+                      } bg-white border-[1.4px] rounded-full`}
                     >
-                      <div
-                        className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${questionsData.questions[activeCard - 1].response == el ? 'border-Primary-DeepTeal' : 'border-Text-Secondary '} bg-white border-[1.4px] rounded-full`}
-                      >
-                        {questionsData.questions[activeCardNumber - 1]
-                          .response == el && (
-                          <div className="w-[7px] h-[7px] bg-Primary-DeepTeal rounded-full"></div>
-                        )}
-                      </div>
-                      <div
-                        className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response == el ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
-                      >
-                        <span className="mr-1">{optionLabel}.</span>
-                        {el}
-                      </div>
+                      {questionsData.questions[activeCardNumber - 1]
+                        .response == el && (
+                        <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
+                      )}
                     </div>
-                  );
-                },
-              )}
-            </div>
+                    <div
+                      className={`text-[10px] cursor-pointer ${
+                        questionsData.questions[activeCardNumber - 1].response ==
+                        el
+                          ? 'text-Text-Primary'
+                          : 'text-Text-Secondary'
+                      } `}
+                    >
+                      {!isNumericString(el) && (
+                        <span className="mr-1">{optionLabel}.</span>
+                      )}
+                      {el}
+                    </div>
+                  </div>
+                );
+              },
+            )}
           </div>
+        </div>
         </>
       );
     }
@@ -462,7 +474,7 @@ export const Questionary = () => {
         {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
-              <div className="flex flex-col gap-2 h-[150px]  overflow-y-auto">
+              <div className="flex flex-col gap-2 h-[150px] pr-[6px] custom-scrollbar  overflow-y-auto">
                 {AddForms.map((form: any) => (
                   <div
                     onClick={() => toggleSelection(form.unique_id)}
@@ -576,7 +588,7 @@ export const Questionary = () => {
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[250px] min-h-[100px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {resolveForm(
                   questionsFormData.questions[activeCard - 1].type,
@@ -593,16 +605,14 @@ export const Questionary = () => {
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
               <div className="flex  w-[95px] justify-center items-center gap-3">
-                <img
-                  className="cursor-pointer"
-                  onClick={() => {
-                    if (activeCard > 1) {
-                      setActiveCard(activeCard - 1);
-                    }
-                  }}
-                  src="/icons/arrow-circle-left.svg"
-                  alt=""
-                />
+                {activeCard > 1 && (
+                  <img
+                    className="cursor-pointer"
+                    onClick={() => setActiveCard(activeCard - 1)}
+                    src="/icons/arrow-circle-left.svg"
+                    alt=""
+                  />
+                )}
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
@@ -621,7 +631,7 @@ export const Questionary = () => {
                   {activeCard} /{questionsFormData.questions.length}
                 </div>
                 <img
-                  className="cursor-pointer rotate-180"
+                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData.questions.length && 'invisible'}`}
                   onClick={() => {
                     if (activeCard < questionsFormData.questions.length) {
                       setActiveCard(activeCard + 1);
@@ -657,7 +667,7 @@ export const Questionary = () => {
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">
-                <div className="w-full mt-2 h-[600px] overflow-auto ">
+                <div className="w-full mt-2 h-[500px] overflow-auto ">
                   {data?.map((el: any, index: number) => {
                     console.log(el);
 

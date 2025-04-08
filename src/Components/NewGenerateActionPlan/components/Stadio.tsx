@@ -402,7 +402,6 @@ const Stadio: FC<StadioProps> = ({
               onSearch={(value) => {
                 setSearchValue(value);
               }}
-              searchGray={true}
             />
             <Sort
               options={options}

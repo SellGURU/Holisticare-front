@@ -21,6 +21,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectRef = useRef(null);
   useModalAutoClose({
     refrence: selectRef,
+    buttonRefrence: selectButRef,
     close: () => setShowSelect(false),
   });
   return (

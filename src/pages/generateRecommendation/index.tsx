@@ -86,7 +86,7 @@ export const GenerateRecommendation = () => {
     })
       .then((res) => {
         setTratmentPlanData({ ...res.data, member_id: id });
-        setTreatmentId(res.data.treatment_id);
+        // setTreatmentId(res.data.treatment_id);
         setSuggestionsDefualt(res.data.suggestion_tab);
       })
       .finally(() => {
@@ -196,7 +196,9 @@ export const GenerateRecommendation = () => {
                         ),
                       ],
                     })
-                      .then((res) => console.log(res))
+                      .then(() => {
+                        setTreatmentId(treatmentPlanData.treatment_id);
+                      })
                       .finally(() => {
                         setisButtonLoading(false);
                         navigate(`/report/Generate-Holistic-Plan/${id}`);
