@@ -26,7 +26,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   memberID,
   setCardActive,
   isSwitch,
-  status
+  status,
 }) => {
   const navigate = useNavigate();
   const getStatusStyles = (status: string) => {
@@ -83,16 +83,16 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           <div className=" text-xs font-medium flex flex-col ">{name}</div>
         </div>
         <div className="flex flex-col gap-1">
-        <div
-                      style={{ backgroundColor }}
-                      className="flex items-center px-2.5 h-[20px] rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary"
-                    >
-                      <div
-                        className="mr-[5px] size-3 rounded-full"
-                        style={{ backgroundColor: ellipseColor }}
-                      ></div>
-                      {status}
-                    </div>
+          <div
+            style={{ backgroundColor }}
+            className="flex items-center px-2.5 h-[20px] rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary"
+          >
+            <div
+              className="mr-[5px] size-3 rounded-full"
+              style={{ backgroundColor: ellipseColor }}
+            ></div>
+            {status}
+          </div>
           {/* {tags?.map((tag) => (
             <div
               className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${tag === 'Needs checking ' ? 'bg-[#F9DEDC]' : tag == 'checked' ? 'bg-[#DEF7EC]' : 'bg-[#FFD8E4]'}`}
