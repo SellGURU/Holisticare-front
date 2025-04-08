@@ -133,7 +133,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   }, [data]);
   return (
     <div>
-      {showSuggestions && ( 
+      {showSuggestions && (
         <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-Primary-EmeraldGreen shadow-200 min-w-[449px] text-Text-Primary">
           <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
             <div className="flex items-center text-Primary-DeepTeal gap-2">
