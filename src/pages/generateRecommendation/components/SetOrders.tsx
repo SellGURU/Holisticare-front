@@ -37,7 +37,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   visibleCategoriy,
   setVisibleCategorieys,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<string>(visibleCategoriy[0].name||'Activity');
+  const [activeCategory, setActiveCategory] = useState<string>(
+    visibleCategoriy[0].name || 'Activity',
+  );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
   const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
@@ -323,11 +325,12 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
             {activeCategory !=
               categories.filter((el) => el.visible)[
                 categories.filter((el) => el.visible).length - 1
-              ].name&&visibleCategoriy.filter((el)=>el.visible).length>1 && (
-              <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
-                <div onClick={handleContinue}>Continue</div>
-              </div>
-            )}
+              ].name &&
+              visibleCategoriy.filter((el) => el.visible).length > 1 && (
+                <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
+                  <div onClick={handleContinue}>Continue</div>
+                </div>
+              )}
             <div
               className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
             >
@@ -338,7 +341,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 onClick={() => setshowchangeOrders(true)}
               />
             </div>
-          </div>          
+          </div>
         </div>
 
         <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
@@ -374,7 +377,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 </ul>
               </div>
             ))}
-
         </div>
       </div>
       {showModal && (
