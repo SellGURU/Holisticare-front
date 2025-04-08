@@ -180,11 +180,9 @@ const ClientList = () => {
   const [removeName, setRemoveName] = useState('');
   const [isOpenConfirm, setISOpenConfirm] = useState(false);
   const [, setUserMail] = useState('');
-  const [, setActionType] = useState<'Delete' | 'Email' | 'SMS'>(
-    'Delete',
-  );
+  const [, setActionType] = useState<'Delete' | 'Email' | 'SMS'>('Delete');
   console.log(removeName);
-  
+
   useEffect(() => {
     const handleDelete = (value: any) => {
       setRemoveId(value.detail.id);
@@ -475,8 +473,6 @@ const ClientList = () => {
             setClientList((prevList) =>
               prevList.filter((client) => client.member_id !== removeId),
             );
-          
-
           });
         }}
       ></DeleteModal>

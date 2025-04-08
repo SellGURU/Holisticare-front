@@ -18,17 +18,17 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
 }) => {
   const modalRefrence = useRef(null);
   const [isComplete, setisComplete] = useState(false);
-  const [currentName,setCurrentName] = useState(name);
+  const [currentName, setCurrentName] = useState(name);
   const isNameTooLong = currentName.length > 20;
   useModalAutoClose({
     refrence: modalRefrence,
     close: onClose,
   });
-console.log(name);
-console.log(currentName);
-useEffect(()=>{
-  setCurrentName(name)
-},[isOpen])
+  console.log(name);
+  console.log(currentName);
+  useEffect(() => {
+    setCurrentName(name);
+  }, [isOpen]);
   if (!isOpen) return null;
 
   return (

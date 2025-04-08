@@ -485,19 +485,16 @@ input[type='range'] {
   background-color: #888; /* Scrollbar thumb color */
   border-radius: 10px; /* Round the corners */
   border-radius: 12px;
-  
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background-color: #f1f1f1; /* Scrollbar track color */
-  
 }
 
 /* For Firefox */
 .custom-scrollbar {
-
   scrollbar-width: thin; /* Make the scrollbar thin */
-  scrollbar-color: #FFFFFF #FFFFFF; /* Scrollbar thumb and track color */
+  scrollbar-color: #ffffff #ffffff; /* Scrollbar thumb and track color */
 }
 @media (max-width: 640px) {
   .max-sm-absolute {

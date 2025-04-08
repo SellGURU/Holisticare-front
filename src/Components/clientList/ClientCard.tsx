@@ -232,11 +232,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
         onConfirm={() => {
           Application.deletePatient({
             member_id: client.member_id,
-          }).then(()=>{
+          }).then(() => {
             ondelete(client.member_id);
             // setshowModal(false);
-
-          })
+          });
           // onarchive(client.member_id)
         }}
       ></DeleteModal>
