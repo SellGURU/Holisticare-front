@@ -17,7 +17,7 @@ export const BotMsg = ({ msg, time }: { msg: string; time?: string }) => {
         </div>
         <div
           className={
-            'w-[213px] h-fit  p-2 text-Text-Primary TextStyle-Body-2 bg-backgroundColor-Card border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tr-[20px] '
+            'w-[213px] h-fit  p-2 text-Text-Primary TextStyle-Body-2 bg-backgroundColor-Main border-Gray-50 border leading-loose rounded-bl-[20px] rounded-br-[20px] rounded-tr-[20px] '
           }
         >
           <p>{msg}</p>

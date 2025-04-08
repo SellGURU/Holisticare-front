@@ -21,13 +21,37 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   name,
   email,
   picture,
-  tags,
+  // tags,
   cardActive,
   memberID,
   setCardActive,
   isSwitch,
+  status
 }) => {
   const navigate = useNavigate();
+  const getStatusStyles = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'normal':
+      case 'checked':
+        return {
+          backgroundColor: '#DEF7EC',
+          ellipseColor: '#06C78D',
+        };
+      case 'needs check':
+        return {
+          backgroundColor: '#F9DEDC',
+          ellipseColor: '#FFAB2C',
+        };
+
+      default:
+        return {
+          backgroundColor: '#FFD8E4',
+          ellipseColor: '#FC5474',
+        };
+    }
+  };
+  const { backgroundColor, ellipseColor } = getStatusStyles(status);
+
   return (
     <div
       id={memberID as any}
@@ -59,7 +83,17 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           <div className=" text-xs font-medium flex flex-col ">{name}</div>
         </div>
         <div className="flex flex-col gap-1">
-          {tags?.map((tag) => (
+        <div
+                      style={{ backgroundColor }}
+                      className="flex items-center px-2.5 h-[20px] rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary"
+                    >
+                      <div
+                        className="mr-[5px] size-3 rounded-full"
+                        style={{ backgroundColor: ellipseColor }}
+                      ></div>
+                      {status}
+                    </div>
+          {/* {tags?.map((tag) => (
             <div
               className={`text-center rounded-full py-[2px] px-1.5 md:px-2.5 text-[8px] md:text-[10px] w-fit text-black text-nowrap flex items-center gap-1 ${tag === 'Needs checking ' ? 'bg-[#F9DEDC]' : tag == 'checked' ? 'bg-[#DEF7EC]' : 'bg-[#FFD8E4]'}`}
             >
@@ -68,7 +102,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
               ></div>
               {tag}
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
       <div className="mt-3 flex justify-between items-center">
