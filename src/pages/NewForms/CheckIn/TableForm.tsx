@@ -6,10 +6,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { columns } from './tableTd';
 import { FaSort } from 'react-icons/fa';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import TableRow from './TableRow';
 
 interface TableProps {
   classData: Array<any>;
@@ -18,6 +18,7 @@ interface TableProps {
   onPreview: (id: string) => void;
   onReposition: (id: string) => void;
 }
+
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
   const rowValue = row.getValue(columnId);
@@ -35,15 +36,13 @@ const TableForm: FC<TableProps> = ({
   onEdit,
   onPreview,
   onReposition,
-  // setCheckInLists,
-  // setCheckInListEditValue,
-
-  // setShowModalSchedule,
 }) => {
   const [data, setData] = useState(classData);
+
   useEffect(() => {
     setData(classData);
   }, [classData]);
+
   const table = useReactTable({
     data,
     columns: columns(),
@@ -51,134 +50,9 @@ const TableForm: FC<TableProps> = ({
     getSortedRowModel: getSortedRowModel(),
     globalFilterFn: nestedFilter,
   });
-  const [showModal, setshowModal] = useState(false);
-  const showModalRefrence = useRef(null);
-  const showModalButtonRefrence = useRef(null);
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  useModalAutoClose({
-    refrence: showModalRefrence,
-    buttonRefrence: showModalButtonRefrence,
-    close: () => {
-      setshowModal(false);
-    },
-  });
-  const [modalPosition, setModalPosition] = useState({ top: 0 });
-  const handleOpenModal = (e: React.MouseEvent<HTMLImageElement>, row: any) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const modalHeight = 250; // Approximate height of the modal
-    const windowHeight = window.innerHeight;
 
-    // Calculate the initial top position
-    let topPosition = rect.top + window.scrollY - 200;
-
-    // Check if the modal would go off the bottom of the screen
-    if (topPosition + modalHeight > windowHeight + window.scrollY) {
-      // Position the modal with less top offset when near the bottom of the screen
-      // This will make it appear closer to the click point
-      topPosition = rect.top + window.scrollY - 100;
-    }
-
-    // If top position is more than 230px, show the modal above the click point
-    if (topPosition > 230) {
-      topPosition = rect.top + window.scrollY - modalHeight - 80;
-    }
-
-    setModalPosition({
-      top: topPosition,
-    });
-    setSelectedRow(row.original);
-    setshowModal(true);
-  };
-  const [sureRemove, setSureRemove] = useState(false);
-  const removeItemByNo = (id: string) => {
-    onDelete(id);
-    setshowModal(false);
-    setSelectedRow(null);
-    setSureRemove(false);
-  };
-  const handleEdit = (id: string) => {
-    // setRepositionModeModal(false);
-    setshowModal(false);
-    onEdit(id);
-    // setEditModeModal(true);
-    // setCheckInListEditValue(selectedRow);
-    // setShowModal(true);
-  };
-  const handleReposition = (id: string) => {
-    setshowModal(false);
-    onReposition(id);
-  };
-  // const handleSchedule = () => {
-  //   setshowModal(false);
-  //   setCheckInListEditValue(selectedRow);
-  //   setShowModalSchedule(true);
-  // };
   return (
     <div className="flex items-center justify-center relative">
-      {showModal && (
-        <div
-          ref={showModalRefrence}
-          style={{ top: `${modalPosition.top}px` }}
-          className="absolute right-[100px] z-20 w-[188px] rounded-[16px] px-4 py-2 bg-white shadow-800 flex flex-col gap-3"
-        >
-          <div
-            className="flex items-center gap-2 TextStyle-Body-2 text-Text-Primary pb-2 border-b border-Secondary-SelverGray cursor-pointer"
-            onClick={() => handleReposition(selectedRow.id)}
-          >
-            <img src="/icons/setting-4-green.svg" alt="" className="w-4 h-4" />
-            Reposition
-          </div>
-          <div
-            className="flex items-center cursor-not-allowed border-b opacity-50 border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 "
-            // onClick={handleSchedule}
-          >
-            <img src="/icons/timer-green.svg" alt="" />
-            Schedule & Reminder
-          </div>
-          <div
-            onClick={() => {
-              setshowModal(false);
-              onPreview(selectedRow.id);
-            }}
-            className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
-          >
-            <img src="/icons/eye-green.svg" className="w-4" alt="" />
-            Preview
-          </div>
-          <div
-            className="flex items-center border-b border-Secondary-SelverGray gap-2 TextStyle-Body-2 text-Text-Primary pb-2 cursor-pointer"
-            onClick={() => handleEdit(selectedRow.id)}
-          >
-            <img src="/icons/edit-green.svg" className="w-4" alt="" />
-            Edit
-          </div>
-          {sureRemove ? (
-            <div className="flex items-center justify-start gap-3">
-              <div className="text-Text-Quadruple text-xs">Sure?</div>
-              <img
-                src="/icons/tick-circle-green.svg"
-                alt=""
-                className="w-[20px] h-[20px] cursor-pointer"
-                onClick={() => removeItemByNo(selectedRow.id)}
-              />
-              <img
-                src="/icons/close-circle-red.svg"
-                alt=""
-                className="w-[20px] h-[20px] cursor-pointer"
-                onClick={() => setSureRemove(false)}
-              />
-            </div>
-          ) : (
-            <div
-              className="flex items-center gap-2 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
-              onClick={() => setSureRemove(true)}
-            >
-              <img src="/icons/delete-green.svg" className="w-4" alt="" />
-              Delete
-            </div>
-          )}
-        </div>
-      )}
       <div className="w-full mt-4">
         <div
           className={`flex flex-col justify-between overflow-x-auto bg-white rounded-[16px] text-Text-Primary mt-[-12px] border border-Boarder shadow-200`}
@@ -233,34 +107,14 @@ const TableForm: FC<TableProps> = ({
               </thead>
               <tbody>
                 {table.getRowModel().rows.map((row) => (
-                  <tr
-                    className={`text-Text-Primary space-y-7 bg-white`}
+                  <TableRow
                     key={row.id}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className="px-3 py-3 text-center text-nowrap text-xs"
-                        key={cell.id}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                    <td className="px-3 py-3 text-center text-nowrap text-xs">
-                      <div className="flex justify-center w-full">
-                        <img
-                          onClick={(e) => {
-                            handleOpenModal(e, row);
-                          }}
-                          src="/icons/more-blue.svg"
-                          alt=""
-                          className="cursor-pointer"
-                        />
-                      </div>
-                    </td>
-                  </tr>
+                    row={row}
+                    onDelete={onDelete}
+                    onEdit={onEdit}
+                    onPreview={onPreview}
+                    onReposition={onReposition}
+                  />
                 ))}
               </tbody>
             </table>
