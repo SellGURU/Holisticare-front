@@ -39,7 +39,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
   return (
     <>
       <div className=" w-full  rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center  absolute left-0">
-        <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 blur-md absolute"></div>
+        <div className="w-full h-full opacity-85 rounded-[12px] bg-Gray-50 backdrop-blur-md absolute"></div>
         <div
           style={{ height: window.innerHeight - 60 + 'px' }}
           className=" w-[260px] h-fit overflow-auto  xs:w-[344px] md:w-[530px] relative z-10 px-2"
@@ -69,8 +69,8 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Drag and drop your test file here or click to upload.
               </div>
               <div className="text-Text-Secondary text-[12px] text-center mt-2 w-[220px] xs:w-[300px] md:w-[500px]">
-              {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 10MB)`}
-            </div>
+                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 10MB)`}
+              </div>
               <div className="w-full mt-3 flex justify-center">
                 <div className="text-Primary-DeepTeal cursor-pointer text-[12px] underline">
                   Upload Test Results
@@ -109,7 +109,6 @@ const UploadTest: React.FC<UploadTestProps> = ({
               />
             </div>
 
-            
             <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
               {files.map((el: any) => {
                 return (
