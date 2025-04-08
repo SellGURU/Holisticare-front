@@ -36,9 +36,9 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
           <div className="text-[12px] text-Text-Primary font-medium">
             {data?.title}
           </div>
-          <div className="text-Text-Secondary text-[10px]">
+          {/* <div className="text-Text-Secondary text-[10px]">
             Last update: 20 days ago
-          </div>
+          </div> */}
         </div>
         <div className="w-full h-[350px] mt-2 overflow-y-auto">
           <Checkin upData={data?.questions}></Checkin>
