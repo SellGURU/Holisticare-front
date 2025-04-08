@@ -52,7 +52,10 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
       >
         <div className="flex items-center gap-1">
           <h2 className={`text-Text-Primary font-medium text-xs xl:text-sm`}>
-            {title} {time && <span className=" ml-2 text-xs">{time}</span>}{' '}
+            {title}{' '}
+            {time && (
+              <span className=" ml-2 text-[10px] text-[#888888]">{time}</span>
+            )}{' '}
           </h2>
           {/* <span className={`${theme}-graphicinfo-btn-number ${!number && "hidden"}`}>
                     ({number})

@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import YoupValidation from '../../validation';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
+import SimpleDatePicker from '../../Components/SimpleDatePicker';
 const AddClient = () => {
   const formik = useFormik({
     initialValues: {
@@ -24,8 +25,8 @@ const AddClient = () => {
     validationSchema: yup.object({
       age: yup.number().min(12).max(60),
       email: YoupValidation('email'),
-      firstName: yup.string().required(),
-      lastName: yup.string().required(),
+      firstName: yup.string().required('First name is required'),
+      lastName: yup.string().required('Last name is required'),
       gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
     }),
     onSubmit: () => {
@@ -69,11 +70,8 @@ const AddClient = () => {
   const [photo, setPhoto] = useState('');
   const [memberId, setMemberID] = useState('');
   const [isLoading, setisLoading] = useState(false);
-  const [dateofBrith, setDateOfBrith] = useState(
-    new Date().toISOString().split('T')[0],
-  );
-  const validateDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(new Date());
+  const validateDate = (date: any) => {
     return !isNaN(date.getTime()); // Returns true if it's a valid date
   };
   const submit = () => {
@@ -88,7 +86,7 @@ const AddClient = () => {
       last_name: formik.values.lastName,
       picture: photo,
       // age: formik.values.age,
-      date_of_birth: dateofBrith,
+      date_of_birth: dateOfBirth,
       gender: formik.values.gender,
       wearable_devices: [],
     })
@@ -221,22 +219,31 @@ const AddClient = () => {
                 className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
               >
                 <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
-                  <div className=" w-full md:w-[220px]">
+                  <div className="w-full md:w-[220px]">
                     <TextField
                       type="text"
                       {...formik.getFieldProps('firstName')}
-                      name="firstName"
                       label="First Name"
                       placeholder="Enter client’s first name..."
                     />
+                    {formik.touched.firstName && formik.errors.firstName ? (
+                      <div className="text-Red text-[10px] mt-[2px]">
+                        {formik.errors.firstName}
+                      </div>
+                    ) : null}
                   </div>
-                  <div className=" w-full md:w-[220px]">
+                  <div className="w-full md:w-[220px]">
                     <TextField
                       type="text"
                       {...formik.getFieldProps('lastName')}
                       label="Last Name"
                       placeholder="Enter client’s last name..."
                     />
+                    {formik.touched.lastName && formik.errors.lastName ? (
+                      <div className="text-Red text-[10px] mt-[2px]">
+                        {formik.errors.lastName}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
@@ -341,21 +348,17 @@ const AddClient = () => {
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Date of birth
                     </label>
-                    <input
-                      type="date"
-                      onChange={(e: any) => {
-                        // console.log(new Date(e.target.value).toISOString().split('T')[0])
-                        if (validateDate(e.target.value)) {
-                          setDateOfBrith(
-                            new Date(e.target.value)
-                              .toISOString()
-                              .split('T')[0],
-                          );
-                        }
-                      }}
-                      value={dateofBrith}
-                      className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary"
-                    />
+                    <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
+                      <SimpleDatePicker
+                        isAddClient
+                        date={dateOfBirth}
+                        setDate={(date) => {
+                          if (validateDate(date)) {
+                            setDateOfBirth(date);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                   <div></div>
                 </div>

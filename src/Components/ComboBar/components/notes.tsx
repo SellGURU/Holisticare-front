@@ -121,7 +121,7 @@ export const Notes = () => {
                         {
                           date: Date.now(),
                           time: new Date().toLocaleTimeString(),
-                          writer: '',
+                          writer: 'clinic',
                           note: commentText,
                         },
                       ]);
@@ -173,7 +173,7 @@ export const Notes = () => {
               {data?.map((el: any, index: number) => {
                 return (
                   <div className=" my-2">
-                    <Accordion title={formatDate(el.date)}>
+                    <Accordion time={el.time} title={formatDate(el.date)}>
                       {editIndex === index ? (
                         <textarea
                           className="text-[12px] w-full resize-none outline-none"
@@ -181,7 +181,12 @@ export const Notes = () => {
                           onChange={(e) => setEditText(e.target.value)}
                         />
                       ) : (
-                        <p className="text-[12px]">{el.note}</p>
+                        <>
+                          <div className="text-[#005F73] text-xs">
+                            {el.writer}
+                          </div>
+                          <p className="text-[12px]">{el.note}</p>
+                        </>
                       )}
                       <div className="flex w-full justify-end items-center gap-1">
                         {editIndex === index ? (
@@ -253,7 +258,7 @@ export const Notes = () => {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-start -mt-[300px]">
             <img src="/icons/no-note.svg" alt="" />
             <div className="text-[12px] text-Text-Primary mt-1">
               No Notes Found
