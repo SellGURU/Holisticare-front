@@ -73,12 +73,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [showConflicts, setShowConflicts] = useState(false);
 
   const handleVideoClick = (file: any) => {
-    Application.showExerciseFille({file_id: file.file_id}).then((res) => {
-        const base64Data = res.data.base_64_data;
-        const videoUrl = `data:video/mp4;base64,${base64Data}`;
-        window.open(videoUrl, '_blank');
-    })
-
+    Application.showExerciseFille({ file_id: file.file_id }).then((res) => {
+      const base64Data = res.data.base_64_data;
+      const videoUrl = `data:video/mp4;base64,${base64Data}`;
+      window.open(videoUrl, '_blank');
+    });
   };
 
   return (
@@ -160,23 +159,48 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
                     • {valueData}:
                   </div>
-                  {valueData == 'File' &&
-                    <div 
+                  {valueData == 'File' && (
+                    <div
                       onClick={async () => {
                         if (value.Sections) {
                           // Get all video links from sections
-                          const allVideoLinks = value.Sections.flatMap((section: { Exercises: Array<{ Files: Array<{ Type: string; Content: { url: string; file_id: string } }> }> }) => {
-                            return section.Exercises.flatMap((exercise: { Files: Array<{ Type: string; Content: { url: string; file_id: string } }> }) => {
-                              return exercise.Files
-                                .filter((file: { Type: string; Content: { url: string; file_id: string } }) => 
-                                  (file.Type === 'link' || file.Type === 'Video') && (file.Content.url || file.Content.file_id)
-                                )
-                                .map((file: { Content: { url: string; file_id: string } }) => ({
-                                  url: file.Content.url,
-                                  file_id: file.Content.file_id
-                                }));
-                            });
-                          });
+                          const allVideoLinks = value.Sections.flatMap(
+                            (section: {
+                              Exercises: Array<{
+                                Files: Array<{
+                                  Type: string;
+                                  Content: { url: string; file_id: string };
+                                }>;
+                              }>;
+                            }) => {
+                              return section.Exercises.flatMap(
+                                (exercise: {
+                                  Files: Array<{
+                                    Type: string;
+                                    Content: { url: string; file_id: string };
+                                  }>;
+                                }) => {
+                                  return exercise.Files.filter(
+                                    (file: {
+                                      Type: string;
+                                      Content: { url: string; file_id: string };
+                                    }) =>
+                                      (file.Type === 'link' ||
+                                        file.Type === 'Video') &&
+                                      (file.Content.url ||
+                                        file.Content.file_id),
+                                  ).map(
+                                    (file: {
+                                      Content: { url: string; file_id: string };
+                                    }) => ({
+                                      url: file.Content.url,
+                                      file_id: file.Content.file_id,
+                                    }),
+                                  );
+                                },
+                              );
+                            },
+                          );
 
                           // Process each video
                           for (const video of allVideoLinks) {
@@ -191,7 +215,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                   .replace(/^(https?\/\/\/:)+/, '')
                                   .replace(/^:+\/?/, '')
                                   .replace(/^\/+/, '');
-                                
+
                                 cleanUrl = `https://${cleanUrl}`;
                                 new URL(cleanUrl);
                                 window.open(cleanUrl, '_blank');
@@ -205,11 +229,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                           }
                         }
                       }}
-                      className='flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline'
+                      className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
                     >
                       Youtube Link / Video
                     </div>
-                  }
+                  )}
                   <div className="text-xs text-Text-Primary text-justify ml-1">
                     {valueData === 'Macros' ? (
                       <div className="flex justify-start items-center gap-4">
