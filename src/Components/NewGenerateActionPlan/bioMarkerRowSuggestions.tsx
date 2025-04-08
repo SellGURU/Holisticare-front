@@ -380,7 +380,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 value['Client Notes'].map((note: string, index: number) => {
                   return (
                     <div className="text-Text-Primary text-[10px] flex items-center mb-2">
-                      Note {value['Client Notes'].map.length>1 && <>{index + 1}</>}:{' '}
+                      Note{' '}
+                      {value['Client Notes'].map.length > 1 && <>{index + 1}</>}
+                      :{' '}
                       <div className="text-Text-Quadruple text-[10px] ml-1">
                         {note}
                       </div>

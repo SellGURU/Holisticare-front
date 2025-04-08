@@ -510,7 +510,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   className="mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                   rows={6}
                 />
-                {!instructions && <span className="text-xs text-red-500">Instruction is required .</span>}
+                {!instructions && (
+                  <span className="text-xs text-red-500">
+                    Instruction is required .
+                  </span>
+                )}
               </div>
               {selectedGroup === 'Supplement' && (
                 <div className="flex flex-col mb-4 w-full gap-2">
@@ -682,7 +686,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 </div>
               )}
               <div className="mb-4">
-                <label className="text-xs font-medium">Frequency <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium">
+                  Frequency <span className="text-red-500">*</span>
+                </label>
                 <div className="flex items-center gap-6 mt-2">
                   <div className="flex items-center gap-1">
                     <input
@@ -745,7 +751,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </label>
                   </div>
                 </div>
-                {!frequencyType && <span className="text-xs text-red-500">Frequency is required .</span>}
+                {!frequencyType && (
+                  <span className="text-xs text-red-500">
+                    Frequency is required .
+                  </span>
+                )}
                 {frequencyType === 'weekly' && (
                   <div className="mt-3">
                     <div className="text-xs text-Text-Quadruple">
@@ -907,7 +917,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        if (selectedGroup && title && frequencyType && instructions) {
+                        if (
+                          selectedGroup &&
+                          title &&
+                          frequencyType &&
+                          instructions
+                        ) {
                           handleApply();
                         }
                       }}
