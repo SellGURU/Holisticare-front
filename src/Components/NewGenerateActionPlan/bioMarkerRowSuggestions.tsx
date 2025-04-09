@@ -6,7 +6,7 @@ import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
 import ConflictsModal from './components/ConflictsModal';
 import BasedOnModal from './components/BasedOnModal';
-import Application from '../../api/app';
+import FilePreviewModal from './components/FilePreviewModal';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -49,6 +49,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showFilePreviewModal, setShowFilePreviewModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
   useEffect(() => {
     setNewValue(value);
@@ -71,14 +72,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value.Category]);
   const [showConflicts, setShowConflicts] = useState(false);
-
-  const handleVideoClick = (file: any) => {
-    Application.showExerciseFille({ file_id: file.file_id }).then((res) => {
-      const base64Data = res.data.base_64_data;
-      const videoUrl = `data:video/mp4;base64,${base64Data}`;
-      window.open(videoUrl, '_blank');
-    });
-  };
 
   return (
     <>
@@ -161,74 +154,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                   {valueData == 'File' && (
                     <div
-                      onClick={async () => {
-                        if (value.Sections) {
-                          // Get all video links from sections
-                          const allVideoLinks = value.Sections.flatMap(
-                            (section: {
-                              Exercises: Array<{
-                                Files: Array<{
-                                  Type: string;
-                                  Content: { url: string; file_id: string };
-                                }>;
-                              }>;
-                            }) => {
-                              return section.Exercises.flatMap(
-                                (exercise: {
-                                  Files: Array<{
-                                    Type: string;
-                                    Content: { url: string; file_id: string };
-                                  }>;
-                                }) => {
-                                  return exercise.Files.filter(
-                                    (file: {
-                                      Type: string;
-                                      Content: { url: string; file_id: string };
-                                    }) =>
-                                      (file.Type === 'link' ||
-                                        file.Type === 'Video') &&
-                                      (file.Content.url ||
-                                        file.Content.file_id),
-                                  ).map(
-                                    (file: {
-                                      Content: { url: string; file_id: string };
-                                    }) => ({
-                                      url: file.Content.url,
-                                      file_id: file.Content.file_id,
-                                    }),
-                                  );
-                                },
-                              );
-                            },
-                          );
-
-                          // Process each video
-                          for (const video of allVideoLinks) {
-                            try {
-                              if (video.url) {
-                                // Handle direct URL
-                                let cleanUrl = video.url
-                                  .replace(/^(https?:\/\/)+/, '')
-                                  .replace(/^(https?\/\/)+/, '')
-                                  .replace(/^(https?\/:)+/, '')
-                                  .replace(/^(https?\/\/:)+/, '')
-                                  .replace(/^(https?\/\/\/:)+/, '')
-                                  .replace(/^:+\/?/, '')
-                                  .replace(/^\/+/, '');
-
-                                cleanUrl = `https://${cleanUrl}`;
-                                new URL(cleanUrl);
-                                window.open(cleanUrl, '_blank');
-                              } else if (video.file_id) {
-                                // Handle file download
-                                handleVideoClick(video);
-                              }
-                            } catch (error) {
-                              console.error('Error processing video:', error);
-                            }
-                          }
-                        }
-                      }}
+                      onClick={() => setShowFilePreviewModal(true)}
                       className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
                     >
                       Youtube Link / Video
@@ -489,6 +415,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           showModal={showConflicts}
         />
       )}
+      <FilePreviewModal
+        isOpen={showFilePreviewModal}
+        onClose={() => setShowFilePreviewModal(false)}
+        sections={value.Sections || []}
+      />
       <ActionEditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
