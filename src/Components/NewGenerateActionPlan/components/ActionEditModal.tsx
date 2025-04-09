@@ -82,12 +82,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   );
   const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
-    type: defalts?.Activity_Filters?.Type || '',
-    terms: defalts?.Activity_Filters?.Terms || '',
-    condition: defalts?.Activity_Filters?.Conditions || '',
-    muscle: defalts?.Activity_Filters?.Muscle || '',
-    equipment: defalts?.Activity_Filters?.Equipment || '',
-    level: defalts?.Activity_Filters?.Level || '',
+    Type: defalts?.Activity_Filters?.Type || '',
+    Terms: defalts?.Activity_Filters?.Terms || '',
+    Conditions: defalts?.Activity_Filters?.Conditions || '',
+    Muscle: defalts?.Activity_Filters?.Muscle || '',
+    Equipment: defalts?.Activity_Filters?.Equipment || '',
+    Level: defalts?.Activity_Filters?.Level || '',
   });
   const [step, setStep] = useState(0);
   const updateAddData = (key: keyof typeof addData, value: any) => {
@@ -144,12 +144,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setBaseScore(defalts.Base_Score || 5);
       setFrequencyType(defalts?.Frequency_Type || null);
       setAddData({
-        type: defalts?.Activity_Filters?.Type || '',
-        terms: defalts?.Activity_Filters?.Terms || '',
-        condition: defalts?.Activity_Filters?.Conditions || '',
-        muscle: defalts?.Activity_Filters?.Muscle || '',
-        equipment: defalts?.Activity_Filters?.Equipment || '',
-        level: defalts?.Activity_Filters?.Level || '',
+        Type: defalts?.Activity_Filters?.Type || '',
+        Terms: defalts?.Activity_Filters?.Terms || '',
+        Conditions: defalts?.Activity_Filters?.Conditions || '',
+        Muscle: defalts?.Activity_Filters?.Muscle || '',
+        Equipment: defalts?.Activity_Filters?.Equipment || '',
+        Level: defalts?.Activity_Filters?.Level || '',
       });
       setPractitionerComments(defalts['Practitioner Comments'] || []);
     }
@@ -194,6 +194,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Title: title,
       'Practitioner Comments': practitionerComments,
       Instruction: instructions,
+      Activity_Location: selectedLocations,
       Times: selectedTimes,
       'Client Notes': notes,
       frequencyType: frequencyType,
@@ -205,6 +206,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             : null,
       Description: description,
       Base_Score: baseScore,
+      Activity_Filters: addData,
       Sections: rsolveSectionListforSendToApi(),
       Task_Type: 'Action',
     });
@@ -281,6 +283,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setTitle('');
     setDose(null);
     setValue(null);
+    setAddData({
+      Type: '',
+      Terms: '',
+      Conditions: '',
+      Muscle: '',
+      Equipment: '',
+      Level: '',
+    });
   };
 
   const handleApply = () => {
@@ -616,49 +626,49 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     <CustomSelect
                       placeHolder="Type"
                       options={TypesOptions}
-                      selectedOption={addData.type}
+                      selectedOption={addData.Type}
                       onOptionSelect={(option: string) =>
-                        updateAddData('type', option)
+                        updateAddData('Type', [option])
                       }
                     />
                     <CustomSelect
                       placeHolder="Terms"
                       options={TermsOptions}
-                      selectedOption={addData.terms}
+                      selectedOption={addData.Terms}
                       onOptionSelect={(option: string) =>
-                        updateAddData('terms', option)
+                        updateAddData('Terms', [option])
                       }
                     />
                     <CustomSelect
                       placeHolder="Condition"
                       options={ConditionsOptions}
-                      selectedOption={addData.condition}
+                      selectedOption={addData.Conditions}
                       onOptionSelect={(option: string) =>
-                        updateAddData('condition', option)
+                        updateAddData('Conditions', [option])
                       }
                     />
                     <CustomSelect
                       placeHolder="Muscle"
                       options={MuscleOptions}
-                      selectedOption={addData.muscle}
+                      selectedOption={addData.Muscle}
                       onOptionSelect={(option: string) =>
-                        updateAddData('muscle', option)
+                        updateAddData('Muscle', [option])
                       }
                     />
                     <CustomSelect
                       placeHolder="Equipment"
                       options={EquipmentOptions}
-                      selectedOption={addData.equipment}
+                      selectedOption={addData.Equipment}
                       onOptionSelect={(option: string) =>
-                        updateAddData('equipment', option)
+                        updateAddData('Equipment', [option])
                       }
                     />
                     <CustomSelect
                       placeHolder="Level"
                       options={LevelOptions}
-                      selectedOption={addData.level}
+                      selectedOption={addData.Level}
                       onOptionSelect={(option: string) =>
-                        updateAddData('level', option)
+                        updateAddData('Level', [option])
                       }
                     />
                   </div>

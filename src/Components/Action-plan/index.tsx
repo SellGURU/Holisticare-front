@@ -237,7 +237,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                         )}
                       </>
                     ) : (
-                      <div className="w-full flex flex-col items-center">
+                      <div className="w-full hidden  flex-col items-center">
                         <img src="/icons/NoCalendar.svg" alt="" />
                         <div className="TextStyle-Headline-4 text-Text-Primary -mt-12">
                           No Calendar Generated Yet

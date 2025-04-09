@@ -72,7 +72,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value.Category]);
   const [showConflicts, setShowConflicts] = useState(false);
-
+  const resolvePillarIcon = () => {
+    switch (value.Category) {
+      case 'Diet':
+        return '/icons/diet.svg';
+      case 'Supplement':
+        return '/icons/pill.svg';
+      case 'Lifestyle':
+        return '/icons/Lifestyle.svg';
+      case 'Activity':
+        return '/icons/weight.svg';
+    }
+  };
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -81,7 +92,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type || value.Frequency_Type.length === 0 ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center justify-between w-full">
-              <div className="text-Text-Primary text-sm font-medium">
+              <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
+                <div className="w-6 h-6 bg-[#E5E5E5] mr-2  flex justify-center items-center rounded-[8px]">
+                  <img src={resolvePillarIcon()} alt="" />
+                </div>
                 {value.Title}
               </div>
               <div className="flex items-center">
@@ -279,11 +293,27 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                               <div className="text-[12px] text-Text-Primary font-medium">
                                 {index + 1}. {el.Section}
                               </div>
-                              <div className="w-[80%] gap-2 grid">
+                              <div className="w-[80%] relative gap-2 grid">
+                                {el.Exercises.length > 1 && (
+                                  <div
+                                    className="absolute   top-[25px] left-[-8px]"
+                                    style={{
+                                      height: `${el.Exercises.length * 48 - 35}px`,
+                                    }}
+                                  >
+                                    <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
+                                      <img
+                                        className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
+                                        src="/icons/link.svg"
+                                        alt="super set"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                                 {el.Exercises.map((val: any) => {
                                   return (
                                     <>
-                                      <div className="w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                      <div className="w-full relative  bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
                                         <div className="flex items-center justify-between w-full">
                                           <div className="flex justify-start items-center">
                                             <div className="relative">
@@ -456,6 +486,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   second_layer: editedData.Layers?.second_layer ?? '',
                   third_layer: editedData.Layers?.third_layer ?? '',
                 },
+                Activity_Filters: editedData.Activity_Filters ?? [],
+                Activity_Location: editedData.Activity_Location ?? '',
                 Frequency_Type: editedData.frequencyType ?? '',
                 Frequency_Dates: editedData.frequencyDates ?? [],
                 Sections: editedData.Sections ?? [],

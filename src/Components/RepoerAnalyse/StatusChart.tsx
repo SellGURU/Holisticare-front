@@ -124,36 +124,103 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   // Chart Options
   const options: ChartOptions<'line'> = {
     responsive: true,
-    maintainAspectRatio: false, // Disable aspect ratio to control height
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
-        // max: maxVal.value[1],
-        display: false, // Hide y-axis labels for compact design
+        display: true,
       },
       x: {
         ticks: {
-          color: '#005F73', // Change the text color of x-axis labels
+          color: '#005F73',
           font: {
-            size: 10, // Change the font size of x-axis labels
+            size: 10,
           },
         },
-        display: true, // Hide x-axis labels for compact design
+        display: true,
       },
     },
     plugins: {
       legend: {
-        display: false, // Hide the legend to save space
+        display: false,
       },
       tooltip: {
-        enabled: true, // Keep tooltip enabled if needed
+        enabled: false, // Disable default tooltip since we'll show custom always-visible ones
       },
     },
   };
 
-  // Plugin to draw background layers for "Perfect", "Good", and "Need Focus"
+  // Plugin to draw background layers and persistent tooltips
   const backgroundLayerPlugin: Plugin<'line'> = {
     id: 'backgroundLayer',
+    afterDraw: (chart) => {
+      const ctx = chart.ctx;
+      const meta = chart.getDatasetMeta(0);
+
+      meta.data.forEach((element: any, index: number) => {
+        const dataPoint = dataPoints[index];
+        const { x, y } = element.getCenterPoint();
+
+        // Draw tooltip background with shadow
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+
+        // Draw rounded rectangle background
+        const width = 40;
+        const height = 24;
+        const radius = 4;
+
+        ctx.beginPath();
+        ctx.moveTo(x - width / 2 + radius, y + 5);
+        ctx.lineTo(x + width / 2 - radius, y + 5);
+        ctx.quadraticCurveTo(
+          x + width / 2,
+          y + 5,
+          x + width / 2,
+          y + 5 + radius,
+        );
+        ctx.lineTo(x + width / 2, y + 5 + height - radius);
+        ctx.quadraticCurveTo(
+          x + width / 2,
+          y + 5 + height,
+          x + width / 2 - radius,
+          y + 5 + height,
+        );
+        ctx.lineTo(x - width / 2 + radius, y + 5 + height);
+        ctx.quadraticCurveTo(
+          x - width / 2,
+          y + 5 + height,
+          x - width / 2,
+          y + 5 + height - radius,
+        );
+        ctx.lineTo(x - width / 2, y + 5 + radius);
+        ctx.quadraticCurveTo(
+          x - width / 2,
+          y + 5,
+          x - width / 2 + radius,
+          y + 5,
+        );
+        ctx.closePath();
+
+        // Fill and stroke the background
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.strokeStyle = '#E5E7EB';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Draw tooltip text
+        ctx.fillStyle = '#005F73';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(dataPoint.toString(), x, y + 20);
+      });
+    },
     beforeDraw: (chart) => {
       const {
         ctx,
@@ -161,7 +228,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         scales: { y },
       } = chart;
 
-      // Function to draw layers with colors
       const drawLayer = (yMin: number, yMax: number, color: string) => {
         ctx.save();
         ctx.fillStyle = color;
@@ -173,77 +239,10 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         );
         ctx.restore();
       };
+
       sortKeysWithValues(statusBar).forEach((el) => {
         drawLayer(el.value[0], el.value[1], resolveLayerColor(el.key));
       });
-      // if (mode == "multi") {
-      //   drawLayer(0, statusBar["Needs Focus"][0][1], "rgba(252, 84, 116, 0.1)");
-
-      //   drawLayer(
-      //     statusBar["Ok"][0][0],
-      //     statusBar["Ok"][0][1],
-      //     "rgba(251, 173, 55, 0.3)"
-      //   );
-      //   drawLayer(
-      //     statusBar["Good"][0][0],
-      //     statusBar["Good"][0][1],
-      //     "rgba(6, 199, 141, 0.1)"
-      //   );
-      //   drawLayer(
-      //     statusBar["Ok"][1][0],
-      //     statusBar["Ok"][1][1],
-      //     "rgba(251, 173, 55, 0.3)"
-      //   );
-      //   drawLayer(
-      //     statusBar["Needs Focus"][1][0],
-      //     statusBar["Needs Focus"][1][1],
-      //     "rgba(252, 84, 116, 0.1)"
-      //   );
-
-      // } else {
-      //   if(statusBar["Needs Focus"].length > 1){
-      //     drawLayer(
-      //       statusBar["Needs Focus"][0][0],
-      //       statusBar["Needs Focus"][0][1],
-      //       "rgba(252, 84, 116, 0.1)"
-      //     );
-      //     drawLayer(
-      //       statusBar["Good"][0][0],
-      //       statusBar["Good"][0][1],
-      //       "rgba(6, 199, 141, 0.1)"
-      //     );
-      //     drawLayer(
-      //       statusBar["Ok"][0][0],
-      //       statusBar["Ok"][0][1],
-      //       "rgba(251, 173, 55, 0.3)"
-      //     );
-      //     drawLayer(
-      //       statusBar["Needs Focus"][1][0],
-      //       statusBar["Needs Focus"][1][1],
-      //       "rgba(252, 84, 116, 0.1)"
-      //     );
-      //   }else {
-      //     drawLayer(
-      //       statusBar["Good"][0][0],
-      //       statusBar["Good"][0][1],
-      //       "rgba(6, 199, 141, 0.1)"
-      //     );
-      //     drawLayer(
-      //       statusBar["Ok"][0][0],
-      //       statusBar["Ok"][0][1],
-      //       "rgba(251, 173, 55, 0.3)"
-      //     );
-      //     drawLayer(
-      //       statusBar["Needs Focus"][0][0],
-      //       statusBar["Needs Focus"][0][1],
-      //       "rgba(252, 84, 116, 0.1)"
-      //     );
-
-      //   }
-
-      // }
-
-      // Draw "Need Focus" Layer (0-60)
     },
   };
   const [isLoading, setIsLoading] = useState(false);
