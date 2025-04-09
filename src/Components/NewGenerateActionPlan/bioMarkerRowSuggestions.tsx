@@ -335,10 +335,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                     </>
                                   );
                                 })}
-                                {el.Exercises.length >1 &&
+                                {el.Exercises.length > 1 && (
                                   <div
                                     className="absolute z-[1]  top-[25px] left-[-8px]"
-                                    style={{ height: `${el.Exercises.length * 48 - 35}px` }}
+                                    style={{
+                                      height: `${el.Exercises.length * 48 - 35}px`,
+                                    }}
                                   >
                                     <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
                                       <img
@@ -348,7 +350,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                       />
                                     </div>
                                   </div>
-                                }
+                                )}
                               </div>
                             </div>
                           </div>
