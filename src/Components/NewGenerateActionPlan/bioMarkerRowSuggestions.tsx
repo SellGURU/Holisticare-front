@@ -72,7 +72,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value.Category]);
   const [showConflicts, setShowConflicts] = useState(false);
-
+  const resolvePillarIcon = () => {
+    switch (value.Category) {
+      case 'Diet':
+        return '/icons/diet.svg';
+      case 'Supplement':
+        return '/icons/pill.svg';
+      case 'Lifestyle':
+        return '/icons/Lifestyle.svg';
+      case 'Activity':
+        return '/icons/weight.svg';
+    }
+  };
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -81,7 +92,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type || value.Frequency_Type.length === 0 ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center justify-between w-full">
-              <div className="text-Text-Primary text-sm font-medium">
+              <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
+                <div className="w-6 h-6 bg-[#E5E5E5] mr-2  flex justify-center items-center rounded-[8px]">
+                  <img src={resolvePillarIcon()} alt="" />
+                </div>
                 {value.Title}
               </div>
               <div className="flex items-center">

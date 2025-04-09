@@ -283,6 +283,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setTitle('');
     setDose(null);
     setValue(null);
+    setAddData({
+      Type: '',
+      Terms: '',
+      Conditions: '',
+      Muscle: '',
+      Equipment: '',
+      Level: '',
+    });
   };
 
   const handleApply = () => {
