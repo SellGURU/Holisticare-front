@@ -660,7 +660,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       options={LevelOptions}
                       selectedOption={addData.Level}
                       onOptionSelect={(option: string) =>
-                        updateAddData('Level',  [option])
+                        updateAddData('Level', [option])
                       }
                     />
                   </div>
