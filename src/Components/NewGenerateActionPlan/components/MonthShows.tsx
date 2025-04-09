@@ -6,7 +6,7 @@ interface MonthShowsProps {
 const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
   return (
     <div
-      className={`h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex ml-1 ${className}`}
+      className={`min-h-[32px] border flex-wrap max-w-[546px] h-auto rounded-[4px] text-xs bg-white border-Gray-50 inline-flex ml-1 ${className}`}
     >
       {days.map((day, index) => (
         <div
