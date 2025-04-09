@@ -248,7 +248,7 @@ const GenerateActionPlan = () => {
           <>
             {calendarViewData && (
               <div className="w-full h-full px-8 mt-[125px]">
-                {calendarViewData?.scheduled_tasks.length > 0 &&
+                {calendarViewData?.scheduled_tasks.length > 0 && (
                   <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
                     <div className="flex flex-col h-full justify-between">
                       <div className="font-medium text-sm text-Text-Primary">
@@ -257,7 +257,8 @@ const GenerateActionPlan = () => {
                       <div className="text-[10px] text-Text-Primary">
                         Monitor your clients' wellness progress with clear
                         insights and visual updates. Track key health metrics to
-                        keep them motivated and support informed, healthy choices.
+                        keep them motivated and support informed, healthy
+                        choices.
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
@@ -307,15 +308,15 @@ const GenerateActionPlan = () => {
                       </div>
                     </div>
                   </div>
-                }
+                )}
                 {calendarViewData?.scheduled_tasks.length > 0 && (
                   <CalenderComponent data={calendarViewData?.scheduled_tasks} />
                 )}
                 {/* {calendarViewData?.scheduled_tasks.length} */}
                 {calendarViewData?.scheduled_tasks.length === 0 && (
-                  <div className='pt-24'>
+                  <div className="pt-24">
                     <div className="w-full h-[200px] flex justify-center items-center">
-                        <img className='' src="/icons/bro.svg" alt="" />
+                      <img className="" src="/icons/bro.svg" alt="" />
                     </div>
                     <div className="text-Text-Primary font-medium text-center">
                       Not scheduled yet.
