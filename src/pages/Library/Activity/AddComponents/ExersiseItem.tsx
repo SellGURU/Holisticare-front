@@ -132,7 +132,9 @@ const ExerciseItem = ({
           <div
             className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
-            <div className="text-center text-[8px] text-Text-Primary">Set <span className="text-red-500">*</span></div>
+            <div className="text-center text-[8px] text-Text-Primary">
+              Set <span className="text-red-500">*</span>
+            </div>
             <input
               type="number"
               value={sets}

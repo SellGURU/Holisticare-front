@@ -49,7 +49,7 @@ const InformationStep: FC<InformationStepProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
-  
+
   // Formik validation schema
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
@@ -83,7 +83,7 @@ const InformationStep: FC<InformationStepProps> = ({
       setTypeOptions(res.data.Type);
     });
   }, []);
-  
+
   const handleCheckboxChange = (value: string) => {
     updateAddData(
       'location',
@@ -92,7 +92,7 @@ const InformationStep: FC<InformationStepProps> = ({
         : [...addData.location, value],
     );
   };
-  
+
   return (
     <>
       <div className="w-full flex gap-4 mt-6 relative">
@@ -109,7 +109,11 @@ const InformationStep: FC<InformationStepProps> = ({
               onChange={(e) => formik.setFieldValue('title', e.target.value)}
               onBlur={formik.handleBlur}
               className="w-[360px]"
-              errorMessage={formik.touched.title && formik.errors.title ? formik.errors.title : undefined}
+              errorMessage={
+                formik.touched.title && formik.errors.title
+                  ? formik.errors.title
+                  : undefined
+              }
               inValid={formik.touched.title && Boolean(formik.errors.title)}
             />
           </div>
@@ -140,7 +144,9 @@ const InformationStep: FC<InformationStepProps> = ({
             <textarea
               placeholder="Write the activity's Instruction..."
               value={formik.values.instruction}
-              onChange={(e) => formik.setFieldValue('instruction', e.target.value)}
+              onChange={(e) =>
+                formik.setFieldValue('instruction', e.target.value)
+              }
               onBlur={formik.handleBlur}
               className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
                 formik.touched.instruction && formik.errors.instruction
@@ -149,7 +155,9 @@ const InformationStep: FC<InformationStepProps> = ({
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
             {formik.touched.instruction && formik.errors.instruction && (
-              <div className="text-red-500 text-xs mt-1">{formik.errors.instruction}</div>
+              <div className="text-red-500 text-xs mt-1">
+                {formik.errors.instruction}
+              </div>
             )}
           </div>
         </div>

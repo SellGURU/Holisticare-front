@@ -46,7 +46,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         // Show validation error
         return;
       }
-      
+
       if (editid) {
         Application.editActivity({
           Title: addData.title,
@@ -151,14 +151,16 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   };
   // Check if form is valid whenever addData changes
   useEffect(() => {
-    setIsFormValid(addData.title.trim() !== '' && addData.instruction.trim() !== '');
+    setIsFormValid(
+      addData.title.trim() !== '' && addData.instruction.trim() !== '',
+    );
   }, [addData.title, addData.instruction]);
-  
+
   // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {
     setIsExerciseStepValid(sectionList.length > 0);
   }, [sectionList]);
-  
+
   return (
     <>
       <div
@@ -205,8 +207,9 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             <div
               onClick={step === 0 && !isFormValid ? undefined : nextStep}
               className={`text-Primary-DeepTeal text-[14px] ${
-                (step === 0 && !isFormValid) || (step === 1 && !isExerciseStepValid)
-                  ? 'opacity-50 cursor-not-allowed pointer-events-none' 
+                (step === 0 && !isFormValid) ||
+                (step === 1 && !isExerciseStepValid)
+                  ? 'opacity-50 cursor-not-allowed pointer-events-none'
                   : 'cursor-pointer font-medium'
               }`}
             >
