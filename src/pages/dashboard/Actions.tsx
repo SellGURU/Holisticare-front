@@ -136,7 +136,12 @@ const Actions: React.FC = () => {
                   <div
                     className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}
                   >
-                    <div title={action.alert} className="max-w-[267px] truncate">{action.alert}</div>
+                    <div
+                      title={action.alert}
+                      className="max-w-[267px] truncate"
+                    >
+                      {action.alert}
+                    </div>
 
                     <div className="flex items-center gap-2">
                       {action.state === 'Pending' && (

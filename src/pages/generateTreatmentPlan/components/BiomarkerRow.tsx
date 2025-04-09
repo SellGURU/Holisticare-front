@@ -144,7 +144,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           <div className=" top-4 right-4  absolute">
             {isExpanded ? (
               <div
-                onClick={() => setIsExpanded(false)}
+                onClick={() => {setIsExpanded(false)
+                  setdeleteConfirm(false)
+                }}
                 className="size-4 transition-transform rotate-180"
               >
                 <SvgIcon
@@ -156,7 +158,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             ) : (
               <img
-                onClick={() => setIsExpanded(true)}
+                onClick={() => {setIsExpanded(true)
+                  setdeleteConfirm(false)
+                }}
                 className={` ${isOverview && 'hidden'} cursor-pointer mb-2  size-4 transition-transform`}
                 src="/icons/arow-down-drop.svg"
                 alt=""
