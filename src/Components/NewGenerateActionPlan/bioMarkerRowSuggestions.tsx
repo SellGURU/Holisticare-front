@@ -77,9 +77,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       case 'Diet':
         return '/icons/diet.svg';
       case 'Supplement':
-        return '/icons/pill.svg';
+        return '/icons/Supplement.svg';
       case 'Lifestyle':
-        return '/icons/Lifestyle.svg';
+        return '/icons/LifeStyle2.svg';
       case 'Activity':
         return '/icons/weight.svg';
     }
@@ -94,7 +94,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
                 <div className="w-6 h-6 bg-[#E5E5E5] mr-2  flex justify-center items-center rounded-[8px]">
-                  <img src={resolvePillarIcon()} alt="" />
+                  <img className='w-4' src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}
               </div>
