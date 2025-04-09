@@ -156,44 +156,64 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     afterDraw: (chart) => {
       const ctx = chart.ctx;
       const meta = chart.getDatasetMeta(0);
-      
+
       meta.data.forEach((element: any, index: number) => {
         const dataPoint = dataPoints[index];
         const { x, y } = element.getCenterPoint();
-        
+
         // Draw tooltip background with shadow
         ctx.save();
         ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
         ctx.shadowBlur = 4;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 2;
-        
+
         // Draw rounded rectangle background
         const width = 40;
         const height = 24;
         const radius = 4;
-        
+
         ctx.beginPath();
-        ctx.moveTo(x - width/2 + radius, y + 5);
-        ctx.lineTo(x + width/2 - radius, y + 5);
-        ctx.quadraticCurveTo(x + width/2, y + 5, x + width/2, y + 5 + radius);
-        ctx.lineTo(x + width/2, y + 5 + height - radius);
-        ctx.quadraticCurveTo(x + width/2, y + 5 + height, x + width/2 - radius, y + 5 + height);
-        ctx.lineTo(x - width/2 + radius, y + 5 + height);
-        ctx.quadraticCurveTo(x - width/2, y + 5 + height, x - width/2, y + 5 + height - radius);
-        ctx.lineTo(x - width/2, y + 5 + radius);
-        ctx.quadraticCurveTo(x - width/2, y + 5, x - width/2 + radius, y + 5);
+        ctx.moveTo(x - width / 2 + radius, y + 5);
+        ctx.lineTo(x + width / 2 - radius, y + 5);
+        ctx.quadraticCurveTo(
+          x + width / 2,
+          y + 5,
+          x + width / 2,
+          y + 5 + radius,
+        );
+        ctx.lineTo(x + width / 2, y + 5 + height - radius);
+        ctx.quadraticCurveTo(
+          x + width / 2,
+          y + 5 + height,
+          x + width / 2 - radius,
+          y + 5 + height,
+        );
+        ctx.lineTo(x - width / 2 + radius, y + 5 + height);
+        ctx.quadraticCurveTo(
+          x - width / 2,
+          y + 5 + height,
+          x - width / 2,
+          y + 5 + height - radius,
+        );
+        ctx.lineTo(x - width / 2, y + 5 + radius);
+        ctx.quadraticCurveTo(
+          x - width / 2,
+          y + 5,
+          x - width / 2 + radius,
+          y + 5,
+        );
         ctx.closePath();
-        
+
         // Fill and stroke the background
         ctx.fillStyle = 'white';
         ctx.fill();
         ctx.strokeStyle = '#E5E7EB';
         ctx.lineWidth = 1;
         ctx.stroke();
-        
+
         ctx.restore();
-        
+
         // Draw tooltip text
         ctx.fillStyle = '#005F73';
         ctx.font = '10px Arial';
@@ -219,7 +239,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         );
         ctx.restore();
       };
-      
+
       sortKeysWithValues(statusBar).forEach((el) => {
         drawLayer(el.value[0], el.value[1], resolveLayerColor(el.key));
       });
