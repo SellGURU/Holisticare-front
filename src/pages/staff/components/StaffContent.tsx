@@ -14,7 +14,7 @@ type StaffMember = {
   online: boolean;
   user_name: string;
   you_tag: boolean;
-  available_role:string
+  available_role: string;
 };
 
 const StaffContent = () => {
@@ -48,7 +48,7 @@ const StaffContent = () => {
       picture: string;
       online: boolean;
       user_name: string;
-      available_role:string
+      available_role: string;
     }[]
   >([]);
   const getStaffs = () => {
