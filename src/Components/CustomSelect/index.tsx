@@ -35,7 +35,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
         }}
         className={`w-full ${wfull ? 'md:w-full' : 'md:w-[181px]'}  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && options.length > 0 && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
       >
-        {selectedOption && selectedOption != "" ? (
+        {selectedOption && selectedOption != '' ? (
           <div className="text-[12px] text-[#383838] max-w-[140px] truncate">
             {selectedOption}
           </div>
@@ -61,13 +61,13 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
             <div
               key={option}
               onClick={() => {
-                if(option != 'None'){
+                if (option != 'None') {
                   onOptionSelect(option);
-                }else {
-                  onOptionSelect("");
+                } else {
+                  onOptionSelect('');
                 }
                 setShowSelect(false);
-              }}    
+              }}
               className="text-[12px] cursor-pointer text-Text-Primary py-1"
             >
               {option}

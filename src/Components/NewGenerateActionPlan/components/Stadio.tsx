@@ -134,9 +134,9 @@ const Stadio: FC<StadioProps> = ({
     }
   };
   const { id } = useParams<{ id: string }>();
-  const AutoGenerate = (isWithAi?:boolean) => {
+  const AutoGenerate = (isWithAi?: boolean) => {
     // if(isWithAi){
-      setIsAutoGenerate(true);
+    setIsAutoGenerate(true);
     // }
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
@@ -149,7 +149,7 @@ const Stadio: FC<StadioProps> = ({
       })
       .finally(() => {
         setIsAutoGenerate(false);
-        if(isWithAi){
+        if (isWithAi) {
           setIsAutoGenerateComplete(true);
           setTimeout(() => {
             setIsAutoGenerateComplete(false);
