@@ -483,7 +483,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-medium">Title <span className="text-red-500">*</span></label>
+                <label className="block text-xs font-medium">
+                  Title <span className="text-red-500">*</span>
+                </label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}

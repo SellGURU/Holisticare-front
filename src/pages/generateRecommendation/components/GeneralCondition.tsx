@@ -296,7 +296,9 @@ const Card: React.FC<CardProps> = ({
                 className="w-full bg-backgroundColor-Card px-4 rounded-lg resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
               />
             ) : (
-              <li className="list-disc text-xs mt-2">{item}</li>
+              <li className={` ${item.length > 1 && 'list-disc'} text-xs mt-2`}>
+                {item}
+              </li>
             )}
           </>
         ))}

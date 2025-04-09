@@ -4,12 +4,13 @@ import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
 import DownloadModal from './downloadModal';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
 import { publish } from '../../utils/event';
 import { resolveAccesssUser } from '../../help';
 import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { subscribe, unsubscribe } from '../../utils/event';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -159,6 +160,22 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openDownload, setOpenDownload] = useState(false);
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
+  const [isReportAvailable, setIsReportAvailable] = useState(true);
+
+  useEffect(() => {
+    const handleReportStatus = (message: any) => {
+      const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
+      setIsReportAvailable(eventData.detail.isHaveReport);
+    };
+
+    subscribe('reportStatus', handleReportStatus);
+
+    return () => {
+      unsubscribe('reportStatus', handleReportStatus);
+    };
+  }, []);
+
+  const shouldEnableActions = !isReportAvailable;
   return (
     <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
@@ -211,6 +228,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {canDownload && (
           <div className="flex gap-3">
             <ButtonPrimary
+              disabled={shouldEnableActions}
               size="small"
               onClick={() => {
                 setOpenDownload(true);
@@ -237,9 +255,14 @@ export const TopBar: React.FC<TopBarProps> = ({
             </ButtonPrimary>
             <div
               onClick={() => {
+                if (shouldEnableActions) return;
                 setOpenShare(true);
               }}
-              className="flex items-center gap-1 TextStyle-Button text-[#005F73] cursor-pointer "
+              className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
+                shouldEnableActions
+                  ? 'cursor-not-allowed opacity-60'
+                  : 'cursor-pointer'
+              }`}
             >
               <img src="/icons/share.svg" alt="" />
               Share
