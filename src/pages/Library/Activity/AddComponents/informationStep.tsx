@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import Checkbox from '../../../../Components/checkbox';
 import CustomSelect from '../../../../Components/CustomSelect';
 import TextField from '../../../../Components/TextField';
@@ -47,12 +49,30 @@ const InformationStep: FC<InformationStepProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
-  // const [type, setType] = useState('');
-  // const [terms, setTerms] = useState('');
-  // const [condition, setCondition] = useState('');
-  // const [muscle, setMuscle] = useState('');
-  // const [equipment, setEquipment] = useState('');
-  // const [level, setLevel] = useState('');
+  
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    title: Yup.string().required('Title is required'),
+    instruction: Yup.string().required('Instruction is required'),
+  });
+
+  // Initialize Formik
+  const formik = useFormik({
+    initialValues: {
+      title: addData.title,
+      instruction: addData.instruction,
+    },
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: () => {}, // This is handled by the parent component
+  });
+
+  // Update parent component when form values change
+  useEffect(() => {
+    updateAddData('title', formik.values.title);
+    updateAddData('instruction', formik.values.instruction);
+  }, [formik.values.title, formik.values.instruction]);
+
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -63,6 +83,7 @@ const InformationStep: FC<InformationStepProps> = ({
       setTypeOptions(res.data.Type);
     });
   }, []);
+  
   const handleCheckboxChange = (value: string) => {
     updateAddData(
       'location',
@@ -71,25 +92,33 @@ const InformationStep: FC<InformationStepProps> = ({
         : [...addData.location, value],
     );
   };
+  
   return (
     <>
       <div className="w-full flex gap-4 mt-6 relative">
         <div className="flex flex-col gap-4">
-          <TextField
-            type="text"
-            newStyle
-            label="Title"
-            placeholder="Write the activity’s title..."
-            value={addData.title}
-            onChange={(e) => updateAddData('title', e.target.value)}
-            className="w-[360px]"
-          />
+          <div className="flex flex-col gap-1">
+            <div className="text-xs font-medium text-Text-Primary">
+              Title <span className="text-red-500">*</span>
+            </div>
+            <TextField
+              type="text"
+              newStyle
+              placeholder="Write the activity's title..."
+              value={formik.values.title}
+              onChange={(e) => formik.setFieldValue('title', e.target.value)}
+              onBlur={formik.handleBlur}
+              className="w-[360px]"
+              errorMessage={formik.touched.title && formik.errors.title ? formik.errors.title : undefined}
+              inValid={formik.touched.title && Boolean(formik.errors.title)}
+            />
+          </div>
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
               Description
             </div>
             <textarea
-              placeholder="Write the activity’s description..."
+              placeholder="Write the activity's description..."
               value={addData.description}
               onChange={(e) => updateAddData('description', e.target.value)}
               className="w-full h-[62px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
@@ -106,14 +135,22 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Instruction
+              Instruction <span className="text-red-500">*</span>
             </div>
             <textarea
-              placeholder="Write the activity’s Instruction..."
-              value={addData.instruction}
-              onChange={(e) => updateAddData('instruction', e.target.value)}
-              className="w-full h-[62px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
+              placeholder="Write the activity's Instruction..."
+              value={formik.values.instruction}
+              onChange={(e) => formik.setFieldValue('instruction', e.target.value)}
+              onBlur={formik.handleBlur}
+              className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
+                formik.touched.instruction && formik.errors.instruction
+                  ? 'border-red-500'
+                  : 'border-Gray-50'
+              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
+            {formik.touched.instruction && formik.errors.instruction && (
+              <div className="text-red-500 text-xs mt-1">{formik.errors.instruction}</div>
+            )}
           </div>
         </div>
         <div className="bg-[#E9EDF5] h-[328px] w-px"></div>

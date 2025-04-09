@@ -15,6 +15,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [step, setStep] = useState(0);
   // const [showSectionOrder, setShowSectionOrder] = useState(false);
   const [sectionList, setSectionList] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -32,8 +34,19 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   };
   const nextStep = () => {
     if (step === 0) {
+      // Validate required fields before proceeding
+      if (!isFormValid) {
+        // Show validation errors
+        return;
+      }
       setStep(step + 1);
     } else {
+      // Validate that there's at least one section before saving
+      if (!isExerciseStepValid) {
+        // Show validation error
+        return;
+      }
+      
       if (editid) {
         Application.editActivity({
           Title: addData.title,
@@ -136,6 +149,16 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       [key]: value,
     }));
   };
+  // Check if form is valid whenever addData changes
+  useEffect(() => {
+    setIsFormValid(addData.title.trim() !== '' && addData.instruction.trim() !== '');
+  }, [addData.title, addData.instruction]);
+  
+  // Check if exercise step is valid whenever sectionList changes
+  useEffect(() => {
+    setIsExerciseStepValid(sectionList.length > 0);
+  }, [sectionList]);
+  
   return (
     <>
       <div
@@ -180,8 +203,12 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               Cancel
             </div>
             <div
-              onClick={nextStep}
-              className="text-Primary-DeepTeal text-[14px] cursor-pointer font-medium"
+              onClick={step === 0 && !isFormValid ? undefined : nextStep}
+              className={`text-Primary-DeepTeal text-[14px] ${
+                (step === 0 && !isFormValid) || (step === 1 && !isExerciseStepValid)
+                  ? 'opacity-50 cursor-not-allowed pointer-events-none' 
+                  : 'cursor-pointer font-medium'
+              }`}
             >
               {step === 0 ? 'Next' : editid ? 'Update' : 'Save'}
             </div>

@@ -132,7 +132,7 @@ const ExerciseItem = ({
           <div
             className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
-            <div className="text-center text-[8px] text-Text-Primary">set</div>
+            <div className="text-center text-[8px] text-Text-Primary">Set <span className="text-red-500">*</span></div>
             <input
               type="number"
               value={sets}
@@ -165,9 +165,9 @@ const ExerciseItem = ({
               }
               className="w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
-            <div className="absolute right-2 top-[18px] text-[10px] text-Text-Secondary">
+            {/* <div className="absolute right-2 top-[18px] text-[10px] text-Text-Secondary">
               kg
-            </div>
+            </div> */}
           </div>
           <div className="mt-2">
             <div className="text-center text-[8px] text-Text-Primary">
