@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 
@@ -12,6 +12,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   setShowModal,
   getStaffs,
 }) => {
+  const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('');
   const [openRoll, setOpenRoll] = useState(false);
   const [role, setRole] = useState('staff');
@@ -27,6 +28,12 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
       getStaffs();
     });
   };
+  const [Roles, setRoles] = useState([])
+  useEffect(()=>{
+    Application.getStaffRoles({}).then((res)=>{
+      setRoles(res.data.member_role)
+    })
+  },[])
   return (
     <>
       {step === 1 ? (
@@ -36,6 +43,15 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               <div className="text-Text-Primary font-medium">Invite Member</div>
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
+            <div className='w-full mb-4 '>
+            <input
+                  placeholder="Write the full name ..."
+                  className={`w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+            </div>
             <div className="w-full flex items-center gap-2">
               <div className="flex flex-col">
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
@@ -43,7 +59,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 </div>
                 <input
                   placeholder="Write email member ..."
-                  className={`w-[304px] h-[28px] border ${!email.includes('@') && email.length > 0 ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                  className={`w-[222px] h-[28px] border ${!email.includes('@') && email.length > 0 ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -63,8 +79,13 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     }}
                     className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                   >
-                    <option value="staff">Staff</option>
-                    <option value="admin">Admin</option>
+                    {
+                      Roles?.map((role)=>(
+                        <option value={role}>{role}</option>
+                      ))
+                    }
+                    {/* <option value="staff">Staff</option>
+                    <option value="admin">Admin</option> */}
                   </select>
                   <img
                     className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
@@ -150,9 +171,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 <div className="text-center text-Text-Primary text-xl font-medium">
                   Free
                 </div>
-                <div className="text-Primary-DeepTeal text-xs font-medium text-center mt-5 cursor-pointer">
+                {/* <div className="text-Primary-DeepTeal text-xs font-medium text-center mt-5 cursor-pointer">
                   Learn more
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="w-full flex justify-end items-center p-2 mt-5">
@@ -168,10 +189,11 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               <div
                 className={`${loading ? 'text-Disable' : 'text-Primary-DeepTeal'} text-sm font-medium cursor-pointer`}
                 onClick={() => {
-                  if (email && role) {
+                  if (email && role && fullName) {
                     onSave({
                       email: email,
                       role: role,
+                      full_name: fullName
                     });
                   }
                 }}

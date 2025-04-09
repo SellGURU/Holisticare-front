@@ -529,7 +529,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   <div className="flex w-full  text-Text-Primary   text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
                       <img src="/icons/note-2.svg" alt="" />
-                      Questionary
+                      Questionnaire
                     </div>
                     <div
                       className="text-nowrap max-w-[100px] ml-[13px] truncate"
