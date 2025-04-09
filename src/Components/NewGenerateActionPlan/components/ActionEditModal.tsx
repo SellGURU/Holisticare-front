@@ -483,7 +483,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-medium">Title</label>
+                <label className="block text-xs font-medium">Title <span className="text-red-500">*</span></label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -491,6 +491,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   type="text"
                   className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                 />
+                {!title && (
+                  <span className="text-xs text-red-500">
+                    Title is required.
+                  </span>
+                )}
               </div>
               <div className={`mb-4`}>
                 <label className="block text-xs font-medium">Description</label>
@@ -510,7 +515,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <RangeCard value={baseScore} changeValue={setBaseScore} />
               </div>
               <div className="mb-4">
-                <label className="flex w-full justify-between items-center text-xs font-medium">
+                <label className="flex w-full justify-start gap-1 items-center text-xs font-medium">
                   Instruction <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -989,7 +994,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               <div
                 onClick={() => {
                   if (step == 0) {
-                    if (frequencyType && instructions) {
+                    if (frequencyType && instructions && title) {
                       setStep(step + 1);
                     }
                   } else {
@@ -997,7 +1002,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   }
                 }}
                 className={`${
-                  step === 0 && (!frequencyType || !instructions)
+                  step === 0 && (!frequencyType || !instructions || !title)
                     ? 'text-Disable'
                     : 'text-Primary-DeepTeal'
                 } text-[14px] cursor-pointer font-medium`}
