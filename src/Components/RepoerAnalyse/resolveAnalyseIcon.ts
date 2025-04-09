@@ -84,6 +84,9 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Immune System Health') {
     return '/icons/biomarkers/Cells.svg';
   }
+  if (name == 'Sex Hormones') {
+    return '/icons/biomarkers/sex-hormone.svg';
+  }
   // "./images/report/vitamine.svg",
   // :"./images/report/bone.svg",
   // ./images/report/heart_rate_02.svg
