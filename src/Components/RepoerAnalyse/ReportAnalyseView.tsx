@@ -706,7 +706,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     onGenderate={() => {
                       setISGenerateLoading(true);
                       setTimeout(() => {
-                        publish('QuestionaryTrackingCall', {});
+                        // publish('QuestionaryTrackingCall', {});
                         fetchData();
                       }, 5000);
                     }}
