@@ -286,13 +286,18 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     className={`w-full h-full bg-[#E9F0F2] rounded-[16px]  mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
                   >
                     {value.Sections.map((el: any, index: number) => {
+                      // Check if this section has been shown before
+                      const isFirstOccurrence = index === value.Sections.findIndex((t: any) => t.Section === el.Section);
+                      
                       return (
                         <>
                           <div className="p-4">
                             <div className="flex justify-between items-start">
-                              <div className="text-[12px] text-Text-Primary font-medium">
+                              
+                              <div className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}>
                                 {index + 1}. {el.Section}
                               </div>
+                              
                               <div className="w-[80%] relative gap-2 grid">
                                 {el.Exercises.length > 1 && (
                                   <div
