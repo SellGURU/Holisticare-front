@@ -146,7 +146,9 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
         </h2>
         <div className=" w-full relative overflow-visible mt-2 mb-4">
-          <label className="text-xs font-medium text-Text-Primary">Category</label>
+          <label className="text-xs font-medium text-Text-Primary">
+            Category
+          </label>
           <div
             ref={selectButRef}
             onClick={() => setShowSelect(!showSelect)}
