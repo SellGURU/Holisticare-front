@@ -134,8 +134,10 @@ const Stadio: FC<StadioProps> = ({
     }
   };
   const { id } = useParams<{ id: string }>();
-  const AutoGenerate = () => {
+  const AutoGenerate = (isWithAi?: boolean) => {
+    // if(isWithAi){
     setIsAutoGenerate(true);
+    // }
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
     })
@@ -147,10 +149,12 @@ const Stadio: FC<StadioProps> = ({
       })
       .finally(() => {
         setIsAutoGenerate(false);
-        setIsAutoGenerateComplete(true);
-        setTimeout(() => {
-          setIsAutoGenerateComplete(false);
-        }, 5000);
+        if (isWithAi) {
+          setIsAutoGenerateComplete(true);
+          setTimeout(() => {
+            setIsAutoGenerateComplete(false);
+          }, 5000);
+        }
       });
   };
   const conflicCheck = () => {
