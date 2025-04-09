@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
-import { subscribe,unsubscribe } from '../../utils/event'; // Adjust the import path as needed
+import { subscribe, unsubscribe } from '../../utils/event'; // Adjust the import path as needed
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import SvgIcon from '../../utils/svgIcon';
 import { decodeAccessUser } from '../../help';
@@ -118,7 +118,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     };
   }, []);
   return (
-    <div className={`h-fit min-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white ${!isReportAvailable && 'opacity-40 '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}>
+    <div
+      className={`h-fit min-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white ${!isReportAvailable && 'opacity-40 '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
+    >
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() => !disableClicks && setActiveLayer('layer')}

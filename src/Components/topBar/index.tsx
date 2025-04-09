@@ -228,7 +228,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {canDownload && (
           <div className="flex gap-3">
             <ButtonPrimary
-            disabled={shouldEnableActions}
+              disabled={shouldEnableActions}
               size="small"
               onClick={() => {
                 setOpenDownload(true);
@@ -254,17 +254,19 @@ export const TopBar: React.FC<TopBarProps> = ({
               )}
             </ButtonPrimary>
             <div
-           onClick={() => {
-            if (shouldEnableActions) return; 
-            setOpenShare(true);
-          }}
-            className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
-              shouldEnableActions ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
-            }`}
-          >
-            <img src="/icons/share.svg" alt="" />
-            Share
-          </div>
+              onClick={() => {
+                if (shouldEnableActions) return;
+                setOpenShare(true);
+              }}
+              className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
+                shouldEnableActions
+                  ? 'cursor-not-allowed opacity-60'
+                  : 'cursor-pointer'
+              }`}
+            >
+              <img src="/icons/share.svg" alt="" />
+              Share
+            </div>
           </div>
         )}
         <div className="relative">

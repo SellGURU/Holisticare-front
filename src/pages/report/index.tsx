@@ -3,7 +3,7 @@ import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView'
 import { TopBar } from '../../Components/topBar';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
-import { subscribe,unsubscribe } from '../../utils/event';
+import { subscribe, unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 
 const Report = () => {
@@ -70,7 +70,7 @@ const Report = () => {
           canDownload
         ></TopBar>
       </div>
-      
+
       <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
         <div
           // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
