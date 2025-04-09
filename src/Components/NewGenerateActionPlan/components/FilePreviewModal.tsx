@@ -46,29 +46,23 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   useEffect(() => {
     const fetchVideos = async () => {
       if (!sections || sections.length === 0) return;
-      
+
       setIsLoading(true);
-      
+
       // Get all video links from sections
-      const allVideoLinks = sections.flatMap(
-        (section: Section) => {
-          return section.Exercises.flatMap(
-            (exercise: Exercise) => {
-              return exercise.Files.filter(
-                (file: File) =>
-                  (file.Type === 'link' || file.Type === 'Video') &&
-                  (file.Content.url || file.Content.file_id),
-              ).map(
-                (file: File) => ({
-                  url: file.Content.url,
-                  file_id: file.Content.file_id,
-                  title: file.Title || 'Video',
-                }),
-              );
-            },
-          );
-        },
-      );
+      const allVideoLinks = sections.flatMap((section: Section) => {
+        return section.Exercises.flatMap((exercise: Exercise) => {
+          return exercise.Files.filter(
+            (file: File) =>
+              (file.Type === 'link' || file.Type === 'Video') &&
+              (file.Content.url || file.Content.file_id),
+          ).map((file: File) => ({
+            url: file.Content.url,
+            file_id: file.Content.file_id,
+            title: file.Title || 'Video',
+          }));
+        });
+      });
 
       try {
         const videoPromises = allVideoLinks.map(async (video) => {
@@ -92,7 +86,9 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         });
 
         const videos = await Promise.all(videoPromises);
-        const validVideos = videos.filter((video): video is VideoData => video !== null);
+        const validVideos = videos.filter(
+          (video): video is VideoData => video !== null,
+        );
         setVideoData(validVideos);
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -125,13 +121,13 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
     Application.showExerciseFille({ file_id: file.file_id }).then((res) => {
       const base64Data = res.data.base_64_data;
       const videoUrl = base64Data;
-      
+
       // Create a temporary anchor element with download attribute
       const downloadLink = document.createElement('a');
       downloadLink.href = videoUrl;
       downloadLink.download = `${file.title || 'video'}.mp4`;
       downloadLink.style.display = 'none';
-      
+
       // Add to document, click it, and remove it
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -170,7 +166,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             alt="Close"
           />
         </div>
-        
+
         <div className="mt-4 h-[400px] overflow-auto">
           {isLoading ? (
             <div className="w-full h-[200px] flex justify-center items-center">
@@ -183,8 +179,8 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {videoData.map((video, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="rounded-xl border border-Gray-50 p-3 bg-white shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -207,7 +203,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                       )}
                     </div>
                   </div>
-                  
+
                   {video.url ? (
                     isYouTubeShorts(video.url) ? (
                       <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
@@ -252,7 +248,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             </div>
           )}
         </div>
-        
+
         <div
           onClick={onClose}
           className="absolute right-4 bottom-4 text-sm font-medium text-[#909090] cursor-pointer"
@@ -264,4 +260,4 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   );
 };
 
-export default FilePreviewModal; 
+export default FilePreviewModal;
