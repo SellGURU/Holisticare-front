@@ -291,7 +291,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             <RangeCard
               onSubmit={(score) => setScore(score)}
               value={score}
-              question="Base Weight"
+              question="Base Score"
             />
             <TextField
               newStyle

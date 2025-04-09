@@ -130,7 +130,7 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Weight
+              Base Score
             </div>
             <RangeCardLibraryActivity
               value={addData.score}
