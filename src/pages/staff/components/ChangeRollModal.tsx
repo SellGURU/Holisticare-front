@@ -10,6 +10,7 @@ interface ChangeRollModalProps {
     picture: string;
     online: boolean;
     user_name: string;
+    available_role: string;
   };
   setChangeRollSuccess: (value: boolean) => void;
   isSuccess: boolean;
@@ -27,6 +28,8 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
   handleCloseModalChangeRoll,
 }) => {
   const [selectRoll, setSelectRoll] = useState('');
+  console.log(memberInfo);
+
   return (
     <>
       {!isSuccess ? (
@@ -58,7 +61,27 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
                 </div>
                 <div className="text-Text-Primary text-xs flex items-center w-[50%] p-2 border-l border-Gray-50">
                   <div className="flex flex-col gap-2">
-                    {memberInfo?.role === 'admin' ? (
+                    {memberInfo.available_role && (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          id={memberInfo.available_role}
+                          name="role"
+                          value={memberInfo.available_role}
+                          checked={selectRoll === memberInfo.available_role}
+                          onChange={(e) => setSelectRoll(e.target.value)}
+                          className="w-[10px] h-[10px] accent-Primary-DeepTeal cursor-pointer"
+                        />
+                        <label
+                          htmlFor={memberInfo.available_role}
+                          className="text-xs cursor-pointer"
+                        >
+                          {memberInfo.available_role}
+                        </label>
+                      </div>
+                    )}
+
+                    {/* {memberInfo?.role === 'admin' ? (
                       <div className="flex items-center gap-2">
                         <input
                           type="radio"
@@ -94,7 +117,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
                           Admin
                         </label>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
