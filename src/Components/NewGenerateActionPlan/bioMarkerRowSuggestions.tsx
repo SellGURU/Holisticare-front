@@ -6,6 +6,7 @@ import MonthShows from './components/MonthShows';
 import SvgIcon from '../../utils/svgIcon';
 import ConflictsModal from './components/ConflictsModal';
 import BasedOnModal from './components/BasedOnModal';
+import FilePreviewModal from './components/FilePreviewModal';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -48,6 +49,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [sureRemoveIndex, setSureRemoveIndex] = useState<number | null>(null);
   const [showBasedOn, setShowBasedOn] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showFilePreviewModal, setShowFilePreviewModal] = useState(false);
   const [newValue, setNewValue] = useState(null);
   useEffect(() => {
     setNewValue(value);
@@ -150,6 +152,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
                     • {valueData}:
                   </div>
+                  {valueData == 'File' && (
+                    <div
+                      onClick={() => setShowFilePreviewModal(true)}
+                      className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
+                    >
+                      Youtube Link / Video
+                    </div>
+                  )}
                   <div className="text-xs text-Text-Primary text-justify ml-1">
                     {valueData === 'Macros' ? (
                       <div className="flex justify-start items-center gap-4">
@@ -405,6 +415,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           showModal={showConflicts}
         />
       )}
+      <FilePreviewModal
+        isOpen={showFilePreviewModal}
+        onClose={() => setShowFilePreviewModal(false)}
+        sections={value.Sections || []}
+      />
       <ActionEditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
