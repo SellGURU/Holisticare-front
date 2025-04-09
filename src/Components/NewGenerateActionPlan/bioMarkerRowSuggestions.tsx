@@ -94,7 +94,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
                 <div className="w-6 h-6 bg-[#E5E5E5] mr-2  flex justify-center items-center rounded-[8px]">
-                  <img className='w-4' src={resolvePillarIcon()} alt="" />
+                  <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}
               </div>
@@ -285,88 +285,101 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div
                     className={`w-full h-full bg-[#E9F0F2] rounded-[16px]  mt-2 ${expandedItems[index] ? '' : 'hidden'}`}
                   >
-                    {value.Sections.map((el: any, index: number) => {
-                      // Check if this section has been shown before
-                      const isFirstOccurrence =
-                        index ===
-                        value.Sections.findIndex(
-                          (t: any) => t.Section === el.Section,
-                        );
+                    {(() => {
+                      // Create a map to track section numbers
+                      const sectionNumbers: Record<string, number> = {};
+                      let nextSectionNumber = 1;
 
-                      return (
-                        <>
-                          <div className="p-4">
-                            <div className="flex justify-between items-start">
-                              <div
-                                className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
-                              >
-                                {index + 1}. {el.Section}
-                              </div>
+                      return value.Sections.map((el: any, index: number) => {
+                        // Check if this section has been shown before
+                        const isFirstOccurrence =
+                          index ===
+                          value.Sections.findIndex(
+                            (t: any) => t.Section === el.Section,
+                          );
 
-                              <div className="w-[80%] relative gap-2 grid">
-                                {el.Exercises.length > 1 && (
-                                  <div
-                                    className="absolute   top-[25px] left-[-8px]"
-                                    style={{
-                                      height: `${el.Exercises.length * 48 - 35}px`,
-                                    }}
-                                  >
-                                    <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
-                                      <img
-                                        className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
-                                        src="/icons/link.svg"
-                                        alt="super set"
-                                      />
+                        // Assign section number if it's the first occurrence
+                        if (isFirstOccurrence && el.Section) {
+                          sectionNumbers[el.Section] = nextSectionNumber++;
+                        }
+
+                        return (
+                          <>
+                            <div className="p-4">
+                              <div className="flex justify-between items-start">
+                                <div
+                                  className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
+                                >
+                                  {el.Section &&
+                                    isFirstOccurrence &&
+                                    `${sectionNumbers[el.Section]}. ${el.Section}`}
+                                </div>
+
+                                <div className="w-[80%] relative gap-2 grid">
+                                  {el.Exercises.length > 1 && (
+                                    <div
+                                      className="absolute   top-[25px] left-[-8px]"
+                                      style={{
+                                        height: `${el.Exercises.length * 48 - 35}px`,
+                                      }}
+                                    >
+                                      <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
+                                        <img
+                                          className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
+                                          src="/icons/link.svg"
+                                          alt="super set"
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                )}
-                                {el.Exercises.map((val: any) => {
-                                  return (
-                                    <>
-                                      <div className="w-full relative  bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
-                                        <div className="flex items-center justify-between w-full">
-                                          <div className="flex justify-start items-center">
-                                            <div className="relative">
-                                              <img
-                                                src="/images/activity/activity-demo.png"
-                                                alt=""
-                                                className="w-[32px] h-[32px] rounded-[6.4px]"
-                                              />
-                                              <img
-                                                src="/icons/youtube.svg"
-                                                alt=""
-                                                className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
-                                              />
+                                  )}
+                                  {el.Exercises.map((val: any) => {
+                                    return (
+                                      <>
+                                        <div className="w-full relative  bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                          <div className="flex items-center justify-between w-full">
+                                            <div className="flex justify-start items-center">
+                                              <div className="relative">
+                                                <img
+                                                  src="/images/activity/activity-demo.png"
+                                                  alt=""
+                                                  className="w-[32px] h-[32px] rounded-[6.4px]"
+                                                />
+                                                <img
+                                                  src="/icons/youtube.svg"
+                                                  alt=""
+                                                  className="w-[15.48px] h-[16px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+                                                />
+                                              </div>
+                                              <div className="text-xs text-Text-Primary ml-2 font-medium">
+                                                {val?.Title}
+                                              </div>
                                             </div>
-                                            <div className="text-xs text-Text-Primary ml-2 font-medium">
-                                              {val?.Title}
-                                            </div>
-                                          </div>
-                                          <div className="flex items-center w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
-                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                              Set {el?.Sets}
-                                            </div>
-                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                              Reps {val?.Reps}
-                                            </div>
-                                            <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
-                                              Weight {val?.Weight} g
-                                            </div>
-                                            <div className="w-[25%] flex items-center justify-center">
-                                              Rest {val?.Rest} s
+                                            <div className="flex items-center w-[400px] h-[28px] gap-2 border border-Gray-50 rounded-lg text-[10px] text-Text-Quadruple">
+                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                Set {el?.Sets}
+                                              </div>
+                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                Reps {val?.Reps}
+                                              </div>
+                                              <div className="border-r border-Gray-50 w-[25%] h-full flex items-center justify-center">
+                                                Weight {val?.Weight} g
+                                              </div>
+                                              <div className="w-[25%] flex items-center justify-center">
+                                                Rest {val?.Rest} s
+                                              </div>
                                             </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    </>
-                                  );
-                                })}
+                                      </>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </>
-                      );
-                    })}
+                          </>
+                        );
+                      });
+                    })()}
                   </div>
                 )}
               </div>
