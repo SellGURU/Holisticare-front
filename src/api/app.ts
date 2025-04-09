@@ -920,6 +920,9 @@ class Application extends Api {
   static editActivity = (data: any) => {
     return this.post('/activity_library/edit_activity', data);
   };
+  static getStaffRoles = (data: any) => {
+    return this.get('/settings/invite_staff/roles', data);
+  };
 }
 
 export default Application;

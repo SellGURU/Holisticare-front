@@ -39,10 +39,10 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
   };
   const [changeRollSuccess, setChangeRollSuccess] = useState(false);
   const [showModalAssignList, setShowModalAssignList] = useState(false);
-  const handleShowModalAssignList = () => {
-    setShowModalAssignList(true);
-    handleChangeUserId(memberInfo?.user_id);
-  };
+  // const handleShowModalAssignList = () => {
+  //   setShowModalAssignList(true);
+  //   handleChangeUserId(memberInfo?.user_id);
+  // };
   const [assignedClients, setAssignedClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const getStaffAssignedClients = (userId: string) => {
@@ -51,11 +51,11 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
       setLoading(false);
     });
   };
-  const [userId, setUserId] = useState('');
-  const handleChangeUserId = (value: string) => {
-    setUserId(value);
-    setLoading(true);
-  };
+  const [userId, ] = useState('');
+  // const handleChangeUserId = (value: string) => {
+  //   setUserId(value);
+  //   setLoading(true);
+  // };
   useEffect(() => {
     if (userId && showModalAssignList) {
       getStaffAssignedClients(userId);
@@ -143,21 +143,21 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
             Change Role
           </button>
           <div className="flex items-center gap-3">
-            <div data-tooltip-id="remove-tooltip">
+            {/* <div data-tooltip-id="remove-tooltip">
               <img
                 src="/icons/document-text-blue.svg"
                 alt=""
                 className="w-5 h-5 cursor-pointer"
                 onClick={handleShowModalAssignList}
               />
-            </div>
-            <Tooltip
+            </div> */}
+            {/* <Tooltip
               id="remove-tooltip"
               place="top"
               className="!bg-white !text-Text-Quadruple !text-[10px] !shadow-100 !rounded-[6px] !border !border-gray-50"
             >
               Assign List
-            </Tooltip>
+            </Tooltip> */}
             <div data-tooltip-id="assign-tooltip">
               <img
                 src="/icons/user-minus-blue.svg"

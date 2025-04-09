@@ -33,7 +33,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
         <div className="flex flex-col justify-between bg-white w-[373px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
-              <div className="text-Text-Primary font-medium">Change Roll</div>
+              <div className="text-Text-Primary font-medium">Change Role</div>
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="text-Text-Primary text-xs font-medium text-center mt-5">

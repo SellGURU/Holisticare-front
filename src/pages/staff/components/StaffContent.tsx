@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import MemberCard from './MemberCard';
-import SelectBoxStaff from './SelectBox';
+// import SelectBoxStaff from './SelectBox';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 import HeaderStaff from './Header';
@@ -27,7 +27,7 @@ const StaffContent = () => {
     email: '',
     role: '',
   });
-  const [members, setMembers] = useState<
+  const [, setMembers] = useState<
     {
       email: string;
       role: string;
@@ -65,21 +65,21 @@ const StaffContent = () => {
   useEffect(() => {
     getStaffs();
   }, []);
-  const handleFilterChange = (filter: string) => {
-    let sortedList = [...filteredMembers];
-    if (filter === 'higherScores') {
-      sortedList = sortedList.sort((a, b) => b.score - a.score);
-      setFilteredMembers(sortedList);
-    } else if (filter === 'lowerScores') {
-      sortedList = sortedList.sort((a, b) => a.score - b.score);
-      setFilteredMembers(sortedList);
-    } else if (filter === 'neverJoin') {
-      sortedList = sortedList.sort((a, b) => a.score - b.score);
-      setFilteredMembers(sortedList.filter((member) => member.score === 0));
-    } else if (filter === 'all') {
-      setFilteredMembers([...members]);
-    }
-  };
+  // const handleFilterChange = (filter: string) => {
+  //   let sortedList = [...filteredMembers];
+  //   if (filter === 'higherScores') {
+  //     sortedList = sortedList.sort((a, b) => b.score - a.score);
+  //     setFilteredMembers(sortedList);
+  //   } else if (filter === 'lowerScores') {
+  //     sortedList = sortedList.sort((a, b) => a.score - b.score);
+  //     setFilteredMembers(sortedList);
+  //   } else if (filter === 'neverJoin') {
+  //     sortedList = sortedList.sort((a, b) => a.score - b.score);
+  //     setFilteredMembers(sortedList.filter((member) => member.score === 0));
+  //   } else if (filter === 'all') {
+  //     setFilteredMembers([...members]);
+  //   }
+  // };
   return (
     <>
       <HeaderStaff getStaffs={getStaffs} />
@@ -106,9 +106,9 @@ const StaffContent = () => {
             </div>
           </div>
         </div>
-        <div className="text-Text-Primary text-xs text-nowrap font-medium gap-2 flex items-center">
+        {/* <div className="text-Text-Primary text-xs text-nowrap font-medium gap-2 flex items-center">
           Sort by: <SelectBoxStaff onChange={handleFilterChange} />
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-wrap items-center gap-2 mt-4">
         {filteredMembers.length > 0 && (
