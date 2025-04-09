@@ -67,7 +67,7 @@ const Employes: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
-        <ButtonPrimary
+        {/* <ButtonPrimary
           style={{ backgroundColor: '#fff', color: '#005F73' }}
           size="small"
         >
@@ -77,7 +77,7 @@ const Employes: React.FC = () => {
             src="/icons/arrow-back.svg"
             alt=""
           />
-        </ButtonPrimary>
+        </ButtonPrimary> */}
       </div>
       {Employees.length < 1 ? (
         <div className=" w-full h-full flex flex-col items-center justify-center">
