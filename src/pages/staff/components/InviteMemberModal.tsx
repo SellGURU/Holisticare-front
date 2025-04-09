@@ -12,7 +12,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   setShowModal,
   getStaffs,
 }) => {
-  const [fullName, setFullName] = useState('')
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [openRoll, setOpenRoll] = useState(false);
   const [role, setRole] = useState('staff');
@@ -28,12 +28,12 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
       getStaffs();
     });
   };
-  const [Roles, setRoles] = useState([])
-  useEffect(()=>{
-    Application.getStaffRoles({}).then((res)=>{
-      setRoles(res.data.member_role)
-    })
-  },[])
+  const [Roles, setRoles] = useState([]);
+  useEffect(() => {
+    Application.getStaffRoles({}).then((res) => {
+      setRoles(res.data.member_role);
+    });
+  }, []);
   return (
     <>
       {step === 1 ? (
@@ -43,14 +43,14 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               <div className="text-Text-Primary font-medium">Invite Member</div>
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
-            <div className='w-full mb-4 '>
-            <input
-                  placeholder="Write the full name ..."
-                  className={`w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
+            <div className="w-full mb-4 ">
+              <input
+                placeholder="Write the full name ..."
+                className={`w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
             </div>
             <div className="w-full flex items-center gap-2">
               <div className="flex flex-col">
@@ -79,11 +79,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     }}
                     className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                   >
-                    {
-                      Roles?.map((role)=>(
-                        <option value={role}>{role}</option>
-                      ))
-                    }
+                    {Roles?.map((role) => <option value={role}>{role}</option>)}
                     {/* <option value="staff">Staff</option>
                     <option value="admin">Admin</option> */}
                   </select>
@@ -193,7 +189,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     onSave({
                       email: email,
                       role: role,
-                      full_name: fullName
+                      full_name: fullName,
                     });
                   }
                 }}

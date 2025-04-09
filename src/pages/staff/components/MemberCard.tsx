@@ -51,7 +51,7 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
       setLoading(false);
     });
   };
-  const [userId, ] = useState('');
+  const [userId] = useState('');
   // const handleChangeUserId = (value: string) => {
   //   setUserId(value);
   //   setLoading(true);
