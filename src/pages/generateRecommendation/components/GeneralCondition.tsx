@@ -209,7 +209,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           onContentChange={(index, value) =>
             handleContentChange('clientInsights', index, value)
           }
-        />        
+        />
         <Card
           title="Looking Forwards"
           content={
@@ -224,7 +224,6 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
             handleContentChange('lookingForwards', index, value)
           }
         />
-
       </div>
     </div>
   );
