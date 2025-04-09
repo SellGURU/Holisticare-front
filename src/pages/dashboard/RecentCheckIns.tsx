@@ -153,19 +153,20 @@ const RecentCheckIns = () => {
 
   const handleMarkAsReviewed = () => {
     if (currentCheckIn) {
-   
-      DashboardApi.markAsReviewd({filled_checkin_id:
-        currentCheckIn.filled_checkin_id
-      }).then(()=>{
+      DashboardApi.markAsReviewd({
+        filled_checkin_id: currentCheckIn.filled_checkin_id,
+      }).then(() => {
         setCheckIns((prevCheckIns) =>
           prevCheckIns.map((ci) =>
-            ci.filled_checkin_id === currentCheckIn.filled_checkin_id ? { ...ci, Status: 'Reviewed' } : ci,
+            ci.filled_checkin_id === currentCheckIn.filled_checkin_id
+              ? { ...ci, Status: 'Reviewed' }
+              : ci,
           ),
         );
         setCheckInModal(false);
         setshowCheckICommentnModal(true);
-      })
-    
+      });
+
       // resetModalStates();
     }
   };
