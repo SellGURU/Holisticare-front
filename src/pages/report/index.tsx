@@ -3,7 +3,7 @@ import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView'
 import { TopBar } from '../../Components/topBar';
 import { ComboBar } from '../../Components';
 import { useState, useEffect, useRef } from 'react';
-import { subscribe } from '../../utils/event';
+import { subscribe,unsubscribe } from '../../utils/event';
 import Draggable from 'react-draggable';
 
 const Report = () => {
@@ -47,6 +47,20 @@ const Report = () => {
       setIsMobileMenuOpen(!isMobileMenuOpen);
     }
   };
+  const [isReportAvailable, setIsReportAvailable] = useState(true);
+
+  useEffect(() => {
+    const handleReportStatus = (message: any) => {
+      const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
+      setIsReportAvailable(eventData.detail.isHaveReport);
+    };
+
+    subscribe('reportStatus', handleReportStatus);
+
+    return () => {
+      unsubscribe('reportStatus', handleReportStatus);
+    };
+  }, []);
   return (
     <div className="w-full h-full">
       <div className="  w-full sticky z-50 top-0 ">
@@ -56,11 +70,11 @@ const Report = () => {
           canDownload
         ></TopBar>
       </div>
-      <div></div>
+      
       <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
         <div
           // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="fixed z-[60] top-[50%] left-3 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer"
+          className={`fixed z-[40] top-[50%] left-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
         >
           <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
         </div>

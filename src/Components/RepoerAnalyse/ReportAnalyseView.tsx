@@ -47,6 +47,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   isShare,
   uniqKey,
 }) => {
+
   const { id, name } = useParams<{ id: string; name: string }>();
   const resolvedMemberID = id ? parseInt(id) : memberID;
   const [loading, setLoading] = useState(true);
@@ -54,6 +55,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
+  
+  useEffect(() => {
+    // Watch for changes in isHaveReport
+    if (!isHaveReport) {
+      publish('reportStatus', {
+        isHaveReport: false,
+        memberId: resolvedMemberID
+      });
+    }
+  }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
       (res) => {
@@ -267,11 +278,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [location, loading]); // Add 'loading' to dependencies
   useEffect(() => {
     if (!isHaveReport) {
-      publish('noReportAvailable', { message: 'No report available' });
+      publish('reportStatus', {
+        isHaveReport: false,
+        memberId: resolvedMemberID,
+      });
     } else {
-      publish('ReportAvailable', {});
+      publish('reportStatus', {
+        isHaveReport: true,
+        memberId: resolvedMemberID,
+      });
     }
-  }, [isHaveReport]);
+  }, [isHaveReport, resolvedMemberID]);
+
+
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
     return rect.top >= 0 && rect.bottom <= window.innerHeight;
