@@ -17,6 +17,7 @@ interface MemberCardProps {
     picture: string;
     online: boolean;
     user_name: string;
+    available_role:string
   };
   getStaffs: () => void;
 }
