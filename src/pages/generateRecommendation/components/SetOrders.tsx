@@ -317,7 +317,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
           </div>
           <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
             {activeCategory !=
-              categories.filter((el) => el.visible)[0].name && (
+              categories.filter((el) => el.visible)[0].name &&  visibleCategoriy.filter((el) => el.visible).length > 1 && (
               <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
                 <div onClick={handleReset}>Reset</div>
               </div>

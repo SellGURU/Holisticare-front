@@ -197,6 +197,20 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
           }
         />
         <Card
+          title="Client Insights"
+          content={
+            editMode.clientInsights
+              ? tempData.clientInsights
+              : data.clientInsights
+          }
+          isEditing={editMode.clientInsights}
+          onEdit={() => handleEdit('clientInsights')}
+          onSave={() => handleSave('clientInsights')}
+          onContentChange={(index, value) =>
+            handleContentChange('clientInsights', index, value)
+          }
+        />        
+        <Card
           title="Looking Forwards"
           content={
             editMode.lookingForwards
@@ -210,20 +224,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
             handleContentChange('lookingForwards', index, value)
           }
         />
-        <Card
-          title="Client Insights"
-          content={
-            editMode.clientInsights
-              ? tempData.clientInsights
-              : data.clientInsights
-          }
-          isEditing={editMode.clientInsights}
-          onEdit={() => handleEdit('clientInsights')}
-          onSave={() => handleSave('clientInsights')}
-          onContentChange={(index, value) =>
-            handleContentChange('clientInsights', index, value)
-          }
-        />
+
       </div>
     </div>
   );
