@@ -399,7 +399,7 @@ const RecentCheckIns = () => {
                   </th>
                   <th className="py-2 pl-2 text-[10px]">Title</th>
                   <th className="py-2 pl-2 text-[10px]">Time</th>
-                  <th className="py-2 pl-3 rounded-tr-2xl text-[10px] ">
+                  <th className="py-2 pl-5 rounded-tr-2xl text-[10px]  ">
                     Status
                   </th>
                 </tr>
@@ -429,9 +429,9 @@ const RecentCheckIns = () => {
                       className="py-2"
                     >
                       <span
-                        className={`text-[8px]  w-[65px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
+                        className={`text-[10px]  w-[75px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${
                           checkIn.Status === 'Review Now'
-                            ? 'text-[#FFBD59] underline cursor-pointer'
+                            ? 'text-[#FFAB2C] underline cursor-pointer'
                             : 'bg-[#DEF7EC] '
                         }`}
                       >
