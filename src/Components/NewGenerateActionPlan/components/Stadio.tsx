@@ -224,6 +224,8 @@ const Stadio: FC<StadioProps> = ({
         onAddNotes={() => {}}
         defalts={null}
         onSubmit={(addData) => {
+          // console.log('addData', addData);
+          // alert(addData);
           const newData = {
             Category: addData.Category,
             Title: addData.Title || '',
@@ -247,7 +249,9 @@ const Stadio: FC<StadioProps> = ({
               third_layer: '',
             },
             Sections: addData.Sections ?? [],
+            Activity_Filters: addData.Activity_Filters ?? [],
             Frequency_Type: addData.frequencyType ?? '',
+            Activity_Location: addData.Activity_Location ?? '',
             Frequency_Dates: addData.frequencyDates ?? [],
           };
 

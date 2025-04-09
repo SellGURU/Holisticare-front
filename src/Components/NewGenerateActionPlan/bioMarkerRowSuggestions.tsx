@@ -456,6 +456,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   second_layer: editedData.Layers?.second_layer ?? '',
                   third_layer: editedData.Layers?.third_layer ?? '',
                 },
+                Activity_Filters: editedData.Activity_Filters ?? [],
+                Activity_Location: editedData.Activity_Location ?? '',
                 Frequency_Type: editedData.frequencyType ?? '',
                 Frequency_Dates: editedData.frequencyDates ?? [],
                 Sections: editedData.Sections ?? [],
