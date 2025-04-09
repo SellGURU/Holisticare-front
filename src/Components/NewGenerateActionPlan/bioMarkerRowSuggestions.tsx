@@ -293,11 +293,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                               <div className="text-[12px] text-Text-Primary font-medium">
                                 {index + 1}. {el.Section}
                               </div>
-                              <div className="w-[80%] gap-2 grid">
+                              <div className="w-[80%] relative gap-2 grid">
                                 {el.Exercises.map((val: any) => {
                                   return (
                                     <>
-                                      <div className="w-full bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
+                                      <div className="w-full relative z-10 bg-white p-2 h-[48px] flex justify-between items-center rounded-[12px] shadow-50">
                                         <div className="flex items-center justify-between w-full">
                                           <div className="flex justify-start items-center">
                                             <div className="relative">
@@ -335,6 +335,20 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                     </>
                                   );
                                 })}
+                                {el.Exercises.length >1 &&
+                                  <div
+                                    className="absolute z-[1]  top-[25px] left-[-8px]"
+                                    style={{ height: `${el.Exercises.length * 48 - 35}px` }}
+                                  >
+                                    <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
+                                      <img
+                                        className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
+                                        src="/icons/link.svg"
+                                        alt="super set"
+                                      />
+                                    </div>
+                                  </div>
+                                }
                               </div>
                             </div>
                           </div>
