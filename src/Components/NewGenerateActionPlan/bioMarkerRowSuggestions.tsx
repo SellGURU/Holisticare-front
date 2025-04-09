@@ -309,7 +309,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                       />
                                     </div>
                                   </div>
-                                )}                               
+                                )}
                                 {el.Exercises.map((val: any) => {
                                   return (
                                     <>
@@ -351,7 +351,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                                     </>
                                   );
                                 })}
-
                               </div>
                             </div>
                           </div>
