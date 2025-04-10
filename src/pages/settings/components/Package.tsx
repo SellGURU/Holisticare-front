@@ -7,7 +7,7 @@ import packagesData from './packagesMoch.json';
 import { AppContext } from '../../../store/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
 import TableNoPaginate from '../../../Components/TableNoPaginate';
-import SearchBox from '../../../Components/SearchBox';
+// import SearchBox from '../../../Components/SearchBox';
 
 const packages = [
   {
@@ -66,11 +66,11 @@ const PackagePage = () => {
           <div className="text-base font-medium text-Text-Primary">
             Packages
           </div>
-          <SearchBox
+          {/* <SearchBox
             isHaveBorder
             onSearch={() => {}}
             placeHolder="Search in Packages ..."
-          ></SearchBox>
+          ></SearchBox> */}
         </div>
         <div className="bg-backgroundColor-Card p-4 w-full h-[240px] rounded-[16px]">
           <div className=" flex justify-between items-center">
