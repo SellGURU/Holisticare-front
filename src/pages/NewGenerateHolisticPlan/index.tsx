@@ -734,7 +734,7 @@ const NewGenerateHolisticPlan = () => {
                     updateClientConditionInsights(res.data);
                   });
                 }}
-                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
+                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-center gap-2 items-center text-white w-[140px] text-[11px] px-3 py-1 rounded-[36px] border border-gray-50"
               >
                 {isAnalysingQuik ? (
                   <>
@@ -759,7 +759,7 @@ const NewGenerateHolisticPlan = () => {
                     updateClientConditionInsights(res.data);
                   });
                 }}
-                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[10px] px-3 py-1 rounded-[36px] border border-gray-50"
+                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[11px] px-3 py-1 rounded-[36px] border border-gray-50"
               >
                 {isAnalysingComper ? (
                   <>
@@ -779,7 +779,7 @@ const NewGenerateHolisticPlan = () => {
               </div>
             </div>
             <>
-              <div className="w-full bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
+              <div className="w-full bg-[#005F731A] h-[40px] px-[9px] rounded-t-[12px] flex justify-start items-center text-[#888888] font-medium text-[12px] select-none">
                 Client Condition Insight
               </div>
 
@@ -797,7 +797,7 @@ const NewGenerateHolisticPlan = () => {
               )}
             </>
 
-            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex justify-center items-center text-[#888888] font-medium text-[12px] select-none">
+            <div className="w-full mt-3 bg-[#005F731A] h-[40px] rounded-t-[12px] flex px-[9px] items-center text-[#888888] font-medium text-[12px] select-none">
               Needs Focus Biomarkers
             </div>
             {treatmentPlanData && (
