@@ -344,7 +344,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
           </div>
         </div>
 
-        <div className="relative bg-backgroundColor-Card border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
+        <div className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => (

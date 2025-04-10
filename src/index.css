@@ -353,7 +353,7 @@ input[type='number'] {
   @apply leading-[19.36px] text-[12px] font-[500] text-Text-Primary opacity-85;
 }
 .Aurora-TextArea-input {
-  @apply focus:outline-none h-[95px] w-full resize-none px-2 rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[16px]  placeholder:font-[300]   pb-[12px] pt-[10px] border dark:border-[#383838]   bg-white  dark:bg-[#1E1E1E];
+  @apply focus:outline-none h-[5px] w-full resize-none px-2 rounded-[6px]  placeholder:leading-[27.25px]  placeholder:text-[16px]  placeholder:font-[300]   pb-[12px] pt-[10px] border dark:border-[#383838]   bg-white  dark:bg-[#1E1E1E];
 }
 
 .Aurora-TextArea-inValid {
