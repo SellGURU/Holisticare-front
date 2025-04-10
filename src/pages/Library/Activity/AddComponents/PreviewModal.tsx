@@ -123,7 +123,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             </div>
             {isActivty ? (
               <div className="h-[330px] w-full overflow-auto  flex flex-col gap-1 rounded-2xl border border-Gray-50 p-3 bg-[#E9F0F2]">
-                {Sections?.map((section, index) => (
+                {/* {Sections?.map((section, index) => (
                   <div key={index}>
                     <div className="text-xs font-medium text-[#383838]">
                       {index + 1}. {section.Section}
@@ -172,7 +172,114 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                       </div>
                     ))}
                   </div>
-                ))}
+                ))} */}
+                <div
+                  className={`w-full h-full bg-[#E9F0F2] rounded-[16px]  mt-2 `}
+                >
+                  {(() => {
+                    // Create a map to track section numbers
+                    const sectionNumbers: Record<string, number> = {};
+                    let nextSectionNumber = 1;
+
+                    return Sections.map((el: any, index: number) => {
+                      // Check if this section has been shown before
+                      const isFirstOccurrence =
+                        index ===
+                        Sections.findIndex(
+                          (t: any) => t.Section === el.Section,
+                        );
+
+                      // Assign section number if it's the first occurrence
+                      if (isFirstOccurrence && el.Section) {
+                        sectionNumbers[el.Section] = nextSectionNumber++;
+                      }
+
+                      return (
+                        <>
+                          <div className="p-1">
+                            <div className=" w-full justify-between items-start">
+                              <div
+                                className={` ${el.Section && isFirstOccurrence ? 'visible' : 'invisible'} text-[12px] text-Text-Primary font-medium`}
+                              >
+                                {el.Section &&
+                                  isFirstOccurrence &&
+                                  `${sectionNumbers[el.Section]}. ${el.Section}`}
+                              </div>
+
+                              <div className="w-full relative gap-2 grid">
+                                {el.Exercises.length > 1 && (
+                                  <div
+                                    className="absolute z-[1]  top-[25px] left-[-8px]"
+                                    style={{
+                                      height: `${el.Exercises.length * 87 - 12}px`,
+                                    }}
+                                  >
+                                    <div className="w-[20px] relative h-full rounded-[16px]  bg-bg-color border-2 border-gray-300 border-r-bg-color">
+                                      <img
+                                        className="absolute top-[35%] left-[-8px] bg-bg-color py-1"
+                                        src="/icons/link.svg"
+                                        alt="super set"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {el.Exercises.map(
+                                  (val: any, exIndex: number) => {
+                                    return (
+                                      <>
+                                        <div
+                                          key={exIndex}
+                                          className="py-2 px-3 rounded-2xl relative z-10 w-full bg-white my-2"
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <img
+                                              src="/icons/video-preview.svg"
+                                              className="size-8 rounded-md"
+                                              alt="Video"
+                                            />
+                                            <div className="text-xs text-[#383838] font-medium">
+                                              {exercise.Title}
+                                            </div>
+                                          </div>
+                                          <div className="pt-1 border-t mt-2 border-Gray-50 w-full flex justify-between text-Text-Primary">
+                                            <div className="flex flex-col justify-between items-center text-[10px] ">
+                                              <span className="text-[8px] text-Text-Secondary">
+                                                Set
+                                              </span>
+                                              {el.Sets}
+                                            </div>
+                                            <div className="flex flex-col justify-between items-center text-[10px] ">
+                                              <span className="text-[8px] text-Text-Secondary">
+                                                Reps
+                                              </span>
+                                              {val.Reps}
+                                            </div>
+                                            <div className="flex flex-col justify-between items-center text-[10px] ">
+                                              <span className="text-[8px] text-Text-Secondary">
+                                                Weight{' '}
+                                              </span>
+                                              {val.Weight}
+                                            </div>
+                                            <div className="flex flex-col justify-between items-center text-[10px] ">
+                                              <span className="text-[8px] text-Text-Secondary">
+                                                Rest (min){' '}
+                                              </span>
+                                              {val.Rest}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </>
+                                    );
+                                  },
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
             ) : (
               <div className="h-[220px] overflow-auto flex flex-col gap-1">

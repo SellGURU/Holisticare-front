@@ -47,6 +47,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
   const [searchValue, setSearchValue] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     Application.getExercisesList({}).then((res) => {
@@ -202,6 +203,41 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    exercise: Exercise,
+  ) => {
+    e.dataTransfer.setData('application/json', JSON.stringify(exercise));
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('bg-Gray-50');
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove('bg-Gray-50');
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('bg-Gray-50');
+
+    try {
+      const exerciseData = JSON.parse(
+        e.dataTransfer.getData('application/json'),
+      );
+      addExercise(exerciseData);
+    } catch (error) {
+      console.error('Error parsing dragged exercise data:', error);
+    }
+  };
+
   return (
     <>
       <div className="w-full mt-6">
@@ -209,6 +245,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         <div className="flex w-full items-center justify-between">
           <div
             className={`w-[530px] h-[432px] border border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
             {exercises.length == 0 && (
               <>
@@ -277,10 +316,6 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise
               </div>
-              {/* <div className="flex items-center gap-1 text-Primary-DeepTeal font-medium text-xs cursor-pointer">
-                <img src="/icons/add-blue.svg" alt="" className="w-5 h-5" />
-                Add Exercise
-              </div> */}
             </div>
             <SearchBox
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"
@@ -291,36 +326,40 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-2">
               {filteredExerciseList.map((el: any) => {
                 return (
-                  <>
-                    <div className="w-full h-[40px] bg-white px-2 py-1 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center justify-center gap-[5px]">
-                        <div className="relative">
-                          <img
-                            src="/images/activity/activity-demo.png"
-                            alt=""
-                            className="w-8 h-8 bg-cover rounded-lg mr-1"
-                          />
-                          <img
-                            src="/icons/video-octagon.svg"
-                            alt=""
-                            className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
-                          />
-                        </div>
-                        <div className="text-xs text-Text-Primary">
-                          {el.Title}
-                        </div>
-                        <div className="text-[8px] text-Text-Quadruple">
-                          ({el.Files.length} Videos)
-                        </div>
+                  <div
+                    key={el.Title}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, el)}
+                    onDragEnd={handleDragEnd}
+                    className={`w-full h-[40px] bg-white px-2 py-1 rounded-xl flex items-center justify-between cursor-move ${isDragging ? 'opacity-50' : ''}`}
+                  >
+                    <div className="flex items-center justify-center gap-[5px]">
+                      <div className="relative">
+                        <img
+                          src="/images/activity/activity-demo.png"
+                          alt=""
+                          className="w-8 h-8 bg-cover rounded-lg mr-1"
+                        />
+                        <img
+                          src="/icons/video-octagon.svg"
+                          alt=""
+                          className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
+                        />
                       </div>
-                      <img
-                        onClick={() => addExercise(el)}
-                        src="/icons/add-blue.svg"
-                        alt=""
-                        className="w-4 h-4 cursor-pointer"
-                      />
+                      <div className="text-xs text-Text-Primary">
+                        {el.Title}
+                      </div>
+                      <div className="text-[8px] text-Text-Quadruple">
+                        ({el.Files.length} Videos)
+                      </div>
                     </div>
-                  </>
+                    <img
+                      onClick={() => addExercise(el)}
+                      src="/icons/add-blue.svg"
+                      alt=""
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                  </div>
                 );
               })}
             </div>
