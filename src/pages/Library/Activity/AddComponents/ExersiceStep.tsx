@@ -203,7 +203,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, exercise: Exercise) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    exercise: Exercise,
+  ) => {
     e.dataTransfer.setData('application/json', JSON.stringify(exercise));
     setIsDragging(true);
   };
@@ -224,9 +227,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.currentTarget.classList.remove('bg-Gray-50');
-    
+
     try {
-      const exerciseData = JSON.parse(e.dataTransfer.getData('application/json'));
+      const exerciseData = JSON.parse(
+        e.dataTransfer.getData('application/json'),
+      );
       addExercise(exerciseData);
     } catch (error) {
       console.error('Error parsing dragged exercise data:', error);
