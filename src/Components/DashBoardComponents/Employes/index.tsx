@@ -63,7 +63,7 @@ const Employes: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-[320px] overflow-hidden bg-white rounded-2xl shadow-200 p-4 ">
+    <div className="w-full h-[280px] -mt-10 overflow-hidden bg-white rounded-2xl shadow-200 p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
@@ -87,7 +87,7 @@ const Employes: React.FC = () => {
           </div>
         </div>
       ) : (
-        <ul className="space-y-3 max-h-[260px] overflow-auto pr-1 ">
+        <ul className="space-y-3 max-h-[220px] overflow-auto pr-1 ">
           {Employees.map((employee, index) => (
             <EmployeeRow employee={employee} index={index}></EmployeeRow>
           ))}

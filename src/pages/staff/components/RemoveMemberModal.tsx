@@ -42,7 +42,8 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
               Are you sure you want to remove {memberInfo?.user_name}?
             </div>
             <div className="text-Text-Quadruple text-xs text-center mt-3">
-            By removing, this staff will no longer have access to the portal.            </div>
+              By removing, this staff will no longer have access to the portal.{' '}
+            </div>
             <div className="w-full flex justify-end items-center p-2 mt-5">
               <div
                 className="text-Disable text-sm font-medium mr-4 cursor-pointer"

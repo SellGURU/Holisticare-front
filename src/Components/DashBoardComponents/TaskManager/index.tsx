@@ -223,7 +223,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           </div>
         </div>
       </MainModal>
-      <div className="w-full h-[320px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+      <div className="w-full h-[280px] -mt-10 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
@@ -247,7 +247,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3 mb-4 overflow-auto h-[253px]">
+          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-fit max-h-[193px]">
             {tasks.map((task) => (
               <li
                 key={task.task_id}
