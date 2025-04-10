@@ -158,7 +158,12 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
 
   // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {
-    setIsExerciseStepValid(sectionList.length > 0);
+    const emptySetSections = sectionList.filter(
+      (section: any) => section.Sets == '',
+    );
+    setIsExerciseStepValid(
+      sectionList.length > 0 && emptySetSections.length == 0,
+    );
   }, [sectionList]);
 
   return (

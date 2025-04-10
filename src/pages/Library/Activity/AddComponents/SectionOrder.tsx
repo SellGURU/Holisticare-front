@@ -81,16 +81,18 @@ const SectionOrderModal: React.FC<SectionOrderModal> = ({
                   {category.name}
                 </div>
                 <div className="flex items-center gap-3">
-                  <img
-                    className={`cursor-pointer ${!category.visible || index === 0 ? 'opacity-50 pointer-events-none' : ''}`}
-                    src="/icons/arrow-circle-up.svg"
-                    onClick={() => handleOrderChange(index, 'up')}
-                  />
-                  <img
-                    className={`cursor-pointer ${!category.visible || index === localCategories.length - 1 ? 'opacity-50 pointer-events-none' : ''}`}
-                    src="/icons/arrow-circle-down.svg"
-                    onClick={() => handleOrderChange(index, 'down')}
-                  />
+                  <div className="flex items-center gap-1">
+                    <img
+                      className={`cursor-pointer ${!category.visible || index === 0 ? 'opacity-50 pointer-events-none' : ''}`}
+                      src="/icons/arrow-circle-up.svg"
+                      onClick={() => handleOrderChange(index, 'up')}
+                    />
+                    <img
+                      className={`cursor-pointer ${!category.visible || index === localCategories.length - 1 ? 'opacity-50 pointer-events-none' : ''}`}
+                      src="/icons/arrow-circle-down.svg"
+                      onClick={() => handleOrderChange(index, 'down')}
+                    />
+                  </div>
 
                   <img
                     className={`   cursor-pointer`}

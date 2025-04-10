@@ -30,11 +30,25 @@ const ExerciseItem = ({
   sets,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [showSetError, setShowSetError] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
     refrence: menuRef,
   });
+
+  const preventEInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+    }
+  };
+
+  const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setShowSetError(!value);
+    onChange(index, 'Sets', value, exesiseIndex);
+  };
+
   return (
     <>
       <div
@@ -138,11 +152,17 @@ const ExerciseItem = ({
             <input
               type="number"
               value={sets}
-              onChange={(e) =>
-                onChange(index, 'Sets', e.target.value, exesiseIndex)
-              }
-              className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
+              onChange={handleSetChange}
+              onKeyDown={preventEInput}
+              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+                showSetError ? 'border-red-500' : 'border-gray-50'
+              } outline-none text-[10px] text-Text-Primary`}
             />
+            {showSetError && (
+              <div className="text-[8px] text-red-500 mt-1 text-center">
+                Set is required
+              </div>
+            )}
           </div>
           <div className="mt-2">
             <div className="text-center text-[8px] text-Text-Primary">Reps</div>
@@ -152,6 +172,7 @@ const ExerciseItem = ({
               onChange={(e) =>
                 onChange(index, 'Reps', e.target.value, exesiseIndex)
               }
+              onKeyDown={preventEInput}
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
           </div>
@@ -165,6 +186,7 @@ const ExerciseItem = ({
               onChange={(e) =>
                 onChange(index, 'Weight', e.target.value, exesiseIndex)
               }
+              onKeyDown={preventEInput}
               className="w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
             {/* <div className="absolute right-2 top-[18px] text-[10px] text-Text-Secondary">
@@ -181,6 +203,7 @@ const ExerciseItem = ({
               onChange={(e) =>
                 onChange(index, 'Rest', e.target.value, exesiseIndex)
               }
+              onKeyDown={preventEInput}
               className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
             />
           </div>
