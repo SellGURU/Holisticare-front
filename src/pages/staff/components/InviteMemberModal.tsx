@@ -44,6 +44,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="w-full mb-4 ">
+              <div className="text-Text-Primary text-[12px] font-medium mb-1">
+                Full Name
+              </div>
               <input
                 placeholder="Write the full name ..."
                 className={`w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
@@ -58,7 +61,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   E-mail
                 </div>
                 <input
-                  placeholder="Write email member ..."
+                  placeholder="Write the email ..."
                   className={`w-[222px] h-[28px] border ${!email.includes('@') && email.length > 0 ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                   type="email"
                   value={email}
