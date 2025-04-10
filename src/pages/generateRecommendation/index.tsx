@@ -128,7 +128,9 @@ export const GenerateRecommendation = () => {
       }
     };
   }, []);
+  const [isClosed, setisClosed] = useState(false);
   // useEffect(() => console.log(scrollPosition), [scrollPosition]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
@@ -272,6 +274,10 @@ export const GenerateRecommendation = () => {
                 lookingForwards: treatmentPlanData?.looking_forwards,
               }}
               setData={setTratmentPlanData}
+              isClosed={isClosed}
+              showSuggestions={showSuggestions}
+              setIsClosed={setisClosed}
+              setShowSuggestions={setShowSuggestions}
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
