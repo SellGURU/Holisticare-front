@@ -13,7 +13,7 @@ const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs }) => {
     <>
       <div className="w-full flex justify-between items-center">
         <div className="text-Text-Primary font-medium text-base">Staff</div>
-        <div className="flex flex-col">
+        <div className="flex flex-col items-end">
           <ButtonSecondary
             ClassName="w-[167px] rounded-[20px]"
             onClick={() => {
@@ -23,7 +23,7 @@ const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs }) => {
             <img src="/icons/user-cirlce-add.svg" alt="" className="w-4 h-4" />
             Invite Member
           </ButtonSecondary>
-          <div className="text-[#888888] text-[9px] text-end mt-1 mr-2">
+          <div className="text-[#888888] text-[9px] text-end mt-1  mr-1">
             Pay money per new member!
           </div>
         </div>
