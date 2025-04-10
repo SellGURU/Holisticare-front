@@ -60,6 +60,7 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
         color: randomColor,
         x: Math.random(),
         y: Math.random(),
+        originalSize: node.size, // Store original size for search highlighting
       });
     });
 
@@ -97,6 +98,16 @@ const GraphEvents = ({
   const registerEvents = useRegisterEvents();
   const sigma = useSigma();
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
+
+  // Store sigma instance in a ref so it can be accessed by the search function
+  useEffect(() => {
+    if (sigma) {
+      // Store the sigma instance in a ref that can be accessed by the parent component
+      const sigmaInstance = sigma;
+      // @ts-expect-error - Adding a custom property to the window object
+      window.sigmaInstance = sigmaInstance;
+    }
+  }, [sigma]);
 
   useEffect(() => {
     registerEvents({
@@ -193,6 +204,50 @@ const AiKnowledge = () => {
           context.arc(data.x, data.y, size + 4, 0, Math.PI * 4, true);
           context.closePath();
           context.fill();
+        },
+        // Add settings for hidden nodes and edges
+        defaultNodeColor: { color: '#1f77b4' },
+        defaultEdgeColor: { color: '#999' },
+        defaultNodeSize: 10,
+        defaultEdgeWidth: 1,
+        // Custom rendering for nodes
+        defaultDrawNode: (context: any, data: any) => {
+          // Skip rendering if node is hidden
+          if (data.hidden) return;
+
+          const size = data.size || 10;
+          const color = data.color || '#1f77b4';
+
+          context.fillStyle = color;
+          context.beginPath();
+          context.arc(data.x, data.y, size, 0, Math.PI * 2, true);
+          context.closePath();
+          context.fill();
+
+          // Draw label if available
+          if (data.label) {
+            context.fillStyle = '#000';
+            context.font = '12px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(data.label, data.x, data.y + size + 10);
+          }
+        },
+        // Custom rendering for edges
+        defaultDrawEdge: (context: any, data: any) => {
+          // Skip rendering if edge is hidden
+          if (data.hidden) return;
+
+          const source = data.source;
+          const target = data.target;
+
+          context.strokeStyle = data.color || '#999';
+          context.lineWidth = data.width || 1;
+
+          context.beginPath();
+          context.moveTo(source.x, source.y);
+          context.lineTo(target.x, target.y);
+          context.stroke();
         },
       });
     }, 600);
@@ -368,6 +423,95 @@ const AiKnowledge = () => {
       closeModal();
     }
   };
+
+  const handleSearch = (term: string) => {
+    if (!graphData || !term.trim()) {
+      // If search is cleared, show all nodes
+      // @ts-expect-error - Accessing the custom property we added to the window object
+      const sigmaInstance = window.sigmaInstance;
+
+      if (sigmaInstance) {
+        const graph = sigmaInstance.getGraph();
+
+        // Show all nodes
+        graph.forEachNode((nodeId: string) => {
+          graph.setNodeAttribute(nodeId, 'hidden', false);
+          graph.setNodeAttribute(nodeId, 'highlighted', false);
+          graph.setNodeAttribute(
+            nodeId,
+            'size',
+            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+          );
+        });
+
+        // Show all edges
+        graph.forEachEdge((edgeId: string) => {
+          graph.setEdgeAttribute(edgeId, 'hidden', false);
+        });
+
+        sigmaInstance.refresh();
+      }
+      return;
+    }
+
+    const matchingNodes = graphData.nodes
+      .filter(
+        (node: any) =>
+          node.label.toLowerCase().includes(term.toLowerCase()) ||
+          (node.category1 &&
+            node.category1.toLowerCase().includes(term.toLowerCase())) ||
+          (node.category2 &&
+            node.category2.toLowerCase().includes(term.toLowerCase())),
+      )
+      .map((node: any) => node.id);
+
+    // Access the sigma instance from the window object
+    // @ts-expect-error - Accessing the custom property we added to the window object
+    const sigmaInstance = window.sigmaInstance;
+
+    if (sigmaInstance) {
+      const graph = sigmaInstance.getGraph();
+
+      // First, hide all nodes and edges
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', true);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', true);
+      });
+
+      // Then show and highlight matching nodes
+      matchingNodes.forEach((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', true);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.5,
+        );
+
+        // Show edges connected to matching nodes
+        graph.forEachEdge((edgeId: string) => {
+          const source = graph.source(edgeId);
+          const target = graph.target(edgeId);
+
+          if (source === nodeId || target === nodeId) {
+            graph.setEdgeAttribute(edgeId, 'hidden', false);
+          }
+        });
+      });
+
+      sigmaInstance.refresh();
+    }
+  };
+
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
@@ -529,7 +673,7 @@ const AiKnowledge = () => {
                 isHaveBorder
                 ClassName="rounded-[12px]"
                 placeHolder="Search for document ..."
-                onSearch={() => {}}
+                onSearch={handleSearch}
               ></SearchBox>
               <ActivityMenu
                 activeMenu={activeMenu}
@@ -629,7 +773,7 @@ const AiKnowledge = () => {
             <SearchBox
               ClassName="rounded-[12px]"
               placeHolder="Search for document ..."
-              onSearch={() => {}}
+              onSearch={handleSearch}
             ></SearchBox>
             <div className="mt-3 w-full">
               <Toggle
