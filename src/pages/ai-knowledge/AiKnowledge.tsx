@@ -8,7 +8,6 @@ import forceAtlas2 from 'graphology-layout-forceatlas2';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
-import { useLayoutCircular } from '@react-sigma/layout-circular';
 import Application from '../../api/app.ts';
 import SearchBox from '../../Components/SearchBox/index.tsx';
 import Circleloader from '../../Components/CircleLoader/index.tsx';
@@ -35,57 +34,114 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
   isInitialLoad,
 }) => {
   const loadGraph = useLoadGraph();
-  const { assign } = useLayoutCircular();
 
   useEffect(() => {
     if (!graphData) return; // Ensure graphData is available
 
     const graph = new Graph();
 
-    const nodesToAdd = isInitialLoad
-      ? graphData.nodes
-      : graphData.nodes.filter(
-          (node: any) =>
-            activeFilters.includes(node.category1) ||
-            activeFilters.includes(node.category2),
-        );
+    // Initialize nodes with more centered positions
+    const centerX = 0.5;
+    const centerY = 0.5;
+    const radius = 0.3; // Smaller initial radius to start nodes closer to center
 
-    const nodeSet = new Set(nodesToAdd.map((node: any) => node.id));
-
-    nodesToAdd.forEach((node: any) => {
+    // Always add all nodes to the graph with better initial positions
+    graphData.nodes.forEach((node: any, index: number) => {
       const randomColor = chroma.random().hex();
+      // Calculate initial position in a spiral pattern
+      const angle = index * 2.4; // Golden angle in radians
+      const r = radius * Math.sqrt(index / graphData.nodes.length);
+      const x = centerX + r * Math.cos(angle);
+      const y = centerY + r * Math.sin(angle);
+
       graph.addNode(node.id, {
         label: node.label,
         size: node.size,
         color: randomColor,
-        x: Math.random(),
-        y: Math.random(),
+        x: x,
+        y: y,
+        originalSize: node.size,
+        category1: node.category1,
+        category2: node.category2,
       });
     });
 
+    // Always add all edges to the graph with full opacity
     graphData.edges.forEach((edge: any, index: number) => {
-      if (nodeSet.has(edge.source) && nodeSet.has(edge.target)) {
-        graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
-          weight: edge.weight,
-          color: '#696969',
-        });
-      } else {
-        console.warn(
-          `Missing nodes for edge: ${edge.source} -> ${edge.target}`,
-        );
-      }
+      graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
+        weight: edge.weight,
+        color: '#d6d6d6',
+        width: 1,
+      });
     });
 
+    // Apply optimized force layout settings
     forceAtlas2.assign(graph, {
-      iterations: 100, // Number of iterations to stabilize layout
+      iterations: 100, // Reduced iterations as we have better initial positions
       settings: {
-        gravity: 1, // Controls node clustering
-        scalingRatio: 20, // Space between nodes
+        gravity: 1, // Increased gravity to pull nodes toward center
+        scalingRatio: 2, // Reduced scaling ratio for tighter packing
+        strongGravityMode: true, // Enable strong gravity mode to prevent empty center
+        slowDown: 2, // Faster cooling for quicker convergence
+        edgeWeightInfluence: 2, // Increased edge influence for better clustering
+        barnesHutOptimize: true,
+        barnesHutTheta: 0.5, // More precise force calculation
+        linLogMode: false,
+        adjustSizes: true,
+        outboundAttractionDistribution: true, // Enable outbound attraction for better distribution
       },
     });
+
+    // Run a second pass of force layout with different settings to refine positions
+    forceAtlas2.assign(graph, {
+      iterations: 50,
+      settings: {
+        gravity: 0.5,
+        scalingRatio: 1,
+        strongGravityMode: true,
+        slowDown: 5,
+        edgeWeightInfluence: 1,
+        barnesHutOptimize: true,
+        barnesHutTheta: 0.5,
+        linLogMode: false,
+        adjustSizes: true,
+        outboundAttractionDistribution: false,
+      },
+    });
+
+    // If not initial load, hide nodes that don't match the active filters
+    if (!isInitialLoad && activeFilters.length > 0) {
+      const visibleNodes = new Set<string>();
+
+      graphData.nodes.forEach((node: any) => {
+        if (
+          activeFilters.includes(node.category1) ||
+          activeFilters.includes(node.category2)
+        ) {
+          visibleNodes.add(node.id);
+        }
+      });
+
+      // Hide nodes that don't match the filters
+      graph.forEachNode((nodeId: string) => {
+        if (!visibleNodes.has(nodeId)) {
+          graph.setNodeAttribute(nodeId, 'hidden', true);
+        }
+      });
+
+      // Hide edges connected to hidden nodes
+      graph.forEachEdge((edgeId: string) => {
+        const source = graph.source(edgeId);
+        const target = graph.target(edgeId);
+
+        if (!visibleNodes.has(source) || !visibleNodes.has(target)) {
+          graph.setEdgeAttribute(edgeId, 'hidden', true);
+        }
+      });
+    }
+
     loadGraph(graph);
-    // assign();
-  }, [activeFilters, graphData, isInitialLoad, loadGraph, assign]);
+  }, [activeFilters, graphData, isInitialLoad, loadGraph]);
 
   return null;
 };
@@ -97,6 +153,16 @@ const GraphEvents = ({
   const registerEvents = useRegisterEvents();
   const sigma = useSigma();
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
+
+  // Store sigma instance in a ref so it can be accessed by the search function
+  useEffect(() => {
+    if (sigma) {
+      // Store the sigma instance in a ref that can be accessed by the parent component
+      const sigmaInstance = sigma;
+      // @ts-expect-error - Adding a custom property to the window object
+      window.sigmaInstance = sigmaInstance;
+    }
+  }, [sigma]);
 
   useEffect(() => {
     registerEvents({
@@ -173,11 +239,91 @@ const AiKnowledge = () => {
   }, []);
   const handleButtonClick = (category: string) => {
     setIsInitialLoad(false);
-    setActiveFilters((prevFilters) =>
-      prevFilters.includes(category)
-        ? prevFilters.filter((filter) => filter !== category)
-        : [...prevFilters, category],
-    );
+
+    // Update the active filters state
+    const newActiveFilters = activeFilters.includes(category)
+      ? activeFilters.filter((filter) => filter !== category)
+      : [...activeFilters, category];
+
+    setActiveFilters(newActiveFilters);
+
+    // Apply the filter immediately using the sigma instance
+    // @ts-expect-error - Accessing the custom property we added to the window object
+    const sigmaInstance = window.sigmaInstance;
+
+    if (sigmaInstance && graphData) {
+      const graph = sigmaInstance.getGraph();
+
+      // If no filters are active, show all nodes
+      if (newActiveFilters.length === 0) {
+        graph.forEachNode((nodeId: string) => {
+          graph.setNodeAttribute(nodeId, 'hidden', false);
+          graph.setNodeAttribute(nodeId, 'highlighted', false);
+          graph.setNodeAttribute(
+            nodeId,
+            'size',
+            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+          );
+        });
+
+        graph.forEachEdge((edgeId: string) => {
+          graph.setEdgeAttribute(edgeId, 'hidden', false);
+        });
+
+        sigmaInstance.refresh();
+        return;
+      }
+
+      // First, hide all nodes and edges
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', true);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', true);
+      });
+
+      // Find nodes that match the active filters
+      const visibleNodes = new Set<string>();
+
+      graphData.nodes.forEach((node: any) => {
+        if (
+          newActiveFilters.includes(node.category1) ||
+          newActiveFilters.includes(node.category2)
+        ) {
+          visibleNodes.add(node.id);
+        }
+      });
+
+      // Show and highlight matching nodes
+      visibleNodes.forEach((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', true);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.2,
+        );
+
+        // Show edges connected to matching nodes
+        graph.forEachEdge((edgeId: string) => {
+          const source = graph.source(edgeId);
+          const target = graph.target(edgeId);
+
+          if (source === nodeId || target === nodeId) {
+            graph.setEdgeAttribute(edgeId, 'hidden', false);
+          }
+        });
+      });
+
+      sigmaInstance.refresh();
+    }
   };
   const [sigmaSetting, setSigmaSetting] = useState<any>({});
   useEffect(() => {
@@ -193,6 +339,68 @@ const AiKnowledge = () => {
           context.arc(data.x, data.y, size + 4, 0, Math.PI * 4, true);
           context.closePath();
           context.fill();
+        },
+        // Add settings for hidden nodes and edges
+        defaultNodeColor: { color: '#1f77b4' },
+        defaultEdgeColor: { color: '#999999' }, // #999999 with 100% opacity
+        defaultNodeSize: 10,
+        defaultEdgeWidth: 0.8, // Slightly thinner edges
+        // Increase min camera ratio to zoom out and show more of the graph
+        minCameraRatio: 0.1,
+        // Increase max camera ratio to allow more zoom in
+        maxCameraRatio: 10,
+        // Adjust label rendering for better visibility
+        labelRenderedSizeThreshold: 5,
+        labelSize: 12,
+        labelSizeRatio: 1,
+        // Custom rendering for nodes
+        defaultDrawNode: (context: any, data: any) => {
+          // Skip rendering if node is hidden
+          if (data.hidden) return;
+
+          const size = data.size || 10;
+          const color = data.color || '#1f77b4';
+
+          // Draw node with a slight transparency for better visibility
+          context.globalAlpha = 0.8;
+          context.fillStyle = color;
+          context.beginPath();
+          context.arc(data.x, data.y, size, 0, Math.PI * 2, true);
+          context.closePath();
+          context.fill();
+
+          // Reset transparency
+          context.globalAlpha = 1;
+
+          // Draw label if available
+          if (data.label) {
+            context.fillStyle = '#000';
+            context.font = '12px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(data.label, data.x, data.y + size + 10);
+          }
+        },
+        // Custom rendering for edges with full opacity
+        defaultDrawEdge: (context: any, data: any) => {
+          // Skip rendering if edge is hidden
+          if (data.hidden) return;
+
+          const source = data.source;
+          const target = data.target;
+
+          // Draw edge with full opacity
+          context.globalAlpha = 1.0; // 100% opacity
+          context.strokeStyle = data.color || '#999999'; // #999999 with 100% opacity
+          context.lineWidth = data.width || 0.8; // Slightly thinner edges
+
+          context.beginPath();
+          context.moveTo(source.x, source.y);
+          context.lineTo(target.x, target.y);
+          context.stroke();
+
+          // Reset transparency (not needed but kept for consistency)
+          context.globalAlpha = 1;
         },
       });
     }, 600);
@@ -368,6 +576,95 @@ const AiKnowledge = () => {
       closeModal();
     }
   };
+
+  const handleSearch = (term: string) => {
+    if (!graphData || !term.trim()) {
+      // If search is cleared, show all nodes
+      // @ts-expect-error - Accessing the custom property we added to the window object
+      const sigmaInstance = window.sigmaInstance;
+
+      if (sigmaInstance) {
+        const graph = sigmaInstance.getGraph();
+
+        // Show all nodes
+        graph.forEachNode((nodeId: string) => {
+          graph.setNodeAttribute(nodeId, 'hidden', false);
+          graph.setNodeAttribute(nodeId, 'highlighted', false);
+          graph.setNodeAttribute(
+            nodeId,
+            'size',
+            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+          );
+        });
+
+        // Show all edges
+        graph.forEachEdge((edgeId: string) => {
+          graph.setEdgeAttribute(edgeId, 'hidden', false);
+        });
+
+        sigmaInstance.refresh();
+      }
+      return;
+    }
+
+    const matchingNodes = graphData.nodes
+      .filter(
+        (node: any) =>
+          node.label.toLowerCase().includes(term.toLowerCase()) ||
+          (node.category1 &&
+            node.category1.toLowerCase().includes(term.toLowerCase())) ||
+          (node.category2 &&
+            node.category2.toLowerCase().includes(term.toLowerCase())),
+      )
+      .map((node: any) => node.id);
+
+    // Access the sigma instance from the window object
+    // @ts-expect-error - Accessing the custom property we added to the window object
+    const sigmaInstance = window.sigmaInstance;
+
+    if (sigmaInstance) {
+      const graph = sigmaInstance.getGraph();
+
+      // First, hide all nodes and edges
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', true);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', true);
+      });
+
+      // Then show and highlight matching nodes
+      matchingNodes.forEach((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', true);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.5,
+        );
+
+        // Show edges connected to matching nodes
+        graph.forEachEdge((edgeId: string) => {
+          const source = graph.source(edgeId);
+          const target = graph.target(edgeId);
+
+          if (source === nodeId || target === nodeId) {
+            graph.setEdgeAttribute(edgeId, 'hidden', false);
+          }
+        });
+      });
+
+      sigmaInstance.refresh();
+    }
+  };
+
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
@@ -529,7 +826,7 @@ const AiKnowledge = () => {
                 isHaveBorder
                 ClassName="rounded-[12px]"
                 placeHolder="Search for document ..."
-                onSearch={() => {}}
+                onSearch={handleSearch}
               ></SearchBox>
               <ActivityMenu
                 activeMenu={activeMenu}
@@ -629,7 +926,7 @@ const AiKnowledge = () => {
             <SearchBox
               ClassName="rounded-[12px]"
               placeHolder="Search for document ..."
-              onSearch={() => {}}
+              onSearch={handleSearch}
             ></SearchBox>
             <div className="mt-3 w-full">
               <Toggle

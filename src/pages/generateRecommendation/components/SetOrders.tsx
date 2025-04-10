@@ -381,7 +381,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       </div>
       {showModal && (
         <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <div className="bg-white min-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+          <div className="bg-white h-fit max-h-[400px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
             <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
               <img src="/icons/notification-status.svg" alt="" /> Practitioner
               Comment

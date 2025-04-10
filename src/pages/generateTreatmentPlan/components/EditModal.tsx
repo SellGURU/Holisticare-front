@@ -137,7 +137,7 @@ const EditModal: React.FC<EditModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
         ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary overflow-auto max-h-[660px]"
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary max-h-[660px]"
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
@@ -145,51 +145,52 @@ const EditModal: React.FC<EditModalProps> = ({
             {isAdd ? 'Add Recommendation' : 'Edit Recommendation'}
           </div>
         </h2>
-        <div className=" w-full relative overflow-visible mt-2 mb-4">
-          <label className="text-xs font-medium text-Text-Primary">
-            Category
-          </label>
-          <div
-            ref={selectButRef}
-            onClick={() => setShowSelect(!showSelect)}
-            className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
-          >
-            {selectedGroup ? (
-              <div className="text-[12px] text-Text-Primary">
-                {selectedGroup}
-              </div>
-            ) : (
-              <div className="text-[12px] text-gray-400">Select Group</div>
-            )}
-            <div>
-              <img
-                className={`${showSelect && 'rotate-180'}`}
-                src="/icons/arow-down-drop.svg"
-                alt=""
-              />
-            </div>
-          </div>
-          {showSelect && (
+        <div className="max-h-[440px] overflow-auto pr-1 mt-[6px]">
+          <div className=" w-full relative overflow-visible mt-2 mb-4">
+            <label className="text-xs font-medium text-Text-Primary">
+              Category
+            </label>
             <div
-              ref={selectRef}
-              className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
+              ref={selectButRef}
+              onClick={() => setShowSelect(!showSelect)}
+              className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
             >
-              {groups.map((groupObj, index) => {
-                const groupName = Object.keys(groupObj)[0];
-                return (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setSelectedGroup(groupName);
-                      setShowSelect(false);
-                    }}
-                    className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                  >
-                    {groupName}
-                  </div>
-                );
-              })}
-              {/* <div
+              {selectedGroup ? (
+                <div className="text-[12px] text-Text-Primary">
+                  {selectedGroup}
+                </div>
+              ) : (
+                <div className="text-[12px] text-gray-400">Select Group</div>
+              )}
+              <div>
+                <img
+                  className={`${showSelect && 'rotate-180'}`}
+                  src="/icons/arow-down-drop.svg"
+                  alt=""
+                />
+              </div>
+            </div>
+            {showSelect && (
+              <div
+                ref={selectRef}
+                className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
+              >
+                {groups.map((groupObj, index) => {
+                  const groupName = Object.keys(groupObj)[0];
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setSelectedGroup(groupName);
+                        setShowSelect(false);
+                      }}
+                      className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                    >
+                      {groupName}
+                    </div>
+                  );
+                })}
+                {/* <div
                           onClick={() => {
                             formik.setFieldValue('gender', 'Male');
                             setShowSelect(false);
@@ -207,10 +208,10 @@ const EditModal: React.FC<EditModalProps> = ({
                         >
                           Female
                         </div> */}
-            </div>
-          )}
-        </div>
-        {/* <div className="my-4">
+              </div>
+            )}
+          </div>
+          {/* <div className="my-4">
           <label className="block text-xs font-medium">Group</label>
           <select
             value={group}
@@ -220,37 +221,39 @@ const EditModal: React.FC<EditModalProps> = ({
             <option>Diet</option>
           </select>
         </div> */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium">Recommendation</label>
-            <input
-              value={recommendation}
-              onChange={(e) => setRecommendation(e.target.value)}
-              placeholder="Write Recommendation"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
+          <div className="mb-4 grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium">
+                Recommendation
+              </label>
+              <input
+                value={recommendation}
+                onChange={(e) => setRecommendation(e.target.value)}
+                placeholder="Write Recommendation"
+                type="text"
+                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+              />
+            </div>
+            {/* {selectedGroupDose && ( */}
+            <div
+              className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
+            >
+              <label className="block text-xs font-medium">Dose</label>
+              <input
+                value={dose}
+                disabled={!selectedGroupDose}
+                onChange={(e) => setDose(e.target.value)}
+                placeholder="Write Dose"
+                type="text"
+                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+              />
+            </div>
+            {/* )} */}
           </div>
-          {/* {selectedGroupDose && ( */}
-          <div
-            className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
-          >
-            <label className="block text-xs font-medium">Dose</label>
-            <input
-              value={dose}
-              disabled={!selectedGroupDose}
-              onChange={(e) => setDose(e.target.value)}
-              placeholder="Write Dose"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
-          </div>
-          {/* )} */}
-        </div>
-        <div className="mb-4">
-          <label className="flex w-full justify-between items-center text-xs font-medium">
-            Instructions
-            {/* <div className="flex mt-2 space-x-4">
+          <div className="mb-4">
+            <label className="flex w-full justify-between items-center text-xs font-medium">
+              Instructions
+              {/* <div className="flex mt-2 space-x-4">
               <Checkbox
                 label="Morning"
                 checked={morning}
@@ -267,101 +270,106 @@ const EditModal: React.FC<EditModalProps> = ({
                 onChange={() => setNight(!night)}
               />
             </div> */}
-          </label>
-          <input
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            placeholder="Write Instructions"
-            type="text"
-            className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="text-xs font-medium">Times</label>
-          <div className="flex w-full mt-2 ">
-            {times.map((time, index) => (
-              <div
-                key={time}
-                onClick={() => toggleTimeSelection(time)}
-                className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
-                  selectedTimes.includes(time)
-                    ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                    : 'bg-backgroundColor-Card text-Text-Secondary'
-                }`}
-              >
-                {time}
+            </label>
+            <input
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              placeholder="Write Instructions"
+              type="text"
+              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="text-xs font-medium">Times</label>
+            <div className="flex w-full mt-2 ">
+              {times.map((time, index) => (
+                <div
+                  key={time}
+                  onClick={() => toggleTimeSelection(time)}
+                  className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                    selectedTimes.includes(time)
+                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                      : 'bg-backgroundColor-Card text-Text-Secondary'
+                  }`}
+                >
+                  {time}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-xs font-medium">Client Note</label>
+            <textarea
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              onKeyDown={handleNoteKeyDown}
+              className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
+              rows={4}
+              placeholder="Write notes ..."
+            />
+          </div>
+          <div className="mb-4 flex flex-col gap-2  ">
+            {notes.map((note, index) => (
+              <div className="w-full flex gap-1 items-start">
+                <div
+                  key={index}
+                  className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
+                >
+                  <span>{note}</span>
+                </div>
+                <div
+                  onClick={() => handleDeleteNote(index)}
+                  className="cursor-pointer"
+                >
+                  <SvgIcon
+                    src="/icons/delete.svg"
+                    color="#FC5474
+"
+                    width="24px"
+                    height="24px"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mb-4">
+            <label className="block text-xs font-medium">
+              Practitioner Comments
+            </label>
+            <textarea
+              value={practitionerComment}
+              onChange={(e) => setPractitionerComment(e.target.value)}
+              onKeyDown={handleCommentKeyDown}
+              className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+              rows={4}
+              placeholder="Enter internal observations or comments..."
+            />
+          </div>
+          <div className="mb-4 flex flex-col gap-2  ">
+            {practitionerComments?.map((comment, index) => (
+              <div className="w-full flex gap-1 items-start">
+                <div
+                  key={index}
+                  className=" w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
+                >
+                  <span>{comment}</span>
+                </div>
+                <div
+                  onClick={() => handleDeleteComment(index)}
+                  className="cursor-pointer"
+                >
+                  <SvgIcon
+                    src="/icons/delete.svg"
+                    color="#FC5474"
+                    width="24px"
+                    height="24px"
+                  />
+                </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-xs font-medium">Client Note</label>
-          <textarea
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            onKeyDown={handleNoteKeyDown}
-            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
-            rows={4}
-            placeholder="Write notes ..."
-          />
-        </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
-          {notes.map((note, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
-            >
-              <span>{note}</span>
-              <div
-                onClick={() => handleDeleteNote(index)}
-                className="cursor-pointer"
-              >
-                <SvgIcon
-                  src="/icons/delete.svg"
-                  color="#FC5474
-"
-                  width="24px"
-                  height="24px"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mb-4">
-          <label className="block text-xs font-medium">
-            Practitioner Comments
-          </label>
-          <textarea
-            value={practitionerComment}
-            onChange={(e) => setPractitionerComment(e.target.value)}
-            onKeyDown={handleCommentKeyDown}
-            className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            rows={4}
-            placeholder="Enter internal observations or comments..."
-          />
-        </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
-          {practitionerComments?.map((comment, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
-            >
-              <span>{comment}</span>
-              <div
-                onClick={() => handleDeleteComment(index)}
-                className="cursor-pointer"
-              >
-                <SvgIcon
-                  src="/icons/delete.svg"
-                  color="#FC5474"
-                  width="24px"
-                  height="24px"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-end gap-2 ">
+        <div className="flex justify-end gap-4 mt-8 ">
           <button
             onClick={onClose}
             className="text-sm font-medium text-[#909090] cursor-pointer"
