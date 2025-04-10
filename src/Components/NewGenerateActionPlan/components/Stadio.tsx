@@ -283,7 +283,7 @@ const Stadio: FC<StadioProps> = ({
             </div>
           )}
           <div
-            className={`w-full flex justify-end gap-3 ${selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+            className={`w-full flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
           >
             {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
               <div
