@@ -49,11 +49,11 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
     graphData.nodes.forEach((node: any, index: number) => {
       const randomColor = chroma.random().hex();
       // Calculate initial position in a spiral pattern
-      const angle = (index * 2.4); // Golden angle in radians
+      const angle = index * 2.4; // Golden angle in radians
       const r = radius * Math.sqrt(index / graphData.nodes.length);
       const x = centerX + r * Math.cos(angle);
       const y = centerY + r * Math.sin(angle);
-      
+
       graph.addNode(node.id, {
         label: node.label,
         size: node.size,
@@ -108,11 +108,11 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
         outboundAttractionDistribution: false,
       },
     });
-    
+
     // If not initial load, hide nodes that don't match the active filters
     if (!isInitialLoad && activeFilters.length > 0) {
       const visibleNodes = new Set<string>();
-      
+
       graphData.nodes.forEach((node: any) => {
         if (
           activeFilters.includes(node.category1) ||
@@ -121,25 +121,25 @@ const LoadGraph: React.FC<LoadGraphProps> = ({
           visibleNodes.add(node.id);
         }
       });
-      
+
       // Hide nodes that don't match the filters
       graph.forEachNode((nodeId: string) => {
         if (!visibleNodes.has(nodeId)) {
           graph.setNodeAttribute(nodeId, 'hidden', true);
         }
       });
-      
+
       // Hide edges connected to hidden nodes
       graph.forEachEdge((edgeId: string) => {
         const source = graph.source(edgeId);
         const target = graph.target(edgeId);
-        
+
         if (!visibleNodes.has(source) || !visibleNodes.has(target)) {
           graph.setEdgeAttribute(edgeId, 'hidden', true);
         }
       });
     }
-    
+
     loadGraph(graph);
   }, [activeFilters, graphData, isInitialLoad, loadGraph]);
 
@@ -239,21 +239,21 @@ const AiKnowledge = () => {
   }, []);
   const handleButtonClick = (category: string) => {
     setIsInitialLoad(false);
-    
+
     // Update the active filters state
     const newActiveFilters = activeFilters.includes(category)
       ? activeFilters.filter((filter) => filter !== category)
       : [...activeFilters, category];
-    
+
     setActiveFilters(newActiveFilters);
-    
+
     // Apply the filter immediately using the sigma instance
     // @ts-expect-error - Accessing the custom property we added to the window object
     const sigmaInstance = window.sigmaInstance;
-    
+
     if (sigmaInstance && graphData) {
       const graph = sigmaInstance.getGraph();
-      
+
       // If no filters are active, show all nodes
       if (newActiveFilters.length === 0) {
         graph.forEachNode((nodeId: string) => {
@@ -265,15 +265,15 @@ const AiKnowledge = () => {
             graph.getNodeAttribute(nodeId, 'originalSize') || 10,
           );
         });
-        
+
         graph.forEachEdge((edgeId: string) => {
           graph.setEdgeAttribute(edgeId, 'hidden', false);
         });
-        
+
         sigmaInstance.refresh();
         return;
       }
-      
+
       // First, hide all nodes and edges
       graph.forEachNode((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', true);
@@ -284,14 +284,14 @@ const AiKnowledge = () => {
           graph.getNodeAttribute(nodeId, 'originalSize') || 10,
         );
       });
-      
+
       graph.forEachEdge((edgeId: string) => {
         graph.setEdgeAttribute(edgeId, 'hidden', true);
       });
-      
+
       // Find nodes that match the active filters
       const visibleNodes = new Set<string>();
-      
+
       graphData.nodes.forEach((node: any) => {
         if (
           newActiveFilters.includes(node.category1) ||
@@ -300,7 +300,7 @@ const AiKnowledge = () => {
           visibleNodes.add(node.id);
         }
       });
-      
+
       // Show and highlight matching nodes
       visibleNodes.forEach((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', false);
@@ -310,18 +310,18 @@ const AiKnowledge = () => {
           'size',
           (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.2,
         );
-        
+
         // Show edges connected to matching nodes
         graph.forEachEdge((edgeId: string) => {
           const source = graph.source(edgeId);
           const target = graph.target(edgeId);
-          
+
           if (source === nodeId || target === nodeId) {
             graph.setEdgeAttribute(edgeId, 'hidden', false);
           }
         });
       });
-      
+
       sigmaInstance.refresh();
     }
   };
@@ -357,10 +357,10 @@ const AiKnowledge = () => {
         defaultDrawNode: (context: any, data: any) => {
           // Skip rendering if node is hidden
           if (data.hidden) return;
-          
+
           const size = data.size || 10;
           const color = data.color || '#1f77b4';
-          
+
           // Draw node with a slight transparency for better visibility
           context.globalAlpha = 0.8;
           context.fillStyle = color;
@@ -368,10 +368,10 @@ const AiKnowledge = () => {
           context.arc(data.x, data.y, size, 0, Math.PI * 2, true);
           context.closePath();
           context.fill();
-          
+
           // Reset transparency
           context.globalAlpha = 1;
-          
+
           // Draw label if available
           if (data.label) {
             context.fillStyle = '#000';
@@ -385,23 +385,23 @@ const AiKnowledge = () => {
         defaultDrawEdge: (context: any, data: any) => {
           // Skip rendering if edge is hidden
           if (data.hidden) return;
-          
+
           const source = data.source;
           const target = data.target;
-          
+
           // Draw edge with full opacity
           context.globalAlpha = 1.0; // 100% opacity
           context.strokeStyle = data.color || '#999999'; // #999999 with 100% opacity
           context.lineWidth = data.width || 0.8; // Slightly thinner edges
-          
+
           context.beginPath();
           context.moveTo(source.x, source.y);
           context.lineTo(target.x, target.y);
           context.stroke();
-          
+
           // Reset transparency (not needed but kept for consistency)
           context.globalAlpha = 1;
-        }
+        },
       });
     }, 600);
   }, []);
