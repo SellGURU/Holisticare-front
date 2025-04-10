@@ -48,7 +48,7 @@ const DashBoard = () => {
 
             <TaskManager />
           </div>
-          <div className=" grid gap-4">
+          <div className="  grid gap-4">
             <Clients></Clients>
 
             <Employes></Employes>
