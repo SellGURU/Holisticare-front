@@ -234,9 +234,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                       </div>
                       <div
                         className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[120px] max-w-[150px] text-Text-Secondary   ${
-                          expandedMessage === message.member_id
-                            ? ''
-                            : ''
+                          expandedMessage === message.member_id ? '' : ''
                         } `}
                       >
                         {message.message}
