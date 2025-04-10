@@ -53,10 +53,18 @@ type SectionKey = keyof ConditionDataProps;
 interface GeneralConditionProps {
   data: ConditionDataProps;
   setData: (values: any) => void;
+  isClosed: boolean;
+  showSuggestions: boolean;
+  setIsClosed: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSuggestions: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   data,
   setData,
+  isClosed,
+  showSuggestions,
+  setIsClosed,
+  setShowSuggestions,
 }) => {
   // const [data, setData] = useState<ConditionDataProps>(updata);
   const [editMode, setEditMode] = useState<EditModeState>({
@@ -110,6 +118,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
       });
     }
     setEditMode((prev) => ({ ...prev, [section]: false }));
+   
   };
 
   const handleContentChange = (
@@ -125,12 +134,23 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
     }));
   };
   useEffect(() => console.log(data), [data]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // useEffect(() => {
+  //   if (data?.completionSuggestions?.length > 0) {
+  //     setShowSuggestions(true);
+  //   }
+  // }, [data]);
   useEffect(() => {
-    if (data?.completionSuggestions?.length > 0) {
+    if (data?.completionSuggestions?.length > 0 && !isClosed) {
       setShowSuggestions(true);
     }
-  }, [data]);
+  }, [data, isClosed, setShowSuggestions]);
+
+  const toggleSuggestions = () => {
+    setIsClosed(!isClosed);
+    setShowSuggestions((prev) => !prev);
+  };
+
   return (
     <div>
       {showSuggestions && (
@@ -152,8 +172,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
               <img
                 src="/icons/close.svg"
                 alt=""
-                onClick={() => setShowSuggestions(false)}
-                style={{ cursor: 'pointer' }}
+                onClick={toggleSuggestions}                style={{ cursor: 'pointer' }}
               />
             )}
           </div>

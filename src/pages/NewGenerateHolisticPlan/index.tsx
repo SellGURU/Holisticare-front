@@ -627,7 +627,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           </div>
           <div
-            className={`lg:pt-[30px] h-[660px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+            className={`lg:pt-[30px] h-[600px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
           >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
