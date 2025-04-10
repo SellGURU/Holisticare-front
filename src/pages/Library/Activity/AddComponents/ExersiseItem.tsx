@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SvgIcon from '../../../../utils/svgIcon';
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 
@@ -7,7 +7,7 @@ interface ExerciseItemProps {
   isSuperSet?: boolean;
   index: number;
   exercise: any;
-  sets: number;
+  sets: any;
   exesiseIndex: number;
   onDelete: (exersiseIndex: number) => void;
   toSuperSet: () => void;
@@ -30,12 +30,15 @@ const ExerciseItem = ({
   sets,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showSetError, setShowSetError] = useState(true);
+  const [showSetError, setShowSetError] = useState(sets== "");
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
     refrence: menuRef,
   });
+  useEffect(() => {
+    setShowSetError(sets == "");
+  }, [sets]);
 
   const preventEInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'e' || e.key === 'E') {
