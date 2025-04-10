@@ -118,7 +118,6 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
       });
     }
     setEditMode((prev) => ({ ...prev, [section]: false }));
-   
   };
 
   const handleContentChange = (
@@ -172,7 +171,8 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
               <img
                 src="/icons/close.svg"
                 alt=""
-                onClick={toggleSuggestions}                style={{ cursor: 'pointer' }}
+                onClick={toggleSuggestions}
+                style={{ cursor: 'pointer' }}
               />
             )}
           </div>
