@@ -114,7 +114,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     });
   }, []);
 
-  const [baseScore, setBaseScore] = useState(defalts?.Base_Score || 5);
+  const [baseScore, setBaseScore] = useState(
+    defalts?.Base_Score === 0 ? defalts?.Base_Score : 5,
+  );
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
     if (defalts) {
@@ -141,7 +143,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setSelectedTimes(defalts.Times || []);
       setNotes(defalts['Client Notes'] || []);
       setDescription(defalts.Description || '');
-      setBaseScore(defalts.Base_Score || 5);
+      setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
       setFrequencyType(defalts?.Frequency_Type || null);
       setAddData({
         Type: defalts?.Activity_Filters?.Type || '',
@@ -529,7 +531,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 />
                 {!instructions && (
                   <span className="text-xs text-red-500">
-                    Instruction is required .
+                    Instruction is required.
                   </span>
                 )}
               </div>
@@ -721,7 +723,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
-                    <label htmlFor="daily" className="text-xs cursor-pointer">
+                    <label
+                      htmlFor="daily"
+                      className={`text-xs cursor-pointer ${frequencyType === 'daily' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+                    >
                       Daily
                     </label>
                   </div>
@@ -742,7 +747,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
-                    <label htmlFor="weekly" className="text-xs cursor-pointer">
+                    <label
+                      htmlFor="weekly"
+                      className={`text-xs cursor-pointer ${frequencyType === 'weekly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+                    >
                       Weekly
                     </label>
                   </div>
@@ -763,14 +771,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       }}
                       className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
                     />
-                    <label htmlFor="monthly" className="text-xs cursor-pointer">
+                    <label
+                      htmlFor="monthly"
+                      className={`text-xs cursor-pointer ${frequencyType === 'monthly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+                    >
                       Monthly
                     </label>
                   </div>
                 </div>
                 {!frequencyType && (
                   <span className="text-xs text-red-500">
-                    Frequency is required .
+                    Frequency is required.
                   </span>
                 )}
                 {frequencyType === 'weekly' && (
@@ -858,13 +869,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   onKeyDown={handleNoteKeyDown}
                   className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
                   rows={4}
-                  placeholder="Write notes ..."
+                  placeholder="Enter your observations, concerns, or feedback here..."
                 />
               </div>
               <div
                 className={`${
                   notes.length > 0 ? 'mb-4' : ''
-                } flex flex-col gap-2 max-h-[100px] overflow-auto`}
+                } flex flex-col gap-2`}
               >
                 {notes.map((note, index) => (
                   <div
@@ -896,10 +907,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   onKeyDown={handleCommentKeyDown}
                   className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                   rows={4}
-                  placeholder="Enter internal observations or comments..."
+                  placeholder="Document your clinical observations, interventions, and plans..."
                 />
               </div>
-              <div className="mb-4 flex flex-col gap-2 max-h-[250px] overflow-auto ">
+              <div className="mb-4 flex flex-col gap-2">
                 {practitionerComments?.map((comment, index) => (
                   <div
                     key={index}

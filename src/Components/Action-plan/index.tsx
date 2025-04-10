@@ -197,7 +197,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                               </div>
                               <div className="flex h-full gap-8">
                                 <div className="flex flex-col items-center">
-                                  <div className="font-medium text-sm text-Text-Primary -mb-2">
+                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
                                     Diet
                                   </div>
                                   <CircularProgressBar
@@ -205,7 +205,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                                   />
                                 </div>
                                 <div className="flex flex-col items-center">
-                                  <div className="font-medium text-sm text-Text-Primary -mb-2">
+                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
                                     Activity
                                   </div>
                                   <CircularProgressBar
@@ -213,7 +213,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                                   />
                                 </div>
                                 <div className="flex flex-col items-center">
-                                  <div className="font-medium text-sm text-Text-Primary -mb-2">
+                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
                                     Supplement
                                   </div>
                                   <CircularProgressBar
@@ -221,7 +221,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                                   />
                                 </div>
                                 <div className="flex flex-col items-center">
-                                  <div className="font-medium text-sm text-Text-Primary -mb-2">
+                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
                                     Lifestyle
                                   </div>
                                   <CircularProgressBar

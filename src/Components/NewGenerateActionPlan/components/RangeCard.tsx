@@ -11,6 +11,7 @@ const RangeCard: React.FC<RangeCardProps> = ({ value, changeValue }) => {
       setVal(value);
     }
   }, [value]);
+  const [scores] = useState<number[]>([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   return (
     <>
       <div className="w-full">
@@ -32,17 +33,20 @@ const RangeCard: React.FC<RangeCardProps> = ({ value, changeValue }) => {
           }}
         ></input>
         <div className="w-full flex justify-between items-center">
-          <div className="text-[10px] ml-1 text-Text-Secondary">0</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">1</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">2</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">3</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">4</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">5</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">6</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">7</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">8</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">9</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
+          {scores.map((score, index) => {
+            return (
+              <div
+                key={index}
+                className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+                onClick={() => {
+                  setVal(score);
+                  changeValue(score);
+                }}
+              >
+                {score}
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

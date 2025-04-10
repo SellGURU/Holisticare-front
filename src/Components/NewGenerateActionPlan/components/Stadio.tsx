@@ -280,7 +280,9 @@ const Stadio: FC<StadioProps> = ({
               />
             </div>
           )}
-          <div className="w-full flex justify-end mb-2 gap-3">
+          <div
+            className={`w-full flex justify-end gap-3 ${selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+          >
             {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
               <div
                 className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
@@ -335,7 +337,7 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
           <div
-            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.checkIn.length == 0 && actions.category.length == 0 && ''} `}
+            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100 ${actions.checkIn.length == 0 && actions.category.length == 0 && ''} `}
           >
             {actions.checkIn.length == 0 && actions.category.length == 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-[450px]">
@@ -344,7 +346,7 @@ const Stadio: FC<StadioProps> = ({
                   alt=""
                   className="w-[87px] h-[87px]"
                 />
-                <div className="text-Text-Primary font-medium text-base mt-2">
+                <div className="text-Text-Primary font-medium text-sm mt-2">
                   No action to show
                 </div>
                 <ButtonSecondary
@@ -421,17 +423,17 @@ const Stadio: FC<StadioProps> = ({
                 {AllCategories.map((cat) => {
                   return (
                     <>
-                      <div
+                      <button
                         className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-2 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                         onClick={() => setSelectedCategory(cat)}
                       >
                         {cat}
-                      </div>
+                      </button>
                     </>
                   );
                 })}
               </div>
-              <div className="w-full h-[360px] overflow-y-auto">
+              <div className="w-full h-[345px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any) => {
                     return (
