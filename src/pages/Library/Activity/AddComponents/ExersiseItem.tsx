@@ -30,14 +30,14 @@ const ExerciseItem = ({
   sets,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showSetError, setShowSetError] = useState(sets== "");
+  const [showSetError, setShowSetError] = useState(sets == '');
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
     refrence: menuRef,
   });
   useEffect(() => {
-    setShowSetError(sets == "");
+    setShowSetError(sets == '');
   }, [sets]);
 
   const preventEInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
