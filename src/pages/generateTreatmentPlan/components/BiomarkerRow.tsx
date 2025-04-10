@@ -129,7 +129,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             )}
           </div>
           {isExpanded && (
-            <div className="flex flex-col mt-1 pt-1 border-t border-Gray-50">
+            <div className="flex flex-col mt-2 pt-1 border-t border-Gray-50">
               {notes?.map((note, index) => (
                 <div
                   key={index}
@@ -170,7 +170,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             )}
 
             <div
-              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col mt-1 items-center gap-[6px]`}
+              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col mt-1 items-center gap-[10px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}
@@ -213,7 +213,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       </div>
       {showModal && (
         <MainModal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <div className="bg-white h-fit min-h-[300px] max-h-[600px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
+          <div className="bg-white h-fit max-h-[600px] overflow-auto w-[500px]  p-6 pb-8 rounded-2xl shadow-800">
             <div className="border-b border-Gray-50 pb-2 w-full flex gap-2 items-center text-sm font-medium text-Text-Primary">
               <img src="/icons/notification-status.svg" alt="" /> Practitioner
               Comment

@@ -137,7 +137,7 @@ const EditModal: React.FC<EditModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
         ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary overflow-auto max-h-[660px]"
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary max-h-[660px]"
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
@@ -145,6 +145,7 @@ const EditModal: React.FC<EditModalProps> = ({
             {isAdd ? 'Add Recommendation' : 'Edit Recommendation'}
           </div>
         </h2>
+        <div className='max-h-[440px] overflow-auto pr-1 mt-[6px]'>
         <div className=" w-full relative overflow-visible mt-2 mb-4">
           <label className="text-xs font-medium text-Text-Primary">
             Category
@@ -305,14 +306,18 @@ const EditModal: React.FC<EditModalProps> = ({
             placeholder="Write notes ..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
+        <div className="mb-4 flex flex-col gap-2  ">
           {notes.map((note, index) => (
+            <div className='w-full flex gap-1 items-start'>
+
             <div
               key={index}
-              className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
+              className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
             >
               <span>{note}</span>
-              <div
+              
+            </div>
+            <div
                 onClick={() => handleDeleteNote(index)}
                 className="cursor-pointer"
               >
@@ -325,6 +330,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 />
               </div>
             </div>
+
           ))}
         </div>
         <div className="mb-4">
@@ -340,14 +346,17 @@ const EditModal: React.FC<EditModalProps> = ({
             placeholder="Enter internal observations or comments..."
           />
         </div>
-        <div className="mb-4 flex flex-col gap-2 max-h-[50px] overflow-auto ">
+        <div className="mb-4 flex flex-col gap-2  ">
           {practitionerComments?.map((comment, index) => (
+            <div className='w-full flex gap-1 items-start'>
             <div
               key={index}
-              className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
+              className=" w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
             >
               <span>{comment}</span>
-              <div
+             
+            </div>
+            <div
                 onClick={() => handleDeleteComment(index)}
                 className="cursor-pointer"
               >
@@ -361,7 +370,8 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
           ))}
         </div>
-        <div className="flex justify-end gap-2 ">
+        </div>
+        <div className="flex justify-end gap-4 mt-8 ">
           <button
             onClick={onClose}
             className="text-sm font-medium text-[#909090] cursor-pointer"
@@ -375,6 +385,7 @@ const EditModal: React.FC<EditModalProps> = ({
             Save
           </button>
         </div>
+       
       </div>
     </div>
   );
