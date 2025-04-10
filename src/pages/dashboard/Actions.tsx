@@ -55,7 +55,7 @@ const Actions: React.FC = () => {
           <Circleloader />
         </div>
       ) : (
-        <div className="w-full h-full overflow-hidden bg-white rounded-2xl shadow-200 p-4">
+        <div className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4">
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
               Actions Needed

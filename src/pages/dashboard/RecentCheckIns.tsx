@@ -370,8 +370,8 @@ const RecentCheckIns = () => {
           </div>
         </div>
       </MainModal>
-      <div className="w-full h-[328px] bg-white rounded-2xl shadow-200 p-4">
-        <div className=" overflow-auto pb-3 h-[300px] pr-2 ">
+      <div className="w-full h-[300px] bg-white rounded-2xl shadow-200 p-4">
+        <div className=" overflow-auto pb-3 h-[280px] pr-2 ">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
               Recent Check-Ins{' '}
