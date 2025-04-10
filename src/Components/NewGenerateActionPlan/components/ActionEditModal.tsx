@@ -409,6 +409,35 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const day = String(i + 1).padStart(2, '0');
     return `${year}-${month}-${day}`;
   });
+  const addDaySuffix = (dayStr: string) => {
+    const day = parseInt(dayStr, 10);
+    if (isNaN(day)) return dayStr;
+
+    if (day >= 11 && day <= 13) return `${day}th`;
+
+    switch (day % 10) {
+      case 1:
+        return `${day}st`;
+      case 2:
+        return `${day}nd`;
+      case 3:
+        return `${day}rd`;
+      default:
+        return `${day}th`;
+    }
+  };
+
+  const showAlert = () => {
+    if (selectedGroup && frequencyType === 'daily') {
+      return true;
+    } else if (
+      selectedGroup &&
+      frequencyType &&
+      (selectedDays.length > 0 || selectedDaysMonth.length > 0)
+    ) {
+      return true;
+    }
+  };
 
   return (
     <MainModal
@@ -861,6 +890,89 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   })}
                 </div>
               </div>
+              {showAlert() ? (
+                <div className="mb-4">
+                  <div className="w-full rounded-2xl px-3 py-[7px] gap-2.5 bg-bg-color border border-Gray-50 flex items-center">
+                    <img
+                      src="/icons/info-circle-blue.svg"
+                      alt=""
+                      className="w-4 h-4"
+                    />
+                    <div className="text-xs text-Primary-DeepTeal flex flex-wrap leading-relaxed">
+                      <span>{selectedGroup} scheduled</span>
+                      {frequencyType === 'daily' ? (
+                        <span>
+                          &nbsp;for everyday {selectedTimes.join(' and ')}.
+                        </span>
+                      ) : frequencyType === 'weekly' ? (
+                        <>
+                          <span className="mr-1">&nbsp;for every</span>
+                          {selectedDays.length > 1 ? (
+                            <>
+                              <span className="capitalize">
+                                {selectedDays.slice(0, -1).join(', ')}
+                              </span>
+                              <span className="mr-1">&nbsp;and</span>
+                              <span className="capitalize">
+                                {selectedDays.slice(-1)}
+                              </span>
+                            </>
+                          ) : (
+                            <span>{selectedDays[0] || ''}</span>
+                          )}
+                          {selectedTimes.length > 0 && (
+                            <>
+                              <span className="mr-1">&nbsp;in</span>
+                              <span>{selectedTimes.join(' and ')}</span>
+                            </>
+                          )}
+                          <span>.</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>&nbsp;for the</span>
+                          {selectedTimes.length > 0 && (
+                            <>
+                              <span className="mr-1">&nbsp;in</span>
+                              <span>{selectedTimes.join(' and ')}</span>
+                            </>
+                          )}
+                          {selectedDaysMonth.length > 1 ? (
+                            <>
+                              <span className="mr-1">&nbsp;of</span>
+                              <span>
+                                {selectedDaysMonth
+                                  .slice(0, -1)
+                                  .map((date) =>
+                                    addDaySuffix(date.split('-')[2]),
+                                  )
+                                  .join(', ')}
+                              </span>
+                              <span className="mr-1">&nbsp;and</span>
+                              <span>
+                                {addDaySuffix(
+                                  selectedDaysMonth.slice(-1)[0].split('-')[2],
+                                )}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="ml-1">
+                              {selectedDaysMonth[0]
+                                ? addDaySuffix(
+                                    selectedDaysMonth[0].split('-')[2],
+                                  )
+                                : ''}
+                            </span>
+                          )}
+                          <span>.</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
               <div className="mb-4">
                 <label className="block text-xs font-medium">Client Note</label>
                 <textarea
