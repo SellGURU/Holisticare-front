@@ -50,16 +50,7 @@ const Stadio: FC<StadioProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const [isAutoGenerateComplete, setIsAutoGenerateComplete] = useState(false);
-  // const addToActions = (item: any) => {
-  //   setActions((prev: any) => [item, ...prev]);
-  //   setData((prev: Array<any>) => {
-  //     const oldCategory = [...prev];
-  //     const itemindex = prev.findIndex(
-  //       (el: any) => JSON.stringify(el) === JSON.stringify(item),
-  //     );
-  //     return oldCategory.filter((_el, inde) => inde != itemindex);
-  //   });
-  // };
+  // const [ setIsDragging] = useState(false);
   const addToActions = (item: any) => {
     if (item.Task_Type === 'Checkin') {
       setActions((prevActions: any) => ({
@@ -96,16 +87,6 @@ const Stadio: FC<StadioProps> = ({
     }
   };
 
-  // const removeFromActions = (item: any) => {
-  //   setActions((prev: any) => {
-  //     const updatedActions = prev.filter(
-  //       (el: any) => JSON.stringify(el) !== JSON.stringify(item),
-  //     );
-  //     return updatedActions;
-  //   });
-
-  //   setData((prev: Array<any>) => [item, ...prev]);
-  // };
   const removeFromActions = (item: any) => {
     if (item.Task_Type === 'Checkin') {
       setActions((prevActions: any) => ({
@@ -135,9 +116,7 @@ const Stadio: FC<StadioProps> = ({
   };
   const { id } = useParams<{ id: string }>();
   const AutoGenerate = (isWithAi?: boolean) => {
-    // if(isWithAi){
     setIsAutoGenerate(true);
-    // }
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
     })
@@ -185,11 +164,6 @@ const Stadio: FC<StadioProps> = ({
   const handleChangeSort = (value: string) => {
     setSortBy(value);
   };
-  // const filteredDataCategory = data.category.filter(
-  //   (el: any) =>
-  //     el.Category == selectCategory &&
-  //     el.Title.toLowerCase().includes(searchValue.toLowerCase()),
-  // );
   const filteredDataCategory = useMemo(() => {
     return data.category
       .filter(
@@ -217,6 +191,37 @@ const Stadio: FC<StadioProps> = ({
       color: 'bg-Primary-EmeraldGreen',
     },
   ];
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: any) => {
+    e.dataTransfer.setData('application/json', JSON.stringify(item));
+    // setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    // setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('bg-Gray-50');
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove('bg-Gray-50');
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('bg-Gray-50');
+
+    try {
+      const itemData = JSON.parse(e.dataTransfer.getData('application/json'));
+      addToActions(itemData);
+    } catch (error) {
+      console.error('Error parsing dragged item data:', error);
+    }
+  };
+
   return (
     <>
       <ActionEditModal
@@ -228,8 +233,6 @@ const Stadio: FC<StadioProps> = ({
         onAddNotes={() => {}}
         defalts={null}
         onSubmit={(addData) => {
-          // console.log('addData', addData);
-          // alert(addData);
           const newData = {
             Category: addData.Category,
             Title: addData.Title || '',
@@ -268,7 +271,6 @@ const Stadio: FC<StadioProps> = ({
       />
       <div className="flex px-6 gap-4">
         <div className="flex-grow">
-          {/* alert */}
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
@@ -280,7 +282,9 @@ const Stadio: FC<StadioProps> = ({
               />
             </div>
           )}
-          <div className="w-full flex justify-end mb-2 gap-3">
+          <div
+            className={`w-full flex justify-end gap-3 ${selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+          >
             {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
               <div
                 className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
@@ -335,7 +339,12 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
           <div
-            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100   ${actions.checkIn.length == 0 && actions.category.length == 0 && ''} `}
+            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100 ${
+              actions.checkIn.length == 0 && actions.category.length == 0 && ''
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
             {actions.checkIn.length == 0 && actions.category.length == 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-[450px]">
@@ -344,7 +353,7 @@ const Stadio: FC<StadioProps> = ({
                   alt=""
                   className="w-[87px] h-[87px]"
                 />
-                <div className="text-Text-Primary font-medium text-base mt-2">
+                <div className="text-Text-Primary font-medium text-sm mt-2">
                   No action to show
                 </div>
                 <ButtonSecondary
@@ -402,7 +411,7 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className=" w-[342px] ">
+        <div className="w-[342px]">
           <div className="w-[342px] sticky top-[190px] p-4 h-[490px] bg-white rounded-[24px] border border-gray-50 shadow-100">
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
@@ -421,38 +430,50 @@ const Stadio: FC<StadioProps> = ({
                 {AllCategories.map((cat) => {
                   return (
                     <>
-                      <div
+                      <button
                         className={`${selectCategory === cat ? 'bg-[linear-gradient(89.73deg,_rgba(0,95,115,0.5)_-121.63%,_rgba(108,194,74,0.5)_133.18%)] text-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'} px-2 py-2 rounded-2xl text-[10px] flex-grow cursor-pointer`}
                         onClick={() => setSelectedCategory(cat)}
                       >
                         {cat}
-                      </div>
+                      </button>
                     </>
                   );
                 })}
               </div>
-              <div className="w-full h-[360px] overflow-y-auto">
+              <div className="w-full h-[345px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any) => {
                     return (
-                      <>
+                      <div
+                        key={`${value.Category}-${value.Title}`}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, value)}
+                        onDragEnd={handleDragEnd}
+                        className="cursor-move"
+                      >
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
                           handleShowConflictsModal={handleShowConflictsModal}
                         />
-                      </>
+                      </div>
                     );
                   })}
                   {filteredDataCheckIn.map((value: any) => {
                     return (
-                      <>
+                      <div
+                        key={`${value.Task_Type}-${value.Title}`}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, value)}
+                        onDragEnd={handleDragEnd}
+                        className="cursor-move"
+                      >
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
                           checkIn={true}
                         />
-                      </>
+                      </div>
                     );
                   })}
                 </div>

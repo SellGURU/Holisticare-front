@@ -89,17 +89,17 @@ const LibBox: FC<LibBoxProps> = ({
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
                 />
-                {data['System Score']}
+                {data['System Score'] ? data['System Score'] : '-'}
               </div>
               <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
                 />
-                {data.Base_Score}
+                {data.Base_Score ? data.Base_Score : '-'}
               </div>
             </div>
             {data.flag && data.flag.conflicts.length > 0 && (
-              <div
+              <button
                 className="flex items-center gap-1 cursor-pointer"
                 onClick={() => {
                   if (handleShowConflictsModal) {
@@ -115,7 +115,7 @@ const LibBox: FC<LibBoxProps> = ({
                 <div className="text-[10px] text-[#FFAB2C]">
                   ({data.flag.conflicts.length})
                 </div>
-              </div>
+              </button>
             )}
           </div>
         )}

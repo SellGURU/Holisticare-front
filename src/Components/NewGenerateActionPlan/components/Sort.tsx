@@ -33,9 +33,10 @@ const Sort = ({ options, handleChangeSort, sortBy }: SortProps) => {
           </span>
         </button>
         <img
-          className={`w-3 h-3 object-contain opacity-80 absolute top-2 right-3 transition-transform duration-200 ${
+          className={`w-3 h-3 object-contain opacity-80 absolute top-2 right-3 transition-transform duration-200 cursor-pointer ${
             isOpen ? 'rotate-180' : ''
           }`}
+          onClick={() => setIsOpen(!isOpen)}
           src="/icons/arow-down-drop.svg"
           alt=""
         />

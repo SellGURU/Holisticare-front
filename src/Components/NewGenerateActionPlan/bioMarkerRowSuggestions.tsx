@@ -20,7 +20,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   index,
   onRemove,
 }) => {
-  console.log('value', value);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
@@ -202,17 +201,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-DeepTeal`}
                       />
-                      {value['System Score']}
+                      {value['System Score'] ? value['System Score'] : '-'}
                     </div>
                     <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-EmeraldGreen`}
                       />
-                      {value.Base_Score}
+                      {value.Base_Score ? value.Base_Score : '-'}
                     </div>
                   </div>
                   {value.flag && value.flag.conflicts.length > 0 && (
-                    <div
+                    <button
                       className="flex items-center gap-1 cursor-pointer ml-7"
                       onClick={() => {
                         setShowConflicts(true);
@@ -225,7 +224,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-[10px] text-[#FFAB2C]">
                         ({value.flag.conflicts.length})
                       </div>
-                    </div>
+                    </button>
                   )}
                 </div>
                 <div
