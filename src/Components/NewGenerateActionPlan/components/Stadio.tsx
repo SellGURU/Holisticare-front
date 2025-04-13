@@ -50,6 +50,7 @@ const Stadio: FC<StadioProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const [isAutoGenerateComplete, setIsAutoGenerateComplete] = useState(false);
+  const [isAutoGenerateShow, setIsAutoGenerateShow] = useState(true);
   // const [ setIsDragging] = useState(false);
   const addToActions = (item: any) => {
     if (item.Task_Type === 'Checkin') {
@@ -115,7 +116,7 @@ const Stadio: FC<StadioProps> = ({
     }
   };
   const { id } = useParams<{ id: string }>();
-  const AutoGenerate = (isWithAi?: boolean) => {
+  const AutoGenerate = () => {
     setIsAutoGenerate(true);
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
@@ -128,14 +129,18 @@ const Stadio: FC<StadioProps> = ({
       })
       .finally(() => {
         setIsAutoGenerate(false);
-        if (isWithAi) {
-          setIsAutoGenerateComplete(true);
-          setTimeout(() => {
-            setIsAutoGenerateComplete(false);
-          }, 5000);
-        }
+        setIsAutoGenerateComplete(true);
+        setTimeout(() => {
+          setIsAutoGenerateComplete(false);
+          setIsAutoGenerateShow(false);
+        }, 5000);
       });
   };
+  useEffect(() => {
+    if (isAutoGenerateShow === false) {
+      setIsAutoGenerateShow(true);
+    }
+  }, [actions]);
   const conflicCheck = () => {
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
@@ -298,33 +303,37 @@ const Stadio: FC<StadioProps> = ({
             )}
             {selectCategory != 'Checkin' && (
               <>
-                {actions.checkIn.length !== 0 ||
-                actions.category.length !== 0 ? (
-                  !isAutoGenerateComplete ? (
-                    <ButtonSecondary
-                      ClassName="rounded-[30px] w-[141px] text-nowrap"
-                      onClick={() => {
-                        AutoGenerate();
-                      }}
-                    >
-                      {isAutoGenerate ? (
-                        <SpinnerLoader />
-                      ) : (
-                        <>
-                          <img
-                            src="/icons/tree-start-white.svg"
-                            alt=""
-                            className="mr-2"
-                          />
-                          Generate by AI
-                        </>
-                      )}
-                    </ButtonSecondary>
+                {isAutoGenerateShow ? (
+                  actions.checkIn.length !== 0 ||
+                  actions.category.length !== 0 ? (
+                    !isAutoGenerateComplete ? (
+                      <ButtonSecondary
+                        ClassName="rounded-[30px] w-[141px] text-nowrap"
+                        onClick={() => {
+                          AutoGenerate();
+                        }}
+                      >
+                        {isAutoGenerate ? (
+                          <SpinnerLoader />
+                        ) : (
+                          <>
+                            <img
+                              src="/icons/tree-start-white.svg"
+                              alt=""
+                              className="mr-2"
+                            />
+                            Generate by AI
+                          </>
+                        )}
+                      </ButtonSecondary>
+                    ) : (
+                      <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
+                        <img src="/icons/tick-circle-bg.svg" alt="" />
+                        Generated
+                      </div>
+                    )
                   ) : (
-                    <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
-                      <img src="/icons/tick-circle-bg.svg" alt="" />
-                      Generated
-                    </div>
+                    ''
                   )
                 ) : (
                   ''
