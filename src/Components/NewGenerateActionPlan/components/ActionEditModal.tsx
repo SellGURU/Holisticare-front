@@ -83,10 +83,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
     Type: defalts?.Activity_Filters?.Type || '',
-    Terms: defalts?.Activity_Filters?.Terms || '',
-    Conditions: defalts?.Activity_Filters?.Conditions || '',
-    Muscle: defalts?.Activity_Filters?.Muscle || '',
-    Equipment: defalts?.Activity_Filters?.Equipment || '',
+    Terms: defalts?.Activity_Filters?.Terms || [],
+    Conditions: defalts?.Activity_Filters?.Conditions || [],
+    Muscle: defalts?.Activity_Filters?.Muscle ||[],
+    Equipment: defalts?.Activity_Filters?.Equipment || [],
     Level: defalts?.Activity_Filters?.Level || '',
   });
   const [step, setStep] = useState(0);
@@ -679,33 +679,37 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <CustomSelect
                         placeHolder="Terms"
                         options={TermsOptions}
+                        isMulti
                         selectedOption={addData.Terms}
-                        onOptionSelect={(option: string) =>
-                          updateAddData('Terms', [option])
+                        onOptionSelect={(option: any) =>
+                          updateAddData('Terms', option)
                         }
                       />
                       <CustomSelect
                         placeHolder="Condition"
                         options={ConditionsOptions}
+                        isMulti
                         selectedOption={addData.Conditions}
-                        onOptionSelect={(option: string) =>
-                          updateAddData('Conditions', [option])
+                        onOptionSelect={(option: any) =>
+                          updateAddData('Conditions', option)
                         }
                       />
                       <CustomSelect
                         placeHolder="Muscle"
                         options={MuscleOptions}
+                        isMulti
                         selectedOption={addData.Muscle}
-                        onOptionSelect={(option: string) =>
-                          updateAddData('Muscle', [option])
+                        onOptionSelect={(option: any) =>
+                          updateAddData('Muscle', option)
                         }
                       />
                       <CustomSelect
                         placeHolder="Equipment"
+                        isMulti
                         options={EquipmentOptions}
                         selectedOption={addData.Equipment}
-                        onOptionSelect={(option: string) =>
-                          updateAddData('Equipment', [option])
+                        onOptionSelect={(option: any) =>
+                          updateAddData('Equipment', option)
                         }
                       />
                       <CustomSelect
