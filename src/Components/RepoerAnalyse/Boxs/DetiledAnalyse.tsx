@@ -315,7 +315,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                           {active && (
                             <HistoricalChart
                               statusBar={active?.chart_bounds}
-                              dataStatus={active.status}
+                              dataStatus={active.status.reverse()}
                               dataPoints={[...active.values].reverse()}
                               labels={[...active.date].reverse()}
                             ></HistoricalChart>
