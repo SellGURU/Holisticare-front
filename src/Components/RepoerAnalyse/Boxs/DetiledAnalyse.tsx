@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import StatusChart from '../StatusChart';
+// import StatusChart from '../StatusChart';
 import { subscribe } from '../../../utils/event';
 // import Legends from '../Legends';
 import StatusBarChart from './StatusBarChart';
@@ -8,6 +8,7 @@ import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 import UnitPopUp from '../../UnitPopup';
 import { sortKeysWithValues } from './Help';
+import HistoricalChart from '../HistoricalChart';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -82,9 +83,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     });
     return key;
   };
-  const isChartDataEmpty = !active?.values.some(
-    (value: string) => !isNaN(parseFloat(value)),
-  );
+  // const isChartDataEmpty = !active?.values.some(
+  //   (value: string) => !isNaN(parseFloat(value)),
+  // );
 
   return (
     <>
@@ -312,18 +313,24 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         </div>
                         <div className="mt-0 relative">
                           {active && (
-                            <StatusChart
-                              isStringValues={isChartDataEmpty}
-                              mode={
-                                active.chart_bounds['Needs Focus'].length > 1 &&
-                                active.chart_bounds['Ok'].length > 1
-                                  ? 'multi'
-                                  : 'line'
-                              }
+                            <HistoricalChart
                               statusBar={active?.chart_bounds}
-                              labels={[...active.date].reverse()}
+                              dataStatus={active.status.reverse()}
                               dataPoints={[...active.values].reverse()}
-                            ></StatusChart>
+                              labels={[...active.date].reverse()}
+                            ></HistoricalChart>
+                            // <StatusChart
+                            //   isStringValues={isChartDataEmpty}
+                            //   mode={
+                            //     active.chart_bounds['Needs Focus'].length > 1 &&
+                            //     active.chart_bounds['Ok'].length > 1
+                            //       ? 'multi'
+                            //       : 'line'
+                            //   }
+                            //   statusBar={active?.chart_bounds}
+                            //   labels={[...active.date].reverse()}
+                            //   dataPoints={[...active.values].reverse()}
+                            // ></StatusChart>
                           )}
                         </div>
                       </div>

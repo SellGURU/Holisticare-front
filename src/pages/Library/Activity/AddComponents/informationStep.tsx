@@ -15,10 +15,10 @@ interface InformationStepProps {
     score: number;
     instruction: string;
     type: string;
-    terms: string;
-    condition: string;
-    muscle: string;
-    equipment: string;
+    terms: Array<string>;
+    condition: Array<string>;
+    muscle: Array<string>;
+    equipment: Array<string>;
     level: string;
     location: Array<string>;
   };
@@ -174,32 +174,33 @@ const InformationStep: FC<InformationStepProps> = ({
             <CustomSelect
               placeHolder="Terms"
               options={TermsOptions}
+              isMulti
               selectedOption={addData.terms}
-              onOptionSelect={(option: string) =>
-                updateAddData('terms', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('terms', option)}
             />
             <CustomSelect
               placeHolder="Condition"
+              isMulti
               options={ConditionsOptions}
               selectedOption={addData.condition}
-              onOptionSelect={(option: string) =>
-                updateAddData('condition', option)
-              }
+              onOptionSelect={(option: any) => {
+                updateAddData('condition', option);
+                // console.log(option)
+              }}
             />
             <CustomSelect
               placeHolder="Muscle"
               options={MuscleOptions}
+              isMulti
               selectedOption={addData.muscle}
-              onOptionSelect={(option: string) =>
-                updateAddData('muscle', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('muscle', option)}
             />
             <CustomSelect
               placeHolder="Equipment"
               options={EquipmentOptions}
+              isMulti
               selectedOption={addData.equipment}
-              onOptionSelect={(option: string) =>
+              onOptionSelect={(option: any) =>
                 updateAddData('equipment', option)
               }
             />
@@ -207,9 +208,7 @@ const InformationStep: FC<InformationStepProps> = ({
               placeHolder="Level"
               options={LevelOptions}
               selectedOption={addData.level}
-              onOptionSelect={(option: string) =>
-                updateAddData('level', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('level', option)}
             />
           </div>
           <div className="flex flex-col text-xs gap-3 mt-2">

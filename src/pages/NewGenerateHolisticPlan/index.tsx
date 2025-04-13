@@ -19,8 +19,9 @@ import Circleloader from '../../Components/CircleLoader';
 import { resolveKeyStatus } from '../../help';
 import UnitPopUp from '../../Components/UnitPopup';
 import StatusBarChart from '../../Components/RepoerAnalyse/Boxs/StatusBarChart';
-import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
+// import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
 import { AppContext } from '../../store/app';
+import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -105,9 +106,9 @@ const NewGenerateHolisticPlan = () => {
     }
   }, []);
   const [isFirstLoading, setisFirstLoading] = useState(false);
-  const isChartDataEmpty = !activeEl?.values.some(
-    (value: string) => !isNaN(parseFloat(value)),
-  );
+  // const isChartDataEmpty = !activeEl?.values.some(
+  //   (value: string) => !isNaN(parseFloat(value)),
+  // );
   console.log(activeEl);
   useEffect(() => {
     if (isSaving == 'saving') {
@@ -537,22 +538,16 @@ const NewGenerateHolisticPlan = () => {
                                         </div>
                                       </div>
                                       <div className="mt-0 relative">
-                                        <StatusChart
-                                          isStringValues={isChartDataEmpty}
-                                          mode={
-                                            activeEl.chart_bounds['Needs Focus']
-                                              .length > 1 &&
-                                            activeEl.chart_bounds['Ok'].length >
-                                              1
-                                              ? 'multi'
-                                              : 'line'
-                                          }
+                                        <HistoricalChart
                                           statusBar={activeEl.chart_bounds}
-                                          labels={[...activeEl.date].reverse()}
                                           dataPoints={[
                                             ...activeEl.values,
                                           ].reverse()}
-                                        ></StatusChart>
+                                          dataStatus={[
+                                            ...activeEl.status,
+                                          ].reverse()}
+                                          labels={[...activeEl.date].reverse()}
+                                        ></HistoricalChart>
                                       </div>
                                     </div>
                                   </div>

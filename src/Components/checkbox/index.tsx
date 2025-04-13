@@ -4,9 +4,19 @@ type CheckboxProps = {
   checked: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   label?: string;
+  borderColor?: string;
+  width?: string;
+  height?: string;
 };
 
-const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  checked,
+  onChange,
+  label,
+  borderColor = 'border-Primary-DeepTeal',
+  width = 'w-4',
+  height = 'h-4',
+}) => {
   return (
     <label className="flex items-center cursor-pointer">
       <input
@@ -16,8 +26,8 @@ const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label }) => {
         className="hidden"
       />
       <div
-        className={`w-4 h-4 flex items-center justify-center rounded border border-Primary-DeepTeal ${
-          checked ? 'bg-Primary-DeepTeal' : 'bg-white'
+        className={`${width} ${height} flex items-center justify-center rounded border ${borderColor} ${
+          checked ? 'bg-Primary-DeepTeal border-none' : 'bg-white'
         }`}
       >
         {checked && (

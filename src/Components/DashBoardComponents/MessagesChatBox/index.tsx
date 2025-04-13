@@ -4,12 +4,15 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import InputMentions from '../../AiChat/InputMentions';
 import Circleloader from '../../CircleLoader';
+import { MoonLoader } from 'react-spinners';
+import SvgIcon from '../../../utils/svgIcon';
 type Message = {
   date: string;
   time: string;
   conversation_id: number;
   message_text: string;
   sender_id: number;
+  isSending?: boolean;
   replied_message_id: number | null;
   sender_type: string;
 };
@@ -76,12 +79,24 @@ const MessagesChatBox = () => {
         images: Images,
         conversation_id: lastConversationId,
       };
-      // setMessages([...messages, newMessage]);
+      setMessages([
+        ...messages,
+        {
+          conversation_id: Number(lastConversationId),
+          date: new Date().toISOString(),
+          message_text: input,
+          replied_message_id: 0,
+          sender_id: Number(memberId),
+          isSending: true,
+          sender_type: 'user',
+          time: '',
+        },
+      ]);
       setInput('');
       try {
-        const res = await Application.sendMessage(newMessage);
-        const data = await res.data;
-        console.log(data);
+        await Application.sendMessage(newMessage);
+        // const data = await res.data;
+        // console.log(data);
         userMessagesList(parseInt(memberId));
         // setConversationId(data.current_conversation_id);
       } catch (err) {
@@ -200,8 +215,26 @@ const MessagesChatBox = () => {
                               {message.time}
                             </span>
                           </div>
-                          <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
-                            {formatText(message.message_text)}
+                          <div className="flex items-end ml-1">
+                            {message.isSending ? (
+                              <span>
+                                <MoonLoader
+                                  color="#383838"
+                                  size={12}
+                                ></MoonLoader>
+                              </span>
+                            ) : (
+                              <span>
+                                <SvgIcon
+                                  src="./icons/tick-green.svg"
+                                  color="#8a8a8a"
+                                ></SvgIcon>
+                                {/* <img src="./icons/tick-green.svg" alt="" /> */}
+                              </span>
+                            )}
+                            <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                              {formatText(message.message_text)}
+                            </div>
                           </div>
                         </div>
                         <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
