@@ -48,24 +48,27 @@ const HistoricalChart = ({
                     style={{ backgroundColor: resolveColor(el.key) }}
                   ></div>
                   <div
-                    className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center gap-2 flex justify-between"
+                    className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center  flex justify-start"
                     style={{ borderColor: resolveColor(el.key) }}
                   >
                     <>
                       {dataPoints.map((point, index) => (
-                        <div
-                          key={index}
-                          style={{ backgroundColor: resolveColor(el.key) }}
-                          className={`w-2 h-2 border border-gray-50 rounded-full relative ${
-                            dataStatus[index].toLowerCase() ===
-                            el.key.toLowerCase()
-                              ? ``
-                              : 'bg-transparent invisible'
-                          }`}
-                        >
-                          <div className="absolute -top-4 left-1/2 transform text-[8px] text-Text-Primary -translate-x-1/2   px-3 py-1 rounded whitespace-nowrap z-10">
-                            {point}
-                          </div>
+                        <div className='w-[40px]'>
+                            <div
+                            key={index}
+                            style={{ backgroundColor: resolveColor(el.key) }}
+                            className={`w-2 h-2 border border-gray-50 rounded-full relative ${
+                                dataStatus[index].toLowerCase() ===
+                                el.key.toLowerCase()
+                                ? ``
+                                : 'bg-transparent invisible'
+                            }`}
+                            >
+                            <div className="absolute -top-4 left-1/2 transform text-[8px] text-Text-Primary -translate-x-1/2   px-3 py-1 rounded whitespace-nowrap z-10">
+                                {point}
+                            </div>
+                            </div>
+
                         </div>
                       ))}
                     </>
@@ -89,9 +92,9 @@ const HistoricalChart = ({
             );
           })}
         <div>
-          <div className="flex flex-col w-full mt-1">
+          <div className="flex justify-start items-center w-full mt-1">
             {labels.map((label, index) => (
-              <div key={index} className="text-[8px] ">
+              <div key={index} className="text-[8px] w-[40px] ">
                 <div className="flex justify-start text-[#888888] font-medium gap-1 items-center">
                   <div>{label.split('-')[2]}</div>
                   <div>{label.split('-')[1]}</div>
