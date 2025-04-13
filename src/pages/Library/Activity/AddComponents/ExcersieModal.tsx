@@ -36,13 +36,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [description, setDescription] = useState(exercise.Description || '');
   const [instruction, setInstruction] = useState(exercise.Instruction || '');
   const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
-  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || '');
+  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || []);
   const [condition, setCondition] = useState(
-    exercise.Exercise_Filters?.Conditions || '',
+    exercise.Exercise_Filters?.Conditions || [],
   );
-  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || '');
+  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || []);
   const [equipment, setEquipment] = useState(
-    exercise.Exercise_Filters?.Equipment || '',
+    exercise.Exercise_Filters?.Equipment || [],
   );
   const [level, setLevel] = useState(exercise.Exercise_Filters?.Level || '');
   const [location, setLocation] = useState<string[]>(
@@ -95,11 +95,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       },
     }));
     const exerciseFilters = {
-      Conditions: [condition],
-      Equipment: [equipment],
+      Conditions: condition,
+      Equipment: equipment,
       Type: [type],
-      Terms: [terms],
-      Muscle: [muscle],
+      Terms: terms,
+      Muscle: muscle,
       Level: [level],
     };
 
@@ -246,10 +246,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setDescription(exercise.Description || '');
     setInstruction(exercise.Instruction || '');
     setType(exercise.Exercise_Filters?.Type || '');
-    setTerms(exercise.Exercise_Filters?.Terms || '');
-    setCondition(exercise.Exercise_Filters?.Conditions || '');
-    setMuscle(exercise.Exercise_Filters?.Muscle || '');
-    setEquipment(exercise.Exercise_Filters?.Equipment || '');
+    setTerms(exercise.Exercise_Filters?.Terms || []);
+    setCondition(exercise.Exercise_Filters?.Conditions || []);
+    setMuscle(exercise.Exercise_Filters?.Muscle || []);
+    setEquipment(exercise.Exercise_Filters?.Equipment || []);
     setLevel(exercise.Exercise_Filters?.Leve || '');
     setLocation(exercise.Exercise_Location || []);
     setFileList(exercise.Files || []);
@@ -315,23 +315,27 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <CustomSelect
                 placeHolder="Terms"
                 options={TermsOptions}
+                isMulti
                 selectedOption={terms}
-                onOptionSelect={(option: string) => setTerms(option)}
+                onOptionSelect={(option: any) => setTerms(option)}
               />
               <CustomSelect
                 placeHolder="Condition"
                 options={ConditionsOptions}
+                isMulti
                 selectedOption={condition}
-                onOptionSelect={(option: string) => setCondition(option)}
+                onOptionSelect={(option: any) => setCondition(option)}
               />
               <CustomSelect
                 placeHolder="Muscle"
                 options={MuscleOptions}
                 selectedOption={muscle}
+                isMulti
                 onOptionSelect={(option: string) => setMuscle(option)}
               />
               <CustomSelect
                 placeHolder="Equipment"
+                isMulti
                 options={EquipmentOptions}
                 selectedOption={equipment}
                 onOptionSelect={(option: string) => setEquipment(option)}
