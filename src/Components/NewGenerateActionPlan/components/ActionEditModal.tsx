@@ -896,6 +896,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           checked={selectedTimes.includes(item)}
                           onChange={() => toggleTimeSelection(item)}
                           label={item}
+                          borderColor="border-Text-Quadruple"
+                          width="w-3.5"
+                          height="h-3.5"
                         />
                       );
                     })}
