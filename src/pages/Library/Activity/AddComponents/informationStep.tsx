@@ -176,29 +176,24 @@ const InformationStep: FC<InformationStepProps> = ({
               options={TermsOptions}
               isMulti
               selectedOption={addData.terms}
-              onOptionSelect={(option: any) =>
-                updateAddData('terms', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('terms', option)}
             />
             <CustomSelect
               placeHolder="Condition"
               isMulti
               options={ConditionsOptions}
               selectedOption={addData.condition}
-              onOptionSelect={(option: any) =>{
-                updateAddData('condition', option)
+              onOptionSelect={(option: any) => {
+                updateAddData('condition', option);
                 // console.log(option)
-              }
-              }
+              }}
             />
             <CustomSelect
               placeHolder="Muscle"
               options={MuscleOptions}
               isMulti
               selectedOption={addData.muscle}
-              onOptionSelect={(option: any) =>
-                updateAddData('muscle', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('muscle', option)}
             />
             <CustomSelect
               placeHolder="Equipment"
@@ -213,9 +208,7 @@ const InformationStep: FC<InformationStepProps> = ({
               placeHolder="Level"
               options={LevelOptions}
               selectedOption={addData.level}
-              onOptionSelect={(option: any) =>
-                updateAddData('level', option)
-              }
+              onOptionSelect={(option: any) => updateAddData('level', option)}
             />
           </div>
           <div className="flex flex-col text-xs gap-3 mt-2">

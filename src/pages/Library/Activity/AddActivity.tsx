@@ -60,7 +60,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             Type: [addData.type],
             Level: [addData.level],
             Muscle: addData.muscle,
-            Terms:addData.terms,
+            Terms: addData.terms,
           },
           Activity_Location: addData.location,
           Act_Id: editid,
