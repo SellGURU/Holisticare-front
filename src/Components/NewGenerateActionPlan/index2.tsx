@@ -189,14 +189,14 @@ const GenerateActionPlan = () => {
                         <PlanObjective
                           value={planObjective}
                           setValue={setPlanObjective}
-                        ></PlanObjective>
+                        />
                       </div>
                       <div className="w-[342px]">
                         <TimeDuration
                           setDuration={(value) => {
                             setDuration(value);
                           }}
-                        ></TimeDuration>
+                        />
                       </div>
                     </div>
                   </>

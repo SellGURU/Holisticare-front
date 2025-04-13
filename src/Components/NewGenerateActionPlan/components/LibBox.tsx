@@ -135,7 +135,7 @@ const LibBox: FC<LibBoxProps> = ({
               </div>
               <div className="text-[10px] text-Text-Primary text-justify ml-1">
                 {valueData === 'Macros' ? (
-                  <div className="flex justify-start items-center gap-4">
+                  <div className="flex justify-start items-center gap-4 ml-3.5">
                     <div className="flex justify-start items-center">
                       Carbs: {data['Total Macros']?.Carbs}
                       <div className="text-Text-Quadruple">gr</div>
