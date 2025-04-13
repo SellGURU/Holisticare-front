@@ -63,53 +63,63 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   }, [pageType]);
   const onSave = (values: any) => {
     if (selectedRow !== null) {
-      if (pageType === 'Supplement') {
-        Application.editSupplement({
-          Sup_Id: selectedRow.Sup_Id,
-          ...values,
-        }).then(() => {
-          setSelectedRow(null);
-          getSupplements();
-          setAddShowModal(false);
-        });
-      } else if (pageType === 'Lifestyle') {
-        Application.editLifestyle({
-          Life_Id: selectedRow.Life_Id,
-          ...values,
-        }).then(() => {
-          setSelectedRow(null);
-          getLifestyles();
-          setAddShowModal(false);
-        });
-      } else {
-        Application.editDiet({
-          Diet_Id: selectedRow.Diet_Id,
-          ...values,
-        }).then(() => {
-          setSelectedRow(null);
-          getDiets();
-          setAddShowModal(false);
-        });
-      }
+        // Close the modal immediately
+        setLoading(true)
+        setAddShowModal(false);
+        setSelectedRow(null);
+
+        if (pageType === 'Supplement') {
+            Application.editSupplement({
+                Sup_Id: selectedRow.Sup_Id,
+                ...values,
+            }).then(() => {
+                getSupplements(); // Refresh data after closing
+                setLoading(false);
+            });
+        } else if (pageType === 'Lifestyle') {
+            Application.editLifestyle({
+                Life_Id: selectedRow.Life_Id,
+                ...values,
+            }).then(() => {
+                getLifestyles(); // Refresh data after closing
+                setLoading(false);
+            });
+        } else {
+            Application.editDiet({
+                Diet_Id: selectedRow.Diet_Id,
+                ...values,
+            }).then(() => {
+              
+                getDiets(); // Refresh data after closing
+                setLoading(false);
+            });
+        }
     } else {
-      if (pageType === 'Supplement') {
-        Application.addSupplement(values).then(() => {
-          getSupplements();
-          setAddShowModal(false);
-        });
-      } else if (pageType === 'Lifestyle') {
-        Application.addLifestyle(values).then(() => {
-          getLifestyles();
-          setAddShowModal(false);
-        });
-      } else {
-        Application.addDiet(values).then(() => {
-          getDiets();
-          setAddShowModal(false);
-        });
-      }
+        // Close the modal immediately
+        setLoading(true)
+        setAddShowModal(false);
+
+        if (pageType === 'Supplement') {
+            Application.addSupplement(values).then(() => {
+                getSupplements(); // Refresh data after closing
+                setLoading(false)
+
+            });
+        } else if (pageType === 'Lifestyle') {
+            Application.addLifestyle(values).then(() => {
+                getLifestyles(); // Refresh data after closing
+                setLoading(false)
+
+            });
+        } else {
+            Application.addDiet(values).then(() => {
+                getDiets(); // Refresh data after closing
+                setLoading(false)
+
+            });
+        }
     }
-  };
+};
   const filteredData = tableData.filter((item) =>
     item.Title.toLowerCase().includes(searchQuery.toLowerCase()),
   );

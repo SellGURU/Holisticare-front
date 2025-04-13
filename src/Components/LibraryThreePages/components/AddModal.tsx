@@ -154,7 +154,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}’s description...`}
                 value={addData.description}
                 onChange={(e) => updateAddData('description', e.target.value)}
-                className="w-full h-[98px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
+                className="w-full h-[98px] rounded-[16px] text-justify py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
               />
             </div>
             <div className="flex flex-col mt-4 w-full">
@@ -174,7 +174,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}’s instruction...`}
                 value={addData.instruction}
                 onChange={(e) => updateAddData('instruction', e.target.value)}
-                className="w-full h-[98px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
+                className="w-full h-[98px] text-justify  rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
               />
             </div>
             {pageType === 'Supplement' && (
