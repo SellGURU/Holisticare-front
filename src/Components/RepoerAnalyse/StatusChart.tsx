@@ -50,8 +50,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   const [, setXLabelColor] = useState(
     themeColor === 'dark' ? '#FFFFFFDE' : '#262626',
   );
-  console.log(statusBar);
-  console.log(sortKeysWithValues(statusBar));
+
   useEffect(() => {
     const handleThemeChange = () => {
       const newThemeColor = localStorage.getItem('theme-base') || 'light';

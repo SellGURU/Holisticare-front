@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import Toggle from './Toggle';
-import StatusChart from '../StatusChart';
+// import StatusChart from '../StatusChart';
 import { FiExternalLink } from 'react-icons/fi';
 import { publish } from '../../../utils/event';
 import Legends from '../Legends';
@@ -9,6 +9,7 @@ import Legends from '../Legends';
 import { Tooltip } from 'react-tooltip';
 import StatusBarChart from './StatusBarChart';
 import UnitPopUp from '../../UnitPopup';
+import HistoricalChart from '../HistoricalChart';
 interface RefrenceBoxProps {
   data: any;
 }
@@ -135,7 +136,13 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
         {isCheced ? (
           <>
             <div className="mt-1 relative">
-              <StatusChart
+              <HistoricalChart
+                statusBar={data.chart_bounds}
+                dataPoints={[...data.values].reverse()}
+                dataStatus={[...data.status].reverse()}
+                labels={[...data.date].reverse()}
+              ></HistoricalChart>
+              {/* <StatusChart
                 mode={
                   data.chart_bounds['Needs Focus'].length > 1 &&
                   data.chart_bounds['Ok'].length > 1
@@ -145,7 +152,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
                 statusBar={data.chart_bounds}
                 labels={[...data.date].reverse()}
                 dataPoints={[...data.values].reverse()}
-              ></StatusChart>
+              ></StatusChart> */}
             </div>
           </>
         ) : (
