@@ -85,7 +85,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Type: defalts?.Activity_Filters?.Type || '',
     Terms: defalts?.Activity_Filters?.Terms || [],
     Conditions: defalts?.Activity_Filters?.Conditions || [],
-    Muscle: defalts?.Activity_Filters?.Muscle ||[],
+    Muscle: defalts?.Activity_Filters?.Muscle || [],
     Equipment: defalts?.Activity_Filters?.Equipment || [],
     Level: defalts?.Activity_Filters?.Level || '',
   });
