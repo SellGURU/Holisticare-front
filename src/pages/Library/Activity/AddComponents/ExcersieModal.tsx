@@ -95,11 +95,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       },
     }));
     const exerciseFilters = {
-      Conditions: condition,
-      Equipment: equipment,
+      Conditions: [condition],
+      Equipment: [equipment],
       Type: [type],
-      Terms: terms,
-      Muscle: muscle,
+      Terms: [terms],
+      Muscle: [muscle],
       Level: [level],
     };
 

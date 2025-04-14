@@ -25,7 +25,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
   }, [value]);
   return (
     <>
-      <div className="bg-[#FCFCFC] p-3 w-full  rounded-[12px] border border-gray-50">
+      <div className=" w-full  rounded-[12px] border border-gray-50">
         {!hideQuestions && (
           <div className="text-[12px] text-Text-Primary">
             {index ? index + '.' : ''} {question}
