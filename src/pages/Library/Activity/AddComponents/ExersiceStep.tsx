@@ -288,9 +288,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                                   );
                                 const exerciseToDelete =
                                   activeTabExercises[index];
-                                const originalIndex = updatedExercises.findIndex(
-                                  (el: any) => el === exerciseToDelete,
-                                );
+                                const originalIndex =
+                                  updatedExercises.findIndex(
+                                    (el: any) => el === exerciseToDelete,
+                                  );
                                 updatedExercises.splice(originalIndex, 1);
                                 return updatedExercises;
                               });
@@ -308,9 +309,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               </div>
             </div>
             {exercises.length === 0 && (
-              <div className="text-red-500 text-xs mt-1">Add Exercise to continue.</div>
+              <div className="text-red-500 text-xs mt-1">
+                Add Exercise to continue.
+              </div>
             )}
-
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">

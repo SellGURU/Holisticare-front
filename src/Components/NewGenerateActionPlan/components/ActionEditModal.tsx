@@ -311,7 +311,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return;
     }
-    
+
     if (selectedGroup === 'Supplement') {
       onSubmit({
         Category: selectedGroup,
@@ -474,16 +474,19 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return true;
     }
-    if(selectedGroup === 'Activity' && step === 1){
+    if (selectedGroup === 'Activity' && step === 1) {
       const emptySetSections = sectionList.filter(
         (section: any) => section.Sets == '',
       );
-      if(sectionList.length > 0 && emptySetSections.length == 0 &&selectedGroup === 'Activity'){
+      if (
+        sectionList.length > 0 &&
+        emptySetSections.length == 0 &&
+        selectedGroup === 'Activity'
+      ) {
         return false;
-      }else {
+      } else {
         return true;
       }
-
     }
     return false;
   };
@@ -573,9 +576,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs font-medium">
-                    Title
-                  </label>
+                  <label className="block text-xs font-medium">Title</label>
                   <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -819,9 +820,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   </div>
                 )}
                 <div className="mb-4">
-                  <label className="text-xs font-medium">
-                    Frequency 
-                  </label>
+                  <label className="text-xs font-medium">Frequency</label>
                   <div className="flex items-center gap-6 mt-2">
                     <div className="flex items-center gap-1">
                       <input
@@ -903,11 +902,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       Please select at least one day of the week.
                     </span>
                   )}
-                  {frequencyType === 'monthly' && selectedDaysMonth.length === 0 && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      Please select at least one day of the month.
-                    </span>
-                  )}
+                  {frequencyType === 'monthly' &&
+                    selectedDaysMonth.length === 0 && (
+                      <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                        Please select at least one day of the month.
+                      </span>
+                    )}
                   {frequencyType === 'weekly' && (
                     <div className="mt-3">
                       <div className="text-xs text-Text-Quadruple">
@@ -1228,7 +1228,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         setStep(step + 1);
                       }
                     } else {
-                      if(!isNextDisabled()){
+                      if (!isNextDisabled()) {
                         saveActivity();
                       }
                     }

@@ -104,17 +104,13 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     cell: ({ row }) => {
       const dateStr = row.original?.['Added on'].substring(0, 10) || '-';
       let formattedDate = '-';
-      
+
       if (dateStr !== '-') {
         const [year, month, day] = dateStr.split('-');
         formattedDate = `${month.padStart(2, '0')}/${day.padStart(2, '0')}/${year}`;
       }
-      
-      return (
-        <div className="text-xs text-Text-Quadruple">
-          {formattedDate}
-        </div>
-      );
+
+      return <div className="text-xs text-Text-Quadruple">{formattedDate}</div>;
     },
-  }
+  },
 ];
