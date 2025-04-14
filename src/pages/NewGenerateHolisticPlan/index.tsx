@@ -322,7 +322,7 @@ const NewGenerateHolisticPlan = () => {
                         <div>
                           {treatmentPlanData['suggestion_tab'].length > 0 ? (
                             <>
-                              {treatmentPlanData['suggestion_tab'].map(
+                              {treatmentPlanData['suggestion_tab'].reverse().map(
                                 (el: any, suggestionIndex: number) => {
                                   return (
                                     <>
@@ -637,7 +637,7 @@ const NewGenerateHolisticPlan = () => {
               oldsData.suggestion_tab = suggestions;
               return oldsData;
             });
-            // console.log(addData);
+            console.log(addData);
           }}
           isAdd
           isOpen={showAddModal}

@@ -33,9 +33,9 @@ const EditModal: React.FC<EditModalProps> = ({
   const [groups, setGroups] = useState<any[]>([]);
   const [selectedGroup] = useState<string | null>(defalts?.Category || null);
   const [newNote, setNewNote] = useState('');
-  const [recommendation] = useState(defalts?.Recommendation);
-  const [dose] = useState(defalts?.Dose);
-  const [instructions] = useState(defalts?.Instruction);
+  // const [recommendation] = useState(defalts?.Recommendation);
+  // const [dose] = useState(defalts?.Dose);
+  // const [instructions] = useState(defalts?.Instruction);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     defalts ? defalts.Times : [],
   );
@@ -74,13 +74,23 @@ const EditModal: React.FC<EditModalProps> = ({
       Dose: defalts?.Dose || '',
       Instruction: defalts?.Instruction || '',
       Times: defalts?.Times || [],
-      Notes: defalts?.['Client Notes'] || [],
-      PractitionerComments: defalts?.['Practitioner Comments'] || [],
+      Notes: defalts?.['Client Notes'] || notes,
+      PractitionerComments: defalts?.['Practitioner Comments'] || practitionerComments,
     },
     validationSchema,
 
     onSubmit: (values) => {
-      onSubmit(values);
+      console.log('Form values:', values); 
+      onSubmit({
+        Category: values.Category,
+        Recommendation: values.Recommendation,
+        'Based on': defalts ? defalts['Based on'] : '',
+        'Practitioner Comments': practitionerComments,
+        Instruction: values.Instruction,
+        Times: selectedTimes,
+        Dose: values.Dose,
+        'Client Notes': notes,
+      });
       onClose();
     },
   });
@@ -128,19 +138,19 @@ const EditModal: React.FC<EditModalProps> = ({
     setNotes(updatedNotes);
   };
 
-  const handleApply = () => {
-    onSubmit({
-      Category: selectedGroup,
-      Recommendation: recommendation,
-      'Based on': defalts ? defalts['Based on'] : '',
-      'Practitioner Comments': practitionerComments,
-      Instruction: instructions,
-      Times: selectedTimes,
-      Dose: dose,
-      'Client Notes': notes,
-    });
-    onClose();
-  };
+  // const handleApply = () => {
+  //   onSubmit({
+  //     Category: selectedGroup,
+  //     Recommendation: defalts?.Recommendation || '',
+  //           'Based on': defalts ? defalts['Based on'] : '',
+  //     'Practitioner Comments': practitionerComments,
+  //     Instruction: instructions,
+  //     Times: selectedTimes,
+  //     Dose: dose,
+  //     'Client Notes': notes,
+  //   });
+  //   onClose();
+  // };
   const handleDeleteComment = (index: number) => {
     const updatedComments = practitionerComments.filter((_, i) => i !== index);
     setPractitionerComments(updatedComments);
@@ -165,6 +175,9 @@ const EditModal: React.FC<EditModalProps> = ({
         .Dose
     : false;
 
+const handleSaveClick = () => {
+  formik.handleSubmit(); // Call handleSubmit without arguments
+};
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -178,6 +191,7 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
         </h2>
         <div className="max-h-[440px] overflow-auto pr-1 mt-[6px]">
+        <form onSubmit={formik.handleSubmit}>
           <div className=" w-full relative overflow-visible mt-2 mb-4">
             <label className="text-xs font-medium text-Text-Primary">
               Category
@@ -185,10 +199,10 @@ const EditModal: React.FC<EditModalProps> = ({
             <div
               onClick={() => setShowSelect(!showSelect)}
               className={`w-full cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
-                formik.errors.Category? 'border-[#FC5474]' : 'border-Gray-50'
+                formik.errors.Category ? 'border-[#FC5474]' : 'border-Gray-50'
               }`}
             >
-              {formik.values.Category  ? (
+              {formik.values.Category ? (
                 <div className="text-[12px] text-Text-Primary">
                   {formik.values.Category}
                 </div>
@@ -209,7 +223,7 @@ const EditModal: React.FC<EditModalProps> = ({
               </div>
             )}
             {showSelect && (
-              <div  className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
+              <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
                 {groups.map((groupObj, index) => {
                   const groupName = Object.keys(groupObj)[0];
                   return (
@@ -244,10 +258,10 @@ const EditModal: React.FC<EditModalProps> = ({
                 Recommendation
               </label>
               <input
-                name="Recommendation"
-                value={formik.values.Recommendation}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                  name="Recommendation"
+                  value={formik.values.Recommendation}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 placeholder="Write Recommendation"
                 type="text"
                 className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
@@ -267,7 +281,15 @@ const EditModal: React.FC<EditModalProps> = ({
             <div
               className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
             >
-              <label className=" text-xs font-medium flex items-start gap-[2px]">Dose <img className='cursor-pointer' data-tooltip-id={'more-info'} src="/icons/info-circle.svg" alt="" /></label>
+              <label className=" text-xs font-medium flex items-start gap-[2px]">
+                Dose{' '}
+                <img
+                  className="cursor-pointer"
+                  data-tooltip-id={'more-info'}
+                  src="/icons/info-circle.svg"
+                  alt=""
+                />
+              </label>
               <input
                 name="Dose"
                 value={formik.values.Dose}
@@ -290,18 +312,15 @@ const EditModal: React.FC<EditModalProps> = ({
                     {formik.errors.Dose}
                   </div>
                 )}
-                {
-                  selectedGroupDose && (
-                    <Tooltip
-                    id="more-info"
-                    place="top"
-                    className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                  >
-                    Dose must include a number followed by a unit (e.g., '50 mg')
-                  </Tooltip>
-                  )
-                }
-                 
+              {selectedGroupDose && (
+                <Tooltip
+                  id="more-info"
+                  place="top"
+                  className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  Dose must include a number followed by a unit (e.g., '50 mg')
+                </Tooltip>
+              )}
             </div>
             {/* )} */}
           </div>
@@ -434,6 +453,7 @@ const EditModal: React.FC<EditModalProps> = ({
               </div>
             ))}
           </div>
+          </form>
         </div>
         <div className="flex justify-end gap-4 mt-8 ">
           <button
@@ -443,8 +463,10 @@ const EditModal: React.FC<EditModalProps> = ({
             Cancel
           </button>
           <button
-            onClick={handleApply}
-            type="submit"
+            type="button"
+            onClick={handleSaveClick} 
+            // onClick={handleApply}
+            // type="submit"
             disabled={!(formik.isValid && formik.dirty)}
             className={`text-sm font-medium cursor-pointer ${
               formik.isValid && formik.dirty
@@ -455,6 +477,7 @@ const EditModal: React.FC<EditModalProps> = ({
             Save
           </button>
         </div>
+      
       </div>
     </div>
   );
