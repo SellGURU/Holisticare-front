@@ -185,10 +185,10 @@ const EditModal: React.FC<EditModalProps> = ({
             <div
               onClick={() => setShowSelect(!showSelect)}
               className={`w-full cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
-                formik.errors.Category? 'border-[#FC5474]' : 'border-Gray-50'
+                formik.errors.Category ? 'border-[#FC5474]' : 'border-Gray-50'
               }`}
             >
-              {formik.values.Category  ? (
+              {formik.values.Category ? (
                 <div className="text-[12px] text-Text-Primary">
                   {formik.values.Category}
                 </div>
@@ -209,7 +209,7 @@ const EditModal: React.FC<EditModalProps> = ({
               </div>
             )}
             {showSelect && (
-              <div  className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
+              <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
                 {groups.map((groupObj, index) => {
                   const groupName = Object.keys(groupObj)[0];
                   return (
@@ -267,7 +267,15 @@ const EditModal: React.FC<EditModalProps> = ({
             <div
               className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
             >
-              <label className=" text-xs font-medium flex items-start gap-[2px]">Dose <img className='cursor-pointer' data-tooltip-id={'more-info'} src="/icons/info-circle.svg" alt="" /></label>
+              <label className=" text-xs font-medium flex items-start gap-[2px]">
+                Dose{' '}
+                <img
+                  className="cursor-pointer"
+                  data-tooltip-id={'more-info'}
+                  src="/icons/info-circle.svg"
+                  alt=""
+                />
+              </label>
               <input
                 name="Dose"
                 value={formik.values.Dose}
@@ -290,18 +298,15 @@ const EditModal: React.FC<EditModalProps> = ({
                     {formik.errors.Dose}
                   </div>
                 )}
-                {
-                  selectedGroupDose && (
-                    <Tooltip
-                    id="more-info"
-                    place="top"
-                    className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                  >
-                    Dose must include a number followed by a unit (e.g., '50 mg')
-                  </Tooltip>
-                  )
-                }
-                 
+              {selectedGroupDose && (
+                <Tooltip
+                  id="more-info"
+                  place="top"
+                  className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  Dose must include a number followed by a unit (e.g., '50 mg')
+                </Tooltip>
+              )}
             </div>
             {/* )} */}
           </div>
