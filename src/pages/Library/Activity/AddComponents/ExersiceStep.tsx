@@ -203,11 +203,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
-  const handleDragStart = (
-    e: React.DragEvent<HTMLDivElement>,
-    exercise: Exercise,
-  ) => {
-    e.dataTransfer.setData('application/json', JSON.stringify(exercise));
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, exercise: Exercise) => {
+    e.dataTransfer.setData('application/holisticare-exercise', JSON.stringify(exercise));
     setIsDragging(true);
   };
 
@@ -217,7 +214,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.currentTarget.classList.add('bg-Gray-50');
+    if (e.dataTransfer.types.includes('application/holisticare-exercise')) {
+      e.currentTarget.classList.add('bg-Gray-50');
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -228,11 +227,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     e.preventDefault();
     e.currentTarget.classList.remove('bg-Gray-50');
 
+    if (!e.dataTransfer.types.includes('application/holisticare-exercise')) {
+      return;
+    }
+
     try {
-      const exerciseData = JSON.parse(
-        e.dataTransfer.getData('application/json'),
-      );
-      addExercise(exerciseData);
+      const exerciseData = JSON.parse(e.dataTransfer.getData('application/holisticare-exercise'));
+      if (exerciseData && exerciseData.Title && exerciseData.Files) {
+        addExercise(exerciseData);
+      }
     } catch (error) {
       console.error('Error parsing dragged exercise data:', error);
     }
@@ -243,9 +246,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       <div className="w-full mt-6">
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="flex w-full items-center justify-between">
-          <div className="w-[530px] h-[432px] ">
+          <div>
             <div
-              className={`w-[530px] h-[422px] border ${exercises.length === 0 ? 'border-red-500' : 'border-Gray-50'} rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={`w-[530px] h-[432px] border ${exercises.length === 0 ? 'border-red-500' : 'border-Gray-50'} rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -288,10 +291,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                                   );
                                 const exerciseToDelete =
                                   activeTabExercises[index];
-                                const originalIndex =
-                                  updatedExercises.findIndex(
-                                    (el: any) => el === exerciseToDelete,
-                                  );
+                                const originalIndex = updatedExercises.findIndex(
+                                  (el: any) => el === exerciseToDelete,
+                                );
                                 updatedExercises.splice(originalIndex, 1);
                                 return updatedExercises;
                               });
@@ -307,26 +309,16 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                     );
                   })}
               </div>
-            </div>
             {exercises.length === 0 && (
-              <div className="text-red-500 text-xs mt-1">
-                Add Exercise to continue.
-              </div>
+              <div className="text-red-500 text-xs mt-1">Add Exercise to continue.</div>
             )}
+            </div>
+
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise
-              </div>
-              <div className="text-xs font-medium cursor-pointer text-Primary-DeepTeal flex items-center gap-1">
-                {' '}
-                <img
-                  className="size-5"
-                  src="/public/icons/add-blue.svg"
-                  alt=""
-                />{' '}
-                Add Exercise
               </div>
             </div>
             <SearchBox

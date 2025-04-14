@@ -8,6 +8,7 @@ import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
 import CustomSelect from '../../CustomSelect';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
+import { Tooltip } from 'react-tooltip';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -39,9 +40,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [dose, setDose] = useState(defalts?.Dose);
   const [value, setValue] = useState(defalts?.Value);
   const [totalMacros, setTotalMacros] = useState({
-    Fats: defalts?.['Total Macros']?.Fats,
-    Protein: defalts?.['Total Macros']?.Protein,
-    Carbs: defalts?.['Total Macros']?.Carbs,
+    Fats: defalts?.['Total Macros']?.Fats || '',
+    Protein: defalts?.['Total Macros']?.Protein || '',
+    Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
 
   const toggleDaySelection = (day: string) => {
@@ -311,6 +312,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return;
     }
+    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+      return;
+    }
 
     if (selectedGroup === 'Supplement') {
       onSubmit({
@@ -474,6 +478,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return true;
     }
+    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+      return true;
+    }
     if (selectedGroup === 'Activity' && step === 1) {
       const emptySetSections = sectionList.filter(
         (section: any) => section.Sets == '',
@@ -633,8 +640,26 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 </div>
                 {selectedGroup === 'Supplement' && (
                   <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs font-medium text-Text-Primary">
+                    <div className="text-xs flex font-medium text-Text-Primary">
                       Dose
+                      <div data-tooltip-id="dose-tooltip">
+                        <img
+                          src="/icons/info-circle.svg"
+                          alt=""
+                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
+                        />
+                      </div>
+                      <Tooltip
+                        id="dose-tooltip"
+                        place="top"
+                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+                      >
+                        <div className="flex items-center gap-1">
+                        Dose must include a number followed by a unit (e.g., '50 mg')
+                         
+                        </div>
+
+                      </Tooltip>                        
                     </div>
                     <input
                       placeholder="Write the supplement's dose..."
@@ -651,8 +676,26 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 )}
                 {selectedGroup === 'Lifestyle' && (
                   <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs font-medium text-Text-Primary">
+                    <div className="text-xs flex items-center  font-medium text-Text-Primary">
                       Value
+                      <div data-tooltip-id="value-tooltip">
+                        <img
+                          src="/icons/info-circle.svg"
+                          alt=""
+                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
+                        />
+                      </div>
+                      <Tooltip
+                        id="value-tooltip"
+                        place="top"
+                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+                      >
+                        <div className="flex items-center gap-1">
+                        Value must contain just Natural Numbers.
+                         
+                        </div>
+
+                      </Tooltip>                      
                     </div>
                     <input
                       placeholder="Enter Value..."
@@ -670,8 +713,26 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 )}
                 {selectedGroup === 'Diet' && (
                   <div className="flex flex-col w-full mb-4">
-                    <div className="font-medium text-Text-Primary text-xs">
+                    <div className="font-medium flex text-Text-Primary text-xs">
                       Macros Goal
+                      <div data-tooltip-id="Macros-tooltip">
+                        <img
+                          src="/icons/info-circle.svg"
+                          alt=""
+                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
+                        />
+                      </div>
+                      <Tooltip
+                        id="Macros-tooltip"
+                        place="top"
+                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+                      >
+                        <div className="flex items-center gap-1">
+                        Macros Goal must contain just Whole Numbers.
+                         
+                        </div>
+
+                      </Tooltip>                         
                     </div>
                     <div className="flex items-center justify-between mt-3 gap-4">
                       <div className="flex flex-col gap-1">
@@ -690,7 +751,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Carbs', Number(e.target.value))
                           }
-                          className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -709,7 +770,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Protein', Number(e.target.value))
                           }
-                          className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -728,10 +789,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Fats', Number(e.target.value))
                           }
-                          className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                     </div>
+                    {(!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats) && (
+                      <span className="text-[10px] mt-1 ml-2 text-red-500">
+                        These fields are required.
+                      </span>
+                    )}
                   </div>
                 )}
                 {selectedGroup === 'Activity' && (
