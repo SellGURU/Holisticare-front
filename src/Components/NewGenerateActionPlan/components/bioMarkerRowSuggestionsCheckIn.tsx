@@ -185,8 +185,6 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
 
               const isCheckInItem =
                 originalItem?.Check_in_id &&
-                originalItem?.Estimated_time &&
-                originalItem?.Questions_Count &&
                 originalItem?.Task_Type &&
                 originalItem?.Title;
 
