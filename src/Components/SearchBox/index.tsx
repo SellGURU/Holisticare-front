@@ -35,7 +35,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         height="16px"
         color="#888888"
       /> */}
-      <img src='/icons/search-normal.svg' alt="Search" className="w-4 h-4" />
+      <img src="/icons/search-normal.svg" alt="Search" className="w-4 h-4" />
       <input
         type="text"
         placeholder={placeHolder}
