@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Application from '../../../api/app';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import InputMentions from '../../AiChat/InputMentions';
-import Circleloader from '../../CircleLoader';
 import { MoonLoader } from 'react-spinners';
+import Application from '../../../api/app';
 import SvgIcon from '../../../utils/svgIcon';
+import Circleloader from '../../CircleLoader';
+import InputMentions from './InputMentions';
 type Message = {
   date: string;
   time: string;
@@ -15,6 +15,7 @@ type Message = {
   isSending?: boolean;
   replied_message_id: number | null;
   sender_type: string;
+  images?: string[];
 };
 type SendMessage = {
   conversation_id?: number;
@@ -30,10 +31,9 @@ const MessagesChatBox = () => {
   const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [Images, setImages] = useState<string[]>([]); // Use string[] to store base64 strings
+  const [Images, setImages] = useState<string[]>([]);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-  // const [conversationId] = useState<number>(1);
 
   const usernameParams = searchParams.get('username');
   const userMessagesList = (member_id: number) => {
@@ -90,15 +90,14 @@ const MessagesChatBox = () => {
           isSending: true,
           sender_type: 'user',
           time: '',
+          images: Images,
         },
       ]);
       setInput('');
+      setImages([]);
       try {
         await Application.sendMessage(newMessage);
-        // const data = await res.data;
-        // console.log(data);
         userMessagesList(parseInt(memberId));
-        // setConversationId(data.current_conversation_id);
       } catch (err) {
         console.log(err);
       }
@@ -106,19 +105,15 @@ const MessagesChatBox = () => {
   };
 
   const formatText = (text: string) => {
-    // First, replace the bold formatting *text* with <strong>text</strong>
     const boldedText = text.replace(
       /\*(.*?)\*/g,
       (_match, p1) => `<strong>${p1}</strong>`,
     );
 
-    // Then, split the text by \n to handle newlines
     const lines = boldedText.split('\n');
 
-    // Return the formatted text as JSX
     return lines.map((line, index) => (
       <span key={index}>
-        {/* Use dangerouslySetInnerHTML to render HTML inside the span */}
         <span dangerouslySetInnerHTML={{ __html: line }} />
         <br />
       </span>
@@ -126,7 +121,6 @@ const MessagesChatBox = () => {
   };
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
-    // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     const objDiv: any = document.getElementById('userChat');
     objDiv.scrollTop = objDiv.scrollHeight;
   };
@@ -136,19 +130,18 @@ const MessagesChatBox = () => {
   const handleUpload = (file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      const base64String = reader.result as string; // Convert to base64 string
-      setImages((prevImages) => [...prevImages, base64String]); // Store base64 string
+      const base64String = reader.result as string;
+      setImages((prevImages) => [...prevImages, base64String]);
     };
-    reader.readAsDataURL(file); // Read the file as a data URL
+    reader.readAsDataURL(file);
   };
-  console.log(Images);
   return (
     <>
       <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
         {isLoading ? (
           <>
             <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full">
-              <Circleloader></Circleloader>
+              <Circleloader />
             </div>
           </>
         ) : (
@@ -196,6 +189,18 @@ const MessagesChatBox = () => {
                               {message.time}
                             </span>
                           </div>
+                          <div className="flex flex-row gap-2">
+                            {message.images?.map((image, index) => {
+                              return (
+                                <img
+                                  src={image}
+                                  alt=""
+                                  key={index}
+                                  className="w-32 h-32 object-contain"
+                                />
+                              );
+                            })}
+                          </div>
                           <div
                             className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
                             style={{ lineHeight: '26px' }}
@@ -215,20 +220,29 @@ const MessagesChatBox = () => {
                               {message.time}
                             </span>
                           </div>
+                          <div className="flex flex-row gap-2">
+                            {message.images?.map((image, index) => {
+                              return (
+                                <img
+                                  src={image}
+                                  alt=""
+                                  key={index}
+                                  className="w-32 h-32 object-contain"
+                                />
+                              );
+                            })}
+                          </div>
                           <div className="flex items-end ml-1">
                             {message.isSending ? (
                               <span>
-                                <MoonLoader
-                                  color="#383838"
-                                  size={12}
-                                ></MoonLoader>
+                                <MoonLoader color="#383838" size={12} />
                               </span>
                             ) : (
                               <span>
                                 <SvgIcon
                                   src="./icons/tick-green.svg"
                                   color="#8a8a8a"
-                                ></SvgIcon>
+                                />
                                 {/* <img src="./icons/tick-green.svg" alt="" /> */}
                               </span>
                             )}
@@ -268,7 +282,7 @@ const MessagesChatBox = () => {
                   onChange={setInput}
                   onSubmit={handleSend}
                   value={input}
-                ></InputMentions>
+                />
               </div>
             )}
           </>
