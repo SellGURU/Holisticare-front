@@ -754,16 +754,23 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
-                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
-                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
-                                e.key === 'Tab' || e.key === 'Enter') {
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
                               return;
                             }
                             // Allow numbers, backspace, delete
-                            if (!/[\d\b]/.test(e.key) && 
-                                e.key !== 'Backspace' && 
-                                e.key !== 'Delete' && 
-                                e.key !== 'Tab') {
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
                               e.preventDefault();
                             }
                           }}
@@ -788,16 +795,23 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
-                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
-                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
-                                e.key === 'Tab' || e.key === 'Enter') {
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
                               return;
                             }
                             // Allow numbers, backspace, delete
-                            if (!/[\d\b]/.test(e.key) && 
-                                e.key !== 'Backspace' && 
-                                e.key !== 'Delete' && 
-                                e.key !== 'Tab') {
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
                               e.preventDefault();
                             }
                           }}
@@ -822,16 +836,23 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
-                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
-                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
-                                e.key === 'Tab' || e.key === 'Enter') {
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
                               return;
                             }
                             // Allow numbers, backspace, delete
-                            if (!/[\d\b]/.test(e.key) && 
-                                e.key !== 'Backspace' && 
-                                e.key !== 'Delete' && 
-                                e.key !== 'Tab') {
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
                               e.preventDefault();
                             }
                           }}
