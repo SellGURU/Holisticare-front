@@ -243,73 +243,74 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       <div className="w-full mt-6">
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="flex w-full items-center justify-between">
-          <div
-            className={`w-[530px] h-[432px] border border-Gray-50 rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {exercises.length == 0 && (
-              <>
-                <img src="/icons/amico.svg" alt="" />
-                <div className="font-medium text-xs text-Text-Primary mt-8">
-                  No exercise existed yet.
-                </div>
-              </>
-            )}
-            <div className="grid gap-2 w-full">
-              {exercises
-                .filter((el: any) => el.Section === activeTab)
-                .map((exercise: any, index: any) => {
-                  return (
-                    <>
-                      {exercise.Type === 'Superset' ? (
-                        <SuperSetExersiseItem
-                          onDelete={(exersiseIndex: number) =>
-                            handleSuperSetDelete(index, exersiseIndex)
-                          }
-                          key={index}
-                          index={index}
-                          exercise={exercise}
-                          onChange={handleExerciseChange}
-                          toSuperSet={() => {}}
-                        />
-                      ) : (
-                        <ExerciseItem
-                          exesiseIndex={0}
-                          sets={exercise.Sets}
-                          onDelete={() => {
-                            setExercises((prevExercises) => {
-                              const updatedExercises = [...prevExercises];
-                              // Find the exercise in the current active tab
-                              const activeTabExercises =
-                                updatedExercises.filter(
-                                  (el: any) => el.Section === activeTab,
+          <div className="w-[530px] h-[432px] ">
+            <div
+              className={`w-[530px] h-[422px] border ${exercises.length === 0 ? 'border-red-500' : 'border-Gray-50'} rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {exercises.length == 0 && (
+                <>
+                  <img src="/icons/amico.svg" alt="" />
+                  <div className="font-medium text-xs text-Text-Primary mt-8">
+                    No exercise existed yet.
+                  </div>
+                </>
+              )}
+              <div className="grid gap-2 w-full">
+                {exercises
+                  .filter((el: any) => el.Section === activeTab)
+                  .map((exercise: any, index: any) => {
+                    return (
+                      <>
+                        {exercise.Type === 'Superset' ? (
+                          <SuperSetExersiseItem
+                            onDelete={(exersiseIndex: number) =>
+                              handleSuperSetDelete(index, exersiseIndex)
+                            }
+                            key={index}
+                            index={index}
+                            exercise={exercise}
+                            onChange={handleExerciseChange}
+                            toSuperSet={() => {}}
+                          />
+                        ) : (
+                          <ExerciseItem
+                            exesiseIndex={0}
+                            sets={exercise.Sets}
+                            onDelete={() => {
+                              setExercises((prevExercises) => {
+                                const updatedExercises = [...prevExercises];
+                                const activeTabExercises =
+                                  updatedExercises.filter(
+                                    (el: any) => el.Section === activeTab,
+                                  );
+                                const exerciseToDelete =
+                                  activeTabExercises[index];
+                                const originalIndex = updatedExercises.findIndex(
+                                  (el: any) => el === exerciseToDelete,
                                 );
-                              const exerciseToDelete =
-                                activeTabExercises[index];
-
-                              // Find the original index in the full array
-                              const originalIndex = updatedExercises.findIndex(
-                                (el: any) => el === exerciseToDelete,
-                              );
-
-                              // Remove the exercise at the correct index
-                              updatedExercises.splice(originalIndex, 1);
-                              return updatedExercises;
-                            });
-                          }}
-                          key={index}
-                          index={index}
-                          exercise={exercise.Exercises[0]}
-                          onChange={handleExerciseChange}
-                          toSuperSet={() => handleSuperSet(index, exercise)}
-                        />
-                      )}
-                    </>
-                  );
-                })}
+                                updatedExercises.splice(originalIndex, 1);
+                                return updatedExercises;
+                              });
+                            }}
+                            key={index}
+                            index={index}
+                            exercise={exercise.Exercises[0]}
+                            onChange={handleExerciseChange}
+                            toSuperSet={() => handleSuperSet(index, exercise)}
+                          />
+                        )}
+                      </>
+                    );
+                  })}
+              </div>
             </div>
+            {exercises.length === 0 && (
+              <div className="text-red-500 text-xs mt-1">Add Exercise to continue.</div>
+            )}
+
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">
