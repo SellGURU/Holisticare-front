@@ -151,7 +151,7 @@ const ExerciseItem = ({
             className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
             <div className="text-center flex text-[8px] text-Text-Primary">
-              Set 
+              Set
               <div data-tooltip-id="set-tooltip">
                 <img
                   src="/icons/info-circle.svg"
@@ -165,9 +165,9 @@ const ExerciseItem = ({
                 className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
               >
                 <div className="flex items-center gap-1">
-                 Set must contain just Natural Numbers.
+                  Set must contain just Natural Numbers.
                 </div>
-              </Tooltip>              
+              </Tooltip>
             </div>
             <input
               type="number"
