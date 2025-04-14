@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
-
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Tooltip } from 'react-tooltip';
 interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,13 +31,11 @@ const EditModal: React.FC<EditModalProps> = ({
     });
   }, []);
   const [groups, setGroups] = useState<any[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(
-    defalts?.Category || null,
-  );
+  const [selectedGroup] = useState<string | null>(defalts?.Category || null);
   const [newNote, setNewNote] = useState('');
-  const [recommendation, setRecommendation] = useState(defalts?.Recommendation);
-  const [dose, setDose] = useState(defalts?.Dose);
-  const [instructions, setInstructions] = useState(defalts?.Instruction);
+  // const [recommendation] = useState(defalts?.Recommendation);
+  // const [dose] = useState(defalts?.Dose);
+  // const [instructions] = useState(defalts?.Instruction);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     defalts ? defalts.Times : [],
   );
@@ -52,7 +52,49 @@ const EditModal: React.FC<EditModalProps> = ({
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);
+  const validationSchema = Yup.object({
+    Category: Yup.string().required('This field is required.'),
+    Recommendation: Yup.string().required('This field is required.'),
+    // Dose: Yup.string().required('This field is required.'),
+    Instruction: Yup.string().required('This field is required.'),
+  });
+  interface FormValues {
+    Category: string;
+    Recommendation: string;
+    Dose: string;
+    Instruction: string;
+    Times: string[];
+    Notes: string[];
+    PractitionerComments: string[];
+  }
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      Category: defalts?.Category || '',
+      Recommendation: defalts?.Recommendation || '',
+      Dose: defalts?.Dose || '',
+      Instruction: defalts?.Instruction || '',
+      Times: defalts?.Times || [],
+      Notes: defalts?.['Client Notes'] || notes,
+      PractitionerComments:
+        defalts?.['Practitioner Comments'] || practitionerComments,
+    },
+    validationSchema,
 
+    onSubmit: (values) => {
+      console.log('Form values:', values);
+      onSubmit({
+        Category: values.Category,
+        Recommendation: values.Recommendation,
+        'Based on': defalts ? defalts['Based on'] : '',
+        'Practitioner Comments': practitionerComments,
+        Instruction: values.Instruction,
+        Times: selectedTimes,
+        Dose: values.Dose,
+        'Client Notes': notes,
+      });
+      onClose();
+    },
+  });
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -97,19 +139,19 @@ const EditModal: React.FC<EditModalProps> = ({
     setNotes(updatedNotes);
   };
 
-  const handleApply = () => {
-    onSubmit({
-      Category: selectedGroup,
-      Recommendation: recommendation,
-      'Based on': defalts ? defalts['Based on'] : '',
-      'Practitioner Comments': practitionerComments,
-      Instruction: instructions,
-      Times: selectedTimes,
-      Dose: dose,
-      'Client Notes': notes,
-    });
-    onClose();
-  };
+  // const handleApply = () => {
+  //   onSubmit({
+  //     Category: selectedGroup,
+  //     Recommendation: defalts?.Recommendation || '',
+  //           'Based on': defalts ? defalts['Based on'] : '',
+  //     'Practitioner Comments': practitionerComments,
+  //     Instruction: instructions,
+  //     Times: selectedTimes,
+  //     Dose: dose,
+  //     'Client Notes': notes,
+  //   });
+  //   onClose();
+  // };
   const handleDeleteComment = (index: number) => {
     const updatedComments = practitionerComments.filter((_, i) => i !== index);
     setPractitionerComments(updatedComments);
@@ -133,6 +175,10 @@ const EditModal: React.FC<EditModalProps> = ({
     ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
         .Dose
     : false;
+
+  const handleSaveClick = () => {
+    formik.handleSubmit(); // Call handleSubmit without arguments
+  };
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -146,72 +192,58 @@ const EditModal: React.FC<EditModalProps> = ({
           </div>
         </h2>
         <div className="max-h-[440px] overflow-auto pr-1 mt-[6px]">
-          <div className=" w-full relative overflow-visible mt-2 mb-4">
-            <label className="text-xs font-medium text-Text-Primary">
-              Category
-            </label>
-            <div
-              ref={selectButRef}
-              onClick={() => setShowSelect(!showSelect)}
-              className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
-            >
-              {selectedGroup ? (
-                <div className="text-[12px] text-Text-Primary">
-                  {selectedGroup}
-                </div>
-              ) : (
-                <div className="text-[12px] text-gray-400">Select Group</div>
-              )}
-              <div>
-                <img
-                  className={`${showSelect && 'rotate-180'}`}
-                  src="/icons/arow-down-drop.svg"
-                  alt=""
-                />
-              </div>
-            </div>
-            {showSelect && (
+          <form onSubmit={formik.handleSubmit}>
+            <div className=" w-full relative overflow-visible mt-2 mb-4">
+              <label className="text-xs font-medium text-Text-Primary">
+                Category
+              </label>
               <div
-                ref={selectRef}
-                className="w-full z-20 shadow-200  py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]"
+                onClick={() => setShowSelect(!showSelect)}
+                className={`w-full cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
+                  formik.errors.Category ? 'border-[#FC5474]' : 'border-Gray-50'
+                }`}
               >
-                {groups.map((groupObj, index) => {
-                  const groupName = Object.keys(groupObj)[0];
-                  return (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setSelectedGroup(groupName);
-                        setShowSelect(false);
-                      }}
-                      className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                    >
-                      {groupName}
-                    </div>
-                  );
-                })}
-                {/* <div
-                          onClick={() => {
-                            formik.setFieldValue('gender', 'Male');
-                            setShowSelect(false);
-                          }}
-                          className="text-[12px] cursor-pointer text-Text-Primary py-1 border-b border-gray-100"
-                        >
-                          Male
-                        </div>
-                        <div
-                          onClick={() => {
-                            formik.setFieldValue('gender', 'Female');
-                            setShowSelect(false);
-                          }}
-                          className="text-[12px] cursor-pointer text-Text-Primary py-1"
-                        >
-                          Female
-                        </div> */}
+                {formik.values.Category ? (
+                  <div className="text-[12px] text-Text-Primary">
+                    {formik.values.Category}
+                  </div>
+                ) : (
+                  <div className="text-[12px] text-gray-400">Select Group</div>
+                )}
+                <div>
+                  <img
+                    className={`${showSelect && 'rotate-180'}`}
+                    src="/icons/arow-down-drop.svg"
+                    alt=""
+                  />
+                </div>
               </div>
-            )}
-          </div>
-          {/* <div className="my-4">
+              {formik.errors.Category && (
+                <div className="text-[#FC5474] text-[10px] mt-1">
+                  {formik.errors.Category}
+                </div>
+              )}
+              {showSelect && (
+                <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
+                  {groups.map((groupObj, index) => {
+                    const groupName = Object.keys(groupObj)[0];
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          formik.setFieldValue('Category', groupName);
+                          setShowSelect(false);
+                        }}
+                        className="text-[12px] text-Text-Primary my-1 cursor-pointer"
+                      >
+                        {groupName}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            {/* <div className="my-4">
           <label className="block text-xs font-medium">Group</label>
           <select
             value={group}
@@ -221,39 +253,84 @@ const EditModal: React.FC<EditModalProps> = ({
             <option>Diet</option>
           </select>
         </div> */}
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium">
-                Recommendation
-              </label>
-              <input
-                value={recommendation}
-                onChange={(e) => setRecommendation(e.target.value)}
-                placeholder="Write Recommendation"
-                type="text"
-                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-              />
+            <div className="mb-4 grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium">
+                  Recommendation
+                </label>
+                <input
+                  name="Recommendation"
+                  value={formik.values.Recommendation}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Write Recommendation"
+                  type="text"
+                  className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
+                    formik.touched.Recommendation &&
+                    formik.errors.Recommendation
+                      ? 'border-[#FC5474]'
+                      : 'border-Gray-50'
+                  } rounded-2xl outline-none`}
+                />
+                {formik.touched.Recommendation &&
+                  formik.errors.Recommendation && (
+                    <div className="text-[#FC5474] text-[10px] mt-1">
+                      {formik.errors.Recommendation}
+                    </div>
+                  )}
+              </div>
+              {/* {selectedGroupDose && ( */}
+              <div
+                className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
+              >
+                <label className=" text-xs font-medium flex items-start gap-[2px]">
+                  Dose{' '}
+                  <img
+                    className="cursor-pointer"
+                    data-tooltip-id={'more-info'}
+                    src="/icons/info-circle.svg"
+                    alt=""
+                  />
+                </label>
+                <input
+                  name="Dose"
+                  value={formik.values.Dose}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  placeholder="Write Dose"
+                  type="text"
+                  className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
+                    formik.touched.Dose &&
+                    formik.errors.Dose &&
+                    !selectedGroupDose
+                      ? 'border-[#FC5474]'
+                      : 'border-Gray-50'
+                  } rounded-2xl outline-none`}
+                />
+                {formik.touched.Dose &&
+                  formik.errors.Dose &&
+                  !selectedGroupDose && (
+                    <div className="text-[#FC5474] text-[10px] mt-1">
+                      {formik.errors.Dose}
+                    </div>
+                  )}
+                {selectedGroupDose && (
+                  <Tooltip
+                    id="more-info"
+                    place="top"
+                    className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                  >
+                    Dose must include a number followed by a unit (e.g., '50
+                    mg')
+                  </Tooltip>
+                )}
+              </div>
+              {/* )} */}
             </div>
-            {/* {selectedGroupDose && ( */}
-            <div
-              className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
-            >
-              <label className="block text-xs font-medium">Dose</label>
-              <input
-                value={dose}
-                disabled={!selectedGroupDose}
-                onChange={(e) => setDose(e.target.value)}
-                placeholder="Write Dose"
-                type="text"
-                className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-              />
-            </div>
-            {/* )} */}
-          </div>
-          <div className="mb-4">
-            <label className="flex w-full justify-between items-center text-xs font-medium">
-              Instructions
-              {/* <div className="flex mt-2 space-x-4">
+            <div className="mb-4">
+              <label className="flex w-full justify-between items-center text-xs font-medium">
+                Instructions
+                {/* <div className="flex mt-2 space-x-4">
               <Checkbox
                 label="Morning"
                 checked={morning}
@@ -270,104 +347,116 @@ const EditModal: React.FC<EditModalProps> = ({
                 onChange={() => setNight(!night)}
               />
             </div> */}
-            </label>
-            <input
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
-              placeholder="Write Instructions"
-              type="text"
-              className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="text-xs font-medium">Times</label>
-            <div className="flex w-full mt-2 ">
-              {times.map((time, index) => (
-                <div
-                  key={time}
-                  onClick={() => toggleTimeSelection(time)}
-                  className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
-                    selectedTimes.includes(time)
-                      ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
-                      : 'bg-backgroundColor-Card text-Text-Secondary'
-                  }`}
-                >
-                  {time}
+              </label>
+              <input
+                name="Instruction"
+                value={formik.values.Instruction}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder="Write Instruction"
+                type="text"
+                className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
+                  formik.errors.Instruction && formik.touched.Instruction
+                    ? 'border-[#FC5474]'
+                    : 'border-Gray-50'
+                } rounded-2xl outline-none`}
+              />
+              {formik.errors.Instruction && formik.touched.Instruction && (
+                <div className="text-[#FC5474] text-[10px] mt-1">
+                  {formik.errors.Instruction}
+                </div>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="text-xs font-medium">Times</label>
+              <div className="flex w-full mt-2 ">
+                {times.map((time, index) => (
+                  <div
+                    key={time}
+                    onClick={() => toggleTimeSelection(time)}
+                    className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                      selectedTimes.includes(time)
+                        ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                        : 'bg-backgroundColor-Card text-Text-Secondary'
+                    }`}
+                  >
+                    {time}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-medium">Client Note</label>
+              <textarea
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                onKeyDown={handleNoteKeyDown}
+                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
+                rows={4}
+                placeholder="Write notes ..."
+              />
+            </div>
+            <div className="mb-4 flex flex-col gap-2  ">
+              {notes.map((note, index) => (
+                <div className="w-full flex gap-1 items-start">
+                  <div
+                    key={index}
+                    className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
+                  >
+                    <span>{note}</span>
+                  </div>
+                  <div
+                    onClick={() => handleDeleteNote(index)}
+                    className="cursor-pointer"
+                  >
+                    <SvgIcon
+                      src="/icons/delete.svg"
+                      color="#FC5474
+"
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-xs font-medium">Client Note</label>
-            <textarea
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              onKeyDown={handleNoteKeyDown}
-              className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
-              rows={4}
-              placeholder="Write notes ..."
-            />
-          </div>
-          <div className="mb-4 flex flex-col gap-2  ">
-            {notes.map((note, index) => (
-              <div className="w-full flex gap-1 items-start">
-                <div
-                  key={index}
-                  className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
-                >
-                  <span>{note}</span>
+            <div className="mb-4">
+              <label className="block text-xs font-medium">
+                Practitioner Comments
+              </label>
+              <textarea
+                value={practitionerComment}
+                onChange={(e) => setPractitionerComment(e.target.value)}
+                onKeyDown={handleCommentKeyDown}
+                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+                rows={4}
+                placeholder="Enter internal observations or comments..."
+              />
+            </div>
+            <div className="mb-4 flex flex-col gap-2  ">
+              {practitionerComments?.map((comment, index) => (
+                <div className="w-full flex gap-1 items-start">
+                  <div
+                    key={index}
+                    className=" w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
+                  >
+                    <span>{comment}</span>
+                  </div>
+                  <div
+                    onClick={() => handleDeleteComment(index)}
+                    className="cursor-pointer"
+                  >
+                    <SvgIcon
+                      src="/icons/delete.svg"
+                      color="#FC5474"
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
                 </div>
-                <div
-                  onClick={() => handleDeleteNote(index)}
-                  className="cursor-pointer"
-                >
-                  <SvgIcon
-                    src="/icons/delete.svg"
-                    color="#FC5474
-"
-                    width="24px"
-                    height="24px"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mb-4">
-            <label className="block text-xs font-medium">
-              Practitioner Comments
-            </label>
-            <textarea
-              value={practitionerComment}
-              onChange={(e) => setPractitionerComment(e.target.value)}
-              onKeyDown={handleCommentKeyDown}
-              className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
-              rows={4}
-              placeholder="Enter internal observations or comments..."
-            />
-          </div>
-          <div className="mb-4 flex flex-col gap-2  ">
-            {practitionerComments?.map((comment, index) => (
-              <div className="w-full flex gap-1 items-start">
-                <div
-                  key={index}
-                  className=" w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
-                >
-                  <span>{comment}</span>
-                </div>
-                <div
-                  onClick={() => handleDeleteComment(index)}
-                  className="cursor-pointer"
-                >
-                  <SvgIcon
-                    src="/icons/delete.svg"
-                    color="#FC5474"
-                    width="24px"
-                    height="24px"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </form>
         </div>
         <div className="flex justify-end gap-4 mt-8 ">
           <button
@@ -377,8 +466,16 @@ const EditModal: React.FC<EditModalProps> = ({
             Cancel
           </button>
           <button
-            onClick={handleApply}
-            className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
+            type="button"
+            onClick={handleSaveClick}
+            // onClick={handleApply}
+            // type="submit"
+            disabled={!(formik.isValid && formik.dirty)}
+            className={`text-sm font-medium cursor-pointer ${
+              formik.isValid && formik.dirty
+                ? 'text-Primary-DeepTeal'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
           >
             Save
           </button>

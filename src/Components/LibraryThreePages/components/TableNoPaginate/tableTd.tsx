@@ -39,7 +39,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <Tooltip
               id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
               place="top"
-              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {row.original?.Instruction}
             </Tooltip>
@@ -102,11 +102,15 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     header: 'Added on',
     enableSorting: false,
     cell: ({ row }) => {
-      return (
-        <div className="text-xs text-Text-Quadruple">
-          {row.original?.['Added on'].substring(0, 10) || '-'}
-        </div>
-      );
+      const dateStr = row.original?.['Added on'].substring(0, 10) || '-';
+      let formattedDate = '-';
+
+      if (dateStr !== '-') {
+        const [year, month, day] = dateStr.split('-');
+        formattedDate = `${month.padStart(2, '0')}/${day.padStart(2, '0')}/${year}`;
+      }
+
+      return <div className="text-xs text-Text-Quadruple">{formattedDate}</div>;
     },
   },
 ];

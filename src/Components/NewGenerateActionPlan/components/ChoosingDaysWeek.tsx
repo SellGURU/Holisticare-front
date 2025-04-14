@@ -9,7 +9,7 @@ interface ChoosingDaysWeekProps {
 
 const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
   selectedDays,
-  toggleDaySelection,
+  // toggleDaySelection,
   ClassName,
 }) => {
   return (
@@ -20,7 +20,7 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
         (day, index, array) => (
           <div
             key={day}
-            onClick={() => toggleDaySelection(day)}
+            // onClick={() => toggleDaySelection(day)}
             className={`w-full cursor-pointer flex items-center justify-center capitalize ${
               selectedDays.includes(day)
                 ? 'text-Primary-EmeraldGreen'

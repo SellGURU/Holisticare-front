@@ -63,49 +63,55 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
   }, [pageType]);
   const onSave = (values: any) => {
     if (selectedRow !== null) {
+      // Close the modal immediately
+      setLoading(true);
+      setAddShowModal(false);
+      setSelectedRow(null);
+
       if (pageType === 'Supplement') {
         Application.editSupplement({
           Sup_Id: selectedRow.Sup_Id,
           ...values,
         }).then(() => {
-          setSelectedRow(null);
-          getSupplements();
-          setAddShowModal(false);
+          getSupplements(); // Refresh data after closing
+          setLoading(false);
         });
       } else if (pageType === 'Lifestyle') {
         Application.editLifestyle({
           Life_Id: selectedRow.Life_Id,
           ...values,
         }).then(() => {
-          setSelectedRow(null);
-          getLifestyles();
-          setAddShowModal(false);
+          getLifestyles(); // Refresh data after closing
+          setLoading(false);
         });
       } else {
         Application.editDiet({
           Diet_Id: selectedRow.Diet_Id,
           ...values,
         }).then(() => {
-          setSelectedRow(null);
-          getDiets();
-          setAddShowModal(false);
+          getDiets(); // Refresh data after closing
+          setLoading(false);
         });
       }
     } else {
+      // Close the modal immediately
+      setLoading(true);
+      setAddShowModal(false);
+
       if (pageType === 'Supplement') {
         Application.addSupplement(values).then(() => {
-          getSupplements();
-          setAddShowModal(false);
+          getSupplements(); // Refresh data after closing
+          setLoading(false);
         });
       } else if (pageType === 'Lifestyle') {
         Application.addLifestyle(values).then(() => {
-          getLifestyles();
-          setAddShowModal(false);
+          getLifestyles(); // Refresh data after closing
+          setLoading(false);
         });
       } else {
         Application.addDiet(values).then(() => {
-          getDiets();
-          setAddShowModal(false);
+          getDiets(); // Refresh data after closing
+          setLoading(false);
         });
       }
     }

@@ -7,6 +7,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inValid?: boolean;
   errorMessage?: string;
   newStyle?: boolean;
+  largeHeight?: boolean;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
@@ -17,6 +18,7 @@ const TextField: React.FC<TextFieldProps> = ({
   onChange,
   type,
   newStyle,
+  largeHeight,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -79,7 +81,7 @@ const TextField: React.FC<TextFieldProps> = ({
       <div className="relative">
         <input
           type={getInputType()}
-          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'}  ${newStyle && 'bg-[#FDFDFD]'} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none ${
+          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start align-top  pt-0'}  ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none ${
             inValid
               ? 'border-red-500'
               : newStyle

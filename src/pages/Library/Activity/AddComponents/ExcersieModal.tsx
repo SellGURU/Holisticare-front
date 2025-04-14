@@ -36,13 +36,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [description, setDescription] = useState(exercise.Description || '');
   const [instruction, setInstruction] = useState(exercise.Instruction || '');
   const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
-  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || '');
+  const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || []);
   const [condition, setCondition] = useState(
-    exercise.Exercise_Filters?.Conditions || '',
+    exercise.Exercise_Filters?.Conditions || [],
   );
-  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || '');
+  const [muscle, setMuscle] = useState(exercise.Exercise_Filters?.Muscle || []);
   const [equipment, setEquipment] = useState(
-    exercise.Exercise_Filters?.Equipment || '',
+    exercise.Exercise_Filters?.Equipment || [],
   );
   const [level, setLevel] = useState(exercise.Exercise_Filters?.Level || '');
   const [location, setLocation] = useState<string[]>(
@@ -246,10 +246,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setDescription(exercise.Description || '');
     setInstruction(exercise.Instruction || '');
     setType(exercise.Exercise_Filters?.Type || '');
-    setTerms(exercise.Exercise_Filters?.Terms || '');
-    setCondition(exercise.Exercise_Filters?.Conditions || '');
-    setMuscle(exercise.Exercise_Filters?.Muscle || '');
-    setEquipment(exercise.Exercise_Filters?.Equipment || '');
+    setTerms(exercise.Exercise_Filters?.Terms || []);
+    setCondition(exercise.Exercise_Filters?.Conditions || []);
+    setMuscle(exercise.Exercise_Filters?.Muscle || []);
+    setEquipment(exercise.Exercise_Filters?.Equipment || []);
     setLevel(exercise.Exercise_Filters?.Leve || '');
     setLocation(exercise.Exercise_Location || []);
     setFileList(exercise.Files || []);
@@ -280,27 +280,53 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <TextField
+            <div className="flex flex-col">
+              <div className="text-Text-Primary text-[12px] font-medium">
+                Description
+              </div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Write the exercise’s description..."
+                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border  placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
+                id=""
+              ></textarea>
+            </div>
+
+            {/* <TextField
               type="text"
               newStyle
               label="Description"
               placeholder="Write the exercise’s description..."
               value={description}
+              largeHeight
               onChange={(e) => setDescription(e.target.value)}
-            />
+            /> */}
             <RangeCard
               onSubmit={(score) => setScore(score)}
               value={score}
               question="Base Score"
             />
-            <TextField
+            <div className="flex flex-col">
+              <div className="text-Text-Primary text-[12px] font-medium">
+                Instruction
+              </div>
+              <textarea
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                placeholder="Write the exercise’s Instruction..."
+                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
+                id=""
+              ></textarea>
+            </div>
+            {/* <TextField
               newStyle
               type="text"
               placeholder="Write the exercise’s Instruction..."
               label="Instruction"
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
-            />
+            /> */}
           </div>
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[35%] flex flex-col gap-4">
@@ -315,23 +341,27 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               <CustomSelect
                 placeHolder="Terms"
                 options={TermsOptions}
+                isMulti
                 selectedOption={terms}
-                onOptionSelect={(option: string) => setTerms(option)}
+                onOptionSelect={(option: any) => setTerms(option)}
               />
               <CustomSelect
                 placeHolder="Condition"
                 options={ConditionsOptions}
+                isMulti
                 selectedOption={condition}
-                onOptionSelect={(option: string) => setCondition(option)}
+                onOptionSelect={(option: any) => setCondition(option)}
               />
               <CustomSelect
                 placeHolder="Muscle"
                 options={MuscleOptions}
                 selectedOption={muscle}
+                isMulti
                 onOptionSelect={(option: string) => setMuscle(option)}
               />
               <CustomSelect
                 placeHolder="Equipment"
+                isMulti
                 options={EquipmentOptions}
                 selectedOption={equipment}
                 onOptionSelect={(option: string) => setEquipment(option)}

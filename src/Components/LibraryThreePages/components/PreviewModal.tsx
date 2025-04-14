@@ -42,14 +42,14 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Description
                 </div>
-                <div className="text-xs text-Text-Quadruple leading-5">
-                  {/* {selectedRow?.Description} */}
-                  Eat a balanced diet with a variety of fruits, vegetables, lean
+                <div className="text-xs text-Text-Secondary text-justify leading-5">
+                  {selectedRow?.Description}
+                  {/* Eat a balanced diet with a variety of fruits, vegetables, lean
                   proteins, healthy fats, and whole grains. Drink at least 8
                   glasses of water per day to stay hydrated. Limit processed
                   foods, sugary drinks, and excessive salt intake. Avoid
                   skipping meals; aim for three main meals and healthy snacks if
-                  needed.
+                  needed. */}
                 </div>
               </div>
               <div className="flex gap-7 items-center">
@@ -67,7 +67,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
                 </div>
-                <div className="text-xs text-Text-Quadruple leading-5">
+                <div className="text-xs text-Text-Secondary text-justify leading-5">
                   {selectedRow?.Instruction}
                 </div>
               </div>
@@ -83,7 +83,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-5 text-justify w-full">
                   <div className="font-medium text-Text-Primary text-xs">
                     Macros Goal
                   </div>
@@ -122,7 +122,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                         alt=""
                         className="w-[28.94px] h-[30px]"
                       />
-                      <div className="text-xs text-Text-Fivefold flex items-center gap-[4px]">
+                      <div className="text-xs text-Text-Fivefold flex text-justify items-center gap-[4px]">
                         Fats:
                         <div className="text-Text-Quadruple">
                           {selectedRow?.['Total Macros'].Fats}

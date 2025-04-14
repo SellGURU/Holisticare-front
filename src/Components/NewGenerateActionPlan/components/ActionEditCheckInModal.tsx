@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import Checkbox from '../../checkbox';
+import MainModal from '../../MainModal';
 
 interface ActionEditCheckInModalProps {
   isOpen: boolean;
@@ -22,6 +23,9 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>(
     defalts?.Frequency_Dates || [],
   );
+  // const [estimatedTime, setEstimatedTime] = useState<string>(
+  //   defalts?.Estimated_time || '',
+  // );
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -50,6 +54,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
         setSelectedDaysMonth([]);
       }
       setFrequencyType(defalts?.Frequency_Type || null);
+      // setEstimatedTime(defalts?.Estimated_time || '');
       setSelectedTimes(defalts.Times || []);
     }
   }, [defalts]);
@@ -104,11 +109,14 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
     return `${year}-${month}-${day}`;
   });
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
-      <div
-        ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[530px] text-Text-Primary overflow-auto max-h-[660px]"
-      >
+    <MainModal
+      onClose={() => {
+        onClose();
+        onReset();
+      }}
+      isOpen={isOpen}
+    >
+      <div className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[530px] text-Text-Primary overflow-auto max-h-[660px]">
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">Edit Check-In</div>
         </h2>
@@ -129,7 +137,10 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label htmlFor="daily" className="text-xs cursor-pointer">
+              <label
+                htmlFor="daily"
+                className={`text-xs cursor-pointer ${frequencyType === 'daily' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+              >
                 Daily
               </label>
             </div>
@@ -150,7 +161,10 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label htmlFor="weekly" className="text-xs cursor-pointer">
+              <label
+                htmlFor="weekly"
+                className={`text-xs cursor-pointer ${frequencyType === 'weekly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+              >
                 Weekly
               </label>
             </div>
@@ -171,7 +185,10 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
-              <label htmlFor="monthly" className="text-xs cursor-pointer">
+              <label
+                htmlFor="monthly"
+                className={`text-xs cursor-pointer ${frequencyType === 'monthly' ? 'text-Primary-DeepTeal' : 'text-Text-Quadruple'}`}
+              >
                 Monthly
               </label>
             </div>
@@ -240,7 +257,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
         </div>
         <div className="mb-4">
           <label className="text-xs font-medium">Times</label>
-          <div className="flex w-full mt-2 gap-2">
+          <div className="flex w-full mt-2 gap-6">
             {times.map((item, index) => {
               return (
                 <Checkbox
@@ -248,6 +265,9 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                   checked={selectedTimes.includes(item)}
                   onChange={() => toggleTimeSelection(item)}
                   label={item}
+                  borderColor="border-Text-Quadruple"
+                  width="w-3.5"
+                  height="h-3.5"
                 />
               );
             })}
@@ -268,7 +288,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </MainModal>
   );
 };
 

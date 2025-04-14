@@ -50,6 +50,7 @@ const Stadio: FC<StadioProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isAutoGenerate, setIsAutoGenerate] = useState(false);
   const [isAutoGenerateComplete, setIsAutoGenerateComplete] = useState(false);
+  const [isAutoGenerateShow, setIsAutoGenerateShow] = useState(true);
   // const [ setIsDragging] = useState(false);
   const addToActions = (item: any) => {
     if (item.Task_Type === 'Checkin') {
@@ -115,7 +116,7 @@ const Stadio: FC<StadioProps> = ({
     }
   };
   const { id } = useParams<{ id: string }>();
-  const AutoGenerate = (isWithAi?: boolean) => {
+  const AutoGenerate = () => {
     setIsAutoGenerate(true);
     Application.getActionPlanGenerateActionPlanTaskNew({
       member_id: id,
@@ -128,14 +129,18 @@ const Stadio: FC<StadioProps> = ({
       })
       .finally(() => {
         setIsAutoGenerate(false);
-        if (isWithAi) {
-          setIsAutoGenerateComplete(true);
-          setTimeout(() => {
-            setIsAutoGenerateComplete(false);
-          }, 5000);
-        }
+        setIsAutoGenerateComplete(true);
+        setTimeout(() => {
+          setIsAutoGenerateComplete(false);
+          setIsAutoGenerateShow(false);
+        }, 5000);
       });
   };
+  useEffect(() => {
+    if (isAutoGenerateShow === false) {
+      setIsAutoGenerateShow(true);
+    }
+  }, [actions]);
   const conflicCheck = () => {
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
@@ -193,8 +198,10 @@ const Stadio: FC<StadioProps> = ({
   ];
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: any) => {
-    e.dataTransfer.setData('application/json', JSON.stringify(item));
-    // setIsDragging(true);
+    e.dataTransfer.setData(
+      'application/holisticare-action',
+      JSON.stringify(item),
+    );
   };
 
   const handleDragEnd = () => {
@@ -203,7 +210,9 @@ const Stadio: FC<StadioProps> = ({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.currentTarget.classList.add('bg-Gray-50');
+    if (e.dataTransfer.types.includes('application/holisticare-action')) {
+      e.currentTarget.classList.add('bg-Gray-50');
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -214,9 +223,17 @@ const Stadio: FC<StadioProps> = ({
     e.preventDefault();
     e.currentTarget.classList.remove('bg-Gray-50');
 
+    if (!e.dataTransfer.types.includes('application/holisticare-action')) {
+      return;
+    }
+
     try {
-      const itemData = JSON.parse(e.dataTransfer.getData('application/json'));
-      addToActions(itemData);
+      const itemData = JSON.parse(
+        e.dataTransfer.getData('application/holisticare-action'),
+      );
+      if (itemData && (itemData.Task_Type || itemData.Category)) {
+        addToActions(itemData);
+      }
     } catch (error) {
       console.error('Error parsing dragged item data:', error);
     }
@@ -282,61 +299,84 @@ const Stadio: FC<StadioProps> = ({
               />
             </div>
           )}
-          <div
-            className={`w-full flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
-          >
-            {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
-              <div
-                className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
-                onClick={() => setCalendarView(true)}
-              >
-                <img src="/icons/calendar-date.svg" alt="" className="w-5" />
-                Calendar View
+          <div className="flex justify-between w-full items-center">
+            {/* {actions.f} */}
+            {actions.category.filter((el) => el.Category == 'Activity').length >
+              1 && (
+              <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
+                <img src="/icons/warning-2.svg" alt="" />
+                More than one Activity task exists!
               </div>
-            ) : (
-              ''
             )}
-            {selectCategory != 'Checkin' && (
-              <>
-                {actions.checkIn.length !== 0 ||
-                actions.category.length !== 0 ? (
-                  !isAutoGenerateComplete ? (
-                    <ButtonSecondary
-                      ClassName="rounded-[30px] w-[141px] text-nowrap"
-                      onClick={() => {
-                        AutoGenerate();
-                      }}
-                    >
-                      {isAutoGenerate ? (
-                        <SpinnerLoader />
-                      ) : (
-                        <>
-                          <img
-                            src="/icons/tree-start-white.svg"
-                            alt=""
-                            className="mr-2"
-                          />
-                          Generate by AI
-                        </>
-                      )}
-                    </ButtonSecondary>
-                  ) : (
-                    <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
-                      <img src="/icons/tick-circle-bg.svg" alt="" />
-                      Generated
-                    </div>
-                  )
-                ) : (
-                  ''
-                )}
-                <ButtonPrimary
-                  onClick={() => setshowAddModal(true)}
-                  ClassName="w-[108px]"
+            {actions.category.filter((el) => el.Category == 'Diet').length >
+              1 &&
+              actions.category.filter((el) => el.Category == 'Activity')
+                .length <= 1 && (
+                <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
+                  <img src="/icons/warning-2.svg" alt="" />
+                  More than one Diet task exists!
+                </div>
+              )}
+            <div
+              className={`flex-grow flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+            >
+              {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
+                <div
+                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                  onClick={() => setCalendarView(true)}
                 >
-                  <img src="/icons/add-square.svg" alt="" /> Add
-                </ButtonPrimary>
-              </>
-            )}
+                  <img src="/icons/calendar-date.svg" alt="" className="w-5" />
+                  Calendar View
+                </div>
+              ) : (
+                ''
+              )}
+              {selectCategory != 'Checkin' && (
+                <>
+                  {isAutoGenerateShow ? (
+                    actions.checkIn.length !== 0 ||
+                    actions.category.length !== 0 ? (
+                      !isAutoGenerateComplete ? (
+                        <ButtonSecondary
+                          ClassName="rounded-[30px] w-[141px] text-nowrap"
+                          onClick={() => {
+                            AutoGenerate();
+                          }}
+                        >
+                          {isAutoGenerate ? (
+                            <SpinnerLoader />
+                          ) : (
+                            <>
+                              <img
+                                src="/icons/tree-start-white.svg"
+                                alt=""
+                                className="mr-2"
+                              />
+                              Generate by AI
+                            </>
+                          )}
+                        </ButtonSecondary>
+                      ) : (
+                        <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
+                          <img src="/icons/tick-circle-bg.svg" alt="" />
+                          Generated
+                        </div>
+                      )
+                    ) : (
+                      ''
+                    )
+                  ) : (
+                    ''
+                  )}
+                  <ButtonPrimary
+                    onClick={() => setshowAddModal(true)}
+                    ClassName="w-[108px]"
+                  >
+                    <img src="/icons/add-square.svg" alt="" /> Add
+                  </ButtonPrimary>
+                </>
+              )}
+            </div>
           </div>
           <div
             className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100 ${
