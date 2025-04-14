@@ -166,6 +166,18 @@ const Stadio: FC<StadioProps> = ({
     conflicCheck();
   }, [actions]);
   const [sortBy, setSortBy] = useState('System Score');
+  const resolveTaskCheckText = () => {
+    if (
+      actions.category.filter((el) => el.Category == 'Activity').length > 1 &&
+      actions.category.filter((el) => el.Category == 'Diet').length > 1
+    ) {
+      return 'More than one Diet task and one Activity task exists!';
+    }
+    if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
+      return 'More than one Activity task exists!';
+    }
+    return 'More than one Diet task exists!';
+  };
   const handleChangeSort = (value: string) => {
     setSortBy(value);
   };
@@ -301,22 +313,15 @@ const Stadio: FC<StadioProps> = ({
           )}
           <div className="flex justify-between w-full items-center">
             {/* {actions.f} */}
-            {actions.category.filter((el) => el.Category == 'Activity').length >
-              1 && (
+            {(actions.category.filter((el) => el.Category == 'Activity')
+              .length > 1 ||
+              actions.category.filter((el) => el.Category == 'Diet').length >
+                1) && (
               <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
                 <img src="/icons/warning-2.svg" alt="" />
-                More than one Activity task exists!
+                {resolveTaskCheckText()}
               </div>
             )}
-            {actions.category.filter((el) => el.Category == 'Diet').length >
-              1 &&
-              actions.category.filter((el) => el.Category == 'Activity')
-                .length <= 1 && (
-                <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
-                  <img src="/icons/warning-2.svg" alt="" />
-                  More than one Diet task exists!
-                </div>
-              )}
             <div
               className={`flex-grow flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
