@@ -886,11 +886,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                     {(!totalMacros.Carbs ||
                       !totalMacros.Protein ||
-                      !totalMacros.Fats) && showValidation && (
-                      <span className="text-[10px] mt-1 ml-2 text-red-500">
-                        These fields are required.
-                      </span>
-                    )}
+                      !totalMacros.Fats) &&
+                      showValidation && (
+                        <span className="text-[10px] mt-1 ml-2 text-red-500">
+                          These fields are required.
+                        </span>
+                      )}
                   </div>
                 )}
                 {selectedGroup === 'Activity' && (
@@ -1056,13 +1057,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       This field is required.
                     </span>
                   )}
-                  {frequencyType === 'weekly' && selectedDays.length === 0 && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      Please select at least one day of the week.
-                    </span>
-                  )}
+                  {frequencyType === 'weekly' &&
+                    selectedDays.length === 0 &&
+                    showValidation && (
+                      <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                        Please select at least one day of the week.
+                      </span>
+                    )}
                   {frequencyType === 'monthly' &&
-                    selectedDaysMonth.length === 0 && showValidation && (
+                    selectedDaysMonth.length === 0 &&
+                    showValidation && (
                       <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                         Please select at least one day of the month.
                       </span>
@@ -1374,7 +1378,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <div
                   onClick={step === 0 ? handleNextClick : handleSaveClick}
                   className={`${
-                    isNextDisabled() ? 'text-Primary-DeepTeal' : 'text-Primary-DeepTeal'
+                    isNextDisabled()
+                      ? 'text-Primary-DeepTeal'
+                      : 'text-Primary-DeepTeal'
                   } text-[14px] cursor-pointer font-medium`}
                 >
                   {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
