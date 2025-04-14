@@ -322,8 +322,9 @@ const NewGenerateHolisticPlan = () => {
                         <div>
                           {treatmentPlanData['suggestion_tab'].length > 0 ? (
                             <>
-                              {treatmentPlanData['suggestion_tab'].reverse().map(
-                                (el: any, suggestionIndex: number) => {
+                              {treatmentPlanData['suggestion_tab']
+                                .reverse()
+                                .map((el: any, suggestionIndex: number) => {
                                   return (
                                     <>
                                       <div
@@ -380,8 +381,7 @@ const NewGenerateHolisticPlan = () => {
                                       </div>
                                     </>
                                   );
-                                },
-                              )}
+                                })}
                             </>
                           ) : (
                             <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">

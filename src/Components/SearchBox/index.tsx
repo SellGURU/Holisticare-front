@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { InputHTMLAttributes, useState } from 'react';
-import SvgIcon from '../../utils/svgIcon';
+// import SvgIcon from '../../utils/svgIcon';
 
 interface SearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   onSearch: (searchTerm: any) => void;
@@ -29,13 +29,13 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     <div
       className={`relative flex justify-start items-center   md:min-w-[300px] h-8 rounded-2xl bg-backgroundColor-Secondary  py-[10px] px-4 ${isHaveBorder ? 'border border-Gray-50' : 'shadow-200'}   ${ClassName}`}
     >
-      <SvgIcon
-        src="/icons/search.svg"
+      {/* <SvgIcon
+        src="/icons/search-normal.svg"
         width="16px"
         height="16px"
         color="#888888"
-      />
-      {/* <img alt="Search" className="w-4 h-4" /> */}
+      /> */}
+      <img src='/icons/search-normal.svg' alt="Search" className="w-4 h-4" />
       <input
         type="text"
         placeholder={placeHolder}
