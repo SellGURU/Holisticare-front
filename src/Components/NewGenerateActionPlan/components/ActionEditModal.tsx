@@ -657,7 +657,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="dose-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
@@ -692,7 +692,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="value-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
@@ -727,7 +727,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="Macros-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
