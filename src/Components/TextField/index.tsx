@@ -7,7 +7,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inValid?: boolean;
   errorMessage?: string;
   newStyle?: boolean;
-  largeHeight?:boolean
+  largeHeight?: boolean;
 }
 
 const TextField: React.FC<TextFieldProps> = ({

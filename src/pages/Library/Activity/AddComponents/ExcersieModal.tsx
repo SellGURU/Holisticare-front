@@ -309,11 +309,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             />
             <div className="flex flex-col">
               <div className="text-Text-Primary text-[12px] font-medium">
-              Instruction
+                Instruction
               </div>
               <textarea
-              value={instruction}
-              onChange={(e) => setInstruction(e.target.value)}
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
                 placeholder="Write the exercise’s Instruction..."
                 className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
                 id=""
