@@ -619,7 +619,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Write the action's title..."
                     type="text"
-                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${!title && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-[6px] px-3 border ${!title && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                   />
                   {!title && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
