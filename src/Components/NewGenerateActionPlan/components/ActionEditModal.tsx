@@ -82,12 +82,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   );
   const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
-    Type: defalts?.Activity_Filters?.Type || '',
+    Type: defalts?.Activity_Filters?.Type || [],
     Terms: defalts?.Activity_Filters?.Terms || [],
     Conditions: defalts?.Activity_Filters?.Conditions || [],
     Muscle: defalts?.Activity_Filters?.Muscle || [],
     Equipment: defalts?.Activity_Filters?.Equipment || [],
-    Level: defalts?.Activity_Filters?.Level || '',
+    Level: defalts?.Activity_Filters?.Level || [],
   });
   const [step, setStep] = useState(0);
   const updateAddData = (key: keyof typeof addData, value: any) => {
@@ -146,12 +146,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
       setFrequencyType(defalts?.Frequency_Type || null);
       setAddData({
-        Type: defalts?.Activity_Filters?.Type || '',
-        Terms: defalts?.Activity_Filters?.Terms || '',
-        Conditions: defalts?.Activity_Filters?.Conditions || '',
-        Muscle: defalts?.Activity_Filters?.Muscle || '',
-        Equipment: defalts?.Activity_Filters?.Equipment || '',
-        Level: defalts?.Activity_Filters?.Level || '',
+        Type: defalts?.Activity_Filters?.Type || [],
+        Terms: defalts?.Activity_Filters?.Terms || [],
+        Conditions: defalts?.Activity_Filters?.Conditions || [],
+        Muscle: defalts?.Activity_Filters?.Muscle || [],
+        Equipment: defalts?.Activity_Filters?.Equipment || [],
+        Level: defalts?.Activity_Filters?.Level || [],
       });
       setPractitionerComments(defalts['Practitioner Comments'] || []);
     }
@@ -286,16 +286,32 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setDose(null);
     setValue(null);
     setAddData({
-      Type: '',
-      Terms: '',
-      Conditions: '',
-      Muscle: '',
-      Equipment: '',
-      Level: '',
+      Type: [],
+      Terms: [],
+      Conditions: [],
+      Muscle: [],
+      Equipment: [],
+      Level: [],
     });
   };
 
   const handleApply = () => {
+    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+      return;
+    }
+    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
+      return;
+    }
+    if (selectedGroup === 'Supplement' && !dose) {
+      return;
+    }
+    if (selectedGroup === 'Lifestyle' && !value) {
+      return;
+    }
+    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+      return;
+    }
+
     if (selectedGroup === 'Supplement') {
       onSubmit({
         Category: selectedGroup,
@@ -439,6 +455,42 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
   };
 
+  const isNextDisabled = () => {
+    if (!selectedGroup || !title || !frequencyType || !instructions) {
+      return true;
+    }
+    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+      return true;
+    }
+    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
+      return true;
+    }
+    if (selectedGroup === 'Supplement' && !dose) {
+      return true;
+    }
+    if (selectedGroup === 'Lifestyle' && !value) {
+      return true;
+    }
+    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+      return true;
+    }
+    if (selectedGroup === 'Activity' && step === 1) {
+      const emptySetSections = sectionList.filter(
+        (section: any) => section.Sets == '',
+      );
+      if (
+        sectionList.length > 0 &&
+        emptySetSections.length == 0 &&
+        selectedGroup === 'Activity'
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <MainModal
       onClose={() => {
@@ -476,7 +528,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         setShowSelect(!showSelect);
                       }
                     }}
-                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border border-Gray-50 `}
+                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${!selectedGroup ? 'border-red-500' : 'border-Gray-50'}`}
                   >
                     {selectedGroup ? (
                       <div className="text-xs text-Text-Primary">
@@ -495,6 +547,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       />
                     </div>
                   </div>
+                  {!selectedGroup && (
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      This field is required.
+                    </span>
+                  )}
                   {showSelect && (
                     <div
                       ref={selectRef}
@@ -519,19 +576,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-xs font-medium">
-                    Title <span className="text-red-500">*</span>
-                  </label>
+                  <label className="block text-xs font-medium">Title</label>
                   <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Write the action's title..."
                     type="text"
-                    className="mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none placeholder:text-Text-Fivefold"
+                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${!title ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                   />
                   {!title && (
-                    <span className="text-xs text-red-500">
-                      Title is required.
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      This field is required.
                     </span>
                   )}
                 </div>
@@ -543,10 +598,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     onKeyDown={handleNoteKeyDown}
-                    className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none placeholder:text-Text-Fivefold"
+                    className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!description ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                     rows={6}
                     placeholder="Write the action's description..."
                   />
+                  {!description && (
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      This field is required.
+                    </span>
+                  )}
                 </div>
                 <div className="mb-4">
                   <div className="text-xs font-medium text-Text-Primary">
@@ -556,18 +616,18 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 </div>
                 <div className="mb-4">
                   <label className="flex w-full justify-start gap-1 items-center text-xs font-medium">
-                    Instruction <span className="text-red-500">*</span>
+                    Instruction
                   </label>
                   <textarea
                     value={instructions}
                     onChange={(e) => setInstructions(e.target.value)}
                     placeholder="Write the action's instruction..."
-                    className="mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none placeholder:text-Text-Fivefold"
+                    className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!instructions ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                     rows={6}
                   />
                   {!instructions && (
-                    <span className="text-xs text-red-500">
-                      Instruction is required.
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      This field is required.
                     </span>
                   )}
                 </div>
@@ -580,8 +640,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       placeholder="Write the supplement's dose..."
                       value={dose}
                       onChange={(e) => setDose(e.target.value)}
-                      className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
+                    {!dose && (
+                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
+                        This field is required.
+                      </span>
+                    )}
                   </div>
                 )}
                 {selectedGroup === 'Lifestyle' && (
@@ -594,8 +659,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       value={value}
                       type="number"
                       onChange={(e) => setValue(Number(e.target.value))}
-                      className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
+                    {!value && (
+                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
+                        This field is required.
+                      </span>
+                    )}
                   </div>
                 )}
                 {selectedGroup === 'Diet' && (
@@ -742,12 +812,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         );
                       })}
                     </div>
+                    {selectedLocations.length === 0 && (
+                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
+                        This field is required.
+                      </span>
+                    )}
                   </div>
                 )}
                 <div className="mb-4">
-                  <label className="text-xs font-medium">
-                    Frequency <span className="text-red-500">*</span>
-                  </label>
+                  <label className="text-xs font-medium">Frequency</label>
                   <div className="flex items-center gap-6 mt-2">
                     <div className="flex items-center gap-1">
                       <input
@@ -820,10 +893,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                   </div>
                   {!frequencyType && (
-                    <span className="text-xs text-red-500">
-                      Frequency is required.
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      This field is required.
                     </span>
                   )}
+                  {frequencyType === 'weekly' && selectedDays.length === 0 && (
+                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                      Please select at least one day of the week.
+                    </span>
+                  )}
+                  {frequencyType === 'monthly' &&
+                    selectedDaysMonth.length === 0 && (
+                      <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                        Please select at least one day of the month.
+                      </span>
+                    )}
                   {frequencyType === 'weekly' && (
                     <div className="mt-3">
                       <div className="text-xs text-Text-Quadruple">
@@ -1140,17 +1224,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 <div
                   onClick={() => {
                     if (step == 0) {
-                      if (frequencyType && instructions && title) {
+                      if (!isNextDisabled()) {
                         setStep(step + 1);
                       }
                     } else {
-                      saveActivity();
+                      if (!isNextDisabled()) {
+                        saveActivity();
+                      }
                     }
                   }}
                   className={`${
-                    step === 0 && (!frequencyType || !instructions || !title)
-                      ? 'text-Disable'
-                      : 'text-Primary-DeepTeal'
+                    isNextDisabled() ? 'text-Disable' : 'text-Primary-DeepTeal'
                   } text-[14px] cursor-pointer font-medium`}
                 >
                   {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
