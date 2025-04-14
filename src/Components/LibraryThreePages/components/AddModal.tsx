@@ -183,7 +183,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   Dose
                 </div>
                 <input
-                  placeholder="Write the supplement’s dose..."
+                  placeholder="Enter the supplement’s dose..."
                   value={dose}
                   onChange={(e) => setDose(e.target.value)}
                   className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
