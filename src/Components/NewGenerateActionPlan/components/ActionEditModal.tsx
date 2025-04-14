@@ -270,9 +270,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSelectedDaysMonth([]);
     setSelectedGroup(null);
     setTotalMacros({
-      Fats: 0,
-      Protein: 0,
-      Carbs: 0,
+      Fats: null,
+      Protein: null,
+      Carbs: null,
     });
     setInstructions('');
     setSelectedTimes([]);
