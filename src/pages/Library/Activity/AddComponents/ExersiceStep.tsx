@@ -319,6 +319,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               <div className="font-medium text-sm text-Text-Primary">
                 Exercise
               </div>
+              <div className="text-xs font-medium cursor-pointer text-Primary-DeepTeal flex items-center gap-1">
+                {' '}
+                <img
+                  className="size-5"
+                  src="/public/icons/add-blue.svg"
+                  alt=""
+                />{' '}
+                Add Exercise
+              </div>
             </div>
             <SearchBox
               ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"

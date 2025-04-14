@@ -32,7 +32,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
           </div>
         )}
 
-        <div className="w-full mt-4 px-3">
+        <div className="w-full mt-4 ">
           <input
             type="range"
             value={val}

@@ -280,27 +280,53 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <TextField
+            <div className="flex flex-col">
+              <div className="text-Text-Primary text-[12px] font-medium">
+                Description
+              </div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Write the exercise’s description..."
+                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border  placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
+                id=""
+              ></textarea>
+            </div>
+
+            {/* <TextField
               type="text"
               newStyle
               label="Description"
               placeholder="Write the exercise’s description..."
               value={description}
+              largeHeight
               onChange={(e) => setDescription(e.target.value)}
-            />
+            /> */}
             <RangeCard
               onSubmit={(score) => setScore(score)}
               value={score}
               question="Base Score"
             />
-            <TextField
+            <div className="flex flex-col">
+              <div className="text-Text-Primary text-[12px] font-medium">
+                Instruction
+              </div>
+              <textarea
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                placeholder="Write the exercise’s Instruction..."
+                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
+                id=""
+              ></textarea>
+            </div>
+            {/* <TextField
               newStyle
               type="text"
               placeholder="Write the exercise’s Instruction..."
               label="Instruction"
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
-            />
+            /> */}
           </div>
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[35%] flex flex-col gap-4">
