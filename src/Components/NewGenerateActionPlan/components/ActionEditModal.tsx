@@ -752,6 +752,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Carbs', Number(e.target.value))
                           }
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
+                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
+                                e.key === 'Tab' || e.key === 'Enter') {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (!/[\d\b]/.test(e.key) && 
+                                e.key !== 'Backspace' && 
+                                e.key !== 'Delete' && 
+                                e.key !== 'Tab') {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
@@ -771,6 +786,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Protein', Number(e.target.value))
                           }
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
+                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
+                                e.key === 'Tab' || e.key === 'Enter') {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (!/[\d\b]/.test(e.key) && 
+                                e.key !== 'Backspace' && 
+                                e.key !== 'Delete' && 
+                                e.key !== 'Tab') {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
@@ -790,6 +820,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Fats', Number(e.target.value))
                           }
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
+                                e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
+                                e.key === 'Tab' || e.key === 'Enter') {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (!/[\d\b]/.test(e.key) && 
+                                e.key !== 'Backspace' && 
+                                e.key !== 'Delete' && 
+                                e.key !== 'Tab') {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
