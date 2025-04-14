@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import SvgIcon from '../../../../utils/svgIcon';
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ExerciseItemProps {
@@ -149,8 +150,24 @@ const ExerciseItem = ({
           <div
             className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
-            <div className="text-center text-[8px] text-Text-Primary">
-              Set <span className="text-red-500">*</span>
+            <div className="text-center flex text-[8px] text-Text-Primary">
+              Set 
+              <div data-tooltip-id="set-tooltip">
+                <img
+                  src="/icons/info-circle.svg"
+                  alt=""
+                  className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
+                />
+              </div>
+              <Tooltip
+                id="set-tooltip"
+                place="top"
+                className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+              >
+                <div className="flex items-center gap-1">
+                 Set must contain just Natural Numbers.
+                </div>
+              </Tooltip>              
             </div>
             <input
               type="number"
@@ -163,7 +180,7 @@ const ExerciseItem = ({
             />
             {showSetError && (
               <div className="text-[8px] text-red-500 mt-1 text-center">
-                Set is required
+                This field is required.
               </div>
             )}
           </div>
