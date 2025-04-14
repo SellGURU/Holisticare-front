@@ -198,7 +198,10 @@ const Stadio: FC<StadioProps> = ({
   ];
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: any) => {
-    e.dataTransfer.setData('application/holisticare-action', JSON.stringify(item));
+    e.dataTransfer.setData(
+      'application/holisticare-action',
+      JSON.stringify(item),
+    );
   };
 
   const handleDragEnd = () => {
@@ -225,7 +228,9 @@ const Stadio: FC<StadioProps> = ({
     }
 
     try {
-      const itemData = JSON.parse(e.dataTransfer.getData('application/holisticare-action'));
+      const itemData = JSON.parse(
+        e.dataTransfer.getData('application/holisticare-action'),
+      );
       if (itemData && (itemData.Task_Type || itemData.Category)) {
         addToActions(itemData);
       }
@@ -294,20 +299,24 @@ const Stadio: FC<StadioProps> = ({
               />
             </div>
           )}
-          <div className='flex justify-between w-full items-center'>
+          <div className="flex justify-between w-full items-center">
             {/* {actions.f} */}
-            {actions.category.filter((el) =>el.Category == 'Activity').length >1 &&
-              <div className='text-[12px]  text-[#FC5474] flex items-center gap-1'>
+            {actions.category.filter((el) => el.Category == 'Activity').length >
+              1 && (
+              <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
                 <img src="/icons/warning-2.svg" alt="" />
                 More than one Activity task exists!
               </div>
-            }
-            {actions.category.filter((el) =>el.Category == 'Diet').length >1 &&actions.category.filter((el) =>el.Category == 'Activity').length <=1 &&
-              <div className='text-[12px]  text-[#FC5474] flex items-center gap-1'>
-                <img src="/icons/warning-2.svg" alt="" />
-                More than one Diet task exists!
-              </div>
-            }            
+            )}
+            {actions.category.filter((el) => el.Category == 'Diet').length >
+              1 &&
+              actions.category.filter((el) => el.Category == 'Activity')
+                .length <= 1 && (
+                <div className="text-[12px]  text-[#FC5474] flex items-center gap-1">
+                  <img src="/icons/warning-2.svg" alt="" />
+                  More than one Diet task exists!
+                </div>
+              )}
             <div
               className={`flex-grow flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >

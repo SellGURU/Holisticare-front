@@ -312,7 +312,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return;
     }
-    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+    if (
+      selectedGroup === 'Diet' &&
+      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+    ) {
       return;
     }
 
@@ -478,7 +481,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
       return true;
     }
-    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+    if (
+      selectedGroup === 'Diet' &&
+      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+    ) {
       return true;
     }
     if (selectedGroup === 'Activity' && step === 1) {
@@ -655,11 +661,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                        Dose must include a number followed by a unit (e.g., '50 mg')
-                         
+                          Dose must include a number followed by a unit (e.g.,
+                          '50 mg')
                         </div>
-
-                      </Tooltip>                        
+                      </Tooltip>
                     </div>
                     <input
                       placeholder="Write the supplement's dose..."
@@ -691,11 +696,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                        Value must contain just Natural Numbers.
-                         
+                          Value must contain just Natural Numbers.
                         </div>
-
-                      </Tooltip>                      
+                      </Tooltip>
                     </div>
                     <input
                       placeholder="Enter Value..."
@@ -728,11 +731,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                        Macros Goal must contain just Whole Numbers.
-                         
+                          Macros Goal must contain just Whole Numbers.
                         </div>
-
-                      </Tooltip>                         
+                      </Tooltip>
                     </div>
                     <div className="flex items-center justify-between mt-3 gap-4">
                       <div className="flex flex-col gap-1">
@@ -793,7 +794,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         />
                       </div>
                     </div>
-                    {(!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats) && (
+                    {(!totalMacros.Carbs ||
+                      !totalMacros.Protein ||
+                      !totalMacros.Fats) && (
                       <span className="text-[10px] mt-1 ml-2 text-red-500">
                         These fields are required.
                       </span>

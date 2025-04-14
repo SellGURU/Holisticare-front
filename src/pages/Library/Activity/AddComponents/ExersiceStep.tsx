@@ -203,8 +203,14 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, exercise: Exercise) => {
-    e.dataTransfer.setData('application/holisticare-exercise', JSON.stringify(exercise));
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    exercise: Exercise,
+  ) => {
+    e.dataTransfer.setData(
+      'application/holisticare-exercise',
+      JSON.stringify(exercise),
+    );
     setIsDragging(true);
   };
 
@@ -232,7 +238,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     }
 
     try {
-      const exerciseData = JSON.parse(e.dataTransfer.getData('application/holisticare-exercise'));
+      const exerciseData = JSON.parse(
+        e.dataTransfer.getData('application/holisticare-exercise'),
+      );
       if (exerciseData && exerciseData.Title && exerciseData.Files) {
         addExercise(exerciseData);
       }
@@ -291,9 +299,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                                   );
                                 const exerciseToDelete =
                                   activeTabExercises[index];
-                                const originalIndex = updatedExercises.findIndex(
-                                  (el: any) => el === exerciseToDelete,
-                                );
+                                const originalIndex =
+                                  updatedExercises.findIndex(
+                                    (el: any) => el === exerciseToDelete,
+                                  );
                                 updatedExercises.splice(originalIndex, 1);
                                 return updatedExercises;
                               });
@@ -309,11 +318,12 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                     );
                   })}
               </div>
-            {exercises.length === 0 && (
-              <div className="text-red-500 text-xs mt-1">Add Exercise to continue.</div>
-            )}
+              {exercises.length === 0 && (
+                <div className="text-red-500 text-xs mt-1">
+                  Add Exercise to continue.
+                </div>
+              )}
             </div>
-
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">
