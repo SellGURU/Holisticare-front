@@ -44,6 +44,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Protein: defalts?.['Total Macros']?.Protein || '',
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
+  const [showValidation, setShowValidation] = useState(false);
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -294,6 +295,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Equipment: [],
       Level: [],
     });
+    setShowValidation(false);
   };
 
   const handleApply = () => {
@@ -504,11 +506,33 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return false;
   };
 
+  const handleNextClick = () => {
+    setShowValidation(true);
+    if (!isNextDisabled()) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleSaveClick = () => {
+    setShowValidation(true);
+    if (!isNextDisabled()) {
+      saveActivity();
+    }
+  };
+
+  const handleApplyClick = () => {
+    setShowValidation(true);
+    if (selectedGroup && title && frequencyType && instructions) {
+      handleApply();
+    }
+  };
+
   return (
     <MainModal
       onClose={() => {
         onClose();
         onReset();
+        setShowValidation(false);
       }}
       isOpen={isOpen}
     >
@@ -541,7 +565,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         setShowSelect(!showSelect);
                       }
                     }}
-                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${!selectedGroup ? 'border-red-500' : 'border-Gray-50'}`}
+                    className={` w-full  cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${!selectedGroup && showValidation ? 'border-red-500' : 'border-Gray-50'}`}
                   >
                     {selectedGroup ? (
                       <div className="text-xs text-Text-Primary">
@@ -560,7 +584,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       />
                     </div>
                   </div>
-                  {!selectedGroup && (
+                  {!selectedGroup && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                       This field is required.
                     </span>
@@ -595,9 +619,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Write the action's title..."
                     type="text"
-                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${!title ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-[6px] px-3 border ${!title && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                   />
-                  {!title && (
+                  {!title && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                       This field is required.
                     </span>
@@ -611,11 +635,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     onKeyDown={handleNoteKeyDown}
-                    className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!description ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                    className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!description && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                     rows={6}
                     placeholder="Write the action's description..."
                   />
-                  {!description && (
+                  {!description && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                       This field is required.
                     </span>
@@ -635,10 +659,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     value={instructions}
                     onChange={(e) => setInstructions(e.target.value)}
                     placeholder="Write the action's instruction..."
-                    className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!instructions ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                    className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!instructions && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
                     rows={6}
                   />
-                  {!instructions && (
+                  {!instructions && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                       This field is required.
                     </span>
@@ -657,7 +681,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="dose-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
@@ -670,9 +694,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       placeholder="Write the supplement's dose..."
                       value={dose}
                       onChange={(e) => setDose(e.target.value)}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!dose && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
-                    {!dose && (
+                    {!dose && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
@@ -692,7 +716,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="value-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
@@ -705,9 +729,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       value={value}
                       type="number"
                       onChange={(e) => setValue(Number(e.target.value))}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
-                    {!value && (
+                    {!value && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
@@ -727,7 +751,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                       <Tooltip
                         id="Macros-tooltip"
-                        place="top"
+                        place="right-end"
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
@@ -752,7 +776,29 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Carbs', Number(e.target.value))
                           }
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -771,7 +817,29 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Protein', Number(e.target.value))
                           }
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -790,17 +858,40 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           onChange={(e) =>
                             updateTotalMacros('Fats', Number(e.target.value))
                           }
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                       </div>
                     </div>
                     {(!totalMacros.Carbs ||
                       !totalMacros.Protein ||
-                      !totalMacros.Fats) && (
-                      <span className="text-[10px] mt-1 ml-2 text-red-500">
-                        These fields are required.
-                      </span>
-                    )}
+                      !totalMacros.Fats) &&
+                      showValidation && (
+                        <span className="text-[10px] mt-1 ml-2 text-red-500">
+                          These fields are required.
+                        </span>
+                      )}
                   </div>
                 )}
                 {selectedGroup === 'Activity' && (
@@ -881,7 +972,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         );
                       })}
                     </div>
-                    {selectedLocations.length === 0 && (
+                    {selectedLocations.length === 0 && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
@@ -961,18 +1052,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </label>
                     </div>
                   </div>
-                  {!frequencyType && (
+                  {!frequencyType && showValidation && (
                     <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                       This field is required.
                     </span>
                   )}
-                  {frequencyType === 'weekly' && selectedDays.length === 0 && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      Please select at least one day of the week.
-                    </span>
-                  )}
+                  {frequencyType === 'weekly' &&
+                    selectedDays.length === 0 &&
+                    showValidation && (
+                      <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
+                        Please select at least one day of the week.
+                      </span>
+                    )}
                   {frequencyType === 'monthly' &&
-                    selectedDaysMonth.length === 0 && (
+                    selectedDaysMonth.length === 0 &&
+                    showValidation && (
                       <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
                         Please select at least one day of the month.
                       </span>
@@ -1227,23 +1321,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         Cancel
                       </button>
                       <button
-                        onClick={() => {
-                          if (
-                            selectedGroup &&
-                            title &&
-                            frequencyType &&
-                            instructions
-                          ) {
-                            handleApply();
-                          }
-                        }}
+                        onClick={handleApplyClick}
                         className={`${
                           selectedGroup &&
                           title &&
                           frequencyType &&
                           instructions
                             ? 'text-Primary-DeepTeal'
-                            : 'text-Disable'
+                            : 'text-Primary-DeepTeal'
                         } text-sm font-medium cursor-pointer`}
                       >
                         {isAdd ? 'Add' : 'Update'}
@@ -1291,19 +1376,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   Cancel
                 </div>
                 <div
-                  onClick={() => {
-                    if (step == 0) {
-                      if (!isNextDisabled()) {
-                        setStep(step + 1);
-                      }
-                    } else {
-                      if (!isNextDisabled()) {
-                        saveActivity();
-                      }
-                    }
-                  }}
+                  onClick={step === 0 ? handleNextClick : handleSaveClick}
                   className={`${
-                    isNextDisabled() ? 'text-Disable' : 'text-Primary-DeepTeal'
+                    isNextDisabled()
+                      ? 'text-Primary-DeepTeal'
+                      : 'text-Primary-DeepTeal'
                   } text-[14px] cursor-pointer font-medium`}
                 >
                   {step === 0 ? 'Next' : !isAdd ? 'Update' : 'Save'}
