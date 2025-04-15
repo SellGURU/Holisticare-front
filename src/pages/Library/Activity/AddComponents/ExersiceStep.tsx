@@ -318,13 +318,12 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                     );
                   })}
               </div>
-             
             </div>
             {exercises.length === 0 && (
-                <div className="text-Red text-xs mt-2">
-                  Add Exercise to continue.
-                </div>
-              )}
+              <div className="text-Red text-xs mt-2">
+                Add Exercise to continue.
+              </div>
+            )}
           </div>
           <div className="w-[314px] h-[432px] rounded-xl bg-backgroundColor-Main flex flex-col p-3">
             <div className="flex w-full items-center justify-between mt-1">

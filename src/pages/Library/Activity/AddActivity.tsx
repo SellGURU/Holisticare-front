@@ -182,8 +182,12 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         <div className="w-full h-[1px] bg-Boarder my-3"></div>
         <div className="min-h-[300px]">
           {step === 0 ? (
-            <InformationStep   showValidation={showValidation}
-            onValidationChange={setIsFormValid} addData={addData} updateAddData={updateAddData} />
+            <InformationStep
+              showValidation={showValidation}
+              onValidationChange={setIsFormValid}
+              addData={addData}
+              updateAddData={updateAddData}
+            />
           ) : (
             <ExersiceStep
               sectionList={sectionList}

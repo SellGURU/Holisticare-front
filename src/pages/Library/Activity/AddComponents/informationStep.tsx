@@ -77,7 +77,7 @@ const InformationStep: FC<InformationStepProps> = ({
     enableReinitialize: true,
     onSubmit: () => {}, // Handled by parent
   });
- 
+
   useEffect(() => {
     onValidationChange(formik.isValid);
   }, [formik.isValid, onValidationChange]);
@@ -123,9 +123,11 @@ const InformationStep: FC<InformationStepProps> = ({
               onChange={(e) => formik.setFieldValue('title', e.target.value)}
               onBlur={formik.handleBlur}
               className="w-[360px]"
-              errorMessage={ showValidation ?'This field is required.' : undefined}
+              errorMessage={
+                showValidation ? 'This field is required.' : undefined
+              }
               inValid={showValidation && Boolean(formik.errors.title)}
-              />
+            />
           </div>
 
           <div className="flex flex-col w-full gap-2">
@@ -139,30 +141,33 @@ const InformationStep: FC<InformationStepProps> = ({
                 formik.setFieldValue('description', e.target.value);
                 updateAddData('description', e.target.value);
               }}
-              
               name="description"
               className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
-                showValidation && formik.errors.description ? 'border-Red' : 'border-Gray-50'
+                showValidation && formik.errors.description
+                  ? 'border-Red'
+                  : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-                {showValidation && formik.errors.description && (
-            <div className="text-Red text-[10px]">{formik.errors.description}</div>
-          )}
+            {showValidation && formik.errors.description && (
+              <div className="text-Red text-[10px]">
+                {formik.errors.description}
+              </div>
+            )}
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
               Base Score <span className="text-Red">*</span>
             </div>
             <RangeCardLibraryActivity
-            value={formik.values.score}
-            changeValue={(key, value) => {
-              formik.setFieldValue('score', value);
-              updateAddData(key, value);
-            }}
-            showValidation={showValidation}
-            error={Boolean(formik.errors.score)}
-            required={true}
-          />
+              value={formik.values.score}
+              changeValue={(key, value) => {
+                formik.setFieldValue('score', value);
+                updateAddData(key, value);
+              }}
+              showValidation={showValidation}
+              error={Boolean(formik.errors.score)}
+              required={true}
+            />
             {/* {formik.touched.score && formik.errors.score && (
               <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
             )} */}
@@ -179,15 +184,18 @@ const InformationStep: FC<InformationStepProps> = ({
                 formik.setFieldValue('instruction', e.target.value);
                 updateAddData('instruction', e.target.value);
               }}
-              
               name="instruction"
               className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
-                showValidation && formik.errors.instruction ? 'border-Red' : 'border-Gray-50'
+                showValidation && formik.errors.instruction
+                  ? 'border-Red'
+                  : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-        {showValidation && formik.errors.instruction && (
-            <div className="text-Red text-[10px]">{formik.errors.instruction}</div>
-          )}
+            {showValidation && formik.errors.instruction && (
+              <div className="text-Red text-[10px]">
+                {formik.errors.instruction}
+              </div>
+            )}
           </div>
         </div>
         <div className="bg-[#E9EDF5] h-[328px] w-px"></div>

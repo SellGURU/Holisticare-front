@@ -15,7 +15,7 @@ interface RangeCardProps {
 const RangeCardLibraryActivity: React.FC<RangeCardProps> = ({
   value,
   changeValue,
-showValidation,
+  showValidation,
   error,
   required = false,
 }) => {
@@ -37,7 +37,6 @@ showValidation,
             setVal(Number(e.target.value));
             changeValue('score', Number(e.target.value));
           }}
-        
           min={0}
           max={10}
           className="w-full h-[2px] sliderCheckin border-none"
