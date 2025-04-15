@@ -178,6 +178,16 @@ const Stadio: FC<StadioProps> = ({
     }
     return 'More than one Diet task exists!';
   };
+  const checkHaveConflicts = () => {
+    const conflicts = [];
+    if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
+      conflicts.push('Activity');
+    }
+    if (actions.category.filter((el) => el.Category == 'Diet').length > 1) {
+      conflicts.push('Diet');
+    }
+    return conflicts;
+  };
   const handleChangeSort = (value: string) => {
     setSortBy(value);
   };
@@ -447,6 +457,7 @@ const Stadio: FC<StadioProps> = ({
                           setActions={setActions}
                           key={index}
                           index={index}
+                          conflicts={checkHaveConflicts()}
                         />
                       </>
                     );
