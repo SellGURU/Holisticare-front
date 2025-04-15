@@ -106,7 +106,7 @@ const TableForm: FC<TableProps> = ({
                 ))}
               </thead>
               <tbody>
-                {table.getRowModel().rows.map((row) => (
+                {table.getRowModel().rows.map((row, index) => (
                   <TableRow
                     key={row.id}
                     row={row}
@@ -114,6 +114,7 @@ const TableForm: FC<TableProps> = ({
                     onEdit={onEdit}
                     onPreview={onPreview}
                     onReposition={onReposition}
+                    index={index}
                   />
                 ))}
               </tbody>

@@ -10,6 +10,7 @@ interface TableRowProps {
   onEdit: (id: string) => void;
   onPreview: (id: string) => void;
   onReposition: (id: string) => void;
+  index: number;
 }
 
 const TableRow: FC<TableRowProps> = ({
@@ -18,6 +19,7 @@ const TableRow: FC<TableRowProps> = ({
   onEdit,
   onPreview,
   onReposition,
+  index,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [sureRemove, setSureRemove] = useState(false);
@@ -75,7 +77,7 @@ const TableRow: FC<TableRowProps> = ({
   return (
     <>
       <tr
-        className="text-Text-Primary relative space-y-7 bg-white"
+        className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-Text-Primary relative space-y-7`}
         key={row.id}
       >
         {row.getVisibleCells().map((cell) => (
