@@ -94,7 +94,7 @@ const TableRow: FC<TableRowProps> = ({
               onClick={handleOpenModal}
               src="/icons/more-blue.svg"
               alt=""
-              className="cursor-pointer p-2"
+              className="cursor-pointer px-4 py-2"
             />
           </div>
         </td>
@@ -141,7 +141,7 @@ const TableRow: FC<TableRowProps> = ({
           </div>
           {sureRemove ? (
             <div className="flex items-center justify-start gap-3">
-              <div className="text-Text-Quadruple text-xs">Sure?</div>
+              <div className="text-Text-Primary text-xs">Sure?</div>
               <img
                 src="/icons/tick-circle-green.svg"
                 alt=""

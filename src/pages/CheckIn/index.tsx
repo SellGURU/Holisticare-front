@@ -154,7 +154,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
   };
   return (
     <>
-      <div className="px-6 py-4 grid gap-3 pb-4">
+      <div className="py-4 grid gap-3 pb-4">
         {chekinData.map((el: any, index: number) => (
           <div key={index + 1}>{resolveQuestionCard(el, index)}</div>
         ))}
