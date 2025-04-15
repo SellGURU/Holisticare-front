@@ -9,6 +9,7 @@ interface AddModalLibraryTreePagesProps {
   pageType: string;
   onSubmit: (value: any) => void;
   selectedRow: any;
+  setSelectedRow: () => void;
 }
 
 const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
@@ -17,6 +18,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   pageType,
   onSubmit,
   selectedRow,
+  setSelectedRow,
 }) => {
   const [addData, setAddData] = useState({
     title: '',
@@ -133,6 +135,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     setDose('');
     setValue('');
     setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
+    setSelectedRow();
   };
   const [errors, setErrors] = useState({
     title: false,
@@ -210,7 +213,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     validateFields(); // Validate on blur
   };
   return (
-    <MainModal isOpen={addShowModal} onClose={handleCloseModal}>
+    <MainModal
+      isOpen={addShowModal}
+      onClose={() => {
+        handleCloseModal();
+        clear();
+      }}
+    >
       <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
         <div className="w-full h-full">
           <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
@@ -447,6 +456,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               onClick={() => {
                 if (notDisabled()) {
                   submit();
+                  clear();
                 }
               }}
             >

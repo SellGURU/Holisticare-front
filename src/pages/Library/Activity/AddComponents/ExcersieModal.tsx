@@ -75,7 +75,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       setYouTubeLink(existingLink.Content.url || '');
     }
   }, [fileList]);
-  
+
   const handleCheckboxChange = (value: string) => {
     setLocation((prev) =>
       prev.includes(value)
