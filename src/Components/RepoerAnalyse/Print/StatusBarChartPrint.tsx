@@ -101,8 +101,8 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                 {el.value[1] != undefined &&
                 data.chart_bounds[el.key].label != data.values[0] ? (
                   <>
-                    {data.values[0] >= el.value[0] &&
-                      el.value[1] >= data.values[0] && (
+                    {(data.values[0] >= el.value[0] &&
+                      el.value[1] >= data.values[0] ||data.status[0] == el.key) && (
                         <div
                           className={`absolute  top-[2px]  z-10`}
                           style={{
@@ -145,7 +145,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                 ) : (
                   <>
                     {(data.chart_bounds[el.key].label == data.values[0] ||
-                      el.value[0]?.toString().includes(data.values[0])) && (
+                      el.value[0]?.toString().includes(data.values[0]) || data.status[0] == el.key) && (
                       <div
                         className={`absolute  top-[2px]  z-10`}
                         style={{
