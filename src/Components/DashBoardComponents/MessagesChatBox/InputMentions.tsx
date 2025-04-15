@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useRef, useState } from 'react';
 
 interface InputMentionsProps {
@@ -8,6 +6,7 @@ interface InputMentionsProps {
   onSubmit: () => void;
   changeBenchMarks: (benchs: Array<string>) => void;
   onUpload?: (file: File) => void;
+  handleDeleteImage?: (indexToDelete: number) => void;
 }
 const InputMentions: React.FC<InputMentionsProps> = ({
   value,
@@ -15,6 +14,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   onSubmit,
   changeBenchMarks,
   onUpload,
+  handleDeleteImage,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -49,6 +49,12 @@ const InputMentions: React.FC<InputMentionsProps> = ({
       reader.readAsDataURL(file);
     }
   };
+  const handleDeleteImagePreview = (indexToDelete: number) => {
+    setImagePreview((prev) => prev.filter((_, i) => i !== indexToDelete));
+    if (handleDeleteImage) {
+      handleDeleteImage(indexToDelete);
+    }
+  };
   const handleAttachClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -61,7 +67,11 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           className="cursor-pointer"
           src="/icons/attach-svgrepo-com 1.svg"
           alt=""
-          onClick={handleAttachClick}
+          onClick={() => {
+            if (imagePreview.length < 6) {
+              handleAttachClick();
+            }
+          }}
         />
         <input
           className="hidden"
@@ -97,12 +107,20 @@ const InputMentions: React.FC<InputMentionsProps> = ({
           <div className="absolute bottom-10 left-1 md:left-2 mb-2 flex flex-row gap-2">
             {imagePreview.map((image, index) => {
               return (
-                <img
-                  src={image}
-                  alt="Image Preview"
-                  className="h-20 w-20 object-cover rounded-md"
-                  key={index}
-                />
+                <div className="relative">
+                  <img
+                    src={image}
+                    alt="Image Preview"
+                    className="h-20 w-20 object-cover rounded-md"
+                    key={index}
+                  />
+                  <img
+                    src="/icons/close-circle-red.svg"
+                    alt=""
+                    className="w-4 h-4 absolute -top-1 -right-1 cursor-pointer bg-bg-color rounded-lg"
+                    onClick={() => handleDeleteImagePreview(index)}
+                  />
+                </div>
               );
             })}
           </div>
