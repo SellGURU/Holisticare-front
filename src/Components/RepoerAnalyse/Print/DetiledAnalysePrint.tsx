@@ -88,7 +88,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               <BiomarkersPrint data={el}></BiomarkersPrint>
               <div
                 className="text-xs text-justify text-gray-700 py-2"
-                style={{ color: '#888888',marginBottom:'24px', fontSize: '12px' }}
+                style={{
+                  color: '#888888',
+                  marginBottom: '24px',
+                  fontSize: '12px',
+                }}
               >
                 {el?.more_info}
               </div>
