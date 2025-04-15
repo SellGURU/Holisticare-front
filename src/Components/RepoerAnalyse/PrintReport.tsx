@@ -278,7 +278,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Client Summary
             </div>
             <div className="" style={{ color: '#383838', fontSize: '14px' }}>
-              Total of{ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
+              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
               {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
