@@ -16,6 +16,7 @@ interface RemoveMemberModalProps {
   handleCloseModalRemove: () => void;
   handleRemoveMember: (userId: string) => void;
   submitLoading: boolean;
+  getStaffs: () => void;
 }
 
 const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
@@ -25,6 +26,7 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
   handleCloseModalRemove,
   handleRemoveMember,
   submitLoading,
+  getStaffs,
 }) => {
   return (
     <>
@@ -76,6 +78,7 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
               onClick={() => {
                 handleCloseModalRemove();
                 setSuccessRemove(false);
+                getStaffs();
               }}
             >
               Got it

@@ -62,27 +62,28 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       [key]: value,
     }));
   };
-  const notDisabled = () => {
-    if (pageType === 'Supplement') {
-      return (
-        addData.title && addData.description && addData.instruction && dose
-      );
-    } else if (pageType === 'Lifestyle') {
-      return (
-        addData.title && addData.description && addData.instruction && value
-      );
-    } else {
-      return (
-        addData.title &&
-        addData.description &&
-        addData.instruction &&
-        totalMacros.Carbs &&
-        totalMacros.Fats &&
-        totalMacros.Protein
-      );
-    }
-  };
+  // const notDisabled = () => {
+  //   if (pageType === 'Supplement') {
+  //     return (
+  //       addData.title && addData.description && addData.instruction && dose
+  //     );
+  //   } else if (pageType === 'Lifestyle') {
+  //     return (
+  //       addData.title && addData.description && addData.instruction && value
+  //     );
+  //   } else {
+  //     return (
+  //       addData.title &&
+  //       addData.description &&
+  //       addData.instruction &&
+  //       totalMacros.Carbs &&
+  //       totalMacros.Fats &&
+  //       totalMacros.Protein
+  //     );
+  //   }
+  // };
   const submit = () => {
+    setShowValidation(true);
     // Validate fields using the validateFields function
     if (!validateFields()) {
       return; // Exit the function if there are validation errors
@@ -126,17 +127,24 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     }
   };
   const clear = () => {
-    setAddData({
-      title: '',
-      description: '',
-      score: 0,
-      instruction: '',
-    });
-    setDose('');
-    setValue('');
-    setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
+    // Your existing clear logic
+    setShowValidation(false);
     setSelectedRow();
+    setErrors({
+      title: false,
+      description: false,
+      instruction: false,
+      dose: false,
+      value: false,
+      score: false,
+      macros: {
+        Fats: false,
+        Protein: false,
+        Carbs: false,
+      },
+    });
   };
+
   const [errors, setErrors] = useState({
     title: false,
     description: false,
@@ -150,22 +158,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       Carbs: false,
     },
   });
-  const [touched, setTouched] = useState({
-    title: false,
-    description: false,
-    instruction: false,
-    dose: false,
-    value: false,
-    score: false,
-    macros: {
-      Fats: false,
-      Protein: false,
-      Carbs: false,
-    },
-  });
-  const validateFields = (fieldName?: string) => {
+
+  const validateFields = () => {
     const newErrors = {
-      ...errors,
       title: !addData.title,
       description: !addData.description,
       instruction: !addData.instruction,
@@ -181,37 +176,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
     setErrors(newErrors);
 
-    if (fieldName) {
-      if (fieldName.includes('macros.')) {
-        const macroField = fieldName.split('.')[1];
-        return !newErrors.macros[macroField as keyof typeof newErrors.macros];
-      }
-      return !newErrors[fieldName as keyof typeof newErrors];
-    }
-
     return !Object.values(newErrors).some(
       (error) =>
         error === true ||
         (typeof error === 'object' && Object.values(error).some(Boolean)),
     );
   };
-  const handleBlur = (field: string, nestedField?: string) => {
-    if (nestedField) {
-      setTouched((prev) => ({
-        ...prev,
-        macros: {
-          ...prev.macros,
-          [nestedField]: true,
-        },
-      }));
-    } else {
-      setTouched((prev) => ({
-        ...prev,
-        [field]: true,
-      }));
-    }
-    validateFields(); // Validate on blur
-  };
+  const [showValidation, setShowValidation] = useState(false);
   return (
     <MainModal
       isOpen={addShowModal}
@@ -229,15 +200,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
           {/* Title Field */}
           <div className="flex flex-col mt-5 w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">Title</div>
+            <div className="text-xs font-medium text-Text-Primary">
+              Title <span className="text-Red">*</span>
+            </div>
             <input
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s title...`}
               value={addData.title}
               onChange={(e) => updateAddData('title', e.target.value)}
-              onBlur={() => handleBlur('title')}
-              className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${touched.title && errors.title ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+              className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                showValidation && errors.title ? 'border-Red' : 'border-Gray-50'
+              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
             />
-            {touched.title && errors.title && (
+            {showValidation && errors.title && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -247,16 +221,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Description Field */}
           <div className="flex flex-col mt-4 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Description
+              Description <span className="text-Red">*</span>
             </div>
             <textarea
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s description...`}
               value={addData.description}
               onChange={(e) => updateAddData('description', e.target.value)}
-              onBlur={() => handleBlur('description')}
-              className={`w-full h-[98px] rounded-[16px] text-justify py-1 px-3 border ${touched.description && errors.description ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              className={`w-full h-[98px] rounded-[16px] text-justify py-1 px-3 border ${
+                showValidation && errors.description
+                  ? 'border-Red'
+                  : 'border-Gray-50'
+              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-            {touched.description && errors.description && (
+            {showValidation && errors.description && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -266,31 +243,33 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Base Score Field */}
           <div className="flex flex-col mt-4 w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score
+              Base Score <span className="text-Red">*</span>
             </div>
             <RangeCardLibraryThreePages
               value={addData.score}
               changeValue={updateAddData}
-              onBlur={() => handleBlur('score')}
-              touched={touched.score}
+              showValidation={showValidation}
               error={errors.score}
-              required={true} // or false depending on your requirements
+              required={true}
             />
           </div>
 
           {/* Instruction Field */}
           <div className="flex flex-col mt-4 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Instruction
+              Instruction <span className="text-Red">*</span>
             </div>
             <textarea
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s instruction...`}
               value={addData.instruction}
               onChange={(e) => updateAddData('instruction', e.target.value)}
-              onBlur={() => handleBlur('instruction')}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${touched.instruction && errors.instruction ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
+                showValidation && errors.instruction
+                  ? 'border-Red'
+                  : 'border-Gray-50'
+              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-            {touched.instruction && errors.instruction && (
+            {showValidation && errors.instruction && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -300,15 +279,20 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Dose</div>
+              <div className="text-xs font-medium text-Text-Primary">
+                Dose <span className="text-Red">*</span>
+              </div>
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
                 onChange={(e) => setDose(e.target.value)}
-                onBlur={() => handleBlur('dose')}
-                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${touched.dose && errors.dose ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                  showValidation && errors.dose
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
-              {touched.dose && errors.dose && (
+              {showValidation && errors.dose && (
                 <div className="text-Red text-[10px]">
                   This field is required.
                 </div>
@@ -319,16 +303,21 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Value</div>
+              <div className="text-xs font-medium text-Text-Primary">
+                Value <span className="text-Red">*</span>
+              </div>
               <input
                 placeholder="Enter Value..."
                 value={value}
                 type="number"
                 onChange={(e) => setValue(e.target.value)}
-                onBlur={() => handleBlur('value')}
-                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${touched.value && errors.value ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                  showValidation && errors.value
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
-              {touched.value && errors.value && (
+              {showValidation && errors.value && (
                 <div className="text-Red text-[10px]">
                   This field is required.
                 </div>
@@ -340,7 +329,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {pageType === 'Diet' && (
             <div className="flex flex-col w-full mt-3.5">
               <div className="font-medium text-Text-Primary text-xs">
-                Macros Goal
+                Macros Goal <span className="text-Red">*</span>
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between mt-3 gap-4">
@@ -361,11 +350,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       onChange={(e) =>
                         updateTotalMacros('Carbs', Number(e.target.value))
                       }
-                      onBlur={() => handleBlur('macros', 'Carbs')}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        (touched.macros.Carbs && errors.macros.Carbs) ||
-                        (touched.macros.Protein && errors.macros.Protein) ||
-                        (touched.macros.Fats && errors.macros.Fats)
+                        showValidation &&
+                        (errors.macros.Carbs ||
+                          errors.macros.Protein ||
+                          errors.macros.Fats)
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -389,11 +378,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       onChange={(e) =>
                         updateTotalMacros('Protein', Number(e.target.value))
                       }
-                      onBlur={() => handleBlur('macros', 'Protein')}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        (touched.macros.Carbs && errors.macros.Carbs) ||
-                        (touched.macros.Protein && errors.macros.Protein) ||
-                        (touched.macros.Fats && errors.macros.Fats)
+                        showValidation &&
+                        (errors.macros.Carbs ||
+                          errors.macros.Protein ||
+                          errors.macros.Fats)
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -417,11 +406,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       onChange={(e) =>
                         updateTotalMacros('Fats', Number(e.target.value))
                       }
-                      onBlur={() => handleBlur('macros', 'Fats')}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        (touched.macros.Carbs && errors.macros.Carbs) ||
-                        (touched.macros.Protein && errors.macros.Protein) ||
-                        (touched.macros.Fats && errors.macros.Fats)
+                        showValidation &&
+                        (errors.macros.Carbs ||
+                          errors.macros.Protein ||
+                          errors.macros.Fats)
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -429,9 +418,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   </div>
                 </div>
                 {/* Single validation message for all macro fields */}
-                {(touched.macros.Carbs ||
-                  touched.macros.Protein ||
-                  touched.macros.Fats) &&
+                {showValidation &&
                   (errors.macros.Carbs ||
                     errors.macros.Protein ||
                     errors.macros.Fats) && (
@@ -447,14 +434,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           <div className="w-full flex justify-end items-center p-2 mt-5">
             <div
               className="text-Disable text-sm font-medium mr-4 cursor-pointer"
-              onClick={handleCloseModal}
+              onClick={() => {
+                handleCloseModal();
+                clear();
+              }}
             >
               Cancel
             </div>
             <div
-              className={`${notDisabled() ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+              className="text-Primary-DeepTeal text-sm font-medium cursor-pointer"
               onClick={() => {
-                if (notDisabled()) {
+                setShowValidation(true);
+                if (validateFields()) {
                   submit();
                   clear();
                 }

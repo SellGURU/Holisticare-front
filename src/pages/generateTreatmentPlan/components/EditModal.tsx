@@ -49,6 +49,8 @@ const EditModal: React.FC<EditModalProps> = ({
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
+  const [showValidation, setShowValidation] = useState(false);
+
   const selectRef = useRef(null);
   const modalRef = useRef(null);
   const selectButRef = useRef(null);
@@ -79,20 +81,23 @@ const EditModal: React.FC<EditModalProps> = ({
         defalts?.['Practitioner Comments'] || practitionerComments,
     },
     validationSchema,
-
+    validateOnMount: false,
+    validateOnChange: true,
+    validateOnBlur: false,
     onSubmit: (values) => {
-      console.log('Form values:', values);
-      onSubmit({
-        Category: values.Category,
-        Recommendation: values.Recommendation,
-        'Based on': defalts ? defalts['Based on'] : '',
-        'Practitioner Comments': practitionerComments,
-        Instruction: values.Instruction,
-        Times: selectedTimes,
-        Dose: values.Dose,
-        'Client Notes': notes,
-      });
-      onClose();
+      if (formik.isValid) {
+        onSubmit({
+          Category: values.Category,
+          Recommendation: values.Recommendation,
+          'Based on': defalts ? defalts['Based on'] : '',
+          'Practitioner Comments': practitionerComments,
+          Instruction: values.Instruction,
+          Times: selectedTimes,
+          Dose: values.Dose,
+          'Client Notes': notes,
+        });
+        onClose();
+      }
     },
   });
   useModalAutoClose({
@@ -177,8 +182,10 @@ const EditModal: React.FC<EditModalProps> = ({
     : false;
 
   const handleSaveClick = () => {
-    formik.handleSubmit(); // Call handleSubmit without arguments
+    setShowValidation(true);
+    formik.handleSubmit();
   };
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -187,20 +194,22 @@ const EditModal: React.FC<EditModalProps> = ({
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
-            {/* <img src="/icons/danger.svg" alt="" />{' '} */}
             {isAdd ? 'Add Recommendation' : 'Edit Recommendation'}
           </div>
         </h2>
         <div className="max-h-[440px] overflow-auto pr-1 mt-[6px]">
           <form onSubmit={formik.handleSubmit}>
-            <div className=" w-full relative overflow-visible mt-2 mb-4">
+            {/* Category Field */}
+            <div className="w-full relative overflow-visible mt-2 mb-4">
               <label className="text-xs font-medium text-Text-Primary">
-                Category
+                Category <span className="text-Red">*</span>
               </label>
               <div
                 onClick={() => setShowSelect(!showSelect)}
                 className={`w-full cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
-                  formik.errors.Category ? 'border-[#FC5474]' : 'border-Gray-50'
+                  showValidation && formik.errors.Category
+                    ? 'border-Red'
+                    : 'border-Gray-50'
                 }`}
               >
                 {formik.values.Category ? (
@@ -218,8 +227,8 @@ const EditModal: React.FC<EditModalProps> = ({
                   />
                 </div>
               </div>
-              {formik.errors.Category && (
-                <div className="text-[#FC5474] text-[10px] mt-1">
+              {showValidation && formik.errors.Category && (
+                <div className="text-Red text-[10px] mt-1">
                   {formik.errors.Category}
                 </div>
               )}
@@ -243,48 +252,38 @@ const EditModal: React.FC<EditModalProps> = ({
                 </div>
               )}
             </div>
-            {/* <div className="my-4">
-          <label className="block text-xs font-medium">Group</label>
-          <select
-            value={group}
-            onChange={(e) => setGroup(e.target.value)}
-            className="mt-1 text-xs block w-full py-1 px-3 bg-backgroundColor-Card border border-Gray-50 outline-none rounded-2xl"
-          >
-            <option>Diet</option>
-          </select>
-        </div> */}
+
+            {/* Recommendation and Dose Fields */}
             <div className="mb-4 grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium">
-                  Recommendation
+                  Recommendation <span className="text-Red">*</span>
                 </label>
                 <input
                   name="Recommendation"
                   value={formik.values.Recommendation}
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
                   placeholder="Write Recommendation"
                   type="text"
                   className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                    formik.touched.Recommendation &&
-                    formik.errors.Recommendation
-                      ? 'border-[#FC5474]'
+                    showValidation && formik.errors.Recommendation
+                      ? 'border-Red'
                       : 'border-Gray-50'
                   } rounded-2xl outline-none`}
                 />
-                {formik.touched.Recommendation &&
-                  formik.errors.Recommendation && (
-                    <div className="text-[#FC5474] text-[10px] mt-1">
-                      {formik.errors.Recommendation}
-                    </div>
-                  )}
+                {showValidation && formik.errors.Recommendation && (
+                  <div className="text-Red text-[10px] mt-1">
+                    {formik.errors.Recommendation}
+                  </div>
+                )}
               </div>
-              {/* {selectedGroupDose && ( */}
+
               <div
                 className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'}`}
               >
-                <label className=" text-xs font-medium flex items-start gap-[2px]">
+                <label className="text-xs font-medium flex items-start gap-[2px]">
                   Dose{' '}
+                  {selectedGroupDose && <span className="text-Red">*</span>}
                   <img
                     className="cursor-pointer"
                     data-tooltip-id={'more-info'}
@@ -296,87 +295,70 @@ const EditModal: React.FC<EditModalProps> = ({
                   name="Dose"
                   value={formik.values.Dose}
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
                   placeholder="Write Dose"
                   type="text"
-                  className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                    formik.touched.Dose &&
-                    formik.errors.Dose &&
-                    !selectedGroupDose
-                      ? 'border-[#FC5474]'
+                  disabled={!selectedGroupDose}
+                  className={`mt-1 ${!selectedGroupDose && 'cursor-not-allowed'} text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
+                    showValidation && formik.errors.Dose && selectedGroupDose
+                      ? 'border-Red'
                       : 'border-Gray-50'
                   } rounded-2xl outline-none`}
                 />
-                {formik.touched.Dose &&
-                  formik.errors.Dose &&
-                  !selectedGroupDose && (
-                    <div className="text-[#FC5474] text-[10px] mt-1">
-                      {formik.errors.Dose}
-                    </div>
-                  )}
+                {showValidation && formik.errors.Dose && selectedGroupDose && (
+                  <div className="text-Red text-[10px] mt-1">
+                    {formik.errors.Dose}
+                  </div>
+                )}
                 {selectedGroupDose && (
                   <Tooltip
                     id="more-info"
                     place="top"
-                    className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0]  !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                    className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                   >
                     Dose must include a number followed by a unit (e.g., '50
                     mg')
                   </Tooltip>
                 )}
               </div>
-              {/* )} */}
             </div>
+
+            {/* Instructions Field */}
             <div className="mb-4">
               <label className="flex w-full justify-between items-center text-xs font-medium">
-                Instructions
-                {/* <div className="flex mt-2 space-x-4">
-              <Checkbox
-                label="Morning"
-                checked={morning}
-                onChange={() => setMorning(!morning)}
-              />
-              <Checkbox
-                label="MidDay"
-                checked={midDay}
-                onChange={() => setMidDay(!midDay)}
-              />
-              <Checkbox
-                label="Night"
-                checked={night}
-                onChange={() => setNight(!night)}
-              />
-            </div> */}
+                Instructions <span className="text-Red">*</span>
               </label>
               <input
                 name="Instruction"
                 value={formik.values.Instruction}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 placeholder="Write Instruction"
                 type="text"
                 className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  formik.errors.Instruction && formik.touched.Instruction
-                    ? 'border-[#FC5474]'
+                  showValidation && formik.errors.Instruction
+                    ? 'border-Red'
                     : 'border-Gray-50'
                 } rounded-2xl outline-none`}
               />
-              {formik.errors.Instruction && formik.touched.Instruction && (
-                <div className="text-[#FC5474] text-[10px] mt-1">
+              {showValidation && formik.errors.Instruction && (
+                <div className="text-Red text-[10px] mt-1">
                   {formik.errors.Instruction}
                 </div>
               )}
             </div>
+
+            {/* Times Selection */}
             <div className="mb-4">
               <label className="text-xs font-medium">Times</label>
-              <div className="flex w-full mt-2 ">
+              <div className="flex w-full mt-2">
                 {times.map((time, index) => (
                   <div
                     key={time}
                     onClick={() => toggleTimeSelection(time)}
-                    className={`cursor-pointer py-1 px-3 border border-Gray-50 ${index == times.length - 1 && 'rounded-r-2xl'} ${index == 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
+                    className={`cursor-pointer py-1 px-3 border border-Gray-50 ${
+                      index === times.length - 1 && 'rounded-r-2xl'
+                    } ${index === 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
                       selectedTimes.includes(time)
-                        ? 'bg-gradient-to-r from-[#99C7AF]  to-[#AEDAA7]  text-Primary-DeepTeal'
+                        ? 'bg-gradient-to-r from-[#99C7AF] to-[#AEDAA7] text-Primary-DeepTeal'
                         : 'bg-backgroundColor-Card text-Text-Secondary'
                     }`}
                   >
@@ -385,24 +367,25 @@ const EditModal: React.FC<EditModalProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Client Notes */}
             <div className="mb-4">
               <label className="block text-xs font-medium">Client Note</label>
               <textarea
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 onKeyDown={handleNoteKeyDown}
-                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none "
+                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                 rows={4}
                 placeholder="Write notes ..."
               />
             </div>
-            <div className="mb-4 flex flex-col gap-2  ">
+
+            {/* Notes List */}
+            <div className="mb-4 flex flex-col gap-2">
               {notes.map((note, index) => (
-                <div className="w-full flex gap-1 items-start">
-                  <div
-                    key={index}
-                    className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
-                  >
+                <div key={index} className="w-full flex gap-1 items-start">
+                  <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
                     <span>{note}</span>
                   </div>
                   <div
@@ -411,8 +394,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   >
                     <SvgIcon
                       src="/icons/delete.svg"
-                      color="#FC5474
-"
+                      color="#FC5474"
                       width="24px"
                       height="24px"
                     />
@@ -420,6 +402,8 @@ const EditModal: React.FC<EditModalProps> = ({
                 </div>
               ))}
             </div>
+
+            {/* Practitioner Comments */}
             <div className="mb-4">
               <label className="block text-xs font-medium">
                 Practitioner Comments
@@ -433,13 +417,12 @@ const EditModal: React.FC<EditModalProps> = ({
                 placeholder="Enter internal observations or comments..."
               />
             </div>
-            <div className="mb-4 flex flex-col gap-2  ">
+
+            {/* Comments List */}
+            <div className="mb-4 flex flex-col gap-2">
               {practitionerComments?.map((comment, index) => (
-                <div className="w-full flex gap-1 items-start">
-                  <div
-                    key={index}
-                    className=" w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl"
-                  >
+                <div key={index} className="w-full flex gap-1 items-start">
+                  <div className="w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
                     <span>{comment}</span>
                   </div>
                   <div
@@ -458,24 +441,25 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
           </form>
         </div>
-        <div className="flex justify-end gap-4 mt-8 ">
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-4 mt-8">
           <button
-            onClick={onClose}
+            onClick={() => {
+              setShowValidation(false);
+              onClose();
+            }}
             className="text-sm font-medium text-[#909090] cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="button"
-            onClick={handleSaveClick}
-            // onClick={handleApply}
-            // type="submit"
-            disabled={!(formik.isValid && formik.dirty)}
-            className={`text-sm font-medium cursor-pointer ${
-              formik.isValid && formik.dirty
-                ? 'text-Primary-DeepTeal'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
+            onClick={() => {
+              setShowValidation(true);
+              handleSaveClick();
+            }}
+            className="text-sm font-medium cursor-pointer text-Primary-DeepTeal"
           >
             Save
           </button>
