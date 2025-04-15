@@ -79,11 +79,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
         {refrences?.biomarkers.map((el: any) => {
           return (
             <div
-              // style={{
-              //   pageBreakInside: 'avoid',
-              //   pageBreakBefore: 'auto',
-              //   pageBreakAfter: 'auto',
-              // }}
+            // style={{
+            //   pageBreakInside: 'avoid',
+            //   pageBreakBefore: 'auto',
+            //   pageBreakAfter: 'auto',
+            // }}
             >
               <BiomarkersPrint data={el}></BiomarkersPrint>
               <div

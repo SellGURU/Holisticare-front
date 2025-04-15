@@ -27,7 +27,6 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             <span className="text-gray-800">Notes:</span> {data.Notes}
           </div>
-
         </div>
         <div
           className="text-sm text-gray-600 absolute bottom-2"

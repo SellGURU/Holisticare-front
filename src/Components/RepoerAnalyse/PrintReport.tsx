@@ -691,7 +691,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           )}
-          <div className='gap-3'>
+          <div className="gap-3">
             {TreatMentPlanData.map((el) => {
               return (
                 <>
@@ -707,7 +707,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       }}
                     >
                       <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                        <img src={resolveTreatmentPlanIcon(el.category)} alt="" />
+                        <img
+                          src={resolveTreatmentPlanIcon(el.category)}
+                          alt=""
+                        />
                       </div>
                       {el.category}
                     </div>
@@ -723,7 +726,6 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </>
               );
             })}
-
           </div>
         </div>
       )}

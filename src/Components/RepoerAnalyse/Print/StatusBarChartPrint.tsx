@@ -108,9 +108,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                         className={`absolute  top-[2px]  z-10`}
                         style={{
                           top: '2px',
-                          left:
-                            45 +
-                            '%',
+                          left: 45 + '%',
                         }}
                       >
                         <div
