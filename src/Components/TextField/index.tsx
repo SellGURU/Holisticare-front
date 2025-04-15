@@ -83,7 +83,7 @@ const TextField: React.FC<TextFieldProps> = ({
           type={getInputType()}
           className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start align-top  pt-0'}  ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none ${
             inValid
-              ? 'border-red-500'
+              ? 'border-Red'
               : newStyle
                 ? 'border-[#E9EDF5]'
                 : 'border-gray-50'
@@ -107,7 +107,7 @@ const TextField: React.FC<TextFieldProps> = ({
         )}
       </div>
       {inValid && (
-        <span className="text-red-500 text-[10px] mt-1">{errorMessage}</span>
+        <span className="text-Red text-[10px] mt-1">{errorMessage}</span>
       )}
     </div>
   );

@@ -6,19 +6,29 @@ interface RangeCardProps {
     key: 'score' | 'title' | 'description' | 'instruction',
     value: number,
   ) => void;
+
+  error?: boolean;
+  required?: boolean;
+  showValidation?: boolean;
 }
+
 const RangeCardLibraryActivity: React.FC<RangeCardProps> = ({
   value,
   changeValue,
+  showValidation,
+  error,
+  required = false,
 }) => {
   const [val, setVal] = useState(value);
+
   useEffect(() => {
-    if (value) {
+    if (value !== undefined) {
       setVal(value);
     }
   }, [value]);
+
   return (
-    <>
+    <div className="flex flex-col gap-2">
       <div className="w-full">
         <input
           type="range"
@@ -29,14 +39,14 @@ const RangeCardLibraryActivity: React.FC<RangeCardProps> = ({
           }}
           min={0}
           max={10}
-          className="w-full h-[2px] sliderCheckin border-none "
+          className="w-full h-[2px] sliderCheckin border-none"
           style={{
             background: `linear-gradient(88.52deg, #6CC24A 3%, #6CC24A 140.48%) 0% / ${val * 10}% 100% no-repeat, #d1d5db`,
             WebkitAppearance: 'none',
             MozAppearance: 'none',
             appearance: 'none',
           }}
-        ></input>
+        />
         <div className="w-full flex justify-between items-center">
           <div className="text-[10px] ml-1 text-Text-Secondary">0</div>
           <div className="text-[10px] ml-1 text-Text-Secondary">1</div>
@@ -51,7 +61,10 @@ const RangeCardLibraryActivity: React.FC<RangeCardProps> = ({
           <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
         </div>
       </div>
-    </>
+      {showValidation && error && required && (
+        <div className="text-Red text-[10px]">This field is required.</div>
+      )}
+    </div>
   );
 };
 

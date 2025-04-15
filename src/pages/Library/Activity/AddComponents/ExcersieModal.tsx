@@ -6,6 +6,8 @@ import CustomSelect from '../../../../Components/CustomSelect';
 import Checkbox from '../../../../Components/checkbox';
 import { MainModal } from '../../../../Components';
 import Application from '../../../../api/app';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,9 +34,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 }) => {
   console.log(exercise);
 
-  const [title, setTitle] = useState(exercise.Title || '');
-  const [description, setDescription] = useState(exercise.Description || '');
-  const [instruction, setInstruction] = useState(exercise.Instruction || '');
+  const [, setTitle] = useState(exercise.Title || '');
+  const [, setDescription] = useState(exercise.Description || '');
+  const [, setInstruction] = useState(exercise.Instruction || '');
   const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
   const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || []);
   const [condition, setCondition] = useState(
@@ -49,7 +51,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     exercise.Exercise_Location || [],
   );
   const [fileList, setFileList] = useState<FileData[]>(exercise.Files || []);
-  const [score, setScore] = useState(exercise.Base_Score || 0);
+  const [, setScore] = useState(exercise.Base_Score || 0);
   const [youTubeLink, setYouTubeLink] = useState<string>('');
   const [ConditionsOptions, setConditionsOptions] = useState([]);
   const [EquipmentOptions, setEquipmentOptions] = useState([]);
@@ -73,6 +75,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       setYouTubeLink(existingLink.Content.url || '');
     }
   }, [fileList]);
+  
   const handleCheckboxChange = (value: string) => {
     setLocation((prev) =>
       prev.includes(value)
@@ -81,6 +84,15 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     );
   };
   const handleSubmit = () => {
+    // Only proceed if we have either a file or YouTube link
+    const hasFile = fileList.length > 0;
+    const hasYouTubeLink = youTubeLink.trim() !== '';
+
+    if (!hasFile && !hasYouTubeLink) {
+      setFileError('At least one of these fields is required.');
+      return;
+    }
+
     const filesData = fileList.map((file) => ({
       Title: file.Title,
       Type:
@@ -94,6 +106,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         file_id: file.Content.file_id || '',
       },
     }));
+
     const exerciseFilters = {
       Conditions: [condition],
       Equipment: [equipment],
@@ -103,22 +116,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Level: [level],
     };
 
-    // Construct Exercise_Location array
-    const exerciseLocation = location ? location : []; // Assuming location is a single string
-
     const exerciseData = {
-      Title: title,
-      Description: description,
-      Instruction: instruction,
+      Title: formik.values.title,
+      Description: formik.values.description,
+      Instruction: formik.values.instruction,
       type,
       Exercise_Filters: exerciseFilters,
       'Added on': new Date(),
-      Exercise_Location: exerciseLocation,
+      Exercise_Location: location || [],
       Exercise_Id: exercise.Exercise_Id,
-      //   youtubeLink: youTubeLink,
       Files: filesData,
-      Base_Score: score,
+      Base_Score: formik.values.score,
     };
+
     onSubmit(exerciseData);
     onClose();
   };
@@ -150,6 +160,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     const files = event.target.files;
     if (files) {
       const file = files[0];
+      if (!isFileSizeValid(file)) {
+        setFileError('File exceeds 4.5 MB or has an unsupported format.');
+        return;
+      }
+      setFileError(undefined);
       const base64Data = await convertToBase64(file);
       const fileData: FileData = {
         Title: file.name,
@@ -242,6 +257,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     });
   };
   const resetForm = () => {
+    formik.resetForm();
+    setShowValidation(false);
+    setShowFileValidation(false);
+    setFileError(undefined);
     setTitle(exercise.Title || '');
     setDescription(exercise.Description || '');
     setInstruction(exercise.Instruction || '');
@@ -250,14 +269,47 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setCondition(exercise.Exercise_Filters?.Conditions || []);
     setMuscle(exercise.Exercise_Filters?.Muscle || []);
     setEquipment(exercise.Exercise_Filters?.Equipment || []);
-    setLevel(exercise.Exercise_Filters?.Leve || '');
+    setLevel(exercise.Exercise_Filters?.Level || '');
     setLocation(exercise.Exercise_Location || []);
     setFileList(exercise.Files || []);
     setScore(exercise.Base_Score || 0);
     setYouTubeLink('');
   };
   const [uploadProgress, setUploadProgress] = useState(0);
-
+  const [showValidation, setShowValidation] = useState(false);
+  const validationSchema = Yup.object({
+    title: Yup.string().required('This field is required.'),
+    description: Yup.string().required('This field is required.'),
+    instruction: Yup.string().required('This field is required.'),
+    score: Yup.number()
+      .min(1, 'This field is required.')
+      .required('This field is required.'),
+  });
+  const formik = useFormik({
+    initialValues: {
+      title: exercise.Title || '',
+      description: exercise.Description || '',
+      instruction: exercise.Instruction || '',
+      score: exercise.Base_Score || 0,
+    },
+    validationSchema,
+    validateOnMount: true,
+    onSubmit: () => {
+      // Handle submit
+    },
+  });
+  const [fileError, setFileError] = useState<string | undefined>(undefined);
+  const [showFileValidation, setShowFileValidation] = useState(false);
+  const isFileSizeValid = (file: File) => {
+    const maxSize = 4.5 * 1024 * 1024; // 4.5MB in bytes
+    return file.size <= maxSize;
+  };
+  useEffect(() => {
+    setTitle(formik.values.title);
+    setDescription(formik.values.description);
+    setInstruction(formik.values.instruction);
+    setScore(formik.values.score);
+  }, [formik.values]);
   return (
     <MainModal
       isOpen={isOpen}
@@ -266,7 +318,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         onClose();
       }}
     >
-      <div className="w-[1107px] h-[473px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
+      <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
         <div className="w-full border-b border-Gray-50 pb-2 text-sm font-medium">
           {isEdit ? 'Edit Exercise' : 'Add Exercise'}
         </div>
@@ -277,20 +329,39 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               newStyle
               label="Title"
               placeholder="Write the exercise’s title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={formik.values.title}
+              onChange={(e) => {
+                formik.setFieldValue('title', e.target.value);
+                setTitle(e.target.value); // If you still need the local state
+              }}
+              errorMessage={
+                showValidation && formik.errors.title
+                  ? String(formik.errors.title)
+                  : undefined
+              }
+              inValid={showValidation && Boolean(formik.errors.title)}
             />
-            <div className="flex flex-col">
-              <div className="text-Text-Primary text-[12px] font-medium">
-                Description
+            <div className="flex flex-col gap-1">
+              <div className="text-xs font-medium text-Text-Primary">
+                Description <span className="text-Red">*</span>
               </div>
               <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Write the exercise’s description..."
-                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border  placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
-                id=""
-              ></textarea>
+                value={formik.values.description}
+                onChange={(e) =>
+                  formik.setFieldValue('description', e.target.value)
+                }
+                placeholder="Write the exercise's description..."
+                className={`bg-[#FDFDFD] w-full rounded-[16px] mt-1 text-justify border ${
+                  showValidation && formik.errors.description
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2`}
+              />
+              {showValidation && formik.errors.description && (
+                <div className="text-Red text-[10px]">
+                  {String(formik.errors.description)}
+                </div>
+              )}
             </div>
 
             {/* <TextField
@@ -303,21 +374,37 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
             /> */}
             <RangeCard
-              onSubmit={(score) => setScore(score)}
-              value={score}
               question="Base Score"
+              value={formik.values.score}
+              onSubmit={(score) => {
+                formik.setFieldValue('score', score);
+                setScore(score);
+              }}
+              showValidation={showValidation}
+              error={Boolean(formik.errors.score)}
+              required={true}
             />
-            <div className="flex flex-col">
-              <div className="text-Text-Primary text-[12px] font-medium">
-                Instruction
+            <div className="flex flex-col gap-1">
+              <div className="text-xs font-medium text-Text-Primary">
+                Instruction <span className="text-Red">*</span>
               </div>
               <textarea
-                value={instruction}
-                onChange={(e) => setInstruction(e.target.value)}
-                placeholder="Write the exercise’s Instruction..."
-                className="bg-[#FDFDFD] `w-full rounded-[16px] mt-1 text-justify border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2"
-                id=""
-              ></textarea>
+                value={formik.values.instruction}
+                onChange={(e) =>
+                  formik.setFieldValue('instruction', e.target.value)
+                }
+                placeholder="Write the exercise's Instruction..."
+                className={`bg-[#FDFDFD] w-full rounded-[16px] mt-1 text-justify border ${
+                  showValidation && formik.errors.instruction
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2`}
+              />
+              {showValidation && formik.errors.instruction && (
+                <div className="text-Red text-[10px]">
+                  {String(formik.errors.instruction)}
+                </div>
+              )}
             </div>
             {/* <TextField
               newStyle
@@ -398,10 +485,21 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               type="text"
               label="Youtube link"
               placeholder="Enter youtube link ..."
-              onChange={(e) => handleYouTubeLinkChange(e.target.value)}
+              onChange={(e) => {
+                handleYouTubeLinkChange(e.target.value);
+                setFileError(undefined); // Use undefined instead of null
+              }}
+              // errorMessage={showFileValidation ? fileError : undefined}
+              inValid={showFileValidation && Boolean(fileError)}
             />
             <div className="w-full text-center text-xs font-medium">OR</div>
-            <label className="w-full h-[174px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
+            <label
+              className={`w-full h-[174px] rounded-2xl border ${
+                showFileValidation && fileError
+                  ? 'border-Red'
+                  : 'border-Gray-50'
+              } bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer`}
+            >
               <input
                 type="file"
                 accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv"
@@ -412,13 +510,21 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 // onChange={handleFileChange}
               />
               <img src="/icons/upload-test.svg" alt="" />
-              <div className="text-xs text-[#888888] text-center">
-                Supported formats: MP4, MOV, AVI, MKV, WMV
+              <div className="text-[10px] text-[#B0B0B0] text-center">
+                Supported Formats:{' '}
+                <span className="text-Text-Secondary">
+                  {' '}
+                  PNG, SVG, JPG, JPEG
+                </span>{' '}
+                Maximum Size: <span className="text-Text-Secondary">4.5MB</span>
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
                 Upload Video
               </div>
             </label>
+            {showFileValidation && fileError && (
+              <div className="text-Red text-[10px]">{fileError}</div>
+            )}
             <div className="overflow-auto h-[75px]">
               {uploadProgress > 0 && uploadProgress < 100 && (
                 <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
@@ -491,8 +597,21 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           </div>
           <div
             onClick={() => {
-              resetForm();
-              handleSubmit();
+              setShowValidation(true);
+              setShowFileValidation(true);
+
+              // Check if either file is uploaded or YouTube link is provided
+              const hasFile = fileList.length > 0;
+              const hasYouTubeLink = youTubeLink.trim() !== '';
+
+              if (!hasFile && !hasYouTubeLink) {
+                setFileError('At least one of these fields is required.');
+                return;
+              }
+
+              if (formik.isValid) {
+                handleSubmit();
+              }
             }}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
