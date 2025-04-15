@@ -251,9 +251,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <div className="relative z-50 mr-0">
-                              <UnitPopUp unit={active?.unit}></UnitPopUp>
-                            </div>
+                            {active?.unit != '' && (
+                              <div className="relative z-50 mr-0">
+                                <UnitPopUp unit={active?.unit}></UnitPopUp>
+                              </div>
+                            )}
                             <div className="  cursor-pointer ">
                               <div
                                 className={`  flex gap-2 justify-end items-center`}
@@ -284,9 +286,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className="TextStyle-Headline-6 flex justify-between text-nowrap items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
-                            <div className="relative z-50 ">
-                              <UnitPopUp unit={active?.unit}></UnitPopUp>
-                            </div>
+                            {active?.unit != '' && (
+                              <div className="relative z-50 ">
+                                <UnitPopUp unit={active?.unit}></UnitPopUp>
+                              </div>
+                            )}
 
                             <div className="w-[94px] opacity-50 cursor-pointer flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                               <div className="text-Primary-DeepTeal text-[10px]">
