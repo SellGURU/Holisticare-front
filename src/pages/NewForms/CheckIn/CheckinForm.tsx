@@ -171,7 +171,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
                 setShowReposition(true);
                 setEditFormId(id);
               }}
-            ></TableForm>
+            />
           </div>
         </>
       ) : (
@@ -224,7 +224,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             onsave(values);
           }}
           mode={resolveMode()}
-        ></CheckInControllerModal>
+        />
       </MainModal>
 
       <MainModal

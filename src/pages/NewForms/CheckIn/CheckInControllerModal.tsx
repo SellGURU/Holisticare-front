@@ -97,7 +97,7 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
               {resolveFormTitle() + ' Form'}
             </div>
           </div>
-          <div className="w-full h-[1px] bg-Boarder my-3"></div>
+          <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
           <div className="w-full mt-6">
             <TextField
               type="text"
