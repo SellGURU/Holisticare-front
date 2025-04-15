@@ -46,7 +46,7 @@ const HistoricalChart = ({
 
   return (
     <>
-      <div className="w-full h-full relative">
+      <div className="w-full h-full relative pr-4">
         {/* SVG for connecting points across different status categories */}
         <svg
           className="absolute w-full h-full top-0 left-0"
@@ -135,16 +135,16 @@ const HistoricalChart = ({
               </div>
 
               {el.value[1] ? (
-                <div className="absolute right-[-12px] text-[6px] bottom-[-4px] text-center">
+                <div className="absolute min-w-[16px] right-[-20px]  text-[6px] bottom-[-4px] text-left">
                   {el.value[0]}
                 </div>
               ) : (
-                <div className="absolute right-[-15px] w-[25px] text-nowrap overflow-hidden text-[6px] bottom-[10px] rotate-90 text-center">
+                <div className="absolute right-[-18px] w-[25px] text-nowrap overflow-hidden text-[6px] bottom-[10px] rotate-90 text-center">
                   {el.value[0]}
                 </div>
               )}
               {inde == 0 && (
-                <div className="absolute right-[-12px] text-[6px] top-[-4px] text-center">
+                <div className="absolute min-w-[16px] right-[-20px] text-[6px] top-[-4px] text-left">
                   {el.value[1]}
                 </div>
               )}
