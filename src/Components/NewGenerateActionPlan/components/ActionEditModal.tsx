@@ -38,7 +38,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
-  const [value, setValue] = useState(defalts?.Value);
+  const [value, setValue] = useState(defalts?.Value || '');
   const [totalMacros, setTotalMacros] = useState({
     Fats: defalts?.['Total Macros']?.Fats || '',
     Protein: defalts?.['Total Macros']?.Protein || '',
@@ -63,7 +63,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
       ...prevTheme,
-      [key]: value,
+      [key]: value === 0 ? '' : value,
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
@@ -286,7 +286,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setNewNote('');
     setTitle('');
     setDose(null);
-    setValue(null);
+    setValue('');
     setAddData({
       Type: [],
       Terms: [],
@@ -728,7 +728,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       placeholder="Enter Value..."
                       value={value}
                       type="number"
-                      onChange={(e) => setValue(Number(e.target.value))}
+                      onChange={(e) =>
+                        setValue(
+                          e.target.value === '' ? '' : Number(e.target.value),
+                        )
+                      }
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                     {!value && showValidation && (
@@ -774,7 +778,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Carbohydrates"
                           value={totalMacros.Carbs}
                           onChange={(e) =>
-                            updateTotalMacros('Carbs', Number(e.target.value))
+                            updateTotalMacros(
+                              'Carbs',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
@@ -815,7 +824,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Proteins"
                           value={totalMacros.Protein}
                           onChange={(e) =>
-                            updateTotalMacros('Protein', Number(e.target.value))
+                            updateTotalMacros(
+                              'Protein',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
@@ -856,7 +870,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Fats"
                           value={totalMacros.Fats}
                           onChange={(e) =>
-                            updateTotalMacros('Fats', Number(e.target.value))
+                            updateTotalMacros(
+                              'Fats',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
