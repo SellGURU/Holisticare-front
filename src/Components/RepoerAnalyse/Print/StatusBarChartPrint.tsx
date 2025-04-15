@@ -109,9 +109,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                         style={{
                           top: '2px',
                           left:
-                            ((data.values[0] - el.value[0]) /
-                              (el.value[1] - el.value[0])) *
-                              100 +
+                            45 +
                             '%',
                         }}
                       >

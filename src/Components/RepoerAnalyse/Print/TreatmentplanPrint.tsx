@@ -14,17 +14,20 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           borderColor: '#E9EDF5',
         }}
       >
-        <div
-          className="text-sm text-gray-600 absolute top-2"
-          style={{ fontSize: '12px', color: '#383838' }}
-        >
-          {data.title}
-        </div>
-        <div
-          className="my-8  text-sm"
-          style={{ fontSize: '12px', color: '#888888' }}
-        >
-          <span className="text-gray-800">Notes:</span> {data.Notes}
+        <div>
+          <div
+            className="text-sm text-gray-600  top-2"
+            style={{ fontSize: '12px', color: '#383838' }}
+          >
+            {data.title}
+          </div>
+          <div
+            className="my-8  text-sm"
+            style={{ fontSize: '12px', color: '#888888' }}
+          >
+            <span className="text-gray-800">Notes:</span> {data.Notes}
+          </div>
+
         </div>
         <div
           className="text-sm text-gray-600 absolute bottom-2"
