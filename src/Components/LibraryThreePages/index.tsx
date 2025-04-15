@@ -193,6 +193,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         pageType={pageType}
         onSubmit={onSave}
         selectedRow={selectedRow}
+        setSelectedRow={() => setSelectedRow(null)}
       />
       <PreviewModalLibraryTreePages
         previewShowModal={previewShowModal}
