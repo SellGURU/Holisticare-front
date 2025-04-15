@@ -8,6 +8,7 @@ interface ActionCardProps {
   setActions: (data: any) => void;
   index: number;
   checkIn?: boolean;
+  conflicts?: string[];
 }
 const ActionCard: React.FC<ActionCardProps> = ({
   data,
@@ -15,6 +16,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
   setActions,
   index,
   checkIn,
+  conflicts,
 }) => {
   return (
     <>
@@ -22,6 +24,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
         <BioMarkerRowSuggestions
           index={index}
           value={data}
+          isInvalid={conflicts?conflicts.includes(data.Category):false}
           onRemove={onRemove}
           setValues={setActions}
         />
