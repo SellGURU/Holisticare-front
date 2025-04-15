@@ -728,7 +728,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       placeholder="Enter Value..."
                       value={value}
                       type="number"
-                      onChange={(e) => setValue(e.target.value === '' ? '' : Number(e.target.value))}
+                      onChange={(e) =>
+                        setValue(
+                          e.target.value === '' ? '' : Number(e.target.value),
+                        )
+                      }
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                     {!value && showValidation && (
@@ -774,7 +778,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Carbohydrates"
                           value={totalMacros.Carbs}
                           onChange={(e) =>
-                            updateTotalMacros('Carbs', e.target.value === '' ? '' : Number(e.target.value))
+                            updateTotalMacros(
+                              'Carbs',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
@@ -815,7 +824,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Proteins"
                           value={totalMacros.Protein}
                           onChange={(e) =>
-                            updateTotalMacros('Protein', e.target.value === '' ? '' : Number(e.target.value))
+                            updateTotalMacros(
+                              'Protein',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
@@ -856,7 +870,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                           placeholder="Fats"
                           value={totalMacros.Fats}
                           onChange={(e) =>
-                            updateTotalMacros('Fats', e.target.value === '' ? '' : Number(e.target.value))
+                            updateTotalMacros(
+                              'Fats',
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
                           }
                           onKeyDown={(e) => {
                             // Allow navigation keys
