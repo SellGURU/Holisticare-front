@@ -17,6 +17,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [sectionList, setSectionList] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
+
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -34,6 +36,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   };
   const nextStep = () => {
     if (step === 0) {
+      setShowValidation(true);
       // Validate required fields before proceeding
       if (!isFormValid) {
         // Show validation errors
@@ -179,7 +182,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         <div className="w-full h-[1px] bg-Boarder my-3"></div>
         <div className="min-h-[300px]">
           {step === 0 ? (
-            <InformationStep addData={addData} updateAddData={updateAddData} />
+            <InformationStep   showValidation={showValidation}
+            onValidationChange={setIsFormValid} addData={addData} updateAddData={updateAddData} />
           ) : (
             <ExersiceStep
               sectionList={sectionList}
@@ -210,16 +214,22 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               Cancel
             </div>
             <div
+              onClick={nextStep}
+              className={`text-Primary-DeepTeal text-[14px] cursor-pointer font-medium`}
+            >
+              {step === 0 ? 'Next' : editid ? 'Update' : 'Save'}
+            </div>
+            {/* <div
               onClick={step === 0 && !isFormValid ? undefined : nextStep}
               className={`text-Primary-DeepTeal text-[14px] ${
-                (step === 0 && !isFormValid) ||
+                (step === 0) ||
                 (step === 1 && !isExerciseStepValid)
                   ? 'opacity-50 cursor-not-allowed pointer-events-none'
                   : 'cursor-pointer font-medium'
               }`}
             >
               {step === 0 ? 'Next' : editid ? 'Update' : 'Save'}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -124,7 +124,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
       console.error('Failed to copy text: ', err);
     }
   };
-const [showAsignList, setshowAsignList] = useState(false)
+  const [showAsignList, setshowAsignList] = useState(false);
   return (
     <>
       <MainModal

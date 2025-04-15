@@ -37,11 +37,15 @@ interface InformationStepProps {
       | 'location',
     value: any,
   ) => void;
+  showValidation: boolean; // Add this prop
+  onValidationChange: (isValid: boolean) => void; // Add this prop
 }
 
 const InformationStep: FC<InformationStepProps> = ({
   addData,
   updateAddData,
+  showValidation,
+  onValidationChange,
 }) => {
   const [ConditionsOptions, setConditionsOptions] = useState([]);
   const [EquipmentOptions, setEquipmentOptions] = useState([]);
@@ -52,21 +56,31 @@ const InformationStep: FC<InformationStepProps> = ({
 
   // Formik validation schema
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
-    instruction: Yup.string().required('Instruction is required'),
+    title: Yup.string().required('This field is required.'),
+    description: Yup.string().required('This field is required.'),
+    instruction: Yup.string().required('This field is required.'),
+    score: Yup.number()
+      .min(1, 'This field is required.')
+      .required('This field is required.'),
   });
 
-  // Initialize Formik
+  // Update the Formik initialization
   const formik = useFormik({
     initialValues: {
       title: addData.title,
+      description: addData.description,
       instruction: addData.instruction,
+      score: addData.score,
     },
     validationSchema,
+    validateOnMount: true,
     enableReinitialize: true,
-    onSubmit: () => {}, // This is handled by the parent component
+    onSubmit: () => {}, // Handled by parent
   });
-
+ 
+  useEffect(() => {
+    onValidationChange(formik.isValid);
+  }, [formik.isValid, onValidationChange]);
   // Update parent component when form values change
   useEffect(() => {
     updateAddData('title', formik.values.title);
@@ -99,7 +113,7 @@ const InformationStep: FC<InformationStepProps> = ({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <div className="text-xs font-medium text-Text-Primary">
-              Title <span className="text-red-500">*</span>
+              Title <span className="text-Red">*</span>
             </div>
             <TextField
               type="text"
@@ -109,56 +123,71 @@ const InformationStep: FC<InformationStepProps> = ({
               onChange={(e) => formik.setFieldValue('title', e.target.value)}
               onBlur={formik.handleBlur}
               className="w-[360px]"
-              errorMessage={
-                formik.touched.title && formik.errors.title
-                  ? formik.errors.title
-                  : undefined
-              }
-              inValid={formik.touched.title && Boolean(formik.errors.title)}
-            />
+              errorMessage={ showValidation ?'This field is required.' : undefined}
+              inValid={showValidation && Boolean(formik.errors.title)}
+              />
           </div>
+
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Description
+              Description <span className="text-red-500">*</span>
             </div>
             <textarea
               placeholder="Write the activity's description..."
-              value={addData.description}
-              onChange={(e) => updateAddData('description', e.target.value)}
-              className="w-full h-[62px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none"
+              value={formik.values.description}
+              onChange={(e) => {
+                formik.setFieldValue('description', e.target.value);
+                updateAddData('description', e.target.value);
+              }}
+              
+              name="description"
+              className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
+                showValidation && formik.errors.description ? 'border-Red' : 'border-Gray-50'
+              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
+                {showValidation && formik.errors.description && (
+            <div className="text-Red text-[10px]">{formik.errors.description}</div>
+          )}
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score
+              Base Score <span className="text-Red">*</span>
             </div>
             <RangeCardLibraryActivity
-              value={addData.score}
-              changeValue={updateAddData}
-            />
+            value={formik.values.score}
+            changeValue={(key, value) => {
+              formik.setFieldValue('score', value);
+              updateAddData(key, value);
+            }}
+            showValidation={showValidation}
+            error={Boolean(formik.errors.score)}
+            required={true}
+          />
+            {/* {formik.touched.score && formik.errors.score && (
+              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
+            )} */}
           </div>
+
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Instruction <span className="text-red-500">*</span>
+              Instruction <span className="text-Red">*</span>
             </div>
             <textarea
               placeholder="Write the activity's Instruction..."
               value={formik.values.instruction}
-              onChange={(e) =>
-                formik.setFieldValue('instruction', e.target.value)
-              }
-              onBlur={formik.handleBlur}
+              onChange={(e) => {
+                formik.setFieldValue('instruction', e.target.value);
+                updateAddData('instruction', e.target.value);
+              }}
+              
+              name="instruction"
               className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
-                formik.touched.instruction && formik.errors.instruction
-                  ? 'border-red-500'
-                  : 'border-Gray-50'
+                showValidation && formik.errors.instruction ? 'border-Red' : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-            {formik.touched.instruction && formik.errors.instruction && (
-              <div className="text-red-500 text-xs mt-1">
-                {formik.errors.instruction}
-              </div>
-            )}
+        {showValidation && formik.errors.instruction && (
+            <div className="text-Red text-[10px]">{formik.errors.instruction}</div>
+          )}
           </div>
         </div>
         <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
