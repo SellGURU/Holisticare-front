@@ -21,6 +21,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   const [step, setStep] = useState(1);
   const [registered] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   const onSave = (values: any) => {
     setLoading(true);
     Application.inviteStaffMember(values).then(() => {
@@ -45,11 +46,16 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               </div>
               <input
                 placeholder="Write the full name ..."
-                className={`w-full h-[28px] border border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                className={`w-full h-[28px] border ${showValidation && fullName.length == 0 ? 'border-red-500' : 'border-Gray-50'} border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
+              {fullName.length == 0 && showValidation && (
+                <div className="text-[10px] mt-1 ml-2 text-red-500">
+                  This field is required.
+                </div>
+              )}
             </div>
             <div className="w-full flex items-center gap-2">
               <div className="flex flex-col">
@@ -63,8 +69,17 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {!email.includes('@') && email.length > 0 ? (
+                  <div className="text-[10px] mt-1 ml-2 text-red-500">
+                    This field is required.
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
-              <div className="flex flex-col w-full">
+              <div
+                className={`flex flex-col w-full ${!email.includes('@') && role.length > 0 ? 'mb-[17px]' : ''}`}
+              >
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   Role
                 </div>
@@ -104,10 +119,12 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 Cancel
               </div>
               <div
-                className={`${email.includes('@') && role ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
+                className={`${email.includes('@') && role && fullName ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
                 onClick={() => {
-                  if (email.includes('@') && role) {
+                  setShowValidation(true);
+                  if (email.includes('@') && role && fullName) {
                     setStep(2);
+                    setShowValidation(false);
                   }
                 }}
               >
