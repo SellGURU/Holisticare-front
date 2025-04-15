@@ -179,11 +179,11 @@ const Stadio: FC<StadioProps> = ({
     return 'More than one Diet task exists!';
   };
   const checkHaveConflicts = () => {
-    const conflicts = []
+    const conflicts = [];
     if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
       conflicts.push('Activity');
     }
-    if(actions.category.filter((el) => el.Category == 'Diet').length > 1){
+    if (actions.category.filter((el) => el.Category == 'Diet').length > 1) {
       conflicts.push('Diet');
     }
     return conflicts;

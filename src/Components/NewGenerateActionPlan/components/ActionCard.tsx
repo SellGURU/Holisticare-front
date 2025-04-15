@@ -24,7 +24,7 @@ const ActionCard: React.FC<ActionCardProps> = ({
         <BioMarkerRowSuggestions
           index={index}
           value={data}
-          isInvalid={conflicts?conflicts.includes(data.Category):false}
+          isInvalid={conflicts ? conflicts.includes(data.Category) : false}
           onRemove={onRemove}
           setValues={setActions}
         />
