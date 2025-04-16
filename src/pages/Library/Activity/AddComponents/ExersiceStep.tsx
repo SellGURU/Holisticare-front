@@ -38,9 +38,9 @@ interface ExerciseGroup {
 interface ExersiceStepProps {
   onChange: (data: Array<ExerciseGroup>) => void;
   sectionList: Array<ExerciseGroup>;
-  showValidation: boolean;
-  setShowValidation: (val: any) => void;
-  onValidationChange: (isValid: boolean) => void;
+  showValidation?: boolean;
+  setShowValidation?: (val: any) => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 const ExersiceStep: React.FC<ExersiceStepProps> = ({
   onChange,
@@ -59,7 +59,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       (section: any) => section.Sets === '',
     );
     const isValid = exercises.length > 0 && emptySetSections.length === 0;
-    onValidationChange(isValid);
+    if (onValidationChange) {
+      onValidationChange(isValid);
+    }
   }, [exercises, onValidationChange]);
   useEffect(() => {
     Application.getExercisesList({}).then((res) => {
@@ -81,7 +83,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         },
       ],
     };
-    setShowValidation(false);
+    if (setShowValidation) {
+      setShowValidation(false);
+    }
+
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
   };
 
