@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { MainModal } from '../../../../Components';
 import ExerciseModal from './ExcersieModal';
 import PreviewExerciseModal from './PreviewModal';
+import { Tooltip } from 'react-tooltip';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
@@ -64,9 +65,29 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             ? `${exercise.Title.substring(0, 30)}...`
             : exercise.Title}
         </td>
-        <td className="py-3 text-xs text-[#888888] w-[300px] text-center ">
-          {exercise.Instruction}
+        <td
+          style={{
+            textWrap: 'nowrap',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+          data-tooltip-id={ index+'Instruction'}
+          className="py-3 text-xs text-[#888888] w-[300px] text-center "
+        >
+          {exercise.Instruction.length > 47
+            ? exercise.Instruction.substring(0, 47) + '...'
+            : exercise.Instruction}
         </td>
+        {exercise.Instruction.length > 47 && (
+          <Tooltip
+            id={index+"Instruction"}
+            place="top"
+            className="!bg-white !w-[276px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          >
+            {exercise.Instruction}
+          </Tooltip>
+        )}
+
         <td
           onClick={() => {
             setViewModal(true);

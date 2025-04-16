@@ -443,14 +443,7 @@ input[type='number'] {
   font-size: 14px; /* Adjust size of the bullet if needed */
 }
 /* Add this to your global CSS */
-html {
-  scrollbar-gutter: stable;
-}
 
-/* OR */
-body {
-  padding-right: calc(100vw - 100%);
-}
 /* Custom slider thumb */
 input[type='range']::-webkit-slider-thumb {
   appearance: none;
