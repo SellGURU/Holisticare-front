@@ -39,7 +39,7 @@ interface ExersiceStepProps {
   onChange: (data: Array<ExerciseGroup>) => void;
   sectionList: Array<ExerciseGroup>;
   showValidation: boolean;
-  setShowValidation: (val:any)=>void;
+  setShowValidation: (val: any) => void;
   onValidationChange: (isValid: boolean) => void;
 }
 const ExersiceStep: React.FC<ExersiceStepProps> = ({
@@ -47,7 +47,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   sectionList,
   onValidationChange,
   showValidation,
-  setShowValidation
+  setShowValidation,
 }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>(sectionList);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
@@ -55,7 +55,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   useEffect(() => {
-    const emptySetSections = exercises.filter((section: any) => section.Sets === '');
+    const emptySetSections = exercises.filter(
+      (section: any) => section.Sets === '',
+    );
     const isValid = exercises.length > 0 && emptySetSections.length === 0;
     onValidationChange(isValid);
   }, [exercises, onValidationChange]);
@@ -79,8 +81,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         },
       ],
     };
+setShowValidation(false)
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
-    setShowValidation(false)
+
+  
   };
 
   const handleExerciseChange = (
@@ -299,7 +303,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                           />
                         ) : (
                           <ExerciseItem
-                          showValidation={showValidation}
+                            showValidation={showValidation}
                             exesiseIndex={0}
                             sets={exercise.Sets}
                             onDelete={() => {
@@ -324,7 +328,6 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                             exercise={exercise.Exercises[0]}
                             onChange={handleExerciseChange}
                             toSuperSet={() => handleSuperSet(index, exercise)}
-
                           />
                         )}
                       </>

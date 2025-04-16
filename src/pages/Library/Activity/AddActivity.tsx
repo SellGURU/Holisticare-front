@@ -45,7 +45,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       setStep(step + 1);
       setShowValidation(false);
     } else {
-      setShowExerciseValidation(true); 
+      setShowExerciseValidation(true);
       // Validate that there's at least one section before saving
       if (!isExerciseStepValid) {
         // Show validation error
@@ -71,8 +71,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Act_Id: editid,
         }).then(() => {
           onSave();
-          setShowExerciseValidation(false)
-          setShowValidation(false)
+          setShowExerciseValidation(false);
+          setShowValidation(false);
         });
       } else {
         Application.addActivity({
@@ -92,8 +92,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Location: addData.location,
         }).then(() => {
           onSave();
-          setShowExerciseValidation(false)
-          setShowValidation(false)
+          setShowExerciseValidation(false);
+          setShowValidation(false);
         });
       }
     }
@@ -101,8 +101,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const backStep = () => {
     if (step === 1) {
       setStep(step - 1);
-      setShowExerciseValidation(false)
-      setShowValidation(false)
+      setShowExerciseValidation(false);
+      setShowValidation(false);
     }
   };
   useEffect(() => {
@@ -198,10 +198,10 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             />
           ) : (
             <ExersiceStep
-            showValidation={showExerciseValidation}
-setShowValidation={(val:any)=>{
-  setShowExerciseValidation(val)
-}}
+              showValidation={showExerciseValidation}
+              setShowValidation={(val: any) => {
+                setShowExerciseValidation(val);
+              }}
               sectionList={sectionList}
               onChange={(values: any) => {
                 setSectionList(values);
