@@ -360,7 +360,7 @@ const CategoryOrder: React.FC<CategoryOrderProps> = ({
                   })}
                 </div>
               </div> */}
-              <div className="bg-white rounded-[16px]  shadow-100 py-6 px-2 md:px-6 lg:px-6  mt-2  border border-Gray-25  ">
+              <div className="bg-white w-full max-w-[your-width] mx-auto rounded-[16px]  shadow-100 py-6 px-2 md:px-6 lg:px-6  mt-2  border border-Gray-25  ">
                 <div className="flex w-full">
                   <div className="w-full flex justify-center">
                     <Toggle
