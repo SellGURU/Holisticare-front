@@ -152,15 +152,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
   const renderBiomarkerGroups = (el: any) => {
     const biomarkers = resolveSubCategories().filter(
       (val) => val.subcategory == el.subcategory,
-    )[0].biomarkers;
+    )[0]?.biomarkers;
 
-    const totalBiomarkers = biomarkers.length;
+    const totalBiomarkers = biomarkers?.length;
     const groups = [];
 
     // First group (0-3)
     groups.push(
       <DetiledAnalyse
-        refrences={biomarkers.slice(0, 3)}
+        refrences={biomarkers?.slice(0, 3)}
         data={el}
       ></DetiledAnalyse>,
     );
@@ -825,7 +825,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
 
           <div className="relative" style={{ zIndex: 60 }}>
-            {resolveCategories().map((el: any) => {
+            {resolveCategories()?.map((el: any) => {
               return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
             })}
           </div>
