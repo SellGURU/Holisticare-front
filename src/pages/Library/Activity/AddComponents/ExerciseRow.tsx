@@ -66,8 +66,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             : exercise.Title}
         </td>
         <td
-        
-          data-tooltip-id={'Instruction'+index}
+          data-tooltip-id={'Instruction' + index}
           className="py-3 text-xs text-[#888888] w-[300px] text-center "
         >
           <div className=" text-ellipsis select-none">
@@ -77,7 +76,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
           </div>
           {exercise.Instruction.length > 47 && (
             <Tooltip
-              id={`Instruction`+index}
+              id={`Instruction` + index}
               place="top"
               className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
@@ -89,8 +88,6 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             </Tooltip>
           )}
         </td>
-       
-       
 
         <td
           onClick={() => {
