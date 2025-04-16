@@ -24,17 +24,6 @@ interface PrintReportProps {
 }
 
 // Header component that will only appear from page 2 onwards
-// const PrintHeader = () => {
-//   return (
-//     <div className="print-header z-50 ">
-//       <div className="flex justify-between items-center px-4 py-2">
-//         <img src="/icons/poweredBy.svg" alt="HolistiCare" style={{ height: '30px' }} />
-//         <div className="text-sm font-medium" style={{ color: '#005F73' }}>Comprehensive Health Plan</div>
-//       </div>
-//       <div className="w-full" style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}></div>
-//     </div>
-//   );
-// };
 
 // // Footer component that will only appear from page 2 onwards
 // const PrintFooter = () => {
@@ -80,6 +69,31 @@ const PrintReport: React.FC<PrintReportProps> = ({
   useEffect(() => {
     console.log(helthPlan);
   }, [helthPlan]);
+  const PrintHeader = () => {
+    return (
+      <div className="print-header z-50 ">
+        <div className="flex justify-between items-center px-4 py-2">
+          <div>
+            <div style={{ color: '#383838', fontSize: '12px' }}>
+              {usrInfoData?.name}
+            </div>
+            <div style={{ color: '#888888', fontSize: '12px' }}>
+              Jan 19, 2025
+            </div>
+          </div>
+          <div
+            style={{ color: '#005F73', fontSize: '14px', fontWeight: '500' }}
+          >
+            Comprehensive Health Plan
+          </div>
+        </div>
+        <div
+          className="w-full"
+          style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}
+        ></div>
+      </div>
+    );
+  };
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -105,6 +119,41 @@ const PrintReport: React.FC<PrintReportProps> = ({
   subscribe('downloadCalled', (data) => {
     setPrintOptions(data.detail);
   });
+
+  // Helper function to render biomarker groups
+  const renderBiomarkerGroups = (el: any) => {
+    const biomarkers = resolveSubCategories().filter(
+      (val) => val.subcategory == el.subcategory,
+    )[0].biomarkers;
+
+    const totalBiomarkers = biomarkers.length;
+    const groups = [];
+
+    // First group (0-3)
+    groups.push(
+      <DetiledAnalyse
+        refrences={biomarkers.slice(0, 3)}
+        data={el}
+      ></DetiledAnalyse>,
+    );
+
+    // Additional groups (3-7, 7-11, 11-15)
+    for (let i = 3; i < totalBiomarkers; i += 4) {
+      if (i < totalBiomarkers) {
+        groups.push(
+          <div className="py-6" key={`group-${i}`}>
+            <DetiledAnalyse
+              isMore={true}
+              refrences={biomarkers.slice(i, i + 4)}
+              data={el}
+            ></DetiledAnalyse>
+          </div>,
+        );
+      }
+    }
+
+    return groups;
+  };
 
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
@@ -345,7 +394,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             padding: '24px 24px',
           }}
         >
-          {/* <PrintHeader /> */}
+          <PrintHeader />
           <div
             className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
@@ -477,6 +526,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
+            pageBreakAfter: 'always',
           }}
         >
           {/* <PrintHeader /> */}
@@ -498,10 +548,50 @@ const PrintReport: React.FC<PrintReportProps> = ({
           <div className="w-full mt-4 grid gap-8 grid-cols-1">
             {resolveBioMarkers()
               .filter((val) => val.outofref == true)
+              .slice(0, 6)
               .map((el) => {
                 return <BiomarkersPrint data={el}></BiomarkersPrint>;
               })}
           </div>
+
+          {/* <PrintFooter /> */}
+        </div>
+      )}
+
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked &&
+        resolveBioMarkers().filter((val) => val.outofref == true).length >
+          6 && (
+          <div
+            className=" "
+            style={{
+              backgroundColor: '#E9F0F2',
+              minHeight: '100vh',
+              padding: '24px 24px',
+              pageBreakAfter: 'always',
+            }}
+          >
+            <div className="w-full mt-4 grid gap-8 grid-cols-1">
+              {resolveBioMarkers()
+                .filter((val) => val.outofref == true)
+                .slice(6, 12)
+                .map((el) => {
+                  return <BiomarkersPrint data={el}></BiomarkersPrint>;
+                })}
+            </div>
+          </div>
+        )}
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked && (
+        <div
+          className=" "
+          style={{
+            backgroundColor: '#E9F0F2',
+            minHeight: '100vh',
+            padding: '24px 24px',
+            pageBreakAfter: 'always',
+          }}
+        >
           <div className="w-full mb-3 mt-4 flex items-center justify-between">
             <div
               className="text-lg"
@@ -649,7 +739,6 @@ const PrintReport: React.FC<PrintReportProps> = ({
               );
             })}
           </div>
-          {/* <PrintFooter /> */}
         </div>
       )}
 
@@ -681,20 +770,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="">
             {resolveCategories().map((el: any) => {
-              return (
-                <div className="py-6">
-                  <DetiledAnalyse
-                    refrences={
-                      resolveSubCategories().filter(
-                        (val) => val.subcategory == el.subcategory,
-                      )[0]
-                    }
-                    data={el}
-                  ></DetiledAnalyse>
-                </div>
-              );
+              return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
             })}
           </div>
           {/* <PrintFooter /> */}
@@ -712,7 +790,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         >
           {/* <PrintHeader /> */}
           <div
-            className="flex justify-between mb-3 items-center"
+            className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
           >
             <div
@@ -764,7 +842,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {TreatMentPlanData.map((el) => {
               return (
                 <>
-                  <div className="no-split">
+                  <div
+                    className="no-split mt-14"
+                    style={{ pageBreakAfter: 'always' }}
+                  >
                     <div
                       className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
                       style={{
@@ -784,14 +865,34 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       {el.category}
                     </div>
 
-                    <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none">
-                      {el.data.map((el2: any) => {
+                    <div
+                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      {el.data.slice(0, 6).map((el2: any) => {
                         return (
                           <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
                         );
                       })}
                     </div>
                   </div>
+                  {el.data.length > 6 && (
+                    <div
+                      className="no-split mt-14"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      <div
+                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                        style={{ pageBreakAfter: 'always' }}
+                      >
+                        {el.data.slice(6, 12).map((el2: any) => {
+                          return (
+                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </>
               );
             })}
