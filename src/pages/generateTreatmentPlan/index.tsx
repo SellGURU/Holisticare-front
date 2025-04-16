@@ -548,7 +548,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
                   >
                     {el}
                   </div>
-                  <div className="bg-backgroundColor-Card p-4 h-[180px] border text-[12px]  text-Text-Primary border-gray-50">
+                  <div className="bg-backgroundColor-Card p-4 h-[220px] border text-[12px]  text-Text-Primary border-gray-50">
                     {clientGools[el]}
                   </div>
                 </>
@@ -646,7 +646,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
             Needs Focus Biomarkers
           </div>
           {treatmentPlanData && (
-            <div className="bg-backgroundColor-Card  pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
+            <div className="bg-backgroundColor-Card  p-0 border text-[12px]  text-Text-Primary border-gray-50">
               <TextBoxAi
                 isUpchange={isforceReload}
                 isNeedFocus

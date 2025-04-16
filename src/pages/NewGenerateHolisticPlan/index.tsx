@@ -796,7 +796,7 @@ const NewGenerateHolisticPlan = () => {
               Needs Focus Biomarkers
             </div>
             {treatmentPlanData && (
-              <div className="bg-backgroundColor-Card p-4 pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
+              <div className="bg-backgroundColor-Card pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
                 <TextBoxAi
                   // isUpchange={isforceReload}
                   isNeedFocus
