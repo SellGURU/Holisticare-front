@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { ActionPlanCard } from './ActionPlanCard';
 import { useNavigate, useParams } from 'react-router-dom';
 import CalenderComponent from '../CalendarComponent/CalendarComponent';
+import { ActionPlanCard } from './ActionPlanCard';
 // import CalendarData from "../../api/--moch--/data/new/Calender.json";
 import Application from '../../api/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
-import SemiCircularProgressBar from '../NewGenerateActionPlan/components/SemiCircularProgressBar';
-import CircularProgressBar from '../NewGenerateActionPlan/components/CircularProgressBar';
+import ProgressCalenderView from './ProgressCalendarView';
 
 // type CardData = {
 //   cardID: number;
@@ -69,11 +68,12 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   const [activeAction, setActiveAction] = useState(
     CardData.length > 0 ? CardData[0] : null,
   );
+  console.log('activeAction => ', activeAction);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log(activeAction);
-  });
+  // useEffect(() => {
+  //   console.log(activeAction);
+  // });
   // const [isCalenDarGenerated,setISCalenderGenerated] = useState(false);
   useEffect(() => {
     if (!isShare) {
@@ -113,9 +113,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                 <>
                   {' '}
                   {calenderDataUper.length > 0 && (
-                    <CalenderComponent
-                      data={calenderDataUper}
-                    ></CalenderComponent>
+                    <CalenderComponent data={calenderDataUper} />
                   )}
                 </>
               )}
@@ -171,68 +169,12 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                           ></MobileCalendarComponent>
                         ) : (
                           <>
-                            <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
-                              <div className="flex flex-col h-full justify-between">
-                                <div className="font-medium text-sm text-Text-Primary">
-                                  Progress
-                                </div>
-                                <div className="text-[10px] text-Text-Primary">
-                                  Monitor your clients' wellness progress with
-                                  clear insights and visual updates. Track key
-                                  health metrics to keep them motivated and
-                                  support informed, healthy choices.
-                                </div>
-                              </div>
-                              <div className="flex h-full gap-8">
-                                <div className="h-full w-[1px] bg-Gray-50"></div>
-                                <div className="flex flex-col items-center">
-                                  <div className="font-medium text-sm text-Text-Primary -mb-3">
-                                    Total
-                                  </div>
-                                  <SemiCircularProgressBar
-                                    percentage={activeAction.progress}
-                                  />
-                                </div>
-                                <div className="h-full w-[1px] bg-Gray-50"></div>
-                              </div>
-                              <div className="flex h-full gap-8">
-                                <div className="flex flex-col items-center">
-                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
-                                    Diet
-                                  </div>
-                                  <CircularProgressBar
-                                    percentage={activeAction.score.diet}
-                                  />
-                                </div>
-                                <div className="flex flex-col items-center">
-                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
-                                    Activity
-                                  </div>
-                                  <CircularProgressBar
-                                    percentage={activeAction.score.activity}
-                                  />
-                                </div>
-                                <div className="flex flex-col items-center">
-                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
-                                    Supplement
-                                  </div>
-                                  <CircularProgressBar
-                                    percentage={activeAction.score.supplement}
-                                  />
-                                </div>
-                                <div className="flex flex-col items-center">
-                                  <div className="font-medium text-xs text-Text-Primary -mb-2">
-                                    Lifestyle
-                                  </div>
-                                  <CircularProgressBar
-                                    percentage={activeAction.score.lifestyle}
-                                  />
-                                </div>
-                              </div>
-                            </div>
+                            <ProgressCalenderView activeAction={activeAction} />
                             <CalenderComponent
                               data={activeAction.calendar}
-                            ></CalenderComponent>
+                              overview={activeAction.overview}
+                              isTwoView={true}
+                            />
                           </>
                         )}
                       </>
