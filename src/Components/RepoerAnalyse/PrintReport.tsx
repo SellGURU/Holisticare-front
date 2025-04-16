@@ -963,7 +963,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         })}
                       </div>
                     </div>
-                  )}                  
+                  )}
                 </>
               );
             })}
