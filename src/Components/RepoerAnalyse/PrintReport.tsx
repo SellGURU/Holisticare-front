@@ -84,7 +84,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {usrInfoData?.name}
             </div>
             <div style={{ color: '#888888', fontSize: '12px' }}>
-              Jan 19, 2025
+              {new Date().toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </div>
           </div>
           <div
@@ -97,6 +101,24 @@ const PrintReport: React.FC<PrintReportProps> = ({
           className="w-full relative z-50"
           style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}
         ></div>
+      </div>
+    );
+  };
+  const PrintFooter = () => {
+    return (
+      <div className="print-footer invisible z-50">
+        <div
+          className="w-full"
+          style={{ height: '1px', backgroundColor: '#005F73', opacity: 0.3 }}
+        ></div>
+        <div className="flex justify-between items-center px-4 py-2">
+          <div className="text-xs invisible" style={{ color: '#383838' }}>
+            © HolistiCare
+          </div>
+          <div className="text-xs" style={{ color: '#383838' }}>
+            <span className="pageNumber">1</span>
+          </div>
+        </div>
       </div>
     );
   };
@@ -168,21 +190,18 @@ const PrintReport: React.FC<PrintReportProps> = ({
           __html: `
           @media print {
             
-            .print-header, .print-footer {
+            .print-header{
               display: none;
             }
             
             /* Hide header/footer on first page */
             body > div > div:first-of-type .print-header,
-            body > div > div:first-of-type .print-footer,
-            body > div > div:nth-of-type(2) .print-header,
-            body > div > div:nth-of-type(2) .print-footer {
+            body > div > div:nth-of-type(2) .print-header {
               display: none !important;
             }
             
             /* Show header/footer on all other pages */
-            body > div > div:not(:first-of-type):not(:nth-of-type(2)) .print-header,
-            body > div > div:not(:first-of-type):not(:nth-of-type(2)) .print-footer {
+            body > div > div:not(:first-of-type):not(:nth-of-type(2)) .print-header {
               display: block !important;
               position: fixed;
               width: 100%;
@@ -202,6 +221,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             .print-footer {
               bottom: 0;
               left:0;
+              position:'absolute !important'
             }
             
             /* Add padding to content to accommodate header/footer */
@@ -536,7 +556,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
             })}
           </div>
-          {/* <PrintFooter /> */}
+          <PrintFooter />
         </div>
       )}
 
