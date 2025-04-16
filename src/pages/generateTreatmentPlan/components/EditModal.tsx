@@ -79,7 +79,7 @@ const EditModal: React.FC<EditModalProps> = ({
     validateOnMount: false,
     validateOnChange: true,
     validateOnBlur: false,
-    
+
     onSubmit: (values) => {
       if (formik.isValid) {
         onSubmit({
@@ -99,11 +99,11 @@ const EditModal: React.FC<EditModalProps> = ({
   useEffect(() => {
     Application.HolisticPlanCategories({}).then((res) => {
       setGroups(res.data);
-      
+
       // If there's a default category, set the initial dose value
       if (defalts?.Category) {
         const selectedGroupData = res.data.find(
-          (g: any) => Object.keys(g)[0] === defalts.Category
+          (g: any) => Object.keys(g)[0] === defalts.Category,
         );
         if (selectedGroupData) {
           setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
@@ -111,12 +111,12 @@ const EditModal: React.FC<EditModalProps> = ({
       }
     });
   }, []);
-  
+
   useEffect(() => {
     const category = formik.values.Category;
     if (category && groups.length > 0) {
       const selectedGroupData = groups.find(
-        (g: any) => Object.keys(g)[0] === category
+        (g: any) => Object.keys(g)[0] === category,
       );
       if (selectedGroupData) {
         setSelectedGroupDose(selectedGroupData[category].Dose);
@@ -199,7 +199,6 @@ const EditModal: React.FC<EditModalProps> = ({
   // "night"
   // const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
- 
   // const selectedGroupDose = selectedGroup
   //   ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
   //       .Dose
@@ -209,7 +208,7 @@ const EditModal: React.FC<EditModalProps> = ({
     setShowValidation(true);
     formik.handleSubmit();
   };
-console.log(selectedGroupDose);
+  console.log(selectedGroupDose);
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
