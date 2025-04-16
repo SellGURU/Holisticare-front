@@ -165,7 +165,7 @@ const GenerateNewPlan: React.FC<GenerateNewPlanProps> = ({ isActionPlan }) => {
         onConfirm={handleConfirm}
       />
       {isFinalLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           {' '}
           <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
