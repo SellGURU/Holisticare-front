@@ -135,6 +135,9 @@ const MessagesChatBox = () => {
     };
     reader.readAsDataURL(file);
   };
+  const handleDeleteImage = (indexToDelete: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== indexToDelete));
+  };
   return (
     <>
       <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
@@ -276,6 +279,7 @@ const MessagesChatBox = () => {
               <div className="px-2">
                 <InputMentions
                   onUpload={handleUpload}
+                  handleDeleteImage={handleDeleteImage}
                   changeBenchMarks={(val: Array<string>) => {
                     setSelectedBenchMarks(val);
                   }}
