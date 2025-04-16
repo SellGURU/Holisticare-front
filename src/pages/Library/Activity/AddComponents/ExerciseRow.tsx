@@ -66,27 +66,35 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             : exercise.Title}
         </td>
         <td
-          style={{
-            textWrap: 'nowrap',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-          data-tooltip-id={index + 'Instruction'}
-          className="py-3 text-xs text-[#888888] w-[300px] text-center "
-        >
-          {exercise.Instruction.length > 47
-            ? exercise.Instruction.substring(0, 47) + '...'
-            : exercise.Instruction}
-        </td>
-        {exercise.Instruction.length > 47 && (
-          <Tooltip
-            id={index + 'Instruction'}
-            place="top"
-            className="!bg-white !w-[276px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-          >
-            {exercise.Instruction}
-          </Tooltip>
-        )}
+    style={{
+      textWrap: 'nowrap',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      position: 'relative' // Add this
+    }}
+    data-tooltip-id={`instruction-${index}`} // Changed tooltip ID format
+    className="py-3 text-xs text-[#888888] w-[300px] text-center"
+  >
+    <div className="overflow-hidden text-ellipsis select-none">
+      {exercise.Instruction.length > 47
+        ? exercise.Instruction.substring(0, 47) + '...'
+        : exercise.Instruction}
+    </div>
+    {exercise.Instruction.length > 47 && (
+      <Tooltip
+        id={`instruction-${index}`}
+        place="top"
+        className="!bg-white !w-[276px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+        style={{
+          zIndex: 9999,
+          
+          pointerEvents: 'none'
+        }}
+      >
+        {exercise.Instruction}
+      </Tooltip>
+    )}
+  </td>
 
         <td
           onClick={() => {
