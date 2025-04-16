@@ -524,7 +524,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Client Condition Insights
             </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-5 py-2 flex flex-col gap-2">
               {clientSummary}
             </div>
           </div>
