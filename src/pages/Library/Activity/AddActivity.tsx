@@ -18,7 +18,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
-
+  const [showExerciseValidation, setShowExerciseValidation] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -43,7 +43,9 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         return;
       }
       setStep(step + 1);
+      setShowValidation(false);
     } else {
+      setShowExerciseValidation(true);
       // Validate that there's at least one section before saving
       if (!isExerciseStepValid) {
         // Show validation error
@@ -69,6 +71,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Act_Id: editid,
         }).then(() => {
           onSave();
+          setShowExerciseValidation(false);
+          setShowValidation(false);
         });
       } else {
         Application.addActivity({
@@ -88,6 +92,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           Activity_Location: addData.location,
         }).then(() => {
           onSave();
+          setShowExerciseValidation(false);
+          setShowValidation(false);
         });
       }
     }
@@ -95,6 +101,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const backStep = () => {
     if (step === 1) {
       setStep(step - 1);
+      setShowExerciseValidation(false);
+      setShowValidation(false);
     }
   };
   useEffect(() => {
@@ -190,10 +198,15 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             />
           ) : (
             <ExersiceStep
+              showValidation={showExerciseValidation}
+              setShowValidation={(val: any) => {
+                setShowExerciseValidation(val);
+              }}
               sectionList={sectionList}
               onChange={(values: any) => {
                 setSectionList(values);
               }}
+              onValidationChange={setIsExerciseStepValid}
             />
           )}
         </div>
