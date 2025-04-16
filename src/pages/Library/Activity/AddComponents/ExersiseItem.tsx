@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import {  useRef, useState } from 'react';
 import SvgIcon from '../../../../utils/svgIcon';
 import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 import { Tooltip } from 'react-tooltip';
@@ -18,6 +18,7 @@ interface ExerciseItemProps {
     value: string,
     exersiseIndex: number,
   ) => void;
+  showValidation?: boolean;
 }
 
 const ExerciseItem = ({
@@ -29,17 +30,16 @@ const ExerciseItem = ({
   toSuperSet,
   isSuperSet,
   sets,
+  showValidation = false
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showSetError, setShowSetError] = useState(sets == '');
+  const isSetEmpty = sets === '';
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
     refrence: menuRef,
   });
-  useEffect(() => {
-    setShowSetError(sets == '');
-  }, [sets]);
+
 
   const preventEInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'e' || e.key === 'E') {
@@ -49,7 +49,7 @@ const ExerciseItem = ({
 
   const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setShowSetError(!value);
+ 
     onChange(index, 'Sets', value, exesiseIndex);
   };
 
@@ -175,10 +175,10 @@ const ExerciseItem = ({
               onChange={handleSetChange}
               onKeyDown={preventEInput}
               className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
-                showSetError ? 'border-red-500' : 'border-gray-50'
+                showValidation && isSetEmpty ? 'border-red-500' : 'border-gray-50'
               } outline-none text-[10px] text-Text-Primary`}
             />
-            {showSetError && (
+            {showValidation && isSetEmpty &&(
               <div className="text-[8px] text-red-500 mt-1 text-center">
                 This field is required.
               </div>

@@ -38,17 +38,27 @@ interface ExerciseGroup {
 interface ExersiceStepProps {
   onChange: (data: Array<ExerciseGroup>) => void;
   sectionList: Array<ExerciseGroup>;
+  showValidation: boolean;
+  setShowValidation: (val:any)=>void;
+  onValidationChange: (isValid: boolean) => void;
 }
 const ExersiceStep: React.FC<ExersiceStepProps> = ({
   onChange,
   sectionList,
+  onValidationChange,
+  showValidation,
+  setShowValidation
 }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>(sectionList);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
   const [activeTab, setActiveTab] = useState('Warm-Up');
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-
+  useEffect(() => {
+    const emptySetSections = exercises.filter((section: any) => section.Sets === '');
+    const isValid = exercises.length > 0 && emptySetSections.length === 0;
+    onValidationChange(isValid);
+  }, [exercises, onValidationChange]);
   useEffect(() => {
     Application.getExercisesList({}).then((res) => {
       setExerciseList(res.data);
@@ -70,6 +80,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       ],
     };
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
+    setShowValidation(false)
   };
 
   const handleExerciseChange = (
@@ -256,12 +267,12 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         <div className="flex w-full items-center justify-between">
           <div>
             <div
-              className={`w-[530px] h-[432px] border ${exercises.length === 0 ? 'border-red-500' : 'border-Gray-50'} rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
+              className={`w-[530px] h-[432px] border ${showValidation && exercises.length === 0 ? 'border-red-500' : 'border-Gray-50'} rounded-xl flex flex-col items-center ${!exercises.length && 'justify-center'} p-3 overflow-y-auto`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {exercises.length == 0 && (
+              {showValidation && exercises.length === 0 && (
                 <>
                   <img src="/icons/amico.svg" alt="" />
                   <div className="font-medium text-xs text-Text-Primary mt-8">
@@ -288,6 +299,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                           />
                         ) : (
                           <ExerciseItem
+                          showValidation={showValidation}
                             exesiseIndex={0}
                             sets={exercise.Sets}
                             onDelete={() => {
@@ -312,6 +324,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                             exercise={exercise.Exercises[0]}
                             onChange={handleExerciseChange}
                             toSuperSet={() => handleSuperSet(index, exercise)}
+
                           />
                         )}
                       </>
@@ -319,7 +332,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                   })}
               </div>
             </div>
-            {exercises.length === 0 && (
+            {showValidation && exercises.length === 0 && (
               <div className="text-Red text-xs mt-2">
                 Add Exercise to continue.
               </div>
