@@ -9,7 +9,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
       <div
         className=" no-split  h-auto rounded-lg flex items-center px-4 py-2 border  relative "
         style={{
-          width: '215px',
+          width: '100%',
           backgroundColor: '#FDFDFD',
           borderColor: '#E9EDF5',
         }}
@@ -22,7 +22,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
             {data.title}
           </div>
           <div
-            className="my-8  text-sm"
+            className="my-2  text-sm"
             style={{ fontSize: '12px', color: '#888888' }}
           >
             <span className="text-gray-800">Notes:</span> {data.Notes}
