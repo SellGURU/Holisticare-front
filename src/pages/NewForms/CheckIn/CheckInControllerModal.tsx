@@ -165,6 +165,10 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
         <>
           <div
             className={`${addMore ? 'max-h-[100px]' : 'max-h-[200px]'} min-h-[60px] overflow-y-auto w-full`}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#E5E5E5 transparent',
+            }}
           >
             <div className="flex flex-col items-center justify-center gap-1 w-full">
               {questions?.map((item: any, index: number) => {
@@ -186,7 +190,7 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
                       }}
                       index={index}
                       question={item}
-                    ></QuestionItem>
+                    />
                   </>
                 );
               })}

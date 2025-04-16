@@ -94,7 +94,7 @@ const TableForm: FC<TableProps> = ({
                       </th>
                     ))}
                     <th
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px]`}
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium first:rounded-tl-[12px] last:rounded-tr-[12px]`}
                     >
                       <div className={`flex items-center justify-center`}>
                         <div className="flex items-center justify-center">

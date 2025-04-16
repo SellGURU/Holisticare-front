@@ -108,8 +108,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           @media print {
             
             .print-header, .print-footer {
@@ -148,9 +149,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
               padding-bottom: 40px !important;
             }
           }
-        `
-      }} />
-      
+        `,
+        }}
+      />
+
       {/* First page - Cover page */}
       <div
         className=" w-full relative min-h-full"
@@ -226,7 +228,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
         </div>
       </div>
-      
+
       {/* Second page - Table of contents */}
       <div
         className=" w-full relative min-h-full"
@@ -332,7 +334,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
         </div>
       </div>
-      
+
       {/* Rest of pages - Include header and footer */}
       {printOptins.filter((el) => el.name == 'Client Summary')[0].checked && (
         <div
@@ -466,8 +468,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {/* <PrintFooter /> */}
         </div>
       )}
-      
-      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0].checked && (
+
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked && (
         <div
           className=" "
           style={{
@@ -650,7 +653,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       )}
 
-      {printOptins.filter((el) => el.name == 'Detailed Analysis')[0].checked && (
+      {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
+        .checked && (
         <div
           className=""
           style={{
@@ -680,9 +684,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           <div className="mt-6">
             {resolveCategories().map((el: any) => {
               return (
-                <div
-                  className="py-6"
-                >
+                <div className="py-6">
                   <DetiledAnalyse
                     refrences={
                       resolveSubCategories().filter(
@@ -698,7 +700,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {/* <PrintFooter /> */}
         </div>
       )}
-      
+
       {printOptins.filter((el) => el.name == 'Holistic Plan')[0].checked && (
         <div
           className=" "

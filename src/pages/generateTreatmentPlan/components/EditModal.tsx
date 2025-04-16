@@ -23,15 +23,10 @@ const EditModal: React.FC<EditModalProps> = ({
   // onAddNotes,
   isAdd,
 }) => {
-  useEffect(() => {
-    Application.HolisticPlanCategories({}).then((res) => {
-      console.log(res.data);
+  const [selectedGroupDose, setSelectedGroupDose] = useState(false);
 
-      setGroups(res.data);
-    });
-  }, []);
   const [groups, setGroups] = useState<any[]>([]);
-  const [selectedGroup] = useState<string | null>(defalts?.Category || null);
+  // const [selectedGroup] = useState<string | null>(defalts?.Category || null);
   const [newNote, setNewNote] = useState('');
   // const [recommendation] = useState(defalts?.Recommendation);
   // const [dose] = useState(defalts?.Dose);
@@ -84,6 +79,7 @@ const EditModal: React.FC<EditModalProps> = ({
     validateOnMount: false,
     validateOnChange: true,
     validateOnBlur: false,
+
     onSubmit: (values) => {
       if (formik.isValid) {
         onSubmit({
@@ -100,6 +96,33 @@ const EditModal: React.FC<EditModalProps> = ({
       }
     },
   });
+  useEffect(() => {
+    Application.HolisticPlanCategories({}).then((res) => {
+      setGroups(res.data);
+
+      // If there's a default category, set the initial dose value
+      if (defalts?.Category) {
+        const selectedGroupData = res.data.find(
+          (g: any) => Object.keys(g)[0] === defalts.Category,
+        );
+        if (selectedGroupData) {
+          setSelectedGroupDose(selectedGroupData[defalts.Category].Dose);
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const category = formik.values.Category;
+    if (category && groups.length > 0) {
+      const selectedGroupData = groups.find(
+        (g: any) => Object.keys(g)[0] === category,
+      );
+      if (selectedGroupData) {
+        setSelectedGroupDose(selectedGroupData[category].Dose);
+      }
+    }
+  }, [formik.values.Category, groups]);
   useModalAutoClose({
     refrence: selectRef,
     buttonRefrence: selectButRef,
@@ -176,15 +199,16 @@ const EditModal: React.FC<EditModalProps> = ({
   // "night"
   // const groups = ['Diet', 'Activity', 'Supplement', 'Lifestyle'];
 
-  const selectedGroupDose = selectedGroup
-    ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
-        .Dose
-    : false;
+  // const selectedGroupDose = selectedGroup
+  //   ? groups.find((g) => Object.keys(g)[0] === selectedGroup)?.[selectedGroup]
+  //       .Dose
+  //   : false;
 
   const handleSaveClick = () => {
     setShowValidation(true);
     formik.handleSubmit();
   };
+  console.log(selectedGroupDose);
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">

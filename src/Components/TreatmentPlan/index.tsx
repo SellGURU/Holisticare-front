@@ -548,7 +548,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 >
                   {el}
                 </div>
-                <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                <div className="bg-backgroundColor-Card  border text-[12px]  text-Text-Primary border-gray-50">
                   {clientGools[el]}
                 </div>
               </>
