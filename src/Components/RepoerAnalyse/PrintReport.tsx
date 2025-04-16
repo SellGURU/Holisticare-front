@@ -278,7 +278,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Client Summary
             </div>
             <div className="" style={{ color: '#383838', fontSize: '14px' }}>
-              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
+              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
               {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
@@ -691,37 +691,42 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           )}
-          {TreatMentPlanData.map((el) => {
-            return (
-              <>
-                <div className="no-split">
-                  <div
-                    className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
-                    style={{
-                      width: '193px',
-                      borderRadius: '8px',
-                      borderBottomLeftRadius: '0px',
-                      borderBottomRightRadius: '0px',
-                      color: '#005F73',
-                    }}
-                  >
-                    <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                      <img src={resolveTreatmentPlanIcon(el.category)} alt="" />
+          <div className="gap-3">
+            {TreatMentPlanData.map((el) => {
+              return (
+                <>
+                  <div className="no-split">
+                    <div
+                      className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
+                      style={{
+                        width: '193px',
+                        borderRadius: '8px',
+                        borderBottomLeftRadius: '0px',
+                        borderBottomRightRadius: '0px',
+                        color: '#005F73',
+                      }}
+                    >
+                      <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
+                        <img
+                          src={resolveTreatmentPlanIcon(el.category)}
+                          alt=""
+                        />
+                      </div>
+                      {el.category}
                     </div>
-                    {el.category}
-                  </div>
 
-                  <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none">
-                    {el.data.map((el2: any) => {
-                      return (
-                        <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                      );
-                    })}
+                    <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none">
+                      {el.data.map((el2: any) => {
+                        return (
+                          <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              </>
-            );
-          })}
+                </>
+              );
+            })}
+          </div>
         </div>
       )}
 

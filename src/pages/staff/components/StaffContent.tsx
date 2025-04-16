@@ -51,6 +51,12 @@ const StaffContent = () => {
       available_role: string;
     }[]
   >([]);
+  const [roles, setRoles] = useState([]);
+  useEffect(() => {
+    Application.getStaffRoles({}).then((res) => {
+      setRoles(res.data.member_role);
+    });
+  }, []);
   const getStaffs = () => {
     setLoading(true);
     Application.getStaffList().then((res) => {
@@ -84,10 +90,10 @@ const StaffContent = () => {
   // };
   return (
     <>
-      <HeaderStaff getStaffs={getStaffs} />
+      <HeaderStaff getStaffs={getStaffs} roles={roles} />
       {loading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          <Circleloader></Circleloader>
+          <Circleloader />
         </div>
       )}
       <div className="w-full flex items-center justify-between mt-4">
