@@ -59,6 +59,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
+  const [youTubeError, setYouTubeError] = useState<string | undefined>(
+    undefined,
+  );
+  const [showYouTubeValidation, setShowYouTubeValidation] = useState(false);
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -84,28 +88,43 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     );
   };
   const handleSubmit = () => {
-    // Only proceed if we have either a file or YouTube link
+    setShowValidation(true)
     const hasFile = fileList.length > 0;
-    const hasYouTubeLink = youTubeLink.trim() !== '';
+    const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
-    if (!hasFile && !hasYouTubeLink) {
-      setFileError('At least one of these fields is required.');
+    // Validate YouTube link
+    if (!isYouTubeLinkValid && youTubeLink.trim() !== '') {
+      setYouTubeError('Please enter a valid YouTube link.');
+      setShowYouTubeValidation(true);
       return;
     }
 
-    const filesData = fileList.map((file) => ({
-      Title: file.Title,
-      Type:
-        file.Type === 'link'
-          ? 'link'
-          : file.Type.startsWith('video/')
-            ? 'Video'
-            : 'Video',
-      Content: {
-        url: file.Content.url || '',
-        file_id: file.Content.file_id || '',
-      },
-    }));
+    // Validate file or YouTube link presence
+    if (!hasFile && !isYouTubeLinkValid) {
+      setFileError('At least one of these fields is required.');
+      setShowFileValidation(true);
+      return;
+    }
+
+    // Prepare files data, including valid YouTube link
+    const filesData = fileList.slice(); // Copy current file list
+    if (isYouTubeLinkValid) {
+      const existingLinkIndex = filesData.findIndex((file) => file.Type === 'link');
+      const newLink = {
+        Title: 'YouTube Link',
+        Type: 'link',
+        Content: {
+          url: youTubeLink,
+          file_id: '',
+        },
+      };
+
+      if (existingLinkIndex >= 0) {
+        filesData[existingLinkIndex] = newLink;
+      } else {
+        filesData.push(newLink);
+      }
+    }
 
     const exerciseFilters = {
       Conditions: [condition],
@@ -234,27 +253,14 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   const handleYouTubeLinkChange = (link: string) => {
     setYouTubeLink(link);
-    setFileList((prevList) => {
-      const existingLinkIndex = prevList.findIndex(
-        (file) => file.Type === 'link',
-      );
-      const newLink = {
-        Title: 'YouTube Link',
-        Type: 'link',
-        Content: {
-          url: link,
-          file_id: '',
-        },
-      };
-
-      if (existingLinkIndex >= 0) {
-        const updatedList = [...prevList];
-        updatedList[existingLinkIndex] = newLink;
-        return updatedList;
-      } else {
-        return [...prevList, newLink];
-      }
-    });
+    // Clear any error if the link is valid
+    if (showYouTubeValidation) {
+      setYouTubeError(undefined);
+    }
+    if(isValidYouTubeUrl(link)){
+      setFileError(undefined)
+    }
+    // Do not update file list here, handle it in the save logic
   };
   const resetForm = () => {
     formik.resetForm();
@@ -310,6 +316,14 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setInstruction(formik.values.instruction);
     setScore(formik.values.score);
   }, [formik.values]);
+
+  const isValidYouTubeUrl = (url: string) => {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?[a-zA-Z0-9_-]{11}/;
+    return youtubeRegex.test(url);
+  };
+console.log(youTubeError);
+
   return (
     <MainModal
       isOpen={isOpen}
@@ -478,20 +492,17 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           </div>
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
-            <TextField
-              disabled={fileUploaded}
-              value={youTubeLink}
-              newStyle
-              type="text"
-              label="Youtube link"
-              placeholder="Enter youtube link ..."
-              onChange={(e) => {
-                handleYouTubeLinkChange(e.target.value);
-                setFileError(undefined); // Use undefined instead of null
-              }}
-              // errorMessage={showFileValidation ? fileError : undefined}
-              inValid={showFileValidation && Boolean(fileError)}
-            />
+          <TextField
+        disabled={fileUploaded}
+        value={youTubeLink}
+        newStyle
+        type="text"
+        label="YouTube link"
+        placeholder="Enter YouTube link ..."
+        onChange={(e) => handleYouTubeLinkChange(e.target.value)}
+        errorMessage={showYouTubeValidation ? youTubeError : undefined}
+        inValid={showYouTubeValidation && Boolean(youTubeError)}
+      />
             <div className="w-full text-center text-xs font-medium">OR</div>
             <label
               className={`w-full h-[174px] rounded-2xl border ${
@@ -596,27 +607,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             Cancel
           </div>
           <div
-            onClick={() => {
-              setShowValidation(true);
-              setShowFileValidation(true);
-
-              // Check if either file is uploaded or YouTube link is provided
-              const hasFile = fileList.length > 0;
-              const hasYouTubeLink = youTubeLink.trim() !== '';
-
-              if (!hasFile && !hasYouTubeLink) {
-                setFileError('At least one of these fields is required.');
-                return;
-              }
-
-              if (formik.isValid) {
-                handleSubmit();
-              }
-            }}
-            className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
-          >
-            {isEdit ? 'Save' : 'Add'}
-          </div>
+        onClick={handleSubmit}
+        className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
+      >
+        {isEdit ? 'Save' : 'Add'}
+      </div>
         </div>
       </div>
     </MainModal>
