@@ -123,7 +123,7 @@ const CalenderPrint: React.FC<CalenderPrint> = ({ data }) => {
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   return (
-    <div className="w-full py-2 rounded-lg relative" style={{zIndex:'60'}}>
+    <div className="w-full py-2 rounded-lg relative" style={{ zIndex: '60' }}>
       <div
         className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-0 mb-0 py-3"
         style={{ gap: '30px' }}

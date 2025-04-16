@@ -81,10 +81,8 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
         },
       ],
     };
-setShowValidation(false)
+    setShowValidation(false);
     setExercises((prevExercises) => [...prevExercises, resolveExercise]);
-
-  
   };
 
   const handleExerciseChange = (

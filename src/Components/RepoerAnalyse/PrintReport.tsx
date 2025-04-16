@@ -72,7 +72,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
-        <img  className='print-headerImage ' style={{position:'fixed',right:'0',top:'0',zIndex:10 }} src="/icons/wwe.svg" alt="" />                  
+        <img
+          className="print-headerImage "
+          style={{ position: 'fixed', right: '0', top: '0', zIndex: 10 }}
+          src="/icons/wwe.svg"
+          alt=""
+        />
         <div className="flex justify-between items-center px-4 relative z-50 py-2">
           <div>
             <div style={{ color: '#383838', fontSize: '12px' }}>
@@ -391,7 +396,6 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </div>
       </div>
 
-     
       {/* Rest of pages - Include header and footer */}
       {printOptins.filter((el) => el.name == 'Client Summary')[0].checked && (
         <div
@@ -403,10 +407,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
           }}
         >
           <PrintHeader />
-          
+
           <div
             className="flex relative  justify-between items-center"
-            style={{ marginTop: '16px' ,zIndex:60}}
+            style={{ marginTop: '16px', zIndex: 60 }}
           >
             <div
               className="text-lg"
@@ -419,7 +423,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
-          <div className="flex justify-start relative   items-center mt-4 gap-3" style={{zIndex:60}}>
+          <div
+            className="flex justify-start relative   items-center mt-4 gap-3"
+            style={{ zIndex: 60 }}
+          >
             <div
               style={{ fontSize: '14px', color: '#383838', fontWeight: 500 }}
             >
@@ -443,12 +450,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           </div>
           <div
-            style={{ color: '#383838', fontSize: '14px',zIndex:60 }}
+            style={{ color: '#383838', fontSize: '14px', zIndex: 60 }}
             className="text-justify relative  mt-4"
           >
             {ClientSummaryBoxs?.client_summary}
           </div>
-          <div className="w-full  relative  invisible  flex justify-end items-center gap-4 mt-4" style={{zIndex:60}}>
+          <div
+            className="w-full  relative  invisible  flex justify-end items-center gap-4 mt-4"
+            style={{ zIndex: 60 }}
+          >
             <div className="flex justify-start gap-1 items-center">
               <div
                 className=""
@@ -518,7 +528,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2  relative  gap-4 mt-4"   style={{zIndex:60}}>
+          <div
+            className="grid grid-cols-2  relative  gap-4 mt-4"
+            style={{ zIndex: 60 }}
+          >
             {resolveCategories().map((el: any) => {
               return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
             })}
@@ -539,7 +552,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
           }}
         >
           {/* <PrintHeader /> */}
-          <div className="flex relative justify-between items-center mt-4" style={{zIndex:60}}>
+          <div
+            className="flex relative justify-between items-center mt-4"
+            style={{ zIndex: 60 }}
+          >
             <div
               id="Out of Reference"
               className="text-lg"
@@ -554,7 +570,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {referenceData.total_biomarker_note}
             </div>
           </div>
-          <div className="w-full mt-4 relative grid gap-8 grid-cols-1" style={{zIndex:60}}>
+          <div
+            className="w-full mt-4 relative grid gap-8 grid-cols-1"
+            style={{ zIndex: 60 }}
+          >
             {resolveBioMarkers()
               .filter((val) => val.outofref == true)
               .slice(0, 6)
@@ -580,7 +599,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
               pageBreakAfter: 'always',
             }}
           >
-            <div className="w-full relative mt-4 grid gap-8 grid-cols-1" style={{zIndex:60}}>
+            <div
+              className="w-full relative mt-4 grid gap-8 grid-cols-1"
+              style={{ zIndex: 60 }}
+            >
               {resolveBioMarkers()
                 .filter((val) => val.outofref == true)
                 .slice(6, 12)
@@ -601,7 +623,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
             pageBreakAfter: 'always',
           }}
         >
-          <div className="w-full relative mb-3 mt-4 flex items-center justify-between" style={{zIndex:60}}>
+          <div
+            className="w-full relative mb-3 mt-4 flex items-center justify-between"
+            style={{ zIndex: 60 }}
+          >
             <div
               className="text-lg"
               style={{ color: '#005F73', fontWeight: '600' }}
@@ -609,7 +634,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Conclusion
             </div>
           </div>
-          <div className="px-2 relative" style={{zIndex:60}}>
+          <div className="px-2 relative" style={{ zIndex: 60 }}>
             <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
               <div
                 className="text-gray-700 font-medium "
@@ -765,7 +790,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {/* <PrintHeader /> */}
           <div
             className="flex relative  justify-between items-center"
-            style={{ marginTop: '16px' ,zIndex:60}}
+            style={{ marginTop: '16px', zIndex: 60 }}
           >
             <div
               className="text-lg"
@@ -779,7 +804,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           </div>
 
-          <div className="relative" style={{zIndex:60}}>
+          <div className="relative" style={{ zIndex: 60 }}>
             {resolveCategories().map((el: any) => {
               return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
             })}
@@ -800,7 +825,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {/* <PrintHeader /> */}
           <div
             className="flex relative justify-between items-center"
-            style={{ marginTop: '16px',zIndex:'60' }}
+            style={{ marginTop: '16px', zIndex: '60' }}
           >
             <div
               className="text-xl"
@@ -812,7 +837,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {helthPlan && (
             <div
               className="w-full mb-4 relative flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
-              style={{ borderRadius: '12px',zIndex:'60' }}
+              style={{ borderRadius: '12px', zIndex: '60' }}
             >
               <div className="text-sm" style={{ color: '#005F73' }}>
                 {helthPlan[helthPlan.length - 1]?.t_title}
@@ -847,7 +872,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           )}
-          <div className="gap-3 relative" style={{zIndex:60}}>
+          <div className="gap-3 relative" style={{ zIndex: 60 }}>
             {TreatMentPlanData.map((el) => {
               return (
                 <>
@@ -915,7 +940,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {/* <PrintHeader /> */}
           <div
             className="flex justify-between relative items-center"
-            style={{ marginTop: '16px',zIndex:'60' }}
+            style={{ marginTop: '16px', zIndex: '60' }}
           >
             <div
               className="text-xl"
@@ -927,7 +952,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {ActionPlan && (
             <div
               className="w-full relative mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
-              style={{ borderRadius: '12px',zIndex:'60' }}
+              style={{ borderRadius: '12px', zIndex: '60' }}
             >
               <div className="text-sm mb-2" style={{ color: '#005F73' }}>
                 {ActionPlan[ActionPlan.length - 1]?.title}
