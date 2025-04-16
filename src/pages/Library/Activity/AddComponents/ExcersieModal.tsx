@@ -88,7 +88,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     );
   };
   const handleSubmit = () => {
-    setShowValidation(true)
+    setShowValidation(true);
     const hasFile = fileList.length > 0;
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
@@ -109,7 +109,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     // Prepare files data, including valid YouTube link
     const filesData = fileList.slice(); // Copy current file list
     if (isYouTubeLinkValid) {
-      const existingLinkIndex = filesData.findIndex((file) => file.Type === 'link');
+      const existingLinkIndex = filesData.findIndex(
+        (file) => file.Type === 'link',
+      );
       const newLink = {
         Title: 'YouTube Link',
         Type: 'link',
@@ -257,8 +259,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     if (showYouTubeValidation) {
       setYouTubeError(undefined);
     }
-    if(isValidYouTubeUrl(link)){
-      setFileError(undefined)
+    if (isValidYouTubeUrl(link)) {
+      setFileError(undefined);
     }
     // Do not update file list here, handle it in the save logic
   };
@@ -322,7 +324,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?[a-zA-Z0-9_-]{11}/;
     return youtubeRegex.test(url);
   };
-console.log(youTubeError);
+  console.log(youTubeError);
 
   return (
     <MainModal
@@ -492,17 +494,17 @@ console.log(youTubeError);
           </div>
           <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
-          <TextField
-        disabled={fileUploaded}
-        value={youTubeLink}
-        newStyle
-        type="text"
-        label="YouTube link"
-        placeholder="Enter YouTube link ..."
-        onChange={(e) => handleYouTubeLinkChange(e.target.value)}
-        errorMessage={showYouTubeValidation ? youTubeError : undefined}
-        inValid={showYouTubeValidation && Boolean(youTubeError)}
-      />
+            <TextField
+              disabled={fileUploaded}
+              value={youTubeLink}
+              newStyle
+              type="text"
+              label="YouTube link"
+              placeholder="Enter YouTube link ..."
+              onChange={(e) => handleYouTubeLinkChange(e.target.value)}
+              errorMessage={showYouTubeValidation ? youTubeError : undefined}
+              inValid={showYouTubeValidation && Boolean(youTubeError)}
+            />
             <div className="w-full text-center text-xs font-medium">OR</div>
             <label
               className={`w-full h-[174px] rounded-2xl border ${
@@ -607,11 +609,11 @@ console.log(youTubeError);
             Cancel
           </div>
           <div
-        onClick={handleSubmit}
-        className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
-      >
-        {isEdit ? 'Save' : 'Add'}
-      </div>
+            onClick={handleSubmit}
+            className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
+          >
+            {isEdit ? 'Save' : 'Add'}
+          </div>
         </div>
       </div>
     </MainModal>
