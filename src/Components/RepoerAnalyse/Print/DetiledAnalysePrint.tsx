@@ -11,16 +11,27 @@ interface DetiledAnalyseProps {
   isMore?: boolean;
 }
 
-const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ isMore, data, refrences }) => {
+const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
+  isMore,
+  data,
+  refrences,
+}) => {
   // console.log(refrences);
 
   return (
-    <div className="bg-white mt-9" style={{ borderRadius: '16px', padding: '12px', pageBreakAfter: 'always' }}>
+    <div
+      className="bg-white mt-9"
+      style={{
+        borderRadius: '16px',
+        padding: '12px',
+        pageBreakAfter: 'always',
+      }}
+    >
       <div
         className={`w-full  no-split flex cursor-pointer justify-start items-center h-16 rounded-md `}
       >
-        {!isMore &&
-        <>
+        {!isMore && (
+          <>
             <div
               className="w-10 h-10 items-center rounded-full flex justify-center"
               style={{
@@ -57,7 +68,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ isMore, data, refrences
               >
                 <div className=" ">
                   {' '}
-                  <span className=" ">{data?.num_of_biomarkers}</span> Biomarkers
+                  <span className=" ">{data?.num_of_biomarkers}</span>{' '}
+                  Biomarkers
                 </div>
                 <div className="  ml-2 ">
                   <span className="">{data?.out_of_ref}</span>{' '}
@@ -65,11 +77,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ isMore, data, refrences
                 </div>
               </div>
             </div>
-        </>
-        }
+          </>
+        )}
       </div>
       <div className="w-full mt-0 grid gap-1 grid-cols-1">
-        {!isMore &&
+        {!isMore && (
           <>
             <div
               className="text-sm "
@@ -84,7 +96,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ isMore, data, refrences
               {data?.description}
             </div>
           </>
-        }
+        )}
         {refrences?.map((el: any) => {
           return (
             <div

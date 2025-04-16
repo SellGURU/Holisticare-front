@@ -25,7 +25,6 @@ interface PrintReportProps {
 
 // Header component that will only appear from page 2 onwards
 
-
 // // Footer component that will only appear from page 2 onwards
 // const PrintFooter = () => {
 //   return (
@@ -70,24 +69,31 @@ const PrintReport: React.FC<PrintReportProps> = ({
   useEffect(() => {
     console.log(helthPlan);
   }, [helthPlan]);
-const PrintHeader = () => {
-  return (
-    <div className="print-header z-50 ">
-      <div className="flex justify-between items-center px-4 py-2">
-        <div>
-          <div style={{color:'#383838',fontSize:'12px'}}>
-            {usrInfoData?.name}
+  const PrintHeader = () => {
+    return (
+      <div className="print-header z-50 ">
+        <div className="flex justify-between items-center px-4 py-2">
+          <div>
+            <div style={{ color: '#383838', fontSize: '12px' }}>
+              {usrInfoData?.name}
+            </div>
+            <div style={{ color: '#888888', fontSize: '12px' }}>
+              Jan 19, 2025
+            </div>
           </div>
-          <div style={{color:'#888888',fontSize:'12px'}}>Jan 19, 2025</div>
+          <div
+            style={{ color: '#005F73', fontSize: '14px', fontWeight: '500' }}
+          >
+            Comprehensive Health Plan
+          </div>
         </div>
-        <div style={{color:'#005F73',fontSize:'14px',fontWeight:'500'}}>
-          Comprehensive Health Plan
-        </div>
+        <div
+          className="w-full"
+          style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}
+        ></div>
       </div>
-      <div className="w-full" style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}></div>
-    </div>
-  );
-};  
+    );
+  };
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -117,20 +123,20 @@ const PrintHeader = () => {
   // Helper function to render biomarker groups
   const renderBiomarkerGroups = (el: any) => {
     const biomarkers = resolveSubCategories().filter(
-      (val) => val.subcategory == el.subcategory
+      (val) => val.subcategory == el.subcategory,
     )[0].biomarkers;
-    
+
     const totalBiomarkers = biomarkers.length;
     const groups = [];
-    
+
     // First group (0-3)
     groups.push(
       <DetiledAnalyse
         refrences={biomarkers.slice(0, 3)}
         data={el}
-      ></DetiledAnalyse>
+      ></DetiledAnalyse>,
     );
-    
+
     // Additional groups (3-7, 7-11, 11-15)
     for (let i = 3; i < totalBiomarkers; i += 4) {
       if (i < totalBiomarkers) {
@@ -141,11 +147,11 @@ const PrintHeader = () => {
               refrences={biomarkers.slice(i, i + 4)}
               data={el}
             ></DetiledAnalyse>
-          </div>
+          </div>,
         );
       }
     }
-    
+
     return groups;
   };
 
@@ -553,29 +559,9 @@ const PrintHeader = () => {
       )}
 
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
-        .checked &&resolveBioMarkers()
-              .filter((val) => val.outofref == true).length>6 && 
-        <div
-          className=" "
-          style={{
-            backgroundColor: '#E9F0F2',
-            minHeight: '100vh',
-            padding: '24px 24px',
-            pageBreakAfter: 'always',
-          }}
-        >
-          <div className="w-full mt-4 grid gap-8 grid-cols-1">
-            {resolveBioMarkers()
-              .filter((val) => val.outofref == true)
-              .slice(6, 12)
-              .map((el) => {
-                return <BiomarkersPrint data={el}></BiomarkersPrint>;
-              })}
-          </div>          
-        </div>      
-      }
-      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked &&
+        resolveBioMarkers().filter((val) => val.outofref == true).length >
+          6 && (
           <div
             className=" "
             style={{
@@ -585,156 +571,177 @@ const PrintHeader = () => {
               pageBreakAfter: 'always',
             }}
           >
-            <div className="w-full mb-3 mt-4 flex items-center justify-between">
-                  <div
-                    className="text-lg"
-                    style={{ color: '#005F73', fontWeight: '600' }}
-                  >
-                    Conclusion
-                  </div>
-                </div>
-                <div className="px-2">
-                  <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
-                    <div
-                      className="text-gray-700 font-medium "
-                      style={{ width: 200, fontSize: 12, color: '#383838' }}
-                    >
-                      Name
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Result
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Units
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Lab Ref Range
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Baseline
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Optimal Range
-                    </div>
-                    <div
-                      className="text-gray-700 text-center font-medium "
-                      style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                    >
-                      Changes
-                    </div>
-                  </div>
-                  {ResolveConceringData().map((el) => {
-                    return (
-                      <>
-                        <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
-                          <div
-                            className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                            style={{ fontSize: 9, color: '#005F73' }}
-                          >
-                            <div>
-                              <img src="/icons/arrow-square-down.svg" alt="" />
-                            </div>
-                            {el.subcategory}
-                          </div>
-                        </div>
-                        {el.biomarkers.map((val: any) => {
-                          return (
-                            <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                              <div
-                                className=" text-gray-800"
-                                style={{
-                                  fontSize: '10px',
-                                  color: '#383838',
-                                  width: 200,
-                                }}
-                              >
-                                {val.name}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val.Result}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val.Units}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val['Lab Ref Range']}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val.Baseline}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val['Optimal Range']}
-                              </div>
-                              <div
-                                className=" text-gray-800 text-center"
-                                style={{
-                                  fontSize: '10px',
-                                  width: '60px',
-                                  color: '#383838',
-                                }}
-                              >
-                                {val.Changes}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </>
-                    );
-                  })}
+            <div className="w-full mt-4 grid gap-8 grid-cols-1">
+              {resolveBioMarkers()
+                .filter((val) => val.outofref == true)
+                .slice(6, 12)
+                .map((el) => {
+                  return <BiomarkersPrint data={el}></BiomarkersPrint>;
+                })}
             </div>
           </div>
-        }
-      
+        )}
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked && (
+        <div
+          className=" "
+          style={{
+            backgroundColor: '#E9F0F2',
+            minHeight: '100vh',
+            padding: '24px 24px',
+            pageBreakAfter: 'always',
+          }}
+        >
+          <div className="w-full mb-3 mt-4 flex items-center justify-between">
+            <div
+              className="text-lg"
+              style={{ color: '#005F73', fontWeight: '600' }}
+            >
+              Conclusion
+            </div>
+          </div>
+          <div className="px-2">
+            <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
+              <div
+                className="text-gray-700 font-medium "
+                style={{ width: 200, fontSize: 12, color: '#383838' }}
+              >
+                Name
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Result
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Units
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Lab Ref Range
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Baseline
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Optimal Range
+              </div>
+              <div
+                className="text-gray-700 text-center font-medium "
+                style={{ fontSize: 12, width: '60px', color: '#383838' }}
+              >
+                Changes
+              </div>
+            </div>
+            {ResolveConceringData().map((el) => {
+              return (
+                <>
+                  <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
+                    <div
+                      className="text-xs flex justify-start gap-2 items-center text-gray-800"
+                      style={{ fontSize: 9, color: '#005F73' }}
+                    >
+                      <div>
+                        <img src="/icons/arrow-square-down.svg" alt="" />
+                      </div>
+                      {el.subcategory}
+                    </div>
+                  </div>
+                  {el.biomarkers.map((val: any) => {
+                    return (
+                      <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                        <div
+                          className=" text-gray-800"
+                          style={{
+                            fontSize: '10px',
+                            color: '#383838',
+                            width: 200,
+                          }}
+                        >
+                          {val.name}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val.Result}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val.Units}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val['Lab Ref Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val.Baseline}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val['Optimal Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '10px',
+                            width: '60px',
+                            color: '#383838',
+                          }}
+                        >
+                          {val.Changes}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
         .checked && (
         <div
@@ -765,11 +772,7 @@ const PrintHeader = () => {
 
           <div className="">
             {resolveCategories().map((el: any) => {
-              return (
-                <div className="py-6">
-                  {renderBiomarkerGroups(el)}
-                </div>
-              );
+              return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
             })}
           </div>
           {/* <PrintFooter /> */}
@@ -839,7 +842,10 @@ const PrintHeader = () => {
             {TreatMentPlanData.map((el) => {
               return (
                 <>
-                  <div className="no-split mt-14" style={{pageBreakAfter:'always'}}>
+                  <div
+                    className="no-split mt-14"
+                    style={{ pageBreakAfter: 'always' }}
+                  >
                     <div
                       className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
                       style={{
@@ -859,7 +865,10 @@ const PrintHeader = () => {
                       {el.category}
                     </div>
 
-                    <div className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none" style={{pageBreakAfter:'always'}}>
+                    <div
+                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
                       {el.data.slice(0, 6).map((el2: any) => {
                         return (
                           <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
@@ -867,17 +876,23 @@ const PrintHeader = () => {
                       })}
                     </div>
                   </div>
-                  {el.data.length > 6 &&
-                    <div className="no-split mt-14" style={{pageBreakAfter:'always'}}>
-                      <div className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none" style={{pageBreakAfter:'always'}}>
+                  {el.data.length > 6 && (
+                    <div
+                      className="no-split mt-14"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      <div
+                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                        style={{ pageBreakAfter: 'always' }}
+                      >
                         {el.data.slice(6, 12).map((el2: any) => {
                           return (
                             <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
                           );
                         })}
                       </div>
-                    </div>                  
-                  }
+                    </div>
+                  )}
                 </>
               );
             })}
