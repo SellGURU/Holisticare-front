@@ -923,14 +923,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                       style={{ pageBreakAfter: 'always' }}
                     >
-                      {el.data.slice(0, 6).map((el2: any) => {
+                      {el.data.slice(0, 5).map((el2: any) => {
                         return (
                           <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
                         );
                       })}
                     </div>
                   </div>
-                  {el.data.length > 6 && (
+                  {el.data.length > 5 && (
                     <div
                       className="no-split mt-14"
                       style={{ pageBreakAfter: 'always' }}
@@ -939,7 +939,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                         style={{ pageBreakAfter: 'always' }}
                       >
-                        {el.data.slice(6, 12).map((el2: any) => {
+                        {el.data.slice(5, 11).map((el2: any) => {
                           return (
                             <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
                           );
@@ -947,6 +947,23 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       </div>
                     </div>
                   )}
+                  {el.data.length > 10 && (
+                    <div
+                      className="no-split mt-14"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      <div
+                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                        style={{ pageBreakAfter: 'always' }}
+                      >
+                        {el.data.slice(11, 16).map((el2: any) => {
+                          return (
+                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}                  
                 </>
               );
             })}
