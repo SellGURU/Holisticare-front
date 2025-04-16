@@ -68,9 +68,6 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
     Application.RemoveUserStaff({ user_id: userId }).then(() => {
       setSuccessRemove(true);
       setSubmitLoading(false);
-      setTimeout(() => {
-        getStaffs();
-      }, 3000);
     });
   };
   const handleChangeRole = (userId: string, role: string) => {
@@ -177,7 +174,15 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
           </div>
         </div>
       </div>
-      <MainModal isOpen={showModalRemove} onClose={handleCloseModalRemove}>
+      <MainModal
+        isOpen={showModalRemove}
+        onClose={() => {
+          handleCloseModalRemove();
+          if (successRemove) {
+            getStaffs();
+          }
+        }}
+      >
         <RemoveMemberModal
           memberInfo={memberInfo}
           isSuccess={successRemove}
@@ -185,6 +190,7 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
           handleRemoveMember={handleRemoveMember}
           handleCloseModalRemove={handleCloseModalRemove}
           submitLoading={submitLoading}
+          getStaffs={getStaffs}
         />
       </MainModal>
       <MainModal

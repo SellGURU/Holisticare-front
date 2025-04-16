@@ -132,7 +132,15 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                           style={{
                             fontSize: '12px',
                             gap: '2px',
-                            marginLeft: '-24px',
+                            marginLeft:
+                              index == 0
+                                ? '16px'
+                                : index ==
+                                    sortKeysWithValues(data.chart_bounds)
+                                      .length -
+                                      1
+                                  ? '-54px'
+                                  : '-24px',
                             color: '#005F73',
                           }}
                           className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"

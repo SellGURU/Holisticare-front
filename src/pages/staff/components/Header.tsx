@@ -5,9 +5,10 @@ import InviteMemberModal from './InviteMemberModal';
 
 interface HeaderStaffProps {
   getStaffs: () => void;
+  roles: string[];
 }
 
-const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs }) => {
+const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs, roles }) => {
   const [showModal, setShowModal] = useState(false);
   return (
     <>
@@ -47,7 +48,11 @@ const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs }) => {
           setShowModal(false);
         }}
       >
-        <InviteMemberModal setShowModal={setShowModal} getStaffs={getStaffs} />
+        <InviteMemberModal
+          setShowModal={setShowModal}
+          getStaffs={getStaffs}
+          roles={roles}
+        />
       </MainModal>
     </>
   );

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Checkin from '../../CheckIn';
 import FormsApi from '../../../api/Forms';
+import Circleloader from '../../../Components/CircleLoader';
 
 interface CheckInPreviewProps {
   id: string;
@@ -15,19 +16,28 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
   isQuestionary,
 }) => {
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     if (isQuestionary) {
       FormsApi.showQuestinary(id).then((res) => {
         setData(res.data);
+        setLoading(false);
       });
     } else {
       FormsApi.showCheckIn(id).then((res) => {
         setData(res.data);
+        setLoading(false);
       });
     }
   }, []);
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader />
+        </div>
+      )}
       <div className="w-[500px] bg-white  h-[500px] p-6 rounded-[25px]">
         <div className="text-[14px] text-Text-Primary font-medium w-full border-b border-gray-50 pb-3">
           Preview

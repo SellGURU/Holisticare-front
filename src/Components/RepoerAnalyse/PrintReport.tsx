@@ -23,6 +23,21 @@ interface PrintReportProps {
   ActionPlan: any;
 }
 
+// Header component that will only appear from page 2 onwards
+
+// // Footer component that will only appear from page 2 onwards
+// const PrintFooter = () => {
+//   return (
+//     <div className="print-footer z-50">
+//       <div className="w-full" style={{ height: '1px', backgroundColor: '#005F73', opacity: 0.3 }}></div>
+//       <div className="flex justify-between items-center px-4 py-2">
+//         <div className="text-xs" style={{ color: '#383838' }}>© HolistiCare</div>
+//         <div className="text-xs" style={{ color: '#383838' }}>Page <span className="pageNumber"></span></div>
+//       </div>
+//     </div>
+//   );
+// };
+
 const PrintReport: React.FC<PrintReportProps> = ({
   ClientSummaryBoxs,
   ResolveConceringData,
@@ -54,6 +69,31 @@ const PrintReport: React.FC<PrintReportProps> = ({
   useEffect(() => {
     console.log(helthPlan);
   }, [helthPlan]);
+  const PrintHeader = () => {
+    return (
+      <div className="print-header z-50 ">
+        <div className="flex justify-between items-center px-4 py-2">
+          <div>
+            <div style={{ color: '#383838', fontSize: '12px' }}>
+              {usrInfoData?.name}
+            </div>
+            <div style={{ color: '#888888', fontSize: '12px' }}>
+              Jan 19, 2025
+            </div>
+          </div>
+          <div
+            style={{ color: '#005F73', fontSize: '14px', fontWeight: '500' }}
+          >
+            Comprehensive Health Plan
+          </div>
+        </div>
+        <div
+          className="w-full"
+          style={{ height: '2px', backgroundColor: '#005F73', opacity: 0.3 }}
+        ></div>
+      </div>
+    );
+  };
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -80,8 +120,89 @@ const PrintReport: React.FC<PrintReportProps> = ({
     setPrintOptions(data.detail);
   });
 
+  // Helper function to render biomarker groups
+  const renderBiomarkerGroups = (el: any) => {
+    const biomarkers = resolveSubCategories().filter(
+      (val) => val.subcategory == el.subcategory,
+    )[0].biomarkers;
+
+    const totalBiomarkers = biomarkers.length;
+    const groups = [];
+
+    // First group (0-3)
+    groups.push(
+      <DetiledAnalyse
+        refrences={biomarkers.slice(0, 3)}
+        data={el}
+      ></DetiledAnalyse>,
+    );
+
+    // Additional groups (3-7, 7-11, 11-15)
+    for (let i = 3; i < totalBiomarkers; i += 4) {
+      if (i < totalBiomarkers) {
+        groups.push(
+          <div className="py-6" key={`group-${i}`}>
+            <DetiledAnalyse
+              isMore={true}
+              refrences={biomarkers.slice(i, i + 4)}
+              data={el}
+            ></DetiledAnalyse>
+          </div>,
+        );
+      }
+    }
+
+    return groups;
+  };
+
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          @media print {
+            
+            .print-header, .print-footer {
+              display: none;
+            }
+            
+            /* Hide header/footer on first page */
+            body > div > div:first-of-type .print-header,
+            body > div > div:first-of-type .print-footer,
+            body > div > div:nth-of-type(2) .print-header,
+            body > div > div:nth-of-type(2) .print-footer {
+              display: none !important;
+            }
+            
+            /* Show header/footer on all other pages */
+            body > div > div:not(:first-of-type):not(:nth-of-type(2)) .print-header,
+            body > div > div:not(:first-of-type):not(:nth-of-type(2)) .print-footer {
+              display: block !important;
+              position: fixed;
+              width: 100%;
+            }
+            
+            .print-header {
+              top: 0;
+              left:0;
+            }
+            
+            .print-footer {
+              bottom: 0;
+              left:0;
+            }
+            
+            /* Add padding to content to accommodate header/footer */
+            body > div > div:not(:first-of-type):not(:nth-of-type(2)) {
+              padding-top: 60px !important;
+              padding-bottom: 40px !important;
+            }
+          }
+        `,
+        }}
+      />
+
+      {/* First page - Cover page */}
       <div
         className=" w-full relative min-h-full"
         style={{
@@ -89,6 +210,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           height: 'auto',
           overflow: 'hidden',
           backgroundColor: '#E9F0F2',
+          zIndex: 1000000,
         }}
       >
         <div
@@ -155,12 +277,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Second page - Table of contents */}
       <div
         className=" w-full relative min-h-full"
         style={{
           pageBreakAfter: 'always',
           height: '100vh',
           overflow: 'hidden',
+          zIndex: 1000000,
           backgroundColor: '#005F73',
         }}
       >
@@ -258,6 +383,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Rest of pages - Include header and footer */}
       {printOptins.filter((el) => el.name == 'Client Summary')[0].checked && (
         <div
           className=""
@@ -267,6 +394,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             padding: '24px 24px',
           }}
         >
+          <PrintHeader />
           <div
             className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
@@ -278,7 +406,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Client Summary
             </div>
             <div className="" style={{ color: '#383838', fontSize: '14px' }}>
-              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
+              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
               {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
@@ -386,19 +514,22 @@ const PrintReport: React.FC<PrintReportProps> = ({
               return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
             })}
           </div>
+          {/* <PrintFooter /> */}
         </div>
       )}
+
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
         <div
           className=" "
           style={{
-            // pageBreakAfter: 'always',
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
+            pageBreakAfter: 'always',
           }}
         >
+          {/* <PrintHeader /> */}
           <div className="flex justify-between items-center mt-4">
             <div
               id="Out of Reference"
@@ -417,10 +548,50 @@ const PrintReport: React.FC<PrintReportProps> = ({
           <div className="w-full mt-4 grid gap-8 grid-cols-1">
             {resolveBioMarkers()
               .filter((val) => val.outofref == true)
+              .slice(0, 6)
               .map((el) => {
                 return <BiomarkersPrint data={el}></BiomarkersPrint>;
               })}
           </div>
+
+          {/* <PrintFooter /> */}
+        </div>
+      )}
+
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked &&
+        resolveBioMarkers().filter((val) => val.outofref == true).length >
+          6 && (
+          <div
+            className=" "
+            style={{
+              backgroundColor: '#E9F0F2',
+              minHeight: '100vh',
+              padding: '24px 24px',
+              pageBreakAfter: 'always',
+            }}
+          >
+            <div className="w-full mt-4 grid gap-8 grid-cols-1">
+              {resolveBioMarkers()
+                .filter((val) => val.outofref == true)
+                .slice(6, 12)
+                .map((el) => {
+                  return <BiomarkersPrint data={el}></BiomarkersPrint>;
+                })}
+            </div>
+          </div>
+        )}
+      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+        .checked && (
+        <div
+          className=" "
+          style={{
+            backgroundColor: '#E9F0F2',
+            minHeight: '100vh',
+            padding: '24px 24px',
+            pageBreakAfter: 'always',
+          }}
+        >
           <div className="w-full mb-3 mt-4 flex items-center justify-between">
             <div
               className="text-lg"
@@ -582,6 +753,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             padding: '24px 24px',
           }}
         >
+          {/* <PrintHeader /> */}
           <div
             className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
@@ -598,41 +770,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           </div>
 
-          {/* <div className="w-full mt-4 grid gap-8 grid-cols-1">
-                      {resolveBioMarkers().map((el) => {
-                          return (
-                              <BiomarkersPrint data={el}></BiomarkersPrint>
-                          )
-                      })}
-                  
-                  </div>                                   */}
-
-          <div className="mt-6">
+          <div className="">
             {resolveCategories().map((el: any) => {
-              return (
-                <div
-                  className="py-6"
-                  // style={{
-                  //   pageBreakInside: 'avoid',
-                  //   pageBreakBefore: 'auto',
-                  //   pageBreakAfter: 'auto',
-                  // }}
-                >
-                  <DetiledAnalyse
-                    refrences={
-                      resolveSubCategories().filter(
-                        (val) => val.subcategory == el.subcategory,
-                      )[0]
-                    }
-                    data={el}
-                  ></DetiledAnalyse>
-                </div>
-                // <DetiledAnalyse refrences={resolveSubCategories().filter(val =>val.subcategory == el.subcategory )[0]} data={el}></DetiledAnalyse>
-              );
+              return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
             })}
           </div>
+          {/* <PrintFooter /> */}
         </div>
       )}
+
       {printOptins.filter((el) => el.name == 'Holistic Plan')[0].checked && (
         <div
           className=" "
@@ -642,8 +788,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
             padding: '24px 24px',
           }}
         >
+          {/* <PrintHeader /> */}
           <div
-            className="flex justify-between mb-3 items-center"
+            className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
           >
             <div
@@ -691,42 +838,72 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           )}
-          {TreatMentPlanData.map((el) => {
-            return (
-              <>
-                <div className="no-split">
+          <div className="gap-3">
+            {TreatMentPlanData.map((el) => {
+              return (
+                <>
                   <div
-                    className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
-                    style={{
-                      width: '193px',
-                      borderRadius: '8px',
-                      borderBottomLeftRadius: '0px',
-                      borderBottomRightRadius: '0px',
-                      color: '#005F73',
-                    }}
+                    className="no-split mt-14"
+                    style={{ pageBreakAfter: 'always' }}
                   >
-                    <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                      <img src={resolveTreatmentPlanIcon(el.category)} alt="" />
+                    <div
+                      className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
+                      style={{
+                        width: '193px',
+                        borderRadius: '8px',
+                        borderBottomLeftRadius: '0px',
+                        borderBottomRightRadius: '0px',
+                        color: '#005F73',
+                      }}
+                    >
+                      <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
+                        <img
+                          src={resolveTreatmentPlanIcon(el.category)}
+                          alt=""
+                        />
+                      </div>
+                      {el.category}
                     </div>
-                    {el.category}
-                  </div>
 
-                  <div className="w-full flex flex-wrap gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none">
-                    {el.data.map((el2: any) => {
-                      return (
-                        <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                      );
-                    })}
+                    <div
+                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      {el.data.slice(0, 6).map((el2: any) => {
+                        return (
+                          <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              </>
-            );
-          })}
+                  {el.data.length > 6 && (
+                    <div
+                      className="no-split mt-14"
+                      style={{ pageBreakAfter: 'always' }}
+                    >
+                      <div
+                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                        style={{ pageBreakAfter: 'always' }}
+                      >
+                        {el.data.slice(6, 12).map((el2: any) => {
+                          return (
+                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })}
+          </div>
+          {/* <PrintFooter /> */}
         </div>
       )}
 
       {printOptins.filter((el) => el.name == 'Action Plan')[0].checked && (
         <div className="" style={{ pageBreakAfter: 'always', padding: '24px' }}>
+          {/* <PrintHeader /> */}
           <div
             className="flex justify-between items-center"
             style={{ marginTop: '16px' }}
@@ -819,12 +996,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
           {caldenderData != null && caldenderData.length > 0 && (
             <CalenderPrint data={caldenderData}></CalenderPrint>
           )}
+          {/* <PrintFooter /> */}
         </div>
       )}
-
-      {/* <div className="my-10 " style={{ pageBreakAfter: 'always' }}>
-
-      </div> */}
     </div>
   );
 };
