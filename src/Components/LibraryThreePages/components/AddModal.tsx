@@ -127,7 +127,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     }
   };
   const clear = () => {
-    // Your existing clear logic
+    
+    setAddData({
+      title: '',
+      description: '',
+      score: 0,
+      instruction: '',
+    });
+    setDose('');
+    setValue('');
+    setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
     setShowValidation(false);
     setSelectedRow();
     setErrors({
@@ -189,6 +198,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       onClose={() => {
         handleCloseModal();
         clear();
+        setSelectedRow()
       }}
     >
       <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">

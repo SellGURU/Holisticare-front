@@ -70,13 +70,30 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             textWrap: 'nowrap',
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
+            position: 'relative', // Add this
           }}
           data-tooltip-id={index + 'Instruction'}
           className="py-3 text-xs text-[#888888] w-[300px] text-center "
         >
-          {exercise.Instruction.length > 47
-            ? exercise.Instruction.substring(0, 47) + '...'
-            : exercise.Instruction}
+          <div className="overflow-hidden text-ellipsis select-none">
+            {exercise.Instruction.length > 47
+              ? exercise.Instruction.substring(0, 47) + '...'
+              : exercise.Instruction}
+          </div>
+          {exercise.Instruction.length > 47 && (
+            <Tooltip
+              id={`instruction-${index}`}
+              place="top"
+              className="!bg-white !w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              style={{
+                zIndex: 9999,
+
+                pointerEvents: 'none',
+              }}
+            >
+              {exercise.Instruction}
+            </Tooltip>
+          )}
         </td>
         {exercise.Instruction.length > 47 && (
           <Tooltip

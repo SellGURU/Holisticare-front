@@ -322,9 +322,8 @@ const NewGenerateHolisticPlan = () => {
                         <div>
                           {treatmentPlanData['suggestion_tab'].length > 0 ? (
                             <>
-                              {treatmentPlanData['suggestion_tab']
-                                .reverse()
-                                .map((el: any, suggestionIndex: number) => {
+                              {treatmentPlanData['suggestion_tab'].map(
+                                (el: any, suggestionIndex: number) => {
                                   return (
                                     <>
                                       <div
@@ -381,7 +380,8 @@ const NewGenerateHolisticPlan = () => {
                                       </div>
                                     </>
                                   );
-                                })}
+                                },
+                              )}
                             </>
                           ) : (
                             <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
@@ -629,12 +629,9 @@ const NewGenerateHolisticPlan = () => {
         </div>
         <EditModal
           onSubmit={(addData) => {
-            // treatmentPlanData['suggestion_tab']
             setTratmentPlanData((pre: any) => {
-              const oldsData: any = pre;
-              const suggestions = oldsData.suggestion_tab;
-              suggestions.push(addData);
-              oldsData.suggestion_tab = suggestions;
+              const oldsData = { ...pre }; // Create a copy of the previous state
+              oldsData.suggestion_tab = [addData, ...oldsData.suggestion_tab]; // Add new data at the beginning
               return oldsData;
             });
             console.log(addData);
