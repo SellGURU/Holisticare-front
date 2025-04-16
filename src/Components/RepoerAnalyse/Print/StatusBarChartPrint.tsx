@@ -23,13 +23,19 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
     return '#FBAD37';
   };
   const resolvePercentLeft = (data: any, el: any) => {
-    if((((data.values[0] - el.value[0]) /(el.value[1] - el.value[0])) *100)<=5){
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 <=
+      5
+    ) {
       return 5;
     }
-    if((((data.values[0] - el.value[0]) /(el.value[1] - el.value[0])) *100) >95){
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 >
+      95
+    ) {
       return 95;
-    }    
-    return  (((data.values[0] - el.value[0]) /(el.value[1] - el.value[0])) *100)
+    }
+    return ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100;
   };
   return (
     <>
@@ -117,9 +123,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                         className={`absolute  top-[2px]  z-10`}
                         style={{
                           top: '2px',
-                          left:
-                           resolvePercentLeft(data, el)  +
-                            '%',
+                          left: resolvePercentLeft(data, el) + '%',
                         }}
                       >
                         <div
