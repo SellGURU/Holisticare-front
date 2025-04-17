@@ -35,24 +35,23 @@ export const Overview: React.FC<OverviewProps> = ({
   const [currentConflictIndex, setCurrentConflictIndex] = useState(0);
 
   const handleNextConflict = () => {
-    setCurrentConflictIndex((prevIndex) => 
-      (prevIndex + 1) % Conflicts.length
-    );
+    setCurrentConflictIndex((prevIndex) => (prevIndex + 1) % Conflicts.length);
   };
 
   const handlePreviousConflict = () => {
-    setCurrentConflictIndex((prevIndex) => 
-      (prevIndex - 1 + Conflicts.length) % Conflicts.length
+    setCurrentConflictIndex(
+      (prevIndex) => (prevIndex - 1 + Conflicts.length) % Conflicts.length,
     );
   };
   return (
     <>
       <div className=" w-full relative  p-4 rounded-2xl bg-white">
-      {Conflicts.length > 0 && showConflict && (
+        {Conflicts.length > 0 && showConflict && (
           <div className="w-full rounded-2xl px-4 py-3 bg-[#F9DEDC]">
             <div className="flex w-full justify-between items-center">
               <div className="flex gap-5 items-center text-xs font-medium text-Text-Primary">
-                <img src="/icons/check-circle.svg" alt="Check Circle" /> Conflict
+                <img src="/icons/check-circle.svg" alt="Check Circle" />{' '}
+                Conflict
               </div>
               <div className="flex items-center gap-4 text-xs text-Text-Secondary font-medium">
                 {currentConflictIndex + 1}/{Conflicts.length}
@@ -67,15 +66,16 @@ export const Overview: React.FC<OverviewProps> = ({
             <div className="flex w-full px-6 justify-center items-center gap-6">
               <img
                 className={`cursor-pointer ${
-                  currentConflictIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  currentConflictIndex === 0
+                    ? 'opacity-50 cursor-not-allowed'
+                    : ''
                 }`}
                 src="/icons/arrow-up.svg"
                 alt="Previous"
-                onClick={()=>{
-                  if(  currentConflictIndex !== 0){
-                    handlePreviousConflict()
+                onClick={() => {
+                  if (currentConflictIndex !== 0) {
+                    handlePreviousConflict();
                   }
-               
                 }}
               />
               <div className="text-[10px] text-Text-Primary min-w-[1091px] text-center truncate">
@@ -89,11 +89,10 @@ export const Overview: React.FC<OverviewProps> = ({
                 }`}
                 src="/icons/arrow-up.svg"
                 alt="Next"
-                onClick={()=>{
-                  if(currentConflictIndex !== Conflicts.length - 1){
-                    handleNextConflict()
+                onClick={() => {
+                  if (currentConflictIndex !== Conflicts.length - 1) {
+                    handleNextConflict();
                   }
-               
                 }}
               />
             </div>
