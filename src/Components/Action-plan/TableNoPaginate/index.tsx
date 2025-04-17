@@ -21,7 +21,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
   const headers = ['Category', 'Title', 'Frequency', 'Time'];
   return (
     <>
-    {data &&
+      {data && (
         <div className="w-full mt-8">
           <div
             className={`flex flex-col justify-between overflow-x-auto bg-white rounded-[16px] text-Text-Primary mt-[-12px] border border-Boarder shadow-200`}
@@ -122,14 +122,16 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                             <td className="px-4 py-3 whitespace-nowrap">
                               {item.times && item.times.length > 0 ? (
                                 <div className="flex items-center gap-1">
-                                  {item.times.map((time: string, index: number) => (
-                                    <div
-                                      key={index}
-                                      className="inline-block bg-bg-color text-Primary-DeepTeal text-[10px] px-2 rounded-2xl capitalize"
-                                    >
-                                      {time}
-                                    </div>
-                                  ))}
+                                  {item.times.map(
+                                    (time: string, index: number) => (
+                                      <div
+                                        key={index}
+                                        className="inline-block bg-bg-color text-Primary-DeepTeal text-[10px] px-2 rounded-2xl capitalize"
+                                      >
+                                        {time}
+                                      </div>
+                                    ),
+                                  )}
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1 text-[10px] text-[#FFAB2C]">
@@ -158,7 +160,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
             )}
           </div>
         </div>
-    }
+      )}
     </>
   );
 };
