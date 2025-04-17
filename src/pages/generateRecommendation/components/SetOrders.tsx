@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
-import Application from '../../../api/app';
+// import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
 import SvgIcon from '../../../utils/svgIcon';
@@ -37,6 +37,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   visibleCategoriy,
   setVisibleCategorieys,
 }) => {
+  console.log(treatMentPlanData);
+  
   const [activeCategory, setActiveCategory] = useState<string>(
     visibleCategoriy[0].name || 'Activity',
   );
@@ -47,6 +49,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   // const [FilteredData, setFilteredData] = useState(data);
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
+  console.log(id);
+  
   const [categories, setCategories] =
     useState<CategoryState[]>(visibleCategoriy);
 
@@ -103,56 +107,99 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       .filter((cat) => cat.visible)
       .map((cat) => cat.name);
     const currentIndex = visibleCategories.indexOf(activeCategory);
-    const nextTabName = visibleCategories[currentIndex + 1];
-
+    // const nextTabName = visibleCategories[currentIndex + 1];
+  
     storeChecked(
       data.filter(
-        (el: any) => el.checked == true && el.Category == activeCategory,
+        (el: any) => el.checked === true && el.Category === activeCategory,
       ),
     );
-    Application.holisticPlanReScore({
-      tab_name: nextTabName,
-      member_id: id,
-      selected_interventions: [
-        ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
-        ...data.filter(
-          (el: any) => el.checked == true && el.Category == activeCategory,
-        ),
-      ],
-      biomarker_insight: treatMentPlanData?.completion_suggestion,
-      client_insight: treatMentPlanData?.client_insight,
-      looking_forwards: treatMentPlanData?.looking_forwards,
-    })
-      .then((res) => {
-        setIsLoading(false);
-        setOrderedCategories((pre) => {
-          const old = [...pre];
-          old.push(activeCategory);
-          return old;
-        });
-        // const visibleCategories = categories
-        //   .filter(
-        //     (cat) =>
-        //       cat.visible &&
-        //       res.data.map((el: any) => el.Category).includes(cat.name),
-        //   )
-        //   .map((cat) => cat.name);
-        const visibleCategories = categories
-          .filter((cat) => cat.visible)
-          .map((cat) => cat.name);
-        const currentIndex = visibleCategories.indexOf(activeCategory);
-        let nextIndex = currentIndex;
-        if (currentIndex < visibleCategories.length - 1) {
-          nextIndex = nextIndex + 1;
-        }
-        // setFilteredData(res.data);
-        setData([...res.data]);
-        setActiveCategory(visibleCategories[nextIndex]);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  
+    // Directly update state as needed
+    const selectedInterventions = [
+      ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+      ...data.filter(
+        (el: any) => el.checked === true && el.Category === activeCategory,
+      ),
+    ];
+    console.log(selectedInterventions);
+    
+  
+    // Example of state update without API
+    setOrderedCategories((prev) => {
+      const old = [...prev];
+      old.push(activeCategory);
+      return old;
+    });
+  
+    // Update data without API call
+    // If there's logic to determine the next data set, implement it here
+    // Example: setData([...modifiedData]);
+  
+    setIsLoading(false);
+  
+    const nextIndex =
+      currentIndex < visibleCategories.length - 1 ? currentIndex + 1 : currentIndex;
+  
+    setActiveCategory(visibleCategories[nextIndex]);
   };
+  // const handleContinue = () => {
+  //   setIsLoading(true);
+  //   setisStarted(true);
+  //   const visibleCategories = categories
+  //     .filter((cat) => cat.visible)
+  //     .map((cat) => cat.name);
+  //   const currentIndex = visibleCategories.indexOf(activeCategory);
+  //   const nextTabName = visibleCategories[currentIndex + 1];
+
+  //   storeChecked(
+  //     data.filter(
+  //       (el: any) => el.checked == true && el.Category == activeCategory,
+  //     ),
+  //   );
+  //   Application.holisticPlanReScore({
+  //     tab_name: nextTabName,
+  //     member_id: id,
+  //     selected_interventions: [
+  //       ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+  //       ...data.filter(
+  //         (el: any) => el.checked == true && el.Category == activeCategory,
+  //       ),
+  //     ],
+  //     biomarker_insight: treatMentPlanData?.completion_suggestion,
+  //     client_insight: treatMentPlanData?.client_insight,
+  //     looking_forwards: treatMentPlanData?.looking_forwards,
+  //   })
+  //     .then((res) => {
+  //       setIsLoading(false);
+  //       setOrderedCategories((pre) => {
+  //         const old = [...pre];
+  //         old.push(activeCategory);
+  //         return old;
+  //       });
+  //       // const visibleCategories = categories
+  //       //   .filter(
+  //       //     (cat) =>
+  //       //       cat.visible &&
+  //       //       res.data.map((el: any) => el.Category).includes(cat.name),
+  //       //   )
+  //       //   .map((cat) => cat.name);
+  //       const visibleCategories = categories
+  //         .filter((cat) => cat.visible)
+  //         .map((cat) => cat.name);
+  //       const currentIndex = visibleCategories.indexOf(activeCategory);
+  //       let nextIndex = currentIndex;
+  //       if (currentIndex < visibleCategories.length - 1) {
+  //         nextIndex = nextIndex + 1;
+  //       }
+  //       // setFilteredData(res.data);
+  //       setData([...res.data]);
+  //       setActiveCategory(visibleCategories[nextIndex]);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
   const handleReset = () => {
     setActiveCategory(categories.filter((el) => el.visible)[0].name);
     reset();
