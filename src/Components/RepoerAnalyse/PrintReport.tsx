@@ -36,7 +36,6 @@ interface PrintReportProps {
 //         <div className="text-xs" style={{ color: '#383838' }}>Page <span className="pageNumber"></span></div>
 //       </div>
 //     </div>
-//   );
 // };
 
 const PrintReport: React.FC<PrintReportProps> = ({
@@ -167,7 +166,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     groups.push(
       <div
         className="relative "
-        style={{ minHeight: index == 0 ? '950px' : '1030px' }}
+        style={{ minHeight: index == 0 ? '900px' : '1030px' }}
       >
         <DetiledAnalyse
           refrences={biomarkers?.slice(0, 3)}
@@ -245,6 +244,18 @@ const PrintReport: React.FC<PrintReportProps> = ({
             body > div > div:not(:first-of-type):not(:nth-of-type(2)) {
               padding-top: 60px !important;
               padding-bottom: 40px !important;
+            }
+            
+            /* Ensure links are clickable in PDF */
+            a {
+              color: #005F73 !important;
+              text-decoration: none !important;
+              cursor: pointer !important;
+            }
+            
+            /* Ensure section IDs are properly targeted */
+            [id] {
+              scroll-margin-top: 20px;
             }
           }
         `,
@@ -329,6 +340,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       {/* Second page - Table of contents */}
       <div
+        id="table-of-contents"
         className=" w-full relative min-h-full"
         style={{
           pageBreakAfter: 'always',
@@ -366,12 +378,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               >
                 Section 01
               </div>
-              <div
-                className="text-xl"
+              <a
+                href="#client-summary"
+                className="text-xl cursor-pointer hover:underline"
                 style={{ color: '#383838', fontWeight: '500' }}
               >
                 Client Summary
-              </div>
+              </a>
             </div>
             <div className="flex justify-start gap-4 mt-5 items-center">
               <div
@@ -380,12 +393,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               >
                 Section 02
               </div>
-              <div
-                className="text-xl"
+              <a
+                href="#needs-focus-biomarkers"
+                className="text-xl cursor-pointer hover:underline"
                 style={{ color: '#383838', fontWeight: '500' }}
               >
                 Needs Focus Biomarkers
-              </div>
+              </a>
             </div>
             <div className="flex justify-start gap-4 mt-5 items-center">
               <div
@@ -394,12 +408,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               >
                 Section 03
               </div>
-              <div
-                className="text-xl"
+              <a
+                href="#detailed-analysis"
+                className="text-xl cursor-pointer hover:underline"
                 style={{ color: '#383838', fontWeight: '500' }}
               >
-                Detailed Analysis{' '}
-              </div>
+                Detailed Analysis
+              </a>
             </div>
             <div className="flex justify-start gap-4 mt-5 items-center">
               <div
@@ -408,12 +423,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               >
                 Section 04
               </div>
-              <div
-                className="text-xl"
+              <a
+                href="#holistic-plan"
+                className="text-xl cursor-pointer hover:underline"
                 style={{ color: '#383838', fontWeight: '500' }}
               >
                 Holistic Plan
-              </div>
+              </a>
             </div>
             <div className="flex justify-start gap-4 mt-5 items-center">
               <div
@@ -422,12 +438,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               >
                 Section 05
               </div>
-              <div
-                className="text-xl"
+              <a
+                href="#action-plan"
+                className="text-xl cursor-pointer hover:underline"
                 style={{ color: '#383838', fontWeight: '500' }}
               >
                 Action Plan
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -436,6 +453,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
       {/* Rest of pages - Include header and footer */}
       {printOptins.filter((el) => el.name == 'Client Summary')[0].checked && (
         <div
+          id="client-summary"
           className=""
           style={{
             backgroundColor: '#E9F0F2',
@@ -461,6 +479,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {ClientSummaryBoxs.total_category} categories
             </div>
           </div>
+          <a
+            href="#table-of-contents"
+            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+            style={{ color: '#005F73', zIndex: 60 }}
+          >
+            ← Back to Table of Contents
+          </a>
           <div
             className="flex justify-start relative   items-center mt-4 gap-3"
             style={{ zIndex: 60 }}
@@ -581,6 +606,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
         <div
+          id="needs-focus-biomarkers"
           className=" "
           style={{
             backgroundColor: '#E9F0F2',
@@ -609,6 +635,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {referenceData.total_biomarker_note}
             </div>
           </div>
+          <a
+            href="#table-of-contents"
+            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+            style={{ color: '#005F73', zIndex: 60 }}
+          >
+            ← Back to Table of Contents
+          </a>
           <div
             className="w-full mt-4 relative grid gap-8 grid-cols-1"
             style={{ zIndex: 60 }}
@@ -822,6 +855,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
       {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
         .checked && (
         <div
+          id="detailed-analysis"
           className=""
           style={{
             pageBreakAfter: 'always',
@@ -847,7 +881,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {referenceData.detailed_analysis_note}
             </div>
           </div>
-
+          <a
+            href="#table-of-contents"
+            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+            style={{ color: '#005F73', zIndex: 60 }}
+          >
+            ← Back to Table of Contents
+          </a>
           <div className="relative" style={{ zIndex: 60 }}>
             {resolveCategories()?.map((el: any, index: number) => {
               return (
@@ -862,6 +902,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       {printOptins.filter((el) => el.name == 'Holistic Plan')[0].checked && (
         <div
+          id="holistic-plan"
           className=" "
           style={{
             backgroundColor: '#E9F0F2',
@@ -882,6 +923,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Holistic Plan
             </div>
           </div>
+          <a
+            href="#table-of-contents"
+            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+            style={{ color: '#005F73', zIndex: 60 }}
+          >
+            ← Back to Table of Contents
+          </a>
           {helthPlan && (
             <div
               className="w-full mb-4 relative flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
@@ -928,7 +976,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     className="no-split relative  mt-14"
                     style={{
                       pageBreakAfter: 'always',
-                      minHeight: index == 0 ? '900px' : '1020px',
+                      minHeight: index == 0 ? '870px' : '1020px',
                     }}
                   >
                     <div
@@ -1008,6 +1056,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       {printOptins.filter((el) => el.name == 'Action Plan')[0].checked && (
         <div
+          id="action-plan"
           className="relative min-h-screen"
           style={{ pageBreakAfter: 'always', padding: '24px' }}
         >
@@ -1023,6 +1072,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
               Action Plan
             </div>
           </div>
+          <a
+            href="#table-of-contents"
+            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+            style={{ color: '#005F73', zIndex: 60 }}
+          >
+            ← Back to Table of Contents
+          </a>
           {ActionPlan && (
             <div
               className="w-full relative mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
