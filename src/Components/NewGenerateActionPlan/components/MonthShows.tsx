@@ -13,14 +13,16 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
 
   return (
     <div
-      className={`min-h-[32px] border flex-wrap max-w-[546px] h-auto rounded-[4px] text-xs bg-white border-Gray-50 inline-flex ml-1 ${className}`}
+      className={`border flex-wrap h-auto rounded-[4px] text-xs bg-white border-Gray-50 inline-flex ml-1 ${className}`}
+      style={{ minHeight: '32px', maxWidth: '546px', borderRadius: '4px' }}
     >
       {sortedDays.map((day, index) => (
         <div
           key={day}
-          className={`w-[32px] h-[32px] flex items-center justify-center capitalize text-Text-Primary ${
+          className={`flex items-center justify-center capitalize text-Text-Primary ${
             index !== sortedDays.length - 1 ? 'border-r border-Gray-50' : ''
           }`}
+          style={{ width: '32px', height: '32px' }}
         >
           {day.split('-')[2]}
         </div>
