@@ -15,7 +15,12 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
   return (
     <div
       className={`border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex lg:ml-4 ${ClassName}`}
-      style={{ width: '200px', height: '32px',borderRadius:'4px',paddingBottom:'4px' }}
+      style={{
+        width: '200px',
+        height: '32px',
+        borderRadius: '4px',
+        paddingBottom: '4px',
+      }}
     >
       {['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'].map(
         (day, index, array) => (
@@ -23,7 +28,7 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
             key={day}
             // onClick={() => toggleDaySelection(day)}
             style={{
-              color:selectedDays.includes(day)?'#6CC24A':'#383838'
+              color: selectedDays.includes(day) ? '#6CC24A' : '#383838',
             }}
             className={`w-full cursor-pointer flex items-center justify-center capitalize  ${index !== array.length - 1 ? 'border-r border-Gray-50' : ''}`}
           >

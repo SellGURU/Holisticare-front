@@ -37,7 +37,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
           <table
             className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
           >
-            <thead className="text-xs text-Text-Primary bg-backgroundColor-Main" style={{background:'#F4F4F4 ',color:'#383838'}}>
+            <thead
+              className="text-xs text-Text-Primary bg-backgroundColor-Main"
+              style={{ background: '#F4F4F4 ', color: '#383838' }}
+            >
               <tr className="text-nowrap text-Text-Primary">
                 {headers.map((header, index) => (
                   <th
@@ -68,7 +71,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         )}
 
                         {/* Title */}
-                        <td className="py-3 text-xs text-Text-Quadruple whitespace-nowrap" style={{color:'#888888'}}>
+                        <td
+                          className="py-3 text-xs text-Text-Quadruple whitespace-nowrap"
+                          style={{ color: '#888888' }}
+                        >
                           {item.title}
                         </td>
 
