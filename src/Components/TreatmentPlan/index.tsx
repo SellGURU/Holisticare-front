@@ -508,11 +508,12 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   )[0]?.data?.map((el: any) => {
                     return (
                       <>
-                      <TreatmentCard data={el} isOther={aciveTreatmentPlan == "Other"}></TreatmentCard>
+                        <TreatmentCard
+                          data={el}
+                          isOther={aciveTreatmentPlan == 'Other'}
+                        ></TreatmentCard>
                       </>
-
                     );
-                    
                   })}
                 </div>
               )}

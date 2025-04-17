@@ -133,7 +133,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
           <div className="h-[580px] overflow-auto mt-3 flex flex-col ">
             {conflictData.map((el) => (
-              <div className='mb-10'>
+              <div className="mb-10">
                 <div className="flex w-full justify-between">
                   <div className="text-xs font-medium text-Text-Primary">
                     {el.title}
@@ -146,18 +146,24 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     ></div>
                     {el.priority}
                   </div>
-
                 </div>
-                <div className='flex w-full items-start gap-6 mt-5'>
-                  <div className='text-xs text-Text-Secondary'>Reason:</div>
-                  <div className='text-justify text-xs text-Text-Primary'>
+                <div className="flex w-full items-start gap-6 mt-5">
+                  <div className="text-xs text-Text-Secondary">Reason:</div>
+                  <div className="text-justify text-xs text-Text-Primary">
                     {el.reason}
                   </div>
                 </div>
-                </div>
+              </div>
             ))}
           </div>
-          <div onClick={()=>{setShowConflict(false)}} className='cursor-pointer text-[#909090] font-medium text-sm absolute right-4 bottom-4'>close</div>
+          <div
+            onClick={() => {
+              setShowConflict(false);
+            }}
+            className="cursor-pointer text-[#909090] font-medium text-sm absolute right-4 bottom-4"
+          >
+            close
+          </div>
         </div>
       </MainModal>
       <div className="w-full flex justify-center items-start gap-4">
@@ -218,20 +224,20 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </Tooltip>
               </div>
-              <div className="text-Primary-DeepTeal select-none mt-[2px]">
+              <div data-tooltip-id='score-calc' className="text-Primary-DeepTeal select-none mt-[2px]">
                 Score Calculation
                 <Tooltip
-                  id={'base-score'}
+                  id={'score-calc'}
                   place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
                   }}
                 >
-                  <div>Base Score</div>
-                  <div className="text-Text-Secondary">
-                    Initial score from core health metrics.
+                  
+                  <div className="text-Text-Secondary text-[8px]">
+                  Your personalized health plan is now ready. Review your daily goals across nutrition, activity, lifestyle, and supplements to stay on track and improve your overall well-being with confidence.
                   </div>
                 </Tooltip>
               </div>
