@@ -14,7 +14,8 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
 }) => {
   return (
     <div
-      className={`w-[200px] lg:w-[244px] h-[32px] border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex lg:ml-4 ${ClassName}`}
+      className={`border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex lg:ml-4 ${ClassName}`}
+      style={{ width: '200px', height: '32px' }}
     >
       {['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'].map(
         (day, index, array) => (

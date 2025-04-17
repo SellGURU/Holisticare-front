@@ -4,10 +4,11 @@
 import { useEffect, useState } from 'react';
 import { subscribe } from '../../utils/event';
 import BiomarkersPrint from './Print/BiomarkersPrint';
-import CalenderPrint from './Print/CalenderPrint';
+// import CalenderPrint from './Print/CalenderPrint';
 import DetiledAnalyse from './Print/DetiledAnalysePrint';
 import SummaryBoxPrint from './Print/SummaryBoxPrint';
 import TreatmentPlanPrint from './Print/TreatmentplanPrint';
+import ActionPlanOverview from './Print/ActionPlanOverview';
 
 interface PrintReportProps {
   ClientSummaryBoxs: any;
@@ -69,6 +70,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
   useEffect(() => {
     console.log(helthPlan);
   }, [helthPlan]);
+  let pageNumber: number = 0;
+  const resolvePageNumber = () => {
+    pageNumber++;
+    return pageNumber;
+  };
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
@@ -104,9 +110,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
       </div>
     );
   };
-  const PrintFooter = () => {
+  const PrintFooter = ({ pageNumber }: { pageNumber: number }) => {
     return (
-      <div className="print-footer invisible z-50">
+      <div className="print-footer absolute bottom-9 w-full  z-50">
         <div
           className="w-full"
           style={{ height: '1px', backgroundColor: '#005F73', opacity: 0.3 }}
@@ -116,7 +122,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             © HolistiCare
           </div>
           <div className="text-xs" style={{ color: '#383838' }}>
-            <span className="pageNumber">1</span>
+            <span className="pageNumber">{pageNumber}</span>
           </div>
         </div>
       </div>
@@ -149,7 +155,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
   });
 
   // Helper function to render biomarker groups
-  const renderBiomarkerGroups = (el: any) => {
+  const renderBiomarkerGroups = (el: any, index: number) => {
     const biomarkers = resolveSubCategories().filter(
       (val) => val.subcategory == el.subcategory,
     )[0]?.biomarkers;
@@ -159,22 +165,33 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
     // First group (0-3)
     groups.push(
-      <DetiledAnalyse
-        refrences={biomarkers?.slice(0, 3)}
-        data={el}
-      ></DetiledAnalyse>,
+      <div
+        className="relative "
+        style={{ minHeight: index == 0 ? '950px' : '1030px' }}
+      >
+        <DetiledAnalyse
+          refrences={biomarkers?.slice(0, 3)}
+          data={el}
+        ></DetiledAnalyse>
+        <PrintFooter pageNumber={resolvePageNumber()} />
+      </div>,
     );
 
     // Additional groups (3-7, 7-11, 11-15)
     for (let i = 3; i < totalBiomarkers; i += 4) {
       if (i < totalBiomarkers) {
         groups.push(
-          <div className="py-6" key={`group-${i}`}>
+          <div
+            className="pt-6 relative "
+            style={{ minHeight: '1050px' }}
+            key={`group-${i}`}
+          >
             <DetiledAnalyse
               isMore={true}
               refrences={biomarkers.slice(i, i + 4)}
               data={el}
             ></DetiledAnalyse>
+            <PrintFooter pageNumber={resolvePageNumber()} />
           </div>,
         );
       }
@@ -423,6 +440,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           style={{
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
+            position: 'relative',
             padding: '24px 24px',
           }}
         >
@@ -556,7 +574,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
             })}
           </div>
-          <PrintFooter />
+          <PrintFooter pageNumber={resolvePageNumber()} />
         </div>
       )}
 
@@ -568,6 +586,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
+            position: 'relative',
             pageBreakAfter: 'always',
           }}
         >
@@ -602,7 +621,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               })}
           </div>
 
-          {/* <PrintFooter /> */}
+          <PrintFooter pageNumber={resolvePageNumber()} />
         </div>
       )}
 
@@ -616,6 +635,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               backgroundColor: '#E9F0F2',
               minHeight: '100vh',
               padding: '24px 24px',
+              position: 'relative',
               pageBreakAfter: 'always',
             }}
           >
@@ -630,6 +650,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   return <BiomarkersPrint data={el}></BiomarkersPrint>;
                 })}
             </div>
+            <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
         )}
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
@@ -640,6 +661,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
+            position: 'relative',
             pageBreakAfter: 'always',
           }}
         >
@@ -793,6 +815,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               );
             })}
           </div>
+          <PrintFooter pageNumber={resolvePageNumber()} />
         </div>
       )}
 
@@ -804,6 +827,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             pageBreakAfter: 'always',
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
+            position: 'relative',
             padding: '24px 24px',
           }}
         >
@@ -825,11 +849,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </div>
 
           <div className="relative" style={{ zIndex: 60 }}>
-            {resolveCategories()?.map((el: any) => {
-              return <div className="py-6">{renderBiomarkerGroups(el)}</div>;
+            {resolveCategories()?.map((el: any, index: number) => {
+              return (
+                <div className="py-6">{renderBiomarkerGroups(el, index)}</div>
+              );
             })}
           </div>
           {/* <PrintFooter /> */}
+          {/* <PrintFooter pageNumber={resolvePageNumber()} /> */}
         </div>
       )}
 
@@ -840,6 +867,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             backgroundColor: '#E9F0F2',
             minHeight: '100vh',
             padding: '24px 24px',
+            position: 'relative',
           }}
         >
           {/* <PrintHeader /> */}
@@ -893,12 +921,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
           )}
           <div className="gap-3 relative" style={{ zIndex: 60 }}>
-            {TreatMentPlanData.map((el) => {
+            {TreatMentPlanData.map((el, index) => {
               return (
                 <>
                   <div
-                    className="no-split mt-14"
-                    style={{ pageBreakAfter: 'always' }}
+                    className="no-split relative  mt-14"
+                    style={{
+                      pageBreakAfter: 'always',
+                      minHeight: index == 0 ? '900px' : '1020px',
+                    }}
                   >
                     <div
                       className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
@@ -929,11 +960,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         );
                       })}
                     </div>
+                    <PrintFooter pageNumber={resolvePageNumber()} />
                   </div>
                   {el.data.length > 5 && (
                     <div
-                      className="no-split mt-14"
-                      style={{ pageBreakAfter: 'always' }}
+                      className="no-split relative mt-14"
+                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
                     >
                       <div
                         className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
@@ -945,12 +977,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           );
                         })}
                       </div>
+                      <PrintFooter pageNumber={resolvePageNumber()} />
                     </div>
                   )}
                   {el.data.length > 10 && (
                     <div
-                      className="no-split mt-14"
-                      style={{ pageBreakAfter: 'always' }}
+                      className="no-split relative mt-14"
+                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
                     >
                       <div
                         className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
@@ -968,12 +1001,16 @@ const PrintReport: React.FC<PrintReportProps> = ({
               );
             })}
           </div>
+
           {/* <PrintFooter /> */}
         </div>
       )}
 
       {printOptins.filter((el) => el.name == 'Action Plan')[0].checked && (
-        <div className="" style={{ pageBreakAfter: 'always', padding: '24px' }}>
+        <div
+          className="relative min-h-screen"
+          style={{ pageBreakAfter: 'always', padding: '24px' }}
+        >
           {/* <PrintHeader /> */}
           <div
             className="flex justify-between relative items-center"
@@ -1064,10 +1101,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
             </div>
           )}
-          {caldenderData != null && caldenderData.length > 0 && (
+          {/* {caldenderData != null && caldenderData.length > 0 && (
             <CalenderPrint data={caldenderData}></CalenderPrint>
-          )}
-          {/* <PrintFooter /> */}
+          )} */}
+          <ActionPlanOverview classData={caldenderData}></ActionPlanOverview>
+          <PrintFooter pageNumber={resolvePageNumber()} />
         </div>
       )}
     </div>
