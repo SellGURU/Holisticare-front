@@ -28,8 +28,14 @@ const RecentCheckIns: React.FC = () => {
     }).format(date);
   };
   return (
-    <div className="w-full h-[300px] bg-white rounded-2xl shadow-200 p-4 pr-2 ">
-      <div className=" overflow-y-scroll pb-3 h-[280px] pr-[2px] ">
+    <div
+      className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 "
+      style={{ height: (window.innerHeight - 200) / 2 - 16 + 'px' }}
+    >
+      <div
+        className=" overflow-y-scroll pb-3 pr-[2px] "
+        style={{ height: (window.innerHeight - 350) / 2 - 24 + 'px' }}
+      >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm text-Text-Primary font-medium flex items-center">
             Recent Clients
