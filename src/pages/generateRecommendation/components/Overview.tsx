@@ -10,12 +10,16 @@ interface OverviewProps {
   treatmentPlanData: any;
   suggestionsChecked: Array<any>;
   visibleCategoriy: CategoryState[];
+  Conflicts: Array<any>,
 }
 export const Overview: React.FC<OverviewProps> = ({
   visibleCategoriy,
   treatmentPlanData,
   suggestionsChecked,
+  Conflicts
 }) => {
+  console.log(Conflicts);
+  
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
     suggestionsChecked.forEach((el: any) => {
