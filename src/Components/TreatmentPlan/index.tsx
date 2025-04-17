@@ -485,13 +485,34 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </div>
                   Supplement
                 </div>
+                <div
+                  onClick={() => {
+                    setActiveTreatmentplan('Other');
+                  }}
+                  className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                    aciveTreatmentPlan == 'Other'
+                      ? ' border-Primary-EmeraldGreen'
+                      : ''
+                  } w-full flex items-center px-4`}
+                >
+                  <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                    <img src="/icons/others.svg" alt="" />
+                  </div>
+                  Other
+                </div>
               </div>
               {TreatMentPlanData.length > 0 && (
                 <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
-                  )[0].data.map((el: any) => {
-                    return <TreatmentCard data={el}></TreatmentCard>;
+                  )[0]?.data?.map((el: any) => {
+                    return (
+                      <>
+                      <TreatmentCard data={el} isOther={aciveTreatmentPlan == "Other"}></TreatmentCard>
+                      </>
+
+                    );
+                    
                   })}
                 </div>
               )}
