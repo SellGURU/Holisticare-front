@@ -75,10 +75,31 @@ const NewGenerateHolisticPlan = () => {
   const [isSaving, setIsSaving] = useState<'default' | 'saving' | 'completed'>(
     'default',
   );
-  const resoveSubctegoriesSubs = () => {
+  const [resultTabData, setResultTabData] = useState<any>(null);
+  useEffect(() => {
+    Application.getResultTab({ member_id: id }).then((res) => {
+      setResultTabData(res.data.result_tab);
+      if (res.data.result_tab && res.data.result_tab.length > 0) {
+        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+      }
+    });
+  }, [id]);
+  console.log(resultTabData);
+  console.log(activeEl);
+  
+  // const resoveSubctegoriesSubs = () => {
+  //   const subs: any = [];
+  //   // treatmentPlanData['result_tab'][0].subcategories
+  //   treatmentPlanData['result_tab'].map((el: any) => {
+  //     el.subcategories.map((newSubs: any) => {
+  //       subs.push(newSubs);
+  //     });
+  //   });
+  //   return subs;
+  // };
+    const resoveSubctegoriesSubs = () => {
     const subs: any = [];
-    // treatmentPlanData['result_tab'][0].subcategories
-    treatmentPlanData['result_tab'].map((el: any) => {
+    resultTabData?.map((el: any) => {
       el.subcategories.map((newSubs: any) => {
         subs.push(newSubs);
       });
@@ -277,7 +298,7 @@ const NewGenerateHolisticPlan = () => {
                     </div>
                   </div>
                 </div>
-                {treatmentPlanData ? (
+                {treatmentPlanData ?(
                   <div>
                     {active == 'Recommendation' && (
                       <>
@@ -333,6 +354,7 @@ const NewGenerateHolisticPlan = () => {
                                         <BioMarkerRowSuggestions
                                           editAble
                                           value={el}
+                                          index={suggestionIndex}
                                           onEdit={(editData) => {
                                             setTratmentPlanData((pre: any) => {
                                               const oldsData: any = { ...pre };
@@ -412,7 +434,41 @@ const NewGenerateHolisticPlan = () => {
                       </>
                     )}
 
-                    {active == 'Result' && (
+                  
+                  </div>
+                ) : (
+                  active== 'Recommendation' && (
+                  <>
+                    <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                      <div className="w-full h-full flex flex-col items-center justify-center">
+                        <img
+                          className="w-44"
+                          src="/icons/EmptyState.svg"
+                          alt=""
+                        />
+                        <div className="text-base font-medium text-Text-Primary -mt-9">
+                          No Holistic Plan Generated Yet
+                        </div>
+                        <div className="text-xs text-Text-Primary mt-2 mb-5">
+                          {/* Start creating your Holistic Plan */}
+                          Start creating your holistic plan
+                        </div>
+                        <ButtonSecondary
+                          onClick={() => {
+                            navigate(`/report/Generate-Recommendation/${id}`);
+                          }}
+                          // onClick={() => setshowAutoGenerateModal(true)}
+                          ClassName="w-full md:w-fit rounded-full"
+                        >
+                          <img src="/icons/tick-square.svg" alt="" /> Auto
+                          Generate
+                        </ButtonSecondary>
+                      </div>
+                    </div>
+                  </>
+                  )
+                )}
+                  {active == 'Result' && activeEl!== undefined ? (
                       <>
                         <div className="flex justify-start items-center gap-2">
                           <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
@@ -557,38 +613,37 @@ const NewGenerateHolisticPlan = () => {
                           </div>
                         </div>
                       </>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
-                      <div className="w-full h-full flex flex-col items-center justify-center">
-                        <img
-                          className="w-44"
-                          src="/icons/EmptyState.svg"
-                          alt=""
-                        />
-                        <div className="text-base font-medium text-Text-Primary -mt-9">
-                          No Holistic Plan Generated Yet
+                      
+                    ):active == "Result" && (
+                      <>
+                      <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          <img
+                            className="w-44"
+                            src="/icons/EmptyState.svg"
+                            alt=""
+                          />
+                          <div className="text-base font-medium text-Text-Primary -mt-9">
+                            No Holistic Plan Generated Yet
+                          </div>
+                          <div className="text-xs text-Text-Primary mt-2 mb-5">
+                            {/* Start creating your Holistic Plan */}
+                            Start creating your holistic plan
+                          </div>
+                          <ButtonSecondary
+                            onClick={() => {
+                              navigate(`/report/Generate-Recommendation/${id}`);
+                            }}
+                            // onClick={() => setshowAutoGenerateModal(true)}
+                            ClassName="w-full md:w-fit rounded-full"
+                          >
+                            <img src="/icons/tick-square.svg" alt="" /> Auto
+                            Generate
+                          </ButtonSecondary>
                         </div>
-                        <div className="text-xs text-Text-Primary mt-2 mb-5">
-                          {/* Start creating your Holistic Plan */}
-                          Start creating your holistic plan
-                        </div>
-                        <ButtonSecondary
-                          onClick={() => {
-                            navigate(`/report/Generate-Recommendation/${id}`);
-                          }}
-                          // onClick={() => setshowAutoGenerateModal(true)}
-                          ClassName="w-full md:w-fit rounded-full"
-                        >
-                          <img src="/icons/tick-square.svg" alt="" /> Auto
-                          Generate
-                        </ButtonSecondary>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                    )}
               </div>
               {/* <CategoryOrder
                             setData={setTratmentPlanData}
