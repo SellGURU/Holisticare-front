@@ -371,9 +371,15 @@ const RecentCheckIns = () => {
           </div>
         </div>
       </MainModal>
-      <div className="w-full  bg-white rounded-2xl shadow-200 p-4" style={{height:(window.innerHeight-200)/2 -16 +'px'}}>
-        <div className=" overflow-auto pb-3 pr-2 " style={{height:(window.innerHeight-350)/2 - 24+'px'}}>
-          <div className="flex justify-between items-center mb-4" >
+      <div
+        className="w-full  bg-white rounded-2xl shadow-200 p-4"
+        style={{ height: (window.innerHeight - 200) / 2 - 16 + 'px' }}
+      >
+        <div
+          className=" overflow-auto pb-3 pr-2 "
+          style={{ height: (window.innerHeight - 350) / 2 - 24 + 'px' }}
+        >
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
               Recent Check-Ins{' '}
               <span className="text-xs text-Text-Triarty -mt-1">

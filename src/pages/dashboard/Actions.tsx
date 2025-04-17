@@ -55,7 +55,10 @@ const Actions: React.FC = () => {
           <Circleloader />
         </div>
       ) : (
-        <div className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4" style={{height:window.innerHeight-200+'px'}}>
+        <div
+          className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4"
+          style={{ height: window.innerHeight - 200 + 'px' }}
+        >
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
               Actions Needed
@@ -92,7 +95,10 @@ const Actions: React.FC = () => {
           </div>
           {filteredActions.length < 1 ? (
             <>
-              <div className=" w-full pr-2 flex flex-col items-center justify-center" style={{height:window.innerHeight-350+'px'}}>
+              <div
+                className=" w-full pr-2 flex flex-col items-center justify-center"
+                style={{ height: window.innerHeight - 350 + 'px' }}
+              >
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
                   No Data Found
@@ -100,7 +106,10 @@ const Actions: React.FC = () => {
               </div>
             </>
           ) : (
-            <ul className="mt-5 w-full overflow-y-scroll pr-2" style={{height:window.innerHeight-350+'px'}}>
+            <ul
+              className="mt-5 w-full overflow-y-scroll pr-2"
+              style={{ height: window.innerHeight - 350 + 'px' }}
+            >
               {filteredActions.map((action, index) => (
                 <li
                   key={index}

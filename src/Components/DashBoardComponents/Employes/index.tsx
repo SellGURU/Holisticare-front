@@ -63,7 +63,10 @@ const Employes: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full  overflow-hidden bg-white -mt-4 rounded-2xl shadow-200 p-4 " style={{height:(window.innerHeight-200)/2  +'px'}}>
+    <div
+      className="w-full  overflow-hidden bg-white -mt-4 rounded-2xl shadow-200 p-4 "
+      style={{ height: (window.innerHeight - 200) / 2 + 'px' }}
+    >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
