@@ -24,7 +24,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   onEdit,
   editAble,
   isOverview,
-  index
+  index,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -127,8 +127,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return 'bg-[#FFE500]'; // Default color for the circle
     }
   };
-  console.log(value["Practitioner Comments"][0]);
-  
+  console.log(value['Practitioner Comments'][0]);
+
   return (
     <>
       <MainModal isOpen={ShowConflict} onClose={() => setShowConflict(false)}>
@@ -192,7 +192,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] bg-[#005F73] rounded-full"></div>
-               {value["System Score"]}
+                {value['System Score']}
                 <Tooltip
                   id={'system-score'}
                   place="top"
@@ -213,7 +213,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
-               {value.Score}
+                {value.Score}
                 <Tooltip
                   id={'base-score'}
                   place="top"
@@ -230,12 +230,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </Tooltip>
               </div>
               <div
-                data-tooltip-id={index+"score-calc"}
+                data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px]"
               >
                 Score Calculation
                 <Tooltip
-                  id={index+"score-calc"}
+                  id={index + 'score-calc'}
                   place="top"
                   className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
@@ -244,8 +244,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   }}
                 >
                   <div className="text-Text-Primary text-[8px]">
-                   {value["Practitioner Comments"][0]}
-                
+                    {value['Practitioner Comments'][0]}
                   </div>
                 </Tooltip>
               </div>
