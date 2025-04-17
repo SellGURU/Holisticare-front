@@ -86,7 +86,7 @@ const NewGenerateHolisticPlan = () => {
   }, [id]);
   console.log(resultTabData);
   console.log(activeEl);
-  
+
   // const resoveSubctegoriesSubs = () => {
   //   const subs: any = [];
   //   // treatmentPlanData['result_tab'][0].subcategories
@@ -97,7 +97,7 @@ const NewGenerateHolisticPlan = () => {
   //   });
   //   return subs;
   // };
-    const resoveSubctegoriesSubs = () => {
+  const resoveSubctegoriesSubs = () => {
     const subs: any = [];
     resultTabData?.map((el: any) => {
       el.subcategories.map((newSubs: any) => {
@@ -298,7 +298,7 @@ const NewGenerateHolisticPlan = () => {
                     </div>
                   </div>
                 </div>
-                {treatmentPlanData ?(
+                {treatmentPlanData ? (
                   <div>
                     {active == 'Recommendation' && (
                       <>
@@ -433,189 +433,10 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </>
                     )}
-
-                  
                   </div>
                 ) : (
-                  active== 'Recommendation' && (
-                  <>
-                    <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
-                      <div className="w-full h-full flex flex-col items-center justify-center">
-                        <img
-                          className="w-44"
-                          src="/icons/EmptyState.svg"
-                          alt=""
-                        />
-                        <div className="text-base font-medium text-Text-Primary -mt-9">
-                          No Holistic Plan Generated Yet
-                        </div>
-                        <div className="text-xs text-Text-Primary mt-2 mb-5">
-                          {/* Start creating your Holistic Plan */}
-                          Start creating your holistic plan
-                        </div>
-                        <ButtonSecondary
-                          onClick={() => {
-                            navigate(`/report/Generate-Recommendation/${id}`);
-                          }}
-                          // onClick={() => setshowAutoGenerateModal(true)}
-                          ClassName="w-full md:w-fit rounded-full"
-                        >
-                          <img src="/icons/tick-square.svg" alt="" /> Auto
-                          Generate
-                        </ButtonSecondary>
-                      </div>
-                    </div>
-                  </>
-                  )
-                )}
-                  {active == 'Result' && activeEl!== undefined ? (
-                      <>
-                        <div className="flex justify-start items-center gap-2">
-                          <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
-                            <img
-                              className=""
-                              src={'/icons/biomarkers/heart.svg'}
-                              alt=""
-                            />
-                          </div>
-                          {activeEl && (
-                            <div>
-                              <div className="text-[14px] font-medium text-Text-Primary">
-                                {activeEl?.subcategory}
-                              </div>
-                              <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
-                                <span className="text-[8px] lg:text-[12px] text-Text-Primary">
-                                  {activeEl?.num_of_biomarkers}
-                                </span>{' '}
-                                Total Biomarkers{' '}
-                                <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
-                                  {activeEl?.needs_focus_count}
-                                </span>{' '}
-                                Needs Focus
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
-                          <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
-                            <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                              {resoveSubctegoriesSubs().map((value: any) => {
-                                return (
-                                  <>
-                                    {value.biomarkers.map((resol: any) => {
-                                      return (
-                                        <>
-                                          <div
-                                            onClick={() => {
-                                              setActiveEl(resol);
-                                            }}
-                                            className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
-                                          >
-                                            <div className="flex items-center gap-1">
-                                              <div className=" text-[12px] text-Text-Primary">
-                                                {resol.name}
-                                              </div>
-                                              {resolveKeyStatus(
-                                                resol.values[0],
-                                                resol.chart_bounds,
-                                              ) == 'Needs Focus' && (
-                                                <div
-                                                  className="w-3 h-3 rounded-full "
-                                                  style={{
-                                                    backgroundColor: '#FC5474',
-                                                  }}
-                                                ></div>
-                                              )}
-                                            </div>
-                                            <img
-                                              className="  rotate-0  w-4"
-                                              src="/icons/arrow-right.svg"
-                                              alt=""
-                                            />
-                                          </div>
-                                        </>
-                                      );
-                                    })}
-                                  </>
-                                );
-                              })}
-                            </div>
-
-                            {activeEl != null && (
-                              <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
-                                <div className=" text-Text-Primary text-[14px] font-[500]">
-                                  {activeEl.subcategory}
-                                </div>
-                                <div>
-                                  <div
-                                    style={{ lineHeight: '24px' }}
-                                    className=" text-Text-Secondary text-[12px] mt-3"
-                                  >
-                                    {activeEl.description}
-                                  </div>
-                                </div>
-                                <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
-                                  <div className="lg:w-[50%]">
-                                    <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
-                                      <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
-                                        Last Value
-                                        <div className="relative">
-                                          <UnitPopUp
-                                            unit={activeEl.unit}
-                                          ></UnitPopUp>
-                                        </div>
-                                      </div>
-                                      <StatusBarChart
-                                        data={activeEl}
-                                      ></StatusBarChart>
-                                    </div>
-                                  </div>
-                                  <div className={`lg:w-[50%]`}>
-                                    <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
-                                      <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
-                                        Historical Data
-                                        <div className=" flex justify-end gap-2 items-center">
-                                          <div className="relative">
-                                            <UnitPopUp
-                                              unit={activeEl.unit}
-                                            ></UnitPopUp>
-                                          </div>
-                                          <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
-                                            <div className="text-Primary-DeepTeal text-[10px]">
-                                              6 Month
-                                            </div>
-                                            <div className="w-[16px]">
-                                              <img
-                                                src="/icons/arrow-down-green.svg"
-                                                alt=""
-                                              />
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="mt-0 relative">
-                                        <HistoricalChart
-                                          statusBar={activeEl.chart_bounds}
-                                          dataPoints={[
-                                            ...activeEl.values,
-                                          ].reverse()}
-                                          dataStatus={[
-                                            ...activeEl.status,
-                                          ].reverse()}
-                                          labels={[...activeEl.date].reverse()}
-                                        ></HistoricalChart>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </>
-                      
-                    ):active == "Result" && (
-                      <>
+                  active == 'Recommendation' && (
+                    <>
                       <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
                         <div className="w-full h-full flex flex-col items-center justify-center">
                           <img
@@ -643,7 +464,185 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       </div>
                     </>
-                    )}
+                  )
+                )}
+                {active == 'Result' && activeEl !== undefined ? (
+                  <>
+                    <div className="flex justify-start items-center gap-2">
+                      <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
+                        <img
+                          className=""
+                          src={'/icons/biomarkers/heart.svg'}
+                          alt=""
+                        />
+                      </div>
+                      {activeEl && (
+                        <div>
+                          <div className="text-[14px] font-medium text-Text-Primary">
+                            {activeEl?.subcategory}
+                          </div>
+                          <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                            <span className="text-[8px] lg:text-[12px] text-Text-Primary">
+                              {activeEl?.num_of_biomarkers}
+                            </span>{' '}
+                            Total Biomarkers{' '}
+                            <span className="ml-2 text-[8px] lg:text-[12px] text-Text-Primary">
+                              {activeEl?.needs_focus_count}
+                            </span>{' '}
+                            Needs Focus
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
+                      <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
+                        <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
+                          {resoveSubctegoriesSubs().map((value: any) => {
+                            return (
+                              <>
+                                {value.biomarkers.map((resol: any) => {
+                                  return (
+                                    <>
+                                      <div
+                                        onClick={() => {
+                                          setActiveEl(resol);
+                                        }}
+                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
+                                      >
+                                        <div className="flex items-center gap-1">
+                                          <div className=" text-[12px] text-Text-Primary">
+                                            {resol.name}
+                                          </div>
+                                          {resolveKeyStatus(
+                                            resol.values[0],
+                                            resol.chart_bounds,
+                                          ) == 'Needs Focus' && (
+                                            <div
+                                              className="w-3 h-3 rounded-full "
+                                              style={{
+                                                backgroundColor: '#FC5474',
+                                              }}
+                                            ></div>
+                                          )}
+                                        </div>
+                                        <img
+                                          className="  rotate-0  w-4"
+                                          src="/icons/arrow-right.svg"
+                                          alt=""
+                                        />
+                                      </div>
+                                    </>
+                                  );
+                                })}
+                              </>
+                            );
+                          })}
+                        </div>
+
+                        {activeEl != null && (
+                          <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                            <div className=" text-Text-Primary text-[14px] font-[500]">
+                              {activeEl.subcategory}
+                            </div>
+                            <div>
+                              <div
+                                style={{ lineHeight: '24px' }}
+                                className=" text-Text-Secondary text-[12px] mt-3"
+                              >
+                                {activeEl.description}
+                              </div>
+                            </div>
+                            <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
+                              <div className="lg:w-[50%]">
+                                <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                  <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
+                                    Last Value
+                                    <div className="relative">
+                                      <UnitPopUp
+                                        unit={activeEl.unit}
+                                      ></UnitPopUp>
+                                    </div>
+                                  </div>
+                                  <StatusBarChart
+                                    data={activeEl}
+                                  ></StatusBarChart>
+                                </div>
+                              </div>
+                              <div className={`lg:w-[50%]`}>
+                                <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                  <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
+                                    Historical Data
+                                    <div className=" flex justify-end gap-2 items-center">
+                                      <div className="relative">
+                                        <UnitPopUp
+                                          unit={activeEl.unit}
+                                        ></UnitPopUp>
+                                      </div>
+                                      <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                                        <div className="text-Primary-DeepTeal text-[10px]">
+                                          6 Month
+                                        </div>
+                                        <div className="w-[16px]">
+                                          <img
+                                            src="/icons/arrow-down-green.svg"
+                                            alt=""
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="mt-0 relative">
+                                    <HistoricalChart
+                                      statusBar={activeEl.chart_bounds}
+                                      dataPoints={[
+                                        ...activeEl.values,
+                                      ].reverse()}
+                                      dataStatus={[
+                                        ...activeEl.status,
+                                      ].reverse()}
+                                      labels={[...activeEl.date].reverse()}
+                                    ></HistoricalChart>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  active == 'Result' && (
+                    <>
+                      <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          <img
+                            className="w-44"
+                            src="/icons/EmptyState.svg"
+                            alt=""
+                          />
+                          <div className="text-base font-medium text-Text-Primary -mt-9">
+                            No Holistic Plan Generated Yet
+                          </div>
+                          <div className="text-xs text-Text-Primary mt-2 mb-5">
+                            {/* Start creating your Holistic Plan */}
+                            Start creating your holistic plan
+                          </div>
+                          <ButtonSecondary
+                            onClick={() => {
+                              navigate(`/report/Generate-Recommendation/${id}`);
+                            }}
+                            // onClick={() => setshowAutoGenerateModal(true)}
+                            ClassName="w-full md:w-fit rounded-full"
+                          >
+                            <img src="/icons/tick-square.svg" alt="" /> Auto
+                            Generate
+                          </ButtonSecondary>
+                        </div>
+                      </div>
+                    </>
+                  )
+                )}
               </div>
               {/* <CategoryOrder
                             setData={setTratmentPlanData}
