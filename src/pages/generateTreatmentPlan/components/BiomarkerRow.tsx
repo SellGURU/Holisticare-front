@@ -213,7 +213,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
-                {value.Score} 
+                {value.Score}
                 <Tooltip
                   id={'base-score'}
                   place="top"

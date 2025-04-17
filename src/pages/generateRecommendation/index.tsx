@@ -30,25 +30,25 @@ export const GenerateRecommendation = () => {
   const { setTreatmentId } = useContext(AppContext);
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
-    const [Conflicts, setConflicts] = useState([])
-    const handleNext = () => {
-      if (currentStepIndex < steps.length - 1) {
-        if (currentStepIndex === 2) {
-          Application.tratmentPlanConflict({
-            member_id: id,
-            selected_interventions: treatmentPlanData.suggestion_tab,
-            biomarker_insight: treatmentPlanData?.biomarker_insight,
-            client_insights: treatmentPlanData?.client_insight,
-            looking_forward: treatmentPlanData?.looking_forwards,
-          }).then((res) => {
-            setConflicts(res.data);
-            setCurrentStepIndex((prevIndex) => prevIndex + 1);
-          });
-        } else {
+  const [Conflicts, setConflicts] = useState([]);
+  const handleNext = () => {
+    if (currentStepIndex < steps.length - 1) {
+      if (currentStepIndex == 1) {
+        Application.tratmentPlanConflict({
+          member_id: id,
+          selected_interventions: treatmentPlanData.suggestion_tab,
+          biomarker_insight: treatmentPlanData?.biomarker_insight,
+          client_insight: treatmentPlanData?.client_insight,
+          looking_forward: treatmentPlanData?.looking_forwards,
+        }).then((res) => {
+          setConflicts(res.data.conflicts);
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
-        }
+        });
+      } else {
+        setCurrentStepIndex((prevIndex) => prevIndex + 1);
       }
-    };
+    }
+  };
   const handleBack = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);

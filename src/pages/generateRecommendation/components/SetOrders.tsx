@@ -38,7 +38,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setVisibleCategorieys,
 }) => {
   console.log(treatMentPlanData);
-  
+
   const [activeCategory, setActiveCategory] = useState<string>(
     visibleCategoriy[0].name || 'Activity',
   );
@@ -50,7 +50,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   console.log(id);
-  
+
   const [categories, setCategories] =
     useState<CategoryState[]>(visibleCategoriy);
 
@@ -108,13 +108,13 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       .map((cat) => cat.name);
     const currentIndex = visibleCategories.indexOf(activeCategory);
     // const nextTabName = visibleCategories[currentIndex + 1];
-  
+
     storeChecked(
       data.filter(
         (el: any) => el.checked === true && el.Category === activeCategory,
       ),
     );
-  
+
     // Directly update state as needed
     const selectedInterventions = [
       ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
@@ -123,24 +123,25 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       ),
     ];
     console.log(selectedInterventions);
-    
-  
+
     // Example of state update without API
     setOrderedCategories((prev) => {
       const old = [...prev];
       old.push(activeCategory);
       return old;
     });
-  
+
     // Update data without API call
     // If there's logic to determine the next data set, implement it here
     // Example: setData([...modifiedData]);
-  
+
     setIsLoading(false);
-  
+
     const nextIndex =
-      currentIndex < visibleCategories.length - 1 ? currentIndex + 1 : currentIndex;
-  
+      currentIndex < visibleCategories.length - 1
+        ? currentIndex + 1
+        : currentIndex;
+
     setActiveCategory(visibleCategories[nextIndex]);
   };
   // const handleContinue = () => {

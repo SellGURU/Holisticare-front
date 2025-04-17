@@ -927,7 +927,7 @@ class Application extends Api {
     return this.post('/patients/generate_treatment_plan_result_page', data);
   };
   static tratmentPlanConflict = (data: any) => {
-    return this.post('treatment_plan/conflict_check', data);
+    return this.post('/treatment_plan/conflict_check', data);
   };
 }
 
