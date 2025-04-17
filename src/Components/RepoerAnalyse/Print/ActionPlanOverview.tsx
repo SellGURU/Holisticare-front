@@ -73,7 +73,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         {/* Title */}
                         <td
                           className="py-3 text-xs text-Text-Quadruple whitespace-nowrap"
-                          style={{ color: '#888888' }}
+                          style={{
+                            color: '#888888',
+                            paddingTop: index == 0 ? '0px' : '12px',
+                          }}
                         >
                           {item.title}
                         </td>
@@ -170,8 +173,8 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   key={index}
                                   className="inline-block rounded-2xl capitalize"
                                   style={{
-                                    backgroundColor: 'var(--bg-color)',
-                                    color: 'var(--Primary-DeepTeal)',
+                                    backgroundColor: '#E9F0F2',
+                                    color: '#005F73',
                                     fontSize: '10px',
                                     padding: '0 0.5rem',
                                   }}
