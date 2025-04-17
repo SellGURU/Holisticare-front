@@ -37,7 +37,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
           <table
             className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
           >
-            <thead className="text-xs text-Text-Primary bg-backgroundColor-Main">
+            <thead
+              className="text-xs text-Text-Primary bg-backgroundColor-Main"
+              style={{ background: '#F4F4F4 ', color: '#383838' }}
+            >
               <tr className="text-nowrap text-Text-Primary">
                 {headers.map((header, index) => (
                   <th
@@ -68,7 +71,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         )}
 
                         {/* Title */}
-                        <td className="py-3 text-xs text-Text-Quadruple whitespace-nowrap">
+                        <td
+                          className="py-3 text-xs text-Text-Quadruple whitespace-nowrap"
+                          style={{ color: '#888888' }}
+                        >
                           {item.title}
                         </td>
 
@@ -77,7 +83,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           {item.frequency_type === 'weekly' && (
                             <>
                               <div
-                                className="rounded-2xl flex items-center justify-center gap-1"
+                                className="rounded-2xl flex items-center mb-2 justify-center gap-1"
                                 style={{
                                   width: '76px',
                                   height: '24px',
@@ -103,7 +109,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           {item.frequency_type === 'monthly' && (
                             <>
                               <div
-                                className="rounded-2xl flex items-center justify-center gap-1"
+                                className="rounded-2xl flex mb-2 items-center justify-center gap-1"
                                 style={{
                                   width: '80px',
                                   height: '24px',
