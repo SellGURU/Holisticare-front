@@ -224,7 +224,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </Tooltip>
               </div>
-              <div data-tooltip-id='score-calc' className="text-Primary-DeepTeal select-none mt-[2px]">
+              <div
+                data-tooltip-id="score-calc"
+                className="text-Primary-DeepTeal select-none mt-[2px]"
+              >
                 Score Calculation
                 <Tooltip
                   id={'score-calc'}
@@ -235,9 +238,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  
                   <div className="text-Text-Secondary text-[8px]">
-                  Your personalized health plan is now ready. Review your daily goals across nutrition, activity, lifestyle, and supplements to stay on track and improve your overall well-being with confidence.
+                    Your personalized health plan is now ready. Review your
+                    daily goals across nutrition, activity, lifestyle, and
+                    supplements to stay on track and improve your overall
+                    well-being with confidence.
                   </div>
                 </Tooltip>
               </div>
