@@ -24,6 +24,9 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
   const [step, setStep] = useState(0);
+  const [checked, setChecked] = useState(false);
+  const [mintues, setMintues] = useState(5);
+  const [seconds, setSeconds] = useState(15);
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
@@ -43,6 +46,18 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
+            onChangeChecked={(value: boolean) => {
+              setChecked(value);
+            }}
+            onChangeMintues={(value: number) => {
+              setMintues(value);
+            }}
+            onChangeSeconds={(value: number) => {
+              setSeconds(value);
+            }}
+            upChecked={checked}
+            upMintues={mintues}
+            upSeconds={seconds}
             step={step}
           />
         );
@@ -64,6 +79,18 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
+            onChangeChecked={(value: boolean) => {
+              setChecked(value);
+            }}
+            onChangeMintues={(value: number) => {
+              setMintues(value);
+            }}
+            onChangeSeconds={(value: number) => {
+              setSeconds(value);
+            }}
+            upChecked={checked}
+            upMintues={mintues}
+            upSeconds={seconds}
             step={step}
           />
         );
@@ -79,6 +106,8 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
     onSave({
       title: titleForm,
       questions: questions,
+      share_with_client: checked,
+      time: `${mintues}:${seconds}`,
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -90,6 +119,9 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
       FormsApi.showCheckIn(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
+        setMintues(res.data.time.split(':')[0]);
+        setSeconds(res.data.time.split(':')[1]);
+        setChecked(res.data.share_with_client);
       });
     }
   }, [editId]);
@@ -169,12 +201,24 @@ interface AddCheckInProps {
   onChange: (questions: Array<checkinType>) => void;
   upQuestions: Array<checkinType>;
   step: number;
+  onChangeChecked: (value: boolean) => void;
+  onChangeMintues: (value: number) => void;
+  onChangeSeconds: (value: number) => void;
+  upChecked: boolean;
+  upMintues: number;
+  upSeconds: number;
 }
 
 const AddCheckIn: React.FC<AddCheckInProps> = ({
   onChange,
   upQuestions,
   step,
+  onChangeChecked,
+  onChangeMintues,
+  onChangeSeconds,
+  upChecked,
+  upMintues,
+  upSeconds,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -183,11 +227,18 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({
   const [mintues, setMintues] = useState(5);
   const [seconds, setSeconds] = useState(15);
   useEffect(() => {
+    onChangeMintues(mintues);
+    onChangeSeconds(seconds);
+  }, [mintues, seconds]);
+  useEffect(() => {
     onChange(questions);
   }, [questions]);
   useEffect(() => {
     setQuestions(upQuestions);
-  }, [upQuestions]);
+    setChecked(upChecked);
+    setMintues(upMintues);
+    setSeconds(upSeconds);
+  }, [upQuestions, upChecked, upMintues, upSeconds]);
   return (
     <>
       {step == 0 ? (
@@ -304,6 +355,7 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({
               checked={checked}
               onChange={() => {
                 setChecked((pre) => !pre);
+                onChangeChecked(!checked);
               }}
               borderColor="border-Text-Quadruple"
               width="w-3.5"
