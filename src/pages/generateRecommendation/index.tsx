@@ -11,6 +11,7 @@ import Circleloader from '../../Components/CircleLoader';
 import SvgIcon from '../../utils/svgIcon';
 import { AppContext } from '../../store/app';
 import SpinnerLoader from '../../Components/SpinnerLoader';
+import { publish, subscribe } from '../../utils/event';
 
 type CategoryState = {
   name: string;
@@ -31,10 +32,20 @@ export const GenerateRecommendation = () => {
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
   const [Conflicts, setConflicts] = useState([]);
+  const [isRescore,setIsRescore] = useState(false);
+  subscribe("isRescored",()=>{
+    setIsRescore(true)
+  })
+  subscribe("isNotRescored",()=>{
+    setIsRescore(false)
+  })
   const handleNext = () => {
-    if (currentStepIndex < steps.length - 1) {
-      if (currentStepIndex == 1) {
-        Application.tratmentPlanConflict({
+    if(currentStepIndex == 1 && !isRescore) {
+      publish("rescore",{})
+    }else{
+      if (currentStepIndex < steps.length - 1) {
+        if (currentStepIndex == 1) {
+          Application.tratmentPlanConflict({
           member_id: id,
           selected_interventions: treatmentPlanData.suggestion_tab,
           biomarker_insight: treatmentPlanData?.biomarker_insight,
@@ -46,6 +57,7 @@ export const GenerateRecommendation = () => {
         });
       } else {
         setCurrentStepIndex((prevIndex) => prevIndex + 1);
+      }
       }
     }
   };
@@ -79,6 +91,30 @@ export const GenerateRecommendation = () => {
       setCurrentStepIndex(steps.length - 1);
     }
   };
+  const handleSave  = () => {
+    setisButtonLoading(true);
+    Application.saveHolisticPlan({
+      ...treatmentPlanData,
+      suggestion_tab: [
+        ...checkedSuggestions,
+        ...treatmentPlanData.suggestion_tab.filter(
+          (el: any) =>
+            el.checked == true &&
+            !getAllCheckedCategories().includes(el.Category) &&
+            VisibleCategories.filter((el) => el.visible)
+              .map((el) => el.name)
+              .includes(el.Category),
+        ),
+      ],
+    })
+      .then(() => {
+        setTreatmentId(treatmentPlanData.treatment_id);
+      })
+      .finally(() => {
+        setisButtonLoading(false);
+        navigate(`/report/Generate-Holistic-Plan/${id}`);
+      });
+  }
   const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
@@ -197,28 +233,7 @@ export const GenerateRecommendation = () => {
                 disabled={isButtonLoading}
                 onClick={() => {
                   if (currentStepIndex == steps.length - 1) {
-                    setisButtonLoading(true);
-                    Application.saveHolisticPlan({
-                      ...treatmentPlanData,
-                      suggestion_tab: [
-                        ...checkedSuggestions,
-                        ...treatmentPlanData.suggestion_tab.filter(
-                          (el: any) =>
-                            el.checked == true &&
-                            !getAllCheckedCategories().includes(el.Category) &&
-                            VisibleCategories.filter((el) => el.visible)
-                              .map((el) => el.name)
-                              .includes(el.Category),
-                        ),
-                      ],
-                    })
-                      .then(() => {
-                        setTreatmentId(treatmentPlanData.treatment_id);
-                      })
-                      .finally(() => {
-                        setisButtonLoading(false);
-                        navigate(`/report/Generate-Holistic-Plan/${id}`);
-                      });
+                    handleSave();
                   } else handleNext();
                 }}
               >
