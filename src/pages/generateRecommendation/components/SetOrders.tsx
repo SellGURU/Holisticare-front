@@ -145,23 +145,22 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
     setActiveCategory(visibleCategories[nextIndex]);
   };
-  subscribe("rescore",()=>{
-    handleContinue()
-  })
+  subscribe('rescore', () => {
+    handleContinue();
+  });
   useEffect(() => {
-    if(
+    if (
       activeCategory !=
         categories.filter((el) => el.visible)[
-        categories.filter((el) => el.visible).length - 1
+          categories.filter((el) => el.visible).length - 1
         ].name &&
-        visibleCategoriy.filter((el) => el.visible).length > 1      
-    )  
-    {
-      publish("isNotRescored",{})
-    }else {
-      publish("isRescored",{})
+      visibleCategoriy.filter((el) => el.visible).length > 1
+    ) {
+      publish('isNotRescored', {});
+    } else {
+      publish('isRescored', {});
     }
-  },[activeCategory])
+  }, [activeCategory]);
   // const handleContinue = () => {
   //   setIsLoading(true);
   //   setisStarted(true);

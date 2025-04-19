@@ -32,32 +32,32 @@ export const GenerateRecommendation = () => {
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
   const [Conflicts, setConflicts] = useState([]);
-  const [isRescore,setIsRescore] = useState(false);
-  subscribe("isRescored",()=>{
-    setIsRescore(true)
-  })
-  subscribe("isNotRescored",()=>{
-    setIsRescore(false)
-  })
+  const [isRescore, setIsRescore] = useState(false);
+  subscribe('isRescored', () => {
+    setIsRescore(true);
+  });
+  subscribe('isNotRescored', () => {
+    setIsRescore(false);
+  });
   const handleNext = () => {
-    if(currentStepIndex == 1 && !isRescore) {
-      publish("rescore",{})
-    }else{
+    if (currentStepIndex == 1 && !isRescore) {
+      publish('rescore', {});
+    } else {
       if (currentStepIndex < steps.length - 1) {
         if (currentStepIndex == 1) {
           Application.tratmentPlanConflict({
-          member_id: id,
-          selected_interventions: treatmentPlanData.suggestion_tab,
-          biomarker_insight: treatmentPlanData?.biomarker_insight,
-          client_insight: treatmentPlanData?.client_insight,
-          looking_forward: treatmentPlanData?.looking_forwards,
-        }).then((res) => {
-          setConflicts(res.data.conflicts);
+            member_id: id,
+            selected_interventions: treatmentPlanData.suggestion_tab,
+            biomarker_insight: treatmentPlanData?.biomarker_insight,
+            client_insight: treatmentPlanData?.client_insight,
+            looking_forward: treatmentPlanData?.looking_forwards,
+          }).then((res) => {
+            setConflicts(res.data.conflicts);
+            setCurrentStepIndex((prevIndex) => prevIndex + 1);
+          });
+        } else {
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
-        });
-      } else {
-        setCurrentStepIndex((prevIndex) => prevIndex + 1);
-      }
+        }
       }
     }
   };
@@ -91,7 +91,7 @@ export const GenerateRecommendation = () => {
       setCurrentStepIndex(steps.length - 1);
     }
   };
-  const handleSave  = () => {
+  const handleSave = () => {
     setisButtonLoading(true);
     Application.saveHolisticPlan({
       ...treatmentPlanData,
@@ -114,7 +114,7 @@ export const GenerateRecommendation = () => {
         setisButtonLoading(false);
         navigate(`/report/Generate-Holistic-Plan/${id}`);
       });
-  }
+  };
   const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
