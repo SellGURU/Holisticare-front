@@ -14,7 +14,7 @@ interface BioMarkerRowSuggestionsProps {
   editAble?: boolean;
   isOverview?: boolean;
 
-  index: number;
+  index?: number;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
