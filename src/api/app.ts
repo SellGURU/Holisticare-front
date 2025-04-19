@@ -923,6 +923,12 @@ class Application extends Api {
   static getStaffRoles = (data: any) => {
     return this.get('/settings/invite_staff/roles', data);
   };
+  static getResultTab = (data: any) => {
+    return this.post('/patients/generate_treatment_plan_result_page', data);
+  };
+  static tratmentPlanConflict = (data: any) => {
+    return this.post('/treatment_plan/conflict_check', data);
+  };
 }
 
 export default Application;

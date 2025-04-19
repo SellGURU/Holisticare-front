@@ -13,6 +13,8 @@ interface BioMarkerRowSuggestionsProps {
   onEdit: (value: any) => void;
   editAble?: boolean;
   isOverview?: boolean;
+
+  index?: number;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -22,6 +24,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   onEdit,
   editAble,
   isOverview,
+  index,
 }) => {
   const resolveIcon = () => {
     switch (value.Category) {
@@ -124,6 +127,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return 'bg-[#FFE500]'; // Default color for the circle
     }
   };
+  console.log(value['Practitioner Comments'][0]);
+
   return (
     <>
       <MainModal isOpen={ShowConflict} onClose={() => setShowConflict(false)}>
@@ -187,7 +192,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] bg-[#005F73] rounded-full"></div>
-                8.5
+                {value['System Score']}
                 <Tooltip
                   id={'system-score'}
                   place="top"
@@ -208,7 +213,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
-                8.5
+                {value.Score}
                 <Tooltip
                   id={'base-score'}
                   place="top"
@@ -225,12 +230,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </Tooltip>
               </div>
               <div
-                data-tooltip-id="score-calc"
+                data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px]"
               >
                 Score Calculation
                 <Tooltip
-                  id={'score-calc'}
+                  id={index + 'score-calc'}
                   place="top"
                   className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
@@ -238,11 +243,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  <div className="text-Text-Secondary text-[8px]">
-                    Your personalized health plan is now ready. Review your
-                    daily goals across nutrition, activity, lifestyle, and
-                    supplements to stay on track and improve your overall
-                    well-being with confidence.
+                  <div className="text-Text-Primary text-[8px]">
+                    {value['Practitioner Comments'][0]}
                   </div>
                 </Tooltip>
               </div>
@@ -277,7 +279,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 {negative}
               </div>{' '}
             </div>
-            {value['Based on'] && (
+            {/* {value['Based on'] && (
               <div
                 onClick={() => setShowModal(true)}
                 className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
@@ -288,7 +290,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <SvgIcon src="/icons/export.svg" color="#005F73" />
                 </span>
               </div>
-            )}
+            )} */}
           </div>
           {isExpanded && (
             <div className="flex flex-col mt-2 pt-1 border-t border-Gray-50">
