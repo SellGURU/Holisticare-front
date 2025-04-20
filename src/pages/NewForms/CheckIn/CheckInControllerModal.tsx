@@ -25,7 +25,7 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
-  const [mintues, setMintues] = useState(5);
+  const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
   const resolveFormTitle = () => {
     switch (mode) {
@@ -49,14 +49,14 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChangeChecked={(value: boolean) => {
               setChecked(value);
             }}
-            onChangeMintues={(value: number) => {
-              setMintues(value);
+            onChangeMinutes={(value: number) => {
+              setMinutes(value);
             }}
             onChangeSeconds={(value: number) => {
               setSeconds(value);
             }}
             upChecked={checked}
-            upMintues={mintues}
+            upMinutes={minutes}
             upSeconds={seconds}
             step={step}
           />
@@ -82,14 +82,14 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChangeChecked={(value: boolean) => {
               setChecked(value);
             }}
-            onChangeMintues={(value: number) => {
-              setMintues(value);
+            onChangeMinutes={(value: number) => {
+              setMinutes(value);
             }}
             onChangeSeconds={(value: number) => {
               setSeconds(value);
             }}
             upChecked={checked}
-            upMintues={mintues}
+            upMinutes={minutes}
             upSeconds={seconds}
             step={step}
           />
@@ -102,12 +102,15 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
+    const getTimeInMilliseconds = () => {
+      return minutes * 60000 + seconds * 1000;
+    };
     setIsSaveLoading(true);
     onSave({
       title: titleForm,
       questions: questions,
       share_with_client: checked,
-      time: `${mintues}:${seconds}`,
+      time: getTimeInMilliseconds(),
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -119,8 +122,11 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
       FormsApi.showCheckIn(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
-        setMintues(res.data.time.split(':')[0]);
-        setSeconds(res.data.time.split(':')[1]);
+        const totalMs = res.data.time;
+        const mins = Math.floor(totalMs / 60000);
+        const secs = Math.floor((totalMs % 60000) / 1000);
+        setMinutes(mins);
+        setSeconds(secs);
         setChecked(res.data.share_with_client);
       });
     }
@@ -202,10 +208,10 @@ interface AddCheckInProps {
   upQuestions: Array<checkinType>;
   step: number;
   onChangeChecked: (value: boolean) => void;
-  onChangeMintues: (value: number) => void;
+  onChangeMinutes: (value: number) => void;
   onChangeSeconds: (value: number) => void;
   upChecked: boolean;
-  upMintues: number;
+  upMinutes: number;
   upSeconds: number;
 }
 
@@ -214,10 +220,10 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({
   upQuestions,
   step,
   onChangeChecked,
-  onChangeMintues,
+  onChangeMinutes,
   onChangeSeconds,
   upChecked,
-  upMintues,
+  upMinutes,
   upSeconds,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
@@ -227,7 +233,7 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({
   const [mintues, setMintues] = useState(5);
   const [seconds, setSeconds] = useState(15);
   useEffect(() => {
-    onChangeMintues(mintues);
+    onChangeMinutes(mintues);
     onChangeSeconds(seconds);
   }, [mintues, seconds]);
   useEffect(() => {
@@ -236,9 +242,9 @@ const AddCheckIn: React.FC<AddCheckInProps> = ({
   useEffect(() => {
     setQuestions(upQuestions);
     setChecked(upChecked);
-    setMintues(upMintues);
+    setMintues(upMinutes);
     setSeconds(upSeconds);
-  }, [upQuestions, upChecked, upMintues, upSeconds]);
+  }, [upQuestions, upChecked, upMinutes, upSeconds]);
   return (
     <>
       {step == 0 ? (
