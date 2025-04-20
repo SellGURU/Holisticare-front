@@ -191,7 +191,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 data-tooltip-id="system-score"
                 className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
               >
-                <div className="size-[5px] bg-[#005F73] rounded-full"></div>
+                <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
                 {value['System Score']}
                 <Tooltip
                   id={'system-score'}
@@ -202,7 +202,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  <div>System Score</div>
+                  <div className='text-Text-Primary'>System Score</div>
                   <div className="text-Text-Secondary">
                     Score based on all data and AI insights.
                   </div>
@@ -212,7 +212,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 data-tooltip-id="base-score"
                 className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
               >
-                <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
+                <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
                 {value.Score}
                 <Tooltip
                   id={'base-score'}
@@ -223,7 +223,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  <div>Base Score</div>
+                  <div className='text-Text-Primary'>Base Score</div>
                   <div className="text-Text-Secondary">
                     Initial score from core health metrics.
                   </div>

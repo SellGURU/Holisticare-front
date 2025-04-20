@@ -15,6 +15,8 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
   conflicts,
   handleShowConflictsModal,
 }) => {
+  console.log(conflicts);
+  
   return (
     <>
       <MainModal
@@ -47,7 +49,7 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
                       {conflict.severity}
                     </div>
                   </div>
-                  <div className="text-xs text-Text-Primary flex gap-6 mt-1">
+                  <div className="text-xs text-Text-Primary text-justify flex gap-6 mt-1">
                     <div className="text-Text-Quadruple">Reason:</div>
                     {conflict.reason}
                   </div>
