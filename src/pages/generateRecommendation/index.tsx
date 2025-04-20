@@ -32,8 +32,8 @@ export const GenerateRecommendation = () => {
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
   const [activeCategory, setActiveCategory] = useState<string>(
-      VisibleCategories[0].name || 'Activity',
-    );    
+    VisibleCategories[0].name || 'Activity',
+  );
   const [Conflicts, setConflicts] = useState([]);
   const [isRescore, setIsRescore] = useState(false);
   subscribe('isRescored', () => {
@@ -50,7 +50,9 @@ export const GenerateRecommendation = () => {
         if (currentStepIndex == 1) {
           Application.tratmentPlanConflict({
             member_id: id,
-            selected_interventions: treatmentPlanData.suggestion_tab.filter((el:any) =>el.checked ==true),
+            selected_interventions: treatmentPlanData.suggestion_tab.filter(
+              (el: any) => el.checked == true,
+            ),
             biomarker_insight: treatmentPlanData?.biomarker_insight,
             client_insight: treatmentPlanData?.client_insight,
             looking_forward: treatmentPlanData?.looking_forwards,
@@ -67,9 +69,12 @@ export const GenerateRecommendation = () => {
   const handleBack = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);
-      if(currentStepIndex == 1 && activeCategory != VisibleCategories[0].name){
+      if (
+        currentStepIndex == 1 &&
+        activeCategory != VisibleCategories[0].name
+      ) {
         publish('rescoreBack', {});
-      }else {
+      } else {
         setCurrentStepIndex(currentStepIndex - 1);
       }
       // setTratmentPlanData((pre: any) => {

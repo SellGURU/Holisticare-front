@@ -158,13 +158,10 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     const currentIndex = visibleCategories.indexOf(activeCategory);
     // const nextTabName = visibleCategories[currentIndex + 1];
     setIsLoading(false);
-    const backIndex =
-      currentIndex > 0
-        ? currentIndex - 1
-        : currentIndex;
+    const backIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
 
     setActiveCategory(visibleCategories[backIndex]);
-  };  
+  };
   subscribe('rescore', () => {
     handleContinue();
   });
@@ -183,7 +180,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     } else {
       publish('isRescored', {});
     }
-  }, [activeCategory,visibleCategoriy]);
+  }, [activeCategory, visibleCategoriy]);
   // const handleContinue = () => {
   //   setIsLoading(true);
   //   setisStarted(true);
