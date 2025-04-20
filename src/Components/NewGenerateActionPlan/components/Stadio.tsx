@@ -39,7 +39,7 @@ const Stadio: FC<StadioProps> = ({
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
-  const [haveConflicText, setHaveConflicText] = useState('');
+  const [haveConflicText, setHaveConflicText] = useState([]);
   const AllCategories = [
     'Diet',
     'Activity',
@@ -166,28 +166,28 @@ const Stadio: FC<StadioProps> = ({
     conflicCheck();
   }, [actions]);
   const [sortBy, setSortBy] = useState('System Score');
-  const resolveTaskCheckText = () => {
-    if (
-      actions.category.filter((el) => el.Category == 'Activity').length > 1 &&
-      actions.category.filter((el) => el.Category == 'Diet').length > 1
-    ) {
-      return 'More than one Diet task and one Activity task exists!';
-    }
-    if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
-      return 'More than one Activity task exists!';
-    }
-    return 'More than one Diet task exists!';
-  };
-  const checkHaveConflicts = () => {
-    const conflicts = [];
-    if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
-      conflicts.push('Activity');
-    }
-    if (actions.category.filter((el) => el.Category == 'Diet').length > 1) {
-      conflicts.push('Diet');
-    }
-    return conflicts;
-  };
+  // const resolveTaskCheckText = () => {
+  //   if (
+  //     actions.category.filter((el) => el.Category == 'Activity').length > 1 &&
+  //     actions.category.filter((el) => el.Category == 'Diet').length > 1
+  //   ) {
+  //     return 'More than one Diet task and one Activity task exists!';
+  //   }
+  //   if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
+  //     return 'More than one Activity task exists!';
+  //   }
+  //   return 'More than one Diet task exists!';
+  // };
+  // const checkHaveConflicts = () => {
+  //   const conflicts = [];
+  //   if (actions.category.filter((el) => el.Category == 'Activity').length > 1) {
+  //     conflicts.push('Activity');
+  //   }
+  //   if (actions.category.filter((el) => el.Category == 'Diet').length > 1) {
+  //     conflicts.push('Diet');
+  //   }
+  //   return conflicts;
+  // };
   const handleChangeSort = (value: string) => {
     setSortBy(value);
   };
@@ -276,7 +276,7 @@ const Stadio: FC<StadioProps> = ({
             Category: addData.Category,
             Title: addData.Title || '',
             'Based on': '',
-            'Practitioner Comments': addData['Practitioner Comments'] || [],
+            // 'Practitioner Comments': addData['Practitioner Comments'] || [],
             Instruction: addData.Instruction || '',
             Times: addData.Times || [],
             Value: addData.Value || null,
@@ -314,7 +314,7 @@ const Stadio: FC<StadioProps> = ({
             <div className="w-full  my-2 ">
               <AlertModal
                 heading="Conflict"
-                text={haveConflicText}
+                texts={haveConflicText}
                 onClose={() => {
                   setHaveConflic(false);
                 }}
@@ -322,8 +322,7 @@ const Stadio: FC<StadioProps> = ({
             </div>
           )}
           <div className="flex justify-between w-full items-center">
-            {/* {actions.f} */}
-            {(actions.category.filter((el) => el.Category == 'Activity')
+            {/* {(actions.category.filter((el) => el.Category == 'Activity')
               .length > 1 ||
               actions.category.filter((el) => el.Category == 'Diet').length >
                 1) && (
@@ -331,7 +330,7 @@ const Stadio: FC<StadioProps> = ({
                 <img src="/icons/warning-2.svg" alt="" />
                 {resolveTaskCheckText()}
               </div>
-            )}
+            )} */}
             <div
               className={`flex-grow flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
@@ -457,7 +456,7 @@ const Stadio: FC<StadioProps> = ({
                           setActions={setActions}
                           key={index}
                           index={index}
-                          conflicts={checkHaveConflicts()}
+                          // conflicts={checkHaveConflicts()}
                         />
                       </>
                     );

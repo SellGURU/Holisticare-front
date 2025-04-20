@@ -7,6 +7,7 @@ import { MainModal } from '../../../Components';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
 import SvgIcon from '../../../utils/svgIcon';
+import { publish, subscribe } from '../../../utils/event';
 
 type CategoryState = {
   name: string;
@@ -144,6 +145,22 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
     setActiveCategory(visibleCategories[nextIndex]);
   };
+  subscribe('rescore', () => {
+    handleContinue();
+  });
+  useEffect(() => {
+    if (
+      activeCategory !=
+        categories.filter((el) => el.visible)[
+          categories.filter((el) => el.visible).length - 1
+        ].name &&
+      visibleCategoriy.filter((el) => el.visible).length > 1
+    ) {
+      publish('isNotRescored', {});
+    } else {
+      publish('isRescored', {});
+    }
+  }, [activeCategory]);
   // const handleContinue = () => {
   //   setIsLoading(true);
   //   setisStarted(true);
@@ -364,7 +381,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
             )}
           </div>
           <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
-            {activeCategory != categories.filter((el) => el.visible)[0].name &&
+            {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
               visibleCategoriy.filter((el) => el.visible).length > 1 && (
                 <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
                   <div onClick={handleReset}>Reset</div>
@@ -378,7 +395,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
                   <div onClick={handleContinue}>Continue</div>
                 </div>
-              )}
+              )} */}
             <div
               className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
             >
