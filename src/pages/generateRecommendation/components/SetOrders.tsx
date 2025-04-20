@@ -25,6 +25,8 @@ interface SetOrdersProps {
   visibleCategoriy: CategoryState[];
   setVisibleCategorieys: (value: CategoryState[]) => void;
   // resolvedSuggestions:(data:any) => void
+  activeCategory: string;
+  setActiveCategory: (value: string) => void;
 }
 
 export const SetOrders: React.FC<SetOrdersProps> = ({
@@ -33,31 +35,33 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setData,
   storeChecked,
   checkeds,
-  reset,
-  defaultSuggestions,
+  // reset,
+  // defaultSuggestions,
   visibleCategoriy,
+  activeCategory,
+  setActiveCategory,
   setVisibleCategorieys,
 }) => {
   console.log(treatMentPlanData);
 
-  const [activeCategory, setActiveCategory] = useState<string>(
-    visibleCategoriy[0].name || 'Activity',
-  );
+  // const [activeCategory, setActiveCategory] = useState<string>(
+  //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
+  // );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
   const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState(false);
   // const [FilteredData, setFilteredData] = useState(data);
-  const [isStarted, setisStarted] = useState(false);
+  // const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
   console.log(id);
 
   const [categories, setCategories] =
     useState<CategoryState[]>(visibleCategoriy);
 
-  useEffect(() => {
-    setData(defaultSuggestions);
-  }, [defaultSuggestions]);
+  // useEffect(() => {
+  //   setData(defaultSuggestions);
+  // }, [defaultSuggestions]);
   // const _AllCategoryChecekd = (category: string) => {
   //   const newData = data
   //     .filter((el: any) => el.Category == category)
@@ -103,7 +107,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   }, [activeCategory]);
   const handleContinue = () => {
     setIsLoading(true);
-    setisStarted(true);
+    // setisStarted(true);
     const visibleCategories = categories
       .filter((cat) => cat.visible)
       .map((cat) => cat.name);
@@ -145,8 +149,27 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
 
     setActiveCategory(visibleCategories[nextIndex]);
   };
+  const handleBack = () => {
+    setIsLoading(true);
+    // setisStarted(true);
+    const visibleCategories = categories
+      .filter((cat) => cat.visible)
+      .map((cat) => cat.name);
+    const currentIndex = visibleCategories.indexOf(activeCategory);
+    // const nextTabName = visibleCategories[currentIndex + 1];
+    setIsLoading(false);
+    const backIndex =
+      currentIndex > 0
+        ? currentIndex - 1
+        : currentIndex;
+
+    setActiveCategory(visibleCategories[backIndex]);
+  };  
   subscribe('rescore', () => {
     handleContinue();
+  });
+  subscribe('rescoreBack', () => {
+    handleBack();
   });
   useEffect(() => {
     if (
@@ -160,7 +183,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     } else {
       publish('isRescored', {});
     }
-  }, [activeCategory]);
+  }, [activeCategory,visibleCategoriy]);
   // const handleContinue = () => {
   //   setIsLoading(true);
   //   setisStarted(true);
@@ -218,10 +241,10 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   //       setIsLoading(false);
   //     });
   // };
-  const handleReset = () => {
-    setActiveCategory(categories.filter((el) => el.visible)[0].name);
-    reset();
-  };
+  // const handleReset = () => {
+  //   setActiveCategory(categories.filter((el) => el.visible)[0].name);
+  //   reset();
+  // };
   // useEffect(() => {
   //   // setData([
   //   //   ...data.map((el: any) => {
@@ -397,7 +420,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 </div>
               )} */}
             <div
-              className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
+              className={`justify-end ml-4 ${visibleCategoriy.findIndex((el) => el.name == activeCategory) == 0 ? 'flex' : 'hidden'}`}
             >
               <img
                 className="cursor-pointer"

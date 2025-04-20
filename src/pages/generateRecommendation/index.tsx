@@ -31,6 +31,9 @@ export const GenerateRecommendation = () => {
   const { setTreatmentId } = useContext(AppContext);
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
+  const [activeCategory, setActiveCategory] = useState<string>(
+      VisibleCategories[0].name || 'Activity',
+    );    
   const [Conflicts, setConflicts] = useState([]);
   const [isRescore, setIsRescore] = useState(false);
   subscribe('isRescored', () => {
@@ -47,7 +50,7 @@ export const GenerateRecommendation = () => {
         if (currentStepIndex == 1) {
           Application.tratmentPlanConflict({
             member_id: id,
-            selected_interventions: treatmentPlanData.suggestion_tab,
+            selected_interventions: treatmentPlanData.suggestion_tab.filter((el:any) =>el.checked ==true),
             biomarker_insight: treatmentPlanData?.biomarker_insight,
             client_insight: treatmentPlanData?.client_insight,
             looking_forward: treatmentPlanData?.looking_forwards,
@@ -64,14 +67,18 @@ export const GenerateRecommendation = () => {
   const handleBack = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);
-      setCurrentStepIndex(currentStepIndex - 1);
-      setTratmentPlanData((pre: any) => {
-        const newSuggestios = suggestionsDefualt;
-        return {
-          ...pre,
-          suggestion_tab: newSuggestios,
-        };
-      });
+      if(currentStepIndex == 1 && activeCategory != VisibleCategories[0].name){
+        publish('rescoreBack', {});
+      }else {
+        setCurrentStepIndex(currentStepIndex - 1);
+      }
+      // setTratmentPlanData((pre: any) => {
+      //   const newSuggestios = suggestionsDefualt;
+      //   return {
+      //     ...pre,
+      //     suggestion_tab: newSuggestios,
+      //   };
+      // });
     }
   };
   const handleSkip = () => {
@@ -96,11 +103,9 @@ export const GenerateRecommendation = () => {
     Application.saveHolisticPlan({
       ...treatmentPlanData,
       suggestion_tab: [
-        ...checkedSuggestions,
         ...treatmentPlanData.suggestion_tab.filter(
           (el: any) =>
             el.checked == true &&
-            !getAllCheckedCategories().includes(el.Category) &&
             VisibleCategories.filter((el) => el.visible)
               .map((el) => el.name)
               .includes(el.Category),
@@ -120,15 +125,15 @@ export const GenerateRecommendation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
   const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
-  const getAllCheckedCategories = () => {
-    const checkedCategories: string[] = [];
-    checkedSuggestions.forEach((el: any) => {
-      if (el.checked) {
-        checkedCategories.push(el.Category);
-      }
-    });
-    return checkedCategories;
-  };
+  // const getAllCheckedCategories = () => {
+  //   const checkedCategories: string[] = [];
+  //   checkedSuggestions.forEach((el: any) => {
+  //     if (el.checked) {
+  //       checkedCategories.push(el.Category);
+  //     }
+  //   });
+  //   return checkedCategories;
+  // };
   const generatePaln = () => {
     setIsLoading(true);
     Application.generateTreatmentPlan({
@@ -310,6 +315,8 @@ export const GenerateRecommendation = () => {
             ></GeneralCondition>
           ) : currentStepIndex == 1 ? (
             <SetOrders
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
               visibleCategoriy={VisibleCategories}
               setVisibleCategorieys={setVisibleCategories}
               defaultSuggestions={suggestionsDefualt}

@@ -98,7 +98,7 @@ export const Overview: React.FC<OverviewProps> = ({
             </div>
           </div>
         )}
-        {suggestionsChecked.map((el: any, suggestionIndex: number) => {
+        {/* {suggestionsChecked.map((el: any, suggestionIndex: number) => {
           return (
             <>
               <div
@@ -115,12 +115,11 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             </>
           );
-        })}
+        })} */}
         {treatmentPlanData['suggestion_tab']
           .filter(
             (el: any) =>
               el.checked == true &&
-              !getAllCheckedCategories().includes(el.Category) &&
               visibleCategoriy
                 .filter((el) => el.visible)
                 .map((el) => el.name)
