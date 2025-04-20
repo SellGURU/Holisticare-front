@@ -134,13 +134,8 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                   )}
                                 </div>
                               ) : (
-                                <div className="flex items-center gap-1 text-[10px] text-[#FFAB2C]">
-                                  <img
-                                    src="/icons/danger-new.svg"
-                                    alt=""
-                                    className="w-4 h-4"
-                                  />
-                                  No Scheduled
+                                <div className="flex items-center text-[10px] text-Text-Primary">
+                                  -
                                 </div>
                               )}
                             </td>
