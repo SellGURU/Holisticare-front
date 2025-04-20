@@ -61,7 +61,9 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                             )}
 
                             {/* Title */}
-                            <td className="py-3 text-xs text-Text-Quadruple whitespace-nowrap">
+                            <td
+                              className={`py-3 text-xs text-Text-Quadruple whitespace-nowrap ${index == 0 && 'align-top'}`}
+                            >
                               {item.title}
                             </td>
 
