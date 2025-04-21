@@ -470,7 +470,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-lg"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Client Summary
             </div>
@@ -519,7 +519,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {ClientSummaryBoxs?.client_summary}
           </div>
           <div
-            className="w-full  relative  invisible  flex justify-end items-center gap-4 mt-4"
+            className="w-full relative flex justify-end items-center gap-4 mt-4"
             style={{ zIndex: 60 }}
           >
             <div className="flex justify-start gap-1 items-center">
@@ -532,10 +532,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
+              <div style={{ color: '#888888', fontSize: '10px' }}>
                 Excellent{' '}
               </div>
             </div>
@@ -549,12 +546,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
-                Good{' '}
-              </div>
+              <div style={{ color: '#888888', fontSize: '10px' }}>Good </div>
             </div>
             <div className="flex justify-start gap-1 items-center">
               <div
@@ -566,12 +558,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
-                Ok{' '}
-              </div>
+              <div style={{ color: '#888888', fontSize: '10px' }}>Ok </div>
             </div>
             <div className="flex justify-start gap-1 items-center">
               <div
@@ -583,10 +570,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
+              <div style={{ color: '#888888', fontSize: '10px' }}>
                 Needs focus{' '}
               </div>
             </div>
@@ -624,7 +608,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <div
               id="Out of Reference"
               className="text-lg"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Needs Focus Biomarkers
             </div>
@@ -877,7 +861,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <div
               className="text-lg"
               id="Detailed analysis"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Detailed Analysis
             </div>
