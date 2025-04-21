@@ -153,12 +153,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </Tooltip>
               </div>
               <div
-                data-tooltip-id={index + 'score-calc'}
+                data-tooltip-id={index +'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px]"
               >
                 Score Calculation
                 <Tooltip
-                  id={index + 'score-calc'}
+                  id={index +'score-calc'}
                   place="top"
                   className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{

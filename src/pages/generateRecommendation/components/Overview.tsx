@@ -135,6 +135,7 @@ export const Overview: React.FC<OverviewProps> = ({
                   key={`${el.title}-${suggestionIndex}`}
                 >
                   <BioMarkerRowSuggestions
+                  index={suggestionIndex}
                     isOverview
                     value={el}
                     onEdit={() => {}}
