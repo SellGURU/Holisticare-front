@@ -220,8 +220,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
               {TreatMentPlanData?.filter(
                 (value: any) => value.category == aciveTreatmentPlan,
-              )[0].data.map((el: any) => {
-                return <TreatmentCard data={el}></TreatmentCard>;
+              )[0].data.map((el: any, index: number) => {
+                return <TreatmentCard index={index} data={el}></TreatmentCard>;
               })}
             </div>
           )}
@@ -506,10 +506,13 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
-                  )[0]?.data?.map((el: any) => {
+                  )[0]?.data?.map((el: any, index: number) => {
+                    console.log(TreatMentPlanData);
+
                     return (
                       <>
                         <TreatmentCard
+                          index={index}
                           data={el}
                           isOther={aciveTreatmentPlan == 'Other'}
                         ></TreatmentCard>

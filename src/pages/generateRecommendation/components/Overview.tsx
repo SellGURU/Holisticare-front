@@ -64,21 +64,21 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             </div>
             <div className="flex w-full px-6 justify-center items-center gap-6 mt-3">
-              <div className=''>
-              <img
-                className={`cursor-pointer ${
-                  currentConflictIndex === 0
-                    ? 'opacity-50 cursor-not-allowed'
-                    : ''
-                }`}
-                src="/icons/arrow-up.svg"
-                alt="Previous"
-                onClick={() => {
-                  if (currentConflictIndex !== 0) {
-                    handlePreviousConflict();
-                  }
-                }}
-              />
+              <div className="">
+                <img
+                  className={`cursor-pointer ${
+                    currentConflictIndex === 0
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  src="/icons/arrow-up.svg"
+                  alt="Previous"
+                  onClick={() => {
+                    if (currentConflictIndex !== 0) {
+                      handlePreviousConflict();
+                    }
+                  }}
+                />
               </div>
               <div className="text-[10px] text-Text-Primary min-w-[1091px] text-center truncate">
                 {Conflicts[currentConflictIndex]}
@@ -135,6 +135,7 @@ export const Overview: React.FC<OverviewProps> = ({
                   key={`${el.title}-${suggestionIndex}`}
                 >
                   <BioMarkerRowSuggestions
+                    index={suggestionIndex}
                     isOverview
                     value={el}
                     onEdit={() => {}}

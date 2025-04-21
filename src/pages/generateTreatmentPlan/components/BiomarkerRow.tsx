@@ -83,13 +83,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   const { positive, negative } = splitInstructions(editableValue);
 
-
   console.log(value['Practitioner Comments'][0]);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   return (
     <>
-    <ConflictsModal
+      <ConflictsModal
         showModal={ShowConflict}
         setShowModal={setShowConflict}
         conflicts={Conflicts}
@@ -171,18 +170,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </Tooltip>
               </div>
-              {
-                Conflicts?.length > 0 &&(
-                  <div
+              {Conflicts?.length > 0 && (
+                <div
                   onClick={() => setShowConflict(true)}
                   className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
                 >
                   <img src="/icons/alarm.svg" alt="" />
                   Conflict <span>({Conflicts?.length})</span>
                 </div>
-                )
-              }
-            
+              )}
             </div>
           </div>
           <div className="text-[12px] gap-2 w-full ">
