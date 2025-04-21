@@ -120,11 +120,11 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               )}
             </div>
           </div>
-          <li className="list-disc mb-1">
-            <span className="text-Text-Secondary">Positive:</span> {positive}
+          <li className="  mb-2.5">
+            <span className="text-Text-Secondary bullet-point">Positive:</span> {positive}
           </li>
-          <li className="list-disc">
-            <span className="text-Text-Secondary">Negative:</span> {negative}
+          <li className="">
+            <span className="text-Text-Secondary bullet-point">Negative:</span> {negative}
           </li>
         </ul>
       </div>
