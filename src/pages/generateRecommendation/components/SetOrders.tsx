@@ -416,9 +416,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                   <div onClick={handleContinue}>Continue</div>
                 </div>
               )} */}
-            <div
-              className={`justify-end ml-4`}
-            >
+            <div className={`justify-end ml-4`}>
               <img
                 className="cursor-pointer"
                 src="/icons/setting-4.svg"
