@@ -63,7 +63,7 @@ export const Overview: React.FC<OverviewProps> = ({
                 />
               </div>
             </div>
-            <div className="flex w-full px-6 justify-center items-center gap-6 mt-3">
+            <div className="flex w-full px-6 justify-between items-center gap-6 mt-3">
               <div className="">
                 <img
                   className={`cursor-pointer ${

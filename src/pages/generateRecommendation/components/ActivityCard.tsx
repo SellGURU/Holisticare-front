@@ -57,7 +57,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 <Tooltip
                   id={'system-score'}
                   place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -78,7 +78,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 <Tooltip
                   id={'base-score'}
                   place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -98,7 +98,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -120,11 +120,11 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               )}
             </div>
           </div>
-          <li className="list-disc mb-1">
-            <span className="text-Text-Secondary">Positive:</span> {positive}
+          <li className="  mb-2.5">
+            <span className="text-Text-Secondary bullet-point">Positive:</span> {positive}
           </li>
-          <li className="list-disc">
-            <span className="text-Text-Secondary">Negative:</span> {negative}
+          <li className="">
+            <span className="text-Text-Secondary bullet-point">Negative:</span> {negative}
           </li>
         </ul>
       </div>

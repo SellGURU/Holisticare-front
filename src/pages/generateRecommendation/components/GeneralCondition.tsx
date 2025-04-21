@@ -321,10 +321,12 @@ const Card: React.FC<CardProps> = ({
                   onContentChange(index, e.target.value);
                   adjustHeight(e.target);
                 }}
-                className="w-full bg-backgroundColor-Card px-4 rounded-lg resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
+                className="w-full bg-backgroundColor-Card px-4 rounded-lg text-justify resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
               />
             ) : (
-              <li className={` ${item.length > 1 && 'list-disc'} text-xs mt-2`}>
+              <li
+                className={` ${item.length > 1 && 'list-disc'} text-xs text-justify mt-2`}
+              >
                 {item}
               </li>
             )}
