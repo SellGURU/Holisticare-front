@@ -35,7 +35,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
             >
               <div className="size-[5px] bg-[#005F73] rounded-full"></div>
-             {data["System Score"]}
+              {data['System Score']}
               <Tooltip
                 id={'system-score'}
                 place="top"
@@ -90,7 +90,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                <div className="text-Text-Secondary">{data?.["Practitioner Comments"]?.[0]}</div>
+                <div className="text-Text-Secondary">
+                  {data?.['Practitioner Comments']?.[0]}
+                </div>
               </Tooltip>
             </div>
           </div>

@@ -186,8 +186,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       );
 
       // Get the exercise to be removed from superset
-      const exerciseToRemove = updatedExercises[originalIndex].Exercises[exersiseIndex];
-      
+      const exerciseToRemove =
+        updatedExercises[originalIndex].Exercises[exersiseIndex];
+
       // Create a new normal set with the removed exercise
       const newNormalSet = {
         Type: 'Normalset',
@@ -197,9 +198,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       };
 
       // Remove the exercise from the superset
-      const remainingExercises = updatedExercises[originalIndex].Exercises.filter(
-        (_, i) => i !== exersiseIndex
-      );
+      const remainingExercises = updatedExercises[
+        originalIndex
+      ].Exercises.filter((_, i) => i !== exersiseIndex);
 
       // If only one exercise remains in the superset, convert it to a normal set
       if (remainingExercises.length === 1) {
