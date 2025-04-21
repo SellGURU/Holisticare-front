@@ -348,7 +348,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
             {/* Instructions Field */}
             <div className="mb-4">
-              <label className="flex w-full justify-between items-center text-xs font-medium">
+              <label className="flex w-full gap-1 items-center text-xs font-medium">
                 Instructions <span className="text-Red">*</span>
               </label>
               <input
