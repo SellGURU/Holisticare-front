@@ -83,7 +83,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   const { positive, negative } = splitInstructions(editableValue);
 
-  console.log(value['Practitioner Comments'][0]);
+  console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   return (
@@ -107,7 +107,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         <div
           className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-2 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
-          <div className="w-[273px] flex justify-between items-center">
+          <div className=" flex gap-6 items-center">
+            <div className='text-xs font-medium text-Text-Primary'>{value.Recommendation}</div>
             <div className="flex gap-2 text-[8px]">
               <div
                 data-tooltip-id="system-score"
@@ -159,7 +160,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
