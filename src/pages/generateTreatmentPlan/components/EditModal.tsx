@@ -39,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({
   );
   const [showSelect, setShowSelect] = useState(false);
   // const [group, setGroup] = useState(defalts?.Category);
-  const [practitionerComment, setPractitionerComment] = useState('');
+  // const [practitionerComment, setPractitionerComment] = useState('');
 
   const [practitionerComments, setPractitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
@@ -151,17 +151,17 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   };
 
-  const handleCommentKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (practitionerComment.trim()) {
-        setPractitionerComments([...practitionerComments, practitionerComment]);
-        setPractitionerComment('');
-      }
-    }
-  };
+  // const handleCommentKeyDown = (
+  //   e: React.KeyboardEvent<HTMLTextAreaElement>,
+  // ) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (practitionerComment.trim()) {
+  //       setPractitionerComments([...practitionerComments, practitionerComment]);
+  //       setPractitionerComment('');
+  //     }
+  //   }
+  // };
   const handleDeleteNote = (index: number) => {
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
@@ -428,7 +428,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
 
             {/* Practitioner Comments */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-xs font-medium">
                 Practitioner Comments
               </label>
@@ -440,7 +440,7 @@ const EditModal: React.FC<EditModalProps> = ({
                 rows={4}
                 placeholder="Enter internal observations or comments..."
               />
-            </div>
+            </div> */}
 
             {/* Comments List */}
             <div className="mb-4 flex flex-col gap-2">

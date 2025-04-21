@@ -63,7 +63,8 @@ export const Overview: React.FC<OverviewProps> = ({
                 />
               </div>
             </div>
-            <div className="flex w-full px-6 justify-center items-center gap-6">
+            <div className="flex w-full px-6 justify-center items-center gap-6 mt-3">
+              <div className=''>
               <img
                 className={`cursor-pointer ${
                   currentConflictIndex === 0
@@ -78,6 +79,7 @@ export const Overview: React.FC<OverviewProps> = ({
                   }
                 }}
               />
+              </div>
               <div className="text-[10px] text-Text-Primary min-w-[1091px] text-center truncate">
                 {Conflicts[currentConflictIndex]}
               </div>
@@ -133,6 +135,7 @@ export const Overview: React.FC<OverviewProps> = ({
                   key={`${el.title}-${suggestionIndex}`}
                 >
                   <BioMarkerRowSuggestions
+                  index={suggestionIndex}
                     isOverview
                     value={el}
                     onEdit={() => {}}
