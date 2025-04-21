@@ -26,7 +26,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
   const { positive, negative } = splitInstructions(data.Notes);
   return (
     <div className="w-[354px] no-split print:w-full h-full text-justify  print:h-auto flex flex-col gap-4 px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
-      <div className="w-full flex justify-between items-center flex-wrap gap-3">
+      <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm text-Text-Primary ">{data?.title}</div>
         {!isOther && (
           <div className="flex gap-2 text-[8px]">
@@ -35,7 +35,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
             >
               <div className="size-[5px] bg-[#005F73] rounded-full"></div>
-             {data["System Score"]}
+              {data['System Score']}
               <Tooltip
                 id={'system-score'}
                 place="top"
@@ -90,7 +90,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                <div className="text-Text-Secondary">{data?.["Practitioner Comments"]?.[0]}</div>
+                <div className="text-Text-Secondary">
+                  {data?.['Practitioner Comments']?.[0]}
+                </div>
               </Tooltip>
             </div>
           </div>
@@ -98,9 +100,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
       </div>
 
       <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-        <div className="text-Text-Primary">
+        <div className="text-Text-Primary text-justify">
           {' '}
-          <span className="text-Text-Secondary text-justify ">Positive: </span>
+          <span className="text-Text-Secondary  ">Positive: </span>
           {positive}
         </div>
         <div className="text-Text-Primary text-justify mt-3">

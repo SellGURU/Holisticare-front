@@ -108,7 +108,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-2 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
           <div className=" flex gap-6 items-center">
-            <div className='text-xs font-medium text-Text-Primary'>{value.Recommendation}</div>
+            <div className="text-xs font-medium text-Text-Primary">
+              {value.Recommendation}
+            </div>
             <div className="flex gap-2 text-[8px]">
               <div
                 data-tooltip-id="system-score"
