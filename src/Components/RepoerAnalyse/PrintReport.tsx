@@ -474,7 +474,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             >
               Client Summary
             </div>
-            <div className="" style={{ color: '#383838', fontSize: '14px' }}>
+            <div className="" style={{ color: '#888888', fontSize: '14px' }}>
               Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
               {ClientSummaryBoxs.total_category} categories
             </div>
@@ -496,7 +496,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {usrInfoData?.name}
             </div>
             <div className="flex justify-center items-center gap-1">
-              <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div className="" style={{ fontSize: '14px', color: '#888888' }}>
                 <div>Gender: {usrInfoData?.sex} </div>
               </div>
               <div
@@ -504,10 +504,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 style={{
                   width: '1px',
                   height: '12px',
-                  backgroundColor: '#383838',
+                  backgroundColor: '#B0B0B0',
                 }}
               ></div>
-              <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div className="" style={{ fontSize: '14px', color: '#888888' }}>
                 <div>Age: {usrInfoData?.age}</div>
               </div>
             </div>
@@ -630,9 +630,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
             <div
               className="  text-xs"
-              style={{ color: '#383838', fontSize: '14px' }}
+              style={{ color: '#888888', fontSize: '14px' }}
             >
               {referenceData.total_biomarker_note}
+              {console.log(
+                'referenceData.total_biomarker_note => ',
+                referenceData.total_biomarker_note,
+              )}
             </div>
           </div>
           <a
@@ -877,7 +881,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             >
               Detailed Analysis
             </div>
-            <div className="" style={{ color: '#383838', fontSize: '14px' }}>
+            <div className="" style={{ color: '#888888', fontSize: '14px' }}>
               {referenceData.detailed_analysis_note}
             </div>
           </div>
@@ -918,7 +922,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-xl"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Holistic Plan
             </div>
@@ -1067,7 +1071,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-xl"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Action Plan
             </div>
@@ -1081,8 +1085,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </a>
           {ActionPlan && (
             <div
-              className="w-full relative mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
-              style={{ borderRadius: '12px', zIndex: '60' }}
+              className="w-full relative mb-4 py-2 px-4 bg-white border mt-4"
+              style={{
+                borderRadius: '12px',
+                zIndex: '60',
+                borderColor: '#6CC24A',
+              }}
             >
               <div className="text-sm mb-2" style={{ color: '#005F73' }}>
                 {ActionPlan[ActionPlan.length - 1]?.title}

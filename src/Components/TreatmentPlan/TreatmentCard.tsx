@@ -4,9 +4,13 @@ import { Tooltip } from 'react-tooltip';
 interface TreatmentCardProps {
   data: any;
   isOther?: boolean;
-  index: number
+  index: number;
 }
-const TreatmentCard: React.FC<TreatmentCardProps> = ({ data, isOther, index }) => {
+const TreatmentCard: React.FC<TreatmentCardProps> = ({
+  data,
+  isOther,
+  index,
+}) => {
   const splitInstructions = (instruction: string) => {
     const positiveMatch = instruction?.match(
       /Positive:\s*(.+?)(?=\s*Negative:|$)/,
@@ -17,7 +21,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({ data, isOther, index }) =
       negative: negativeMatch ? negativeMatch[1].trim() : '',
     };
   };
-console.log(data);
+  console.log(data);
 
   const { positive, negative } = splitInstructions(data.Notes);
   return (
@@ -42,7 +46,9 @@ console.log(data);
                   pointerEvents: 'none',
                 }}
               >
-                <div className='text-Text-Primary font-medium'>System Score</div>
+                <div className="text-Text-Primary font-medium">
+                  System Score
+                </div>
                 <div className="text-Text-Secondary">
                   Score based on all data and AI insights.
                 </div>
@@ -64,16 +70,19 @@ console.log(data);
                   pointerEvents: 'none',
                 }}
               >
-                <div className='text-Text-Primary font-medium'>Base Score</div>
+                <div className="text-Text-Primary font-medium">Base Score</div>
                 <div className="text-Text-Secondary">
                   Initial score from core health metrics.
                 </div>
               </Tooltip>
             </div>
-            <div data-tooltip-id={index+'calc-score'} className="text-Primary-DeepTeal select-none">
+            <div
+              data-tooltip-id={index + 'calc-score'}
+              className="text-Primary-DeepTeal select-none"
+            >
               Score Calculation
               <Tooltip
-                id={index+'calc-score'}
+                id={index + 'calc-score'}
                 place="top"
                 className="!bg-white !w-[162px] !leading-5 !bg-opacity-100 !shadow-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
@@ -81,10 +90,7 @@ console.log(data);
                   pointerEvents: 'none',
                 }}
               >
-                
-                <div className="text-Text-Secondary">
-                 {data.Based}
-                </div>
+                <div className="text-Text-Secondary">{data.Based}</div>
               </Tooltip>
             </div>
           </div>
@@ -92,20 +98,16 @@ console.log(data);
       </div>
 
       <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-              <div className="text-Text-Primary">
-                {' '}
-                <span className="text-Text-Secondary text-justify ">
-                  Positive:{' '}
-                </span>
-                {positive}
-              </div>
-              <div className="text-Text-Primary text-justify mt-3">
-                <span className="text-Text-Secondary">
-                  Negative:{' '}
-                </span>
-                {negative}
-              </div>{' '}
-            </div>
+        <div className="text-Text-Primary">
+          {' '}
+          <span className="text-Text-Secondary text-justify ">Positive: </span>
+          {positive}
+        </div>
+        <div className="text-Text-Primary text-justify mt-3">
+          <span className="text-Text-Secondary">Negative: </span>
+          {negative}
+        </div>{' '}
+      </div>
       {/* <div className="text-xs font-medium text-Primary-DeepTeal select-none">
         {' '}
         {data?.Based}

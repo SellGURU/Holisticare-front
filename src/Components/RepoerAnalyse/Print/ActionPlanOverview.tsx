@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useEffect, useState } from 'react';
-import ChoosingDaysWeek from '../../NewGenerateActionPlan/components/ChoosingDaysWeek';
-import MonthShows from '../../NewGenerateActionPlan/components/MonthShows';
+import MonthShows from './MonthShows';
+import ChoosingDaysWeek from './ChoosingDaysWeek';
 
 interface TableProps {
   classData: Array<any>;
@@ -54,7 +54,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-Gray-50">
+            <tbody className="bg-white divide-y divide-[#e9edf5]">
               {(Object.entries(grouped) as [string, any[]][]).map(
                 ([key, items]) => (
                   <Fragment key={key}>
@@ -72,17 +72,16 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
 
                         {/* Title */}
                         <td
-                          className="py-3 text-xs text-Text-Quadruple whitespace-nowrap"
+                          className={`py-3 text-xs whitespace-nowrap ${index == 0 && 'align-top'}`}
                           style={{
                             color: '#888888',
-                            paddingTop: index == 0 ? '0px' : '12px',
                           }}
                         >
                           {item.title}
                         </td>
 
                         {/* Frequency */}
-                        <td className="px-4 py-3 whitespace-nowrap  items-center">
+                        <td className="px-4 py-3 whitespace-nowrap flex flex-col items-center">
                           {item.frequency_type === 'weekly' && (
                             <>
                               <div
@@ -91,7 +90,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   width: '76px',
                                   height: '24px',
                                   backgroundColor: '#DEF7EC',
-                                  color: 'var(--Primary-DeepTeal)',
+                                  color: '#005f73',
                                   fontSize: '10px',
                                 }}
                               >
@@ -117,7 +116,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   width: '80px',
                                   height: '24px',
                                   backgroundColor: '#DEF7EC',
-                                  color: 'var(--Primary-DeepTeal)',
+                                  color: '#005f73',
                                   fontSize: '10px',
                                 }}
                               >
@@ -138,7 +137,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                 width: '65px',
                                 height: '24px',
                                 backgroundColor: '#DEF7EC',
-                                color: 'var(--Primary-DeepTeal)',
+                                color: '#005f73',
                                 fontSize: '10px',
                               }}
                             >
@@ -167,7 +166,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         {/* Time */}
                         <td className="px-4 py-3 whitespace-nowrap">
                           {item.times && item.times.length > 0 ? (
-                            <div className="flex items-center gap-1">
+                            <div className="flex flex-col items-start gap-1">
                               {item.times.map((time: string, index: number) => (
                                 <div
                                   key={index}
@@ -186,14 +185,9 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           ) : (
                             <div
                               className="flex items-center gap-1"
-                              style={{ fontSize: '10px', color: '#FFAB2C' }}
+                              style={{ fontSize: '10px', color: '#383838' }}
                             >
-                              <img
-                                src="/icons/danger-new.svg"
-                                alt=""
-                                className="w-4 h-4"
-                              />
-                              No Scheduled
+                              -
                             </div>
                           )}
                         </td>

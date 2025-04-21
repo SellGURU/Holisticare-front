@@ -83,13 +83,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
 
   const { positive, negative } = splitInstructions(editableValue);
 
-
   console.log(value['Practitioner Comments'][0]);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   return (
     <>
-    <ConflictsModal
+      <ConflictsModal
         showModal={ShowConflict}
         setShowModal={setShowConflict}
         conflicts={Conflicts}
@@ -153,12 +152,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </Tooltip>
               </div>
               <div
-                data-tooltip-id={index +'score-calc'}
+                data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px]"
               >
                 Score Calculation
                 <Tooltip
-                  id={index +'score-calc'}
+                  id={index + 'score-calc'}
                   place="top"
                   className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
@@ -171,18 +170,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </Tooltip>
               </div>
-              {
-                Conflicts?.length > 0 &&(
-                  <div
+              {Conflicts?.length > 0 && (
+                <div
                   onClick={() => setShowConflict(true)}
                   className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
                 >
                   <img src="/icons/alarm.svg" alt="" />
                   Conflict <span>({Conflicts?.length})</span>
                 </div>
-                )
-              }
-            
+              )}
             </div>
           </div>
           <div className="text-[12px] gap-2 w-full ">
