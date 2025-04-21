@@ -48,6 +48,7 @@ export const GenerateRecommendation = () => {
     } else {
       if (currentStepIndex < steps.length - 1) {
         if (currentStepIndex == 1) {
+          setisButtonLoading(true)
           Application.tratmentPlanConflict({
             member_id: id,
             selected_interventions: treatmentPlanData.suggestion_tab.filter(
@@ -59,6 +60,7 @@ export const GenerateRecommendation = () => {
           }).then((res) => {
             setConflicts(res.data.conflicts);
             setCurrentStepIndex((prevIndex) => prevIndex + 1);
+            setisButtonLoading(false)
           });
         } else {
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
@@ -249,7 +251,8 @@ export const GenerateRecommendation = () => {
               >
                 {isButtonLoading ? (
                   <>
-                    Generate
+                    {currentStepIndex == 2 ? 'Generate' : 'Next'}
+                  
                     <SpinnerLoader></SpinnerLoader>
                   </>
                 ) : (

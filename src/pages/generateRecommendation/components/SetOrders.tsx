@@ -8,7 +8,6 @@ import Circleloader from '../../../Components/CircleLoader';
 import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
 
-
 type CategoryState = {
   name: string;
   visible: boolean;
@@ -49,7 +48,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   // );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
-  const [activeModalValue, ] = useState<Array<any>>([]);
+  const [activeModalValue] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState(false);
   // const [FilteredData, setFilteredData] = useState(data);
   // const [isStarted, setisStarted] = useState(false);
@@ -418,7 +417,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 </div>
               )} */}
             <div
-              className={`justify-end ml-4 ${visibleCategoriy.findIndex((el) => el.name == activeCategory) == 0 ? 'flex' : 'hidden'}`}
+              className={`justify-end ml-4`}
             >
               <img
                 className="cursor-pointer"
@@ -434,122 +433,123 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => {
-              return(
+              return (
                 <ActivityCard
-                key={index}                                          
-                item={item}                                        
-                index={index}                                        
-                activeCategory={activeCategory}                     
-                handleCheckboxChange={handleCheckboxChange}          
-              />
-          //     <div className="flex items-center gap-2 mb-3">
-          //       <Checkbox
-          //         checked={item.checked}
-          //         onChange={() => handleCheckboxChange(activeCategory, index)}
-          //       />
-          //       <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-          //       <div className="w-full flex gap-6 items-center mb-4">
-          //         <div  className='text-Text-Primary text-xs font-medium '>{item.Recommendation}</div>
-          //   <div className="flex gap-2 text-[8px]">
-          //     <div
-          //       data-tooltip-id="system-score"
-          //       className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
-          //     >
-          //       <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
-          //       {item['System Score']}
-          //       <Tooltip
-          //         id={'system-score'}
-          //         place="top"
-          //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-          //         style={{
-          //           zIndex: 9999,
-          //           pointerEvents: 'none',
-          //         }}
-          //       >
-          //         <div className='text-Text-Primary'>System Score</div>
-          //         <div className="text-Text-Secondary">
-          //           Score based on all data and AI insights.
-          //         </div>
-          //       </Tooltip>
-          //     </div>
-          //     <div
-          //       data-tooltip-id="base-score"
-          //       className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
-          //     >
-          //       <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
-          //       {item.Score}
-          //       <Tooltip
-          //         id={'base-score'}
-          //         place="top"
-          //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-          //         style={{
-          //           zIndex: 9999,
-          //           pointerEvents: 'none',
-          //         }}
-          //       >
-          //         <div className='text-Text-Primary'>Base Score</div>
-          //         <div className="text-Text-Secondary">
-          //           Initial score from core health metrics.
-          //         </div>
-          //       </Tooltip>
-          //     </div>
-          //     <div
-          //       data-tooltip-id={index + 'score-calc'}
-          //       className="text-Primary-DeepTeal select-none mt-[2px]"
-          //     >
-          //       Score Calculation
-          //       <Tooltip
-          //         id={index + 'score-calc'}
-          //         place="top"
-          //         className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-          //         style={{
-          //           zIndex: 9999,
-          //           pointerEvents: 'none',
-          //         }}
-          //       >
-          //         <div className="text-Text-Primary text-[8px]">
-          //           {item['Practitioner Comments'][0]}
-          //         </div>
-          //       </Tooltip>
-          //     </div>
-          //     <div
-          //       onClick={() => setShowConflict(true)}
-          //       className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
-          //     >
-          //       <img src="/icons/alarm.svg" alt="" />
-          //       Conflict <span>(2)</span>
-          //     </div>
-          //   </div>
-          // </div>
-          //         <li className="list-disc mb-1">
-          //           {/* {item.Recommendation}{' '} */}
-          //           <span className="text-Text-Secondary">Positive:</span>{' '}
-          //           {positive}
-          //           {/* {item['Based on'] && (
-          //             <div
-          //               onClick={() => {
-          //                 setShowModal(true);
-          //                 setActivemOdalValue(item['Practitioner Comments']);
-          //               }}
-          //               className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
-          //             >
-          //               Based on your:{' '}
-          //               <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
-          //                 {item['Based on']}{' '}
-          //                 <SvgIcon src="/icons/export.svg" color="#005F73" />
-          //               </span>
-          //             </div>
-          //           )} */}
-          //         </li>
-          //         <li className="list-disc">
-          //           {/* {item.Recommendation}{' '} */}
-          //           <span className="text-Text-Secondary">Negative:</span>{' '}
-          //           {negative}
-             
-          //         </li>
-          //       </ul>
-          //     </div>
-            )})}
+                  key={index}
+                  item={item}
+                  index={index}
+                  activeCategory={activeCategory}
+                  handleCheckboxChange={handleCheckboxChange}
+                />
+                //     <div className="flex items-center gap-2 mb-3">
+                //       <Checkbox
+                //         checked={item.checked}
+                //         onChange={() => handleCheckboxChange(activeCategory, index)}
+                //       />
+                //       <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
+                //       <div className="w-full flex gap-6 items-center mb-4">
+                //         <div  className='text-Text-Primary text-xs font-medium '>{item.Recommendation}</div>
+                //   <div className="flex gap-2 text-[8px]">
+                //     <div
+                //       data-tooltip-id="system-score"
+                //       className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
+                //     >
+                //       <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
+                //       {item['System Score']}
+                //       <Tooltip
+                //         id={'system-score'}
+                //         place="top"
+                //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className='text-Text-Primary'>System Score</div>
+                //         <div className="text-Text-Secondary">
+                //           Score based on all data and AI insights.
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       data-tooltip-id="base-score"
+                //       className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
+                //     >
+                //       <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
+                //       {item.Score}
+                //       <Tooltip
+                //         id={'base-score'}
+                //         place="top"
+                //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className='text-Text-Primary'>Base Score</div>
+                //         <div className="text-Text-Secondary">
+                //           Initial score from core health metrics.
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       data-tooltip-id={index + 'score-calc'}
+                //       className="text-Primary-DeepTeal select-none mt-[2px]"
+                //     >
+                //       Score Calculation
+                //       <Tooltip
+                //         id={index + 'score-calc'}
+                //         place="top"
+                //         className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className="text-Text-Primary text-[8px]">
+                //           {item['Practitioner Comments'][0]}
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       onClick={() => setShowConflict(true)}
+                //       className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
+                //     >
+                //       <img src="/icons/alarm.svg" alt="" />
+                //       Conflict <span>(2)</span>
+                //     </div>
+                //   </div>
+                // </div>
+                //         <li className="list-disc mb-1">
+                //           {/* {item.Recommendation}{' '} */}
+                //           <span className="text-Text-Secondary">Positive:</span>{' '}
+                //           {positive}
+                //           {/* {item['Based on'] && (
+                //             <div
+                //               onClick={() => {
+                //                 setShowModal(true);
+                //                 setActivemOdalValue(item['Practitioner Comments']);
+                //               }}
+                //               className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
+                //             >
+                //               Based on your:{' '}
+                //               <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
+                //                 {item['Based on']}{' '}
+                //                 <SvgIcon src="/icons/export.svg" color="#005F73" />
+                //               </span>
+                //             </div>
+                //           )} */}
+                //         </li>
+                //         <li className="list-disc">
+                //           {/* {item.Recommendation}{' '} */}
+                //           <span className="text-Text-Secondary">Negative:</span>{' '}
+                //           {negative}
+
+                //         </li>
+                //       </ul>
+                //     </div>
+              );
+            })}
         </div>
       </div>
       {showModal && (

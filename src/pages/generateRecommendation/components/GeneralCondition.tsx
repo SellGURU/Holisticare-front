@@ -157,8 +157,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
         <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-[#FFAB2C] shadow-200 min-w-[449px] text-Text-Primary">
           <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
             <div className="flex items-center text-Text-Primary gap-2">
-              
-              <SvgIcon src='/icons/danger.svg' color='#FFAB2C'></SvgIcon>
+              <SvgIcon src="/icons/danger.svg" color="#FFAB2C"></SvgIcon>
               {/* <img src="/icons/lamp-on.svg" alt="" /> */}
               {/* Looking Forwards */}
               Completion Suggestions
@@ -276,17 +275,14 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 min-w-[444px] w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title == "Looking Forwards" ? (
-          <div className='flex items-center gap-2 text-Primary-DeepTeal'>
-                          <img src="/icons/lamp-on.svg" alt="" />
-{title}
-          </div>
-        ):(
-          <>
+        {title == 'Looking Forwards' ? (
+          <div className="flex items-center gap-2 text-Primary-DeepTeal">
+            <img src="/icons/lamp-on.svg" alt="" />
             {title}
-          </>
+          </div>
+        ) : (
+          <>{title}</>
         )}
-      
 
         {isEditing ? (
           <div
