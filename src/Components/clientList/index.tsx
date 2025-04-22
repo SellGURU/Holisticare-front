@@ -475,11 +475,9 @@ const ClientList = () => {
         onDelete={() => {
           Application.deleteClinic({
             member_id: removeId,
-          }).then(() => {
-           
-          });
+          }).then(() => {});
         }}
-        onConfirm={()=>{
+        onConfirm={() => {
           setClientList((prevList) =>
             prevList.filter((client) => client.member_id !== removeId),
           );

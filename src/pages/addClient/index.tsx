@@ -101,12 +101,13 @@ const AddClient = () => {
       })
       .catch((error) => {
         console.log(error);
-setDobApiError('')
-setApiError('')
+        setDobApiError('');
+        setApiError('');
         const errorDetail = error?.detail;
         if (errorDetail === 'Client must be at least 18 years old.') {
           setDobApiError('Client must be at least 18 years old.');
-        } if (errorDetail === 'Client already exists.') {
+        }
+        if (errorDetail === 'Client already exists.') {
           setApiError(
             'Enter a valid email address. This email is already associated with another client.',
           );
