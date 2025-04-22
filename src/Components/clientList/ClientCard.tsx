@@ -114,15 +114,15 @@ const ClientCard: React.FC<ClientCardProps> = ({
   //   // setAccessPassword(res.password);
   // });
   const [notificationMessage, setNotificationMessage] = useState('');
-  const [notifType, setNotifType] = useState('')
-  const copyToClipboard = async (text: string,type:string) => {
+  const [notifType, setNotifType] = useState('');
+  const copyToClipboard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text);
       // Optional: Add a success notification
-      setNotifType(type)
+      setNotifType(type);
       setNotificationMessage('Text Copied to Clipboard');
- // Auto-close after 3 seconds
-    
+      // Auto-close after 3 seconds
+
       // alert('Copied to clipboard!');
       // Or use a toast notification if you have a toast library
       // toast.success('Copied to clipboard!');
@@ -130,13 +130,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
       console.error('Failed to copy text: ', err);
     }
   };
-  const notifCopyModal = useRef(null)
+  const notifCopyModal = useRef(null);
   useModalAutoClose({
     refrence: notifCopyModal,
-    close: ()=>{
-      setNotificationMessage('')
-    }
-  })
+    close: () => {
+      setNotificationMessage('');
+    },
+  });
   // const [showAsignList, setshowAsignList] = useState(false);
   return (
     <>
@@ -154,8 +154,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   alt=""
                 />
                 <div className="text-xs font-medium -mt-6 mb-3">
-                The email address and password have been successfully sent to 
-{' '}
+                  The email address and password have been successfully sent to{' '}
                   {client.name}.
                 </div>
                 <ButtonPrimary onClick={() => setShowAccessModal(false)}>
@@ -170,8 +169,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {client.name}`s Access
               </div>
               <div className="mt-6 text-xs font-medium">
-              Share the email address and password with your client to give them access.
-
+                Share the email address and password with your client to give
+                them access.
               </div>
               <div className="text-xs text-Text-Secondary mt-3">
                 Do not share this information with anyone else.
@@ -181,20 +180,20 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
                   <span className="text-xs select-none">{AccessUserName}</span>
                   <img
-                    onClick={() => copyToClipboard(AccessUserName,'Email')}
+                    onClick={() => copyToClipboard(AccessUserName, 'Email')}
                     className="cursor-pointer"
                     src="/icons/copy.svg"
                     alt=""
                   />
-                  {
-                    notificationMessage && notifType == "Email" && (
-                      <div ref={notifCopyModal} className='absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7'>
-                        <img src="/icons/info-circle-green.svg" alt="" />
-                        {notificationMessage}
-
-                      </div>
-                    )
-                  }
+                  {notificationMessage && notifType == 'Email' && (
+                    <div
+                      ref={notifCopyModal}
+                      className="absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7"
+                    >
+                      <img src="/icons/info-circle-green.svg" alt="" />
+                      {notificationMessage}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-6">
@@ -202,20 +201,20 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
                   <span className="text-xs select-none">{AccessPassword}</span>
                   <img
-                    onClick={() => copyToClipboard(AccessPassword,'Password')}
+                    onClick={() => copyToClipboard(AccessPassword, 'Password')}
                     className="cursor-pointer"
                     src="/icons/copy.svg"
                     alt=""
                   />
-                  {
-                    notificationMessage && notifType == "Password" && (
-                      <div ref={notifCopyModal} className='absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7'>
-                        <img src="/icons/info-circle-green.svg" alt="" />
-                        {notificationMessage}
-
-                      </div>
-                    )
-                  }
+                  {notificationMessage && notifType == 'Password' && (
+                    <div
+                      ref={notifCopyModal}
+                      className="absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7"
+                    >
+                      <img src="/icons/info-circle-green.svg" alt="" />
+                      {notificationMessage}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex w-full justify-end mt-12 gap-4 items-center">
@@ -259,7 +258,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
       ></ArchiveModal>
       <DeleteModal
         isOpen={showDeleteModal}
-        onClose={() => setshowDeleteModal(false)}
+        onClose={() => {
+          setshowDeleteModal(false);
+          ondelete(client.member_id);
+        }}
         name={client.name}
         onDelete={() => {
           Application.deletePatient({
@@ -269,9 +271,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
           });
           // onarchive(client.member_id)
         }}
-        onConfirm={()=>{
+        onConfirm={() => {
           ondelete(client.member_id);
-
         }}
       ></DeleteModal>
       <div

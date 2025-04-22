@@ -465,6 +465,9 @@ const ClientList = () => {
         isOpen={isOpenConfirm}
         onClose={() => {
           setISOpenConfirm(false);
+          setClientList((prevList) =>
+            prevList.filter((client) => client.member_id !== removeId),
+          );
         }}
         onDelete={() => {
           Application.deleteClinic({
