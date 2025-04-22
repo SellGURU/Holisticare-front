@@ -14,6 +14,7 @@ interface ClientCardProps {
   ondelete: (memberid: any) => void;
   onarchive: (memberid: any) => void;
   onToggleHighPriority: (memberid: any) => void;
+  activeTab: string;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
@@ -21,6 +22,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   ondelete,
   onarchive,
   onToggleHighPriority,
+  activeTab,
 }) => {
   console.log(client);
 
@@ -35,21 +37,59 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-  const handleToggleFavoriteAndHighPriority = async () => {
+  // const handleToggleFavoriteAndHighPriority = async () => {
+  //   try {
+  //     // Call API to toggle favorite status
+  //     await Application.addFavorite({
+  //       member_id: client.member_id,
+  //       is_favorite: !client.favorite,
+  //     });
+
+  //     // Update the local state to reflect the change
+  //     onToggleHighPriority(client.member_id);
+
+  //     // Optionally close the modal if applicable
+  //     setshowModal(false);
+  //   } catch (error) {
+  //     console.error('Error updating favorite status:', error);
+  //   }
+  // };
+  const handleAddToHighPriority = async () => {
     try {
-      // Call API to toggle favorite status
-      await Application.addFavorite({
-        member_id: client.member_id,
-        is_favorite: !client.favorite,
-      });
+      if (!client.favorite) {
+        // Call API to add to high priorities
+        await Application.addFavorite({
+          member_id: client.member_id,
+          is_favorite: true,
+        });
 
-      // Update the local state to reflect the change
-      onToggleHighPriority(client.member_id);
+        // Update the local state to reflect the change
+        onToggleHighPriority(client.member_id);
 
-      // Optionally close the modal if applicable
-      setshowModal(false);
+        // Optionally close the modal if applicable
+        setshowModal(false);
+      }
     } catch (error) {
-      console.error('Error updating favorite status:', error);
+      console.error('Error adding to high priorities:', error);
+    }
+  };
+  const handleRemoveFromHighPriority = async () => {
+    try {
+      if (client.favorite && activeTab === 'High-Priority') {
+        // Call API to remove from high priorities
+        await Application.addFavorite({
+          member_id: client.member_id,
+          is_favorite: false,
+        });
+
+        // Update the local state to reflect the change
+        onToggleHighPriority(client.member_id);
+
+        // Optionally close the modal if applicable
+        setshowModal(false);
+      }
+    } catch (error) {
+      console.error('Error removing from high priorities:', error);
     }
   };
   // const handleToggleFavorite = async () => {
@@ -138,6 +178,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
     },
   });
   // const [showAsignList, setshowAsignList] = useState(false);
+  console.log(activeTab);
+
   return (
     <>
       <MainModal
@@ -247,10 +289,19 @@ const ClientCard: React.FC<ClientCardProps> = ({
       <ArchiveModal
         archived={client.archived}
         onConfirm={() => {
-          Application.archivePatient({
-            member_id: client.member_id,
-          });
-          onarchive(client.member_id);
+          if (client.archived) {
+            Application.unArchivePatient({
+              member_id: client.member_id,
+            }).then(() => {
+              onarchive(client.member_id);
+            });
+          } else {
+            Application.archivePatient({
+              member_id: client.member_id,
+            }).then(() => {
+              onarchive(client.member_id);
+            });
+          }
         }}
         name={client.name}
         isOpen={showArchiveModal}
@@ -308,6 +359,43 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   <img src="/icons/directbox-send.svg" alt="" />
                   Unarchive
                 </div>
+                {!client.favorite ? (
+                  <div
+                    onClick={handleAddToHighPriority}
+                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                  >
+                    <img src="/icons/star.svg" alt="" />
+                    Add to High-Priorities
+                  </div>
+                ) : (
+                  client.favorite &&
+                  activeTab == 'High-Priority' && (
+                    <div
+                      onClick={handleRemoveFromHighPriority}
+                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    >
+                      <img src="/icons/star.svg" alt="" />
+                      Remove from High-Priorities
+                    </div>
+                  )
+                )}
+                 <div
+                  onClick={() => {
+                    Application.giveClientAccess({
+                      member_id: client.member_id,
+                    }).then((res) => {
+                      console.log(res);
+
+                      setAccessUserName(res.data.username);
+                      setAccessPassword(res.data.password);
+                      setShowAccessModal(true);
+                    });
+                  }}
+                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                >
+                  <img src="/icons/keyboard-open.svg" alt="" />
+                  Client Access
+                </div>
                 <div
                   onClick={() => {
                     setshowDeleteModal(true);
@@ -343,15 +431,35 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   <img src="/icons/directbox-send.svg" alt="" />
                   Send to Archieve
                 </div>
-                <div
+                {!client.favorite ? (
+                  <div
+                    onClick={handleAddToHighPriority}
+                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                  >
+                    <img src="/icons/star.svg" alt="" />
+                    Add to High-Priorities
+                  </div>
+                ) : (
+                  client.favorite &&
+                  activeTab == 'High-Priority' && (
+                    <div
+                      onClick={handleRemoveFromHighPriority}
+                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    >
+                      <img src="/icons/star.svg" alt="" />
+                      Remove from High-Priorities
+                    </div>
+                  )
+                )}
+                {/* <div
                   onClick={handleToggleFavoriteAndHighPriority}
                   className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                 >
                   <img src="/icons/star.svg" alt="" />
-                  {client.favorite
+                  {client.favorite && activeTab == "High-Priority"
                     ? 'Remove from High-Priorities'
                     : 'Add to High-Priorities'}{' '}
-                </div>
+                </div> */}
                 <div
                   onClick={() => {
                     Application.giveClientAccess({

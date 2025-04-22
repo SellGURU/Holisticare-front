@@ -53,7 +53,7 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
                 {isNameTooLong
                   ? `${currentName.substring(0, 17)}...`
                   : currentName}{' '}
-                has been successfully deleted. has been successfully deleted.
+                has been successfully deleted.
               </div>
               <ButtonPrimary
                 onClick={() => {

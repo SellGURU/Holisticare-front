@@ -60,6 +60,7 @@ const ClientList = () => {
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
     [],
   );
+
   const navigate = useNavigate();
   const getPatients = () => {
     Application.getPatients()
@@ -390,6 +391,8 @@ const ClientList = () => {
                   {filteredClientList.map((client: any) => {
                     return (
                       <ClientCard
+                     
+                      activeTab={active}
                         ondelete={(memberId: any) => {
                           setFilteredClientList((pre) => {
                             const nes = [...pre];
