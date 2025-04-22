@@ -1,4 +1,4 @@
-import { useState, useEffect , useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 
@@ -60,10 +60,10 @@ export default function SimpleDatePicker({
            inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
          }`}
       >
-        {date ? ` ${date.toLocaleDateString()}` : (
-          <div className='text-[#B0B0B0] text-xs font-light'>
-            {placeholder}
-          </div>
+        {date ? (
+          ` ${date.toLocaleDateString()}`
+        ) : (
+          <div className="text-[#B0B0B0] text-xs font-light">{placeholder}</div>
         )}
         <img src="/icons/calendar-3.svg" alt="Calendar" />
       </button>
@@ -84,7 +84,9 @@ export default function SimpleDatePicker({
       )}
 
       {inValid && errorMessage && (
-        <span className="text-Red text-[10px] relative top-[6px]">{errorMessage}</span>
+        <span className="text-Red text-[10px] relative top-[6px]">
+          {errorMessage}
+        </span>
       )}
     </div>
   );
