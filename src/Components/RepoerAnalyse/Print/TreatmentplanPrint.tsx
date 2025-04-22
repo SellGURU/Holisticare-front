@@ -4,6 +4,12 @@ interface TreatmentPlanPrintProps {
 }
 
 const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
+  const result = {
+    positive: data.Notes.match(
+      /Positive:\s*(.*?)(?=Negative:|$)/s,
+    )?.[1]?.trim(),
+    negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
+  };
   return (
     <>
       <div
@@ -16,24 +22,56 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
       >
         <div>
           <div
-            className="text-sm text-gray-600  top-2"
-            style={{ fontSize: '12px', color: '#383838' }}
+            className="top-2"
+            style={{ fontSize: '12px', color: '#383838', fontWeight: 500 }}
           >
             {data.title}
           </div>
           <div
-            className="my-2  text-sm"
-            style={{ fontSize: '12px', color: '#888888' }}
+            className="my-2 flex"
+            style={{ fontSize: '12px', color: '#383838' }}
           >
-            <span className="text-gray-800">Notes:</span> {data.Notes}
+            <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
+            <div>
+              <span style={{ color: '#888888' }}>Positive:</span>{' '}
+              {result.positive}
+            </div>
           </div>
           <div
-            className="text-sm text-gray-600 "
-            style={{ color: '#005F73', fontSize: '10px' }}
+            className="my-2 flex"
+            style={{ fontSize: '12px', color: '#383838' }}
           >
-            {' '}
-            {data.Based}
+            <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
+            <div>
+              <span style={{ color: '#888888' }}>Negative:</span>{' '}
+              {result.negative}
+            </div>
           </div>
+          {data.Client_Notes.length > 0 && (
+            <>
+              <div
+                style={{
+                  backgroundColor: '#E9EDF5',
+                  width: '100%',
+                  height: '1px',
+                  marginBottom: '5px',
+                  marginTop: '5px',
+                }}
+              ></div>
+              <div style={{ color: '#888888', fontSize: '12px' }}>
+                <span
+                  style={{
+                    color: '#383838',
+                    fontSize: '12px',
+                    marginRight: '5px',
+                  }}
+                >
+                  Note:
+                </span>
+                {data.Client_Notes[0]}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
