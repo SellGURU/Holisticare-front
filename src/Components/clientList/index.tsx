@@ -466,14 +466,17 @@ const ClientList = () => {
         onClose={() => {
           setISOpenConfirm(false);
         }}
-        onConfirm={() => {
+        onDelete={() => {
           Application.deleteClinic({
             member_id: removeId,
           }).then(() => {
-            setClientList((prevList) =>
-              prevList.filter((client) => client.member_id !== removeId),
-            );
+           
           });
+        }}
+        onConfirm={()=>{
+          setClientList((prevList) =>
+            prevList.filter((client) => client.member_id !== removeId),
+          );
         }}
       ></DeleteModal>
       {/* <ConfirmModal

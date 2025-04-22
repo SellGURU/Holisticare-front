@@ -14,6 +14,10 @@ import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
 const AddClient = () => {
+  const [showValidation, setShowValidation] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [dobApiError, setDobApiError] = useState('');
+
   const formik = useFormik({
     initialValues: {
       firstName: '',
@@ -30,6 +34,7 @@ const AddClient = () => {
       gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
     }),
     onSubmit: () => {
+      submit();
       // Logic for submission
     },
   });
@@ -70,11 +75,12 @@ const AddClient = () => {
   const [photo, setPhoto] = useState('');
   const [memberId, setMemberID] = useState('');
   const [isLoading, setisLoading] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const validateDate = (date: any) => {
     return !isNaN(date.getTime()); // Returns true if it's a valid date
   };
   const submit = () => {
+    setShowValidation(true);
     if (!formik.isValid) {
       return;
     }
@@ -85,7 +91,6 @@ const AddClient = () => {
       email: formik.values.email,
       last_name: formik.values.lastName,
       picture: photo,
-      // age: formik.values.age,
       date_of_birth: dateOfBirth,
       gender: formik.values.gender,
       wearable_devices: [],
@@ -93,6 +98,19 @@ const AddClient = () => {
       .then((res) => {
         setIsAdded(true);
         setMemberID(res.data.member_id);
+      })
+      .catch((error) => {
+        console.log(error);
+setDobApiError('')
+setApiError('')
+        const errorDetail = error?.detail;
+        if (errorDetail === 'Client must be at least 18 years old.') {
+          setDobApiError('Client must be at least 18 years old.');
+        } if (errorDetail === 'Client already exists.') {
+          setApiError(
+            'Enter a valid email address. This email is already associated with another client.',
+          );
+        }
       })
       .finally(() => {
         setisLoading(false);
@@ -108,6 +126,9 @@ const AddClient = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+  console.log(showValidation);
+  console.log(apiError);
+
   return (
     <>
       {/* {isLoading && (
@@ -257,14 +278,14 @@ const AddClient = () => {
                         formik.setFieldTouched('gender', true);
                         setShowSelect(!showSelect);
                       }}
-                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-red-500' : ''}`}
+                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-Red' : ''}`}
                     >
                       {formik.values.gender !== 'unset' ? (
                         <div className="text-[12px] text-Text-Primary">
                           {formik.values.gender}
                         </div>
                       ) : (
-                        <div className="text-[12px] text-gray-400">
+                        <div className="text-[12px] text-[#B0B0B0] font-light">
                           Select client’s gender...
                         </div>
                       )}
@@ -279,7 +300,7 @@ const AddClient = () => {
                     {showSelect && (
                       <div
                         ref={selectRef}
-                        className="w-full z-20 shadow-200 p-2 rounded-[12px] absolute bg-white border-gray-50 top-[55px]"
+                        className="w-full z-20 shadow-200 p-2 rounded-[12px] absolute bg-white border-gray-50 top-[58px]"
                       >
                         <div
                           onClick={() => {
@@ -307,56 +328,24 @@ const AddClient = () => {
                       </div>
                     )}
                   </div>
-                  {/* <div className="w-full md:w-auto">
-                    <label className="text-Text-Primary text-[12px] font-medium">
-                      Age
-                    </label>
-                    <div className="w-full select-none flex justify-between">
-                      <div
-                        onClick={() =>
-                          formik.setFieldValue('age', formik.values.age - 1)
-                        }
-                        className=" w-full md:w-[66px] h-[32px] flex justify-center items-center cursor-pointer text-Primary-DeepTeal bg-backgroundColor-Main rounded-l-[16px] border-gray-50 border text-[24px]"
-                      >
-                        -
-                      </div>
-                      <div className=" w-full md:w-[88px] h-[32px] bg-backgroundColor-Card border border-gray-50">
-                        <input
-                          {...formik.getFieldProps('age')}
-                          value={Number(formik.values.age)}
-                          type="number"
-                          placeholder="30"
-                          min={12}
-                          max={60}
-                          className={`w-full text-center text-Text-Primary text-[14px] outline-none ${formik.errors.age && formik.touched.age ? 'border-red-500' : ''}`}
-                        />
-                      </div>
-                      <div
-                        onClick={() =>
-                          formik.setFieldValue('age', formik.values.age + 1)
-                        }
-                        className=" w-full md:w-[66px] flex justify-center text-Primary-DeepTeal cursor-pointer items-center h-[28px] bg-backgroundColor-Main rounded-r-[16px] border-gray-50 border text-[24px]"
-                      >
-                        +
-                      </div>
-                    </div>
-                    <div className="text-[10px] text-Text-Secondary mt-1 px-2">
-                      Enter a number between 12 and 60
-                    </div>
-                  </div> */}
+
                   <div className="w-full  ml-2 ">
                     <label className="text-Text-Primary text-[12px] font-medium">
-                      Date of birth
+                      Date of Birth
                     </label>
                     <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
                       <SimpleDatePicker
+                        placeholder="Select your date of birth..."
                         isAddClient
                         date={dateOfBirth}
                         setDate={(date) => {
                           if (validateDate(date)) {
                             setDateOfBirth(date);
+                            setDobApiError(''); // Reset error on valid date selection
                           }
                         }}
+                        inValid={showValidation && !!dobApiError}
+                        errorMessage={showValidation ? dobApiError : ''}
                       />
                     </div>
                   </div>
@@ -366,10 +355,13 @@ const AddClient = () => {
                   {...formik.getFieldProps('email')}
                   type="email"
                   label="Email Address"
-                  errorMessage={formik.errors.email}
+                  errorMessage={
+                    showValidation && (formik.errors.email || apiError)
+                      ? formik.errors.email || apiError
+                      : ''
+                  }
                   inValid={
-                    formik.errors?.email != undefined &&
-                    (formik.touched?.email as boolean)
+                    showValidation && (!!formik.errors.email || !!apiError)
                   }
                   placeholder="Enter client’s email address..."
                 />
@@ -396,7 +388,8 @@ const AddClient = () => {
                                 alt=""
                               />
                               <div
-                                onClick={() => {
+                                onClick={(event) => {
+                                  event.stopPropagation();
                                   setPhoto('');
                                 }}
                                 className="bg-white border border-gray-50 absolute top-[-6px] cursor-pointer right-[-6px] rounded-full shadow-200"
@@ -440,7 +433,9 @@ const AddClient = () => {
                       formik.values.email.length == 0 ||
                       Object.values(formik.errors).some((error) => error !== '')
                     }
-                    onClick={submit}
+                    onClick={() => {
+                      formik.handleSubmit();
+                    }}
                   >
                     {isLoading ? (
                       <>
