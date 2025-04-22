@@ -391,8 +391,7 @@ const ClientList = () => {
                   {filteredClientList.map((client: any) => {
                     return (
                       <ClientCard
-                     
-                      activeTab={active}
+                        activeTab={active}
                         ondelete={(memberId: any) => {
                           setFilteredClientList((pre) => {
                             const nes = [...pre];

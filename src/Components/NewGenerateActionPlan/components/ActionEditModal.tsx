@@ -176,7 +176,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }) || [],
     );
   }, [defalts, isOpen]);
-   const [, setIsExerciseStepValid] = useState(false);
+  const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -1368,7 +1368,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               setShowValidation={(val: any) => {
                 setShowExerciseValidation(val);
               }}
-               showValidation={showExerciseValidation}
+              showValidation={showExerciseValidation}
               onValidationChange={setIsExerciseStepValid}
             />
           )}
