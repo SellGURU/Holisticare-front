@@ -220,7 +220,7 @@ const ClientList = () => {
   useEffect(() => {
     let filtered = clientList;
     if (active === 'High-Priority') {
-      filtered = clientList.filter((client) => client.favorite);
+      filtered = clientList.filter((client) => client.favorite && !client.archived);
     } else if (active === 'Archived') {
       filtered = clientList.filter((client) => client.archived);
     } else {
