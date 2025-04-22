@@ -73,7 +73,8 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
                     onClick={() => {
                       onConfirm();
                       if (archived) {
-                        setisComplete(true);
+                        onClose()
+                        // setisComplete(true);
                       } else {
                         onClose();
                       }

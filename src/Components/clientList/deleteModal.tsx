@@ -7,6 +7,7 @@ import { Tooltip } from 'react-tooltip';
 interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;
+  onDelete:()=>void;
   onConfirm: () => void;
   name: string;
 }
@@ -15,6 +16,7 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
   onClose,
   name,
   onConfirm,
+  onDelete
 }) => {
   const modalRefrence = useRef(null);
   const [isComplete, setisComplete] = useState(false);
@@ -55,6 +57,7 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
               </div>
               <ButtonPrimary
                 onClick={() => {
+                  onConfirm()
                   onClose();
                   setisComplete(false);
                 }}
@@ -90,7 +93,7 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
                 </div>
                 <div
                   onClick={() => {
-                    onConfirm();
+                    onDelete();
 
                     setisComplete(true);
                   }}
