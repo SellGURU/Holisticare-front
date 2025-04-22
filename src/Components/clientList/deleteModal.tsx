@@ -35,7 +35,16 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
 
   return (
     <>
-      <MainModal isOpen={isOpen} onClose={() => onClose}>
+      <MainModal isOpen={isOpen} onClose={() => 
+      {
+        onClose()
+        if(isComplete){
+          onConfirm()
+        }
+      }
+        }>
+          <>
+         
         <div
           className={`rounded-2xl p-6 pb-8 bg-white shadow-800 ${isComplete ? 'w-[303px]' : 'w-[500px]'}  h-[196px]`}
         >
@@ -105,14 +114,16 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
             </>
           )}
         </div>
-      </MainModal>
-      <div className="z-[999]">
+        <div className="z-[999]">
         <Tooltip
           id="name-tooltip"
           place="top"
           content={isNameTooLong ? currentName : undefined}
         />
       </div>
+      </>
+      </MainModal>
+     
     </>
   );
 };

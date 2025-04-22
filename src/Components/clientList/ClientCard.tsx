@@ -311,7 +311,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
         isOpen={showDeleteModal}
         onClose={() => {
           setshowDeleteModal(false);
-          ondelete(client.member_id);
+          // ondelete(client.member_id);
         }}
         name={client.name}
         onDelete={() => {
