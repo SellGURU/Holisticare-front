@@ -169,15 +169,40 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                               </div>
                             </div>
                           ) : (
-                            ''
+                            <div className="flex items-center mt-3">
+                              {item.sections
+                                .slice(0, 2)
+                                .map((section: string, index: number) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center mr-1"
+                                      style={{
+                                        backgroundColor: '#E9F0F2',
+                                        color: '#005F73',
+                                      }}
+                                    >
+                                      {section}
+                                    </div>
+                                  );
+                                })}
+                              {item.sections.length > 2 && (
+                                <div
+                                  className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center"
+                                  style={{
+                                    backgroundColor: '#E9F0F2',
+                                    color: '#005F73',
+                                  }}
+                                >
+                                  +2
+                                </div>
+                              )}
+                            </div>
                           )}
                         </td>
 
                         {/* Frequency */}
-                        <td
-                          className="px-4 py-3 whitespace-nowrap flex flex-col items-center"
-                          style={{ marginLeft: '-110px' }}
-                        >
+                        <td className="px-4 py-3 whitespace-nowrap flex flex-col items-center">
                           {item.frequency_type === 'weekly' && (
                             <>
                               <div
