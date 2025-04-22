@@ -104,7 +104,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
-
+  const [showExerciseValidation, setShowExerciseValidation] = useState(false);
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -176,6 +176,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }) || [],
     );
   }, [defalts, isOpen]);
+  const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -1364,6 +1365,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               onChange={(values: any) => {
                 setSectionList(values);
               }}
+              setShowValidation={(val: any) => {
+                setShowExerciseValidation(val);
+              }}
+              showValidation={showExerciseValidation}
+              onValidationChange={setIsExerciseStepValid}
             />
           )}
 

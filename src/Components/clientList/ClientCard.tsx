@@ -379,7 +379,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   )
                 )}
-                 <div
+                <div
                   onClick={() => {
                     Application.giveClientAccess({
                       member_id: client.member_id,

@@ -500,7 +500,7 @@ const Stadio: FC<StadioProps> = ({
                   {filteredDataCategory.map((value: any) => {
                     return (
                       <div
-                        key={`${value.Category}-${value.Title}`}
+                        // key={`${value.Category}-${value.Title}`}
                         draggable
                         onDragStart={(e) => handleDragStart(e, value)}
                         onDragEnd={handleDragEnd}
