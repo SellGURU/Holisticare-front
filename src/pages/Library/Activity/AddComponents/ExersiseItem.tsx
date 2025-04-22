@@ -12,6 +12,7 @@ interface ExerciseItemProps {
   exesiseIndex: number;
   onDelete: (exersiseIndex: number) => void;
   toSuperSet: () => void;
+  removeFromSuperSet?: () => void;
   onChange: (
     index: number,
     field: string,
@@ -28,6 +29,7 @@ const ExerciseItem = ({
   onChange,
   onDelete,
   toSuperSet,
+  removeFromSuperSet,
   isSuperSet,
   sets,
   showValidation = false,
@@ -103,6 +105,25 @@ const ExerciseItem = ({
                   ></SvgIcon>
                   <div className="text-[12px] text-Text-Primary">
                     Superset with above
+                  </div>
+                </div>
+              )}
+              {isSuperSet && removeFromSuperSet && (
+                <div
+                  onClick={() => {
+                    removeFromSuperSet();
+                    setShowMenu(false);
+                  }}
+                  className="flex justify-start py-2 borer border-b border-gray-50 items-center cursor-pointer gap-2"
+                >
+                  <SvgIcon
+                    src="./icons/link.svg"
+                    color="#6CC24A"
+                    width="16px"
+                    height="16px"
+                  ></SvgIcon>
+                  <div className="text-[12px] text-Text-Primary">
+                    Remove from superset
                   </div>
                 </div>
               )}

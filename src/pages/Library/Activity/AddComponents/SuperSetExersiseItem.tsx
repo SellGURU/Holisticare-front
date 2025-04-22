@@ -12,6 +12,7 @@ interface SuperSetExersiseItemProps {
     value: string,
     exersiseIndex: number,
   ) => void;
+  removeFromSuperSet?: (exersiseIndex: number) => void;
 }
 
 const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
@@ -20,6 +21,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
   onDelete,
   toSuperSet,
   onChange,
+  removeFromSuperSet,
 }) => {
   return (
     <>
@@ -34,7 +36,10 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
             index={index}
             exercise={el}
             onChange={onChange}
-            toSuperSet={() => toSuperSet}
+            toSuperSet={toSuperSet}
+            removeFromSuperSet={
+              removeFromSuperSet ? () => removeFromSuperSet(ind) : undefined
+            }
           />
         ))}
         <div
