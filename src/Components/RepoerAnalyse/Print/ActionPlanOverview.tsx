@@ -45,9 +45,11 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                 {headers.map((header, index) => (
                   <th
                     key={index}
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-3 last:rounded-tr-3`}
+                    className={`${header !== 'Title' && 'px-3'} pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-3 last:rounded-tr-3`}
                   >
-                    <div className={`flex items-center`}>
+                    <div
+                      className={`flex items-center ${header === 'Frequency' && 'justify-center'}`}
+                    >
                       <div className="flex items-center">{header}</div>
                     </div>
                   </th>
@@ -64,7 +66,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         {index === 0 && (
                           <td
                             rowSpan={items.length}
-                            className="px-4 py-3 align-top text-xs text-Text-Primary whitespace-nowrap"
+                            className="px-3 py-3 align-top text-xs text-Text-Primary whitespace-nowrap"
                           >
                             {key.charAt(0).toUpperCase() + key.slice(1)}
                           </td>
@@ -82,7 +84,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                             {item.title}
                           </div>
                           {item.dose ? (
-                            <div className="flex items-center mt-3">
+                            <div className="flex mt-3">
                               <div
                                 className="text-[10px]"
                                 style={{ color: '#B0B0B0' }}
@@ -91,7 +93,12 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                               </div>
                               <div
                                 className="text-[10px]"
-                                style={{ color: '#888888', marginLeft: '2px' }}
+                                style={{
+                                  color: '#888888',
+                                  marginLeft: '2px',
+                                  width: '170px',
+                                  textWrap: 'wrap',
+                                }}
                               >
                                 {item.dose}
                               </div>
@@ -202,7 +209,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         </td>
 
                         {/* Frequency */}
-                        <td className="px-4 py-3 whitespace-nowrap flex flex-col items-center">
+                        <td className="px-3 py-3 whitespace-nowrap flex flex-col items-center">
                           {item.frequency_type === 'weekly' && (
                             <>
                               <div
@@ -225,7 +232,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                               <ChoosingDaysWeek
                                 selectedDays={item.frequency_dates}
                                 toggleDaySelection={() => {}}
-                                ClassName="lg:ml-1"
+                                marginNotActive
                               />
                             </>
                           )}
@@ -285,14 +292,26 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         </td>
 
                         {/* Time */}
-                        <td className="px-4 py-3 whitespace-nowrap">
+                        <td
+                          className="px-4 py-3 whitespace-nowrap"
+                          // style={{ maxWidth: '100px' }}
+                        >
                           {item.client_notes && item.client_notes.length > 0 ? (
-                            <div
-                              className="items-start text-[10px]"
-                              style={{ color: '#888888' }}
-                            >
-                              {item.client_notes[0]}
-                            </div>
+                            item.client_notes[0].length > 50 ? (
+                              <div
+                                className="items-start text-[10px]"
+                                style={{ color: '#888888', textWrap: 'wrap' }}
+                              >
+                                {item.client_notes[0].slice(0, 50)} ...
+                              </div>
+                            ) : (
+                              <div
+                                className="items-start text-[10px]"
+                                style={{ color: '#888888', textWrap: 'wrap' }}
+                              >
+                                {item.client_notes[0]}
+                              </div>
+                            )
                           ) : (
                             <div
                               className="flex items-center"

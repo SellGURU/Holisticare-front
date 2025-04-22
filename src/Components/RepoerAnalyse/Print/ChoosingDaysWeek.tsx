@@ -5,16 +5,18 @@ interface ChoosingDaysWeekProps {
   selectedDays: any;
   toggleDaySelection: (day: string) => void;
   ClassName?: string;
+  marginNotActive?: boolean;
 }
 
 const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
   selectedDays,
   // toggleDaySelection,
   ClassName,
+  marginNotActive,
 }) => {
   return (
     <div
-      className={`border rounded-[4px] text-xs bg-white border-[#e9edf5] inline-flex lg:ml-4 ${ClassName}`}
+      className={`border rounded-[4px] text-xs bg-white border-[#e9edf5] inline-flex ${!marginNotActive && 'lg:ml-4'} ${ClassName}`}
       style={{
         width: '200px',
         height: '32px',
