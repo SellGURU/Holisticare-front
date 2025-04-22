@@ -171,6 +171,59 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     });
   };
 
+  const handleRemoveFromSuperSet = (index: number, exersiseIndex: number) => {
+    setExercises((prevExercises) => {
+      const updatedExercises = [...prevExercises];
+      // Find the exercise in the current active tab
+      const activeTabExercises = updatedExercises.filter(
+        (el: any) => el.Section === activeTab,
+      );
+      const exerciseToUpdate = activeTabExercises[index];
+
+      // Find the original index in the full array
+      const originalIndex = updatedExercises.findIndex(
+        (el: any) => el === exerciseToUpdate,
+      );
+
+      // Get the exercise to be removed from superset
+      const exerciseToRemove =
+        updatedExercises[originalIndex].Exercises[exersiseIndex];
+
+      // Create a new normal set with the removed exercise
+      const newNormalSet = {
+        Type: 'Normalset',
+        Section: exerciseToUpdate.Section,
+        Sets: exerciseToUpdate.Sets,
+        Exercises: [exerciseToRemove],
+      };
+
+      // Remove the exercise from the superset
+      const remainingExercises = updatedExercises[
+        originalIndex
+      ].Exercises.filter((_, i) => i !== exersiseIndex);
+
+      // If only one exercise remains in the superset, convert it to a normal set
+      if (remainingExercises.length === 1) {
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Type: 'Normalset',
+          Exercises: remainingExercises,
+        };
+      } else {
+        // Keep as superset with remaining exercises
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Exercises: remainingExercises,
+        };
+      }
+
+      // Insert the new normal set after the superset
+      updatedExercises.splice(originalIndex + 1, 0, newNormalSet);
+
+      return updatedExercises;
+    });
+  };
+
   const handleSuperSetDelete = (index: number, exersiseIndex: number) => {
     setExercises((prevExercises) => {
       const updatedExercises = [...prevExercises];
@@ -206,8 +259,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
           };
         }
       } else {
-        // If this is the last exercise, remove the entire group
-        updatedExercises.splice(originalIndex, 1);
+        // If this is the last exercise, convert to normal set instead of removing
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Type: 'Normalset',
+        };
       }
       return updatedExercises;
     });
@@ -303,6 +359,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                             exercise={exercise}
                             onChange={handleExerciseChange}
                             toSuperSet={() => {}}
+                            removeFromSuperSet={(exersiseIndex: number) =>
+                              handleRemoveFromSuperSet(index, exersiseIndex)
+                            }
                           />
                         ) : (
                           <ExerciseItem
