@@ -516,6 +516,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
+    setShowExerciseValidation(true)
     if (!isNextDisabled()) {
       saveActivity();
     }
@@ -527,6 +528,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       handleApply();
     }
   };
+console.log(showExerciseValidation);
 
   return (
     <MainModal
