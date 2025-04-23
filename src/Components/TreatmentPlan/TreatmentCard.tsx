@@ -12,7 +12,6 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
   isOther,
   index,
 }) => {
-
   console.log(data);
 
   const { positive, negative } = splitInstructions(data.Notes);
@@ -92,23 +91,23 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
       </div>
 
       <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-        {positive &&
-        <>
-        <div className="text-Text-Primary text-justify">
-          {' '}
-          <span className="text-Text-Secondary  ">Key Benefits:</span>
-          {positive}
-        </div>
-        </>
-        }
-        {negative &&
-        <>
-          <div className="text-Text-Primary text-justify mt-3">
-            <span className="text-Text-Secondary">Key Risks:</span>
-            {negative}
-          </div>{' '}
-        </>
-        }
+        {positive && (
+          <>
+            <div className="text-Text-Primary text-justify">
+              {' '}
+              <span className="text-Text-Secondary  ">Key Benefits:</span>
+              {positive}
+            </div>
+          </>
+        )}
+        {negative && (
+          <>
+            <div className="text-Text-Primary text-justify mt-3">
+              <span className="text-Text-Secondary">Key Risks:</span>
+              {negative}
+            </div>{' '}
+          </>
+        )}
       </div>
       {/* <div className="text-xs font-medium text-Primary-DeepTeal select-none">
         {' '}

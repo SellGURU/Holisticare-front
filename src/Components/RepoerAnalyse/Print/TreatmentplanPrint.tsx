@@ -1,4 +1,4 @@
-import { splitInstructions } from "../../../help";
+import { splitInstructions } from '../../../help';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentPlanPrintProps {
@@ -12,7 +12,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
   //   )?.[1]?.trim(),
   //   negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
   // };
-   const { positive, negative } = splitInstructions(data.Notes);
+  const { positive, negative } = splitInstructions(data.Notes);
   return (
     <>
       <div
@@ -36,8 +36,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
             <div>
-              <span style={{ color: '#888888' }}>Key Benefits</span>{' '}
-              {positive}
+              <span style={{ color: '#888888' }}>Key Benefits</span> {positive}
             </div>
           </div>
           <div
@@ -46,8 +45,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
             <div>
-              <span style={{ color: '#888888' }}>Key Risks</span>{' '}
-              {negative}
+              <span style={{ color: '#888888' }}>Key Risks</span> {negative}
             </div>
           </div>
           {data?.Client_Notes?.length > 0 && (

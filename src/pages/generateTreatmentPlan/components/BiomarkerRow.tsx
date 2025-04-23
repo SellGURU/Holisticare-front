@@ -73,7 +73,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   useEffect(() => console.log(value), [value]);
 
-
   const { positive, negative } = splitInstructions(editableValue);
 
   // console.log(value);
@@ -199,7 +198,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="text-Text-Primary">
                   {' '}
                   <span className="text-Text-Secondary bullet-point">
-                   Key Benefits:{' '}
+                    Key Benefits:{' '}
                   </span>
                   {positive}
                 </div>

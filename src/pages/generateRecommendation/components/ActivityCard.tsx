@@ -18,7 +18,6 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   activeCategory,
   handleCheckboxChange,
 }) => {
-
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
@@ -115,7 +114,9 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             </div>
           </div>
           <li className="  mb-2.5">
-            <span className="text-Text-Secondary bullet-point">Key Benefits:</span>{' '}
+            <span className="text-Text-Secondary bullet-point">
+              Key Benefits:
+            </span>{' '}
             {positive}
           </li>
           <li className="">
