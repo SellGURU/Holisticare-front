@@ -1,15 +1,18 @@
+import { splitInstructions } from "../../../help";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentPlanPrintProps {
   data: any;
 }
 
 const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
-  const result = {
-    positive: data.Notes.match(
-      /Positive:\s*(.*?)(?=Negative:|$)/s,
-    )?.[1]?.trim(),
-    negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
-  };
+  // const result = {
+  //   positive: data.Notes.match(
+  //     /Positive:\s*(.*?)(?=Negative:|$)/s,
+  //   )?.[1]?.trim(),
+  //   negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
+  // };
+   const { positive, negative } = splitInstructions(data.Notes);
   return (
     <>
       <div
@@ -33,8 +36,8 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
             <div>
-              <span style={{ color: '#888888' }}>Positive:</span>{' '}
-              {result.positive}
+              <span style={{ color: '#888888' }}>Key Benefits</span>{' '}
+              {positive}
             </div>
           </div>
           <div
@@ -43,8 +46,8 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
             <div>
-              <span style={{ color: '#888888' }}>Negative:</span>{' '}
-              {result.negative}
+              <span style={{ color: '#888888' }}>Key Risks</span>{' '}
+              {negative}
             </div>
           </div>
           {data?.Client_Notes?.length > 0 && (

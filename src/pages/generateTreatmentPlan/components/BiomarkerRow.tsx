@@ -6,6 +6,7 @@ import EditModal from './EditModal';
 import { MainModal } from '../../../Components';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
+import { splitInstructions } from '../../../help';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -71,20 +72,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   useEffect(() => console.log(value), [value]);
-  const splitInstructions = (instruction: string) => {
-    const positiveMatch = instruction?.match(
-      /Positive:\s*(.+?)(?=\s*Negative:|$)/,
-    );
-    const negativeMatch = instruction?.match(/Negative:\s*(.+)/);
-    return {
-      positive: positiveMatch ? positiveMatch[1].trim() : '',
-      negative: negativeMatch ? negativeMatch[1].trim() : '',
-    };
-  };
+
 
   const { positive, negative } = splitInstructions(editableValue);
 
-  console.log(value);
+  // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   return (
@@ -207,13 +199,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="text-Text-Primary">
                   {' '}
                   <span className="text-Text-Secondary bullet-point">
-                    Positive:{' '}
+                   Key Benefits:{' '}
                   </span>
                   {positive}
                 </div>
                 <div className="text-Text-Primary">
                   <span className="text-Text-Secondary bullet-point">
-                    Negative:{' '}
+                    Key Risks{' '}
                   </span>
                   {negative}
                 </div>{' '}

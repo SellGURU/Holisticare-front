@@ -115,6 +115,18 @@ const convertToBase64 = (file: File): Promise<any> => {
     };
   });
 };
+
+
+const splitInstructions = (instruction: string) => {
+    const positiveMatch = instruction?.match(
+      /Key Benefits:\s*(.+?)(?=\s*Key Risks:|$)/,
+    );
+    const negativeMatch = instruction?.match(/Key Risks:\s*(.+)/);
+    return {
+      positive: positiveMatch ? positiveMatch[1].trim() : '',
+      negative: negativeMatch ? negativeMatch[1].trim() : '',
+  };
+};
 export {
   useConstructor,
   resolveKeyStatus,
@@ -123,4 +135,5 @@ export {
   resolveAccesssUser,
   decodeAccessUser,
   convertToBase64,
+  splitInstructions,
 };
