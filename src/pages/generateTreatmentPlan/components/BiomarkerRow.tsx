@@ -39,7 +39,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/Supplement.svg';
       case 'Lifestyle':
         return '/icons/LifeStyle2.svg';
-        
+
       default:
         return '/icons/others.svg';
     }
@@ -113,72 +113,74 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               {value.Recommendation}
             </div>
             <div className="flex gap-2 text-[8px]">
-              {(value.Category == 'Diet' || value.Category == 'Activity' || value.Category == 'Lifestyle' ||  value.Category == 'Lifestyle') &&
-              <>
-                <div
-                  data-tooltip-id="system-score"
-                  className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
-                >
-                  <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
-                  {value['System Score']}
-                  <Tooltip
-                    id={'system-score'}
-                    place="top"
-                    className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                    style={{
-                      zIndex: 9999,
-                      pointerEvents: 'none',
-                    }}
+              {(value.Category == 'Diet' ||
+                value.Category == 'Activity' ||
+                value.Category == 'Lifestyle' ||
+                value.Category == 'Lifestyle') && (
+                <>
+                  <div
+                    data-tooltip-id="system-score"
+                    className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
                   >
-                    <div className="text-Text-Primary">System Score</div>
-                    <div className="text-Text-Secondary">
-                      Score based on all data and AI insights.
-                    </div>
-                  </Tooltip>
-                </div>
-                <div
-                  data-tooltip-id="base-score"
-                  className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
-                >
-                  <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
-                  {value.Score}
-                  <Tooltip
-                    id={'base-score'}
-                    place="top"
-                    className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                    style={{
-                      zIndex: 9999,
-                      pointerEvents: 'none',
-                    }}
+                    <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
+                    {value['System Score']}
+                    <Tooltip
+                      id={'system-score'}
+                      place="top"
+                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary">System Score</div>
+                      <div className="text-Text-Secondary">
+                        Score based on all data and AI insights.
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <div
+                    data-tooltip-id="base-score"
+                    className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
                   >
-                    <div className="text-Text-Primary">Base Score</div>
-                    <div className="text-Text-Secondary">
-                      Initial score from core health metrics.
-                    </div>
-                  </Tooltip>
-                </div>
-                <div
-                  data-tooltip-id={index + 'score-calc'}
-                  className="text-Primary-DeepTeal select-none mt-[2px]"
-                >
-                  Score Calculation
-                  <Tooltip
-                    id={index + 'score-calc'}
-                    place="top"
-                    className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                    style={{
-                      zIndex: 9999,
-                      pointerEvents: 'none',
-                    }}
+                    <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
+                    {value.Score}
+                    <Tooltip
+                      id={'base-score'}
+                      place="top"
+                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary">Base Score</div>
+                      <div className="text-Text-Secondary">
+                        Initial score from core health metrics.
+                      </div>
+                    </Tooltip>
+                  </div>
+                  <div
+                    data-tooltip-id={index + 'score-calc'}
+                    className="text-Primary-DeepTeal select-none mt-[2px]"
                   >
-                    <div className="text-Text-Primary text-[8px]">
-                      {value['Practitioner Comments'][0]}
-                    </div>
-                  </Tooltip>
-                </div>
-              
-              </>
-              }
+                    Score Calculation
+                    <Tooltip
+                      id={index + 'score-calc'}
+                      place="top"
+                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary text-[8px]">
+                        {value['Practitioner Comments'][0]}
+                      </div>
+                    </Tooltip>
+                  </div>
+                </>
+              )}
               {Conflicts?.length > 0 && (
                 <div
                   onClick={() => setShowConflict(true)}
@@ -197,7 +199,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               className="bg-transparent text-[12px] outline-none w-full resize-none"
               rows={2}
             /> */}
-            {(value.Category == 'Diet' || value.Category == 'Activity' || value.Category == 'Lifestyle' ||  value.Category == 'Lifestyle') &&
+            {(value.Category == 'Diet' ||
+              value.Category == 'Activity' ||
+              value.Category == 'Lifestyle' ||
+              value.Category == 'Lifestyle') && (
               <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
                 <div className="text-Text-Primary">
                   {' '}
@@ -213,7 +218,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {negative}
                 </div>{' '}
               </div>
-            }
+            )}
             {/* {value['Based on'] && (
               <div
                 onClick={() => setShowModal(true)}
