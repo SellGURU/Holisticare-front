@@ -312,9 +312,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Lifestyle' && !value) {
       return;
     }
-    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-      return;
-    }
+    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+    //   return;
+    // }
     if (
       selectedGroup === 'Diet' &&
       (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
@@ -481,9 +481,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Lifestyle' && !value) {
       return true;
     }
-    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-      return true;
-    }
+    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+    //   return true;
+    // }
     if (
       selectedGroup === 'Diet' &&
       (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
@@ -995,11 +995,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         );
                       })}
                     </div>
-                    {selectedLocations.length === 0 && showValidation && (
+                    {/* {selectedLocations.length === 0 && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
-                    )}
+                    )} */}
                   </div>
                 )}
                 <div className="mb-4">
