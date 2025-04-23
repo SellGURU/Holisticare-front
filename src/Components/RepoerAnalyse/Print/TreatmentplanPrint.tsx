@@ -47,7 +47,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
               {result.negative}
             </div>
           </div>
-          {data.Client_Notes.length > 0 && (
+          {data?.Client_Notes?.length > 0 && (
             <>
               <div
                 style={{
