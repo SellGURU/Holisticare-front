@@ -49,7 +49,7 @@ const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
             <div className="text-Text-Secondary text-[9px] ">{items}</div>
           ) : (
             <>
-              <div className="text-[9px] text-Primary-DeepTeal">Gategory:</div>
+              <div className="text-[9px] text-Primary-DeepTeal">Category:</div>
               <div className="grid grid-cols-2 text-[9px] gap-2 mt-2 text-Text-Secondary">
                 {items.map((el: any) => {
                   return (
