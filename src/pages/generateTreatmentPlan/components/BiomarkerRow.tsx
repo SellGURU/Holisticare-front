@@ -5,6 +5,7 @@ import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
 import { MainModal } from '../../../Components';
 import { Tooltip } from 'react-tooltip';
+import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -14,7 +15,7 @@ interface BioMarkerRowSuggestionsProps {
   editAble?: boolean;
   isOverview?: boolean;
 
-  index: number;
+  index?: number;
 }
 
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -81,96 +82,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
 
   const { positive, negative } = splitInstructions(editableValue);
+
+  console.log(value);
+  const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
-  const conflictData = [
-    {
-      title: 'Caloric Restriction (CRI) - Periodic Restriction - 3-Day Fasts',
-      priority: 'Low',
-      reason:
-        'Like the previous entry, performing bodyweight training with high intensity while undergoing a period of extended caloric restriction can result in inadequate recovery and muscle repair. The body requires calories and nutrients to support strenuous activity. Combining these regimens can lead to overtraining syndrome, where symptoms include persistent fatigue, decreased performance, and potential for injury.',
-    },
-    {
-      title: 'Caloric Restriction (CRI) - Periodic Restriction - 3-Day Fasts',
-      priority: 'Medium',
-      reason:
-        'Like the previous entry, performing bodyweight training with high intensity while undergoing a period of extended caloric restriction can result in inadequate recovery and muscle repair. The body requires calories and nutrients to support strenuous activity. Combining these regimens can lead to overtraining syndrome, where symptoms include persistent fatigue, decreased performance, and potential for injury.',
-    },
-    {
-      title: 'Caloric Restriction (CRI) - Periodic Restriction - 3-Day Fasts',
-      priority: 'High',
-      reason:
-        'Like the previous entry, performing bodyweight training with high intensity while undergoing a period of extended caloric restriction can result in inadequate recovery and muscle repair. The body requires calories and nutrients to support strenuous activity. Combining these regimens can lead to overtraining syndrome, where symptoms include persistent fatigue, decreased performance, and potential for injury.',
-    },
-  ];
-  const getBackgroundColor = (priority: string) => {
-    switch (priority) {
-      case 'Low':
-        return 'bg-[#F9F7DC]'; // Light blue for the parent div
-      case 'Medium':
-        return 'bg-[#F9DEDC]'; // Light yellow for the parent div
-      case 'High':
-        return 'bg-[#FFD8E4]'; // Light red for the parent div
-      default:
-        return 'bg-[#F9F7DC]'; // Default color for the parent div
-    }
-  };
-
-  const getCircleColor = (priority: string) => {
-    switch (priority) {
-      case 'Low':
-        return 'bg-[#FFE500]'; // Blue for low priority
-      case 'Medium':
-        return 'bg-[#FFAB2C]'; // Yellow for medium priority
-      case 'High':
-        return 'bg-[#FC5474]'; // Red for high priority
-      default:
-        return 'bg-[#FFE500]'; // Default color for the circle
-    }
-  };
-  console.log(value['Practitioner Comments'][0]);
-
   return (
     <>
-      <MainModal isOpen={ShowConflict} onClose={() => setShowConflict(false)}>
-        <div className="bg-white w-[500px] h-[666px] rounded-2xl p-4 shadow-800 relative">
-          <div className="border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
-            Conflict
-          </div>
-          <div className="h-[580px] overflow-auto mt-3 flex flex-col ">
-            {conflictData.map((el) => (
-              <div className="mb-10">
-                <div className="flex w-full justify-between">
-                  <div className="text-xs font-medium text-Text-Primary">
-                    {el.title}
-                  </div>
-                  <div
-                    className={`rounded-full py-[2px] px-2.5 flex items-center gap-1 text-[10px] text-Text-Primary ${getBackgroundColor(el.priority)}`}
-                  >
-                    <div
-                      className={`size-3 rounded-full ${getCircleColor(el.priority)}`}
-                    ></div>
-                    {el.priority}
-                  </div>
-                </div>
-                <div className="flex w-full items-start gap-6 mt-5">
-                  <div className="text-xs text-Text-Secondary">Reason:</div>
-                  <div className="text-justify text-xs text-Text-Primary">
-                    {el.reason}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div
-            onClick={() => {
-              setShowConflict(false);
-            }}
-            className="cursor-pointer text-[#909090] font-medium text-sm absolute right-4 bottom-4"
-          >
-            close
-          </div>
-        </div>
-      </MainModal>
+      <ConflictsModal
+        showModal={ShowConflict}
+        setShowModal={setShowConflict}
+        conflicts={Conflicts}
+      ></ConflictsModal>
       <div className="w-full flex justify-center items-start gap-4">
         <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
@@ -185,13 +107,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         <div
           className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-2 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
-          <div className="w-[273px] flex justify-between items-center">
+          <div className=" flex gap-6 items-center">
+            <div className="text-xs font-medium text-Text-Primary">
+              {value.Recommendation}
+            </div>
             <div className="flex gap-2 text-[8px]">
               <div
                 data-tooltip-id="system-score"
                 className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
               >
-                <div className="size-[5px] bg-[#005F73] rounded-full"></div>
+                <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
                 {value['System Score']}
                 <Tooltip
                   id={'system-score'}
@@ -202,7 +127,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  <div>System Score</div>
+                  <div className="text-Text-Primary">System Score</div>
                   <div className="text-Text-Secondary">
                     Score based on all data and AI insights.
                   </div>
@@ -212,7 +137,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 data-tooltip-id="base-score"
                 className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
               >
-                <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
+                <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
                 {value.Score}
                 <Tooltip
                   id={'base-score'}
@@ -223,7 +148,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  <div>Base Score</div>
+                  <div className="text-Text-Primary">Base Score</div>
                   <div className="text-Text-Secondary">
                     Initial score from core health metrics.
                   </div>
@@ -237,7 +162,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -248,13 +173,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 </Tooltip>
               </div>
-              <div
-                onClick={() => setShowConflict(true)}
-                className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
-              >
-                <img src="/icons/alarm.svg" alt="" />
-                Conflict <span>(2)</span>
-              </div>
+              {Conflicts?.length > 0 && (
+                <div
+                  onClick={() => setShowConflict(true)}
+                  className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
+                >
+                  <img src="/icons/alarm.svg" alt="" />
+                  Conflict <span>({Conflicts?.length})</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="text-[12px] gap-2 w-full ">

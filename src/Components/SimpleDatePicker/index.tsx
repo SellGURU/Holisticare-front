@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 
@@ -8,6 +8,8 @@ interface DatePickerProps {
   placeholder?: string;
   isLarge?: boolean;
   isAddClient?: boolean;
+  inValid?: boolean;
+  errorMessage?: string;
 }
 
 export default function SimpleDatePicker({
@@ -16,6 +18,8 @@ export default function SimpleDatePicker({
   placeholder,
   isLarge,
   isAddClient,
+  inValid,
+  errorMessage,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -51,10 +55,16 @@ export default function SimpleDatePicker({
     <div className="relative inline-block" ref={calendarRef}>
       <button
         onClick={() => setOpen(!open)}
-        className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ' border border-Gray-50 '}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
-         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary`}
+        className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ''}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
+         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary ${
+           inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
+         }`}
       >
-        {date ? ` ${date.toLocaleDateString()}` : placeholder}
+        {date ? (
+          ` ${date.toLocaleDateString()}`
+        ) : (
+          <div className="text-[#B0B0B0] text-xs font-light">{placeholder}</div>
+        )}
         <img src="/icons/calendar-3.svg" alt="Calendar" />
       </button>
 
@@ -71,6 +81,12 @@ export default function SimpleDatePicker({
             shouldHighlightWeekends
           />
         </div>
+      )}
+
+      {inValid && errorMessage && (
+        <span className="text-Red text-[10px] relative top-[6px]">
+          {errorMessage}
+        </span>
       )}
     </div>
   );

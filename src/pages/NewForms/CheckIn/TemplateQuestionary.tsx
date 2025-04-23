@@ -26,7 +26,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         return '/images/forms/feedback-Form.png';
       case 'Physical Activity Readiness Questionnaire (PAR-Q)':
         return '/images/forms/PAR-Q.png';
-      case 'Personal Information':
+      case 'Health and Lifestyle Profile':
         return '/images/forms/initial-Questionnaire.png';
     }
   };

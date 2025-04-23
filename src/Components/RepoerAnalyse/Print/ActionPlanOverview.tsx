@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useEffect, useState } from 'react';
-import ChoosingDaysWeek from '../../NewGenerateActionPlan/components/ChoosingDaysWeek';
-import MonthShows from '../../NewGenerateActionPlan/components/MonthShows';
+import MonthShows from './MonthShows';
+import ChoosingDaysWeek from './ChoosingDaysWeek';
 
 interface TableProps {
   classData: Array<any>;
@@ -18,7 +18,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
     acc[key].push(item);
     return acc;
   }, {});
-  const headers = ['Category', 'Title', 'Frequency', 'Time'];
+  const headers = ['Category', 'Title', 'Frequency', 'Note'];
   return (
     <div
       className="w-full relative mt-8"
@@ -45,16 +45,18 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                 {headers.map((header, index) => (
                   <th
                     key={index}
-                    className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-3 last:rounded-tr-3`}
+                    className={`${header !== 'Title' && 'px-3'} pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-3 last:rounded-tr-3`}
                   >
-                    <div className={`flex items-center`}>
+                    <div
+                      className={`flex items-center ${header === 'Frequency' && 'justify-center'}`}
+                    >
                       <div className="flex items-center">{header}</div>
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-Gray-50">
+            <tbody className="bg-white divide-y divide-[#e9edf5]">
               {(Object.entries(grouped) as [string, any[]][]).map(
                 ([key, items]) => (
                   <Fragment key={key}>
@@ -64,7 +66,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         {index === 0 && (
                           <td
                             rowSpan={items.length}
-                            className="px-4 py-3 align-top text-xs text-Text-Primary whitespace-nowrap"
+                            className="px-3 py-3 align-top text-xs text-Text-Primary whitespace-nowrap"
                           >
                             {key.charAt(0).toUpperCase() + key.slice(1)}
                           </td>
@@ -72,14 +74,142 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
 
                         {/* Title */}
                         <td
-                          className="py-3 text-xs text-Text-Quadruple whitespace-nowrap"
-                          style={{ color: '#888888' }}
+                          className={`py-3 text-xs whitespace-nowrap ${index == 0 && 'align-top'}`}
                         >
-                          {item.title}
+                          <div
+                            style={{
+                              color: '#888888',
+                            }}
+                          >
+                            {item.title}
+                          </div>
+                          {item.dose ? (
+                            <div className="flex mt-3">
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#B0B0B0' }}
+                              >
+                                Dose:
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{
+                                  color: '#888888',
+                                  marginLeft: '2px',
+                                  width: '170px',
+                                  textWrap: 'wrap',
+                                }}
+                              >
+                                {item.dose}
+                              </div>
+                            </div>
+                          ) : item.value ? (
+                            <div className="flex items-center mt-3">
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#B0B0B0' }}
+                              >
+                                Value:
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#888888', marginLeft: '2px' }}
+                              >
+                                {item.value}
+                              </div>
+                            </div>
+                          ) : item.total_macro ? (
+                            <div className="flex items-center mt-3">
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#B0B0B0' }}
+                              >
+                                Carb:
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#888888', marginLeft: '3px' }}
+                              >
+                                {item.total_macro.Carbs}
+                              </div>
+                              <div
+                                className="text-[8px]"
+                                style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                              >
+                                gr
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#B0B0B0', marginLeft: '9px' }}
+                              >
+                                Protein:
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#888888', marginLeft: '3px' }}
+                              >
+                                {item.total_macro.Protein}
+                              </div>
+                              <div
+                                className="text-[8px]"
+                                style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                              >
+                                gr
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#B0B0B0', marginLeft: '9px' }}
+                              >
+                                Fat:
+                              </div>
+                              <div
+                                className="text-[10px]"
+                                style={{ color: '#888888', marginLeft: '3px' }}
+                              >
+                                {item.total_macro.Fats}
+                              </div>
+                              <div
+                                className="text-[8px]"
+                                style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                              >
+                                gr
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center mt-3">
+                              {item.sections
+                                .slice(0, 2)
+                                .map((section: string, index: number) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center mr-1"
+                                      style={{
+                                        backgroundColor: '#E9F0F2',
+                                        color: '#005F73',
+                                      }}
+                                    >
+                                      {section}
+                                    </div>
+                                  );
+                                })}
+                              {item.sections.length > 2 && (
+                                <div
+                                  className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center"
+                                  style={{
+                                    backgroundColor: '#E9F0F2',
+                                    color: '#005F73',
+                                  }}
+                                >
+                                  +2
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </td>
 
                         {/* Frequency */}
-                        <td className="px-4 py-3 whitespace-nowrap  items-center">
+                        <td className="px-3 py-3 whitespace-nowrap flex flex-col items-center">
                           {item.frequency_type === 'weekly' && (
                             <>
                               <div
@@ -88,7 +218,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   width: '76px',
                                   height: '24px',
                                   backgroundColor: '#DEF7EC',
-                                  color: 'var(--Primary-DeepTeal)',
+                                  color: '#005f73',
                                   fontSize: '10px',
                                 }}
                               >
@@ -102,7 +232,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                               <ChoosingDaysWeek
                                 selectedDays={item.frequency_dates}
                                 toggleDaySelection={() => {}}
-                                ClassName="lg:ml-1"
+                                marginNotActive
                               />
                             </>
                           )}
@@ -114,7 +244,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   width: '80px',
                                   height: '24px',
                                   backgroundColor: '#DEF7EC',
-                                  color: 'var(--Primary-DeepTeal)',
+                                  color: '#005f73',
                                   fontSize: '10px',
                                 }}
                               >
@@ -135,7 +265,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                 width: '65px',
                                 height: '24px',
                                 backgroundColor: '#DEF7EC',
-                                color: 'var(--Primary-DeepTeal)',
+                                color: '#005f73',
                                 fontSize: '10px',
                               }}
                             >
@@ -162,35 +292,32 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         </td>
 
                         {/* Time */}
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {item.times && item.times.length > 0 ? (
-                            <div className="flex items-center gap-1">
-                              {item.times.map((time: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="inline-block rounded-2xl capitalize"
-                                  style={{
-                                    backgroundColor: 'var(--bg-color)',
-                                    color: 'var(--Primary-DeepTeal)',
-                                    fontSize: '10px',
-                                    padding: '0 0.5rem',
-                                  }}
-                                >
-                                  {time}
-                                </div>
-                              ))}
-                            </div>
+                        <td
+                          className="px-4 py-3 whitespace-nowrap"
+                          // style={{ maxWidth: '100px' }}
+                        >
+                          {item.client_notes && item.client_notes.length > 0 ? (
+                            item.client_notes[0].length > 50 ? (
+                              <div
+                                className="items-start text-[10px]"
+                                style={{ color: '#888888', textWrap: 'wrap' }}
+                              >
+                                {item.client_notes[0].slice(0, 50)} ...
+                              </div>
+                            ) : (
+                              <div
+                                className="items-start text-[10px]"
+                                style={{ color: '#888888', textWrap: 'wrap' }}
+                              >
+                                {item.client_notes[0]}
+                              </div>
+                            )
                           ) : (
                             <div
-                              className="flex items-center gap-1"
-                              style={{ fontSize: '10px', color: '#FFAB2C' }}
+                              className="flex items-center"
+                              style={{ fontSize: '10px', color: '#888888' }}
                             >
-                              <img
-                                src="/icons/danger-new.svg"
-                                alt=""
-                                className="w-4 h-4"
-                              />
-                              No Scheduled
+                              -
                             </div>
                           )}
                         </td>

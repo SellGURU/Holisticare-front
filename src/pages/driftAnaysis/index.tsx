@@ -268,7 +268,18 @@ export const DriftAnaysis = () => {
           <>
             <div className=" w-full md:w-[75%] flex flex-col gap-3">
               <div className="w-full font-medium text-Text-Primary">
-                Drift Analysis
+                <div className="flex items-center gap-3">
+                  <div
+                    onClick={() => {
+                      navigate('/');
+                    }}
+                    className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white rounded-lg`}
+                  >
+                    <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+                  </div>
+                  Drift Analysis
+                </div>
+
                 {/* <AnalyseButton text="Generate by AI" />{" "} */}
                 <p className=" mt-1 text-xs text-Text-Secondary block md:hidden">
                   Select a client to view their drift analysis.

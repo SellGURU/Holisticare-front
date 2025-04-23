@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import Checkbox from '../../../Components/checkbox';
 import { MainModal } from '../../../Components';
-import Application from '../../../api/app';
+// import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
-import SvgIcon from '../../../utils/svgIcon';
+import { publish, subscribe } from '../../../utils/event';
+import { ActivityCard } from './ActivityCard';
 
 type CategoryState = {
   name: string;
@@ -24,6 +24,8 @@ interface SetOrdersProps {
   visibleCategoriy: CategoryState[];
   setVisibleCategorieys: (value: CategoryState[]) => void;
   // resolvedSuggestions:(data:any) => void
+  activeCategory: string;
+  setActiveCategory: (value: string) => void;
 }
 
 export const SetOrders: React.FC<SetOrdersProps> = ({
@@ -32,27 +34,33 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setData,
   storeChecked,
   checkeds,
-  reset,
-  defaultSuggestions,
+  // reset,
+  // defaultSuggestions,
   visibleCategoriy,
+  activeCategory,
+  setActiveCategory,
   setVisibleCategorieys,
 }) => {
-  const [activeCategory, setActiveCategory] = useState<string>(
-    visibleCategoriy[0].name || 'Activity',
-  );
+  console.log(treatMentPlanData);
+
+  // const [activeCategory, setActiveCategory] = useState<string>(
+  //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
+  // );
   const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
-  const [activeModalValue, setActivemOdalValue] = useState<Array<any>>([]);
+  const [activeModalValue] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState(false);
   // const [FilteredData, setFilteredData] = useState(data);
-  const [isStarted, setisStarted] = useState(false);
+  // const [isStarted, setisStarted] = useState(false);
   const { id } = useParams<{ id: string }>();
+  console.log(id);
+
   const [categories, setCategories] =
     useState<CategoryState[]>(visibleCategoriy);
 
-  useEffect(() => {
-    setData(defaultSuggestions);
-  }, [defaultSuggestions]);
+  // useEffect(() => {
+  //   setData(defaultSuggestions);
+  // }, [defaultSuggestions]);
   // const _AllCategoryChecekd = (category: string) => {
   //   const newData = data
   //     .filter((el: any) => el.Category == category)
@@ -98,65 +106,141 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   }, [activeCategory]);
   const handleContinue = () => {
     setIsLoading(true);
-    setisStarted(true);
+    // setisStarted(true);
     const visibleCategories = categories
       .filter((cat) => cat.visible)
       .map((cat) => cat.name);
     const currentIndex = visibleCategories.indexOf(activeCategory);
-    const nextTabName = visibleCategories[currentIndex + 1];
+    // const nextTabName = visibleCategories[currentIndex + 1];
 
     storeChecked(
       data.filter(
-        (el: any) => el.checked == true && el.Category == activeCategory,
+        (el: any) => el.checked === true && el.Category === activeCategory,
       ),
     );
-    Application.holisticPlanReScore({
-      tab_name: nextTabName,
-      member_id: id,
-      selected_interventions: [
-        ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
-        ...data.filter(
-          (el: any) => el.checked == true && el.Category == activeCategory,
-        ),
-      ],
-      biomarker_insight: treatMentPlanData?.completion_suggestion,
-      client_insight: treatMentPlanData?.client_insight,
-      looking_forwards: treatMentPlanData?.looking_forwards,
-    })
-      .then((res) => {
-        setIsLoading(false);
-        setOrderedCategories((pre) => {
-          const old = [...pre];
-          old.push(activeCategory);
-          return old;
-        });
-        // const visibleCategories = categories
-        //   .filter(
-        //     (cat) =>
-        //       cat.visible &&
-        //       res.data.map((el: any) => el.Category).includes(cat.name),
-        //   )
-        //   .map((cat) => cat.name);
-        const visibleCategories = categories
-          .filter((cat) => cat.visible)
-          .map((cat) => cat.name);
-        const currentIndex = visibleCategories.indexOf(activeCategory);
-        let nextIndex = currentIndex;
-        if (currentIndex < visibleCategories.length - 1) {
-          nextIndex = nextIndex + 1;
-        }
-        // setFilteredData(res.data);
-        setData([...res.data]);
-        setActiveCategory(visibleCategories[nextIndex]);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+
+    // Directly update state as needed
+    const selectedInterventions = [
+      ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+      ...data.filter(
+        (el: any) => el.checked === true && el.Category === activeCategory,
+      ),
+    ];
+    console.log(selectedInterventions);
+
+    // Example of state update without API
+    setOrderedCategories((prev) => {
+      const old = [...prev];
+      old.push(activeCategory);
+      return old;
+    });
+
+    // Update data without API call
+    // If there's logic to determine the next data set, implement it here
+    // Example: setData([...modifiedData]);
+
+    setIsLoading(false);
+
+    const nextIndex =
+      currentIndex < visibleCategories.length - 1
+        ? currentIndex + 1
+        : currentIndex;
+
+    setActiveCategory(visibleCategories[nextIndex]);
   };
-  const handleReset = () => {
-    setActiveCategory(categories.filter((el) => el.visible)[0].name);
-    reset();
+  const handleBack = () => {
+    setIsLoading(true);
+    // setisStarted(true);
+    const visibleCategories = categories
+      .filter((cat) => cat.visible)
+      .map((cat) => cat.name);
+    const currentIndex = visibleCategories.indexOf(activeCategory);
+    // const nextTabName = visibleCategories[currentIndex + 1];
+    setIsLoading(false);
+    const backIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+
+    setActiveCategory(visibleCategories[backIndex]);
   };
+  subscribe('rescore', () => {
+    handleContinue();
+  });
+  subscribe('rescoreBack', () => {
+    handleBack();
+  });
+  useEffect(() => {
+    if (
+      activeCategory !=
+        categories.filter((el) => el.visible)[
+          categories.filter((el) => el.visible).length - 1
+        ].name &&
+      visibleCategoriy.filter((el) => el.visible).length > 1
+    ) {
+      publish('isNotRescored', {});
+    } else {
+      publish('isRescored', {});
+    }
+  }, [activeCategory, visibleCategoriy]);
+  // const handleContinue = () => {
+  //   setIsLoading(true);
+  //   setisStarted(true);
+  //   const visibleCategories = categories
+  //     .filter((cat) => cat.visible)
+  //     .map((cat) => cat.name);
+  //   const currentIndex = visibleCategories.indexOf(activeCategory);
+  //   const nextTabName = visibleCategories[currentIndex + 1];
+
+  //   storeChecked(
+  //     data.filter(
+  //       (el: any) => el.checked == true && el.Category == activeCategory,
+  //     ),
+  //   );
+  //   Application.holisticPlanReScore({
+  //     tab_name: nextTabName,
+  //     member_id: id,
+  //     selected_interventions: [
+  //       ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+  //       ...data.filter(
+  //         (el: any) => el.checked == true && el.Category == activeCategory,
+  //       ),
+  //     ],
+  //     biomarker_insight: treatMentPlanData?.completion_suggestion,
+  //     client_insight: treatMentPlanData?.client_insight,
+  //     looking_forwards: treatMentPlanData?.looking_forwards,
+  //   })
+  //     .then((res) => {
+  //       setIsLoading(false);
+  //       setOrderedCategories((pre) => {
+  //         const old = [...pre];
+  //         old.push(activeCategory);
+  //         return old;
+  //       });
+  //       // const visibleCategories = categories
+  //       //   .filter(
+  //       //     (cat) =>
+  //       //       cat.visible &&
+  //       //       res.data.map((el: any) => el.Category).includes(cat.name),
+  //       //   )
+  //       //   .map((cat) => cat.name);
+  //       const visibleCategories = categories
+  //         .filter((cat) => cat.visible)
+  //         .map((cat) => cat.name);
+  //       const currentIndex = visibleCategories.indexOf(activeCategory);
+  //       let nextIndex = currentIndex;
+  //       if (currentIndex < visibleCategories.length - 1) {
+  //         nextIndex = nextIndex + 1;
+  //       }
+  //       // setFilteredData(res.data);
+  //       setData([...res.data]);
+  //       setActiveCategory(visibleCategories[nextIndex]);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
+  // const handleReset = () => {
+  //   setActiveCategory(categories.filter((el) => el.visible)[0].name);
+  //   reset();
+  // };
   // useEffect(() => {
   //   // setData([
   //   //   ...data.map((el: any) => {
@@ -200,6 +284,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     setActiveCategory(localCategories[0].name);
     setshowchangeOrders(false);
   };
+
   return (
     <>
       <MainModal
@@ -316,7 +401,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
             )}
           </div>
           <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
-            {activeCategory != categories.filter((el) => el.visible)[0].name &&
+            {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
               visibleCategoriy.filter((el) => el.visible).length > 1 && (
                 <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
                   <div onClick={handleReset}>Reset</div>
@@ -330,10 +415,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 <div className="  text-[12px]  flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none">
                   <div onClick={handleContinue}>Continue</div>
                 </div>
-              )}
-            <div
-              className={`justify-end ml-4 ${!isStarted ? 'flex' : 'hidden'}`}
-            >
+              )} */}
+            <div className={`justify-end ml-4`}>
               <img
                 className="cursor-pointer"
                 src="/icons/setting-4.svg"
@@ -347,36 +430,124 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         <div className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
           {data
             ?.filter((el: any) => el.Category == activeCategory)
-            .map((item: any, index: number) => (
-              <div className="flex items-center gap-2 mb-3">
-                <Checkbox
-                  checked={item.checked}
-                  onChange={() => handleCheckboxChange(activeCategory, index)}
+            .map((item: any, index: number) => {
+              return (
+                <ActivityCard
+                  key={index}
+                  item={item}
+                  index={index}
+                  activeCategory={activeCategory}
+                  handleCheckboxChange={handleCheckboxChange}
                 />
-                <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-                  <li className="list-disc">
-                    {item.Recommendation}{' '}
-                    <span className="text-Text-Secondary">/ Instructions:</span>{' '}
-                    {item.Instruction}
-                    {item['Based on'] && (
-                      <div
-                        onClick={() => {
-                          setShowModal(true);
-                          setActivemOdalValue(item['Practitioner Comments']);
-                        }}
-                        className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
-                      >
-                        Based on your:{' '}
-                        <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
-                          {item['Based on']}{' '}
-                          <SvgIcon src="/icons/export.svg" color="#005F73" />
-                        </span>
-                      </div>
-                    )}
-                  </li>
-                </ul>
-              </div>
-            ))}
+                //     <div className="flex items-center gap-2 mb-3">
+                //       <Checkbox
+                //         checked={item.checked}
+                //         onChange={() => handleCheckboxChange(activeCategory, index)}
+                //       />
+                //       <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
+                //       <div className="w-full flex gap-6 items-center mb-4">
+                //         <div  className='text-Text-Primary text-xs font-medium '>{item.Recommendation}</div>
+                //   <div className="flex gap-2 text-[8px]">
+                //     <div
+                //       data-tooltip-id="system-score"
+                //       className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
+                //     >
+                //       <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
+                //       {item['System Score']}
+                //       <Tooltip
+                //         id={'system-score'}
+                //         place="top"
+                //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className='text-Text-Primary'>System Score</div>
+                //         <div className="text-Text-Secondary">
+                //           Score based on all data and AI insights.
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       data-tooltip-id="base-score"
+                //       className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
+                //     >
+                //       <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
+                //       {item.Score}
+                //       <Tooltip
+                //         id={'base-score'}
+                //         place="top"
+                //         className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className='text-Text-Primary'>Base Score</div>
+                //         <div className="text-Text-Secondary">
+                //           Initial score from core health metrics.
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       data-tooltip-id={index + 'score-calc'}
+                //       className="text-Primary-DeepTeal select-none mt-[2px]"
+                //     >
+                //       Score Calculation
+                //       <Tooltip
+                //         id={index + 'score-calc'}
+                //         place="top"
+                //         className="!bg-white !w-[270px] !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                //         style={{
+                //           zIndex: 9999,
+                //           pointerEvents: 'none',
+                //         }}
+                //       >
+                //         <div className="text-Text-Primary text-[8px]">
+                //           {item['Practitioner Comments'][0]}
+                //         </div>
+                //       </Tooltip>
+                //     </div>
+                //     <div
+                //       onClick={() => setShowConflict(true)}
+                //       className="ml-3 mb-[2px] flex gap-[2px] items-center text-[10px] text-[#F4A261] underline cursor-pointer "
+                //     >
+                //       <img src="/icons/alarm.svg" alt="" />
+                //       Conflict <span>(2)</span>
+                //     </div>
+                //   </div>
+                // </div>
+                //         <li className="list-disc mb-1">
+                //           {/* {item.Recommendation}{' '} */}
+                //           <span className="text-Text-Secondary">Positive:</span>{' '}
+                //           {positive}
+                //           {/* {item['Based on'] && (
+                //             <div
+                //               onClick={() => {
+                //                 setShowModal(true);
+                //                 setActivemOdalValue(item['Practitioner Comments']);
+                //               }}
+                //               className="text-Text-Secondary text-xs contents md:inline-flex lg:inline-flex mt-2"
+                //             >
+                //               Based on your:{' '}
+                //               <span className="text-Primary-DeepTeal flex items-center ml-1 gap-2 cursor-pointer">
+                //                 {item['Based on']}{' '}
+                //                 <SvgIcon src="/icons/export.svg" color="#005F73" />
+                //               </span>
+                //             </div>
+                //           )} */}
+                //         </li>
+                //         <li className="list-disc">
+                //           {/* {item.Recommendation}{' '} */}
+                //           <span className="text-Text-Secondary">Negative:</span>{' '}
+                //           {negative}
+
+                //         </li>
+                //       </ul>
+                //     </div>
+              );
+            })}
         </div>
       </div>
       {showModal && (

@@ -60,6 +60,7 @@ const ClientList = () => {
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
     [],
   );
+
   const navigate = useNavigate();
   const getPatients = () => {
     Application.getPatients()
@@ -219,7 +220,9 @@ const ClientList = () => {
   useEffect(() => {
     let filtered = clientList;
     if (active === 'High-Priority') {
-      filtered = clientList.filter((client) => client.favorite);
+      filtered = clientList.filter(
+        (client) => client.favorite && !client.archived,
+      );
     } else if (active === 'Archived') {
       filtered = clientList.filter((client) => client.archived);
     } else {
@@ -237,6 +240,10 @@ const ClientList = () => {
       ),
     );
   };
+  useEffect(() => {
+    console.log(clientList);
+    console.log(filteredClientList);
+  }, [clientList, filteredClientList]);
   return (
     <>
       {isLoading ? (
@@ -390,6 +397,7 @@ const ClientList = () => {
                   {filteredClientList.map((client: any) => {
                     return (
                       <ClientCard
+                        activeTab={active}
                         ondelete={(memberId: any) => {
                           setFilteredClientList((pre) => {
                             const nes = [...pre];
@@ -466,14 +474,15 @@ const ClientList = () => {
         onClose={() => {
           setISOpenConfirm(false);
         }}
-        onConfirm={() => {
+        onDelete={() => {
           Application.deleteClinic({
             member_id: removeId,
-          }).then(() => {
-            setClientList((prevList) =>
-              prevList.filter((client) => client.member_id !== removeId),
-            );
-          });
+          }).then(() => {});
+        }}
+        onConfirm={() => {
+          setClientList((prevList) =>
+            prevList.filter((client) => client.member_id !== removeId),
+          );
         }}
       ></DeleteModal>
       {/* <ConfirmModal

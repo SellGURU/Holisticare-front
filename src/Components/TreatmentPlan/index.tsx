@@ -220,8 +220,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
             <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
               {TreatMentPlanData?.filter(
                 (value: any) => value.category == aciveTreatmentPlan,
-              )[0].data.map((el: any) => {
-                return <TreatmentCard data={el}></TreatmentCard>;
+              )[0].data.map((el: any, index: number) => {
+                return <TreatmentCard index={index} data={el}></TreatmentCard>;
               })}
             </div>
           )}
@@ -392,7 +392,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div
                   onClick={() => {
                     setTreatmentId('');
-                    navigate(`/report/Generate-Holistic-Plan/${id}`);
+                    navigate(`/report/Generate-Recommendation/${id}`);
+                    // navigate(`/report/Generate-Holistic-Plan/${id}`);
                   }}
                   className={`  relative mt-[95px] ml-2  flex flex-col items-center justify-center min-w-[113px] min-h-[113px] w-[113px] h-[113px] bg-white rounded-full shadow-md border-[2px] border-Primary-DeepTeal border-dashed cursor-pointer `}
                 >
@@ -505,16 +506,29 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 <div className="w-full flex flex-wrap gap-6 bg-white p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
-                  )[0]?.data?.map((el: any) => {
+                  )[0]?.data?.map((el: any, index: number) => {
+                    console.log('TreatMentPlanData => ', TreatMentPlanData);
+
                     return (
                       <>
                         <TreatmentCard
+                          index={index}
                           data={el}
                           isOther={aciveTreatmentPlan == 'Other'}
                         ></TreatmentCard>
                       </>
                     );
                   })}
+                  {TreatMentPlanData?.filter(
+                    (value: any) => value.category == aciveTreatmentPlan,
+                  )[0]?.data == undefined && (
+                    <div className="w-full h-[300px] flex justify-center items-center flex-col">
+                      <img src="/icons/no-recommendations.svg" alt="" />
+                      <div className="text-Text-Primary text-sm font-medium mt-5">
+                        No Recommendations Available.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

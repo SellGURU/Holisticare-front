@@ -6,6 +6,8 @@ import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
 import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
+import Checkbox from '../../../Components/checkbox';
+import TimerPicker from './TimerPicker';
 
 interface CheckInControllerModalProps {
   editId?: string;
@@ -21,6 +23,10 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
   editId,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
+  const [step, setStep] = useState(0);
+  const [checked, setChecked] = useState(false);
+  const [minutes, setMinutes] = useState(5);
+  const [seconds, setSeconds] = useState(15);
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
@@ -40,7 +46,20 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
-          ></AddCheckIn>
+            onChangeChecked={(value: boolean) => {
+              setChecked(value);
+            }}
+            onChangeMinutes={(value: number) => {
+              setMinutes(value);
+            }}
+            onChangeSeconds={(value: number) => {
+              setSeconds(value);
+            }}
+            upChecked={checked}
+            upMinutes={minutes}
+            upSeconds={seconds}
+            step={step}
+          />
         );
       case 'Reposition':
         return (
@@ -50,7 +69,7 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
                 setQuestions(values);
               }}
               upQuestions={questions}
-            ></RepositionCheckIn>
+            />
           </>
         );
       case 'Edit':
@@ -60,7 +79,20 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             onChange={(values) => {
               setQuestions(values);
             }}
-          ></AddCheckIn>
+            onChangeChecked={(value: boolean) => {
+              setChecked(value);
+            }}
+            onChangeMinutes={(value: number) => {
+              setMinutes(value);
+            }}
+            onChangeSeconds={(value: number) => {
+              setSeconds(value);
+            }}
+            upChecked={checked}
+            upMinutes={minutes}
+            upSeconds={seconds}
+            step={step}
+          />
         );
     }
   };
@@ -70,10 +102,15 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
+    const getTimeInMilliseconds = () => {
+      return minutes * 60000 + seconds * 1000;
+    };
     setIsSaveLoading(true);
     onSave({
       title: titleForm,
       questions: questions,
+      share_with_client: checked,
+      time: getTimeInMilliseconds(),
     });
     // FormsApi.addCheckin({
     //   title: titleForm,
@@ -85,6 +122,12 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
       FormsApi.showCheckIn(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
+        const totalMs = res.data.time;
+        const mins = Math.floor(totalMs / 60000);
+        const secs = Math.floor((totalMs % 60000) / 1000);
+        setMinutes(mins);
+        setSeconds(secs);
+        setChecked(res.data.share_with_client);
       });
     }
   }, [editId]);
@@ -98,19 +141,23 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
-          <div className="w-full mt-6">
-            <TextField
-              type="text"
-              name="formtitle"
-              label="Form Title"
-              placeholder="Enter community name..."
-              value={titleForm}
-              onChange={(e) => setTitleForm(e.target.value)}
-            />
-          </div>
-          <div className="w-full text-xs text-Text-Primary font-medium mt-6">
-            Questions
-          </div>
+          {step == 0 && (
+            <>
+              <div className="w-full mt-6">
+                <TextField
+                  type="text"
+                  name="formtitle"
+                  label="Form Title"
+                  placeholder="Enter community name..."
+                  value={titleForm}
+                  onChange={(e) => setTitleForm(e.target.value)}
+                />
+              </div>
+              <div className="w-full text-xs text-Text-Primary font-medium mt-6">
+                Questions
+              </div>
+            </>
+          )}
           <div className="flex flex-col w-full mt-3 items-center justify-center">
             {resolveBoxRender()}
           </div>
@@ -127,7 +174,11 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
           <div
             onClick={() => {
               if (!isDisable()) {
-                addCheckinForm();
+                if (step == 0) {
+                  setStep(1);
+                } else {
+                  addCheckinForm();
+                }
               }
             }}
             className={` ${isDisable() && 'opacity-50'} text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
@@ -135,7 +186,15 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>
             ) : (
-              <>{mode == 'Edit' || mode == 'Reposition' ? 'Update' : 'Save'}</>
+              <>
+                {mode == 'Reposition'
+                  ? 'Update'
+                  : step == 0
+                    ? 'Next'
+                    : mode == 'Edit'
+                      ? 'Update'
+                      : 'Save'}
+              </>
             )}
           </div>
         </div>
@@ -147,118 +206,189 @@ const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
 interface AddCheckInProps {
   onChange: (questions: Array<checkinType>) => void;
   upQuestions: Array<checkinType>;
+  step: number;
+  onChangeChecked: (value: boolean) => void;
+  onChangeMinutes: (value: number) => void;
+  onChangeSeconds: (value: number) => void;
+  upChecked: boolean;
+  upMinutes: number;
+  upSeconds: number;
 }
 
-const AddCheckIn: React.FC<AddCheckInProps> = ({ onChange, upQuestions }) => {
+const AddCheckIn: React.FC<AddCheckInProps> = ({
+  onChange,
+  upQuestions,
+  step,
+  onChangeChecked,
+  onChangeMinutes,
+  onChangeSeconds,
+  upChecked,
+  upMinutes,
+  upSeconds,
+}) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
+  const [checked, setChecked] = useState(false);
+  const [mintues, setMintues] = useState(5);
+  const [seconds, setSeconds] = useState(15);
+  useEffect(() => {
+    onChangeMinutes(mintues);
+    onChangeSeconds(seconds);
+  }, [mintues, seconds]);
   useEffect(() => {
     onChange(questions);
   }, [questions]);
   useEffect(() => {
     setQuestions(upQuestions);
-  }, [upQuestions]);
+    setChecked(upChecked);
+    setMintues(upMinutes);
+    setSeconds(upSeconds);
+  }, [upQuestions, upChecked, upMinutes, upSeconds]);
   return (
     <>
-      {questions.length > 0 && (
+      {step == 0 ? (
         <>
-          <div
-            className={`${addMore ? 'max-h-[100px]' : 'max-h-[200px]'} min-h-[60px] overflow-y-auto w-full`}
-            style={{
-              scrollbarWidth: 'thin',
-              scrollbarColor: '#E5E5E5 transparent',
-            }}
-          >
-            <div className="flex flex-col items-center justify-center gap-1 w-full">
-              {questions?.map((item: any, index: number) => {
-                return (
-                  <>
-                    <QuestionItem
-                      length={questions.length}
-                      onEdit={() => {
-                        setEditingQuestionIndex(index);
-                        setAddMore(true);
-                      }}
-                      onRemove={() => {
-                        setQuestions((pre) => {
-                          const newQuestions = pre.filter(
-                            (_el, ind) => ind != index,
-                          );
-                          return newQuestions;
-                        });
-                      }}
-                      index={index}
-                      question={item}
-                    />
-                  </>
-                );
-              })}
+          {questions.length > 0 && (
+            <>
+              <div
+                className={`${addMore ? 'max-h-[100px]' : 'max-h-[200px]'} min-h-[60px] overflow-y-auto w-full`}
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#E5E5E5 transparent',
+                }}
+              >
+                <div className="flex flex-col items-center justify-center gap-1 w-full">
+                  {questions?.map((item: any, index: number) => {
+                    return (
+                      <>
+                        <QuestionItem
+                          length={questions.length}
+                          onEdit={() => {
+                            setEditingQuestionIndex(index);
+                            setAddMore(true);
+                          }}
+                          onRemove={() => {
+                            setQuestions((pre) => {
+                              const newQuestions = pre.filter(
+                                (_el, ind) => ind != index,
+                              );
+                              return newQuestions;
+                            });
+                          }}
+                          index={index}
+                          question={item}
+                        />
+                      </>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+          {questions.length > 0 && !addMore && (
+            <div
+              className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal mb-4 mt-2"
+              onClick={() => {
+                setAddMore(true);
+              }}
+            >
+              <img
+                src="/icons/add-blue.svg"
+                alt=""
+                width="16px"
+                height="16px"
+              />
+              Add Question
             </div>
+          )}
+          {questions.length == 0 && !addMore && (
+            <>
+              <img
+                src="./icons/document-text-rectangle.svg"
+                alt="document-text-rectangle"
+              />
+              <div className="text-Text-Primary text-xs">
+                No Questions Found.
+              </div>
+              <ButtonSecondary
+                ClassName="rounded-[20px] w-[147px] !py-[3px] mt-3 text-nowrap mb-8"
+                onClick={() => setAddMore(true)}
+              >
+                <img src="/icons/add.svg" alt="" width="20px" height="20px" />
+                Add Question
+              </ButtonSecondary>
+            </>
+          )}
+          {addMore && (
+            <>
+              <AddQuestionsModal
+                editQUestion={questions[editingQuestionIndex]}
+                onSubmit={(value) => {
+                  if (editingQuestionIndex == -1) {
+                    setQuestions([...questions, value]);
+                  } else {
+                    setQuestions((pre) => {
+                      const old = [...pre];
+                      const resolved = old.map((el, ind) => {
+                        if (ind == editingQuestionIndex) {
+                          return value;
+                        } else {
+                          return el;
+                        }
+                      });
+                      return resolved;
+                    });
+                  }
+                  setAddMore(false);
+                }}
+                onCancel={() => {
+                  setEditingQuestionIndex(-1);
+                  setAddMore(false);
+                }}
+              ></AddQuestionsModal>
+            </>
+          )}
+        </>
+      ) : (
+        <div className="w-full">
+          <div className="text-Text-Quadruple text-xs mt-4">
+            The estimated time to complete this form is shown below. If you
+            wish, you can edit this and provide your own estimate.
           </div>
-        </>
-      )}
-      {questions.length > 0 && !addMore && (
-        <div
-          className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal mb-4 mt-2"
-          onClick={() => {
-            setAddMore(true);
-          }}
-        >
-          <img src="/icons/add-blue.svg" alt="" width="16px" height="16px" />
-          Add Question
+          <div className="flex items-center mt-4">
+            <Checkbox
+              checked={checked}
+              onChange={() => {
+                setChecked((pre) => !pre);
+                onChangeChecked(!checked);
+              }}
+              borderColor="border-Text-Quadruple"
+              width="w-3.5"
+              height="h-3.5"
+              label="Share with Client"
+            />
+          </div>
+          <div className="w-full flex items-center justify-center mt-4 mb-5">
+            <TimerPicker
+              minutes={mintues}
+              setMinutes={setMintues}
+              seconds={seconds}
+              setSeconds={setSeconds}
+            />
+          </div>
         </div>
-      )}
-      {questions.length == 0 && !addMore && (
-        <>
-          <img
-            src="./icons/document-text-rectangle.svg"
-            alt="document-text-rectangle"
-          />
-          <div className="text-Text-Primary text-xs">No Questions Found.</div>
-          <ButtonSecondary
-            ClassName="rounded-[20px] w-[147px] !py-[3px] mt-3 text-nowrap mb-8"
-            onClick={() => setAddMore(true)}
-          >
-            <img src="/icons/add.svg" alt="" width="20px" height="20px" />
-            Add Question
-          </ButtonSecondary>
-        </>
-      )}
-      {addMore && (
-        <>
-          <AddQuestionsModal
-            editQUestion={questions[editingQuestionIndex]}
-            onSubmit={(value) => {
-              if (editingQuestionIndex == -1) {
-                setQuestions([...questions, value]);
-              } else {
-                setQuestions((pre) => {
-                  const old = [...pre];
-                  const resolved = old.map((el, ind) => {
-                    if (ind == editingQuestionIndex) {
-                      return value;
-                    } else {
-                      return el;
-                    }
-                  });
-                  return resolved;
-                });
-              }
-              setAddMore(false);
-            }}
-            onCancel={() => {
-              setEditingQuestionIndex(-1);
-              setAddMore(false);
-            }}
-          ></AddQuestionsModal>
-        </>
       )}
     </>
   );
 };
 
-const RepositionCheckIn: React.FC<AddCheckInProps> = ({
+interface RepositionCheckInProps {
+  onChange: (questions: Array<checkinType>) => void;
+  upQuestions: Array<checkinType>;
+}
+
+const RepositionCheckIn: React.FC<RepositionCheckInProps> = ({
   upQuestions,
   onChange,
 }) => {

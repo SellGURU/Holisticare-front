@@ -14,6 +14,7 @@ interface ClientCardProps {
   ondelete: (memberid: any) => void;
   onarchive: (memberid: any) => void;
   onToggleHighPriority: (memberid: any) => void;
+  activeTab: string;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
@@ -21,6 +22,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   ondelete,
   onarchive,
   onToggleHighPriority,
+  activeTab,
 }) => {
   console.log(client);
 
@@ -35,21 +37,59 @@ const ClientCard: React.FC<ClientCardProps> = ({
       setshowModal(false);
     },
   });
-  const handleToggleFavoriteAndHighPriority = async () => {
+  // const handleToggleFavoriteAndHighPriority = async () => {
+  //   try {
+  //     // Call API to toggle favorite status
+  //     await Application.addFavorite({
+  //       member_id: client.member_id,
+  //       is_favorite: !client.favorite,
+  //     });
+
+  //     // Update the local state to reflect the change
+  //     onToggleHighPriority(client.member_id);
+
+  //     // Optionally close the modal if applicable
+  //     setshowModal(false);
+  //   } catch (error) {
+  //     console.error('Error updating favorite status:', error);
+  //   }
+  // };
+  const handleAddToHighPriority = async () => {
     try {
-      // Call API to toggle favorite status
-      await Application.addFavorite({
-        member_id: client.member_id,
-        is_favorite: !client.favorite,
-      });
+      if (!client.favorite) {
+        // Call API to add to high priorities
+        await Application.addFavorite({
+          member_id: client.member_id,
+          is_favorite: true,
+        });
 
-      // Update the local state to reflect the change
-      onToggleHighPriority(client.member_id);
+        // Update the local state to reflect the change
+        onToggleHighPriority(client.member_id);
 
-      // Optionally close the modal if applicable
-      setshowModal(false);
+        // Optionally close the modal if applicable
+        setshowModal(false);
+      }
     } catch (error) {
-      console.error('Error updating favorite status:', error);
+      console.error('Error adding to high priorities:', error);
+    }
+  };
+  const handleRemoveFromHighPriority = async () => {
+    try {
+      if (client.favorite && activeTab === 'High-Priority') {
+        // Call API to remove from high priorities
+        await Application.addFavorite({
+          member_id: client.member_id,
+          is_favorite: false,
+        });
+
+        // Update the local state to reflect the change
+        onToggleHighPriority(client.member_id);
+
+        // Optionally close the modal if applicable
+        setshowModal(false);
+      }
+    } catch (error) {
+      console.error('Error removing from high priorities:', error);
     }
   };
   // const handleToggleFavorite = async () => {
@@ -57,7 +97,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   //     // Call API to toggle favorite status
   //     await Application.addFavorite({
   //       member_id: client.member_id,
-  //       is_favorite: !client.favorite,
+  //       is_favorite: !client.favorite,F
   //     });
 
   //     // Update the local state to reflect the change
@@ -113,18 +153,33 @@ const ClientCard: React.FC<ClientCardProps> = ({
   //   // setAccessUserName(res.username);
   //   // setAccessPassword(res.password);
   // });
-  const copyToClipboard = async (text: string) => {
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notifType, setNotifType] = useState('');
+  const copyToClipboard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text);
       // Optional: Add a success notification
-      alert('Copied to clipboard!');
+      setNotifType(type);
+      setNotificationMessage('Text Copied to Clipboard');
+      // Auto-close after 3 seconds
+
+      // alert('Copied to clipboard!');
       // Or use a toast notification if you have a toast library
       // toast.success('Copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
   };
+  const notifCopyModal = useRef(null);
+  useModalAutoClose({
+    refrence: notifCopyModal,
+    close: () => {
+      setNotificationMessage('');
+    },
+  });
   // const [showAsignList, setshowAsignList] = useState(false);
+  console.log(activeTab);
+
   return (
     <>
       <MainModal
@@ -141,7 +196,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   alt=""
                 />
                 <div className="text-xs font-medium -mt-6 mb-3">
-                  The username and unique code have been successfully sent to{' '}
+                  The email address and password have been successfully sent to{' '}
                   {client.name}.
                 </div>
                 <ButtonPrimary onClick={() => setShowAccessModal(false)}>
@@ -150,43 +205,61 @@ const ClientCard: React.FC<ClientCardProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-white w-[500px] h-[332px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+            <div className="bg-white w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
               <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
                 {' '}
                 {client.name}`s Access
               </div>
               <div className="mt-6 text-xs font-medium">
-                Share the username and unique code with your client to give them
-                access.
+                Share the email address and password with your client to give
+                them access.
               </div>
               <div className="text-xs text-Text-Secondary mt-3">
                 Do not share this information with anyone else.
               </div>
               <div className="flex flex-col gap-2 mt-6">
                 <div className="text-xs font-medium">Email Address</div>
-                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
+                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
                   <span className="text-xs select-none">{AccessUserName}</span>
                   <img
-                    onClick={() => copyToClipboard(AccessUserName)}
+                    onClick={() => copyToClipboard(AccessUserName, 'Email')}
                     className="cursor-pointer"
                     src="/icons/copy.svg"
                     alt=""
                   />
+                  {notificationMessage && notifType == 'Email' && (
+                    <div
+                      ref={notifCopyModal}
+                      className="absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7"
+                    >
+                      <img src="/icons/info-circle-green.svg" alt="" />
+                      {notificationMessage}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-2 mt-6">
                 <div className="text-xs font-medium">Password</div>
-                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD]">
+                <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
                   <span className="text-xs select-none">{AccessPassword}</span>
                   <img
-                    onClick={() => copyToClipboard(AccessPassword)}
+                    onClick={() => copyToClipboard(AccessPassword, 'Password')}
                     className="cursor-pointer"
                     src="/icons/copy.svg"
                     alt=""
                   />
+                  {notificationMessage && notifType == 'Password' && (
+                    <div
+                      ref={notifCopyModal}
+                      className="absolute bg-white py-1 px-4 rounded-xl border border-Gray-50 shadow-800 flex items-center gap-1 text-xs text-Text-Primary right-0 top-7"
+                    >
+                      <img src="/icons/info-circle-green.svg" alt="" />
+                      {notificationMessage}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex w-full justify-end mt-6 gap-4 items-center">
+              <div className="flex w-full justify-end mt-12 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
                   className="text-sm font-medium text-Text-Secondary cursor-pointer"
@@ -216,10 +289,19 @@ const ClientCard: React.FC<ClientCardProps> = ({
       <ArchiveModal
         archived={client.archived}
         onConfirm={() => {
-          Application.archivePatient({
-            member_id: client.member_id,
-          });
-          onarchive(client.member_id);
+          if (client.archived) {
+            Application.unArchivePatient({
+              member_id: client.member_id,
+            }).then(() => {
+              onarchive(client.member_id);
+            });
+          } else {
+            Application.archivePatient({
+              member_id: client.member_id,
+            }).then(() => {
+              onarchive(client.member_id);
+            });
+          }
         }}
         name={client.name}
         isOpen={showArchiveModal}
@@ -227,16 +309,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
       ></ArchiveModal>
       <DeleteModal
         isOpen={showDeleteModal}
-        onClose={() => setshowDeleteModal(false)}
+        onClose={() => {
+          setshowDeleteModal(false);
+          // ondelete(client.member_id);
+        }}
         name={client.name}
-        onConfirm={() => {
+        onDelete={() => {
           Application.deletePatient({
             member_id: client.member_id,
           }).then(() => {
-            ondelete(client.member_id);
             // setshowModal(false);
           });
           // onarchive(client.member_id)
+        }}
+        onConfirm={() => {
+          ondelete(client.member_id);
         }}
       ></DeleteModal>
       <div
@@ -271,6 +358,43 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Unarchive
+                </div>
+                {!client.favorite ? (
+                  <div
+                    onClick={handleAddToHighPriority}
+                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                  >
+                    <img src="/icons/star.svg" alt="" />
+                    Add to High-Priorities
+                  </div>
+                ) : (
+                  client.favorite &&
+                  activeTab == 'High-Priority' && (
+                    <div
+                      onClick={handleRemoveFromHighPriority}
+                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    >
+                      <img src="/icons/star.svg" alt="" />
+                      Remove from High-Priorities
+                    </div>
+                  )
+                )}
+                <div
+                  onClick={() => {
+                    Application.giveClientAccess({
+                      member_id: client.member_id,
+                    }).then((res) => {
+                      console.log(res);
+
+                      setAccessUserName(res.data.username);
+                      setAccessPassword(res.data.password);
+                      setShowAccessModal(true);
+                    });
+                  }}
+                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                >
+                  <img src="/icons/keyboard-open.svg" alt="" />
+                  Client Access
                 </div>
                 <div
                   onClick={() => {
@@ -307,15 +431,35 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   <img src="/icons/directbox-send.svg" alt="" />
                   Send to Archieve
                 </div>
-                <div
+                {!client.favorite ? (
+                  <div
+                    onClick={handleAddToHighPriority}
+                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                  >
+                    <img src="/icons/star.svg" alt="" />
+                    Add to High-Priorities
+                  </div>
+                ) : (
+                  client.favorite &&
+                  activeTab == 'High-Priority' && (
+                    <div
+                      onClick={handleRemoveFromHighPriority}
+                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    >
+                      <img src="/icons/star.svg" alt="" />
+                      Remove from High-Priorities
+                    </div>
+                  )
+                )}
+                {/* <div
                   onClick={handleToggleFavoriteAndHighPriority}
                   className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
                 >
                   <img src="/icons/star.svg" alt="" />
-                  {client.favorite
+                  {client.favorite && activeTab == "High-Priority"
                     ? 'Remove from High-Priorities'
                     : 'Add to High-Priorities'}{' '}
-                </div>
+                </div> */}
                 <div
                   onClick={() => {
                     Application.giveClientAccess({
@@ -450,7 +594,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       Last Check-In
                     </div>
                     <div className="text-Text-Primary text-[10px] sm:text-xs">
-                      {client.enroll_date}
+                      {client.last_checkin}
                     </div>
                   </div>
                 </div>

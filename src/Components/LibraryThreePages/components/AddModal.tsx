@@ -215,12 +215,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             <input
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s title...`}
               value={addData.title}
-              onChange={(e) => updateAddData('title', e.target.value)}
+              onChange={(e) => {
+                updateAddData('title', e.target.value);
+                if (e.target.value) {
+                  setErrors((prev) => ({ ...prev, title: false }));
+                } else {
+                  setErrors((prev) => ({ ...prev, title: true }));
+                }
+              }}
               className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                showValidation && errors.title ? 'border-Red' : 'border-Gray-50'
+                errors.title ? 'border-Red' : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
             />
-            {showValidation && errors.title && (
+            {errors.title && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -235,14 +242,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             <textarea
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s description...`}
               value={addData.description}
-              onChange={(e) => updateAddData('description', e.target.value)}
+              onChange={(e) => {
+                updateAddData('description', e.target.value);
+                if (e.target.value) {
+                  setErrors((prev) => ({ ...prev, description: false }));
+                } else {
+                  setErrors((prev) => ({ ...prev, description: true }));
+                }
+              }}
               className={`w-full h-[98px] rounded-[16px] text-justify py-1 px-3 border ${
-                showValidation && errors.description
-                  ? 'border-Red'
-                  : 'border-Gray-50'
+                errors.description ? 'border-Red' : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-            {showValidation && errors.description && (
+            {errors.description && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -271,14 +283,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             <textarea
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s instruction...`}
               value={addData.instruction}
-              onChange={(e) => updateAddData('instruction', e.target.value)}
+              onChange={(e) => {
+                updateAddData('instruction', e.target.value);
+                if (e.target.value) {
+                  setErrors((prev) => ({ ...prev, instruction: false }));
+                } else {
+                  setErrors((prev) => ({ ...prev, instruction: true }));
+                }
+              }}
               className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
-                showValidation && errors.instruction
-                  ? 'border-Red'
-                  : 'border-Gray-50'
+                errors.instruction ? 'border-Red' : 'border-Gray-50'
               } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
-            {showValidation && errors.instruction && (
+            {errors.instruction && (
               <div className="text-Red text-[10px]">
                 This field is required.
               </div>
@@ -294,14 +311,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
-                onChange={(e) => setDose(e.target.value)}
+                onChange={(e) => {
+                  setDose(e.target.value);
+                  if (e.target.value) {
+                    setErrors((prev) => ({ ...prev, dose: false }));
+                  } else {
+                    setErrors((prev) => ({ ...prev, dose: true }));
+                  }
+                }}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  showValidation && errors.dose
-                    ? 'border-Red'
-                    : 'border-Gray-50'
+                  errors.dose ? 'border-Red' : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
-              {showValidation && errors.dose && (
+              {errors.dose && (
                 <div className="text-Red text-[10px]">
                   This field is required.
                 </div>
@@ -319,14 +341,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 placeholder="Enter Value..."
                 value={value}
                 type="number"
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  if (e.target.value) {
+                    setErrors((prev) => ({ ...prev, value: false }));
+                  } else {
+                    setErrors((prev) => ({ ...prev, value: true }));
+                  }
+                }}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  showValidation && errors.value
-                    ? 'border-Red'
-                    : 'border-Gray-50'
+                  errors.value ? 'border-Red' : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
-              {showValidation && errors.value && (
+              {errors.value && (
                 <div className="text-Red text-[10px]">
                   This field is required.
                 </div>
@@ -356,14 +383,24 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="number"
                       placeholder="Carbohydrates"
                       value={totalMacros.Carbs}
-                      onChange={(e) =>
-                        updateTotalMacros('Carbs', Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        updateTotalMacros('Carbs', Number(e.target.value));
+                        if (e.target.value) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Carbs: false },
+                          }));
+                        } else {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Carbs: true },
+                          }));
+                        }
+                      }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        showValidation &&
-                        (errors.macros.Carbs ||
-                          errors.macros.Protein ||
-                          errors.macros.Fats)
+                        errors.macros.Carbs ||
+                        errors.macros.Protein ||
+                        errors.macros.Fats
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -384,14 +421,24 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="number"
                       placeholder="Proteins"
                       value={totalMacros.Protein}
-                      onChange={(e) =>
-                        updateTotalMacros('Protein', Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        updateTotalMacros('Protein', Number(e.target.value));
+                        if (e.target.value) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Protein: false },
+                          }));
+                        } else {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Protein: true },
+                          }));
+                        }
+                      }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        showValidation &&
-                        (errors.macros.Carbs ||
-                          errors.macros.Protein ||
-                          errors.macros.Fats)
+                        errors.macros.Carbs ||
+                        errors.macros.Protein ||
+                        errors.macros.Fats
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -412,14 +459,24 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="number"
                       placeholder="Fats"
                       value={totalMacros.Fats}
-                      onChange={(e) =>
-                        updateTotalMacros('Fats', Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        updateTotalMacros('Fats', Number(e.target.value));
+                        if (e.target.value) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Fats: false },
+                          }));
+                        } else {
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Fats: true },
+                          }));
+                        }
+                      }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        showValidation &&
-                        (errors.macros.Carbs ||
-                          errors.macros.Protein ||
-                          errors.macros.Fats)
+                        errors.macros.Carbs ||
+                        errors.macros.Protein ||
+                        errors.macros.Fats
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -427,14 +484,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   </div>
                 </div>
                 {/* Single validation message for all macro fields */}
-                {showValidation &&
-                  (errors.macros.Carbs ||
-                    errors.macros.Protein ||
-                    errors.macros.Fats) && (
-                    <div className="text-Red text-[10px]">
-                      These fields are required.
-                    </div>
-                  )}
+                {(errors.macros.Carbs ||
+                  errors.macros.Protein ||
+                  errors.macros.Fats) && (
+                  <div className="text-Red text-[10px]">
+                    These fields are required.
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -198,6 +198,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
     return groups;
   };
+  const colorsText = ['#06C78D', '#FC5474', '#06C78D', '#F4A261'];
 
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
@@ -279,14 +280,26 @@ const PrintReport: React.FC<PrintReportProps> = ({
         >
           <div className="ml-20">
             <div
-              className="text-white uppercase text-center "
-              style={{ fontSize: 42, color: '#383838', letterSpacing: '8px' }}
+              className="text-white uppercase text-center"
+              style={{
+                fontSize: '40px',
+                color: '#383838',
+                letterSpacing: '8px',
+                fontWeight: 600,
+                fontStyle: 'italic',
+              }}
             >
               Comprehensive
             </div>
             <div
               className="text-white uppercase  text-center"
-              style={{ fontSize: 42, color: '#383838', letterSpacing: '8px' }}
+              style={{
+                fontSize: '40px',
+                color: '#383838',
+                letterSpacing: '8px',
+                fontWeight: 600,
+                fontStyle: 'italic',
+              }}
             >
               Health Plan
             </div>
@@ -350,28 +363,44 @@ const PrintReport: React.FC<PrintReportProps> = ({
           backgroundColor: '#005F73',
         }}
       >
-        <div className="text-3xl  ml-14 mt-32 text-white font-medium">
+        <div
+          className="ml-14 mt-32 text-white font-medium"
+          style={{ fontSize: '40px' }}
+        >
           Table of Content
         </div>
         <div
           className="mt-16 pt-16"
           style={{
-            backgroundColor: '#337f8f',
+            backgroundColor: '#005F73',
             height: '100vh',
             width: '90%',
             marginRight: '146px',
+            backgroundImage: "url('/images/bg-report-page-two.png')",
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'top right',
+            backgroundSize: '100%',
           }}
         >
           <div
-            className="px-12  py-20"
+            className="px-12 py-20"
             style={{
               backgroundColor: '#F7F7F7',
               height: '100vh',
               width: '92%',
               marginRight: '146px',
+              backgroundImage: "url('/images/bg-report-page-two.png')",
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'top right',
+              backgroundSize: '100%',
             }}
           >
             <div className="flex justify-start gap-4 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -386,7 +415,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Client Summary
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-5 items-center">
+            <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -401,7 +435,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Needs Focus Biomarkers
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-5 items-center">
+            <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -416,7 +455,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Detailed Analysis
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-5 items-center">
+            <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -431,7 +475,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Holistic Plan
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-5 items-center">
+            <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -470,13 +519,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-lg"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Client Summary
             </div>
-            <div className="" style={{ color: '#383838', fontSize: '14px' }}>
-              Total of {ClientSummaryBoxs.total_subcategory} biomarkers in{' '}
-              {ClientSummaryBoxs.total_category} categories
+            <div className="" style={{ color: '#888888', fontSize: '14px' }}>
+              Total of {ClientSummaryBoxs.total_subcategory} Biomarkers in{' '}
+              {ClientSummaryBoxs.total_category} Categories
             </div>
           </div>
           <a
@@ -496,7 +545,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               {usrInfoData?.name}
             </div>
             <div className="flex justify-center items-center gap-1">
-              <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div className="" style={{ fontSize: '14px', color: '#888888' }}>
                 <div>Gender: {usrInfoData?.sex} </div>
               </div>
               <div
@@ -504,10 +553,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 style={{
                   width: '1px',
                   height: '12px',
-                  backgroundColor: '#383838',
+                  backgroundColor: '#B0B0B0',
                 }}
               ></div>
-              <div className="" style={{ fontSize: '14px', color: '#383838' }}>
+              <div className="" style={{ fontSize: '14px', color: '#888888' }}>
                 <div>Age: {usrInfoData?.age}</div>
               </div>
             </div>
@@ -519,7 +568,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {ClientSummaryBoxs?.client_summary}
           </div>
           <div
-            className="w-full  relative  invisible  flex justify-end items-center gap-4 mt-4"
+            className="w-full relative flex justify-end items-center gap-4 mt-4"
             style={{ zIndex: 60 }}
           >
             <div className="flex justify-start gap-1 items-center">
@@ -532,10 +581,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
+              <div style={{ color: '#888888', fontSize: '10px' }}>
                 Excellent{' '}
               </div>
             </div>
@@ -549,12 +595,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
-                Good{' '}
-              </div>
+              <div style={{ color: '#888888', fontSize: '10px' }}>Good </div>
             </div>
             <div className="flex justify-start gap-1 items-center">
               <div
@@ -566,12 +607,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
-                Ok{' '}
-              </div>
+              <div style={{ color: '#888888', fontSize: '10px' }}>Ok </div>
             </div>
             <div className="flex justify-start gap-1 items-center">
               <div
@@ -583,10 +619,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   borderRadius: '100%',
                 }}
               ></div>
-              <div
-                style={{ color: '#383838', fontSize: '12px' }}
-                className="font-medium"
-              >
+              <div style={{ color: '#888888', fontSize: '10px' }}>
                 Needs focus{' '}
               </div>
             </div>
@@ -624,13 +657,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <div
               id="Out of Reference"
               className="text-lg"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Needs Focus Biomarkers
             </div>
             <div
               className="  text-xs"
-              style={{ color: '#383838', fontSize: '14px' }}
+              style={{ color: '#888888', fontSize: '14px' }}
             >
               {referenceData.total_biomarker_note}
             </div>
@@ -760,7 +793,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
                     <div
                       className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                      style={{ fontSize: 9, color: '#005F73' }}
+                      style={{ fontSize: 12, color: '#005F73' }}
                     >
                       <div>
                         <img src="/icons/arrow-square-down.svg" alt="" />
@@ -768,13 +801,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       {el.subcategory}
                     </div>
                   </div>
-                  {el.biomarkers.map((val: any) => {
+                  {el.biomarkers.map((val: any, index: number) => {
                     return (
                       <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
                         <div
                           className=" text-gray-800"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             color: '#383838',
                             width: 200,
                           }}
@@ -784,9 +817,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: colorsText[index % 4],
                           }}
                         >
                           {val.Result}
@@ -794,9 +827,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: '#888888',
                           }}
                         >
                           {val.Units}
@@ -804,9 +837,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: '#888888',
                           }}
                         >
                           {val['Lab Ref Range']}
@@ -814,9 +847,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: '#888888',
                           }}
                         >
                           {val.Baseline}
@@ -824,9 +857,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: '#888888',
                           }}
                         >
                           {val['Optimal Range']}
@@ -834,9 +867,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         <div
                           className=" text-gray-800 text-center"
                           style={{
-                            fontSize: '10px',
+                            fontSize: '12px',
                             width: '60px',
-                            color: '#383838',
+                            color: colorsText[index % 4],
                           }}
                         >
                           {val.Changes}
@@ -873,11 +906,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <div
               className="text-lg"
               id="Detailed analysis"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Detailed Analysis
             </div>
-            <div className="" style={{ color: '#383838', fontSize: '14px' }}>
+            <div className="" style={{ color: '#888888', fontSize: '14px' }}>
               {referenceData.detailed_analysis_note}
             </div>
           </div>
@@ -918,7 +951,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-xl"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Holistic Plan
             </div>
@@ -932,37 +965,52 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </a>
           {helthPlan && (
             <div
-              className="w-full mb-4 relative flex justify-between items-center py-2 px-4 bg-white border border-green-400 mt-4"
-              style={{ borderRadius: '12px', zIndex: '60' }}
+              className="w-full relative mb-4 mt-4"
+              style={{
+                borderRadius: '12px',
+                zIndex: 60,
+                background:
+                  'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
+                padding: '1px',
+              }}
             >
-              <div className="text-sm" style={{ color: '#005F73' }}>
-                {helthPlan[helthPlan.length - 1]?.t_title}
-              </div>
-              <div className="flex justify-end items-center">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: '#4C88FF' }}
-                ></div>
-                <div
-                  className="ml-1"
-                  style={{ fontSize: '12px', color: '#383838' }}
-                >
-                  {helthPlan[helthPlan.length - 1]?.state}
+              <div
+                style={{
+                  borderRadius: '11px',
+                  background: '#FFFFFF',
+                  width: '100%',
+                }}
+                className="py-2 px-4 flex justify-between items-center"
+              >
+                <div className="text-sm" style={{ color: '#005F73' }}>
+                  {helthPlan[helthPlan.length - 1]?.t_title}
                 </div>
-                <div
-                  style={{
-                    backgroundColor: '#E5E5E5',
-                    marginLeft: '24px',
-                    padding: '2.5px 12px',
-                    borderRadius: '12px',
-                  }}
-                >
+                <div className="flex justify-end items-center">
                   <div
-                    className="flex justify-center gap-1 items-center"
-                    style={{ fontSize: '12px', color: '#005F73' }}
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: '#4C88FF' }}
+                  ></div>
+                  <div
+                    className="ml-1"
+                    style={{ fontSize: '12px', color: '#383838' }}
                   >
-                    <img src="/icons/timerprint.svg" alt="" />
-                    {helthPlan[helthPlan.length - 1]?.date_text}
+                    {helthPlan[helthPlan.length - 1]?.state}
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: '#E5E5E5',
+                      marginLeft: '24px',
+                      padding: '2.5px 12px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <div
+                      className="flex justify-center gap-1 items-center"
+                      style={{ fontSize: '12px', color: '#005F73' }}
+                    >
+                      <img src="/icons/timerprint.svg" alt="" />
+                      {helthPlan[helthPlan.length - 1]?.formatted_date}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1067,7 +1115,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             <div
               className="text-xl"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              style={{ color: '#383838', fontWeight: '600' }}
             >
               Action Plan
             </div>
@@ -1081,76 +1129,92 @@ const PrintReport: React.FC<PrintReportProps> = ({
           </a>
           {ActionPlan && (
             <div
-              className="w-full relative mb-4 py-2 px-4 bg-white border border-green-400 mt-4"
-              style={{ borderRadius: '12px', zIndex: '60' }}
+              className="w-full relative mb-4 mt-4"
+              style={{
+                borderRadius: '12px',
+                zIndex: 60,
+                background:
+                  'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
+                padding: '1px',
+              }}
             >
-              <div className="text-sm mb-2" style={{ color: '#005F73' }}>
-                {ActionPlan[ActionPlan.length - 1]?.title}
-              </div>
-              <div className="text-xs" style={{ color: '#383838' }}>
-                {ActionPlan[ActionPlan.length - 1]?.description}
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="mt-2">
-                  <div className="flex justify-between items-center">
-                    <div style={{ color: '#383838', fontSize: '12px' }}>
-                      Progress
+              <div
+                style={{
+                  borderRadius: '11px',
+                  background: '#FFFFFF',
+                  width: '100%',
+                }}
+                className="py-2 px-4"
+              >
+                <div className="text-sm mb-2" style={{ color: '#005F73' }}>
+                  {ActionPlan[ActionPlan.length - 1]?.title}
+                </div>
+                <div className="text-xs" style={{ color: '#383838' }}>
+                  {ActionPlan[ActionPlan.length - 1]?.description}
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="mt-2">
+                    <div className="flex justify-between items-center">
+                      <div style={{ color: '#383838', fontSize: '12px' }}>
+                        Progress
+                      </div>
+                      <div style={{ color: '#005F73', fontSize: '12px' }}>
+                        {ActionPlan[ActionPlan?.length - 1]?.progress
+                          ? ActionPlan[ActionPlan?.length - 1]?.progress + '%'
+                          : '0%'}
+                      </div>
                     </div>
-                    <div style={{ color: '#005F73', fontSize: '12px' }}>
-                      {ActionPlan[ActionPlan?.length - 1]?.progress
-                        ? ActionPlan[ActionPlan?.length - 1]?.progress + '%'
-                        : '0%'}
+                    <div>
+                      <div
+                        className="relative"
+                        style={{
+                          width: '250px',
+                          height: '8px',
+                          borderRadius: '12px',
+                          background: '#E5E5E5',
+                        }}
+                      >
+                        <div
+                          className="absolute left-0  "
+                          style={{
+                            height: '6px',
+                            backgroundColor: '#6CC24A',
+                            borderRadius: '12px',
+                            width: ActionPlan[ActionPlan.length - 1]?.progress
+                              ? ActionPlan[ActionPlan.length - 1]?.progress +
+                                '%'
+                              : '0%',
+                          }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                  <div>
+                  <div className="flex justify-end items-center">
                     <div
-                      className="relative"
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: '#4C88FF' }}
+                    ></div>
+                    <div
+                      className="ml-1"
+                      style={{ fontSize: '12px', color: '#383838' }}
+                    >
+                      {ActionPlan[ActionPlan.length - 1]?.state}
+                    </div>
+                    <div
                       style={{
-                        width: '250px',
-                        height: '8px',
+                        backgroundColor: '#E5E5E5',
+                        marginLeft: '24px',
+                        padding: '2.5px 12px',
                         borderRadius: '12px',
-                        background: '#E5E5E5',
                       }}
                     >
                       <div
-                        className="absolute left-0  "
-                        style={{
-                          height: '6px',
-                          backgroundColor: '#6CC24A',
-                          borderRadius: '12px',
-                          width: ActionPlan[ActionPlan.length - 1]?.progress
-                            ? ActionPlan[ActionPlan.length - 1]?.progress + '%'
-                            : '0%',
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-end items-center">
-                  <div
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: '#4C88FF' }}
-                  ></div>
-                  <div
-                    className="ml-1"
-                    style={{ fontSize: '12px', color: '#383838' }}
-                  >
-                    {ActionPlan[ActionPlan.length - 1]?.state}
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: '#E5E5E5',
-                      marginLeft: '24px',
-                      padding: '2.5px 12px',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <div
-                      className="flex justify-center gap-1 items-center"
-                      style={{ fontSize: '12px', color: '#005F73' }}
-                    >
-                      <img src="/icons/timerprint.svg" alt="" />
-                      {ActionPlan[ActionPlan.length - 1]?.to_date}
+                        className="flex justify-center gap-1 items-center"
+                        style={{ fontSize: '12px', color: '#005F73' }}
+                      >
+                        <img src="/icons/timerprint.svg" alt="" />
+                        {ActionPlan[ActionPlan.length - 1]?.to_date}
+                      </div>
                     </div>
                   </div>
                 </div>

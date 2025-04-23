@@ -77,11 +77,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     defalts ? defalts['Client Notes'] : [],
   );
   const [showSelect, setShowSelect] = useState(false);
-  const [practitionerComment, setPractitionerComment] = useState('');
+  // const [practitionerComment, setPractitionerComment] = useState('');
   const [description, setDescription] = useState('');
-  const [practitionerComments, setPractitionerComments] = useState<string[]>(
-    defalts ? defalts['Practitioner Comments'] : [],
-  );
+  // const [practitionerComments, setPractitionerComments] = useState<string[]>(
+  //   defalts ? defalts['Practitioner Comments'] : [],
+  // );
   const [sectionList, setSectionList] = useState([]);
   const [addData, setAddData] = useState({
     Type: defalts?.Activity_Filters?.Type || [],
@@ -104,7 +104,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [MuscleOptions, setMuscleOptions] = useState([]);
   const [TermsOptions, setTermsOptions] = useState([]);
   const [TypesOptions, setTypeOptions] = useState([]);
-
+  const [showExerciseValidation, setShowExerciseValidation] = useState(false);
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -155,7 +155,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Equipment: defalts?.Activity_Filters?.Equipment || [],
         Level: defalts?.Activity_Filters?.Level || [],
       });
-      setPractitionerComments(defalts['Practitioner Comments'] || []);
+      // setPractitionerComments(defalts['Practitioner Comments'] || []);
     }
     setSelectedLocations(defalts?.Activity_Location || []);
     setSectionList(
@@ -176,6 +176,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       }) || [],
     );
   }, [defalts, isOpen]);
+  const [, setIsExerciseStepValid] = useState(false);
   const rsolveSectionListforSendToApi = () => {
     return sectionList.map((item: any) => {
       return {
@@ -196,7 +197,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     onSubmit({
       Category: selectedGroup,
       Title: title,
-      'Practitioner Comments': practitionerComments,
+      // 'Practitioner Comments': practitionerComments,
       Instruction: instructions,
       Activity_Location: selectedLocations,
       Times: selectedTimes,
@@ -251,17 +252,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
   };
 
-  const handleCommentKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (practitionerComment.trim()) {
-        setPractitionerComments([...practitionerComments, practitionerComment]);
-        setPractitionerComment('');
-      }
-    }
-  };
+  // const handleCommentKeyDown = (
+  //   e: React.KeyboardEvent<HTMLTextAreaElement>,
+  // ) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (practitionerComment.trim()) {
+  //       setPractitionerComments([...practitionerComments, practitionerComment]);
+  //       setPractitionerComment('');
+  //     }
+  //   }
+  // };
   const handleDeleteNote = (index: number) => {
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
@@ -281,8 +282,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setDescription('');
     setBaseScore(5);
     setFrequencyType(null);
-    setPractitionerComments([]);
-    setPractitionerComment('');
+    // setPractitionerComments([]);
+    // setPractitionerComment('');
     setNewNote('');
     setTitle('');
     setDose(null);
@@ -311,9 +312,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Lifestyle' && !value) {
       return;
     }
-    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-      return;
-    }
+    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+    //   return;
+    // }
     if (
       selectedGroup === 'Diet' &&
       (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
@@ -325,7 +326,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        'Practitioner Comments': practitionerComments,
+        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
         Times: selectedTimes,
         Dose: dose,
@@ -345,7 +346,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        'Practitioner Comments': practitionerComments,
+        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
         Times: selectedTimes,
         Value: value,
@@ -365,7 +366,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        'Practitioner Comments': practitionerComments,
+        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
         Times: selectedTimes,
         'Total Macros': totalMacros,
@@ -385,7 +386,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        'Practitioner Comments': practitionerComments,
+        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
         Times: selectedTimes,
         'Client Notes': notes,
@@ -404,10 +405,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     onClose();
     onReset();
   };
-  const handleDeleteComment = (index: number) => {
-    const updatedComments = practitionerComments.filter((_, i) => i !== index);
-    setPractitionerComments(updatedComments);
-  };
+  // const handleDeleteComment = (index: number) => {
+  //   const updatedComments = practitionerComments.filter((_, i) => i !== index);
+  //   setPractitionerComments(updatedComments);
+  // };
 
   const toggleTimeSelection = (time: string) => {
     setSelectedTimes((prevTimes) =>
@@ -480,9 +481,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Lifestyle' && !value) {
       return true;
     }
-    if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-      return true;
-    }
+    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
+    //   return true;
+    // }
     if (
       selectedGroup === 'Diet' &&
       (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
@@ -515,6 +516,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
+    setShowExerciseValidation(true);
     if (!isNextDisabled()) {
       saveActivity();
     }
@@ -526,12 +528,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       handleApply();
     }
   };
+  console.log(showExerciseValidation);
 
   return (
     <MainModal
       onClose={() => {
         onClose();
         onReset();
+        setStep(0);
         setShowValidation(false);
       }}
       isOpen={isOpen}
@@ -991,11 +995,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         );
                       })}
                     </div>
-                    {selectedLocations.length === 0 && showValidation && (
+                    {/* {selectedLocations.length === 0 && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
-                    )}
+                    )} */}
                   </div>
                 )}
                 <div className="mb-4">
@@ -1293,7 +1297,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                   ))}
                 </div>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label className="block text-xs font-medium">
                     Practitioner Comments
                   </label>
@@ -1305,8 +1309,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     rows={4}
                     placeholder="Document your clinical observations, interventions, and plans..."
                   />
-                </div>
-                <div className="mb-4 flex flex-col gap-2">
+                </div> */}
+                {/* <div className="mb-4 flex flex-col gap-2">
                   {practitionerComments?.map((comment, index) => (
                     <div
                       key={index}
@@ -1326,13 +1330,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       </div>
                     </div>
                   ))}
-                </div>
+                </div> */}
                 <div className="flex justify-end gap-3">
                   {selectedGroup !== 'Activity' && (
                     <>
                       <button
                         onClick={() => {
                           onClose();
+                          setStep(0);
                           onReset();
                         }}
                         className="text-sm font-medium text-Disable cursor-pointer"
@@ -1364,6 +1369,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               onChange={(values: any) => {
                 setSectionList(values);
               }}
+              setShowValidation={(val: any) => {
+                setShowExerciseValidation(val);
+              }}
+              showValidation={showExerciseValidation}
+              onValidationChange={setIsExerciseStepValid}
             />
           )}
 

@@ -6,6 +6,7 @@ import Application from '../../../api/app';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Tooltip } from 'react-tooltip';
+import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -39,12 +40,20 @@ const EditModal: React.FC<EditModalProps> = ({
   );
   const [showSelect, setShowSelect] = useState(false);
   // const [group, setGroup] = useState(defalts?.Category);
-  const [practitionerComment, setPractitionerComment] = useState('');
+  // const [practitionerComment, setPractitionerComment] = useState('');
 
-  const [practitionerComments, setPractitionerComments] = useState<string[]>(
+  const [practitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
+  const clearFields = () => {
+    formik.resetForm();
+    setNewNote('');
+    setNotes([]);
+    setSelectedGroupDose(false);
+    setSelectedTimes([]);
+    setGroups([]);
+  };
 
   const selectRef = useRef(null);
   const modalRef = useRef(null);
@@ -88,11 +97,14 @@ const EditModal: React.FC<EditModalProps> = ({
           'Based on': defalts ? defalts['Based on'] : '',
           'Practitioner Comments': practitionerComments,
           Instruction: values.Instruction,
+          Score: '0',
+          'System Score': '0',
           Times: selectedTimes,
           Dose: values.Dose,
           'Client Notes': notes,
         });
         onClose();
+        clearFields();
       }
     },
   });
@@ -151,17 +163,17 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   };
 
-  const handleCommentKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (practitionerComment.trim()) {
-        setPractitionerComments([...practitionerComments, practitionerComment]);
-        setPractitionerComment('');
-      }
-    }
-  };
+  // const handleCommentKeyDown = (
+  //   e: React.KeyboardEvent<HTMLTextAreaElement>,
+  // ) => {
+  //   if (e.key === 'Enter' && !e.shiftKey) {
+  //     e.preventDefault();
+  //     if (practitionerComment.trim()) {
+  //       setPractitionerComments([...practitionerComments, practitionerComment]);
+  //       setPractitionerComment('');
+  //     }
+  //   }
+  // };
   const handleDeleteNote = (index: number) => {
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
@@ -180,10 +192,10 @@ const EditModal: React.FC<EditModalProps> = ({
   //   });
   //   onClose();
   // };
-  const handleDeleteComment = (index: number) => {
-    const updatedComments = practitionerComments.filter((_, i) => i !== index);
-    setPractitionerComments(updatedComments);
-  };
+  // const handleDeleteComment = (index: number) => {
+  //   const updatedComments = practitionerComments.filter((_, i) => i !== index);
+  //   setPractitionerComments(updatedComments);
+  // };
 
   const toggleTimeSelection = (time: string) => {
     setSelectedTimes((prevTimes) =>
@@ -208,7 +220,6 @@ const EditModal: React.FC<EditModalProps> = ({
     setShowValidation(true);
     formik.handleSubmit();
   };
-  console.log(selectedGroupDose);
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
@@ -226,7 +237,7 @@ const EditModal: React.FC<EditModalProps> = ({
             {/* Category Field */}
             <div className="w-full relative overflow-visible mt-2 mb-4">
               <label className="text-xs font-medium text-Text-Primary">
-                Category <span className="text-Red">*</span>
+                Category
               </label>
               <div
                 onClick={() => setShowSelect(!showSelect)}
@@ -280,14 +291,12 @@ const EditModal: React.FC<EditModalProps> = ({
             {/* Recommendation and Dose Fields */}
             <div className="mb-4 grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium">
-                  Recommendation <span className="text-Red">*</span>
-                </label>
+                <label className="block text-xs font-medium">Title</label>
                 <input
                   name="Recommendation"
                   value={formik.values.Recommendation}
                   onChange={formik.handleChange}
-                  placeholder="Write Recommendation"
+                  placeholder="Write recommendation's title…"
                   type="text"
                   className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
                     showValidation && formik.errors.Recommendation
@@ -348,20 +357,16 @@ const EditModal: React.FC<EditModalProps> = ({
 
             {/* Instructions Field */}
             <div className="mb-4">
-              <label className="flex w-full justify-between items-center text-xs font-medium">
-                Instructions <span className="text-Red">*</span>
+              <label className="flex w-full gap-1 items-center text-xs font-medium">
+                Instructions
               </label>
-              <input
+              <textarea
                 name="Instruction"
                 value={formik.values.Instruction}
                 onChange={formik.handleChange}
-                placeholder="Write Instruction"
-                type="text"
-                className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && formik.errors.Instruction
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
+                placeholder="Write the action's instruction..."
+                className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${showValidation && formik.errors.Instruction ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                rows={4}
               />
               {showValidation && formik.errors.Instruction && (
                 <div className="text-Red text-[10px] mt-1">
@@ -373,22 +378,20 @@ const EditModal: React.FC<EditModalProps> = ({
             {/* Times Selection */}
             <div className="mb-4">
               <label className="text-xs font-medium">Times</label>
-              <div className="flex w-full mt-2">
-                {times.map((time, index) => (
-                  <div
-                    key={time}
-                    onClick={() => toggleTimeSelection(time)}
-                    className={`cursor-pointer py-1 px-3 border border-Gray-50 ${
-                      index === times.length - 1 && 'rounded-r-2xl'
-                    } ${index === 0 && 'rounded-l-2xl'} text-xs text-center w-full ${
-                      selectedTimes.includes(time)
-                        ? 'bg-gradient-to-r from-[#99C7AF] to-[#AEDAA7] text-Primary-DeepTeal'
-                        : 'bg-backgroundColor-Card text-Text-Secondary'
-                    }`}
-                  >
-                    {time}
-                  </div>
-                ))}
+              <div className="flex w-full mt-2 gap-6">
+                {times.map((item, index) => {
+                  return (
+                    <Checkbox
+                      key={index}
+                      checked={selectedTimes.includes(item)}
+                      onChange={() => toggleTimeSelection(item)}
+                      label={item}
+                      borderColor="border-Text-Quadruple"
+                      width="w-3.5"
+                      height="h-3.5"
+                    />
+                  );
+                })}
               </div>
             </div>
 
@@ -419,8 +422,8 @@ const EditModal: React.FC<EditModalProps> = ({
                     <SvgIcon
                       src="/icons/delete.svg"
                       color="#FC5474"
-                      width="24px"
-                      height="24px"
+                      width="16px"
+                      height="16px"
                     />
                   </div>
                 </div>
@@ -428,7 +431,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
 
             {/* Practitioner Comments */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block text-xs font-medium">
                 Practitioner Comments
               </label>
@@ -440,10 +443,10 @@ const EditModal: React.FC<EditModalProps> = ({
                 rows={4}
                 placeholder="Enter internal observations or comments..."
               />
-            </div>
+            </div> */}
 
             {/* Comments List */}
-            <div className="mb-4 flex flex-col gap-2">
+            {/* <div className="mb-4 flex flex-col gap-2">
               {practitionerComments?.map((comment, index) => (
                 <div key={index} className="w-full flex gap-1 items-start">
                   <div className="w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
@@ -456,13 +459,13 @@ const EditModal: React.FC<EditModalProps> = ({
                     <SvgIcon
                       src="/icons/delete.svg"
                       color="#FC5474"
-                      width="24px"
-                      height="24px"
+                      width="16px"
+                      height="16px"
                     />
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
           </form>
         </div>
 

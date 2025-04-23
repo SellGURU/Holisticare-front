@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState, useRef } from 'react';
+import SvgIcon from '../../../utils/svgIcon';
 
 // Define types for the data structure
 interface ConditionDataProps {
@@ -153,9 +154,10 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   return (
     <div>
       {showSuggestions && (
-        <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-Primary-EmeraldGreen shadow-200 min-w-[449px] text-Text-Primary">
+        <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-[#FFAB2C] shadow-200 min-w-[449px] text-Text-Primary">
           <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-            <div className="flex items-center text-Primary-DeepTeal gap-2">
+            <div className="flex items-center text-Text-Primary gap-2">
+              <SvgIcon src="/icons/danger.svg" color="#FFAB2C"></SvgIcon>
               {/* <img src="/icons/lamp-on.svg" alt="" /> */}
               {/* Looking Forwards */}
               Completion Suggestions
@@ -273,7 +275,14 @@ const Card: React.FC<CardProps> = ({
   return (
     <div className="bg-white p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 min-w-[444px] w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
-        {title}
+        {title == 'Looking Forwards' ? (
+          <div className="flex items-center gap-2 text-Primary-DeepTeal">
+            <img src="/icons/lamp-on.svg" alt="" />
+            {title}
+          </div>
+        ) : (
+          <>{title}</>
+        )}
 
         {isEditing ? (
           <div
@@ -312,10 +321,12 @@ const Card: React.FC<CardProps> = ({
                   onContentChange(index, e.target.value);
                   adjustHeight(e.target);
                 }}
-                className="w-full bg-backgroundColor-Card px-4 rounded-lg resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
+                className="w-full bg-backgroundColor-Card px-4 rounded-lg text-justify resize-none border border-Gray-50 text-xs outline-none py-3 overflow-hidden mb-2"
               />
             ) : (
-              <li className={` ${item.length > 1 && 'list-disc'} text-xs mt-2`}>
+              <li
+                className={` ${item.length > 1 && 'list-disc'} text-xs text-justify mt-2`}
+              >
                 {item}
               </li>
             )}

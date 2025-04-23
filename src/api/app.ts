@@ -278,6 +278,10 @@ class Application extends Api {
     const response = this.post('/patients/add_to_archive', data);
     return response;
   };
+  static unArchivePatient = (data: any) => {
+    const response = this.post('/patients/unarchive', data);
+    return response;
+  };
   static saveTreatmentPaln = (data: any) => {
     const response = this.post('/save_treatment_plan', data);
     return response;
@@ -925,6 +929,9 @@ class Application extends Api {
   };
   static getResultTab = (data: any) => {
     return this.post('/patients/generate_treatment_plan_result_page', data);
+  };
+  static tratmentPlanConflict = (data: any) => {
+    return this.post('/treatment_plan/conflict_check', data);
   };
 }
 
