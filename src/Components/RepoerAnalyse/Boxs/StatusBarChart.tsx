@@ -38,7 +38,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
       return 95;
     }
     return ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100;
-  };  
+  };
   // const [isHover,setIsHover] = useState(-1)
   return (
     <>
@@ -103,9 +103,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         <div
                           className={`absolute  top-[2px]  z-10`}
                           style={{
-                            left:
-                              resolvePercentLeft(data,el)+
-                              '%',
+                            left: resolvePercentLeft(data, el) + '%',
                           }}
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
