@@ -60,7 +60,7 @@ const RangeCardLibraryThreePages: React.FC<RangeCardProps> = ({
           <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
         </div>
       </div>
-      {showValidation && error && required && (
+      {showValidation && error && required && !val && (
         <div className="text-Red text-[10px]">This field is required.</div>
       )}
     </div>
