@@ -41,7 +41,7 @@ const EditModal: React.FC<EditModalProps> = ({
   // const [group, setGroup] = useState(defalts?.Category);
   // const [practitionerComment, setPractitionerComment] = useState('');
 
-  const [practitionerComments, setPractitionerComments] = useState<string[]>(
+  const [practitionerComments, ] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
@@ -180,10 +180,10 @@ const EditModal: React.FC<EditModalProps> = ({
   //   });
   //   onClose();
   // };
-  const handleDeleteComment = (index: number) => {
-    const updatedComments = practitionerComments.filter((_, i) => i !== index);
-    setPractitionerComments(updatedComments);
-  };
+  // const handleDeleteComment = (index: number) => {
+  //   const updatedComments = practitionerComments.filter((_, i) => i !== index);
+  //   setPractitionerComments(updatedComments);
+  // };
 
   const toggleTimeSelection = (time: string) => {
     setSelectedTimes((prevTimes) =>
@@ -443,7 +443,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </div> */}
 
             {/* Comments List */}
-            <div className="mb-4 flex flex-col gap-2">
+            {/* <div className="mb-4 flex flex-col gap-2">
               {practitionerComments?.map((comment, index) => (
                 <div key={index} className="w-full flex gap-1 items-start">
                   <div className="w-full flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
@@ -462,7 +462,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
           </form>
         </div>
 
