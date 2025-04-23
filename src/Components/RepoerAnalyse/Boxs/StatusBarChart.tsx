@@ -24,6 +24,21 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
     }
     return '#FBAD37';
   };
+  const resolvePercentLeft = (data: any, el: any) => {
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 <=
+      5
+    ) {
+      return 5;
+    }
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 >
+      95
+    ) {
+      return 95;
+    }
+    return ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100;
+  };  
   // const [isHover,setIsHover] = useState(-1)
   return (
     <>
@@ -89,9 +104,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                           className={`absolute  top-[2px]  z-10`}
                           style={{
                             left:
-                              ((data.values[0] - el.value[0]) /
-                                (el.value[1] - el.value[0])) *
-                                100 +
+                              resolvePercentLeft(data,el)+
                               '%',
                           }}
                         >

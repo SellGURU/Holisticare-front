@@ -37,7 +37,18 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
           style={{ top: top - 5, left: left - 4 }}
         ></div>
       </div>
-      <Tooltip id={'point'}></Tooltip>
+      <Tooltip 
+        id={'point'} 
+        className='text-Text-Primary text-[10px]'
+        style={{ 
+          backgroundColor: 'white', 
+          borderRadius: '4px',
+          padding: '5px 10px',
+          fontSize:'10px',
+          zIndex:'5000',
+          color:'#383838'
+        }}
+      ></Tooltip>
     </>
   );
 };

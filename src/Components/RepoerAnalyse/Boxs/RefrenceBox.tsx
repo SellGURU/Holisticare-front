@@ -113,7 +113,8 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
           </div>
         </div>
         <div className="mt-[20px] flex items-center justify-between">
-          <div className="text-Text-Primary font-medium text-[10px] md:text-xs">
+
+          <div className={`text-Text-Primary font-medium text-[10px] md:text-xs ${isCheced && 'invisible'}`}>
             Current Value
           </div>
           <div className="flex justify-end items-center gap-2">
