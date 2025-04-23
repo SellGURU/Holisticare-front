@@ -419,8 +419,8 @@ const EditModal: React.FC<EditModalProps> = ({
                     <SvgIcon
                       src="/icons/delete.svg"
                       color="#FC5474"
-                      width="24px"
-                      height="24px"
+                      width="16px"
+                      height="16px"
                     />
                   </div>
                 </div>
@@ -456,8 +456,8 @@ const EditModal: React.FC<EditModalProps> = ({
                     <SvgIcon
                       src="/icons/delete.svg"
                       color="#FC5474"
-                      width="24px"
-                      height="24px"
+                      width="16px"
+                      height="16px"
                     />
                   </div>
                 </div>
