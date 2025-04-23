@@ -533,7 +533,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onClose={() => {
         onClose();
         onReset();
-        setStep(0)
+        setStep(0);
         setShowValidation(false);
       }}
       isOpen={isOpen}
@@ -1335,7 +1335,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <button
                         onClick={() => {
                           onClose();
-                          setStep(0)
+                          setStep(0);
                           onReset();
                         }}
                         className="text-sm font-medium text-Disable cursor-pointer"
