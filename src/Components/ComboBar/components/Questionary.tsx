@@ -186,7 +186,8 @@ export const Questionary = () => {
                       onClick={() => {
                         if (!disabled) {
                           formValueChange(
-                            questionsData.questions[activeCardNumber - 1]?.order,
+                            questionsData.questions[activeCardNumber - 1]
+                              ?.order,
                             el,
                           );
                         }
@@ -195,18 +196,21 @@ export const Questionary = () => {
                     >
                       <div
                         className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${
-                          questionsData.questions[activeCardNumber - 1]?.response == el
+                          questionsData.questions[activeCardNumber - 1]
+                            ?.response == el
                             ? 'border-Primary-DeepTeal'
                             : 'border-Text-Secondary '
                         } bg-white border-[1.4px] rounded-full`}
                       >
-                        {questionsData.questions[activeCardNumber - 1]?.response == el && (
+                        {questionsData.questions[activeCardNumber - 1]
+                          ?.response == el && (
                           <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
                         )}
                       </div>
                       <div
                         className={`text-[10px] cursor-pointer ${
-                          questionsData.questions[activeCardNumber - 1]?.response == el
+                          questionsData.questions[activeCardNumber - 1]
+                            ?.response == el
                             ? 'text-Text-Primary'
                             : 'text-Text-Secondary'
                         } `}
@@ -316,7 +320,9 @@ export const Questionary = () => {
         <YesNoCard
           hideQuestions
           question={questionsData.questions[activeCardNumber - 1]?.question}
-          value={questionsData.questions[activeCardNumber - 1]?.response || 'No'}
+          value={
+            questionsData.questions[activeCardNumber - 1]?.response || 'No'
+          }
           index={activeCardNumber}
           onSubmit={(value) => {
             if (!disabled) {
@@ -582,23 +588,28 @@ export const Questionary = () => {
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
                 <div className="text-[12px] text-Primary-DeepTeal font-medium">
-                  {questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.question || 'Question not available'}
+                  {(questionsFormData?.questions &&
+                    questionsFormData.questions[activeCard - 1]?.question) ||
+                    'Question not available'}
                 </div>
               </div>
               <div
                 className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
-                {questionsFormData?.questions && questionsFormData.questions[activeCard - 1] && resolveForm(
-                  questionsFormData.questions[activeCard - 1]?.type,
-                  questionsFormData,
-                  activeCard,
-                )}
+                {questionsFormData?.questions &&
+                  questionsFormData.questions[activeCard - 1] &&
+                  resolveForm(
+                    questionsFormData.questions[activeCard - 1]?.type,
+                    questionsFormData,
+                    activeCard,
+                  )}
               </div>
-              {questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.required && (
-                <div className="text-[10px] text-red-500 mt-1 mb-5">
-                  * This question is required.
-                </div>
-              )}
+              {questionsFormData?.questions &&
+                questionsFormData.questions[activeCard - 1]?.required && (
+                  <div className="text-[10px] text-red-500 mt-1 mb-5">
+                    * This question is required.
+                  </div>
+                )}
             </div>
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
@@ -631,7 +642,9 @@ export const Questionary = () => {
                 <img
                   className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'invisible'}`}
                   onClick={() => {
-                    if (activeCard < (questionsFormData?.questions?.length || 0)) {
+                    if (
+                      activeCard < (questionsFormData?.questions?.length || 0)
+                    ) {
                       setActiveCard(activeCard + 1);
                     }
                   }}
