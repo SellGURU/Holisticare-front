@@ -507,7 +507,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0]?.data?.map((el: any, index: number) => {
-                    console.log(TreatMentPlanData);
+                    console.log('TreatMentPlanData => ', TreatMentPlanData);
 
                     return (
                       <>
@@ -519,6 +519,16 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                       </>
                     );
                   })}
+                  {TreatMentPlanData?.filter(
+                    (value: any) => value.category == aciveTreatmentPlan,
+                  )[0]?.data == undefined && (
+                    <div className="w-full h-[300px] flex justify-center items-center flex-col">
+                      <img src="/icons/no-recommendations.svg" alt="" />
+                      <div className="text-Text-Primary text-sm font-medium mt-5">
+                        No Recommendations Available.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
