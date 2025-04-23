@@ -508,7 +508,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0]?.data?.map((el: any, index: number) => {
-                    console.log('TreatMentPlanData => ', TreatMentPlanData);
+                    // console.log('TreatMentPlanData => ', TreatMentPlanData);
 
                     return (
                       <>
