@@ -41,7 +41,7 @@ const EditModal: React.FC<EditModalProps> = ({
   // const [group, setGroup] = useState(defalts?.Category);
   // const [practitionerComment, setPractitionerComment] = useState('');
 
-  const [practitionerComments, ] = useState<string[]>(
+  const [practitionerComments] = useState<string[]>(
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
