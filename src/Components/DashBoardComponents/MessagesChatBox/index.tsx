@@ -6,6 +6,7 @@ import Application from '../../../api/app';
 import SvgIcon from '../../../utils/svgIcon';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
+import MainModal from '../../MainModal';
 type Message = {
   date: string;
   time: string;
@@ -32,6 +33,8 @@ const MessagesChatBox = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [Images, setImages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
 
@@ -138,6 +141,17 @@ const MessagesChatBox = () => {
   const handleDeleteImage = (indexToDelete: number) => {
     setImages((prev) => prev.filter((_, i) => i !== indexToDelete));
   };
+
+  const handleImageClick = (image: string) => {
+    setSelectedImage(image);
+    setIsImageModalOpen(true);
+  };
+
+  const handleCloseImageModal = () => {
+    setIsImageModalOpen(false);
+    setSelectedImage(null);
+  };
+
   return (
     <>
       <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
@@ -199,7 +213,8 @@ const MessagesChatBox = () => {
                                   src={image}
                                   alt=""
                                   key={index}
-                                  className="w-32 h-32 object-contain"
+                                  className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => handleImageClick(image)}
                                 />
                               );
                             })}
@@ -230,7 +245,8 @@ const MessagesChatBox = () => {
                                   src={image}
                                   alt=""
                                   key={index}
-                                  className="w-32 h-32 object-contain"
+                                  className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => handleImageClick(image)}
                                 />
                               );
                             })}
@@ -246,7 +262,6 @@ const MessagesChatBox = () => {
                                   src="./icons/tick-green.svg"
                                   color="#8a8a8a"
                                 />
-                                {/* <img src="./icons/tick-green.svg" alt="" /> */}
                               </span>
                             )}
                             <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
@@ -292,6 +307,18 @@ const MessagesChatBox = () => {
           </>
         )}
       </div>
+
+      <MainModal isOpen={isImageModalOpen} onClose={handleCloseImageModal}>
+        <div className="flex flex-col items-center">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Full size preview"
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          )}
+        </div>
+      </MainModal>
     </>
   );
 };
