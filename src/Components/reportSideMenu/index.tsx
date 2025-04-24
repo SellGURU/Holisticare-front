@@ -19,7 +19,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     'Detailed Analysis',
     // "Concerning Result",
     'Holistic Plan',
-    // 'Action Plan',
+    'Action Plan',
   ];
 
   const [activeMenu, setactiveMenu] = useState('Client Summary');

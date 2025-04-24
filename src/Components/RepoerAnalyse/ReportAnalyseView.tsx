@@ -673,7 +673,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               .checked == true && (
               <div
                 id="Action Plan"
-                className="my-[200px]  invisible min-h-[650px]"
+                className="my-[200px]   min-h-[650px]"
               >
                 <div
                   id="Action Plan"

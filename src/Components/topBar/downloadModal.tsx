@@ -31,7 +31,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     {
       name: 'Action Plan',
       checked: false,
-      disabled: true,
+      disabled: false,
     },
   ]);
 
