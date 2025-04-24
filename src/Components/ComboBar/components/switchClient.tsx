@@ -48,7 +48,7 @@ export const SwitchClient = () => {
     } else {
       if (activeStatus != 'All') {
         return patients.filter((el) => {
-          return el.status == activeStatus;
+          return el.status.toLocaleLowerCase() == activeStatus.toLocaleLowerCase();
         });
       } else if (searchQuery != '') {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
@@ -86,7 +86,7 @@ export const SwitchClient = () => {
   }, [activeMemberID, id, patients]);
   const status: Array<string> = [
     'All',
-    'Need to check',
+    'Needs check',
     'Checked',
     'Incomplete Data',
   ];
