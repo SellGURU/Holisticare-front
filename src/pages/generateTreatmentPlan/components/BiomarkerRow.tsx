@@ -206,16 +206,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   {negative}
                 </div>{' '}
               </div>
-            ):
+            ) : (
               <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-                <div className="text-Text-Primary">
-                  {' '}
-
-                  {editableValue}
-                </div>
-
-              </div>            
-            }
+                <div className="text-Text-Primary"> {editableValue}</div>
+              </div>
+            )}
             {/* {value['Based on'] && (
               <div
                 onClick={() => setShowModal(true)}
