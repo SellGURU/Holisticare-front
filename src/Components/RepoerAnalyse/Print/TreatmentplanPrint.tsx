@@ -30,30 +30,33 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             {data.title}
           </div>
-          {positive &&
+          {positive && (
             <div
               className="my-2 flex"
               style={{ fontSize: '12px', color: '#383838' }}
             >
-              <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
+              <div style={{ marginRight: '5px', color: '#888888' }}>
+                &#8226;
+              </div>
               <div>
-                <span style={{ color: '#888888' }}>Key Benefits</span> {positive}
+                <span style={{ color: '#888888' }}>Key Benefits</span>{' '}
+                {positive}
               </div>
             </div>
-          }
-          {
-            negative &&
+          )}
+          {negative && (
             <div
               className="my-2 flex"
               style={{ fontSize: '12px', color: '#383838' }}
             >
-              <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
+              <div style={{ marginRight: '5px', color: '#888888' }}>
+                &#8226;
+              </div>
               <div>
                 <span style={{ color: '#888888' }}>Key Risks</span> {negative}
               </div>
             </div>
-
-          }
+          )}
           {data?.Client_Notes?.length > 0 && (
             <>
               <div
