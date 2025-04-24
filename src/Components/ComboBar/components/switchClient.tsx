@@ -48,7 +48,9 @@ export const SwitchClient = () => {
     } else {
       if (activeStatus != 'All') {
         return patients.filter((el) => {
-          return el.status.toLocaleLowerCase() == activeStatus.toLocaleLowerCase();
+          return (
+            el.status.toLocaleLowerCase() == activeStatus.toLocaleLowerCase()
+          );
         });
       } else if (searchQuery != '') {
         // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
