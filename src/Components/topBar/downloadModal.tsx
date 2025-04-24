@@ -65,8 +65,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       <div className="flex justify-between items-center">
         <div className="text-[10px] text-Text-Secondary">
           {downloadSelect.filter((el: any) => el.checked == true).length}/
-          {downloadSelect
-          .filter((el) => !el.disabled).length} selected
+          {downloadSelect.filter((el) => !el.disabled).length} selected
         </div>
         <div
           onClick={removeAll}

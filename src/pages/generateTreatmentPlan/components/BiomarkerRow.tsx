@@ -190,7 +190,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               className="bg-transparent text-[12px] outline-none w-full resize-none"
               rows={2}
             /> */}
-            { positive && (
+            {positive && (
               <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
                 <div className="text-Text-Primary">
                   {' '}
