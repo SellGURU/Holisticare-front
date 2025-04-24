@@ -107,7 +107,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               {(value.Category == 'Diet' ||
                 value.Category == 'Activity' ||
                 value.Category == 'Lifestyle' ||
-                value.Category == 'Lifestyle') && (
+                value.Category == 'Supplement') && (
                 <>
                   <div
                     data-tooltip-id="system-score"
@@ -193,7 +193,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             {(value.Category == 'Diet' ||
               value.Category == 'Activity' ||
               value.Category == 'Lifestyle' ||
-              value.Category == 'Lifestyle') && (
+              value.Category == 'Supplement') && (
               <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
                 <div className="text-Text-Primary">
                   {' '}
