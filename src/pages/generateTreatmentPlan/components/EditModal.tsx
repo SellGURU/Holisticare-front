@@ -61,11 +61,15 @@ const EditModal: React.FC<EditModalProps> = ({
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
-    Dose: Yup.string().test('dose-required', 'This field is required.', function(value) {
-      // If selectedGroupDose is true, then Dose is required
-      if (!selectedGroupDose) return true;
-      return Boolean(value && value.trim() !== '');
-    }),
+    Dose: Yup.string().test(
+      'dose-required',
+      'This field is required.',
+      function (value) {
+        // If selectedGroupDose is true, then Dose is required
+        if (!selectedGroupDose) return true;
+        return Boolean(value && value.trim() !== '');
+      },
+    ),
     Instruction: Yup.string().required('This field is required.'),
   });
   interface FormValues {
@@ -222,7 +226,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
-    formik.validateForm().then(errors => {
+    formik.validateForm().then((errors) => {
       if (Object.keys(errors).length > 0) {
         // If there are validation errors, just show them without submitting
         return;
