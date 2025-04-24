@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReportSideMenu } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
 import { TopBar } from '../../Components/topBar';

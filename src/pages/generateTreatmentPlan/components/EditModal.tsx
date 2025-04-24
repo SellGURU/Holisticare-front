@@ -52,7 +52,7 @@ const EditModal: React.FC<EditModalProps> = ({
     setNotes([]);
     setSelectedGroupDose(false);
     setSelectedTimes([]);
-    setGroups([]);
+    // setGroups([]);
   };
 
   const selectRef = useRef(null);
@@ -61,7 +61,11 @@ const EditModal: React.FC<EditModalProps> = ({
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
-    // Dose: Yup.string().required('This field is required.'),
+    Dose: Yup.string().test('dose-required', 'This field is required.', function(value) {
+      // If selectedGroupDose is true, then Dose is required
+      if (!selectedGroupDose) return true;
+      return Boolean(value && value.trim() !== '');
+    }),
     Instruction: Yup.string().required('This field is required.'),
   });
   interface FormValues {
@@ -86,7 +90,7 @@ const EditModal: React.FC<EditModalProps> = ({
     },
     validationSchema,
     validateOnMount: false,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: false,
 
     onSubmit: (values) => {
@@ -218,7 +222,14 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
-    formik.handleSubmit();
+    formik.validateForm().then(errors => {
+      if (Object.keys(errors).length > 0) {
+        // If there are validation errors, just show them without submitting
+        return;
+      }
+      // Only submit if there are no validation errors
+      formik.handleSubmit();
+    });
   };
 
   return (
@@ -316,7 +327,7 @@ const EditModal: React.FC<EditModalProps> = ({
               >
                 <label className="text-xs font-medium flex items-start gap-[2px]">
                   Dose{' '}
-                  {selectedGroupDose && <span className="text-Red">*</span>}
+                  {/* {selectedGroupDose && <span className="text-Red">*</span>} */}
                   <img
                     className="cursor-pointer"
                     data-tooltip-id={'more-info'}

@@ -30,7 +30,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
     {
       name: 'Action Plan',
-      checked: true,
+      checked: false,
+      disabled: true,
     },
   ]);
 
@@ -75,7 +76,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       </div>
 
       <div className="grid gap-2 mt-2">
-        {downloadSelect.map((el, index: number) => {
+        {downloadSelect.filter((el) =>!el.disabled).map((el, index: number) => {
           return (
             <div className="flex justify-between items-center gap-2">
               <label className="flex items-center cursor-pointer">
