@@ -691,7 +691,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       `/drift-analysis?activeMemberId=${client.member_id}`,
                     )
                   }
-                  className={` ${client.drift_analyzed ? 'invisible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
+                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
                 >
                   <SvgIcon
                     src="/icons/tick-square-blue.svg"
