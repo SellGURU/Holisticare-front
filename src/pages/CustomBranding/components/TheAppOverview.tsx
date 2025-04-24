@@ -241,10 +241,11 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
       <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
         <div className="flex gap-4">
           <div className="flex flex-col items-center text-gray-500">
-            <img
+            <SvgIcon
               src="/icons/status-up-mobile.svg"
-              alt=""
-              className="w-[11.74px] h-[11.74px]"
+              color={customTheme.secondaryColor}
+              width="11.74px"
+              height="11.74px"
             />
             <div className="text-[5.87px] text-Text-Quadruple">Overview</div>
           </div>
