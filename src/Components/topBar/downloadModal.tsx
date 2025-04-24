@@ -46,6 +46,17 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     });
   };
 
+  const selectAll = () => {
+    setDownloadSelect((pre) => {
+      return pre.map((el) => {
+        return {
+          ...el,
+          checked: !el.disabled ? true : el.checked,
+        };
+      });
+    });
+  };
+
   const select = (active: number) => {
     setDownloadSelect((pre) => {
       return pre.map((el, index: number) => {
@@ -60,6 +71,12 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       });
     });
   };
+
+  // Check if all enabled items are unselected
+  const allUnselected = downloadSelect
+    .filter((el) => !el.disabled)
+    .every((el) => !el.checked);
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -68,10 +85,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           {downloadSelect.filter((el) => !el.disabled).length} selected
         </div>
         <div
-          onClick={removeAll}
+          onClick={allUnselected ? selectAll : removeAll}
           className="text-[12px] text-Primary-DeepTeal font-medium cursor-pointer"
         >
-          Remove All
+          {allUnselected ? 'Select All' : 'Remove All'}
         </div>
       </div>
 
