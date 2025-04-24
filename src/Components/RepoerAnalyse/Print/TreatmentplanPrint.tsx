@@ -41,7 +41,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     &#8226;
                   </div>
                   <div>
-                    <span style={{ color: '#888888' }}>Key Benefits</span>{' '}
+                    <span style={{ color: '#888888' }}>Key Benefits:</span>{' '}
                     {positive}
                   </div>
                 </div>
@@ -55,7 +55,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     &#8226;
                   </div>
                   <div>
-                    <span style={{ color: '#888888' }}>Key Risks</span>{' '}
+                    <span style={{ color: '#888888' }}>Key Risks:</span>{' '}
                     {negative}
                   </div>
                 </div>

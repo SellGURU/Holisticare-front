@@ -120,7 +120,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             {positive}
           </li>
           <li className="">
-            <span className="text-Text-Secondary bullet-point">Key Risks</span>{' '}
+            <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
             {negative}
           </li>
         </ul>

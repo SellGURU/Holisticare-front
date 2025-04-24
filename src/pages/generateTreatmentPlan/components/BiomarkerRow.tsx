@@ -201,7 +201,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
                 <div className="text-Text-Primary">
                   <span className="text-Text-Secondary bullet-point">
-                    Key Risks{' '}
+                    Key Risks:{' '}
                   </span>
                   {negative}
                 </div>{' '}
