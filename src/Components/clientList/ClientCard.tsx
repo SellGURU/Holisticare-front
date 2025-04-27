@@ -36,7 +36,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     buttonRefrence: showModalButtonRefrence,
     close: () => {
       setshowModal(false);
-      setshowAssign(false)
+      setshowAssign(false);
     },
   });
   // const handleToggleFavoriteAndHighPriority = async () => {
@@ -182,22 +182,57 @@ const ClientCard: React.FC<ClientCardProps> = ({
   // const [showAsignList, setshowAsignList] = useState(false);
   console.log(activeTab);
   const [showAssign, setshowAssign] = useState(false);
-  const [CoachList, setCoachList] = useState<Array<any>>([
-   
-  ]);
+  interface Coach {
+    username: string;
+    assigned: boolean;
+    // ... other coach properties
+  }
+  const [CoachList, setCoachList] = useState<Array<any>>([]);
+  console.log(CoachList);
 
-  const handleCheckboxChange = (index: number) => {
-    setCoachList((prevState) => {
-      const updatedList = [...prevState];
-      updatedList[index].assigned = !updatedList[index].assigned;
-      return updatedList;
+
+
+  const handleAssignClick = () => {
+    Application.getCoachList({ member_id: client.member_id }).then((res) => {
+      setCoachList(res.data);
+      setshowAssign(!showAssign);
     });
   };
-  const getSelectedCoachesUsernames = () => {
-    return CoachList.filter((coach) => coach.assigned) // Filter coaches with assigned set to true
-      .map((coach) => coach.username); // Map them to their usernames
+  const handleCoachSelection = (selectedCoach: Coach) => {
+    // Update UI - uncheck previous coach and check new one
+    setCoachList(prevCoaches => 
+      prevCoaches.map(coach => ({
+        ...coach,
+        assigned: coach.username === selectedCoach.username
+      }))
+    );
+  
+    // Send only the selected coach to API
+    Application.assignCoach({
+      member_id: client.member_id,
+      coach_usernames: [selectedCoach.username],
+    }).then(() => {
+      setshowAssign(false);
+    });
   };
-  console.log(getSelectedCoachesUsernames());
+  //  handleAssignCoach = (index: number) => {
+  //   // Get all coaches that have assigned = true (including previously assigned coaches)
+  //   const assignedCoaches = CoachList.filter(coach => coach.assigned)
+  //     .map(coach => coach.username);
+  
+  //   // Add the newly selected coach if not already included
+  //   const selectedCoach = CoachList[index];
+  //   if (!assignedCoaches.includes(selectedCoach.username)) {
+  //     assignedCoaches.push(selectedCoach.username);
+  //   }
+  
+  //   Application.assignCoach({
+  //     member_id: client.member_id,
+  //     coach_usernames: assignedCoaches, // Send all assigned coaches
+  //   }).then(() => {
+  //     setshowAssign(false);
+  //   });
+  // };
 
   return (
     <>
@@ -433,15 +468,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <>
                 <div className="relative">
                   <div
-                    onClick={() =>{
-                      
-                      Application.getCoachList({
-                        member_id: client.member_id,
-                      }).then((res) => {
-                        setCoachList(res.data);
-                        setshowAssign(!showAssign) 
-                                            });
-                    } }
+                    onClick={handleAssignClick}
                     className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                   >
                     <div className="flex items-center gap-1">
@@ -463,34 +490,16 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   </div>
                   {showAssign && (
                     <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
-                      {CoachList.map((coach: any, index: number) => (
+                      {CoachList.map((coach: Coach) => (
                         <div
-                          onClick={() => {
-                            const selectedCoaches =
-                              getSelectedCoachesUsernames();
-                            Application.assignCoach({
-                              member_id: client.member_id,
-                              coach_usernames: selectedCoaches,
-                            }).then(() => {
-                              handleCheckboxChange(index);
-                            });
-                          }}
-                          key={index}
+                        onClick={() => handleCoachSelection(coach)}
+                        
                           className={`p-1 cursor-pointer w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
-                          <div
-                            onClick={() => {
-                              const selectedCoaches =
-                                getSelectedCoachesUsernames();
-                              Application.assignCoach({
-                                member_id: client.member_id,
-                                coach_usernames: selectedCoaches,
-                              }).then(() => {
-                                handleCheckboxChange(index);
-                              });
-                            }}
-                          >
-                            <Checkbox onChange={()=>{}} checked={coach.assigned} />
+                          <div>
+                            <Checkbox
+                onChange={() => handleCoachSelection(coach)}                              checked={coach.assigned}
+                            />
                           </div>
 
                           {coach.username}
