@@ -182,19 +182,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
   // const [showAsignList, setshowAsignList] = useState(false);
   console.log(activeTab);
   const [showAssign, setshowAssign] = useState(false);
-  const [CoachList, setCoachList] = useState([
-    {
-      username: 'merrybrown',
-      assigned: true,
-    },
-    {
-      username: 'merrybrown1',
-      assigned: false,
-    },
-    {
-      username: 'clinic',
-      assigned: false,
-    },
+  const [CoachList, setCoachList] = useState<Array<any>>([
+   
   ]);
 
   const handleCheckboxChange = (index: number) => {
