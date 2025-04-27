@@ -391,7 +391,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
                     >
                       Client Summary
-                      <div className="ml-4 invisible">
+                      <div className="ml-4 visible">
                         <Legends isGray></Legends>
                       </div>
                     </div>
@@ -671,7 +671,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             </div>
             {accessManager.filter((el) => el.name == 'Action Plan')[0]
               .checked == true && (
-              <div id="Action Plan" className="my-[200px]  min-h-[650px]">
+              <div id="Action Plan" className="my-[200px]   min-h-[650px]">
                 <div
                   id="Action Plan"
                   className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"

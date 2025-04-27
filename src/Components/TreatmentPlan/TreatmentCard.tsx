@@ -1,4 +1,5 @@
 import { Tooltip } from 'react-tooltip';
+import { splitInstructions } from '../../help';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentCardProps {
@@ -11,16 +12,6 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
   isOther,
   index,
 }) => {
-  const splitInstructions = (instruction: string) => {
-    const positiveMatch = instruction?.match(
-      /Positive:\s*(.+?)(?=\s*Negative:|$)/,
-    );
-    const negativeMatch = instruction?.match(/Negative:\s*(.+)/);
-    return {
-      positive: positiveMatch ? positiveMatch[1].trim() : '',
-      negative: negativeMatch ? negativeMatch[1].trim() : '',
-    };
-  };
   console.log(data);
 
   const { positive, negative } = splitInstructions(data.Notes);
@@ -100,15 +91,36 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
       </div>
 
       <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-        <div className="text-Text-Primary text-justify">
-          {' '}
-          <span className="text-Text-Secondary  ">Positive: </span>
-          {positive}
-        </div>
-        <div className="text-Text-Primary text-justify mt-3">
-          <span className="text-Text-Secondary">Negative: </span>
-          {negative}
-        </div>{' '}
+        <>
+          {positive && negative ? (
+            <>
+              {positive && (
+                <>
+                  <div className="text-Text-Primary text-justify">
+                    {' '}
+                    <span className="text-Text-Secondary  ">Key Benefits:</span>
+                    {positive}
+                  </div>
+                </>
+              )}
+              {negative && (
+                <>
+                  <div className="text-Text-Primary text-justify mt-3">
+                    <span className="text-Text-Secondary">Key Risks:</span>
+                    {negative}
+                  </div>{' '}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="text-Text-Primary break-words text-justify mt-3">
+                {/* <span className="text-Text-Secondary">Key Risks:</span> */}
+                {data?.Notes}
+              </div>{' '}
+            </>
+          )}
+        </>
       </div>
       {/* <div className="text-xs font-medium text-Primary-DeepTeal select-none">
         {' '}

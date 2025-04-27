@@ -6,6 +6,7 @@ import EditModal from './EditModal';
 import { MainModal } from '../../../Components';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
+import { splitInstructions } from '../../../help';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -39,8 +40,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/Supplement.svg';
       case 'Lifestyle':
         return '/icons/LifeStyle2.svg';
+
       default:
-        return '/icons/LifeStyle2.svg';
+        return '/icons/others.svg';
     }
   };
 
@@ -70,20 +72,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   };
   const [deleteConfirm, setdeleteConfirm] = useState(false);
   useEffect(() => console.log(value), [value]);
-  const splitInstructions = (instruction: string) => {
-    const positiveMatch = instruction?.match(
-      /Positive:\s*(.+?)(?=\s*Negative:|$)/,
-    );
-    const negativeMatch = instruction?.match(/Negative:\s*(.+)/);
-    return {
-      positive: positiveMatch ? positiveMatch[1].trim() : '',
-      negative: negativeMatch ? negativeMatch[1].trim() : '',
-    };
-  };
 
   const { positive, negative } = splitInstructions(editableValue);
 
-  console.log(value);
+  // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   return (
@@ -112,67 +104,74 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               {value.Recommendation}
             </div>
             <div className="flex gap-2 text-[8px]">
-              <div
-                data-tooltip-id="system-score"
-                className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
-              >
-                <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
-                {value['System Score']}
-                <Tooltip
-                  id={'system-score'}
-                  place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                  style={{
-                    zIndex: 9999,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <div className="text-Text-Primary">System Score</div>
-                  <div className="text-Text-Secondary">
-                    Score based on all data and AI insights.
+              {(value.Category == 'Diet' ||
+                value.Category == 'Activity' ||
+                value.Category == 'Lifestyle' ||
+                value.Category == 'Supplement') && (
+                <>
+                  <div
+                    data-tooltip-id="system-score"
+                    className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
+                  >
+                    <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
+                    {value['System Score']}
+                    <Tooltip
+                      id={'system-score'}
+                      place="top"
+                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary">System Score</div>
+                      <div className="text-Text-Secondary">
+                        Score based on all data and AI insights.
+                      </div>
+                    </Tooltip>
                   </div>
-                </Tooltip>
-              </div>
-              <div
-                data-tooltip-id="base-score"
-                className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
-              >
-                <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
-                {value.Score}
-                <Tooltip
-                  id={'base-score'}
-                  place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                  style={{
-                    zIndex: 9999,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <div className="text-Text-Primary">Base Score</div>
-                  <div className="text-Text-Secondary">
-                    Initial score from core health metrics.
+                  <div
+                    data-tooltip-id="base-score"
+                    className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
+                  >
+                    <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
+                    {value.Score}
+                    <Tooltip
+                      id={'base-score'}
+                      place="top"
+                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary">Base Score</div>
+                      <div className="text-Text-Secondary">
+                        Initial score from core health metrics.
+                      </div>
+                    </Tooltip>
                   </div>
-                </Tooltip>
-              </div>
-              <div
-                data-tooltip-id={index + 'score-calc'}
-                className="text-Primary-DeepTeal select-none mt-[2px]"
-              >
-                Score Calculation
-                <Tooltip
-                  id={index + 'score-calc'}
-                  place="top"
-                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                  style={{
-                    zIndex: 9999,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <div className="text-Text-Primary text-[8px]">
-                    {value['Practitioner Comments'][0]}
+                  <div
+                    data-tooltip-id={index + 'score-calc'}
+                    className="text-Primary-DeepTeal select-none mt-[2px]"
+                  >
+                    Score Calculation
+                    <Tooltip
+                      id={index + 'score-calc'}
+                      place="top"
+                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      style={{
+                        zIndex: 9999,
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <div className="text-Text-Primary text-[8px]">
+                        {value['Practitioner Comments'][0]}
+                      </div>
+                    </Tooltip>
                   </div>
-                </Tooltip>
-              </div>
+                </>
+              )}
               {Conflicts?.length > 0 && (
                 <div
                   onClick={() => setShowConflict(true)}
@@ -191,21 +190,27 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               className="bg-transparent text-[12px] outline-none w-full resize-none"
               rows={2}
             /> */}
-            <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-              <div className="text-Text-Primary">
-                {' '}
-                <span className="text-Text-Secondary bullet-point">
-                  Positive:{' '}
-                </span>
-                {positive}
+            {positive ? (
+              <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
+                <div className="text-Text-Primary">
+                  {' '}
+                  <span className="text-Text-Secondary bullet-point">
+                    Key Benefits:{' '}
+                  </span>
+                  {positive}
+                </div>
+                <div className="text-Text-Primary">
+                  <span className="text-Text-Secondary bullet-point">
+                    Key Risks:{' '}
+                  </span>
+                  {negative}
+                </div>{' '}
               </div>
-              <div className="text-Text-Primary">
-                <span className="text-Text-Secondary bullet-point">
-                  Negative:{' '}
-                </span>
-                {negative}
-              </div>{' '}
-            </div>
+            ) : (
+              <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
+                <div className="text-Text-Primary"> {editableValue}</div>
+              </div>
+            )}
             {/* {value['Based on'] && (
               <div
                 onClick={() => setShowModal(true)}

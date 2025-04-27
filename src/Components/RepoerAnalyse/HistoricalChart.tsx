@@ -156,9 +156,9 @@ const HistoricalChart = ({
           <div className="flex justify-start items-center w-full mt-1">
             {labels.map((label, index) => (
               <div key={index} className="text-[8px] w-[40px]">
-                <div className="flex justify-start text-[#888888] font-medium gap-1 items-center">
-                  <div>{label.split('-')[2]}</div>
-                  <div>{label.split('-')[1]}</div>
+                <div className="flex justify-start text-[#888888] font-medium  items-center">
+                  <div>{label.split('-')[2]}.</div>
+                  <div>{label.split('-')[1]}.</div>
                 </div>
                 <div className="text-[#B0B0B0] mt-[-2px] ml-[2px]">
                   {label.split('-')[0]}

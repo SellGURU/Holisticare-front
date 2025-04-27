@@ -158,11 +158,11 @@ export const Questionary = () => {
       return (
         <>
           <textarea
-            value={questionsData.questions[activeCardNumber - 1].response}
+            value={questionsData.questions[activeCardNumber - 1]?.response}
             disabled={disabled}
             onChange={(e) => {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 e.target.value,
               );
             }}
@@ -186,7 +186,8 @@ export const Questionary = () => {
                       onClick={() => {
                         if (!disabled) {
                           formValueChange(
-                            questionsData.questions[activeCardNumber - 1].order,
+                            questionsData.questions[activeCardNumber - 1]
+                              ?.order,
                             el,
                           );
                         }
@@ -195,20 +196,21 @@ export const Questionary = () => {
                     >
                       <div
                         className={`w-[12px] h-[12px] flex justify-center items-center cursor-pointer min-w-[12px] min-h-[12px] max-h-[12px] max-w-[12px] ${
-                          questionsData.questions[activeCard - 1].response == el
+                          questionsData.questions[activeCardNumber - 1]
+                            ?.response == el
                             ? 'border-Primary-DeepTeal'
                             : 'border-Text-Secondary '
                         } bg-white border-[1.4px] rounded-full`}
                       >
                         {questionsData.questions[activeCardNumber - 1]
-                          .response == el && (
+                          ?.response == el && (
                           <div className="w-[6px] h-[6px] bg-Primary-DeepTeal rounded-full"></div>
                         )}
                       </div>
                       <div
                         className={`text-[10px] cursor-pointer ${
                           questionsData.questions[activeCardNumber - 1]
-                            .response == el
+                            ?.response == el
                             ? 'text-Text-Primary'
                             : 'text-Text-Secondary'
                         } `}
@@ -249,7 +251,7 @@ export const Questionary = () => {
                               activeCardNumber - 1
                             ].response.filter((item: any) => item !== el); // Remove from array
                         formValueChange(
-                          questionsData.questions[activeCardNumber - 1].order,
+                          questionsData.questions[activeCardNumber - 1]?.order,
                           newResponses,
                         );
                       }
@@ -279,13 +281,13 @@ export const Questionary = () => {
       return (
         <RangeCard
           hideQuestions
-          question={questionsData.questions[activeCardNumber - 1].question}
-          value={questionsData.questions[activeCardNumber - 1].response || 0}
+          question={questionsData.questions[activeCardNumber - 1]?.question}
+          value={questionsData.questions[activeCardNumber - 1]?.response || 0}
           index={activeCardNumber}
           onSubmit={(value) => {
             if (!disabled) {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 value,
               );
             }
@@ -297,15 +299,15 @@ export const Questionary = () => {
       return (
         <FeelingCard
           hideQuestions
-          question={questionsData.questions[activeCardNumber - 1].question}
+          question={questionsData.questions[activeCardNumber - 1]?.question}
           value={
-            questionsData.questions[activeCardNumber - 1].response || 'Neutral'
+            questionsData.questions[activeCardNumber - 1]?.response || 'Neutral'
           }
           index={activeCardNumber}
           onSubmit={(value) => {
             if (!disabled) {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 value,
               );
             }
@@ -317,13 +319,15 @@ export const Questionary = () => {
       return (
         <YesNoCard
           hideQuestions
-          question={questionsData.questions[activeCardNumber - 1].question}
-          value={questionsData.questions[activeCardNumber - 1].response || 'No'}
+          question={questionsData.questions[activeCardNumber - 1]?.question}
+          value={
+            questionsData.questions[activeCardNumber - 1]?.response || 'No'
+          }
           index={activeCardNumber}
           onSubmit={(value) => {
             if (!disabled) {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 value,
               );
             }
@@ -336,13 +340,13 @@ export const Questionary = () => {
       return (
         <RateCard
           hideQuestions
-          question={questionsData.questions[activeCardNumber - 1].question}
-          value={questionsData.questions[activeCardNumber - 1].response || 0}
+          question={questionsData.questions[activeCardNumber - 1]?.question}
+          value={questionsData.questions[activeCardNumber - 1]?.response || 0}
           index={activeCardNumber}
           onSubmit={(value) => {
             if (!disabled) {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 value,
               );
             }
@@ -355,13 +359,13 @@ export const Questionary = () => {
       return (
         <UploadCard
           hideQuestions
-          question={questionsData.questions[activeCardNumber - 1].question}
-          value={questionsData.questions[activeCardNumber - 1].response}
+          question={questionsData.questions[activeCardNumber - 1]?.question}
+          value={questionsData.questions[activeCardNumber - 1]?.response}
           index={activeCardNumber}
           onSubmit={(values) => {
             if (!disabled) {
               formValueChange(
-                questionsData.questions[activeCardNumber - 1].order,
+                questionsData.questions[activeCardNumber - 1]?.order,
                 values,
               );
             }
@@ -387,16 +391,16 @@ export const Questionary = () => {
                 if (!disabled) {
                   if (validateDate(e.target.value)) {
                     formValueChange(
-                      questionsData.questions[activeCardNumber - 1].order,
+                      questionsData.questions[activeCardNumber - 1]?.order,
                       new Date(e.target.value).toISOString().split('T')[0],
                     );
                   }
                 }
               }}
               value={
-                questionsData.questions[activeCardNumber - 1].response != ''
+                questionsData.questions[activeCardNumber - 1]?.response != ''
                   ? new Date(
-                      questionsData.questions[activeCardNumber - 1].response,
+                      questionsData.questions[activeCardNumber - 1]?.response,
                     )
                       .toISOString()
                       .split('T')[0]
@@ -438,10 +442,10 @@ export const Questionary = () => {
     }
   };
   const checkFormComplete = () => {
-    const datas = questionsFormData.questions.filter(
+    const datas = questionsFormData?.questions?.filter(
       (el: any) => el.required == true && el.response.length == 0,
     );
-    return datas.length == 0;
+    return datas?.length == 0;
   };
   const [activeCard, setActiveCard] = useState(1);
 
@@ -584,23 +588,28 @@ export const Questionary = () => {
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
                 <div className="text-[12px] text-Primary-DeepTeal font-medium">
-                  {questionsFormData.questions[activeCard - 1].question}
+                  {(questionsFormData?.questions &&
+                    questionsFormData.questions[activeCard - 1]?.question) ||
+                    'Question not available'}
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
-                {resolveForm(
-                  questionsFormData.questions[activeCard - 1].type,
-                  questionsFormData,
-                  activeCard,
-                )}
+                {questionsFormData?.questions &&
+                  questionsFormData.questions[activeCard - 1] &&
+                  resolveForm(
+                    questionsFormData.questions[activeCard - 1]?.type,
+                    questionsFormData,
+                    activeCard,
+                  )}
               </div>
-              {questionsFormData.questions[activeCard - 1].required && (
-                <div className="text-[10px] text-red-500 mt-1 mb-5">
-                  * This question is required.
-                </div>
-              )}
+              {questionsFormData?.questions &&
+                questionsFormData.questions[activeCard - 1]?.required && (
+                  <div className="text-[10px] text-red-500 mt-1 mb-5">
+                    * This question is required.
+                  </div>
+                )}
             </div>
 
             <div className="w-full flex justify-center pb-2 absolute bottom-0">
@@ -628,12 +637,14 @@ export const Questionary = () => {
                   />
                 </div> */}
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary text-nowrap">
-                  {activeCard} /{questionsFormData.questions.length}
+                  {activeCard} /{questionsFormData?.questions?.length || 0}
                 </div>
                 <img
-                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData.questions.length && 'invisible'}`}
+                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'invisible'}`}
                   onClick={() => {
-                    if (activeCard < questionsFormData.questions.length) {
+                    if (
+                      activeCard < (questionsFormData?.questions?.length || 0)
+                    ) {
                       setActiveCard(activeCard + 1);
                     }
                   }}

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
+import { splitInstructions } from '../../../help';
 
 interface ActivityCardProps {
   item: any;
@@ -16,15 +18,6 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   activeCategory,
   handleCheckboxChange,
 }) => {
-  function splitInstructions(instruction: string) {
-    const positiveMatch = instruction.match(/Positive: (.*?)(?=Negative:|$)/s);
-    const negativeMatch = instruction.match(/Negative: (.*?)(?=$)/s);
-
-    const positive = positiveMatch ? positiveMatch[1].trim() : '';
-    const negative = negativeMatch ? negativeMatch[1].trim() : '';
-
-    return { positive, negative };
-  }
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
@@ -121,11 +114,13 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             </div>
           </div>
           <li className="  mb-2.5">
-            <span className="text-Text-Secondary bullet-point">Positive:</span>{' '}
+            <span className="text-Text-Secondary bullet-point">
+              Key Benefits:
+            </span>{' '}
             {positive}
           </li>
           <li className="">
-            <span className="text-Text-Secondary bullet-point">Negative:</span>{' '}
+            <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
             {negative}
           </li>
         </ul>

@@ -1,15 +1,18 @@
+import { splitInstructions } from '../../../help';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentPlanPrintProps {
   data: any;
 }
 
 const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
-  const result = {
-    positive: data.Notes.match(
-      /Positive:\s*(.*?)(?=Negative:|$)/s,
-    )?.[1]?.trim(),
-    negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
-  };
+  // const result = {
+  //   positive: data.Notes.match(
+  //     /Positive:\s*(.*?)(?=Negative:|$)/s,
+  //   )?.[1]?.trim(),
+  //   negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
+  // };
+  const { positive, negative } = splitInstructions(data.Notes);
   return (
     <>
       <div
@@ -27,27 +30,57 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             {data.title}
           </div>
-          <div
-            className="my-2 flex"
-            style={{ fontSize: '12px', color: '#383838' }}
-          >
-            <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
-            <div>
-              <span style={{ color: '#888888' }}>Positive:</span>{' '}
-              {result.positive}
-            </div>
-          </div>
-          <div
-            className="my-2 flex"
-            style={{ fontSize: '12px', color: '#383838' }}
-          >
-            <div style={{ marginRight: '5px', color: '#888888' }}>&#8226;</div>
-            <div>
-              <span style={{ color: '#888888' }}>Negative:</span>{' '}
-              {result.negative}
-            </div>
-          </div>
-          {data.Client_Notes.length > 0 && (
+          {positive && negative ? (
+            <>
+              {positive && (
+                <div
+                  className="my-2 flex"
+                  style={{ fontSize: '12px', color: '#383838' }}
+                >
+                  <div style={{ marginRight: '5px', color: '#888888' }}>
+                    &#8226;
+                  </div>
+                  <div>
+                    <span style={{ color: '#888888' }}>Key Benefits:</span>{' '}
+                    {positive}
+                  </div>
+                </div>
+              )}
+              {negative && (
+                <div
+                  className="my-2 flex"
+                  style={{ fontSize: '12px', color: '#383838' }}
+                >
+                  <div style={{ marginRight: '5px', color: '#888888' }}>
+                    &#8226;
+                  </div>
+                  <div>
+                    <span style={{ color: '#888888' }}>Key Risks:</span>{' '}
+                    {negative}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div
+                className="my-2 flex break-words text-justify"
+                style={{ fontSize: '12px', color: '#383838' }}
+              >
+                <div style={{ marginRight: '5px', color: '#888888' }}>
+                  &#8226;
+                </div>
+                <div
+                  className="break-words text-justify"
+                  style={{ maxWidth: '600px' }}
+                >
+                  {/* <span style={{ color: '#888888' }}>Key Benefits</span>{' '} */}
+                  {data.Notes}
+                </div>
+              </div>
+            </>
+          )}
+          {data?.Client_Notes?.length > 0 && (
             <>
               <div
                 style={{

@@ -22,6 +22,7 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   editId,
   templateData,
 }) => {
+  console.log('templateData => ', templateData);
   // console.log(templateData)
   const [questions, setQuestions] = useState<Array<checkinType>>(
     templateData ? templateData.questions : [],
@@ -29,6 +30,8 @@ const QuestionaryControllerModal: React.FC<QuestionaryControllerModalProps> = ({
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
       return 'Create Custom ';
+    } else if (templateData != null) {
+      return templateData.title;
     }
     switch (mode) {
       case 'Add':

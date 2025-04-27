@@ -96,7 +96,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
             onClick={() => {
               if (value) {
                 onSubmit();
-                setImagePreview([]);
+                setImagePreview([...[]]);
               }
             }}
             src="/icons/send.svg"

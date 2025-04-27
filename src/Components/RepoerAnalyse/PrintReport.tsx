@@ -396,6 +396,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
             }}
           >
             <div className="flex justify-start gap-4 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -411,6 +416,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </a>
             </div>
             <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -426,6 +436,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </a>
             </div>
             <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -441,6 +456,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </a>
             </div>
             <div className="flex justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}
@@ -455,7 +475,12 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Holistic Plan
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-6 items-center">
+            <div className="hidden justify-start gap-4 mt-6 items-center">
+              <img
+                src="/icons/icon-list-report.svg"
+                alt=""
+                style={{ marginRight: '-8px' }}
+              />
               <div
                 className="text-xl"
                 style={{ color: '#005F73', fontWeight: '500' }}

@@ -24,6 +24,21 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
     }
     return '#FBAD37';
   };
+  const resolvePercentLeft = (data: any, el: any) => {
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 <=
+      5
+    ) {
+      return 5;
+    }
+    if (
+      ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 >
+      95
+    ) {
+      return 95;
+    }
+    return ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100;
+  };
   // const [isHover,setIsHover] = useState(-1)
   return (
     <>
@@ -56,7 +71,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   backgroundColor: resolveColor(el.key),
                 }}
               >
-                <div className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] opacity-40 text-[10px]">
+                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-70 text-[10px]">
                   <TooltipText
                     tooltipValue={
                       data.chart_bounds[el.key].label +
@@ -88,11 +103,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         <div
                           className={`absolute  top-[2px]  z-10`}
                           style={{
-                            left:
-                              ((data.values[0] - el.value[0]) /
-                                (el.value[1] - el.value[0])) *
-                                100 +
-                              '%',
+                            left: resolvePercentLeft(data, el) + '%',
                           }}
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
