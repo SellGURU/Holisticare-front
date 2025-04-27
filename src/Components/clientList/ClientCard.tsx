@@ -445,11 +445,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="relative">
                   <div
                     onClick={() =>{
+                      
                       Application.getCoachList({
                         member_id: client.member_id,
                       }).then((res) => {
                         setCoachList(res.data);
-                        setshowAssign(!showAssign)                      });
+                        setshowAssign(!showAssign) 
+                                            });
                     } }
                     className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                   >
@@ -471,7 +473,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   </div>
                   {showAssign && (
-                    <div className="absolute -top-2 -right-[200px] rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
+                    <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
                       {CoachList.map((coach: any, index: number) => (
                         <div
                           onClick={() => {
@@ -485,7 +487,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                             });
                           }}
                           key={index}
-                          className={`p-1 w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
+                          className={`p-1 cursor-pointer w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
                           <div
                             onClick={() => {
