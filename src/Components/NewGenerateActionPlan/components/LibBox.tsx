@@ -48,7 +48,7 @@ const LibBox: FC<LibBoxProps> = ({
             />
             <div
               data-tooltip-id={`tooltip-${data.Category}-${data.Title}`}
-              className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden"
+              className="select-none text-[12px] text-Text-Primary w-[200px] overflow-hidden cursor-text"
               style={{
                 textWrap: 'nowrap',
                 whiteSpace: 'nowrap',
@@ -85,18 +85,61 @@ const LibBox: FC<LibBoxProps> = ({
             className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6`}
           >
             <div className={`flex items-center gap-1`}>
-              <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+              <div
+                className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
+                data-tooltip-id={`tooltip-system-score`}
+              >
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
                 />
                 {data['System Score'] ? data['System Score'] : '-'}
               </div>
-              <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+              <Tooltip
+                id={`tooltip-system-score`}
+                place="top"
+                className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+              >
+                <div className="font-medium text-[10px] text-Text-Primary">
+                  System Score
+                </div>
+                <div className="text-[10px] text-Text-Quadruple">
+                  Initial score from core health metrics.
+                </div>
+              </Tooltip>
+              <div
+                className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
+                data-tooltip-id={`tooltip-base-score`}
+              >
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
                 />
                 {data.Base_Score ? data.Base_Score : '-'}
               </div>
+              <Tooltip
+                id={`tooltip-base-score`}
+                place="top"
+                className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+              >
+                <div className="font-medium text-[10px] text-Text-Primary">
+                  Base Score
+                </div>
+                <div className="text-[10px] text-Text-Quadruple">
+                  Score based on all data and AI insights.
+                </div>
+              </Tooltip>
+              <div
+                className="text-[8px] text-Primary-DeepTeal cursor-pointer"
+                data-tooltip-id={`tooltip-score-calculation`}
+              >
+                Score Calculation
+              </div>
+              <Tooltip
+                id={`tooltip-score-calculation`}
+                place="top"
+                className="!bg-white !w-[200px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+              >
+                {data['Practitioner Comments'][0]}
+              </Tooltip>
             </div>
             {data.flag && data.flag.conflicts.length > 0 && (
               <button

@@ -32,7 +32,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-  console.log(defalts);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -382,7 +381,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
-    } else if (selectedGroup === 'Activity') {
+    } else {
       onSubmit({
         Category: selectedGroup,
         Title: title,
@@ -428,6 +427,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const times = ['morning', 'midday', 'night'];
   const locations = ['Home', 'Gym'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+  const dayMapping: Record<string, string> = {
+    sat: 'Saturday',
+    sun: 'Sunday',
+    mon: 'Monday',
+    tue: 'Tuesday',
+    wed: 'Wednesday',
+    thu: 'Thursday',
+    fri: 'Friday',
+  };
   const dayMonth = Array.from({ length: 30 }, (_, i) => {
     const date = new Date();
     const year = date.getFullYear();
@@ -528,7 +536,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       handleApply();
     }
   };
-  console.log(showExerciseValidation);
 
   return (
     <MainModal
@@ -919,7 +926,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                 )}
                 {selectedGroup === 'Activity' && (
                   <>
-                    <div className="text-xs font-medium">Filters</div>
+                    <div className="text-xs font-medium mb-1">Filters</div>
                     <div className="grid grid-cols-2 gap-y-2 gap-x-">
                       <CustomSelect
                         placeHolder="Type"
@@ -937,6 +944,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: any) =>
                           updateAddData('Terms', option)
                         }
+                        showTop
                       />
                       <CustomSelect
                         placeHolder="Condition"
@@ -946,6 +954,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: any) =>
                           updateAddData('Conditions', option)
                         }
+                        showTop
                       />
                       <CustomSelect
                         placeHolder="Muscle"
@@ -955,6 +964,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: any) =>
                           updateAddData('Muscle', option)
                         }
+                        showTop
                       />
                       <CustomSelect
                         placeHolder="Equipment"
@@ -964,6 +974,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: any) =>
                           updateAddData('Equipment', option)
                         }
+                        showTop
                       />
                       <CustomSelect
                         placeHolder="Level"
@@ -1183,7 +1194,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="w-4 h-4"
                       />
                       <div className="text-xs text-Primary-DeepTeal flex flex-wrap leading-relaxed">
-                        <span>{selectedGroup} scheduled</span>
+                        <span>
+                          {selectedGroup === 'Supplement' ||
+                          selectedGroup === 'Lifestyle' ||
+                          selectedGroup === 'Diet' ||
+                          selectedGroup === 'Activity'
+                            ? selectedGroup
+                            : 'Other'}{' '}
+                          scheduled
+                        </span>
                         {frequencyType === 'daily' ? (
                           <span>
                             &nbsp;for everyday {selectedTimes.join(' and ')}.
@@ -1194,15 +1213,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                             {selectedDays.length > 1 ? (
                               <>
                                 <span className="capitalize">
-                                  {selectedDays.slice(0, -1).join(', ')}
+                                  {selectedDays
+                                    .slice(0, -1)
+                                    .map((day) => dayMapping[day] || day)
+                                    .join(', ')}
                                 </span>
                                 <span className="mr-1">&nbsp;and</span>
                                 <span className="capitalize">
-                                  {selectedDays.slice(-1)}
+                                  {dayMapping[selectedDays.slice(-1)[0]] ||
+                                    selectedDays.slice(-1)[0]}
                                 </span>
                               </>
                             ) : (
-                              <span>{selectedDays[0] || ''}</span>
+                              <span className="capitalize">
+                                {dayMapping[selectedDays[0]] || ''}
+                              </span>
                             )}
                             {selectedTimes.length > 0 && (
                               <>

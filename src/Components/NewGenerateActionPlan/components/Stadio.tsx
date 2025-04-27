@@ -37,6 +37,7 @@ const Stadio: FC<StadioProps> = ({
   plans,
   handleShowConflictsModal,
 }) => {
+  console.log('actions => ', actions);
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
   const [haveConflicText, setHaveConflicText] = useState([]);
