@@ -36,7 +36,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     buttonRefrence: showModalButtonRefrence,
     close: () => {
       setshowModal(false);
-      setshowAssign(false)
+      setshowAssign(false);
     },
   });
   // const handleToggleFavoriteAndHighPriority = async () => {
@@ -444,15 +444,14 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <>
                 <div className="relative">
                   <div
-                    onClick={() =>{
-                      
+                    onClick={() => {
                       Application.getCoachList({
                         member_id: client.member_id,
                       }).then((res) => {
                         setCoachList(res.data);
-                        setshowAssign(!showAssign) 
-                                            });
-                    } }
+                        setshowAssign(!showAssign);
+                      });
+                    }}
                     className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
                   >
                     <div className="flex items-center gap-1">
@@ -501,7 +500,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
                               });
                             }}
                           >
-                            <Checkbox onChange={()=>{}} checked={coach.assigned} />
+                            <Checkbox
+                              onChange={() => {}}
+                              checked={coach.assigned}
+                            />
                           </div>
 
                           {coach.username}
