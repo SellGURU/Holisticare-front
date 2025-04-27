@@ -9,6 +9,7 @@ import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DeleteModal } from './deleteModal.tsx';
 import MainModal from '../MainModal/index.tsx';
+import Checkbox from '../checkbox/index.tsx';
 interface ClientCardProps {
   client: any;
   ondelete: (memberid: any) => void;
@@ -35,6 +36,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     buttonRefrence: showModalButtonRefrence,
     close: () => {
       setshowModal(false);
+      setshowAssign(false)
     },
   });
   // const handleToggleFavoriteAndHighPriority = async () => {
@@ -179,6 +181,34 @@ const ClientCard: React.FC<ClientCardProps> = ({
   });
   // const [showAsignList, setshowAsignList] = useState(false);
   console.log(activeTab);
+  const [showAssign, setshowAssign] = useState(false);
+  const [CoachList, setCoachList] = useState([
+    {
+      username: 'merrybrown',
+      assigned: true,
+    },
+    {
+      username: 'merrybrown1',
+      assigned: false,
+    },
+    {
+      username: 'clinic',
+      assigned: false,
+    },
+  ]);
+
+  const handleCheckboxChange = (index: number) => {
+    setCoachList((prevState) => {
+      const updatedList = [...prevState];
+      updatedList[index].assigned = !updatedList[index].assigned;
+      return updatedList;
+    });
+  };
+  const getSelectedCoachesUsernames = () => {
+    return CoachList.filter((coach) => coach.assigned) // Filter coaches with assigned set to true
+      .map((coach) => coach.username); // Map them to their usernames
+  };
+  console.log(getSelectedCoachesUsernames());
 
   return (
     <>
@@ -338,10 +368,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
             ref={showModalRefrence}
             className="absolute top-12 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
-            {/* <div className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer">
-              <img src="/icons/assign-green.svg" alt="" />
-              Assign to ...
-            </div> */}
             {client.archived ? (
               <>
                 <div
@@ -416,6 +442,73 @@ const ClientCard: React.FC<ClientCardProps> = ({
               </>
             ) : (
               <>
+                <div className="relative">
+                  <div
+                    onClick={() =>{
+                      Application.getCoachList({
+                        member_id: client.member_id,
+                      }).then((res) => {
+                        setCoachList(res.data);
+                        setshowAssign(!showAssign)                      });
+                    } }
+                    className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                  >
+                    <div className="flex items-center gap-1">
+                      {' '}
+                      <img src="/icons/assign-green.svg" alt="" />
+                      Assign
+                    </div>
+
+                    <div
+                      className={`${showAssign && 'rotate-180'} transition-transform`}
+                    >
+                      <SvgIcon
+                        src="/icons/arrow-right.svg"
+                        width="20px"
+                        height="20px"
+                        color="#888888"
+                      />
+                    </div>
+                  </div>
+                  {showAssign && (
+                    <div className="absolute -top-2 -right-[200px] rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
+                      {CoachList.map((coach: any, index: number) => (
+                        <div
+                          onClick={() => {
+                            const selectedCoaches =
+                              getSelectedCoachesUsernames();
+                            Application.assignCoach({
+                              member_id: client.member_id,
+                              coach_usernames: selectedCoaches,
+                            }).then(() => {
+                              handleCheckboxChange(index);
+                            });
+                          }}
+                          key={index}
+                          className={`p-1 w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
+                        >
+                          <div
+                            onClick={() => {
+                              const selectedCoaches =
+                                getSelectedCoachesUsernames();
+                              Application.assignCoach({
+                                member_id: client.member_id,
+                                coach_usernames: selectedCoaches,
+                              }).then(() => {
+                                handleCheckboxChange(index);
+                              });
+                            }}
+                          >
+                            <Checkbox onChange={()=>{}} checked={coach.assigned} />
+                          </div>
+
+                          {coach.username}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div
                   onClick={() => {
                     setshowModal(false);
@@ -426,7 +519,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     // onarchive(client.member_id);
                     // ondelete(client.member_id);
                   }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Send to Archieve
@@ -434,7 +527,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {!client.favorite ? (
                   <div
                     onClick={handleAddToHighPriority}
-                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                   >
                     <img src="/icons/star.svg" alt="" />
                     Add to High-Priorities
@@ -443,8 +536,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   client.favorite &&
                   activeTab == 'High-Priority' && (
                     <div
-                      onClick={handleRemoveFromHighPriority}
-                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                      className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                     >
                       <img src="/icons/star.svg" alt="" />
                       Remove from High-Priorities
@@ -472,7 +564,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access
@@ -489,7 +581,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
+                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete

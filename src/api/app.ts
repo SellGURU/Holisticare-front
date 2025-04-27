@@ -933,6 +933,12 @@ class Application extends Api {
   static tratmentPlanConflict = (data: any) => {
     return this.post('/treatment_plan/conflict_check', data);
   };
+  static getCoachList = (data: any) => {
+    return this.post('/patients/coaches_usernames', data);
+  };
+  static assignCoach = (data: any) => {
+    return this.post('/patients/assign_to_coach', data);
+  };
 }
 
 export default Application;
