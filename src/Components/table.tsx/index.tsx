@@ -36,7 +36,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // calculate the height of table
-  const pageSize = (window.innerHeight * 0.6) / 65;
+  const pageSize = (window.innerHeight * 0.65) / 65;
   useEffect(() => {
     setData(classData);
   }, [classData]);
@@ -73,7 +73,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
     <div className="flex items-center justify-center flex-col">
       <div className="w-full mt-4">
         <div
-          className={`overflow-x-auto overflow-y-hidden  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[60vh]`}
+          className={`overflow-x-auto overflow-y-hidden  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[67vh]`}
         >
           {table.getRowModel().rows.length > 0 ? (
             <table
@@ -155,7 +155,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
           )}
         </div>
       </div>
-      <div className="mt-5">
+      <div className="mt-4">
         <Pagination
           currentPage={currentPage + 1}
           totalPages={Math.ceil(data.length / pageSize)}
