@@ -7,7 +7,7 @@ import Badge from '../badge';
 // import { useSelector } from "react-redux";
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
-import SvgIcon from '../../utils/svgIcon';
+// import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
 export const columns = (dataLength: number): ColumnDef<any>[] => [
@@ -293,9 +293,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
             alt=""
             className="cursor-pointer"
           /> */}
-          <div onClick={() => {}}>
+          {/* <div onClick={() => {}}>
             <SvgIcon src="/icons/client-card/more.svg" color="#005F73" />
-          </div>
+          </div> */}
 
           <img
             onClick={() => {
@@ -311,7 +311,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
               // }
               // console.log(row.original.information.member_id)
             }}
-            className="cursor-pointe hidden"
+            className="cursor-pointer"
             src="/icons/delete-green.svg"
             alt=""
           />
