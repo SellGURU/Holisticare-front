@@ -265,7 +265,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <Tooltip
                         id={`tooltip-score-calculation-${index}`}
                         place="top"
-                        className="!bg-white !w-[200px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+                        className="!bg-white !w-[300px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[9999]"
                       >
                         {value['Practitioner Comments'][0]}
                       </Tooltip>

@@ -498,10 +498,11 @@ const Stadio: FC<StadioProps> = ({
               </div>
               <div className="w-full h-[345px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
-                  {filteredDataCategory.map((value: any) => {
+                  {filteredDataCategory.map((value: any, index: number) => {
                     return (
                       <div
                         // key={`${value.Category}-${value.Title}`}
+                        key={index}
                         draggable
                         onDragStart={(e) => handleDragStart(e, value)}
                         onDragEnd={handleDragEnd}
@@ -510,15 +511,17 @@ const Stadio: FC<StadioProps> = ({
                         <LibBox
                           onAdd={() => addToActions(value)}
                           data={value}
+                          index={index}
                           handleShowConflictsModal={handleShowConflictsModal}
                         />
                       </div>
                     );
                   })}
-                  {filteredDataCheckIn.map((value: any) => {
+                  {filteredDataCheckIn.map((value: any, index: number) => {
                     return (
                       <div
-                        key={`${value.Task_Type}-${value.Title}`}
+                        // key={`${value.Task_Type}-${value.Title}`}
+                        key={index}
                         draggable
                         onDragStart={(e) => handleDragStart(e, value)}
                         onDragEnd={handleDragEnd}
