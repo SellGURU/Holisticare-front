@@ -436,12 +436,20 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     thu: 'Thursday',
     fri: 'Friday',
   };
+  const sortedSelectedDays = [...selectedDays].sort((a, b) => {
+    return days.indexOf(a) - days.indexOf(b);
+  });
   const dayMonth = Array.from({ length: 30 }, (_, i) => {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(i + 1).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  });
+  const sortedSelectedDaysMonth = [...selectedDaysMonth].sort((a, b) => {
+    const dayA = parseInt(a.split('-')[2], 10);
+    const dayB = parseInt(b.split('-')[2], 10);
+    return dayA - dayB;
   });
   const addDaySuffix = (dayStr: string) => {
     const day = parseInt(dayStr, 10);
@@ -1211,23 +1219,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         ) : frequencyType === 'weekly' ? (
                           <>
                             <span className="mr-1">&nbsp;for every</span>
-                            {selectedDays.length > 1 ? (
+                            {sortedSelectedDays.length > 1 ? (
                               <>
                                 <span className="capitalize">
-                                  {selectedDays
+                                  {sortedSelectedDays
                                     .slice(0, -1)
                                     .map((day) => dayMapping[day] || day)
                                     .join(', ')}
                                 </span>
                                 <span className="mr-1">&nbsp;and</span>
                                 <span className="capitalize">
-                                  {dayMapping[selectedDays.slice(-1)[0]] ||
-                                    selectedDays.slice(-1)[0]}
+                                  {dayMapping[
+                                    sortedSelectedDays.slice(-1)[0]
+                                  ] || sortedSelectedDays.slice(-1)[0]}
                                 </span>
                               </>
                             ) : (
                               <span className="capitalize">
-                                {dayMapping[selectedDays[0]] || ''}
+                                {dayMapping[sortedSelectedDays[0]] || ''}
                               </span>
                             )}
                             {selectedTimes.length > 0 && (
@@ -1247,11 +1256,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                 <span>{selectedTimes.join(' and ')}</span>
                               </>
                             )}
-                            {selectedDaysMonth.length > 1 ? (
+                            {sortedSelectedDaysMonth.length > 1 ? (
                               <>
                                 <span className="mr-1">&nbsp;of</span>
                                 <span>
-                                  {selectedDaysMonth
+                                  {sortedSelectedDaysMonth
                                     .slice(0, -1)
                                     .map((date) =>
                                       addDaySuffix(date.split('-')[2]),
@@ -1261,7 +1270,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                                 <span className="mr-1">&nbsp;and</span>
                                 <span>
                                   {addDaySuffix(
-                                    selectedDaysMonth
+                                    sortedSelectedDaysMonth
                                       .slice(-1)[0]
                                       .split('-')[2],
                                   )}
@@ -1269,9 +1278,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                               </>
                             ) : (
                               <span className="ml-1">
-                                {selectedDaysMonth[0]
+                                {sortedSelectedDaysMonth[0]
                                   ? addDaySuffix(
-                                      selectedDaysMonth[0].split('-')[2],
+                                      sortedSelectedDaysMonth[0].split('-')[2],
                                     )
                                   : ''}
                               </span>
