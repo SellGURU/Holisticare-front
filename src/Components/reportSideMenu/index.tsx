@@ -109,6 +109,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
       setIsReportAvailable(eventData.detail.isHaveReport);
+      setDisableClicks(true);
     };
 
     subscribe('reportStatus', handleReportStatus);
@@ -117,6 +118,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       unsubscribe('reportStatus', handleReportStatus);
     };
   }, []);
+  console.log(isReportAvailable);
+  
   return (
     <div
       className={`h-fit min-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white ${!isReportAvailable && 'opacity-40 '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
@@ -155,7 +158,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
-                  if (!disableClicks) {
+                  if (!disableClicks || isReportAvailable) {
                     onchangeMenu(item);
                   }
                 }}
@@ -174,7 +177,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               {resolveSteps().map((item, index) => (
                 <div
                   onClick={() => {
-                    if (!disableClicks) {
+                    if (!disableClicks || !isReportAvailable) {
                       setactiveImg(index + 1);
                       document.getElementById(item)?.scrollIntoView({
                         behavior: 'smooth',
