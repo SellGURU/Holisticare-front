@@ -177,7 +177,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original["Check-in"] || 'NO Data'}
+          {row.original['Check-in'] || 'NO Data'}
         </div>
       );
     },
@@ -189,7 +189,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original["Questionary"] || 'NO Data'}
+          {row.original['Questionary'] || 'NO Data'}
         </div>
       );
     },
@@ -293,11 +293,10 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
             alt=""
             className="cursor-pointer"
           /> */}
-          <div onClick={()=>{}}>
-          <SvgIcon src="/icons/client-card/more.svg"  color='#005F73' />
-
+          <div onClick={() => {}}>
+            <SvgIcon src="/icons/client-card/more.svg" color="#005F73" />
           </div>
-         
+
           <img
             onClick={() => {
               publish('confirmDelete', {

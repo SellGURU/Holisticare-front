@@ -36,8 +36,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // calculate the height of table
-  const pageSize = (window.innerHeight * 0.67) / 65; // 100vh in pixels
-
+  const pageSize = (window.innerHeight * 0.6) / 65;
   useEffect(() => {
     setData(classData);
   }, [classData]);
@@ -49,7 +48,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
       globalFilter,
       pagination: {
         pageIndex: currentPage,
-        pageSize: 8, // Link page index to currentPage
+        pageSize, // Link page index to currentPage
       },
     },
     getCoreRowModel: getCoreRowModel(),
