@@ -209,9 +209,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
           {/* Title Field */}
           <div className="flex flex-col mt-5 w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Title
-            </div>
+            <div className="text-xs font-medium text-Text-Primary">Title</div>
             <input
               placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s title...`}
               value={addData.title}
@@ -305,9 +303,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">
-                Dose
-              </div>
+              <div className="text-xs font-medium text-Text-Primary">Dose</div>
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
@@ -334,9 +330,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">
-                Value
-              </div>
+              <div className="text-xs font-medium text-Text-Primary">Value</div>
               <input
                 placeholder="Enter Value..."
                 value={value}

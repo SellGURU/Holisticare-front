@@ -190,8 +190,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const [CoachList, setCoachList] = useState<Array<any>>([]);
   console.log(CoachList);
 
-
-
   const handleAssignClick = () => {
     Application.getCoachList({ member_id: client.member_id }).then((res) => {
       setCoachList(res.data);
@@ -200,13 +198,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
   };
   const handleCoachSelection = (selectedCoach: Coach) => {
     // Update UI - uncheck previous coach and check new one
-    setCoachList(prevCoaches => 
-      prevCoaches.map(coach => ({
+    setCoachList((prevCoaches) =>
+      prevCoaches.map((coach) => ({
         ...coach,
-        assigned: coach.username === selectedCoach.username
-      }))
+        assigned: coach.username === selectedCoach.username,
+      })),
     );
-  
+
     // Send only the selected coach to API
     Application.assignCoach({
       member_id: client.member_id,
@@ -219,13 +217,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
   //   // Get all coaches that have assigned = true (including previously assigned coaches)
   //   const assignedCoaches = CoachList.filter(coach => coach.assigned)
   //     .map(coach => coach.username);
-  
+
   //   // Add the newly selected coach if not already included
   //   const selectedCoach = CoachList[index];
   //   if (!assignedCoaches.includes(selectedCoach.username)) {
   //     assignedCoaches.push(selectedCoach.username);
   //   }
-  
+
   //   Application.assignCoach({
   //     member_id: client.member_id,
   //     coach_usernames: assignedCoaches, // Send all assigned coaches
@@ -492,13 +490,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
                       {CoachList.map((coach: Coach) => (
                         <div
-                        onClick={() => handleCoachSelection(coach)}
-                        
+                          onClick={() => handleCoachSelection(coach)}
                           className={`p-1 cursor-pointer w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
                           <div>
                             <Checkbox
-                onChange={() => handleCoachSelection(coach)}                              checked={coach.assigned}
+                              onChange={() => handleCoachSelection(coach)}
+                              checked={coach.assigned}
                             />
                           </div>
 
