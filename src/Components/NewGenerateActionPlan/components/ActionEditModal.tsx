@@ -943,6 +943,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: string) =>
                           updateAddData('Type', [option])
                         }
+                        showTop
                       />
                       <CustomSelect
                         placeHolder="Terms"
