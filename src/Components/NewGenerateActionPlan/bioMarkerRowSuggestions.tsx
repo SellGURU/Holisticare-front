@@ -215,7 +215,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className={`flex items-center gap-1`}>
                     <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
-                      data-tooltip-id={`tooltip-system-score`}
+                      data-tooltip-id={`tooltip-system-score-${index}`}
                     >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-DeepTeal`}
@@ -223,7 +223,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       {value['System Score'] ? value['System Score'] : '-'}
                     </div>
                     <Tooltip
-                      id={`tooltip-system-score`}
+                      id={`tooltip-system-score-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
                     >
@@ -236,7 +236,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </Tooltip>
                     <div
                       className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
-                      data-tooltip-id={`tooltip-base-score`}
+                      data-tooltip-id={`tooltip-base-score-${index}`}
                     >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-EmeraldGreen`}
@@ -244,7 +244,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       {value.Base_Score ? value.Base_Score : '-'}
                     </div>
                     <Tooltip
-                      id={`tooltip-base-score`}
+                      id={`tooltip-base-score-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
                     >
@@ -257,13 +257,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </Tooltip>
                     <div
                       className="text-[8px] text-Primary-DeepTeal cursor-pointer"
-                      data-tooltip-id={`tooltip-score-calculation`}
+                      data-tooltip-id={`tooltip-score-calculation-${index}`}
                     >
                       Score Calculation
                     </div>
                     {value['Practitioner Comments']?.length > 0 && (
                       <Tooltip
-                        id={`tooltip-score-calculation`}
+                        id={`tooltip-score-calculation-${index}`}
                         place="top"
                         className="!bg-white !w-[200px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
                       >
