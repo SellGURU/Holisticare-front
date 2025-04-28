@@ -152,6 +152,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
     onSubmit(exerciseData);
     onClose();
+    resetForm();
   };
 
   // const handleFileChange = async (
@@ -344,6 +345,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               type="text"
               newStyle
               label="Title"
+              titleRequired
               placeholder="Write the exercise’s title..."
               value={formik.values.title}
               onChange={(e) => {
@@ -500,6 +502,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               newStyle
               type="text"
               label="YouTube link"
+              titleRequired
               placeholder="Enter YouTube link ..."
               onChange={(e) => handleYouTubeLinkChange(e.target.value)}
               errorMessage={showYouTubeValidation ? youTubeError : undefined}

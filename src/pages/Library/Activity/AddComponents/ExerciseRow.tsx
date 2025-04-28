@@ -24,7 +24,6 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
     onUpdate(updatedExercise);
     setShowEditModal(false);
   };
-  console.log(exercise);
   const formatDate = (isoString: any) => {
     const date = new Date(isoString);
     const year = date.getFullYear();
@@ -118,7 +117,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?
               <img
-                className="cursor-pointer"
+                className="cursor-pointer w-[20px] h-[20px]"
                 onClick={() => {
                   onDelete();
                   setConfirmDelete(false);
@@ -127,7 +126,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
                 alt=""
               />
               <img
-                className="cursor-pointer size-4"
+                className="cursor-pointer w-[20px] h-[20px]"
                 onClick={() => setConfirmDelete(false)}
                 src="/icons/cansel-close-circle.svg"
                 alt=""
@@ -137,7 +136,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <>
               <img
                 onClick={() => setViewModal(true)}
-                className="cursor-pointer size-4"
+                className="cursor-pointer"
                 src="/icons/eye-blue.svg"
                 alt=""
               />
