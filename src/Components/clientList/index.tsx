@@ -392,7 +392,7 @@ const ClientList = () => {
               </div>
               {activeList == 'grid' ? (
                 <div
-                  className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
+                  className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center p]b-[200px  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
                 >
                   {filteredClientList.map((client: any) => {
                     return (
@@ -448,7 +448,7 @@ const ClientList = () => {
             </>
           ) : (
             <>
-              <div className="w-full h-[80vh] flex justify-center items-center">
+              <div className="w-full h-[100vh] flex justify-center items-center">
                 <div>
                   <div className="flex justify-center">
                     <img src="./icons/EmptyState.svg" alt="" />

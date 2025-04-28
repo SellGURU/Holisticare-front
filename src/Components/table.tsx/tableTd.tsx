@@ -16,7 +16,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
 
     cell: ({ row }) => {
-      console.log(row);
+      console.log(row.original);
 
       return (
         <div className="w-[15vw]">
@@ -52,7 +52,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
   {
     accessorKey: 'member_id',
     header: 'Member ID',
-    enableSorting: false,
+    enableSorting: true,
     cell: ({ row }) => {
       return (
         <div className="flex justify-center text-xs text-Text-Secondary ">
@@ -114,7 +114,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
   {
     accessorKey: 'enroll_date',
     header: 'Enroll Date',
-    enableSorting: true,
+    enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
