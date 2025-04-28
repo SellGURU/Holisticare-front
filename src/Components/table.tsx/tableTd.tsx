@@ -189,7 +189,10 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div title={row.original['Questionary'] } className="text-xs text-Text-Secondary truncate  ">
+        <div
+          title={row.original['Questionary']}
+          className="text-xs text-Text-Secondary truncate  "
+        >
           {row.original['Questionary'] || 'NO Data'}
         </div>
       );
