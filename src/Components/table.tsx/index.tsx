@@ -11,7 +11,6 @@ import {
   useReactTable,
   FilterFn,
 } from '@tanstack/react-table';
-import { FaSort } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import Pagination from '../pagination/index.tsx';
 // import Application from "@/api/app.ts";
@@ -37,8 +36,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // calculate the height of table
-  const pageSize = (window.innerHeight * 0.67) / 65; // 100vh in pixels
-
+  const pageSize = (window.innerHeight * 0.65) / 65;
   useEffect(() => {
     setData(classData);
   }, [classData]);
@@ -75,7 +73,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
     <div className="flex items-center justify-center flex-col">
       <div className="w-full mt-4">
         <div
-          className={`overflow-x-auto  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[60vh]`}
+          className={`overflow-x-auto overflow-y-hidden  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[67vh]`}
         >
           {table.getRowModel().rows.length > 0 ? (
             <table
@@ -93,7 +91,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
                         className={`px-3 pt-5 pb-3 text-xs   font-medium cursor-pointer `}
                       >
                         <div
-                          className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
+                          className={`flex items-center  ${index == 0 ? 'justify-start w-[100px]' : 'justify-center '} `}
                         >
                           <div
                             className="flex items-center justify-center"
@@ -105,10 +103,24 @@ const Table: React.FC<TableProps> = ({ classData }) => {
                             )}
                             {header.column.getCanSort() &&
                               header.column.getIsSorted() === false && (
-                                <FaSort className="cursor-pointer" />
+                                <img
+                                  src="/icons/sorting.svg"
+                                  className="cursor-pointer hidden ml-1"
+                                  alt=""
+                                />
                               )}
-                            {header.column.getIsSorted() === 'asc' && ' 🔼'}
-                            {header.column.getIsSorted() === 'desc' && ' 🔽'}
+                            {header.column.getIsSorted() === 'asc' && (
+                              <img
+                                className="cursor-pointer hidden ml-1"
+                                src="/icons/sort-up.svg"
+                              />
+                            )}
+                            {header.column.getIsSorted() === 'desc' && (
+                              <img
+                                className="cursor-pointer hidden ml-1"
+                                src="/icons/sort-down.svg"
+                              />
+                            )}
                           </div>
                         </div>
                       </th>
@@ -143,11 +155,13 @@ const Table: React.FC<TableProps> = ({ classData }) => {
           )}
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage + 1}
-        totalPages={Math.ceil(data.length / pageSize)}
-        onPageChange={handlePageChange}
-      />
+      <div className="mt-4">
+        <Pagination
+          currentPage={currentPage + 1}
+          totalPages={Math.ceil(data.length / pageSize)}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

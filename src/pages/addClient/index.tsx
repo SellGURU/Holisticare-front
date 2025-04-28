@@ -191,6 +191,7 @@ const AddClient = () => {
                       </div>
                     </ButtonPrimary>
                     <ButtonPrimary
+                      ClassName=" md:w-[200px]"
                       size="small"
                       onClick={() => {
                         navigate(
@@ -206,7 +207,7 @@ const AddClient = () => {
                         src={'/icons/tick.svg'}
                         className={' md:w-5 md:h-5  h-4 w-4'}
                       />
-                      <div className=" text-nowrap text-[10px] md:text-xs   md:w-[140px]">
+                      <div className=" text-nowrap text-[10px] md:text-xs  ">
                         Develop Health Plan
                       </div>
                     </ButtonPrimary>

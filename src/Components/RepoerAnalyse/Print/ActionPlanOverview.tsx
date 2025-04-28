@@ -12,7 +12,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
   useEffect(() => {
     setData(classData);
   }, [classData]);
-  const grouped = data.reduce((acc: any, item) => {
+  const grouped = data?.reduce((acc: any, item) => {
     const key = item.category.toLowerCase();
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
@@ -42,7 +42,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
               style={{ background: '#F4F4F4 ', color: '#383838' }}
             >
               <tr className="text-nowrap text-Text-Primary">
-                {headers.map((header, index) => (
+                {headers?.map((header, index) => (
                   <th
                     key={index}
                     className={`${header !== 'Title' && 'px-3'} pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-3 last:rounded-tr-3`}
@@ -60,7 +60,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
               {(Object.entries(grouped) as [string, any[]][]).map(
                 ([key, items]) => (
                   <Fragment key={key}>
-                    {items.map((item, index) => (
+                    {items?.map((item, index) => (
                       <tr key={index}>
                         {/* Category */}
                         {index === 0 && (
@@ -178,8 +178,8 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           ) : (
                             <div className="flex items-center mt-3">
                               {item.sections
-                                .slice(0, 2)
-                                .map((section: string, index: number) => {
+                                ?.slice(0, 2)
+                                ?.map((section: string, index: number) => {
                                   return (
                                     <div
                                       key={index}
@@ -193,7 +193,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                     </div>
                                   );
                                 })}
-                              {item.sections.length > 2 && (
+                              {item?.sections?.length > 2 && (
                                 <div
                                   className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center"
                                   style={{
