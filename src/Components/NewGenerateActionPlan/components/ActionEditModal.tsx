@@ -983,6 +983,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         onOptionSelect={(option: string) =>
                           updateAddData('Level', [option])
                         }
+                        showTop
                       />
                     </div>
                   </>
