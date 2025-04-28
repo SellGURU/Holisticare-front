@@ -44,8 +44,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
   });
   const [status, setStatus] = useState<StatusFilter>({
     checked: filters.status.checked,
-    "needs check": filters.status["needs check"],
-    "incomplete data": filters.status["incomplete data"],
+    'needs check': filters.status['needs check'],
+    'incomplete data': filters.status['incomplete data'],
   });
   const [enrollDate, setEnrollDate] = useState<DateFilter>({
     from: filters.enrollDate.from,
@@ -59,7 +59,11 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const handleClear = () => {
     setGender({ male: false, female: false });
-    setStatus({ checked: false, "needs check": false, "incomplete data": false });
+    setStatus({
+      checked: false,
+      'needs check': false,
+      'incomplete data': false,
+    });
     setEnrollDate({ from: null, to: null });
     onClearFilters();
     onClose();
@@ -214,7 +218,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 name="atRisk"
                 checked={status['needs check']}
                 onChange={(e) =>
-                  setStatus({ ...status, "needs check": e.target.checked })
+                  setStatus({ ...status, 'needs check': e.target.checked })
                 }
                 className="hidden"
               />
@@ -248,7 +252,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 name="critical"
                 checked={status['incomplete data']}
                 onChange={(e) =>
-                  setStatus({ ...status, "incomplete data": e.target.checked })
+                  setStatus({ ...status, 'incomplete data': e.target.checked })
                 }
                 className="hidden"
               />
@@ -273,7 +277,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 )}
               </div>
               <div className="px-2.5 py-[2px] rounded-full bg-[#FFD8E4] text-[10px]">
-              Incomplete Data
+                Incomplete Data
               </div>
             </label>
           </div>

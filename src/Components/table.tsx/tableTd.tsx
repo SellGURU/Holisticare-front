@@ -112,18 +112,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
   //     );
   //   },
   // },
-  {
-    accessorKey: 'last_checkin',
-    header: 'Last Check-in',
-    enableSorting: false,
-    cell: ({ row }) => {
-      return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original.last_checkin || 'NO Data'}
-        </div>
-      );
-    },
-  },
+
   {
     accessorKey: 'enroll_date',
     header: 'Enroll Date',
@@ -132,6 +121,18 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       return (
         <div className="text-xs text-Text-Secondary ">
           {row.original.enroll_date || 'NO Data'}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'last_checkin',
+    header: 'Last Check-in',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original.last_checkin || 'NO Data'}
         </div>
       );
     },
@@ -165,7 +166,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original.assigned_to[0] || 'NO Data'}
+          {row.original.assigned_to[0] || 'No Data'}
         </div>
       );
     },
@@ -188,7 +189,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="text-xs text-Text-Secondary ">
+        <div title={row.original['Questionary'] } className="text-xs text-Text-Secondary truncate  ">
           {row.original['Questionary'] || 'NO Data'}
         </div>
       );

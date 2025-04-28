@@ -188,7 +188,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     // ... other coach properties
   }
   const [CoachList, setCoachList] = useState<Array<any>>([]);
-  const [selectedCoach, setselectedCoach] = useState('')
+  const [selectedCoach, setselectedCoach] = useState('');
   console.log(CoachList);
 
   const handleAssignClick = () => {
@@ -211,7 +211,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
-      setselectedCoach(selectedCoach.username)
+      setselectedCoach(selectedCoach.username);
       // setshowAssign(false);
     });
   };
