@@ -188,6 +188,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
     // ... other coach properties
   }
   const [CoachList, setCoachList] = useState<Array<any>>([]);
+  const [selectedCoach, setselectedCoach] = useState('')
   console.log(CoachList);
 
   const handleAssignClick = () => {
@@ -210,6 +211,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
+      setselectedCoach(selectedCoach.username)
       // setshowAssign(false);
     });
   };
@@ -693,13 +695,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   </div>
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs ">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] mr-3">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
                     <div className="flex text-nowrap truncate max-w-[110px] ">
-                      {client.assigned_to[0]}
+                      {client.assigned_to[0] || selectedCoach}
                     </div>
                     {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img

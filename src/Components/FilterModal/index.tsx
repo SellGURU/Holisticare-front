@@ -11,9 +11,9 @@ type GenderFilter = {
 };
 
 type StatusFilter = {
-  normal: boolean;
-  atRisk: boolean;
-  critical: boolean;
+  checked: boolean;
+  ['needs check']: boolean;
+  ['incomplete data']: boolean;
 };
 
 type DateFilter = {
@@ -43,9 +43,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
     female: filters.gender.female,
   });
   const [status, setStatus] = useState<StatusFilter>({
-    normal: filters.status.normal,
-    atRisk: filters.status.atRisk,
-    critical: filters.status.critical,
+    checked: filters.status.checked,
+    "needs check": filters.status["needs check"],
+    "incomplete data": filters.status["incomplete data"],
   });
   const [enrollDate, setEnrollDate] = useState<DateFilter>({
     from: filters.enrollDate.from,
@@ -59,7 +59,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const handleClear = () => {
     setGender({ male: false, female: false });
-    setStatus({ normal: false, atRisk: false, critical: false });
+    setStatus({ checked: false, "needs check": false, "incomplete data": false });
     setEnrollDate({ from: null, to: null });
     onClearFilters();
     onClose();
@@ -83,7 +83,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="absolute right-0 xs:right-7 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[330px] md:w-[400px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
+      className="absolute right-0 xs:right-7 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[330px] md:w-[490px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
     >
       <div className="space-y-6">
         {/* Header */}
@@ -102,7 +102,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 onChange={(e) => setGender({ ...gender, male: e.target.checked })} */}
         <div className="w-full flex flex-col md:flex-row items-start gap-[15px] md:gap-[41px]  ">
           <h3 className=" text-[10px] md:text-xs font-medium ">Gender</h3>
-          <div className="flex gap-5 md:gap-[38px]">
+          <div className="flex gap-5 md:gap-[48px]">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -173,23 +173,23 @@ const FilterModal: React.FC<FilterModalProps> = ({
         {/* Status Section */}
         <div className="w-full flex flex-col md:flex-row items-start gap-[15px] md:gap-12">
           <h3 className="text-xs font-medium">Status</h3>
-          <div className="flex w-full flex-wrap gap-4 md:gap-0 justify-between">
+          <div className="flex w-full  gap-4 md:gap-0 justify-between text-nowrap">
             <label className="flex  items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
-                name="normal"
-                checked={status.normal}
+                name="checked"
+                checked={status.checked}
                 onChange={(e) =>
-                  setStatus({ ...status, normal: e.target.checked })
+                  setStatus({ ...status, checked: e.target.checked })
                 }
                 className="hidden"
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.normal ? 'bg-Primary-DeepTeal' : 'bg-white'
+                  status.checked ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
-                {status.normal && (
+                {status.checked && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-3 w-3 text-white"
@@ -205,25 +205,25 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 )}
               </div>
               <div className="px-2.5 py-[2px] rounded-full bg-[#DEF7EC] text-[10px]">
-                Normal
+                Checked
               </div>
             </label>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
                 name="atRisk"
-                checked={status.atRisk}
+                checked={status['needs check']}
                 onChange={(e) =>
-                  setStatus({ ...status, atRisk: e.target.checked })
+                  setStatus({ ...status, "needs check": e.target.checked })
                 }
                 className="hidden"
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.atRisk ? 'bg-Primary-DeepTeal' : 'bg-white'
+                  status['needs check'] ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
-                {status.atRisk && (
+                {status['needs check'] && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-3 w-3 text-white"
@@ -239,25 +239,25 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 )}
               </div>
               <div className="px-2.5 py-[2px] rounded-full bg-[#F9DEDC] text-[10px]">
-                At Risk
+                Needs Check
               </div>
             </label>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
                 name="critical"
-                checked={status.critical}
+                checked={status['incomplete data']}
                 onChange={(e) =>
-                  setStatus({ ...status, critical: e.target.checked })
+                  setStatus({ ...status, "incomplete data": e.target.checked })
                 }
                 className="hidden"
               />
               <div
                 className={`w-4 h-4 flex items-center justify-center rounded  border border-Primary-DeepTeal  ${
-                  status.critical ? 'bg-Primary-DeepTeal' : 'bg-white'
+                  status['incomplete data'] ? 'bg-Primary-DeepTeal' : 'bg-white'
                 }`}
               >
-                {status.critical && (
+                {status['incomplete data'] && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-3 w-3 text-white"
@@ -273,7 +273,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 )}
               </div>
               <div className="px-2.5 py-[2px] rounded-full bg-[#FFD8E4] text-[10px]">
-                Critical
+              Incomplete Data
               </div>
             </label>
           </div>
@@ -282,7 +282,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         {/* Enroll Date Section */}
         <div className=" w-full flex flex-col md:flex-row items-start md:items-center gap-[15px] md:gap-7">
           <h3 className="text-xs font-medium  text-nowrap">Enroll Date</h3>
-          <div className="w-full flex  gap-3">
+          <div className="w-full flex justify-between  gap-3">
             {/* <div className="relative"> */}
             {/* <DatePicker
                 selected={enrollDate.from}
