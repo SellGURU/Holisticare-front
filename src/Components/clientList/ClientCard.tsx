@@ -16,6 +16,8 @@ interface ClientCardProps {
   onarchive: (memberid: any) => void;
   onToggleHighPriority: (memberid: any) => void;
   activeTab: string;
+  onAssign: (memberId: number, coachUsername: string) => void;
+
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
@@ -24,6 +26,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   onarchive,
   onToggleHighPriority,
   activeTab,
+  onAssign
 }) => {
   console.log(client);
 
@@ -188,7 +191,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
     // ... other coach properties
   }
   const [CoachList, setCoachList] = useState<Array<any>>([]);
-  const [selectedCoach, setselectedCoach] = useState('');
   console.log(CoachList);
 
   const handleAssignClick = () => {
@@ -207,11 +209,15 @@ const ClientCard: React.FC<ClientCardProps> = ({
     );
 
     // Send only the selected coach to API
+    console.log(client.assigned_to);
+
     Application.assignCoach({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
-      setselectedCoach(selectedCoach.username);
+      onAssign(client.member_id, selectedCoach.username);
+      console.log(client.assigned_to);
+
       // setshowAssign(false);
     });
   };
@@ -701,7 +707,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       Assigned to
                     </div>
                     <div className="flex text-nowrap truncate max-w-[110px] ">
-                      {client.assigned_to[0] || selectedCoach}
+                      {client.assigned_to[0]}
                     </div>
                     {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img
