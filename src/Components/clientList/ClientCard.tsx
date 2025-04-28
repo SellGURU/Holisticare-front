@@ -16,6 +16,7 @@ interface ClientCardProps {
   onarchive: (memberid: any) => void;
   onToggleHighPriority: (memberid: any) => void;
   activeTab: string;
+  onAssign: (memberId: number, coachUsername: string) => void;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
@@ -24,6 +25,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   onarchive,
   onToggleHighPriority,
   activeTab,
+  onAssign,
 }) => {
   console.log(client);
 
@@ -206,11 +208,16 @@ const ClientCard: React.FC<ClientCardProps> = ({
     );
 
     // Send only the selected coach to API
+    console.log(client.assigned_to);
+
     Application.assignCoach({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
-      setshowAssign(false);
+      onAssign(client.member_id, selectedCoach.username);
+      console.log(client.assigned_to);
+
+      // setshowAssign(false);
     });
   };
   //  handleAssignCoach = (index: number) => {
@@ -476,6 +483,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
 
                     <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAssignClick();
+                      }}
                       className={`${showAssign && 'rotate-180'} transition-transform`}
                     >
                       <SvgIcon
@@ -689,12 +700,15 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   </div>
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-3">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs ">
+                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] mr-3">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
+                    <div className="flex text-nowrap truncate max-w-[110px] ">
+                      {client.assigned_to[0]}
+                    </div>
+                    {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img
                         className="w-full h-full rounded-full object-cover"
                         onError={(e: any) => {
@@ -714,7 +728,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                           alt=""
                         />
                       )}
-                    </div>
+                    </div> */}
                   </div>
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[38px]">

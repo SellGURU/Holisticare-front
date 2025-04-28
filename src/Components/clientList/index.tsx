@@ -32,6 +32,7 @@ type ClientData = {
   favorite?: boolean;
   archived?: boolean;
   drift_analyzed?: boolean;
+  assigned_to?: Array<string>;
   // Add other properties as needed
 };
 type GenderFilter = {
@@ -40,9 +41,9 @@ type GenderFilter = {
 };
 
 type StatusFilter = {
-  normal: boolean;
-  atRisk: boolean;
-  critical: boolean;
+  checked: boolean;
+  ['needs check']: boolean;
+  ['incomplete data']: boolean;
 };
 
 type DateFilter = {
@@ -117,7 +118,7 @@ const ClientList = () => {
   const [activeList, setActiveList] = useState('grid');
   const [filters, setFilters] = useState<Filters>({
     gender: { male: false, female: false },
-    status: { normal: false, atRisk: false, critical: false },
+    status: { checked: false, 'needs check': false, 'incomplete data': false },
     enrollDate: { from: null, to: null },
   });
   const applyFilters = (filters: Filters) => {
@@ -135,15 +136,16 @@ const ClientList = () => {
 
     // Only apply status filter if at least one status is selected
     if (
-      filters.status.normal ||
-      filters.status.atRisk ||
-      filters.status.critical
+      filters.status.checked ||
+      filters.status['needs check'] ||
+      filters.status['incomplete data']
     ) {
       filtered = filtered.filter(
         (client) =>
-          (filters.status.normal && client.status === 'Normal') ||
-          (filters.status.atRisk && client.status === 'At Risk') ||
-          (filters.status.critical && client.status === 'Critical'),
+          (filters.status.checked && client.status === 'checked') ||
+          (filters.status['needs check'] && client.status === 'needs check') ||
+          (filters.status['incomplete data'] &&
+            client.status === 'incomplete data'),
       );
     }
 
@@ -170,7 +172,11 @@ const ClientList = () => {
   const clearFilters = () => {
     setFilters({
       gender: { male: false, female: false },
-      status: { normal: false, atRisk: false, critical: false },
+      status: {
+        checked: false,
+        'needs check': false,
+        'incomplete data': false,
+      },
       enrollDate: { from: null, to: null },
     });
     setFilteredClientList(clientList);
@@ -408,6 +414,35 @@ const ClientList = () => {
                             return nes.filter((el) => el.member_id != memberId);
                           });
                         }}
+                        onAssign={(memberId, coachUsername) => {
+                          setFilteredClientList((prevList) =>
+                            prevList.map((client) =>
+                              client.member_id === memberId
+                                ? {
+                                    ...client,
+                                    assigned_to: [
+                                      coachUsername,
+                                      ...(client.assigned_to || []),
+                                    ],
+                                  }
+                                : client,
+                            ),
+                          );
+
+                          setClientList((prevList) =>
+                            prevList.map((client) =>
+                              client.member_id === memberId
+                                ? {
+                                    ...client,
+                                    assigned_to: [
+                                      coachUsername,
+                                      ...(client.assigned_to || []),
+                                    ],
+                                  }
+                                : client,
+                            ),
+                          );
+                        }}
                         onarchive={(memberId: any) => {
                           setFilteredClientList((pre) => {
                             const nes = [...pre];
@@ -448,7 +483,7 @@ const ClientList = () => {
             </>
           ) : (
             <>
-              <div className="w-full h-[80vh] flex justify-center items-center">
+              <div className="w-full h-[100vh] flex justify-center items-center">
                 <div>
                   <div className="flex justify-center">
                     <img src="./icons/EmptyState.svg" alt="" />
