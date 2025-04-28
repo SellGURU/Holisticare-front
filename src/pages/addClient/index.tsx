@@ -191,7 +191,7 @@ const AddClient = () => {
                       </div>
                     </ButtonPrimary>
                     <ButtonPrimary
-                    ClassName=' md:w-[200px]'
+                      ClassName=" md:w-[200px]"
                       size="small"
                       onClick={() => {
                         navigate(

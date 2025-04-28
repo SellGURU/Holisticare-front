@@ -109,7 +109,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
       setIsReportAvailable(eventData.detail.isHaveReport);
-      
     };
 
     subscribe('reportStatus', handleReportStatus);
@@ -120,7 +119,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   }, []);
   console.log(isReportAvailable);
   console.log(disableClicks);
-  
 
   return (
     <div

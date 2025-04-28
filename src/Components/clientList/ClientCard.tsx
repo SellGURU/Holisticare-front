@@ -210,7 +210,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
-      setshowAssign(false);
+      // setshowAssign(false);
     });
   };
   //  handleAssignCoach = (index: number) => {
@@ -476,10 +476,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
 
                     <div
-                    onClick={(e)=>{
-                      e.stopPropagation()
-                      handleAssignClick()
-                    }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAssignClick();
+                      }}
                       className={`${showAssign && 'rotate-180'} transition-transform`}
                     >
                       <SvgIcon
@@ -698,7 +698,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className='flex text-nowrap truncate max-w-[110px] '>{client.assigned_to[0]}</div>
+                    <div className="flex text-nowrap truncate max-w-[110px] ">
+                      {client.assigned_to[0]}
+                    </div>
                     {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img
                         className="w-full h-full rounded-full object-cover"
