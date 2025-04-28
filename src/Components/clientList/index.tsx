@@ -448,7 +448,7 @@ const ClientList = () => {
             </>
           ) : (
             <>
-              <div className="w-full h-[80vh] flex justify-center items-center">
+              <div className="w-full h-[100vh] flex justify-center items-center">
                 <div>
                   <div className="flex justify-center">
                     <img src="./icons/EmptyState.svg" alt="" />

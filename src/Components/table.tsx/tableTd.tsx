@@ -7,6 +7,7 @@ import Badge from '../badge';
 // import { useSelector } from "react-redux";
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
+import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
 export const columns = (dataLength: number): ColumnDef<any>[] => [
@@ -16,7 +17,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
 
     cell: ({ row }) => {
-      console.log(row);
+      console.log(row.original);
 
       return (
         <div className="w-[15vw]">
@@ -52,7 +53,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
   {
     accessorKey: 'member_id',
     header: 'Member ID',
-    enableSorting: false,
+    enableSorting: true,
     cell: ({ row }) => {
       return (
         <div className="flex justify-center text-xs text-Text-Secondary ">
@@ -112,9 +113,21 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
   //   },
   // },
   {
+    accessorKey: 'last_checkin',
+    header: 'Last Check-in',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original.last_checkin || 'NO Data'}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: 'enroll_date',
     header: 'Enroll Date',
-    enableSorting: true,
+    enableSorting: false,
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
@@ -123,6 +136,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       );
     },
   },
+
   // {
   //   accessorKey: "information.last_followup",
   //   header: "Last Follow-Up",
@@ -140,6 +154,42 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
           <Badge status={row.original.status || 'at-risk'}>
             {row.original.status || 'No Data'}
           </Badge>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'Assigned',
+    header: 'Assigned',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original.assigned_to[0] || 'NO Data'}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'Check-in',
+    header: 'Check-in',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original['Check-in'] || 'NO Data'}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'Questionnaire',
+    header: 'Questionnaire',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {row.original['Questionary'] || 'NO Data'}
         </div>
       );
     },
@@ -243,6 +293,10 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
             alt=""
             className="cursor-pointer"
           /> */}
+          <div onClick={() => {}}>
+            <SvgIcon src="/icons/client-card/more.svg" color="#005F73" />
+          </div>
+
           <img
             onClick={() => {
               publish('confirmDelete', {
@@ -257,7 +311,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
               // }
               // console.log(row.original.information.member_id)
             }}
-            className="cursor-pointer"
+            className="cursor-pointe hidden"
             src="/icons/delete-green.svg"
             alt=""
           />
