@@ -49,7 +49,7 @@ const Table: React.FC<TableProps> = ({ classData }) => {
       globalFilter,
       pagination: {
         pageIndex: currentPage,
-        pageSize:8, // Link page index to currentPage
+        pageSize: 8, // Link page index to currentPage
       },
     },
     getCoreRowModel: getCoreRowModel(),
@@ -104,10 +104,24 @@ const Table: React.FC<TableProps> = ({ classData }) => {
                             )}
                             {header.column.getCanSort() &&
                               header.column.getIsSorted() === false && (
-                                <img src="/icons/sorting.svg" className='cursor-pointer hidden ml-1' alt="" />
+                                <img
+                                  src="/icons/sorting.svg"
+                                  className="cursor-pointer hidden ml-1"
+                                  alt=""
+                                />
                               )}
-                            {header.column.getIsSorted() === 'asc' && (<img className='cursor-pointer hidden ml-1' src='/icons/sort-up.svg' />)}
-                            {header.column.getIsSorted() === 'desc' && (<img className='cursor-pointer hidden ml-1' src='/icons/sort-down.svg' />)}
+                            {header.column.getIsSorted() === 'asc' && (
+                              <img
+                                className="cursor-pointer hidden ml-1"
+                                src="/icons/sort-up.svg"
+                              />
+                            )}
+                            {header.column.getIsSorted() === 'desc' && (
+                              <img
+                                className="cursor-pointer hidden ml-1"
+                                src="/icons/sort-down.svg"
+                              />
+                            )}
                           </div>
                         </div>
                       </th>
@@ -142,14 +156,13 @@ const Table: React.FC<TableProps> = ({ classData }) => {
           )}
         </div>
       </div>
-      <div className='mt-5'>
-      <Pagination
-        currentPage={currentPage + 1}
-        totalPages={Math.ceil(data.length / pageSize)}
-        onPageChange={handlePageChange}
-      />
+      <div className="mt-5">
+        <Pagination
+          currentPage={currentPage + 1}
+          totalPages={Math.ceil(data.length / pageSize)}
+          onPageChange={handlePageChange}
+        />
       </div>
-    
     </div>
   );
 };

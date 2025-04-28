@@ -190,8 +190,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const [CoachList, setCoachList] = useState<Array<any>>([]);
   console.log(CoachList);
 
-
-
   const handleAssignClick = () => {
     Application.getCoachList({ member_id: client.member_id }).then((res) => {
       setCoachList(res.data);
@@ -200,13 +198,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
   };
   const handleCoachSelection = (selectedCoach: Coach) => {
     // Update UI - uncheck previous coach and check new one
-    setCoachList(prevCoaches => 
-      prevCoaches.map(coach => ({
+    setCoachList((prevCoaches) =>
+      prevCoaches.map((coach) => ({
         ...coach,
-        assigned: coach.username === selectedCoach.username
-      }))
+        assigned: coach.username === selectedCoach.username,
+      })),
     );
-  
+
     // Send only the selected coach to API
     Application.assignCoach({
       member_id: client.member_id,
@@ -219,13 +217,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
   //   // Get all coaches that have assigned = true (including previously assigned coaches)
   //   const assignedCoaches = CoachList.filter(coach => coach.assigned)
   //     .map(coach => coach.username);
-  
+
   //   // Add the newly selected coach if not already included
   //   const selectedCoach = CoachList[index];
   //   if (!assignedCoaches.includes(selectedCoach.username)) {
   //     assignedCoaches.push(selectedCoach.username);
   //   }
-  
+
   //   Application.assignCoach({
   //     member_id: client.member_id,
   //     coach_usernames: assignedCoaches, // Send all assigned coaches
@@ -478,6 +476,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
 
                     <div
+                    onClick={(e)=>{
+                      e.stopPropagation()
+                      handleAssignClick()
+                    }}
                       className={`${showAssign && 'rotate-180'} transition-transform`}
                     >
                       <SvgIcon
@@ -492,13 +494,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
                       {CoachList.map((coach: Coach) => (
                         <div
-                        onClick={() => handleCoachSelection(coach)}
-                        
+                          onClick={() => handleCoachSelection(coach)}
                           className={`p-1 cursor-pointer w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
                           <div>
                             <Checkbox
-                onChange={() => handleCoachSelection(coach)}                              checked={coach.assigned}
+                              onChange={() => handleCoachSelection(coach)}
+                              checked={coach.assigned}
                             />
                           </div>
 
@@ -692,11 +694,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-3">
+                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] mr-3">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
+                    <div className='flex text-nowrap truncate max-w-[110px] '>{client.assigned_to[0]}</div>
+                    {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
                       <img
                         className="w-full h-full rounded-full object-cover"
                         onError={(e: any) => {
@@ -716,7 +719,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                           alt=""
                         />
                       )}
-                    </div>
+                    </div> */}
                   </div>
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
                     <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[38px]">

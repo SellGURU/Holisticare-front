@@ -374,11 +374,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-        {
-          !isHaveReport && (
-            <div className='fixed inset-0 bg-white opacity-40 z-[99]'></div>
-          )
-        }
+          {!isHaveReport && (
+            <div className="fixed inset-0 bg-white opacity-40 z-[9]" />
+          )}
           <div
             ref={scrollContainerRef}
             onScrollCapture={() => {
