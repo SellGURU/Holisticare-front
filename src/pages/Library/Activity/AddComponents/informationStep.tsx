@@ -112,9 +112,7 @@ const InformationStep: FC<InformationStepProps> = ({
       <div className="w-full flex gap-4 mt-6 relative">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium text-Text-Primary">
-              Title
-            </div>
+            <div className="text-xs font-medium text-Text-Primary">Title</div>
             <TextField
               type="text"
               newStyle
