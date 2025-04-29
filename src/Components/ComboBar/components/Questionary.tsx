@@ -587,7 +587,7 @@ export const Questionary = () => {
             </div>
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-                <div className="text-[12px] text-Primary-DeepTeal font-medium">
+                <div style={{textAlignLast: 'center'}} className="text-[12px] text-Primary-DeepTeal font-medium text-justify">
                   {(questionsFormData?.questions &&
                     questionsFormData.questions[activeCard - 1]?.question) ||
                     'Question not available'}

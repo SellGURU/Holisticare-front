@@ -16,6 +16,7 @@ import { Notes } from './components/notes.tsx';
 import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import SvgIcon from '../../utils/svgIcon.tsx';
+import { Tooltip } from 'react-tooltip';
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
   isHolisticPlan?: boolean;
@@ -33,7 +34,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
     { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
     { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
-    { name: 'Select Client', url: '/icons/sidbar-menu/repeat.svg' },
+    { name: 'Switch Client', url: '/icons/sidbar-menu/repeat.svg' },
   ];
   const [patientInfo, setPatientInfo] = useState({
     name: '',
@@ -141,7 +142,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         return <TimeLine />;
       case 'Client’s Chat History':
         return <ChatModal memberId={id} info={patientInfo}></ChatModal>;
-      case 'Select Client':
+      case 'Switch Client':
         return <SwitchClient></SwitchClient>;
       default:
         return <div>No Content</div>;
@@ -190,9 +191,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             />
           </li>
           <li
+          data-tooltip-id='name'
             key={'2'}
             className={
-              'text-Text-Primary TextStyle-Headline-6 w-10 text-center hidden md:block'
+              'text-Text-Primary TextStyle-Headline-6 w-10 text-center hidden md:block select-none'
             }
             style={{
               whiteSpace: '',
@@ -201,6 +203,17 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             }}
           >
             {patientInfo.name.substring(0, 20)}
+            {
+              patientInfo.name.length > 20 && (
+                <Tooltip place='left' className="!bg-white !w-fit  !text-wrap 
+                !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+         style={{
+           zIndex: 9999,
+           pointerEvents: 'none',
+         }} id='name' >{patientInfo.name}</Tooltip>
+
+              )
+            }
           </li>
           <li
             key={'line'}

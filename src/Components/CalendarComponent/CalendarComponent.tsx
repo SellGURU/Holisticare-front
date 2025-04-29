@@ -267,7 +267,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               })}
             </div>
           </div>
-          <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1 mb-2 py-5">
+          <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1  py-3">
             {getCurrentMonthWithBuffer(data[0].date)
               .slice(0, 7)
               .map((day, index) => (
