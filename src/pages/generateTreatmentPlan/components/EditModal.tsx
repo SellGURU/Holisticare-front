@@ -93,9 +93,8 @@ const EditModal: React.FC<EditModalProps> = ({
         defalts?.['Practitioner Comments'] || practitionerComments,
     },
     validationSchema,
-    validateOnMount: false,
-    validateOnChange: false,
-    validateOnBlur: false,
+    validateOnMount: true,
+    enableReinitialize: true,
 
     onSubmit: (values) => {
       if (formik.isValid) {
@@ -155,6 +154,7 @@ const EditModal: React.FC<EditModalProps> = ({
     refrence: modalRef,
     close: () => {
       onClose();
+      clearFields();
     },
   });
 
@@ -495,6 +495,7 @@ const EditModal: React.FC<EditModalProps> = ({
             onClick={() => {
               setShowValidation(false);
               onClose();
+              clearFields();
             }}
             className="text-sm font-medium text-[#909090] cursor-pointer"
           >

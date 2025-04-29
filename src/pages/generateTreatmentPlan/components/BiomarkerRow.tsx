@@ -123,7 +123,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         pointerEvents: 'none',
                       }}
                     >
-                      <div className="text-Text-Primary">System Score</div>
+                      <div className="text-Text-Primary font-medium">System Score</div>
                       <div className="text-Text-Secondary">
                         Score based on all data and AI insights.
                       </div>
@@ -144,7 +144,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                         pointerEvents: 'none',
                       }}
                     >
-                      <div className="text-Text-Primary">Base Score</div>
+                      <div className="text-Text-Primary font-medium">Base Score</div>
                       <div className="text-Text-Secondary">
                         Initial score from core health metrics.
                       </div>
