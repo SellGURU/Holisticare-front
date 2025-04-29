@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 class Api {
   protected static base_url: string =
     'https://vercel-backend-one-roan.vercel.app/holisticare';
-    // 'https://vercel-backend-one-roan.vercel.app/holisticare_test';
+  // 'https://vercel-backend-one-roan.vercel.app/holisticare_test';
   // protected static base_url: string = "https://mock.app";
   protected static post(url: string, data?: any, config?: any) {
     if (!config?.noPending) {
