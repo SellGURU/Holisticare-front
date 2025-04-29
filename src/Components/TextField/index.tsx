@@ -8,6 +8,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   newStyle?: boolean;
   largeHeight?: boolean;
+  titleRequired?: boolean;
 }
 
 const TextField: React.FC<TextFieldProps> = ({
@@ -19,6 +20,7 @@ const TextField: React.FC<TextFieldProps> = ({
   type,
   newStyle,
   largeHeight,
+  titleRequired,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +37,7 @@ const TextField: React.FC<TextFieldProps> = ({
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let value = event.target.value;
+    const value = event.target.value;
 
     if (type === 'email') {
       // Remove only leading spaces for email type
@@ -75,7 +77,7 @@ const TextField: React.FC<TextFieldProps> = ({
     <div className={`flex flex-col ${className}`}>
       {label && (
         <label className="text-Text-Primary text-[12px] font-medium">
-          {label}
+          {label} {titleRequired && <span className="text-Red">*</span>}
         </label>
       )}
       <div className="relative">
