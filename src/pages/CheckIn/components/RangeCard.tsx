@@ -9,6 +9,7 @@ interface RangeCardProps {
   showValidation?: boolean;
   error?: boolean;
   required?: boolean;
+  showTitleRequired?: boolean;
 }
 
 const RangeCard: React.FC<RangeCardProps> = ({
@@ -20,6 +21,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
   showValidation,
   error,
   required,
+  showTitleRequired,
 }) => {
   const [val, setVal] = useState(value || 0);
 
@@ -39,11 +41,11 @@ const RangeCard: React.FC<RangeCardProps> = ({
         {!hideQuestions && (
           <div className="text-[12px] text-Text-Primary">
             {index ? index + '.' : ''} {question}
-            {required && <span className="text-Red ml-1">*</span>}
+            {showTitleRequired && <span className="text-Red ml-1">*</span>}
           </div>
         )}
 
-        <div className="w-full mt-4">
+        <div className="w-full">
           <input
             type="range"
             value={val}
@@ -71,7 +73,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
             <div className="text-[10px] ml-1 text-Text-Secondary">7</div>
             <div className="text-[10px] ml-1 text-Text-Secondary">8</div>
             <div className="text-[10px] ml-1 text-Text-Secondary">9</div>
-            <div className="text-[10px] ml-1 text-Text-Secondary">{'>10'}</div>
+            <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
           </div>
         </div>
       </div>

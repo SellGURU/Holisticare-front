@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import InformationStep from './AddComponents/informationStep';
 import ExersiceStep from './AddComponents/ExersiceStep';
 import Application from '../../../api/app';
+import Circleloader from '../../../Components/CircleLoader';
 // import SectionOrderModal from './AddComponents/SectionOrder';
 
 interface AddActivityProps {
@@ -14,6 +15,7 @@ interface AddActivityProps {
 const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [step, setStep] = useState(0);
   // const [showSectionOrder, setShowSectionOrder] = useState(false);
+  const [loading, setLoading] = useState(editid ? true : false);
   const [sectionList, setSectionList] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
@@ -138,6 +140,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             };
           }),
         );
+        setLoading(false);
       });
     }
   }, [editid]);
@@ -179,6 +182,11 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
 
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div
         className={`bg-white ${step === 0 ? 'w-[784px]' : 'w-[884px]'} p-4 rounded-[16px] h-full`}
       >

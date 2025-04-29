@@ -7,6 +7,7 @@ import SvgIcon from '../../utils/svgIcon';
 import ConflictsModal from './components/ConflictsModal';
 import BasedOnModal from './components/BasedOnModal';
 import FilePreviewModal from './components/FilePreviewModal';
+import { Tooltip } from 'react-tooltip';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -83,6 +84,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/LifeStyle2.svg';
       case 'Activity':
         return '/icons/weight.svg';
+      default:
+        return '/icons/others.svg';
     }
   };
   return (
@@ -164,53 +167,109 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 <div className="flex justify-start items-start ml-2">
-                  <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
-                    • {valueData}:
-                  </div>
-                  {valueData == 'File' && (
-                    <div
-                      onClick={() => setShowFilePreviewModal(true)}
-                      className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
-                    >
-                      Youtube Link / Video
-                    </div>
-                  )}
-                  <div className="text-xs text-Text-Primary text-justify ml-1">
-                    {valueData === 'Macros' ? (
-                      <div className="flex justify-start items-center gap-4">
-                        <div className="flex justify-start items-center">
-                          Carbs: {value['Total Macros']?.Carbs}
-                          <div className="text-Text-Quadruple">gr</div>
-                        </div>
-                        <div className="flex justify-start items-center">
-                          Protein: {value['Total Macros']?.Protein}
-                          <div className="text-Text-Quadruple">gr</div>
-                        </div>
-                        <div className="flex justify-start items-center">
-                          Fat: {value['Total Macros']?.Fats}
-                          <div className="text-Text-Quadruple">gr</div>
-                        </div>
+                  {value.Category === 'Diet' &&
+                  value.Category === 'Activity' &&
+                  value.Category === 'Lifestyle' &&
+                  value.Category === 'Supplement' ? (
+                    <>
+                      <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
+                        • {valueData}:
                       </div>
-                    ) : (
-                      value[valueData]
-                    )}
-                  </div>
-                  <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-5 mr-2">
+                      {valueData == 'File' && (
+                        <div
+                          onClick={() => setShowFilePreviewModal(true)}
+                          className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
+                        >
+                          Youtube Link / Video
+                        </div>
+                      )}
+                      <div className="text-xs text-Text-Primary text-justify ml-1">
+                        {valueData === 'Macros' ? (
+                          <div className="flex justify-start items-center gap-4">
+                            <div className="flex justify-start items-center">
+                              Carbs: {value['Total Macros']?.Carbs}
+                              <div className="text-Text-Quadruple">gr</div>
+                            </div>
+                            <div className="flex justify-start items-center">
+                              Protein: {value['Total Macros']?.Protein}
+                              <div className="text-Text-Quadruple">gr</div>
+                            </div>
+                            <div className="flex justify-start items-center">
+                              Fat: {value['Total Macros']?.Fats}
+                              <div className="text-Text-Quadruple">gr</div>
+                            </div>
+                          </div>
+                        ) : (
+                          value[valueData]
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    ''
+                  )}
+                  <div
+                    className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ${value.Category === 'Diet' && 'ml-5'} mr-2`}
+                  >
                     • Score:
                   </div>
                   <div className={`flex items-center gap-1`}>
-                    <div className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                    <div
+                      className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
+                      data-tooltip-id={`tooltip-system-score-${index}`}
+                    >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-DeepTeal`}
                       />
                       {value['System Score'] ? value['System Score'] : '-'}
                     </div>
-                    <div className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center">
+                    <Tooltip
+                      id={`tooltip-system-score-${index}`}
+                      place="top"
+                      className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+                    >
+                      <div className="font-medium text-[10px] text-Text-Primary">
+                        System Score
+                      </div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        Initial score from core health metrics.
+                      </div>
+                    </Tooltip>
+                    <div
+                      className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
+                      data-tooltip-id={`tooltip-base-score-${index}`}
+                    >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-EmeraldGreen`}
                       />
                       {value.Base_Score ? value.Base_Score : '-'}
                     </div>
+                    <Tooltip
+                      id={`tooltip-base-score-${index}`}
+                      place="top"
+                      className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+                    >
+                      <div className="font-medium text-[10px] text-Text-Primary">
+                        Base Score
+                      </div>
+                      <div className="text-[10px] text-Text-Quadruple">
+                        Score based on all data and AI insights.
+                      </div>
+                    </Tooltip>
+                    <div
+                      className="text-[8px] text-Primary-DeepTeal cursor-pointer"
+                      data-tooltip-id={`tooltip-score-calculation-${index}`}
+                    >
+                      Score Calculation
+                    </div>
+                    {value['Practitioner Comments']?.length > 0 && (
+                      <Tooltip
+                        id={`tooltip-score-calculation-${index}`}
+                        place="top"
+                        className="!bg-white !w-[300px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[9999]"
+                      >
+                        {value['Practitioner Comments'][0]}
+                      </Tooltip>
+                    )}
                   </div>
                   {value.flag && value.flag.conflicts.length > 0 && (
                     <button

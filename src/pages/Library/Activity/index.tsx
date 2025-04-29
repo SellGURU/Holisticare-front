@@ -6,9 +6,11 @@ import ActivityHandler from './ActivityHandler';
 import { Exercise } from './Exercise';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Application from '../../../api/app';
+import Circleloader from '../../../Components/CircleLoader';
 
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
+  const [loading, setLoading] = useState(true);
   const [dataList, setDataList] = useState<Array<any>>([]);
   const [ExcercisesList, setExcercisesList] = useState<Array<any>>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,15 +36,22 @@ const Activity = () => {
   const getExercisesList = () => {
     Application.getExercisesList({}).then((res) => {
       setExcercisesList(res.data);
+      setLoading(false);
     });
   };
   const getActivityList = () => {
     Application.activityList().then((res) => {
       setDataList(res.data);
+      setLoading(false);
     });
   };
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div>
         <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-[200px]">
           <div className="w-full flex justify-center ">
@@ -101,14 +110,14 @@ const Activity = () => {
                 getActivityList();
               }}
               data={getFilteredActivity()}
-            ></ActivityHandler>
+            />
           ) : (
             <Exercise
               data={getFilteredExercises()}
               onAdd={getExercisesList}
               showAdd={showAdd}
               setShowAdd={setShowAdd}
-            ></Exercise>
+            />
           )}
         </div>
       </div>

@@ -32,8 +32,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   exercise = {}, // Default to an empty object for adding
   isEdit,
 }) => {
-  console.log(exercise);
-
   const [, setTitle] = useState(exercise.Title || '');
   const [, setDescription] = useState(exercise.Description || '');
   const [, setInstruction] = useState(exercise.Instruction || '');
@@ -152,6 +150,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
 
     onSubmit(exerciseData);
     onClose();
+    resetForm();
   };
 
   // const handleFileChange = async (
@@ -324,7 +323,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?[a-zA-Z0-9_-]{11}/;
     return youtubeRegex.test(url);
   };
-  console.log(youTubeError);
 
   return (
     <MainModal
@@ -359,7 +357,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             />
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
-                Description <span className="text-Red">*</span>
+                Description
               </div>
               <textarea
                 value={formik.values.description}
@@ -402,7 +400,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             />
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
-                Instruction <span className="text-Red">*</span>
+                Instruction
               </div>
               <textarea
                 value={formik.values.instruction}
