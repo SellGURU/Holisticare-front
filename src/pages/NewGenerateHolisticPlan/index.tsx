@@ -871,7 +871,7 @@ const NewGenerateHolisticPlan = () => {
                   </div>
                 ) : (
                   <div className="flex justify-center items-center">
-                    <img src="/icons/tick-square.svg" alt="" />
+                    <img src="/icons/tick-square-no-border.svg" alt="" />
                   </div>
                 )}
                 {isSaving == 'saving' ? (

@@ -51,7 +51,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
-  console.log(value);
 
   useEffect(() => {
     onchange({
@@ -110,13 +109,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 value.Category == 'Supplement') && (
                 <>
                   <div
-                    data-tooltip-id="system-score"
-                    className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
+                    data-tooltip-id={`system-score-${index}`}
+                    className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1 cursor-pointer"
                   >
                     <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
                     {value['System Score']}
                     <Tooltip
-                      id={'system-score'}
+                      id={`system-score-${index}`}
                       place="top"
                       className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                       style={{
@@ -131,13 +130,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </Tooltip>
                   </div>
                   <div
-                    data-tooltip-id="base-score"
-                    className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
+                    data-tooltip-id={`base-score-${index}`}
+                    className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1 cursor-pointer"
                   >
                     <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
                     {value.Score}
                     <Tooltip
-                      id={'base-score'}
+                      id={`base-score-${index}`}
                       place="top"
                       className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                       style={{
@@ -153,7 +152,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                   <div
                     data-tooltip-id={index + 'score-calc'}
-                    className="text-Primary-DeepTeal select-none mt-[2px]"
+                    className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer"
                   >
                     Score Calculation
                     <Tooltip
