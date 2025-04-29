@@ -33,7 +33,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
         }}
         className={`flex flex-col justify-between overflow-x-auto bg-white  text-Text-Primary  border border-Boarder shadow-200`}
       >
-        {data.length > 0 ? (
+        {data?.length > 0 ? (
           <table
             className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
           >
@@ -65,7 +65,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         {/* Category */}
                         {index === 0 && (
                           <td
-                            rowSpan={items.length}
+                            rowSpan={items?.length}
                             className="px-3 py-3 align-top text-xs text-Text-Primary whitespace-nowrap"
                           >
                             {key.charAt(0).toUpperCase() + key.slice(1)}
