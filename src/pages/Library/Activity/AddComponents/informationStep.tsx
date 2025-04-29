@@ -112,9 +112,7 @@ const InformationStep: FC<InformationStepProps> = ({
       <div className="w-full flex gap-4 mt-6 relative">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium text-Text-Primary">
-              Title <span className="text-Red">*</span>
-            </div>
+            <div className="text-xs font-medium text-Text-Primary">Title</div>
             <TextField
               type="text"
               newStyle
@@ -132,7 +130,7 @@ const InformationStep: FC<InformationStepProps> = ({
 
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Description <span className="text-red-500">*</span>
+              Description
             </div>
             <textarea
               placeholder="Write the activity's description..."
@@ -156,7 +154,7 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score <span className="text-Red">*</span>
+              Base Score
             </div>
             <RangeCardLibraryActivity
               value={formik.values.score}
@@ -175,7 +173,7 @@ const InformationStep: FC<InformationStepProps> = ({
 
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
-              Instruction <span className="text-Red">*</span>
+              Instruction
             </div>
             <textarea
               placeholder="Write the activity's Instruction..."

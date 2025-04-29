@@ -20,7 +20,9 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
   return (
     <>
       <MainModal isOpen={previewShowModal} onClose={handlePreviewCloseModal}>
-        <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-4">
+        <div
+          className={`flex flex-col justify-between bg-white ${selectedRow?.Instruction?.length > 500 || selectedRow?.Description?.length > 500 ? 'max-w-[1000px]' : 'w-[500px]'} rounded-[16px] p-4`}
+        >
           <div className="w-full h-full">
             <div className="flex items-center justify-between">
               <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
@@ -84,7 +86,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center gap-5 text-justify w-full">
-                  <div className="font-medium text-Text-Primary text-xs">
+                  <div className="font-medium text-Text-Primary text-xs text-nowrap">
                     Macros Goal
                   </div>
                   <div className="flex items-center flex-grow-[1] justify-between pr-2">

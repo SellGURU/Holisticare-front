@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import PreviewExerciseModal from './PreviewModal';
+import { Tooltip } from 'react-tooltip';
 interface ActivityRowProps {
   exercise: any;
   index: number;
@@ -48,8 +49,28 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             ? `${exercise.Title.substring(0, 30)}...`
             : exercise.Title}
         </td>
-        <td className="py-3 text-xs text-nowrap overflow-hidden max-w-[250px] text-ellipsis text-[#888888] w-[300px] text-center ">
-          {exercise.Instruction}
+        <td
+          className="py-3 text-xs text-[#888888] w-[300px] text-center"
+          data-tooltip-id={`tooltip-activity-${index}`}
+        >
+          <div className="text-ellipsis select-none">
+            {exercise.Instruction.length > 47
+              ? exercise.Instruction.substring(0, 47) + '...'
+              : exercise.Instruction}
+          </div>
+          {exercise.Instruction.length > 47 && (
+            <Tooltip
+              id={`tooltip-activity-${index}`}
+              place="top"
+              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              style={{
+                zIndex: 9999,
+                pointerEvents: 'none',
+              }}
+            >
+              {exercise.Instruction}
+            </Tooltip>
+          )}
         </td>
         <td className="py-3 w-[150px] text-center  text-[10px] ">
           <div className="flex justify-center items-center gap-1">
@@ -86,7 +107,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             <div className="flex items-center gap-1 text-xs text-Text-Primary">
               Sure?
               <img
-                className="cursor-pointer size-4"
+                className="cursor-pointer w-[20px] h-[20px]"
                 onClick={() => {
                   onDelete();
                   setConfirmDelete(false);
@@ -95,7 +116,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
                 alt=""
               />
               <img
-                className="cursor-pointer size-4"
+                className="cursor-pointer w-[20px] h-[20px]"
                 onClick={() => setConfirmDelete(false)}
                 src="/icons/cansel-close-circle.svg"
                 alt=""
@@ -105,7 +126,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             <>
               <img
                 onClick={() => setViewModal(true)}
-                className="cursor-pointer size-4"
+                className="cursor-pointer"
                 src="/icons/eye-blue.svg"
                 alt=""
               />

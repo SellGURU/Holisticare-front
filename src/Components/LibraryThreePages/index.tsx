@@ -164,16 +164,22 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           tableData={filteredData}
           onDelete={(id) => {
             if (pageType === 'Supplement') {
+              setLoading(true);
               Application.deleteSupplement(id).then(() => {
                 getSupplements();
+                setLoading(false);
               });
             } else if (pageType === 'Lifestyle') {
+              setLoading(true);
               Application.deleteLifestyle(id).then(() => {
                 getLifestyles();
+                setLoading(false);
               });
             } else {
+              setLoading(true);
               Application.deleteDiet(id).then(() => {
                 getDiets();
+                setLoading(false);
               });
             }
           }}
