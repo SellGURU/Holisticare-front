@@ -49,7 +49,7 @@ export const Overview: React.FC<OverviewProps> = ({
         {Conflicts.length > 0 && showConflict && (
           <div className="w-full rounded-2xl px-4 py-3 bg-[#F9DEDC]">
             <div className="flex w-full justify-between items-center">
-              <div className="flex gap-5 items-center text-xs font-medium text-Text-Primary">
+              <div className="flex gap-2 items-center text-xs font-medium text-Text-Primary">
                 <img src="/icons/check-circle.svg" alt="Check Circle" />{' '}
                 Conflict
               </div>

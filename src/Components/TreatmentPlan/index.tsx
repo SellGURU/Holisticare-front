@@ -545,9 +545,17 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         <>
           <div className="rounded-xl border border-t-0 border-Gray-50">
             <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+              Client Condition Insights
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-5 py-2 flex flex-col gap-2 rounded-b-xl">
+              {clientSummary}
+            </div>
+          </div>
+          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Needs Focus Biomarkers
             </div>
-            <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+            <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2 rounded-b-xl">
               {NeedFocusData.map((el) => {
                 return (
                   <>
@@ -556,14 +564,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 );
               })}
             </ul>
-          </div>
-          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
-            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              Client Condition Insights
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-5 py-2 flex flex-col gap-2">
-              {clientSummary}
-            </div>
           </div>
         </>
       </SlideOutPanel>

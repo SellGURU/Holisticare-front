@@ -26,7 +26,7 @@ const initialCategoryState: CategoryState[] = [
 ];
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
-  const steps = ['General Condition', 'Set orders', 'Overview'];
+  const steps = ['General Condition', 'Set Orders', 'Overview'];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const { setTreatmentId } = useContext(AppContext);
   const [VisibleCategories, setVisibleCategories] =
