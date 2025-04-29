@@ -120,7 +120,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original.enroll_date || 'NO Data'}
+          {row.original.enroll_date || 'No Data'}
         </div>
       );
     },
@@ -132,7 +132,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original.last_checkin || 'NO Data'}
+          {row.original.last_checkin || 'No Data'}
         </div>
       );
     },
@@ -178,7 +178,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original['Check-in'] || 'NO Data'}
+          {row.original['Check-in'] || 'No Data'}
         </div>
       );
     },
@@ -193,7 +193,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
           title={row.original['Questionary']}
           className="text-xs text-Text-Secondary truncate  "
         >
-          {row.original['Questionary'] || 'NO Data'}
+          {row.original['Questionary'] || 'No Data'}
         </div>
       );
     },

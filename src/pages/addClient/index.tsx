@@ -341,7 +341,7 @@ const AddClient = () => {
                     </label>
                     <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
                       <SimpleDatePicker
-                      formik={formik}
+                        formik={formik}
                         placeholder="Select your date of birth..."
                         isAddClient
                         date={formik.values.dateOfBirth}
