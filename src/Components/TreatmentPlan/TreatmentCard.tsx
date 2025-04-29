@@ -16,7 +16,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
 
   const { positive, negative } = splitInstructions(data.Notes);
   return (
-    <div className="w-[354px] no-split print:w-full h-full text-justify  print:h-auto flex flex-col gap-4 px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
+    <div className="w-[354px] no-split print:w-full min-h-[234px] h-full text-justify  print:h-auto flex flex-col gap-4 px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm text-Text-Primary ">{data?.title}</div>
         {!isOther && (
@@ -30,7 +30,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               <Tooltip
                 id={'system-score'}
                 place="top"
-                className="!bg-white !w-[162px] !leading-5 !text-wrap 
+                className="!bg-white !w-[162px]  !text-wrap 
                  !text-[#888888] !shadow-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
                   zIndex: 9999,
@@ -40,7 +40,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                 <div className="text-Text-Primary font-medium">
                   System Score
                 </div>
-                <div className="text-Text-Secondary">
+                <div className="text-Text-Secondary ">
                   Score based on all data and AI insights.
                 </div>
               </Tooltip>
@@ -54,7 +54,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               <Tooltip
                 id={'base-score'}
                 place="top"
-                className="!bg-white !w-[162px] !shadow-100 !leading-5 !text-wrap 
+                className="!bg-white !w-[162px] !shadow-100  !text-wrap 
                  !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
                   zIndex: 9999,
