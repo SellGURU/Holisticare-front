@@ -17,7 +17,6 @@ interface ClientCardProps {
   onToggleHighPriority: (memberid: any) => void;
   activeTab: string;
   onAssign: (memberId: number, coachUsername: string) => void;
-
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({
@@ -26,7 +25,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   onarchive,
   onToggleHighPriority,
   activeTab,
-  onAssign
+  onAssign,
 }) => {
   console.log(client);
 

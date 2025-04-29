@@ -10,6 +10,7 @@ interface DatePickerProps {
   isAddClient?: boolean;
   inValid?: boolean;
   errorMessage?: string;
+  formik?: any
 }
 
 export default function SimpleDatePicker({
@@ -20,6 +21,7 @@ export default function SimpleDatePicker({
   isAddClient,
   inValid,
   errorMessage,
+  formik
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -54,7 +56,9 @@ export default function SimpleDatePicker({
   return (
     <div className="relative inline-block" ref={calendarRef}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {setOpen(!open)
+           if(formik){ formik.setFieldTouched('dateOfBirth', true);}
+        }}
         className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ''}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
          px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary ${
            inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
@@ -76,6 +80,7 @@ export default function SimpleDatePicker({
               if (newDate) {
                 setDate(new Date(newDate.year, newDate.month - 1, newDate.day));
               }
+              if(formik){ formik.setFieldTouched('dateOfBirth', true);}
               setOpen(false);
             }}
             shouldHighlightWeekends

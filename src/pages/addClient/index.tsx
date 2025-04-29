@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import MainTopBar from '../../Components/MainTopBar';
 import * as yup from 'yup';
-import YoupValidation from '../../validation';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 import SvgIcon from '../../utils/svgIcon';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
@@ -25,13 +24,21 @@ const AddClient = () => {
       email: '',
       age: 30,
       gender: 'unset',
+      dateOfBirth: null,
     },
     validationSchema: yup.object({
       age: yup.number().min(12).max(60),
-      email: YoupValidation('email'),
+      email: yup
+        .string()
+        .email('Enter a valid email address')
+        .required('Email is required'),
       firstName: yup.string().required('First name is required'),
       lastName: yup.string().required('Last name is required'),
       gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
+      dateOfBirth: yup
+        .date()
+        .required('Date of birth is required')
+        .min(new Date('1900-01-01'), 'Enter a valid date'),
     }),
     onSubmit: () => {
       submit();
@@ -75,10 +82,7 @@ const AddClient = () => {
   const [photo, setPhoto] = useState('');
   const [memberId, setMemberID] = useState('');
   const [isLoading, setisLoading] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
-  const validateDate = (date: any) => {
-    return !isNaN(date.getTime()); // Returns true if it's a valid date
-  };
+
   const submit = () => {
     setShowValidation(true);
     if (!formik.isValid) {
@@ -91,7 +95,7 @@ const AddClient = () => {
       email: formik.values.email,
       last_name: formik.values.lastName,
       picture: photo,
-      date_of_birth: dateOfBirth,
+      date_of_birth: formik.values.dateOfBirth,
       gender: formik.values.gender,
       wearable_devices: [],
     })
@@ -337,17 +341,23 @@ const AddClient = () => {
                     </label>
                     <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
                       <SimpleDatePicker
+                      formik={formik}
                         placeholder="Select your date of birth..."
                         isAddClient
-                        date={dateOfBirth}
+                        date={formik.values.dateOfBirth}
                         setDate={(date) => {
-                          if (validateDate(date)) {
-                            setDateOfBirth(date);
-                            setDobApiError(''); // Reset error on valid date selection
-                          }
+                          formik.setFieldValue('dateOfBirth', date);
+                          setDobApiError(''); // Reset error on valid date selection
                         }}
-                        inValid={showValidation && !!dobApiError}
-                        errorMessage={showValidation ? dobApiError : ''}
+                        inValid={
+                          formik.touched.dateOfBirth &&
+                          !!(formik.errors.dateOfBirth || dobApiError)
+                        }
+                        errorMessage={
+                          (formik.touched.dateOfBirth &&
+                            formik.errors.dateOfBirth) ||
+                          dobApiError
+                        }
                       />
                     </div>
                   </div>
@@ -358,12 +368,11 @@ const AddClient = () => {
                   type="email"
                   label="Email Address"
                   errorMessage={
-                    showValidation && (formik.errors.email || apiError)
-                      ? formik.errors.email || apiError
-                      : ''
+                    (formik.touched.email && formik.errors.email) || apiError
                   }
                   inValid={
-                    showValidation && (!!formik.errors.email || !!apiError)
+                    formik.touched.email &&
+                    (!!formik.errors.email || !!apiError)
                   }
                   placeholder="Enter client’s email address..."
                 />

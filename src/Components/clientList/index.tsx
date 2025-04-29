@@ -32,7 +32,7 @@ type ClientData = {
   favorite?: boolean;
   archived?: boolean;
   drift_analyzed?: boolean;
-  assigned_to?: Array<string>
+  assigned_to?: Array<string>;
   // Add other properties as needed
 };
 type GenderFilter = {
@@ -414,23 +414,34 @@ const ClientList = () => {
                             return nes.filter((el) => el.member_id != memberId);
                           });
                         }}
-                        onAssign={(memberId, coachUsername)=>{
+                        onAssign={(memberId, coachUsername) => {
                           setFilteredClientList((prevList) =>
                             prevList.map((client) =>
                               client.member_id === memberId
-                                ? { ...client, assigned_to: [coachUsername, ...(client.assigned_to || [])] }
-                                : client
-                            )
+                                ? {
+                                    ...client,
+                                    assigned_to: [
+                                      coachUsername,
+                                      ...(client.assigned_to || []),
+                                    ],
+                                  }
+                                : client,
+                            ),
                           );
-                          
+
                           setClientList((prevList) =>
                             prevList.map((client) =>
                               client.member_id === memberId
-                                ? { ...client, assigned_to: [coachUsername, ...(client.assigned_to || [])] }
-                                : client
-                            )
+                                ? {
+                                    ...client,
+                                    assigned_to: [
+                                      coachUsername,
+                                      ...(client.assigned_to || []),
+                                    ],
+                                  }
+                                : client,
+                            ),
                           );
-
                         }}
                         onarchive={(memberId: any) => {
                           setFilteredClientList((pre) => {
