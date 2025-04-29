@@ -32,8 +32,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   exercise = {}, // Default to an empty object for adding
   isEdit,
 }) => {
-  console.log(exercise);
-
   const [, setTitle] = useState(exercise.Title || '');
   const [, setDescription] = useState(exercise.Description || '');
   const [, setInstruction] = useState(exercise.Instruction || '');
@@ -325,7 +323,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?[a-zA-Z0-9_-]{11}/;
     return youtubeRegex.test(url);
   };
-  console.log(youTubeError);
 
   return (
     <MainModal
@@ -345,7 +342,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               type="text"
               newStyle
               label="Title"
-              titleRequired
               placeholder="Write the exercise’s title..."
               value={formik.values.title}
               onChange={(e) => {
@@ -361,7 +357,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             />
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
-                Description <span className="text-Red">*</span>
+                Description
               </div>
               <textarea
                 value={formik.values.description}
@@ -404,7 +400,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             />
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
-                Instruction <span className="text-Red">*</span>
+                Instruction
               </div>
               <textarea
                 value={formik.values.instruction}
@@ -502,7 +498,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               newStyle
               type="text"
               label="YouTube link"
-              titleRequired
               placeholder="Enter YouTube link ..."
               onChange={(e) => handleYouTubeLinkChange(e.target.value)}
               errorMessage={showYouTubeValidation ? youTubeError : undefined}

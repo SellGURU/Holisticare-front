@@ -119,7 +119,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               {exercise.Instruction}
             </div>
           </div>
-          <div className="flex w-full items-start gap-3 mb-12">
+          <div className="flex w-full items-start gap-3 mb-10">
             <div className="text-xs font-medium">
               {' '}
               {isActivty ? 'Sections' : 'File'}
@@ -279,7 +279,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                     ) : (
                       <video
                         key={video.file_id}
-                        className="rounded-xl h-[150px] w-[370px] border border-Gray-50 object-contain"
+                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
                         controls
                         src={video.base64}
                       >
