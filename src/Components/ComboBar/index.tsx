@@ -220,7 +220,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           </li>
           <li
             key={'line'}
-            className={'h-[2px] w-full px-[1px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] hidden md:block'}
+            className={
+              'h-[2px] w-full px-[1px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] hidden md:block'
+            }
           ></li>
           {itemList.map((el, index) => (
             <>

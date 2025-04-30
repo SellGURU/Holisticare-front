@@ -126,7 +126,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     >
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
-          onClick={() => !disableClicks && isReportAvailable && setActiveLayer('menu')}
+          onClick={() =>
+            !disableClicks && isReportAvailable && setActiveLayer('menu')
+          }
           className={`flex ${ActiveLayer === 'menu' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
           <img
@@ -134,7 +136,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
           />
         </div>
         <div
-          onClick={() => !disableClicks && isReportAvailable && setActiveLayer('layer')}
+          onClick={() =>
+            !disableClicks && isReportAvailable && setActiveLayer('layer')
+          }
           className={`flex ${ActiveLayer === 'layer' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
           <img

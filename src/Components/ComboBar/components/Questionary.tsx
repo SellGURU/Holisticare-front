@@ -588,7 +588,7 @@ export const Questionary = () => {
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-[6px] px-8 min-h-[108px] text-center rounded-t-[6px] flex items-center">
                 <div
-                  style={{ textAlignLast: 'center',textAlign:"center"}}
+                  style={{ textAlignLast: 'center', textAlign: 'center' }}
                   className="text-[12px]  text-Primary-DeepTeal font-medium text-justify"
                 >
                   {(questionsFormData?.questions &&
@@ -607,12 +607,17 @@ export const Questionary = () => {
                     activeCard,
                   )}
               </div>
-          
-                  <div className={` ${questionsFormData?.questions &&
-                    questionsFormData.questions[activeCard - 1]?.required ? 'block' : 'invisible'} text-[10px] text-red-500 mt-1 mb-5`}>
-                    * This question is required.
-                  </div>
-              
+
+              <div
+                className={` ${
+                  questionsFormData?.questions &&
+                  questionsFormData.questions[activeCard - 1]?.required
+                    ? 'block'
+                    : 'invisible'
+                } text-[10px] text-red-500 mt-1 mb-5`}
+              >
+                * This question is required.
+              </div>
             </div>
 
             <div className="w-full flex justify-center  pb-2 absolute bottom-0">
