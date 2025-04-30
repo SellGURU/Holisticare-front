@@ -43,7 +43,6 @@ const NewGenerateHolisticPlan = () => {
       setisFinalLoading(false);
       navigate(`/report/${id}/a?section=Holistic Plan`);
     }, 3000);
-    navigate(-1);
   };
   const [activeEl, setActiveEl] = useState<any>();
   const updateNeedFocus = (value: any) => {
@@ -266,7 +265,7 @@ const NewGenerateHolisticPlan = () => {
                       value={['Recommendation', 'Result']}
                     ></Toggle>
                   </div>
-                  <div
+                  {/* <div
                     className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData ? 'visible' : 'invisible'}  justify-end gap-2`}
                   >
                     <div
@@ -279,7 +278,6 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/analyse.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/analyse.svg" alt="" /> */}
                       Analysis
                     </div>
 
@@ -293,10 +291,9 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/chart.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/chart.svg" alt="" /> */}
                       Client Goals
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 {treatmentPlanData ? (
                   <div>

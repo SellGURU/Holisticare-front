@@ -3,7 +3,6 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import TreatmentCard from './TreatmentCard';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
@@ -404,7 +403,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="w-full flex justify-center md:justify-end gap-2 my-3">
+              {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">
                 <ButtonPrimary
                   ClassName="w-full md:w-fit"
                   size="small"
@@ -421,7 +420,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {' '}
                   <img src="/icons/chart.svg" alt="" /> Client Goals
                 </ButtonPrimary>
-              </div>
+              </div> */}
               <div className="w-full gap-1 md:gap-2 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden ">
                 <div
                   onClick={() => {
