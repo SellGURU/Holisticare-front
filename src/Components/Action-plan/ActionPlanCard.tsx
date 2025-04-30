@@ -206,9 +206,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
             ? `${el.description.substring(0, 150)}...`
             : el.description}
         </h6>
-        {
-          el.description.length > 150 && (
-            <Tooltip
+        {el.description.length > 150 && (
+          <Tooltip
             id={'desc'}
             place="top"
             className="!bg-white !w-[162px]  !text-wrap 
@@ -220,9 +219,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           >
             {el.description}
           </Tooltip>
-          )
-        }
-      
+        )}
       </div>
       <div className="mt-4 flex flex-col gap-1 w-[185px] mx-auto">
         <div className="flex w-full justify-between text-[10px]  text-Text-Secondary">

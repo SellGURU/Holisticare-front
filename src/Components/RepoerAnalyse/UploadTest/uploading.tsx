@@ -54,9 +54,10 @@ const Uploading: React.FC<UploadingProps> = ({
         (progressEvent: any) => {
           if (isCancelled) return;
           const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total,
+            (Math.sqrt(progressEvent.loaded / progressEvent.total) * 90)
           );
           setProgress(percentCompleted);
+         
         },
       )
         .then((response) => {
@@ -68,6 +69,8 @@ const Uploading: React.FC<UploadingProps> = ({
             type: file.type,
             size: file.size,
           };
+         
+
           onSuccess(fileWithId);
           setIsCompleted(true);
         })

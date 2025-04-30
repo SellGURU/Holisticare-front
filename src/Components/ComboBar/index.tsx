@@ -191,7 +191,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             />
           </li>
           <li
-          data-tooltip-id='name'
+            data-tooltip-id="name"
             key={'2'}
             className={
               'text-Text-Primary TextStyle-Headline-6 w-10 text-center hidden md:block select-none'
@@ -203,21 +203,24 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             }}
           >
             {patientInfo.name.substring(0, 20)}
-            {
-              patientInfo.name.length > 20 && (
-                <Tooltip place='left' className="!bg-white !w-fit  !text-wrap 
+            {patientInfo.name.length > 20 && (
+              <Tooltip
+                place="left"
+                className="!bg-white !w-fit  !text-wrap 
                 !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-         style={{
-           zIndex: 9999,
-           pointerEvents: 'none',
-         }} id='name' >{patientInfo.name}</Tooltip>
-
-              )
-            }
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+                id="name"
+              >
+                {patientInfo.name}
+              </Tooltip>
+            )}
           </li>
           <li
             key={'line'}
-            className={'h-[2px] w-full px-[1px] bg-green-400 hidden md:block'}
+            className={'h-[2px] w-full px-[1px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] hidden md:block'}
           ></li>
           {itemList.map((el, index) => (
             <>
