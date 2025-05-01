@@ -26,7 +26,7 @@ const initialCategoryState: CategoryState[] = [
 ];
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
-  const steps = ['General Condition', 'Set orders', 'Overview'];
+  const steps = ['General Condition', 'Set Orders', 'Overview'];
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const { setTreatmentId } = useContext(AppContext);
   const [VisibleCategories, setVisibleCategories] =
@@ -251,12 +251,26 @@ export const GenerateRecommendation = () => {
               >
                 {isButtonLoading ? (
                   <>
+                    {currentStepIndex == 2 && (
+                      <img
+                        className="w-4"
+                        src="/icons/tick-square.svg"
+                        alt=""
+                      />
+                    )}
                     {currentStepIndex == 2 ? 'Generate' : 'Next'}
 
                     <SpinnerLoader></SpinnerLoader>
                   </>
                 ) : (
                   <>
+                    {currentStepIndex == 2 && (
+                      <img
+                        className="w-4"
+                        src="/icons/tick-square.svg"
+                        alt=""
+                      />
+                    )}
                     {currentStepIndex == 2 ? 'Generate' : 'Next'}
                     {currentStepIndex != 2 && (
                       <img src="/icons/arrow-right-white.svg" alt="" />
