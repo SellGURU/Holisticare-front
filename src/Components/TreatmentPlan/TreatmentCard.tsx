@@ -23,10 +23,10 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
           <div className="flex gap-2 text-[8px]">
             <div
               data-tooltip-id="system-score"
-              className="bg-[#E2F1F8] rounded-full px-2 flex items-center gap-1"
+              className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
             >
               <div className="size-[5px] bg-[#005F73] rounded-full"></div>
-              {data['System Score']}
+              {data['System Score'] ? data['System Score'] : '-'}
               <Tooltip
                 id={'system-score'}
                 place="top"
@@ -47,10 +47,10 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
             </div>
             <div
               data-tooltip-id="base-score"
-              className="bg-[#DAF6C6] rounded-full px-2 flex items-center gap-1"
+              className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1"
             >
               <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
-              {data.Score}
+              {data.Score ? data.Score : '-'}
               <Tooltip
                 id={'base-score'}
                 place="top"

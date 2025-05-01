@@ -150,10 +150,10 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                         onClick={() => {
                           navigate('/report/Generate-Action-Plan/' + id);
                         }}
-                        className=" min-w-[218px] w-[218px] min-h-[258px] h-[258px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
+                        className=" min-w-[218px] w-[218px]  min-h-[238px] h-[238px] bg-white  flex justify-center items-center rounded-[40px] border-2 border-dashed border-Primary-DeepTeal shadow-200 text-Primary-DeepTeal cursor-pointer"
                       >
-                        <div className="flex flex-col  TextStyle-Subtitle-2 ">
-                          <img className="" src="/icons/add-blue.svg" alt="" />
+                        <div className="flex flex-col  TextStyle-Subtitle-2 items-center justify-center ">
+                          <img className="size-[50px]" src="/icons/add-blue.svg" alt="" />
                           Add New
                         </div>
                       </div>

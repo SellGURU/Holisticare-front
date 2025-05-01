@@ -109,7 +109,7 @@ const HistoricalChart = ({
                 style={{ borderColor: resolveColor(el.key) }}
               >
                 {dataPoints.map((point, index) => (
-                  <div key={`point-${index}`} className="w-[40px] relative">
+                  <div key={`point-${index}`} className="w-[40px] ml-2 relative">
                     <div
                       style={{
                         backgroundColor: resolveColor(el.key),
@@ -126,7 +126,7 @@ const HistoricalChart = ({
                       }}
                       className="w-2 h-2 border border-gray-50 rounded-full relative"
                     >
-                      <div className="absolute -top-4 left-1/2 transform text-[8px] text-Text-Primary -translate-x-1/2 px-3 py-1 rounded whitespace-nowrap z-10">
+                      <div className="absolute -top-4 left-1/2  transform text-[8px] text-Text-Primary -translate-x-1/2 px-3 py-1 rounded whitespace-nowrap z-10">
                         {point}
                       </div>
                     </div>
@@ -153,7 +153,7 @@ const HistoricalChart = ({
         })}
 
         <div>
-          <div className="flex justify-start items-center w-full mt-1">
+          <div className="flex justify-start items-center w-full ml-2 mt-1">
             {labels.map((label, index) => (
               <div key={index} className="text-[8px] w-[40px]">
                 <div className="flex justify-start text-[#888888] font-medium  items-center">
