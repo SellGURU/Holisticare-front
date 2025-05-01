@@ -133,7 +133,6 @@ export const Notes = () => {
                       //     note: commentText,
                       //   },
                       // ]);
-                    
                     })
                     .catch((error) => {
                       console.error('Error adding note:', error);

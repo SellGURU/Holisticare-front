@@ -622,18 +622,17 @@ export const Questionary = () => {
 
             <div className="w-full flex justify-center  pb-2 absolute bottom-0">
               <div className="flex  w-[95px] justify-center items-center gap-3">
-                
-                  <img
-                    className={`cursor-pointer ${activeCard <= 1 ? 'opacity-40' : ''}`}
-                    onClick={() => {
-                      if (activeCard > 1) {
-                        setActiveCard(activeCard - 1)
-                      }
-                    }}
-                    src="/icons/arrow-circle-left.svg"
-                    alt=""
-                  />
-               
+                <img
+                  className={`cursor-pointer ${activeCard <= 1 ? 'opacity-40' : ''}`}
+                  onClick={() => {
+                    if (activeCard > 1) {
+                      setActiveCard(activeCard - 1);
+                    }
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
+
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
