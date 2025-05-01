@@ -30,7 +30,7 @@ interface SetOrdersProps {
 
 export const SetOrders: React.FC<SetOrdersProps> = ({
   data,
-  treatMentPlanData,
+  // treatMentPlanData,
   setData,
   storeChecked,
   checkeds,
