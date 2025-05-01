@@ -51,7 +51,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
-  console.log(value);
 
   useEffect(() => {
     onchange({
@@ -97,7 +96,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           </div>
         </div>
         <div
-          className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-2 pr-10 rounded-[16px] items-center border border-Gray-50`}
+          className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-3 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
           <div className=" flex gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
@@ -116,15 +115,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
                     {value['System Score'] ? value['System Score'] : '-' }
                     <Tooltip
-                      id={'system-score'}
+                      id={`system-score-${index}`}
                       place="top"
-                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                       style={{
                         zIndex: 9999,
                         pointerEvents: 'none',
                       }}
                     >
-                      <div className="text-Text-Primary">System Score</div>
+                      <div className="text-Text-Primary font-medium">
+                        System Score
+                      </div>
                       <div className="text-Text-Secondary">
                         Score based on all data and AI insights.
                       </div>
@@ -137,35 +138,37 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
                     {value.Score ? value.Score : '-'}
                     <Tooltip
-                      id={'base-score'}
+                      id={`base-score-${index}`}
                       place="top"
-                      className="!bg-white !w-[162px] !leading-5 !text-wrap  !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                       style={{
                         zIndex: 9999,
                         pointerEvents: 'none',
                       }}
                     >
-                      <div className="text-Text-Primary">Base Score</div>
+                      <div className="text-Text-Primary font-medium">
+                        Base Score
+                      </div>
                       <div className="text-Text-Secondary">
                         Initial score from core health metrics.
                       </div>
                     </Tooltip>
                   </div>
                   <div
-                    data-tooltip-id={index + 'score-calc'}
-                    className="text-Primary-DeepTeal select-none mt-[2px]"
+                    data-tooltip-id={`score-calc-${index}`}
+                    className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
                   >
                     Score Calculation
                     <Tooltip
-                      id={index + 'score-calc'}
+                      id={`score-calc-${index}`}
                       place="top"
-                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
                       style={{
                         zIndex: 9999,
                         pointerEvents: 'none',
                       }}
                     >
-                      <div className="text-Text-Primary text-[8px]">
+                      <div className="text-Text-Primary text-[10px]">
                         {value['Practitioner Comments'][0]}
                       </div>
                     </Tooltip>
@@ -183,7 +186,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               )}
             </div>
           </div>
-          <div className="text-[12px] gap-2 w-full ">
+          <div className="text-[12px] gap-2 w-full mt-2.5">
             {/* <textarea
               value={editableValue}
               onChange={(e) => setEditableValue(e.target.value)}
@@ -199,7 +202,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </span>
                   {positive}
                 </div>
-                <div className="text-Text-Primary">
+                <div className="text-Text-Primary mt-2.5">
                   <span className="text-Text-Secondary bullet-point">
                     Key Risks:{' '}
                   </span>
@@ -224,7 +227,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             )} */}
           </div>
-          {isExpanded && (
+          {isExpanded && notes?.length ? (
             <div className="flex flex-col mt-2 pt-1 border-t border-Gray-50">
               {notes?.map((note, index) => (
                 <div
@@ -236,6 +239,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 </div>
               ))}
             </div>
+          ) : (
+            ''
           )}
           <div className=" top-4 right-4  absolute">
             {isExpanded ? (
@@ -275,10 +280,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 alt=""
               />
               {deleteConfirm ? (
-                <div className="flex flex-col items-center gap-2 pb-1 text-Text-Secondary text-xs">
+                <div className="flex flex-col items-center gap-2 pb-1 text-Text-Secondary text-xs -ml-2 -mr-2">
                   Sure?{' '}
                   <img
-                    className="cursor-pointer mr-1"
+                    className="cursor-pointer mr-1 w-[16px] h-[16px]"
                     onClick={() => {
                       setdeleteConfirm(false);
                       onDelete();
@@ -287,7 +292,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                   />
                   <img
-                    className="cursor-pointer mr-1"
+                    className="cursor-pointer mr-1 w-[16px] h-[16px]"
                     onClick={() => setdeleteConfirm(false)}
                     src="/icons/cansel-close-circle.svg"
                     alt=""

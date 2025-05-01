@@ -28,10 +28,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               <div className="size-[5px] bg-[#005F73] rounded-full"></div>
               {data['System Score'] ? data['System Score'] : '-'}
               <Tooltip
-                id={'system-score'}
+                id={`system-score-${index}`}
                 place="top"
-                className="!bg-white !w-[162px]  !text-wrap 
-                 !text-[#888888] !shadow-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
                   zIndex: 9999,
                   pointerEvents: 'none',
@@ -52,10 +51,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               <div className="size-[5px] bg-[#6CC24A] rounded-full"></div>
               {data.Score ? data.Score : '-'}
               <Tooltip
-                id={'base-score'}
+                id={`base-score-${index}`}
                 place="top"
-                className="!bg-white !w-[162px] !shadow-100  !text-wrap 
-                 !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
                   zIndex: 9999,
                   pointerEvents: 'none',
@@ -68,14 +66,14 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               </Tooltip>
             </div>
             <div
-              data-tooltip-id={index + 'calc-score'}
-              className="text-Primary-DeepTeal select-none"
+              data-tooltip-id={`score-calc-${index}`}
+              className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
             >
               Score Calculation
               <Tooltip
-                id={index + 'calc-score'}
+                id={`score-calc-${index}`}
                 place="top"
-                className="!bg-white !w-[162px] !leading-5 !bg-opacity-100 !shadow-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
                 style={{
                   zIndex: 9999,
                   pointerEvents: 'none',

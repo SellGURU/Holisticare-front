@@ -43,7 +43,6 @@ const NewGenerateHolisticPlan = () => {
       setisFinalLoading(false);
       navigate(`/report/${id}/a?section=Holistic Plan`);
     }, 3000);
-    navigate(-1);
   };
   const [activeEl, setActiveEl] = useState<any>();
   const updateNeedFocus = (value: any) => {
@@ -59,7 +58,7 @@ const NewGenerateHolisticPlan = () => {
   }, []);
   const [showClientGoals, setSHowClientGoals] = useState(false);
   const [showAnalyse, setSHowAnalyse] = useState(false);
-  const [showGenerateSection] = useState(false);
+  // const [showGenerateSection] = useState(false);
   const [showAddModal, setshowAddModal] = useState(false);
   const updateClientConditionInsights = (value: any) => {
     setTratmentPlanData((pre: any) => {
@@ -226,7 +225,7 @@ const NewGenerateHolisticPlan = () => {
               )}
             </div>
             <div className="h-full pr-2 lg:pt-10">
-              <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6">
+              <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6 shadow-100">
                 <div className="flex w-full">
                   <div className={`flex justify-end invisible gap-2`}>
                     <div
@@ -266,7 +265,7 @@ const NewGenerateHolisticPlan = () => {
                       value={['Recommendation', 'Result']}
                     ></Toggle>
                   </div>
-                  <div
+                  {/* <div
                     className={` ${showGenerateSection ? 'hidden' : 'flex'} ${treatmentPlanData ? 'visible' : 'invisible'}  justify-end gap-2`}
                   >
                     <div
@@ -279,7 +278,6 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/analyse.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/analyse.svg" alt="" /> */}
                       Analysis
                     </div>
 
@@ -293,10 +291,9 @@ const NewGenerateHolisticPlan = () => {
                         src="/icons/chart.svg"
                         color={'#005F73'}
                       />
-                      {/* <img src="/icons/chart.svg" alt="" /> */}
                       Client Goals
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 {treatmentPlanData ? (
                   <div>
@@ -494,7 +491,7 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       )}
                     </div>
-                    <div className="w-full bg-[#FDFDFD] border border-gray-50 rounded-[16px] p-4 mt-4">
+                    <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-4 mt-4">
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
                         <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
                           {resoveSubctegoriesSubs().map((value: any) => {
@@ -507,7 +504,7 @@ const NewGenerateHolisticPlan = () => {
                                         onClick={() => {
                                           setActiveEl(resol);
                                         }}
-                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
+                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-Gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
                                       >
                                         <div className="flex items-center gap-1">
                                           <div className=" text-[12px] text-Text-Primary">
@@ -540,7 +537,7 @@ const NewGenerateHolisticPlan = () => {
                         </div>
 
                         {activeEl != null && (
-                          <div className="hidden lg:block w-full p-6 bg-white border border-gray-50  rounded-[6px] h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                          <div className="hidden lg:block w-full p-6 bg-white border border-Gray-50  rounded-xl h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                             <div className=" text-Text-Primary text-[14px] font-[500]">
                               {activeEl.subcategory}
                             </div>
@@ -554,7 +551,7 @@ const NewGenerateHolisticPlan = () => {
                             </div>
                             <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
                               <div className="lg:w-[50%]">
-                                <div className="w-full lg:w-[100%] p-4 bg-white border border-gray-50 h-[159px] rounded-[6px]">
+                                <div className="w-full lg:w-[100%] p-4 bg-white border border-Gray-50 h-[179px] rounded-xl">
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
                                     Last Value
                                     <div className="relative">
@@ -569,7 +566,7 @@ const NewGenerateHolisticPlan = () => {
                                 </div>
                               </div>
                               <div className={`lg:w-[50%]`}>
-                                <div className="w-full lg:w-[100%] p-4 h-[159px] bg-white border-gray-50 border  rounded-[6px]">
+                                <div className="w-full lg:w-[100%] p-4 h-[179px] bg-white border-Gray-50 border  rounded-xl">
                                   <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
                                     Historical Data
                                     <div className=" flex justify-end gap-2 items-center">
@@ -578,7 +575,7 @@ const NewGenerateHolisticPlan = () => {
                                           unit={activeEl.unit}
                                         ></UnitPopUp>
                                       </div>
-                                      <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                                      <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-Gray-50">
                                         <div className="text-Primary-DeepTeal text-[10px]">
                                           6 Month
                                         </div>
@@ -750,7 +747,7 @@ const NewGenerateHolisticPlan = () => {
                     >
                       {el}
                     </div>
-                    <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-gray-50">
+                    <div className="bg-backgroundColor-Card p-4 border text-[12px]  text-Text-Primary border-Gray-50">
                       {clientGools[el]}
                     </div>
                   </>
@@ -780,7 +777,7 @@ const NewGenerateHolisticPlan = () => {
                     updateClientConditionInsights(res.data);
                   });
                 }}
-                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-center gap-2 items-center text-white w-[140px] text-[11px] px-3 py-1 rounded-[36px] border border-gray-50"
+                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-center gap-2 items-center text-white w-[140px] text-[11px] px-3 py-1 rounded-[36px] border border-Gray-50"
               >
                 {isAnalysingQuik ? (
                   <>
@@ -805,7 +802,7 @@ const NewGenerateHolisticPlan = () => {
                     updateClientConditionInsights(res.data);
                   });
                 }}
-                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[11px] px-3 py-1 rounded-[36px] border border-gray-50"
+                className="bg-Primary-EmeraldGreen cursor-pointer flex justify-between gap-2 items-center text-white text-[11px] px-3 py-1 rounded-[36px] border border-Gray-50"
               >
                 {isAnalysingComper ? (
                   <>
@@ -847,7 +844,7 @@ const NewGenerateHolisticPlan = () => {
               Needs Focus Biomarkers
             </div>
             {treatmentPlanData && (
-              <div className="bg-backgroundColor-Card pb-0 pt-0 border text-[12px]  text-Text-Primary border-gray-50">
+              <div className="bg-backgroundColor-Card pb-0 pt-0 border text-[12px]  text-Text-Primary border-Gray-50">
                 <TextBoxAi
                   // isUpchange={isforceReload}
                   isNeedFocus
@@ -871,7 +868,7 @@ const NewGenerateHolisticPlan = () => {
                   </div>
                 ) : (
                   <div className="flex justify-center items-center">
-                    <img src="/icons/tick-square.svg" alt="" />
+                    <img src="/icons/tick-square-no-border.svg" alt="" />
                   </div>
                 )}
                 {isSaving == 'saving' ? (

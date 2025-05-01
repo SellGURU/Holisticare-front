@@ -3,7 +3,6 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
 import TreatmentCard from './TreatmentCard';
-import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
@@ -404,7 +403,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="w-full flex justify-center md:justify-end gap-2 my-3">
+              {/* <div className="w-full flex justify-center md:justify-end gap-2 my-3">
                 <ButtonPrimary
                   ClassName="w-full md:w-fit"
                   size="small"
@@ -421,7 +420,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {' '}
                   <img src="/icons/chart.svg" alt="" /> Client Goals
                 </ButtonPrimary>
-              </div>
+              </div> */}
               <div className="w-full gap-1 md:gap-2 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden ">
                 <div
                   onClick={() => {
@@ -545,9 +544,17 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
         <>
           <div className="rounded-xl border border-t-0 border-Gray-50">
             <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
+              Client Condition Insights
+            </div>
+            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-5 py-2 flex flex-col gap-2 rounded-b-xl">
+              {clientSummary}
+            </div>
+          </div>
+          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
+            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
               Needs Focus Biomarkers
             </div>
-            <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2">
+            <ul className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-9 py-2 flex flex-col gap-2 rounded-b-xl">
               {NeedFocusData.map((el) => {
                 return (
                   <>
@@ -556,14 +563,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 );
               })}
             </ul>
-          </div>
-          <div className="rounded-xl border border-t-0 border-Gray-50 mt-3">
-            <div className="bg-[#005F731A] rounded-t-xl w-full pl-4 py-2 text-xs text-Text-Secondary font-medium">
-              Client Condition Insights
-            </div>
-            <div className="bg-backgroundColor-Card text-xs text-Text-Primary text-justify px-5 py-2 flex flex-col gap-2">
-              {clientSummary}
-            </div>
           </div>
         </>
       </SlideOutPanel>

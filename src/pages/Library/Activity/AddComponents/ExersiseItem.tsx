@@ -35,7 +35,7 @@ const ExerciseItem = ({
   showValidation = false,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const isSetEmpty = sets === '';
+  const isSetEmpty = sets === '' || sets == 0;
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
