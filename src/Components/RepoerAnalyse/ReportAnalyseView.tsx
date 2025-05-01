@@ -369,13 +369,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   return (
     <>
       {loading ? (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-70 backdrop-blur-md z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-30 backdrop-blur-md z-20">
           <Circleloader></Circleloader>
         </div>
       ) : (
         <>
           {!isHaveReport && (
-            <div className="fixed inset-0 bg-white opacity-40 z-[9]" />
+            <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
           <div
             ref={scrollContainerRef}
@@ -541,7 +541,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                   </div>
                   <div className=" hidden xl:block">
-                    <div className="w-full bg-white rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center">
+                    <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
                       <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
                         Name
                       </div>

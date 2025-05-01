@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import { useNavigate, useParams } from 'react-router-dom';
-import TooltipText from '../TooltipText';
+import { Tooltip } from 'react-tooltip';
 // import ConfirmModal from "./sections/ConfirmModal";
 
 // type CardData = {
@@ -49,6 +49,8 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   };
 
   const [showModal, setshowModal] = useState(false);
+  console.log(el);
+
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
   useModalAutoClose({
@@ -71,7 +73,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           onClick();
         }
       }}
-      className={` min-w-[218px] min-h-[258px] w-[218px] h-[258px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
+      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
         isDisabled ? 'opacity-45 cursor-not-allowed' : ''
       }`}
     >
@@ -195,19 +197,31 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           )}
         </div>
       </div>
-      <div className="mt-2 flex flex-col items-center justify-center gap-[6px]">
-        <TooltipText
-          tooltipValue={el.title}
-          className="w-[80%] text-center TextStyle-Headline-6 text-Text-Primary"
+      <div className=" flex flex-col items-center justify-center gap-[6px]">
+        <h6
+          data-tooltip-id="desc"
+          className="TextStyle-Body-3 text-justify  w-full text-Text-Secondary"
         >
-          {/* <h5 className="TextStyle-Headline-6 text-Text-Primary">{el.title}</h5> */}
-          {el.title}
-        </TooltipText>
-        <h6 className="TextStyle-Body-3 text-nowrap overflow-hidden text-ellipsis w-[80%] text-Text-Secondary">
-          {el.description}
+          {el.description.length > 1450
+            ? `${el.description.substring(0, 150)}...`
+            : el.description}
         </h6>
+        {el.description.length > 150 && (
+          <Tooltip
+            id={'desc'}
+            place="top"
+            className="!bg-white !w-[162px]  !text-wrap 
+                   !text-[#888888] !shadow-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            style={{
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+          >
+            {el.description}
+          </Tooltip>
+        )}
       </div>
-      <div className="mt-10 flex flex-col gap-1 w-[185px] mx-auto">
+      <div className="mt-4 flex flex-col gap-1 w-[185px] mx-auto">
         <div className="flex w-full justify-between text-[10px]  text-Text-Secondary">
           Progress
           <span>{el.progress}%</span>
@@ -219,7 +233,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           ></div>
         </div>
       </div>
-      <div className="mt-8 w-full  flex justify-end ">
+      <div className=" w-full   flex justify-end mt-6 ">
         <div className=" bg-Secondary-SelverGray TextStyle-Body-3 text-Primary-DeepTeal  rounded-full w-fit px-2.5 py-[2px]  flex justify-end items-center gap-1 ">
           <img
             className="w-4 h-4 invert dark:invert-0"

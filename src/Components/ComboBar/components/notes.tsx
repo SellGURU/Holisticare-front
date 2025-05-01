@@ -116,16 +116,23 @@ export const Notes = () => {
                     note: commentText,
                   })
                     .then(() => {
-                      setData((prevNotes: any[]) => [
-                        ...prevNotes,
-                        {
-                          date: Date.now(),
-                          time: new Date().toLocaleTimeString(),
-                          writer: 'clinic',
-                          note: commentText,
-                        },
-                      ]);
-                      setCommentText('');
+                      Application.getNotes({ member_id: id }).then((res) => {
+                        if (res.data) {
+                          setData(res.data);
+                          setCommentText('');
+                        } else {
+                          throw new Error('Unexpected data format');
+                        }
+                      });
+                      // setData((prevNotes: any[]) => [
+                      //   ...prevNotes,
+                      //   {
+                      //     date: Date.now(),
+                      //     time: new Date().toLocaleTimeString(),
+                      //     writer: 'clinic',
+                      //     note: commentText,
+                      //   },
+                      // ]);
                     })
                     .catch((error) => {
                       console.error('Error adding note:', error);

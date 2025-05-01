@@ -586,15 +586,18 @@ export const Questionary = () => {
               </ButtonSecondary>
             </div>
             <div className="mt-2">
-              <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
-                <div className="text-[12px] text-Primary-DeepTeal font-medium">
+              <div className="bg-[#E9F0F2] w-full py-[6px] px-8 min-h-[108px] text-center rounded-t-[6px] flex items-center">
+                <div
+                  style={{ textAlignLast: 'center', textAlign: 'center' }}
+                  className="text-[12px]  text-Primary-DeepTeal font-medium text-justify"
+                >
                   {(questionsFormData?.questions &&
                     questionsFormData.questions[activeCard - 1]?.question) ||
                     'Question not available'}
                 </div>
               </div>
               <div
-                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[70px]   max-h-[260px]  ${questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+                className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[260px]  ${questionsFormData?.questions && questionsFormData.questions[activeCard - 1]?.type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
               >
                 {questionsFormData?.questions &&
                   questionsFormData.questions[activeCard - 1] &&
@@ -604,24 +607,32 @@ export const Questionary = () => {
                     activeCard,
                   )}
               </div>
-              {questionsFormData?.questions &&
-                questionsFormData.questions[activeCard - 1]?.required && (
-                  <div className="text-[10px] text-red-500 mt-1 mb-5">
-                    * This question is required.
-                  </div>
-                )}
+
+              <div
+                className={` ${
+                  questionsFormData?.questions &&
+                  questionsFormData.questions[activeCard - 1]?.required
+                    ? 'block'
+                    : 'invisible'
+                } text-[10px] text-red-500 mt-1 mb-5`}
+              >
+                * This question is required.
+              </div>
             </div>
 
-            <div className="w-full flex justify-center pb-2 absolute bottom-0">
+            <div className="w-full flex justify-center  pb-2 absolute bottom-0">
               <div className="flex  w-[95px] justify-center items-center gap-3">
-                {activeCard > 1 && (
-                  <img
-                    className="cursor-pointer"
-                    onClick={() => setActiveCard(activeCard - 1)}
-                    src="/icons/arrow-circle-left.svg"
-                    alt=""
-                  />
-                )}
+                <img
+                  className={`cursor-pointer ${activeCard <= 1 ? 'opacity-40' : ''}`}
+                  onClick={() => {
+                    if (activeCard > 1) {
+                      setActiveCard(activeCard - 1);
+                    }
+                  }}
+                  src="/icons/arrow-circle-left.svg"
+                  alt=""
+                />
+
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
@@ -640,7 +651,7 @@ export const Questionary = () => {
                   {activeCard} /{questionsFormData?.questions?.length || 0}
                 </div>
                 <img
-                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'invisible'}`}
+                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'opacity-40'}`}
                   onClick={() => {
                     if (
                       activeCard < (questionsFormData?.questions?.length || 0)

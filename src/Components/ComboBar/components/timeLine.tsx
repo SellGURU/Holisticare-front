@@ -15,7 +15,7 @@ import Circleloader from '../../CircleLoader';
 const resolveStatusColor = (state: string) => {
   switch (state) {
     case 'Completed':
-      return '#55DD4A';
+      return '#06C78D';
     case 'On Going':
       return '#3C79D6';
     case 'Paused':
@@ -162,6 +162,7 @@ const TimeLine: React.FC = () => {
       groupedData[State].steps.push({
         title: event_title,
         explains: event_description,
+        status: State,
       });
     });
 
@@ -176,6 +177,8 @@ const TimeLine: React.FC = () => {
       setSteps(transformData(res.data.Events));
     });
   }, []);
+  console.log(steps);
+
   return (
     <>
       {isLaoding ? (
@@ -190,7 +193,9 @@ const TimeLine: React.FC = () => {
                 className={`px-2.5 py-1 text-[10px] rounded-full text-Text-Primary  ${
                   section.status === 'On Going'
                     ? 'bg-[#8ECAE6]'
-                    : 'bg-[#F9DEDC]'
+                    : section.status === 'Completed'
+                      ? 'bg-[#DEF7EC]'
+                      : 'bg-[#F9DEDC]'
                 } flex items-center gap-1`}
               >
                 <div

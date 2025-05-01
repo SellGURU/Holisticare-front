@@ -116,7 +116,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
                     >
-                      <img src="/icons/Fiilout-Form.svg" alt="" />
+                      <img
+                        className="size-5"
+                        src="/icons/Fiilout-Form.svg"
+                        alt=""
+                      />
                       Fill out
                     </div>
                     <div
@@ -132,7 +136,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
                     >
-                      <img src="/icons/user-add-green.svg" alt="" />
+                      <img
+                        className="size-5"
+                        src="/icons/user-add-green.svg"
+                        alt=""
+                      />
                       Assign to Client
                     </div>
                   </>
