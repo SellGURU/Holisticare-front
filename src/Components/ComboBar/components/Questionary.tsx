@@ -622,14 +622,18 @@ export const Questionary = () => {
 
             <div className="w-full flex justify-center  pb-2 absolute bottom-0">
               <div className="flex  w-[95px] justify-center items-center gap-3">
-                {activeCard > 1 && (
+                
                   <img
-                    className="cursor-pointer"
-                    onClick={() => setActiveCard(activeCard - 1)}
+                    className={`cursor-pointer ${activeCard <= 1 ? 'opacity-40' : ''}`}
+                    onClick={() => {
+                      if (activeCard > 1) {
+                        setActiveCard(activeCard - 1)
+                      }
+                    }}
                     src="/icons/arrow-circle-left.svg"
                     alt=""
                   />
-                )}
+               
                 {/* <div
                   onClick={() => {
                     if (activeCard > 1) {
@@ -648,7 +652,7 @@ export const Questionary = () => {
                   {activeCard} /{questionsFormData?.questions?.length || 0}
                 </div>
                 <img
-                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'invisible'}`}
+                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'opacity-40'}`}
                   onClick={() => {
                     if (
                       activeCard < (questionsFormData?.questions?.length || 0)

@@ -71,7 +71,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   backgroundColor: resolveColor(el.key),
                 }}
               >
-                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-70 text-[10px]">
+                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]">
                   <TooltipText
                     tooltipValue={
                       data.chart_bounds[el.key].label +

@@ -162,6 +162,7 @@ const TimeLine: React.FC = () => {
       groupedData[State].steps.push({
         title: event_title,
         explains: event_description,
+        status: State
       });
     });
 

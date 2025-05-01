@@ -369,13 +369,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   return (
     <>
       {loading ? (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-70 backdrop-blur-md z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-30 backdrop-blur-md z-20">
           <Circleloader></Circleloader>
         </div>
       ) : (
         <>
           {!isHaveReport && (
-            <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-30 z-[9]" />
+            <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
           <div
             ref={scrollContainerRef}
