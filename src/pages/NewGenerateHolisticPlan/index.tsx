@@ -58,7 +58,7 @@ const NewGenerateHolisticPlan = () => {
   }, []);
   const [showClientGoals, setSHowClientGoals] = useState(false);
   const [showAnalyse, setSHowAnalyse] = useState(false);
-  const [showGenerateSection] = useState(false);
+  // const [showGenerateSection] = useState(false);
   const [showAddModal, setshowAddModal] = useState(false);
   const updateClientConditionInsights = (value: any) => {
     setTratmentPlanData((pre: any) => {
