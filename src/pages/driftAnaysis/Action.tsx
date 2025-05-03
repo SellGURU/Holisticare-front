@@ -344,8 +344,8 @@ console.log(data);
         </SlideOutPanel>
       )}
       <div
-        style={{ height: window.innerHeight }}
-        className=" overflow-auto w-full h-fit pb-[200px] md:pb-0 flex flex-col gap-2 "
+        style={{ height: window.innerHeight- 186 + 'px' }}
+        className=" overflow-auto w-full h-full md:pb-0 flex flex-col gap-2 justify- "
       >
         {' '}
         {isLoading && (
@@ -366,7 +366,7 @@ console.log(data);
           </div>
         )}
         {RoadMapData?.length > 0 ? (
-          <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[220px] md:h-[41%] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Road Map
@@ -429,7 +429,7 @@ console.log(data);
           </div>
         ) : null}
         {MessagesData.length > 0 && (
-          <div className="w-full  md:max-h-[220px] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[220px] md:h-[41%] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Messages{' '}

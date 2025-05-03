@@ -329,7 +329,9 @@ export const DriftAnaysis = () => {
                   </Button>
                 </div> */}
               </div>
-              <div className="hidden md:block">
+              <div style={{
+                height: !isMobile ? window.innerHeight - 186 + 'px' : '',
+              }} className="hidden md:block overflow-hidden md:overflow-y-auto ">
                 {activeMenu === 'Copilot' ? (
                   <AiChat memberID={activeMemberID} />
                 ) : (
