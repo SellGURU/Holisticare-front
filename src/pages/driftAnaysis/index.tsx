@@ -186,7 +186,7 @@ export const DriftAnaysis = () => {
     'All',
     'Need to check',
     'Checked',
-    'Incomplete Data',
+    'incomplete data',
   ];
   //   const [isCreateReportMode, setisCreateReportMode] = useState(false);
   //   const [isEditMode, setEditMode] = useState(false);
@@ -338,10 +338,8 @@ export const DriftAnaysis = () => {
               </div>
             </div>
             <div
-              style={{
-                height: !isMobile ? window.innerHeight - 100 + 'px' : '',
-              }}
-              className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%] overflow-hidden md:overflow-y-auto    "
+             
+              className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%]     "
             >
               <div className="flex md:flex-col gap-3 flex-col-reverse ">
                 <SearchBox
@@ -355,7 +353,9 @@ export const DriftAnaysis = () => {
                 />
               </div>
 
-              <div className="flex flex-col pr-1 h-full    w-[102%] ">
+              <div  style={{
+                height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+              }} className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto    w-[102%] ">
                 {dataToMap.map((client, i) => {
                   console.log(client);
 

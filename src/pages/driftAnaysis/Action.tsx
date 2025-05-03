@@ -26,7 +26,7 @@ interface MessageOption extends RoadMapOption {
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
-  const [RoadMapData, SetRoadMapData] = useState<any>({});
+  const [RoadMapData, SetRoadMapData] = useState<MessageOption[]>([]);
   const [MessagesData, setMessagesData] = useState<MessageOption[]>([
     // {
     //   id: 1,
@@ -45,8 +45,14 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   ]);
   //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
   //   const [isMessagesOpen, setisMessagesOpen] = useState(true);
-  const [isRoadCompleted] = useState(false);
-  const handleMessageDone = (id: string, Description: string) => {
+  const [isRoadCompleted,setIsRoadCompleted] = useState(false);
+  useEffect(() => {
+    // Check if all roadmap options are processed
+    const allProcessed = RoadMapData.every((option) => option.isDone);
+    setIsRoadCompleted(allProcessed);
+  }, [RoadMapData]);
+
+  const handleMessageDone = (id:string, Description:string) => {
     Application.driftAnalysisApporve({
       member_id: memberID,
       description: Description,
@@ -57,9 +63,17 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           message.id === id ? { ...message, isDone: true } : message,
         ),
       );
+
+      // Set a timeout to hide the success message after 3 seconds
+      setTimeout(() => {
+        setMessagesData((prevData) =>
+          prevData.map((message) =>
+            message.id === id ? { ...message, isDone: false } : message,
+          ),
+        );
+      }, 3000);
     });
   };
-
   const handleDelete = (id: string) => {
     setMessagesData((prevData) =>
       prevData.filter((message) => message.id !== id),
@@ -67,7 +81,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   };
   const handleOptionDelete = (id: string) => {
     SetRoadMapData((prevData: any) =>
-      prevData.options.filter((option: any) => option.id !== id),
+      prevData.filter((option: any) => option.id !== id),
     );
   };
   //   const navigate = useNavigate();
@@ -88,7 +102,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           setDescription(response.data.State.description);
           // setRecommendation(response.data.State.recommendation);
           setReference(response.data.State.reference);
-          SetRoadMapData(response.data.RoadMap);
+          SetRoadMapData(response.data.RoadMap.options);
 
           setMessagesData(response.data.Message.options);
         } else {
@@ -105,7 +119,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
         setDescription(''); // or whatever your default value is
         // setRecommendation(''); // if you have a default value
         setReference(''); // or whatever your default value is
-        SetRoadMapData({}); // assuming an empty array is the default
+        SetRoadMapData([]); // assuming an empty array is the default
         setMessagesData([]); // assuming an empty array is the default
       }
       setisLoading(false);
@@ -125,12 +139,15 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     setData((prevData: any) => {
       const newData = { ...prevData };
       const action = newData[Object.keys(newData)[categoryIndex]][actionIndex];
-      if (action.repeat_days.includes(day)) {
+      if (!Array.isArray(action.repeat_days)) {
+        action.repeat_days = [];
+      }
+      if (action.repeat_days?.includes(day)) {
         action.repeat_days = action.repeat_days.filter(
           (d: string) => d !== day,
         );
       } else {
-        action.repeat_days.push(day);
+        action.repeat_days?.push(day);
       }
       return newData;
     });
@@ -149,7 +166,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     setExpandedCategories(newExpandedCategories);
   };
   const [data, setData] = useState({});
-  console.log(RoadMapData);
   const [isLoading, setisLoading] = useState(false);
   const [blockID, setblockID] = useState();
   const [buttonLoading, setbuttonLoading] = useState(false);
@@ -158,6 +174,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+console.log(data);
 
   return (
     <>
@@ -202,6 +219,9 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                         )}
                         {categoryName == 'Supplement' && (
                           <img src={'/icons/Supplement.svg'} alt="" />
+                        )}
+                        {categoryName == 'Lifestyle' && (
+                          <img src={'/icons/LifeStyle2.svg'} alt="" />
                         )}
                       </div>
                       <h3 className="text-xs text-Text-Primary">
@@ -279,7 +299,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                                 )
                               }
                               className={`w-full cursor-pointer border-r border-Gray-50 flex items-center justify-center bg-white ${
-                                action.repeat_days.includes(day)
+                                action.repeat_days?.includes(day)
                                   ? 'text-Primary-EmeraldGreen'
                                   : 'text-Text-Primary'
                               }`}
@@ -297,6 +317,8 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           <div className="w-full flex justify-center mt-5">
             <ButtonPrimary
               onClick={() => {
+                console.log(data);
+                
                 setbuttonLoading(true);
                 Application.ActionPlanSaveTask({
                   member_id: memberID,
@@ -343,7 +365,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
             )}
           </div>
         )}
-        {RoadMapData?.options?.length > 0 ? (
+        {RoadMapData?.length > 0 ? (
           <div className="w-full  md:h-[220px] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
@@ -384,7 +406,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div className={`flex flex-col gap-2 pr-3 mt-2`}>
-                {RoadMapData.options?.map((option: any) => (
+                {RoadMapData?.map((option: any) => (
                   <AccordionCard
                     onClick={() => {
                       Application.driftAction({ member_id: memberID })
