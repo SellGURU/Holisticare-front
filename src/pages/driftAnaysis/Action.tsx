@@ -45,14 +45,14 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   ]);
   //   const [isRoadMapOpen, setisRoadMapOpen] = useState(true);
   //   const [isMessagesOpen, setisMessagesOpen] = useState(true);
-  const [isRoadCompleted,setIsRoadCompleted] = useState(false);
+  const [isRoadCompleted, setIsRoadCompleted] = useState(false);
   useEffect(() => {
     // Check if all roadmap options are processed
     const allProcessed = RoadMapData.every((option) => option.isDone);
     setIsRoadCompleted(allProcessed);
   }, [RoadMapData]);
 
-  const handleMessageDone = (id:string, Description:string) => {
+  const handleMessageDone = (id: string, Description: string) => {
     Application.driftAnalysisApporve({
       member_id: memberID,
       description: Description,
@@ -174,7 +174,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
-console.log(data);
+  console.log(data);
 
   return (
     <>
@@ -318,7 +318,7 @@ console.log(data);
             <ButtonPrimary
               onClick={() => {
                 console.log(data);
-                
+
                 setbuttonLoading(true);
                 Application.ActionPlanSaveTask({
                   member_id: memberID,
@@ -344,8 +344,8 @@ console.log(data);
         </SlideOutPanel>
       )}
       <div
-        style={{ height: window.innerHeight- 186 + 'px' }}
-        className=" overflow-auto w-full h-full md:pb-0 flex flex-col gap-2 justify- "
+        style={{ height: window.innerHeight - 186 + 'px' }}
+        className=" overflow-hidden w-full h-full md:pb-0 flex flex-col gap-2 justify- "
       >
         {' '}
         {isLoading && (

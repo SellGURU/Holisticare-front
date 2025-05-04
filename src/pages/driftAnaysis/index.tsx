@@ -329,9 +329,12 @@ export const DriftAnaysis = () => {
                   </Button>
                 </div> */}
               </div>
-              <div style={{
-                height: !isMobile ? window.innerHeight - 186 + 'px' : '',
-              }} className="hidden md:block overflow-hidden md:overflow-y-auto ">
+              <div
+                style={{
+                  height: !isMobile ? window.innerHeight - 172 + 'px' : '',
+                }}
+                className="hidden md:block overflow-hidden md:overflow-y-auto pt-2 "
+              >
                 {activeMenu === 'Copilot' ? (
                   <AiChat memberID={activeMemberID} />
                 ) : (
@@ -339,10 +342,7 @@ export const DriftAnaysis = () => {
                 )}
               </div>
             </div>
-            <div
-             
-              className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%]     "
-            >
+            <div className="flex flex-col gap-[10px] justify-center h-fit w-full md:w-[26%]     ">
               <div className="flex md:flex-col gap-3 flex-col-reverse ">
                 <SearchBox
                   onSearch={(search) => setSearchQuery(search)}
@@ -355,9 +355,12 @@ export const DriftAnaysis = () => {
                 />
               </div>
 
-              <div  style={{
-                height: !isMobile ? window.innerHeight - 100 + 'px' : '',
-              }} className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto    w-[102%] ">
+              <div
+                style={{
+                  height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+                }}
+                className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto    w-[102%] "
+              >
                 {dataToMap.map((client, i) => {
                   console.log(client);
 

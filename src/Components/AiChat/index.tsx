@@ -143,15 +143,15 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
     });
   }, [memberId]);
   return (
-    <div style={{height: window.innerHeight - 186 + 'px'}} className="w-full  mx-auto bg-white shadow-200  md:min-h-[545px] overflow-auto rounded-[16px] relative flex flex-col justify-between jus p-4 ">
+    <div
+      style={{ height: window.innerHeight - 172 + 'px' }}
+      className="w-full  mx-auto bg-white shadow-200  md:min-h-[545px] overflow-hidden rounded-[16px] relative flex flex-col justify-between jus p-4 "
+    >
       {/* <div className="text-Text-Primary text-sm font-medium">State</div> */}
       <div className="p-4 text-center text-primary-text text-xs">
         {messages.length > 1 && chatStartDate}
       </div>
-      <div
-        id="aiChat"
-        className="p-4 space-y-4 max-h-full overflow-y-scroll"
-      >
+      <div id="aiChat" className="p-4 space-y-4 max-h-full overflow-y-scroll">
         {messages.map((msg, index: number) => (
           <>
             {msg.sender == 'ai' ? (
