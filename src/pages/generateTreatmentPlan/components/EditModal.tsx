@@ -417,9 +417,9 @@ const EditModal: React.FC<EditModalProps> = ({
               <label className="text-xs font-medium flex items-start gap-[2px]">
                 Client Notes{' '}
                 <img
-                  className="cursor-pointer"
+                  className="cursor-pointer w-2 h-2"
                   data-tooltip-id={'more-info-notes'}
-                  src="/icons/info-circle.svg"
+                  src="/icons/info-circle-blue.svg"
                   alt=""
                 />
               </label>
@@ -433,7 +433,7 @@ const EditModal: React.FC<EditModalProps> = ({
               />
               <Tooltip
                 id="more-info-notes"
-                place="top"
+                place="right"
                 className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
               >
                 After writing each note, press the Enter key to save it and be

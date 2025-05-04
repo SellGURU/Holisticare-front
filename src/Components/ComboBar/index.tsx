@@ -118,7 +118,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     handleItemClick('Questionary Tracking');
   });
   const handleItemClick = (name: string) => {
-    if (isHolisticPlan && name !== 'Expert’s Note') {
+    if (isHolisticPlan && name !== 'Expert’s Note' && name !== 'Client Info') {
       return; // Prevent click action if isHolisticPlan is true and it's not the Expert's Note
     }
     setActiveItem(name);
@@ -243,7 +243,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   el.name == 'Questionary Tracking' &&
                   'border-2 border-Orange'
                 } ${
-                  isHolisticPlan && el.name !== 'Expert’s Note'
+                  isHolisticPlan &&
+                  el.name !== 'Expert’s Note' &&
+                  el.name !== 'Client Info'
                     ? 'opacity-50 cursor-not-allowed'
                     : ''
                 }`}
