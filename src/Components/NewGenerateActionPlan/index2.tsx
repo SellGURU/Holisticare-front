@@ -131,6 +131,8 @@ const GenerateActionPlan = () => {
   const handleShowConflictsModal = () => {
     setShowConflictsModal(!showConflictsModal);
   };
+  console.log(calendarViewData?.scheduled_tasks.length > 0 );
+  
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll">
@@ -310,7 +312,7 @@ const GenerateActionPlan = () => {
                   </div>
                 )}
                 {calendarViewData?.scheduled_tasks.length > 0 && (
-                  <CalenderComponent data={calendarViewData?.scheduled_tasks} />
+                  <CalenderComponent isActionPlan  data={calendarViewData?.scheduled_tasks} />
                 )}
                 {/* {calendarViewData?.scheduled_tasks.length} */}
                 {calendarViewData?.scheduled_tasks.length === 0 && (
