@@ -318,11 +318,12 @@ const NewGenerateHolisticPlan = () => {
                                 </div>
                                 <div className="flex justify-between items-center">
                                   <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
-                                    The Holistic Plan is a health safeguard
-                                    designed to help clients achieve their
-                                    wellness goals. You can customize it using
-                                    AI or personal insights to align with
-                                    individual objectives.
+                                    The Holistic Plan is your personalized
+                                    roadmap to optimal well-being. By combining
+                                    knowledge-based insights with your unique
+                                    health metrics, we craft tailored
+                                    recommendations to help you reach and
+                                    sustain your wellness goals with precision.
                                   </div>
                                 </div>
                               </div>
@@ -463,7 +464,7 @@ const NewGenerateHolisticPlan = () => {
                     </>
                   )
                 )}
-                {active == 'Result' && activeEl !== undefined ? (
+                {active == 'Client Metrics' && activeEl !== undefined ? (
                   <>
                     <div className="flex justify-start items-center gap-2">
                       <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
@@ -609,7 +610,7 @@ const NewGenerateHolisticPlan = () => {
                     </div>
                   </>
                 ) : (
-                  active == 'Result' && (
+                  active == 'Client Metrics' && (
                     <>
                       <div className="w-full mt-8 flex flex-col justify-center items-center min-h-[219px]">
                         <div className="w-full h-full flex flex-col items-center justify-center">
