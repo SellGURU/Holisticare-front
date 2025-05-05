@@ -109,7 +109,10 @@ const HistoricalChart = ({
                 style={{ borderColor: resolveColor(el.key) }}
               >
                 {dataPoints.map((point, index) => (
-                  <div key={`point-${index}`} className="w-[40px] ml-2 relative">
+                  <div
+                    key={`point-${index}`}
+                    className="w-[40px] ml-2 relative"
+                  >
                     <div
                       style={{
                         backgroundColor: resolveColor(el.key),

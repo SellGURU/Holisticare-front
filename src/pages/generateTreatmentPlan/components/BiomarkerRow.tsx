@@ -113,7 +113,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
                   >
                     <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
-                    {value['System Score'] ? value['System Score'] : '-' }
+                    {value['System Score'] ? value['System Score'] : '-'}
                     <Tooltip
                       id={`system-score-${index}`}
                       place="top"

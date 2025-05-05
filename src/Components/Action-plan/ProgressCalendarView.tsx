@@ -33,27 +33,25 @@ const ProgressCalenderView: FC<ProgressCalenderViewProps> = ({
       <div className="flex h-full gap-8">
         <div className="flex flex-col items-center">
           <div className="font-medium text-xs text-Text-Primary -mb-2">
-            <img className='size-5' src="/icons/diet.svg" alt="" />
+            <img className="size-5" src="/icons/diet.svg" alt="" />
           </div>
           <CircularProgressBar percentage={activeAction.score.diet} />
         </div>
         <div className="flex flex-col items-center">
           <div className="font-medium text-xs text-Text-Primary -mb-2">
-          <img className='size-5' src="/icons/weight.svg" alt="" />
-
+            <img className="size-5" src="/icons/weight.svg" alt="" />
           </div>
           <CircularProgressBar percentage={activeAction.score.activity} />
         </div>
         <div className="flex flex-col items-center">
           <div className="font-medium text-xs text-Text-Primary -mb-2">
-          <img className='size-5' src="/icons/Supplement.svg" alt="" />
+            <img className="size-5" src="/icons/Supplement.svg" alt="" />
           </div>
           <CircularProgressBar percentage={activeAction.score.supplement} />
         </div>
         <div className="flex flex-col items-center">
           <div className="font-medium text-xs text-Text-Primary -mb-2">
-          <img className='size-5' src="/icons/LifeStyle2.svg" alt="" />
-
+            <img className="size-5" src="/icons/LifeStyle2.svg" alt="" />
           </div>
           <CircularProgressBar percentage={activeAction.score.lifestyle} />
         </div>
