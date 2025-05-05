@@ -7,7 +7,6 @@ export const ClientInfo = () => {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState(null);
   const [clientGoals, setClientGoals] = useState(null);
-  console.log('data => ', data);
   // const [error, setError] = useState<string | null>(null);
 
   const formik = useFormik({
@@ -143,7 +142,7 @@ export const ClientInfo = () => {
             <div className="text-xs font-medium text-Text-Quadruple">
               Client Goals
             </div>
-            {clientGoals ? (
+            {clientGoals && Object.keys(clientGoals).length > 0 ? (
               <div className="flex flex-col mt-2">
                 {Object.entries(clientGoals).map(
                   ([key, value], index: number) => (
