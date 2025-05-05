@@ -256,11 +256,8 @@ const GenerateActionPlan = () => {
                       <div className="font-medium text-sm text-Text-Primary">
                         Progress
                       </div>
-                      <div className="text-[10px] text-Text-Primary">
-                        Monitor your clients' wellness progress with clear
-                        insights and visual updates. Track key health metrics to
-                        keep them motivated and support informed, healthy
-                        choices.
+                      <div className="text-[10px] text-Text-Primary text-justify max-w-[400px] 2xl:max-w-[500px]">
+                      Stay connected to your clients' journey with real-time progress tracking. Visualize their achievements, identify trends, and celebrate milestones—all to foster accountability and inspire lasting wellness transformations.
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
