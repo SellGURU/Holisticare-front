@@ -242,6 +242,9 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     if (category == 'Lifestyle') {
       return '/icons/LifeStyle2.svg';
     }
+    if (category == '') {
+      return '/icons/check-in.svg';
+    }
   };
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
@@ -360,7 +363,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                             src={resolveIcon(category)}
                             alt=""
                           />
-                          {category}
+                          {category || 'Check-In'}
                         </div>
                         {activitiesForTheDay
                           .filter(

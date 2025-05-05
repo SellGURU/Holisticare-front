@@ -105,6 +105,8 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
+  console.log(calendarViewData);
+  
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {
@@ -257,7 +259,11 @@ const GenerateActionPlan = () => {
                         Progress
                       </div>
                       <div className="text-[10px] text-Text-Primary text-justify max-w-[400px] 2xl:max-w-[500px]">
-                      Stay connected to your clients' journey with real-time progress tracking. Visualize their achievements, identify trends, and celebrate milestones—all to foster accountability and inspire lasting wellness transformations.
+                        Stay connected to your clients' journey with real-time
+                        progress tracking. Visualize their achievements,
+                        identify trends, and celebrate milestones—all to foster
+                        accountability and inspire lasting wellness
+                        transformations.
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
