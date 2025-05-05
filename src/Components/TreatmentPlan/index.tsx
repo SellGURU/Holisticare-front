@@ -521,8 +521,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   })}
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
-                  )[0]?.data == undefined && (
-                    <div className="w-full h-[300px] flex justify-center items-center flex-col">
+                  )[0]?.data.length == 0 && (
+                    <div className="w-full h-[450px] flex justify-center items-center flex-col">
                       <img src="/icons/no-recommendations.svg" alt="" />
                       <div className="text-Text-Primary text-sm font-medium mt-5">
                         No Recommendations Available.

@@ -146,7 +146,7 @@ const NewGenerateHolisticPlan = () => {
     <>
       <div className="h-[100vh] overflow-auto">
         {isFirstLoading && (
-          <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
             {' '}
             <Circleloader></Circleloader>
           </div>
@@ -262,7 +262,7 @@ const NewGenerateHolisticPlan = () => {
                     <Toggle
                       active={active}
                       setActive={setActive}
-                      value={['Recommendation', 'Result']}
+                      value={['Recommendation', 'Client Metrics']}
                     ></Toggle>
                   </div>
                   {/* <div
