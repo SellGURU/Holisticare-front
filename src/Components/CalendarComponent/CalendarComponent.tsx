@@ -25,6 +25,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   selectedMonthProp,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     // Determine the initial selected month
@@ -36,38 +37,29 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     setSelectedMonth(initialMonth);
   }, [selectedMonthProp]);
 
-  const getMonthNames = (startMonth: string) => {
-    if (!startMonth) return []; // Handle undefined startMonth
+  useEffect(() => {
+    if (selectedMonth) {
+      const [monthName, year] = selectedMonth.split(', ');
+      const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
+      const newDate = new Date(parseInt(year), monthIndex, 1);
+      setCurrentDate(newDate);
+    }
+  }, [selectedMonth]);
 
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
+  const getNextThreeMonths = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
 
-    const splitMonth = startMonth.split(', ');
-    const monthName = splitMonth[0];
-    const year = splitMonth[1];
+    const months = [];
+    for (let i = 0; i < 3; i++) {
+      const date = new Date(currentYear, currentMonth + i, 1);
+      const monthName = date.toLocaleString('en-US', { month: 'long' });
+      const year = date.getFullYear();
+      months.push(`${monthName}, ${year}`);
+    }
 
-    const startMonthIndex = monthNames.indexOf(monthName.trim());
-    const startYear = parseInt(year.trim(), 10);
-
-    if (startMonthIndex === -1 || isNaN(startYear)) return []; // Handle invalid month/year
-
-    return [
-      `${monthNames[startMonthIndex]}, ${startYear}`,
-      `${monthNames[(startMonthIndex + 1) % 12]}, ${startMonthIndex + 1 > 11 ? startYear + 1 : startYear}`,
-      `${monthNames[(startMonthIndex + 2) % 12]}, ${startMonthIndex + 2 > 11 ? startYear + 1 : startYear}`,
-    ];
+    return months;
   };
 
   // const theme = useSelector((state: any) => state.theme.value.name);
@@ -208,7 +200,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   // };
 
   const getCurrentMonthWithBuffer = (todaydat: any) => {
-    const today = new Date(todaydat);
+    const dateToUse = selectedMonth ? currentDate : new Date(todaydat);
+    const today = new Date(dateToUse);
 
     // Get the first day and last day of the current month
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -339,7 +332,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 Time frame:
                 <Select
                   onChange={(value) => setSelectedMonth(value)}
-                  options={getMonthNames(selectedMonth)}
+                  options={getNextThreeMonths()}
                 />
               </div>
             )}
