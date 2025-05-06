@@ -105,6 +105,8 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
+  console.log(calendarViewData);
+
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {
@@ -131,6 +133,8 @@ const GenerateActionPlan = () => {
   const handleShowConflictsModal = () => {
     setShowConflictsModal(!showConflictsModal);
   };
+  console.log(calendarViewData?.scheduled_tasks.length > 0);
+
   return (
     <>
       <div className="h-[100vh] overflow-auto overflow-y-scroll">
@@ -254,11 +258,12 @@ const GenerateActionPlan = () => {
                       <div className="font-medium text-sm text-Text-Primary">
                         Progress
                       </div>
-                      <div className="text-[10px] text-Text-Primary">
-                        Monitor your clients' wellness progress with clear
-                        insights and visual updates. Track key health metrics to
-                        keep them motivated and support informed, healthy
-                        choices.
+                      <div className="text-[10px] text-Text-Primary text-justify max-w-[400px] 2xl:max-w-[500px]">
+                        Stay connected to your clients' journey with real-time
+                        progress tracking. Visualize their achievements,
+                        identify trends, and celebrate milestones—all to foster
+                        accountability and inspire lasting wellness
+                        transformations.
                       </div>
                     </div>
                     <div className="flex h-full gap-8">
@@ -310,7 +315,10 @@ const GenerateActionPlan = () => {
                   </div>
                 )}
                 {calendarViewData?.scheduled_tasks.length > 0 && (
-                  <CalenderComponent data={calendarViewData?.scheduled_tasks} />
+                  <CalenderComponent
+                    isActionPlan
+                    data={calendarViewData?.scheduled_tasks}
+                  />
                 )}
                 {/* {calendarViewData?.scheduled_tasks.length} */}
                 {calendarViewData?.scheduled_tasks.length === 0 && (
