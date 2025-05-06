@@ -120,7 +120,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       el.value[1] >= data.values[0]) ||
                       (data.status && data.status[0] == el.key)) && (
                       <div
-                        className={`absolute  top-[2px]  z-10`}
+                        className={`absolute top-[2px] z-10 flex flex-col items-center justify-center`}
                         style={{
                           top: '2px',
                           left: resolvePercentLeft(data, el) + '%',
@@ -131,12 +131,11 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                           style={{ background: '#005F73' }}
                         ></div>
                         <div
-                          className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                          className="w-[3px] h-[8px] bg-Primary-DeepTeal"
                           style={{
                             background: '#005F73',
                             width: '3px',
                             height: '8px',
-                            marginLeft: '2.5px',
                           }}
                         ></div>
                         <div

@@ -43,10 +43,10 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
         return (
           <div
             key={day}
-            className={`flex items-center justify-center capitalize text-Text-Primary
+            className={`flex items-center justify-center capitalize
               ${!isLastInRow ? 'border-r border-l border-[#e9edf5]' : ''}
               ${!isInLastRow ? 'border-b border-t border-[#e9edf5]' : ''}`}
-            style={{ width: '32px', height: '32px' }}
+            style={{ width: '32px', height: '32px', color: '#383838' }}
           >
             {day.split('-')[2]}
           </div>

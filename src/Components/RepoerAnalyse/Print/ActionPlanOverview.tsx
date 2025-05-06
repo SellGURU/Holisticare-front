@@ -297,12 +297,12 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           // style={{ maxWidth: '100px' }}
                         >
                           {item.client_notes && item.client_notes.length > 0 ? (
-                            item.client_notes[0].length > 50 ? (
+                            item.client_notes[0].length > 300 ? (
                               <div
                                 className="items-start text-[10px]"
                                 style={{ color: '#888888', textWrap: 'wrap' }}
                               >
-                                {item.client_notes[0].slice(0, 50)} ...
+                                {item.client_notes[0].slice(0, 300)} ...
                               </div>
                             ) : (
                               <div
