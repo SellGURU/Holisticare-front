@@ -465,23 +465,27 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 //   </ul>
                 // </CalendarCell>
                 <div
-                key={index}
-                className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
-                  day.dayNumber === currenDay && day.monthName === currenMonth
-                    ? 'gradient-border text-black-primary'
-                    : currenMonth === day.monthName
-                    ? 'bg-backgroundColor-Card'
-                    : 'bg-backgroundColor-Main'
-                }`}
-                style={{
-                  background: day.dayNumber === currenDay && day.monthName === currenMonth
-                    ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
-                    : undefined,
-                  border: day.dayNumber === currenDay && day.monthName === currenMonth
-                    ? '2px solid transparent'
-                    : '1px solid #D0DDEC'
-                }}
-              >
+                  key={index}
+                  className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
+                    day.dayNumber === currenDay && day.monthName === currenMonth
+                      ? 'gradient-border text-black-primary'
+                      : currenMonth === day.monthName
+                        ? 'bg-backgroundColor-Card'
+                        : 'bg-backgroundColor-Main'
+                  }`}
+                  style={{
+                    background:
+                      day.dayNumber === currenDay &&
+                      day.monthName === currenMonth
+                        ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
+                        : undefined,
+                    border:
+                      day.dayNumber === currenDay &&
+                      day.monthName === currenMonth
+                        ? '2px solid transparent'
+                        : '1px solid #D0DDEC',
+                  }}
+                >
                   <div
                     className={`${
                       day.dayNumber === currenDay &&
