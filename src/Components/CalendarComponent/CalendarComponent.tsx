@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
 import styled from 'styled-components';
+import Select from '../Select';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -13,6 +14,7 @@ interface CalenderComponentProps {
   overview?: any;
   isTwoView?: boolean;
   isActionPlan?: boolean;
+  selectedMonthProp?: string;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -21,8 +23,44 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   overview,
   isTwoView,
   isActionPlan,
+  selectedMonthProp
 }) => {
-  console.log(data);
+  const [selectedMonth, setSelectedMonth] = useState('');
+
+  useEffect(() => {
+    // Determine the initial selected month
+    const today = new Date();
+    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+    const currentYear = today.getFullYear();
+
+    const initialMonth = selectedMonthProp || `${currentMonth}, ${currentYear}`;
+    setSelectedMonth(initialMonth);
+  }, [selectedMonthProp]);
+
+  const getMonthNames = (startMonth: string) => {
+    if (!startMonth) return []; // Handle undefined startMonth
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    
+    const splitMonth = startMonth.split(', ');
+    const monthName = splitMonth[0];
+    const year = splitMonth[1];
+
+    const startMonthIndex = monthNames.indexOf(monthName.trim());
+    const startYear = parseInt(year.trim(), 10);
+
+    if (startMonthIndex === -1 || isNaN(startYear)) return []; // Handle invalid month/year
+
+    return [
+      `${monthNames[startMonthIndex]}, ${startYear}`,
+      `${monthNames[(startMonthIndex + 1) % 12]}, ${(startMonthIndex + 1) > 11 ? startYear + 1 : startYear}`,
+      `${monthNames[(startMonthIndex + 2) % 12]}, ${(startMonthIndex + 2) > 11 ? startYear + 1 : startYear}`
+    ];
+  };
+
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const getNext30Days = () => {
   // const today = new Date();
@@ -286,20 +324,31 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
           <div className="text-Text-Primary font-medium text-base">
             Planning Overview
           </div>
-          <div className="text-Text-Primary font-medium text-xs flex items-center gap-2">
-            Calendar View{' '}
-            <Toggle
-              setChecked={(value) => {
-                setIsCheced(value);
-              }}
-              checked={isCheced}
-            />
+          <div className="flex items-center gap-8 text-Text-Primary font-medium text-xs">
+          {isCheced  && ( <div className='flex items-center gap-2'>
+            Time frame:
+            <Select
+              onChange={(value) => setSelectedMonth(value)}
+              options={getMonthNames(selectedMonth)}            />
+            </div>
+            )}
+           
+          
+            <div className="text-Text-Primary font-medium text-xs flex items-center gap-2">
+              Calendar View{' '}
+              <Toggle
+                setChecked={(value) => {
+                  setIsCheced(value);
+                }}
+                checked={isCheced}
+              />
+            </div>
           </div>
         </div>
       )}
       {isCheced || isTwoView === false || isActionPlan ? (
         <div className="w-full py-4 rounded-lg relative">
-          {!isActionPlan && (
+          {/* {!isActionPlan && (
             <div className="flex">
               <div className="bg-white px-3 py-1 rounded-md ">
                 {new Date(data[0].date).toLocaleString('en-US', {
@@ -307,7 +356,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 })}
               </div>
             </div>
-          )}
+          )} */}
 
           <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1  py-3">
             {getCurrentMonthWithBuffer(data[0].date)

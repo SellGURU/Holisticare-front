@@ -236,7 +236,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       <div className=" w-full   flex justify-end mt-6 ">
         <div className=" bg-Secondary-SelverGray TextStyle-Body-3 text-Primary-DeepTeal  rounded-full w-fit px-2.5 py-[2px]  flex justify-end items-center gap-1 ">
           <img
-            className="w-4 h-4 invert dark:invert-0"
+            className="w-4 h-4"
             src="/icons/timer.svg"
             alt=""
           />
