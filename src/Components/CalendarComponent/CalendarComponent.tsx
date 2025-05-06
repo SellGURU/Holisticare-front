@@ -464,79 +464,87 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                 //     ))}
                 //   </ul>
                 // </CalendarCell>
-                        <div
-                        key={index}
-                        className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border border-Gray-100 rounded-lg ${
-                          day.dayNumber === currenDay && day.monthName === currenMonth
-                            ? 'dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary'
-                            : currenMonth === day.monthName
-                              ? ' bg-backgroundColor-Card'
-                              : ' bg-backgroundColor-Main'
-                        }`}
-                      >
-                        <div
-                          className={`${
-                            day.dayNumber === currenDay &&
-                            day.monthName === currenMonth
-                              ? 'text-Text-Primary'
-                              : currenMonth !== day.monthName
-                                ? 'text-Text-Secondary'
-                                : 'text-Text-Primary'
-                          } text-xs`}
-                        >
-                          {day.dayNumber}
+                <div
+                key={index}
+                className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
+                  day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? 'gradient-border text-black-primary'
+                    : currenMonth === day.monthName
+                    ? 'bg-backgroundColor-Card'
+                    : 'bg-backgroundColor-Main'
+                }`}
+                style={{
+                  background: day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
+                    : undefined,
+                  border: day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? '2px solid transparent'
+                    : '1px solid #D0DDEC'
+                }}
+              >
+                  <div
+                    className={`${
+                      day.dayNumber === currenDay &&
+                      day.monthName === currenMonth
+                        ? 'text-Text-Primary'
+                        : currenMonth !== day.monthName
+                          ? 'text-Text-Secondary'
+                          : 'text-Text-Primary'
+                    } text-xs`}
+                  >
+                    {day.dayNumber}
+                  </div>
+                  <ul>
+                    {categories.map((category: any) => (
+                      <li className="mt-2" key={category}>
+                        <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
+                          <img
+                            className="w-3"
+                            src={resolveIcon(category)}
+                            alt=""
+                          />
+                          {category}
                         </div>
-                        <ul>
-                          {categories.map((category: any) => (
-                            <li className="mt-2" key={category}>
-                              <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
-                                <img
-                                  className="w-3"
-                                  src={resolveIcon(category)}
-                                  alt=""
-                                />
-                                {category}
+                        {activitiesForTheDay
+                          .filter(
+                            (activity: any) => activity.category === category,
+                          )
+                          .map((activity: any, i: number) => {
+                            const activityDate = new Date(activity.date);
+                            const isPastDate = activityDate < today;
+                            const opacityClass =
+                              !activity.status && isPastDate
+                                ? 'opacity-70'
+                                : 'opacity-100';
+
+                            return (
+                              <div
+                                key={i}
+                                className={`flex  gap-1 mt-1 ${opacityClass}`}
+                              >
+                                {activity.status ? (
+                                  <img
+                                    className="w-3 h-3"
+                                    src="/icons/activity-circle-done.svg"
+                                    alt=""
+                                  />
+                                ) : (
+                                  <img
+                                    className="w-3 h-3"
+                                    src="/icons/acitivty-circle.svg"
+                                    alt=""
+                                  />
+                                )}
+                                <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
+                                  {activity.name}
+                                </span>
                               </div>
-                              {activitiesForTheDay
-                                .filter(
-                                  (activity: any) => activity.category === category,
-                                )
-                                .map((activity: any, i: number) => {
-                                  const activityDate = new Date(activity.date);
-                                  const isPastDate = activityDate < today;
-                                  const opacityClass =
-                                    !activity.status && isPastDate
-                                      ? 'opacity-70'
-                                      : 'opacity-100';
-      
-                                  return (
-                                    <div
-                                      key={i}
-                                      className={`flex  gap-1 mt-1 ${opacityClass}`}
-                                    >
-                                      {activity.status ? (
-                                        <img
-                                          className="w-3 h-3"
-                                          src="/icons/activity-circle-done.svg"
-                                          alt=""
-                                        />
-                                      ) : (
-                                        <img
-                                          className="w-3 h-3"
-                                          src="/icons/acitivty-circle.svg"
-                                          alt=""
-                                        />
-                                      )}
-                                      <span className="text-[6px] lg:text-[10px] text-Text-Primary   flex-grow">
-                                        {activity.name}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                            );
+                          })}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               );
             })}
           </div>
