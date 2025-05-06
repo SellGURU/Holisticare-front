@@ -23,7 +23,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   overview,
   isTwoView,
   isActionPlan,
-  selectedMonthProp
+  selectedMonthProp,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState('');
 
@@ -41,10 +41,20 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     if (!startMonth) return []; // Handle undefined startMonth
 
     const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
-    
+
     const splitMonth = startMonth.split(', ');
     const monthName = splitMonth[0];
     const year = splitMonth[1];
@@ -56,8 +66,8 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
 
     return [
       `${monthNames[startMonthIndex]}, ${startYear}`,
-      `${monthNames[(startMonthIndex + 1) % 12]}, ${(startMonthIndex + 1) > 11 ? startYear + 1 : startYear}`,
-      `${monthNames[(startMonthIndex + 2) % 12]}, ${(startMonthIndex + 2) > 11 ? startYear + 1 : startYear}`
+      `${monthNames[(startMonthIndex + 1) % 12]}, ${startMonthIndex + 1 > 11 ? startYear + 1 : startYear}`,
+      `${monthNames[(startMonthIndex + 2) % 12]}, ${startMonthIndex + 2 > 11 ? startYear + 1 : startYear}`,
     ];
   };
 
@@ -325,15 +335,16 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
             Planning Overview
           </div>
           <div className="flex items-center gap-8 text-Text-Primary font-medium text-xs">
-          {isCheced  && ( <div className='flex items-center gap-2'>
-            Time frame:
-            <Select
-              onChange={(value) => setSelectedMonth(value)}
-              options={getMonthNames(selectedMonth)}            />
-            </div>
+            {isCheced && (
+              <div className="flex items-center gap-2">
+                Time frame:
+                <Select
+                  onChange={(value) => setSelectedMonth(value)}
+                  options={getMonthNames(selectedMonth)}
+                />
+              </div>
             )}
-           
-          
+
             <div className="text-Text-Primary font-medium text-xs flex items-center gap-2">
               Calendar View{' '}
               <Toggle

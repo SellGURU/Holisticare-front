@@ -175,7 +175,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                           <>
                             <ProgressCalenderView activeAction={activeAction} />
                             <CalenderComponent
- selectedMonthProp="January, 2025"                              data={activeAction.calendar}
+                              data={activeAction.calendar}
                               overview={activeAction.overview}
                               isTwoView={true}
                             />

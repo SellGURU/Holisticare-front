@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import { useNavigate, useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
@@ -65,7 +65,24 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
   // const [showConfirmModal, setshowConfirmModal] = useState(false);
 
   const isDisabled = el.state === 'Completed';
+  const textRef = useRef<HTMLHeadingElement | null>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (textRef.current) {
+        const lineHeight = parseFloat(
+          getComputedStyle(textRef.current).lineHeight,
+        );
+        const maxHeight = lineHeight * 2; // Calculate the maximum height for 2 lines
+        setIsOverflowing(textRef.current.scrollHeight > maxHeight);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [el.description]);
   return (
     <div
       onClick={() => {
@@ -73,7 +90,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
           onClick();
         }
       }}
-      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] rounded-[40px] bg-white  border shadow-100  px-3 pt-2 cursor-pointer pb-6 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
+      className={` min-w-[218px] relative min-h-[238px] w-[218px] h-[238px] flex flex-col justify-between  rounded-[40px] bg-white  border-2 shadow-100  px-3 pt-2 cursor-pointer pb-3 select-none ${isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50  '}  ${
         isDisabled ? 'opacity-45 cursor-not-allowed' : ''
       }`}
     >
@@ -87,7 +104,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
         </div>
         <div
           // style={{ borderColor: resolveStatusColor() }}
-          className="w-[65px] z-[-1] h-[46px] border-t border-Gray-50   rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  "
+          className={`w-[65px] z-[-1] h-[46px] border-2 ${isActive ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50   '} rounded-t-[22px]  flex items-center justify-center text-lg font-medium relative -top-12 mr-6 bg-white text-Primary-DeepTeal  `}
         >
           {index < 10 && 0}
           {index}
@@ -199,19 +216,25 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       </div>
       <div className=" flex flex-col items-center justify-center gap-[6px]">
         <h6
-          data-tooltip-id="desc"
+          ref={textRef}
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2, // Limit to 2 lines
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          data-tooltip-id={isOverflowing ? 'desc' + el.description : undefined}
           className="TextStyle-Body-3 text-justify  w-full text-Text-Secondary"
         >
-          {el.description.length > 1450
-            ? `${el.description.substring(0, 150)}...`
-            : el.description}
+          {el.description}
         </h6>
-        {el.description.length > 150 && (
+        {isOverflowing && !isDisabled && (
           <Tooltip
-            id={'desc'}
+            id={'desc' + el.description}
             place="top"
-            className="!bg-white !w-[162px]  !text-wrap 
-                   !text-[#888888] !shadow-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            className="!bg-white !opacity-100 !bg-opacity-100 !w-[162px]  !text-wrap 
+                   !text-[#888888] text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
             style={{
               zIndex: 9999,
               pointerEvents: 'none',
@@ -235,11 +258,7 @@ export const ActionPlanCard: React.FC<ActionPlanCardProps> = ({
       </div>
       <div className=" w-full   flex justify-end mt-6 ">
         <div className=" bg-Secondary-SelverGray TextStyle-Body-3 text-Primary-DeepTeal  rounded-full w-fit px-2.5 py-[2px]  flex justify-end items-center gap-1 ">
-          <img
-            className="w-4 h-4"
-            src="/icons/timer.svg"
-            alt=""
-          />
+          <img className="w-4 h-4" src="/icons/timer.svg" alt="" />
           {el.to_date}
         </div>
       </div>

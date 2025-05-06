@@ -55,7 +55,7 @@ const Stadio: FC<StadioProps> = ({
   // const [ setIsDragging] = useState(false);
   const addToActions = (item: any) => {
     console.log(item);
-    
+
     if (item.Task_Type === 'Checkin') {
       setActions((prevActions: any) => ({
         checkIn: [item, ...prevActions.checkIn],
@@ -204,15 +204,15 @@ const Stadio: FC<StadioProps> = ({
       .sort((a: any, b: any) => (b[sortBy] || 0) - (a[sortBy] || 0));
   }, [data.category, selectCategory, searchValue, sortBy]);
   const filteredDataCheckIn = data.checkIn
-  .filter(
-    (el) =>
-      el.Task_Type === selectCategory &&
-      el.Title.toLowerCase().includes(searchValue.toLowerCase())
-  )
-  .map((el) => ({
-    ...el, // Spread existing properties
-    category: 'Check-In', // Add the category key with value 'Check-In'
-  }));
+    .filter(
+      (el) =>
+        el.Task_Type === selectCategory &&
+        el.Title.toLowerCase().includes(searchValue.toLowerCase()),
+    )
+    .map((el) => ({
+      ...el, // Spread existing properties
+      category: 'Check-In', // Add the category key with value 'Check-In'
+    }));
   const [showAddModal, setshowAddModal] = useState(false);
   const options = [
     {
