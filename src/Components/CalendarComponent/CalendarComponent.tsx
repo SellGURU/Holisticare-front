@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
+import Select from '../Select';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -11,6 +12,8 @@ interface CalenderComponentProps {
   data: any;
   overview?: any;
   isTwoView?: boolean;
+  isActionPlan?: boolean;
+  selectedMonthProp?: string;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -18,8 +21,55 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
   data,
   overview,
   isTwoView,
+  isActionPlan,
+  selectedMonthProp,
 }) => {
-  console.log(data[0].date);
+  const [selectedMonth, setSelectedMonth] = useState('');
+
+  useEffect(() => {
+    // Determine the initial selected month
+    const today = new Date();
+    const currentMonth = today.toLocaleString('en-US', { month: 'long' });
+    const currentYear = today.getFullYear();
+
+    const initialMonth = selectedMonthProp || `${currentMonth}, ${currentYear}`;
+    setSelectedMonth(initialMonth);
+  }, [selectedMonthProp]);
+
+  const getMonthNames = (startMonth: string) => {
+    if (!startMonth) return []; // Handle undefined startMonth
+
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    const splitMonth = startMonth.split(', ');
+    const monthName = splitMonth[0];
+    const year = splitMonth[1];
+
+    const startMonthIndex = monthNames.indexOf(monthName.trim());
+    const startYear = parseInt(year.trim(), 10);
+
+    if (startMonthIndex === -1 || isNaN(startYear)) return []; // Handle invalid month/year
+
+    return [
+      `${monthNames[startMonthIndex]}, ${startYear}`,
+      `${monthNames[(startMonthIndex + 1) % 12]}, ${startMonthIndex + 1 > 11 ? startYear + 1 : startYear}`,
+      `${monthNames[(startMonthIndex + 2) % 12]}, ${startMonthIndex + 2 > 11 ? startYear + 1 : startYear}`,
+    ];
+  };
+
   // const theme = useSelector((state: any) => state.theme.value.name);
   // const getNext30Days = () => {
   // const today = new Date();
@@ -236,10 +286,46 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
     if (category == 'Mind') {
       return '/icons/mind.svg';
     }
+    if (category == 'Lifestyle') {
+      return '/icons/LifeStyle2.svg';
+    }
+    if (category == '') {
+      return '/icons/check-in.svg';
+    }
   };
   const today = new Date(); // Current date at the component level
   today.setHours(0, 0, 0, 0); // Ensure time is not considered in comparison
   const [isCheced, setIsCheced] = useState(false);
+  // interface CalendarCellProps {
+  //   isCurrentDay: boolean;
+  //   isCurrentMonth: boolean;
+  // }
+
+  // const CalendarCell = styled.div<CalendarCellProps>`
+  //   padding: 0.25rem 1rem;
+  //   min-height: 59px;
+  //   min-width: 141px;
+  //   border-radius: 4px;
+
+  //   ${({ isCurrentDay, isCurrentMonth }) =>
+  //     isCurrentDay
+  //       ? `
+  //       background: #FCFCFC;
+  //       background: linear-gradient(#FCFCFC, #FCFCFC) padding-box,
+  //                   linear-gradient(to right, #005F73, #6CC24A) border-box;
+  //       border: 2px solid transparent;
+  //       `
+  //       : isCurrentMonth
+  //         ? `
+  //         background: #FDFDFD;
+  //         border: 1px solid #D0DDEC;
+  //         `
+  //         : `
+  //         background: #FCFCFC;
+  //         border: 1px solid #D0DDEC;
+  //         `}
+  // `;
+
   return (
     <>
       {isTwoView && (
@@ -247,26 +333,41 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
           <div className="text-Text-Primary font-medium text-base">
             Planning Overview
           </div>
-          <div className="text-Text-Primary font-medium text-xs flex items-center gap-2">
-            Calendar View{' '}
-            <Toggle
-              setChecked={(value) => {
-                setIsCheced(value);
-              }}
-              checked={isCheced}
-            />
+          <div className="flex items-center gap-8 text-Text-Primary font-medium text-xs">
+            {isCheced && (
+              <div className="flex items-center gap-2">
+                Time frame:
+                <Select
+                  onChange={(value) => setSelectedMonth(value)}
+                  options={getMonthNames(selectedMonth)}
+                />
+              </div>
+            )}
+
+            <div className="text-Text-Primary font-medium text-xs flex items-center gap-2">
+              Calendar View{' '}
+              <Toggle
+                setChecked={(value) => {
+                  setIsCheced(value);
+                }}
+                checked={isCheced}
+              />
+            </div>
           </div>
         </div>
       )}
-      {isCheced || isTwoView === false ? (
+      {isCheced || isTwoView === false || isActionPlan ? (
         <div className="w-full py-4 rounded-lg relative">
-          <div className="flex">
-            <div className="bg-white px-3 py-1 rounded-md ">
-              {new Date(data[0].date).toLocaleString('en-US', {
-                month: 'long',
-              })}
+          {/* {!isActionPlan && (
+            <div className="flex">
+              <div className="bg-white px-3 py-1 rounded-md ">
+                {new Date(data[0].date).toLocaleString('en-US', {
+                  month: 'long',
+                })}
+              </div>
             </div>
-          </div>
+          )} */}
+
           <div className="grid grid-cols-7 w-full lg:gap-2 gap-[100px] mt-1  py-3">
             {getCurrentMonthWithBuffer(data[0].date)
               .slice(0, 7)
@@ -292,16 +393,95 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               );
 
               return (
+                // <CalendarCell
+                //   key={index}
+                //   isCurrentDay={
+                //     day.dayNumber === currenDay && day.monthName === currenMonth
+                //   }
+                //   isCurrentMonth={currenMonth === day.monthName}
+                //   className="px-1 lg:px-4 py-1"
+                // >
+                //   <div
+                //     className={`${
+                //       day.dayNumber === currenDay &&
+                //       day.monthName === currenMonth
+                //         ? 'text-Text-Primary'
+                //         : currenMonth !== day.monthName
+                //           ? 'text-Text-Secondary'
+                //           : 'text-Text-Primary'
+                //     } text-xs`}
+                //   >
+                //     {day.dayNumber}
+                //   </div>
+                //   <ul>
+                //     {categories.map((category: any) => (
+                //       <li className="mt-2" key={category}>
+                //         <div className="font-semibold text-[10px] text-[#383838] flex items-center gap-1">
+                //           <img
+                //             className="w-3"
+                //             src={resolveIcon(category)}
+                //             alt=""
+                //           />
+                //           {category || 'Check-In'}
+                //         </div>
+                //         {activitiesForTheDay
+                //           .filter(
+                //             (activity: any) => activity.category === category,
+                //           )
+                //           .map((activity: any, i: number) => {
+                //             const activityDate = new Date(activity.date);
+                //             const isPastDate = activityDate < today;
+                //             const opacityClass =
+                //               !activity.status && isPastDate
+                //                 ? 'opacity-70'
+                //                 : 'opacity-100';
+
+                //             return (
+                //               <div
+                //                 key={i}
+                //                 className={`flex gap-1 mt-1 ${opacityClass}`}
+                //               >
+                //                 {activity.status ? (
+                //                   <img
+                //                     className="w-3 h-3"
+                //                     src="/icons/activity-circle-done.svg"
+                //                     alt=""
+                //                   />
+                //                 ) : (
+                //                   <img
+                //                     className="w-3 h-3"
+                //                     src="/icons/acitivty-circle.svg"
+                //                     alt=""
+                //                   />
+                //                 )}
+                //                 <span className="text-[6px] lg:text-[10px] text-Text-Primary flex-grow">
+                //                   {activity.name}
+                //                 </span>
+                //               </div>
+                //             );
+                //           })}
+                //       </li>
+                //     ))}
+                //   </ul>
+                // </CalendarCell>
                 <div
-                  key={index}
-                  className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border border-Gray-100 rounded-lg ${
-                    day.dayNumber === currenDay && day.monthName === currenMonth
-                      ? 'dark:bg-[#B8B8FF80] bg-light-blue-active text-black-primary'
-                      : currenMonth === day.monthName
-                        ? ' bg-backgroundColor-Card'
-                        : ' bg-backgroundColor-Main'
-                  }`}
-                >
+                key={index}
+                className={`px-1 lg:px-4 py-1 min-h-[59px] min-w-[141px] border rounded-lg ${
+                  day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? 'gradient-border text-black-primary'
+                    : currenMonth === day.monthName
+                    ? 'bg-backgroundColor-Card'
+                    : 'bg-backgroundColor-Main'
+                }`}
+                style={{
+                  background: day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? 'linear-gradient(white, white) padding-box, linear-gradient(to right, #005F73, #6CC24A) border-box'
+                    : undefined,
+                  border: day.dayNumber === currenDay && day.monthName === currenMonth
+                    ? '2px solid transparent'
+                    : '1px solid #D0DDEC'
+                }}
+              >
                   <div
                     className={`${
                       day.dayNumber === currenDay &&
