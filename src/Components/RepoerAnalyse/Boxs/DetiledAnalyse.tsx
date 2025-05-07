@@ -23,6 +23,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [activeBox, setActiveBOx] = useState<any>(
     refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
   );
+  useEffect(() => {
+    setIsCheced(false);
+  }, [activeBox]);
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'

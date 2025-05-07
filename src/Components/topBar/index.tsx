@@ -302,6 +302,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       >
         <>
           <DownloadModal
+            isOpen={openDownload || openShare}
             onconfirm={(settingsData) => {
               const locationAddress = window.location.pathname;
               const routeData = locationAddress.split('/');
