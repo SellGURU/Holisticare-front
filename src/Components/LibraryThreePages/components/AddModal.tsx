@@ -2,6 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import MainModal from '../../MainModal';
 import RangeCardLibraryThreePages from './RangeCard';
+import { Tooltip } from 'react-tooltip';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -330,7 +331,21 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Value</div>
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">Value
+                <img data-tooltip-id='value-info' className='size-2 cursor-pointer' src="/icons/info-circle-blue.svg" alt="" />
+                <Tooltip
+            id={`value-info`}
+            place="top"
+            className="!bg-white !w-[284px] !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            style={{
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+          >
+          Provide the numerical value, and if needed, enter the unit manually (e.g., 8 + Hours)
+          </Tooltip>
+              </div>
               <input
                 placeholder="Enter Value..."
                 value={value}
