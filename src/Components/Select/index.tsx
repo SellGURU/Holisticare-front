@@ -9,7 +9,7 @@ const Select: React.FC<SelectProps> = ({ onChange, options, key }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative inline-block w-[120px] font-normal">
+    <div className="relative inline-block w-[120px] cursor-pointer font-normal">
       <select
         onClick={() => setIsOpen(!isOpen)}
         onBlur={() => setIsOpen(false)}
@@ -18,7 +18,7 @@ const Select: React.FC<SelectProps> = ({ onChange, options, key }) => {
           setIsOpen(false); // Close the dropdown after selection
         }}
         key={key}
-        className="block appearance-none w-full bg-backgroundColor-Secondary border-none py-[9px] px-4 pr-8 shadow-100 rounded-[8px] leading-tight focus:outline-none text-[10px] text-Text-Secondary"
+        className="block cursor-pointer appearance-none w-full bg-backgroundColor-Secondary border-none py-[9px] px-4 pr-8 shadow-100 rounded-[8px] leading-tight focus:outline-none text-[10px] text-Text-Secondary"
       >
         {options?.map((el) => {
           return (
