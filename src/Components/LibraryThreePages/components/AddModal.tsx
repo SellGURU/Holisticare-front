@@ -110,7 +110,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Value: Number(value),
-        Unit:Unit
+        Unit: Unit,
       };
       onSubmit(data);
       clear();
@@ -139,7 +139,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
     setDose('');
     setValue('');
-    setUnit('')
+    setUnit('');
     setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
     setShowValidation(false);
     setSelectedRow();
@@ -372,7 +372,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                 Value must include a number and, if needed, be followed by a unit (e.g., 8 glasses of water).
+                  Value must include a number and, if needed, be followed by a
+                  unit (e.g., 8 glasses of water).
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
@@ -398,7 +399,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   type="text"
                   onChange={(e) => {
                     setUnit(e.target.value);
-                  
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
                    bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}

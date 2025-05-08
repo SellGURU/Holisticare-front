@@ -18,14 +18,18 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
   selectedRow,
   handleOpenModal,
 }) => {
-  const renderNutrient = (label: string, value: number | undefined, iconSrc: string) => {
+  const renderNutrient = (
+    label: string,
+    value: number | undefined,
+    iconSrc: string,
+  ) => {
     if (value === undefined) {
       return null; // or handle it with a default value
     }
-  
+
     const valueStr = value.toString(); // Convert number to string
     const isOverflowing = valueStr.length > 2;
-  
+
     return (
       <div className="flex items-center gap-1 select-none">
         <img src={iconSrc} alt="" className="w-[30px] h-[30px]" />
@@ -38,7 +42,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              maxWidth: '20px'
+              maxWidth: '20px',
             }}
           >
             {valueStr}
@@ -135,9 +139,21 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                     Macros Goal
                   </div>
                   <div className="flex items-center flex-grow-[1] justify-between pr-2">
-                  {renderNutrient('Carbs', selectedRow?.['Total Macros'].Carbs ?? 0, '/icons/carbs-preview.svg')}
-  {renderNutrient('Proteins', selectedRow?.['Total Macros'].Protein ?? 0, '/icons/proteins-preview.svg')}
-  {renderNutrient('Fats', selectedRow?.['Total Macros'].Fats ?? 0, '/icons/fats-preview.svg')}
+                    {renderNutrient(
+                      'Carbs',
+                      selectedRow?.['Total Macros'].Carbs ?? 0,
+                      '/icons/carbs-preview.svg',
+                    )}
+                    {renderNutrient(
+                      'Proteins',
+                      selectedRow?.['Total Macros'].Protein ?? 0,
+                      '/icons/proteins-preview.svg',
+                    )}
+                    {renderNutrient(
+                      'Fats',
+                      selectedRow?.['Total Macros'].Fats ?? 0,
+                      '/icons/fats-preview.svg',
+                    )}
                     {/* <div className="flex items-center gap-1">
                       <img
                         src="/icons/carbs-preview.svg"
