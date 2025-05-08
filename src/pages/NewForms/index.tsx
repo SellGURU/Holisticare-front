@@ -11,7 +11,7 @@ const NewForms = () => {
       <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-[200px]">
         <div className="w-full flex justify-between items-center">
           <div className="text-Text-Primary font-medium opacity-[87%]">
-            Forms
+            Custom Forms
           </div>
           <SearchBox
             ClassName="rounded-xl !h-6 !py-[0px] !px-3 !shadow-[unset]"
