@@ -372,8 +372,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  Provide the numerical value, and if needed, enter the unit
-                  manually (e.g., 8 + Hours)
+                 Value must include a number and, if needed, be followed by a unit (e.g., 8 glasses of water).
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
