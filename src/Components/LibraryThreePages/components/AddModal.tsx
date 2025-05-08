@@ -303,8 +303,10 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
-            <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Dose</div>
+            <div  className="flex flex-col mt-5 w-full gap-2">
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">Dose
+                <img data-tooltip-id='dose-info' src="/icons/info-circle.svg" alt="" />
+              </div>
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
@@ -325,6 +327,17 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
+              <Tooltip
+            id={`dose-info`}
+            place="top"
+            className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            style={{
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+          >
+Dose must include a number followed by a unit (e.g., '50 mg')         </Tooltip>
             </div>
           )}
 
