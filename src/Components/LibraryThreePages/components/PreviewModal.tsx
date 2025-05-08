@@ -85,31 +85,16 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="flex flex-col w-full gap-4 mt-6">
-              <div className="flex gap-7">
+              {/* <div className="flex gap-7">
                 <div className="font-medium text-Text-Primary text-xs">
                   Description
                 </div>
                 <div className="text-xs text-Text-Secondary text-justify leading-5">
                   {selectedRow?.Description}
-                  {/* Eat a balanced diet with a variety of fruits, vegetables, lean
-                  proteins, healthy fats, and whole grains. Drink at least 8
-                  glasses of water per day to stay hydrated. Limit processed
-                  foods, sugary drinks, and excessive salt intake. Avoid
-                  skipping meals; aim for three main meals and healthy snacks if
-                  needed. */}
+                
                 </div>
-              </div>
-              <div className="flex gap-7 items-center">
-                <div className="font-medium text-Text-Primary text-xs">
-                  Base Score
-                </div>
-                <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
-                  <div className="text-[10px] text-Text-Primary">
-                    {selectedRow?.Base_Score}
-                  </div>
-                  <div className="text-[10px] text-Text-Quadruple">/10</div>
-                </div>
-              </div>
+              </div> */}
+             
               <div className="flex gap-8">
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
@@ -183,6 +168,17 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   </div>
                 </div>
               )}
+               <div className="flex gap-7 items-center">
+                <div className="font-medium text-Text-Primary text-xs">
+                  Base Score
+                </div>
+                <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
+                  <div className="text-[10px] text-Text-Primary">
+                    {selectedRow?.Base_Score}
+                  </div>
+                  <div className="text-[10px] text-Text-Quadruple">/10</div>
+                </div>
+              </div>
             </div>
             <div className="w-full flex justify-end items-center p-2 mt-3">
               <div

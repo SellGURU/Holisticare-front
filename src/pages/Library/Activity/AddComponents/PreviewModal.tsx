@@ -98,28 +98,20 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
           />
         </div>
         <div className="flex flex-col gap-4 mt-7">
-          <div className="flex w-full items-start gap-3">
+          {/* <div className="flex w-full items-start gap-3">
             <div className="text-xs font-medium">Description</div>
             <div className="text-xs text-[#888888] text-justify">
               {exercise.Description}
             </div>
-          </div>
-          <div className="flex w-full items-start gap-3">
-            <div className="text-xs font-medium">Base Score</div>
-            <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
-              <div className="flex">
-                {exercise.Base_Score}{' '}
-                <span className="text-Text-Triarty">/10</span>
-              </div>
-            </div>
-          </div>
+          </div> */}
+         
           <div className="flex w-full items-start gap-3">
             <div className="text-xs font-medium">Instruction</div>
             <div className="text-xs text-[#888888] text-justify">
               {exercise.Instruction}
             </div>
           </div>
-          <div className="flex w-full items-start gap-3 mb-10">
+          <div className="flex w-full items-start gap-3">
             <div className="text-xs font-medium">
               {' '}
               {isActivty ? 'Sections' : 'File'}
@@ -291,7 +283,17 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             )}
           </div>
+          <div className="flex w-full items-start gap-3 mb-10 mt-3 ">
+            <div className="text-xs font-medium">Base Score</div>
+            <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
+              <div className="flex">
+                {exercise.Base_Score}{' '}
+                <span className="text-Text-Triarty">/10</span>
+              </div>
+            </div>
+          </div>
         </div>
+       
         <div
           onClick={onClose}
           className="absolute right-4 bottom-4 text-sm font-medium text-[#909090] cursor-pointer"

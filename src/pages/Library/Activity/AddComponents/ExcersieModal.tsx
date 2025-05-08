@@ -33,7 +33,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   isEdit,
 }) => {
   const [, setTitle] = useState(exercise.Title || '');
-  const [, setDescription] = useState(exercise.Description || '');
+  // const [, setDescription] = useState(exercise.Description || '');
   const [, setInstruction] = useState(exercise.Instruction || '');
   const [type, setType] = useState(exercise.Exercise_Filters?.Type || '');
   const [terms, setTerms] = useState(exercise.Exercise_Filters?.Terms || []);
@@ -269,7 +269,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setShowFileValidation(false);
     setFileError(undefined);
     setTitle(exercise.Title || '');
-    setDescription(exercise.Description || '');
+    // setDescription(exercise.Description || '');
     setInstruction(exercise.Instruction || '');
     setType(exercise.Exercise_Filters?.Type || '');
     setTerms(exercise.Exercise_Filters?.Terms || []);
@@ -313,7 +313,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   useEffect(() => {
     setTitle(formik.values.title);
-    setDescription(formik.values.description);
+    // setDescription(formik.values.description);
     setInstruction(formik.values.instruction);
     setScore(formik.values.score);
   }, [formik.values]);
@@ -355,7 +355,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               }
               inValid={showValidation && Boolean(formik.errors.title)}
             />
-            <div className="flex flex-col gap-1">
+            {/* <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
                 Description
               </div>
@@ -376,7 +376,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   {String(formik.errors.description)}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* <TextField
               type="text"
@@ -387,17 +387,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               largeHeight
               onChange={(e) => setDescription(e.target.value)}
             /> */}
-            <RangeCard
-              question="Base Score"
-              value={formik.values.score}
-              onSubmit={(score) => {
-                formik.setFieldValue('score', score);
-                setScore(score);
-              }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
-            />
+          
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
                 Instruction
@@ -420,6 +410,17 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 </div>
               )}
             </div>
+            <RangeCard
+              question="Base Score"
+              value={formik.values.score}
+              onSubmit={(score) => {
+                formik.setFieldValue('score', score);
+                setScore(score);
+              }}
+              showValidation={showValidation}
+              error={Boolean(formik.errors.score)}
+              required={true}
+            />
             {/* <TextField
               newStyle
               type="text"
