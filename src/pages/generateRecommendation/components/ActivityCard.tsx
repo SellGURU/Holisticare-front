@@ -87,7 +87,8 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px]"
               >
-Analysis Info                <Tooltip
+                Analysis Info{' '}
+                <Tooltip
                   id={index + 'score-calc'}
                   place="top"
                   className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
