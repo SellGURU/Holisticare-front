@@ -81,7 +81,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             </div>
           </div>
           <div className="text-[10px] text-Text-Quadruple mt-1">
-            Personalize
+            Personalize your brand!
           </div>
         </div>
         <div className="flex flex-col w-full mt-10">
