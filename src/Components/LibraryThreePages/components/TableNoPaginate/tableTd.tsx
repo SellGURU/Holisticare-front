@@ -68,7 +68,9 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           {pageType === 'Supplement' ? (
             row.original?.Dose || '-'
           ) : pageType === 'Lifestyle' ? (
-            row.original?.Value
+            <div className="flex items-center justify-center">
+              {row.original?.Value} {row.original?.Unit}
+            </div>
           ) : (
             <div className="flex items-center justify-center gap-4">
               <div>Carb: {row.original?.['Total Macros'].Carbs} gr</div>

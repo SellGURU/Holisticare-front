@@ -2,6 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import MainModal from '../../MainModal';
 import RangeCardLibraryThreePages from './RangeCard';
+import { Tooltip } from 'react-tooltip';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -34,6 +35,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   };
   const [dose, setDose] = useState('');
   const [value, setValue] = useState('');
+  const [Unit, setUnit] = useState('');
   const [totalMacros, setTotalMacros] = useState({
     Fats: '',
     Protein: '',
@@ -49,6 +51,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       });
       setDose(selectedRow ? selectedRow.Dose : '');
       setValue(selectedRow ? selectedRow.Value : '');
+      setUnit(selectedRow ? selectedRow.Unit : '');
       setTotalMacros({
         Fats: selectedRow ? selectedRow['Total Macros']?.Fats : '',
         Protein: selectedRow ? selectedRow['Total Macros']?.Protein : '',
@@ -107,6 +110,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Value: Number(value),
+        Unit: Unit,
       };
       onSubmit(data);
       clear();
@@ -135,6 +139,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
     setDose('');
     setValue('');
+    setUnit('');
     setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
     setShowValidation(false);
     setSelectedRow();
@@ -303,7 +308,14 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Dose</div>
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
+                Dose
+                <img
+                  data-tooltip-id="dose-info"
+                  src="/icons/info-circle.svg"
+                  alt=""
+                />
+              </div>
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
@@ -324,29 +336,74 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
+              <Tooltip
+                id={`dose-info`}
+                place="top-start"
+                className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+              >
+                Dose must include a number followed by a unit (e.g., '50 mg'){' '}
+              </Tooltip>
             </div>
           )}
 
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Value</div>
-              <input
-                placeholder="Enter Value..."
-                value={value}
-                type="number"
-                onChange={(e) => {
-                  setValue(e.target.value);
-                  if (e.target.value) {
-                    setErrors((prev) => ({ ...prev, value: false }));
-                  } else {
-                    setErrors((prev) => ({ ...prev, value: true }));
-                  }
-                }}
-                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  errors.value ? 'border-Red' : 'border-Gray-50'
-                } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-              />
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
+                Value
+                <img
+                  data-tooltip-id="value-info"
+                  className="size-2 cursor-pointer"
+                  src="/icons/info-circle-blue.svg"
+                  alt=""
+                />
+                <Tooltip
+                  id={`value-info`}
+                  place="top-start"
+                  className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  Value must include a number and, if needed, be followed by a
+                  unit (e.g., 8 glasses of water).
+                </Tooltip>
+              </div>
+              <div className="flex w-full gap-3">
+                <input
+                  placeholder="Enter Value..."
+                  value={value}
+                  type="number"
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    if (e.target.value) {
+                      setErrors((prev) => ({ ...prev, value: false }));
+                    } else {
+                      setErrors((prev) => ({ ...prev, value: true }));
+                    }
+                  }}
+                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                    errors.value ? 'border-Red' : 'border-Gray-50'
+                  } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                />
+                <input
+                  placeholder="Enter unit"
+                  value={Unit}
+                  type="text"
+                  onChange={(e) => {
+                    setUnit(e.target.value);
+                  }}
+                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
+                   bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                />
+              </div>
               {errors.value && (
                 <div className="text-Red text-[10px]">
                   This field is required.

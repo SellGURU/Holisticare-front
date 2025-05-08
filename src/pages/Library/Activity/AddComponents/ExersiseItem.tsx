@@ -223,7 +223,7 @@ const ExerciseItem = ({
               Weight
             </div>
             <input
-              type="number"
+              type="text"
               value={exercise.Weight}
               onChange={(e) =>
                 onChange(index, 'Weight', e.target.value, exesiseIndex)

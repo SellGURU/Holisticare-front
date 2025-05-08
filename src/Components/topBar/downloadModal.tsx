@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 
 interface DownloadModalProps {
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
+  isOpen: boolean;
 }
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
+  isOpen,
 }) => {
   const [downloadSelect, setDownloadSelect] = useState([
     {
@@ -30,10 +32,38 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
     {
       name: 'Action Plan',
-      checked: false,
+      checked: true,
       disabled: false,
     },
   ]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setDownloadSelect([
+        {
+          name: 'Client Summary',
+          checked: true,
+        },
+        {
+          name: 'Needs Focus Biomarker',
+          checked: true,
+        },
+        {
+          name: 'Detailed Analysis',
+          checked: true,
+        },
+        {
+          name: 'Holistic Plan',
+          checked: true,
+        },
+        {
+          name: 'Action Plan',
+          checked: true,
+          disabled: false,
+        },
+      ]);
+    }
+  }, [isOpen]);
 
   const removeAll = () => {
     setDownloadSelect((pre) => {
