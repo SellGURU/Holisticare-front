@@ -18,6 +18,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
     acc[key].push(item);
     return acc;
   }, {});
+  console.log(data);
   const headers = ['Category', 'Title', 'Frequency', 'Note'];
   return (
     <div
