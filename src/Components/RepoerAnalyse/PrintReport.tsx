@@ -721,7 +721,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         )}
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
-          <>
+        <>
           <div
             className=" "
             style={{
@@ -788,99 +788,101 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   Changes
                 </div>
               </div>
-              {ResolveConceringData().slice(0,5).map((el) => {
-                return (
-                  <>
-                    <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
-                      <div
-                        className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                        style={{ fontSize: 12, color: '#005F73' }}
-                      >
-                        <div>
-                          <img src="/icons/arrow-square-down.svg" alt="" />
+              {ResolveConceringData()
+                .slice(0, 5)
+                .map((el) => {
+                  return (
+                    <>
+                      <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
+                        <div
+                          className="text-xs flex justify-start gap-2 items-center text-gray-800"
+                          style={{ fontSize: 12, color: '#005F73' }}
+                        >
+                          <div>
+                            <img src="/icons/arrow-square-down.svg" alt="" />
+                          </div>
+                          {el.subcategory}
                         </div>
-                        {el.subcategory}
                       </div>
-                    </div>
-                    {el.biomarkers.map((val: any, index: number) => {
-                      return (
-                        <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                          <div
-                            className=" text-gray-800"
-                            style={{
-                              fontSize: '12px',
-                              color: '#383838',
-                              width: 200,
-                            }}
-                          >
-                            {val.name}
+                      {el.biomarkers.map((val: any, index: number) => {
+                        return (
+                          <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                            <div
+                              className=" text-gray-800"
+                              style={{
+                                fontSize: '12px',
+                                color: '#383838',
+                                width: 200,
+                              }}
+                            >
+                              {val.name}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: colorsText[index % 4],
+                              }}
+                            >
+                              {val.Result}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val.Units}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val['Lab Ref Range']}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val.Baseline}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val['Optimal Range']}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: colorsText[index % 4],
+                              }}
+                            >
+                              {val.Changes}
+                            </div>
                           </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: colorsText[index % 4],
-                            }}
-                          >
-                            {val.Result}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val.Units}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val['Lab Ref Range']}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val.Baseline}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val['Optimal Range']}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: colorsText[index % 4],
-                            }}
-                          >
-                            {val.Changes}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                );
-              })}
+                        );
+                      })}
+                    </>
+                  );
+                })}
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
@@ -939,103 +941,105 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   Changes
                 </div>
               </div>
-              {ResolveConceringData().slice(5,10).map((el) => {
-                return (
-                  <>
-                    <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
-                      <div
-                        className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                        style={{ fontSize: 12, color: '#005F73' }}
-                      >
-                        <div>
-                          <img src="/icons/arrow-square-down.svg" alt="" />
+              {ResolveConceringData()
+                .slice(5, 10)
+                .map((el) => {
+                  return (
+                    <>
+                      <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
+                        <div
+                          className="text-xs flex justify-start gap-2 items-center text-gray-800"
+                          style={{ fontSize: 12, color: '#005F73' }}
+                        >
+                          <div>
+                            <img src="/icons/arrow-square-down.svg" alt="" />
+                          </div>
+                          {el.subcategory}
                         </div>
-                        {el.subcategory}
                       </div>
-                    </div>
-                    {el.biomarkers.map((val: any, index: number) => {
-                      return (
-                        <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                          <div
-                            className=" text-gray-800"
-                            style={{
-                              fontSize: '12px',
-                              color: '#383838',
-                              width: 200,
-                            }}
-                          >
-                            {val.name}
+                      {el.biomarkers.map((val: any, index: number) => {
+                        return (
+                          <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                            <div
+                              className=" text-gray-800"
+                              style={{
+                                fontSize: '12px',
+                                color: '#383838',
+                                width: 200,
+                              }}
+                            >
+                              {val.name}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: colorsText[index % 4],
+                              }}
+                            >
+                              {val.Result}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val.Units}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val['Lab Ref Range']}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val.Baseline}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: '#888888',
+                              }}
+                            >
+                              {val['Optimal Range']}
+                            </div>
+                            <div
+                              className=" text-gray-800 text-center"
+                              style={{
+                                fontSize: '12px',
+                                width: '60px',
+                                color: colorsText[index % 4],
+                              }}
+                            >
+                              {val.Changes}
+                            </div>
                           </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: colorsText[index % 4],
-                            }}
-                          >
-                            {val.Result}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val.Units}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val['Lab Ref Range']}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val.Baseline}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: '#888888',
-                            }}
-                          >
-                            {val['Optimal Range']}
-                          </div>
-                          <div
-                            className=" text-gray-800 text-center"
-                            style={{
-                              fontSize: '12px',
-                              width: '60px',
-                              color: colorsText[index % 4],
-                            }}
-                          >
-                            {val.Changes}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                );
-              })}
+                        );
+                      })}
+                    </>
+                  );
+                })}
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
-          </div>          
-          </>
+          </div>
+        </>
       )}
 
       {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
@@ -1315,7 +1319,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           </div>
                           <div style={{ color: '#005F73', fontSize: '12px' }}>
                             {ActionPlan[ActionPlan?.length - 1]?.progress
-                              ? ActionPlan[ActionPlan?.length - 1]?.progress + '%'
+                              ? ActionPlan[ActionPlan?.length - 1]?.progress +
+                                '%'
                               : '0%'}
                           </div>
                         </div>
@@ -1335,9 +1340,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                 height: '6px',
                                 backgroundColor: '#6CC24A',
                                 borderRadius: '12px',
-                                width: ActionPlan[ActionPlan.length - 1]?.progress
-                                  ? ActionPlan[ActionPlan.length - 1]?.progress +
-                                    '%'
+                                width: ActionPlan[ActionPlan.length - 1]
+                                  ?.progress
+                                  ? ActionPlan[ActionPlan.length - 1]
+                                      ?.progress + '%'
                                   : '0%',
                               }}
                             ></div>
@@ -1375,7 +1381,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     </div>
                   </div>
                 </div>
-                <ActionPlanOverview classData={caldenderData.slice(0,3)}></ActionPlanOverview>
+                <ActionPlanOverview
+                  classData={caldenderData.slice(0, 3)}
+                ></ActionPlanOverview>
               </>
             )}
             {/* {caldenderData != null && caldenderData.length > 0 && (
@@ -1384,19 +1392,19 @@ const PrintReport: React.FC<PrintReportProps> = ({
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
           <div
-            
             className="relative min-h-screen"
             style={{ pageBreakAfter: 'always', padding: '24px' }}
           >
             {/* <PrintHeader /> */}
 
-
-            <ActionPlanOverview classData={caldenderData.slice(3,6)}></ActionPlanOverview>
+            <ActionPlanOverview
+              classData={caldenderData.slice(3, 6)}
+            ></ActionPlanOverview>
             {/* {caldenderData != null && caldenderData.length > 0 && (
               <CalenderPrint data={caldenderData}></CalenderPrint>
             )} */}
             <PrintFooter pageNumber={resolvePageNumber()} />
-          </div>          
+          </div>
         </>
       )}
     </div>
