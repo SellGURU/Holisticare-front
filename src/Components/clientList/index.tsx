@@ -265,7 +265,7 @@ const ClientList = () => {
             <>
               <div className="w-full  flex justify-between items-center">
                 <div className="text-Text-Primary font-medium opacity-[87%]">
-                  Clients List
+                  Client List
                 </div>
                 <ButtonSecondary
                   style={{ borderRadius: '20px' }}
