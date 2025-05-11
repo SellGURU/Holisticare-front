@@ -41,6 +41,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setActiveCategory,
   setVisibleCategorieys,
 }) => {
+  console.log('data => ', data);
+  console.log('activeCategory => ', activeCategory);
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
   // );
@@ -101,7 +103,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
       setActiveCategory(visibleCategories[nextIndex]);
       // AllCategoryChecekd(visibleCategories[nextIndex])
     }
-  }, [activeCategory]);
+  }, []);
   const handleContinue = () => {
     setIsLoading(true);
     // setisStarted(true);
@@ -152,10 +154,15 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     const visibleCategories = categories
       .filter((cat) => cat.visible)
       .map((cat) => cat.name);
+    console.log('visibleCategories => ', visibleCategories);
     const currentIndex = visibleCategories.indexOf(activeCategory);
     // const nextTabName = visibleCategories[currentIndex + 1];
     setIsLoading(false);
     const backIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+    console.log(
+      'visibleCategories[backIndex] => ',
+      visibleCategories[backIndex],
+    );
 
     setActiveCategory(visibleCategories[backIndex]);
   };
@@ -292,9 +299,9 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         <div className=" w-full relative h-[380px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
-            Change Orders
+            Change Order
           </div>
-          <p className="text-xs text-Text-Secondary   my-4">
+          <p className="text-xs text-Text-Secondary my-4">
             Please complete all required fields before confirming your order.
           </p>
           <ul className="border border-Gray-50 rounded-xl">
@@ -378,7 +385,10 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                   <div
                     className={`flex items-center gap-2 text-Primary-DeepTeal text-xs font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
-                    onClick={() => setActiveCategory(name)}
+                    onClick={() => {
+                      setActiveCategory(name);
+                      console.log('name => ', name);
+                    }}
                   >
                     <img
                       className="size-4"
@@ -398,7 +408,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 ),
             )}
           </div>
-          <div className=" gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
+          <div className="gap-2 text-[12px] w-full flex justify-end text-Primary-DeepTeal font-medium cursor-pointer select-none ">
             {/* {activeCategory != categories.filter((el) => el.visible)[0].name &&
               visibleCategoriy.filter((el) => el.visible).length > 1 && (
                 <div className="  text-[12px]   flex justify-end text-Text-Secondary font-medium cursor-pointer select-none">
@@ -414,13 +424,18 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                   <div onClick={handleContinue}>Continue</div>
                 </div>
               )} */}
-            <div className={`justify-end ml-4`}>
+            <div
+              className={`justify-end ml-4 flex items-center gap-1`}
+              onClick={() => setshowchangeOrders(true)}
+            >
               <img
-                className="cursor-pointer"
+                className="cursor-pointer w-5 h-5"
                 src="/icons/setting-4.svg"
                 alt=""
-                onClick={() => setshowchangeOrders(true)}
               />
+              <div className="text-Primary-DeepTeal text-xs font-medium">
+                Change Order
+              </div>
             </div>
           </div>
         </div>
@@ -439,7 +454,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
                 />
               );
             })}
-          {data?.length === 0 && (
+          {data?.filter((el: any) => el.Category == activeCategory).length ===
+            0 && (
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">
