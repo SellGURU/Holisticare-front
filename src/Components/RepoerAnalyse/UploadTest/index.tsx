@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
@@ -34,6 +34,15 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const handleCancelUpload = (fileToCancel: any) => {
     setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
   };
+
+  const handleSuccessUpload = useCallback((fileWithId: any,el:any) => {
+    setFiles((prevFiles) => [...prevFiles, fileWithId]);
+    // Commented code left as-is
+    setUploadingFiles((prevUploadingFiles) =>
+      prevUploadingFiles.filter((file) => file !== el),
+    );
+  }, []);
+
   console.log(files);
 
   return (
@@ -49,7 +58,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
           </div>
           <div className={isShare ? 'opacity-20' : ''}>
             <div className=" text-[10px] xs:text-[12px] text-Text-Primary  text-center mt-1 ">
-              It looks like you haven’t uploaded any test results or completed
+              It looks like you haven't uploaded any test results or completed
               any questionary yet. To view detailed insights, please upload your
               test results or complete the questionnaires now.
             </div>
@@ -141,19 +150,14 @@ const UploadTest: React.FC<UploadTestProps> = ({
               })}
               {upLoadingFiles.map((el: any) => {
                 return (
-                  <>
+                  <div key={el.name + el.size + el.lastModified}>
                     <Uploading
                       memberId={memberId}
                       file={el}
-                      onSuccess={(fileWithId) => {
-                        setFiles((prevFiles) => [...prevFiles, fileWithId]);
-                        setUploadingFiles((prevUploadingFiles) =>
-                          prevUploadingFiles.filter((file) => file !== el),
-                        );
-                      }}
+                      onSuccess={(fileWithId) => handleSuccessUpload(fileWithId,el)}
                       onCancel={() => handleCancelUpload(el)}
                     ></Uploading>
-                  </>
+                  </div>
                 );
               })}
             </div>
