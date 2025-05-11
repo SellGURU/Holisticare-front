@@ -133,8 +133,7 @@ const LibBox: FC<LibBoxProps> = ({
                 className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                 data-tooltip-id={`tooltip-score-calculation-${index}`}
               >
-                Score Calculation
-              </div>
+Analysis Info              </div>
               <Tooltip
                 id={`tooltip-score-calculation-${index}`}
                 place="top"
