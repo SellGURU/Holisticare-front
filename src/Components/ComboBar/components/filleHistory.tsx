@@ -53,7 +53,16 @@ export const FilleHistory = () => {
   // };
   return (
     <div className=" w-full">
-      <div className="px-2">
+      <div
+        onClick={() => {
+          document.getElementById('uploadFile')?.click();
+        }}
+        className=" mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
+      >
+        <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+        Add File
+      </div>
+      <div className="">
         <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>File Name</div>
           <div>Upload Date</div>
@@ -86,7 +95,7 @@ export const FilleHistory = () => {
                   })}
                 </div>
               </div>
-              <div className="w-full mt-5 flex justify-center">
+              {/* <div className="w-full mt-5 flex justify-center">
                 <ButtonPrimary
                   onClick={() => {
                     document.getElementById('uploadFile')?.click();
@@ -96,7 +105,7 @@ export const FilleHistory = () => {
                   <img src="/icons/add-square.svg" alt="" />
                   Add File
                 </ButtonPrimary>
-              </div>
+              </div> */}
               <input
                 type="file"
                 ref={fileInputRef}

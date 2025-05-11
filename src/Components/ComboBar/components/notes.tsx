@@ -70,7 +70,7 @@ export const Notes = () => {
             onClick={() => {
               setShowAddNote(true);
             }}
-            className="text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-5 py-2 w-full text-Primary-DeepTeal "
+            className=" text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
           >
             <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
             Add Note
@@ -266,9 +266,9 @@ export const Notes = () => {
           </>
         ) : (
           <div className="flex flex-col items-center justify-start -mt-[300px]">
-            <img src="/icons/no-note.svg" alt="" />
-            <div className="text-[12px] text-Text-Primary mt-1">
-              No Notes Found
+            <img src="/icons/EmptyNote.svg" alt="" />
+            <div className="text-[12px] text-Text-Primary ">
+            No notes found.
             </div>
           </div>
         )}

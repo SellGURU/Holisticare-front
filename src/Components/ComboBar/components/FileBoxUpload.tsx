@@ -141,7 +141,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
                   document.body.removeChild(link);
                 });
               }}
-              className="cursor-pointer -mt-[3px]"
+              className="cursor-pointer size-5 -mt-[3px]"
               src="/icons/import.svg"
               alt=""
             />
