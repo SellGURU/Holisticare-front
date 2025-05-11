@@ -35,7 +35,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
     setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
   };
 
-  const handleSuccessUpload = useCallback((fileWithId: any,el:any) => {
+  const handleSuccessUpload = useCallback((fileWithId: any, el: any) => {
     setFiles((prevFiles) => [...prevFiles, fileWithId]);
     // Commented code left as-is
     setUploadingFiles((prevUploadingFiles) =>
@@ -154,7 +154,9 @@ const UploadTest: React.FC<UploadTestProps> = ({
                     <Uploading
                       memberId={memberId}
                       file={el}
-                      onSuccess={(fileWithId) => handleSuccessUpload(fileWithId,el)}
+                      onSuccess={(fileWithId) =>
+                        handleSuccessUpload(fileWithId, el)
+                      }
                       onCancel={() => handleCancelUpload(el)}
                     ></Uploading>
                   </div>
