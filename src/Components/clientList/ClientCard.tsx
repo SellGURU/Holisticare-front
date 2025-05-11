@@ -162,14 +162,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const copyToClipboard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // Optional: Add a success notification
       setNotifType(type);
       setNotificationMessage('Text Copied to Clipboard');
-      // Auto-close after 3 seconds
-
-      // alert('Copied to clipboard!');
-      // Or use a toast notification if you have a toast library
-      // toast.success('Copied to clipboard!');
+      setTimeout(() => {
+        setNotifType('');
+        setNotificationMessage('');
+      }, 3000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -187,10 +185,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
   interface Coach {
     username: string;
     assigned: boolean;
-    // ... other coach properties
   }
   const [CoachList, setCoachList] = useState<Array<any>>([]);
-  console.log(CoachList);
 
   const handleAssignClick = () => {
     Application.getCoachList({ member_id: client.member_id }).then((res) => {
@@ -692,7 +688,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.enroll_date}
                     </div>
                     <div className=" text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap">
-                      Last Check-In
+                      Checked on
                     </div>
                     <div className="text-Text-Primary text-[10px] sm:text-xs">
                       {client.last_checkin}
