@@ -459,7 +459,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
             <div className="w-full h-[350px] flex flex-col justify-center items-center">
               <img src="/icons/document-text-rectangle.svg" alt="" />
               <div className="text-base text-Text-Primary font-medium -mt-2">
-                No recommendation existed.
+                No recommendations found.
               </div>
             </div>
           )}

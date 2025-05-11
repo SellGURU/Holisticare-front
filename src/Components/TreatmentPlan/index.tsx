@@ -525,7 +525,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                     <div className="w-full  flex justify-center items-center flex-col">
                       <img src="/icons/no-recommendations.svg" alt="" />
                       <div className="text-Text-Primary text-sm font-medium mt-5">
-                        No Recommendations Available.
+                        No recommendations found.
                       </div>
                     </div>
                   )}
