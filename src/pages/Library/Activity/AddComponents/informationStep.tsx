@@ -11,7 +11,7 @@ import Application from '../../../../api/app';
 interface InformationStepProps {
   addData: {
     title: string;
-    description: string;
+    // description: string;
     score: number;
     instruction: string;
     type: string;
@@ -26,7 +26,7 @@ interface InformationStepProps {
     key:
       | 'type'
       | 'title'
-      | 'description'
+      // | 'description'
       | 'score'
       | 'instruction'
       | 'terms'
@@ -68,7 +68,7 @@ const InformationStep: FC<InformationStepProps> = ({
   const formik = useFormik({
     initialValues: {
       title: addData.title,
-      description: addData.description,
+      // description: addData.description,
       instruction: addData.instruction,
       score: addData.score,
     },
@@ -128,7 +128,7 @@ const InformationStep: FC<InformationStepProps> = ({
             />
           </div>
 
-          <div className="flex flex-col w-full gap-2">
+          {/* <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
               Description
             </div>
@@ -151,25 +151,7 @@ const InformationStep: FC<InformationStepProps> = ({
                 {formik.errors.description}
               </div>
             )}
-          </div>
-          <div className="flex flex-col w-full">
-            <div className="text-xs font-medium text-Text-Primary">
-              Base Score
-            </div>
-            <RangeCardLibraryActivity
-              value={formik.values.score}
-              changeValue={(key, value) => {
-                formik.setFieldValue('score', value);
-                updateAddData(key, value);
-              }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
-            />
-            {/* {formik.touched.score && formik.errors.score && (
-              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
-            )} */}
-          </div>
+          </div> */}
 
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
@@ -194,6 +176,24 @@ const InformationStep: FC<InformationStepProps> = ({
                 {formik.errors.instruction}
               </div>
             )}
+          </div>
+          <div className="flex flex-col w-full">
+            <div className="text-xs font-medium text-Text-Primary">
+              Base Score
+            </div>
+            <RangeCardLibraryActivity
+              value={formik.values.score}
+              changeValue={(key, value) => {
+                formik.setFieldValue('score', value);
+                updateAddData(key, value);
+              }}
+              showValidation={showValidation}
+              error={Boolean(formik.errors.score)}
+              required={true}
+            />
+            {/* {formik.touched.score && formik.errors.score && (
+              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
+            )} */}
           </div>
         </div>
         <div className="bg-[#E9EDF5] h-[328px] w-px"></div>

@@ -74,6 +74,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     pageNumber++;
     return pageNumber;
   };
+  console.log(TreatMentPlanData);
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
@@ -1177,78 +1178,97 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {TreatMentPlanData.map((el, index) => {
               return (
                 <>
-                  <div
-                    className="no-split relative  mt-14"
-                    style={{
-                      pageBreakAfter: 'always',
-                      minHeight: index == 0 ? '870px' : '1020px',
-                    }}
-                  >
-                    <div
-                      className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
-                      style={{
-                        width: '193px',
-                        borderRadius: '8px',
-                        borderBottomLeftRadius: '0px',
-                        borderBottomRightRadius: '0px',
-                        color: '#005F73',
-                      }}
-                    >
-                      <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                        <img
-                          src={resolveTreatmentPlanIcon(el.category)}
-                          alt=""
-                        />
-                      </div>
-                      {el.category}
-                    </div>
+                  {el.data.length > 0 ? (
+                    <>
+                      <div
+                        className="no-split relative  mt-14"
+                        style={{
+                          pageBreakAfter: 'always',
+                          minHeight: index == 0 ? '870px' : '1020px',
+                        }}
+                      >
+                        {index != 0 && <div className="h-8"></div>}
+                        <div
+                          className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
+                          style={{
+                            width: '193px',
+                            borderRadius: '8px',
+                            borderBottomLeftRadius: '0px',
+                            borderBottomRightRadius: '0px',
+                            color: '#005F73',
+                          }}
+                        >
+                          <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
+                            <img
+                              src={resolveTreatmentPlanIcon(el.category)}
+                              alt=""
+                            />
+                          </div>
+                          {el.category}
+                        </div>
 
-                    <div
-                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                      style={{ pageBreakAfter: 'always' }}
-                    >
-                      {el.data.slice(0, 5).map((el2: any) => {
-                        return (
-                          <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                        );
-                      })}
-                    </div>
-                    <PrintFooter pageNumber={resolvePageNumber()} />
-                  </div>
-                  {el.data.length > 5 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(5, 11).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
+                        <div
+                          className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                          style={{ pageBreakAfter: 'always' }}
+                        >
+                          {el.data.slice(0, 5).map((el2: any) => {
+                            return (
+                              <TreatmentPlanPrint
+                                data={el2}
+                              ></TreatmentPlanPrint>
+                            );
+                          })}
+                        </div>
+                        <PrintFooter pageNumber={resolvePageNumber()} />
                       </div>
-                      <PrintFooter pageNumber={resolvePageNumber()} />
-                    </div>
-                  )}
-                  {el.data.length > 10 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(11, 16).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
-                      </div>
-                    </div>
+                      {el.data.length > 5 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(5, 11).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                          <PrintFooter pageNumber={resolvePageNumber()} />
+                        </div>
+                      )}
+                      {el.data.length > 10 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(11, 16).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <></>
                   )}
                 </>
               );
@@ -1382,7 +1402,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   </div>
                 </div>
                 <ActionPlanOverview
-                  classData={caldenderData.slice(0, 4)}
+                  classData={caldenderData?.slice(0, 4)}
                 ></ActionPlanOverview>
               </>
             )}
@@ -1398,7 +1418,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {/* <PrintHeader /> */}
 
             <ActionPlanOverview
-              classData={caldenderData.slice(4, 8)}
+              classData={caldenderData?.slice(4, 8)}
             ></ActionPlanOverview>
             {/* {caldenderData != null && caldenderData.length > 0 && (
               <CalenderPrint data={caldenderData}></CalenderPrint>

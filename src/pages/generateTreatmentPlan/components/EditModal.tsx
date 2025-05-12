@@ -6,7 +6,7 @@ import Application from '../../../api/app';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Tooltip } from 'react-tooltip';
-import Checkbox from '../../../Components/checkbox';
+// import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,9 +32,9 @@ const EditModal: React.FC<EditModalProps> = ({
   // const [recommendation] = useState(defalts?.Recommendation);
   // const [dose] = useState(defalts?.Dose);
   // const [instructions] = useState(defalts?.Instruction);
-  const [selectedTimes, setSelectedTimes] = useState<string[]>(
-    defalts ? defalts.Times : [],
-  );
+  // const [selectedTimes, setSelectedTimes] = useState<string[]>(
+  //   defalts ? defalts.Times : [],
+  // );
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
   );
@@ -51,7 +51,7 @@ const EditModal: React.FC<EditModalProps> = ({
     setNewNote('');
     setNotes([]);
     setSelectedGroupDose(false);
-    setSelectedTimes([]);
+    // setSelectedTimes([]);
     setShowValidation(false);
     // setGroups([]);
   };
@@ -78,7 +78,7 @@ const EditModal: React.FC<EditModalProps> = ({
     Recommendation: string;
     Dose: string;
     Instruction: string;
-    Times: string[];
+    // Times: string[];
     Notes: string[];
     PractitionerComments: string[];
   }
@@ -88,7 +88,7 @@ const EditModal: React.FC<EditModalProps> = ({
       Recommendation: defalts?.Recommendation || '',
       Dose: defalts?.Dose || '',
       Instruction: defalts?.Instruction || '',
-      Times: defalts?.Times || [],
+      // Times: defalts?.Times || [],
       Notes: defalts?.['Client Notes'] || notes,
       PractitionerComments:
         defalts?.['Practitioner Comments'] || practitionerComments,
@@ -107,7 +107,7 @@ const EditModal: React.FC<EditModalProps> = ({
           Instruction: values.Instruction,
           Score: '0',
           'System Score': '0',
-          Times: selectedTimes,
+          // Times: selectedTimes,
           Dose: values.Dose,
           'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         });
@@ -206,15 +206,15 @@ const EditModal: React.FC<EditModalProps> = ({
   //   setPractitionerComments(updatedComments);
   // };
 
-  const toggleTimeSelection = (time: string) => {
-    setSelectedTimes((prevTimes) =>
-      prevTimes.includes(time)
-        ? prevTimes.filter((t) => t !== time)
-        : [...prevTimes, time],
-    );
-  };
+  // const toggleTimeSelection = (time: string) => {
+  //   setSelectedTimes((prevTimes) =>
+  //     prevTimes.includes(time)
+  //       ? prevTimes.filter((t) => t !== time)
+  //       : [...prevTimes, time],
+  //   );
+  // };
 
-  const times = ['morning', 'midday', 'night'];
+  // const times = ['morning', 'midday', 'night'];
   //               "morning",
   // "midday",
   // "night"
@@ -393,7 +393,7 @@ const EditModal: React.FC<EditModalProps> = ({
             </div>
 
             {/* Times Selection */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="text-xs font-medium">Times</label>
               <div className="flex w-full mt-2 gap-6">
                 {times.map((item, index) => {
@@ -410,7 +410,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   );
                 })}
               </div>
-            </div>
+            </div> */}
 
             {/* Client Notes */}
             <div className="mb-4">
