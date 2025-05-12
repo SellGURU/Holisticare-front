@@ -16,7 +16,7 @@ const ALLOWED_FILE_TYPES = [
   'image/jpg',
   'image/png',
   'image/tiff',
-  'text/plain'
+  'text/plain',
 ];
 
 export const FilleHistory = () => {
@@ -82,11 +82,13 @@ export const FilleHistory = () => {
     }
 
     // Check for duplicate filename
-    const isDuplicate = data?.some((existingFile: any) => 
-      existingFile?.file_name && file.name && 
-      existingFile.file_name.toLowerCase() === file.name.toLowerCase()
+    const isDuplicate = data?.some(
+      (existingFile: any) =>
+        existingFile?.file_name &&
+        file.name &&
+        existingFile.file_name.toLowerCase() === file.name.toLowerCase(),
     );
-    
+
     if (isDuplicate) {
       setError(`File ${file.name} already exists.`);
       return false;
@@ -97,11 +99,7 @@ export const FilleHistory = () => {
 
   return (
     <div className=" w-full">
-      {error && (
-        <div className="mb-3 text-red-500 text-[10px]">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-3 text-red-500 text-[10px]">{error}</div>}
       <div
         onClick={() => {
           fileInputRef.current?.click();
@@ -163,16 +161,18 @@ export const FilleHistory = () => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setError(''); // Clear previous errors
                   const fileList = Array.from(e.target.files || []);
-                  
+
                   // Validate each file
-                  const validFiles = fileList.filter(file => validateFile(file));
-                  
+                  const validFiles = fileList.filter((file) =>
+                    validateFile(file),
+                  );
+
                   if (validFiles.length > 0) {
                     setTimeout(() => {
                       setUploadingFiles(validFiles);
                     }, 200);
                   }
-                  
+
                   fileInputRef.current.value = '';
                 }}
                 id="uploadFileBoxes"
