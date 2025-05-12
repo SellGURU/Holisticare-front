@@ -115,7 +115,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#888888', marginLeft: '2px' }}
+                                  style={{
+                                    color: '#888888',
+                                    marginLeft: '2px',
+                                  }}
                                 >
                                   {item.value}
                                 </div>
@@ -130,49 +133,73 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#888888', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#888888',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   {item.total_macro.Carbs}
                                 </div>
                                 <div
                                   className="text-[8px]"
-                                  style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#B0B0B0',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   gr
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#B0B0B0', marginLeft: '9px' }}
+                                  style={{
+                                    color: '#B0B0B0',
+                                    marginLeft: '9px',
+                                  }}
                                 >
                                   Protein:
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#888888', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#888888',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   {item.total_macro.Protein}
                                 </div>
                                 <div
                                   className="text-[8px]"
-                                  style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#B0B0B0',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   gr
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#B0B0B0', marginLeft: '9px' }}
+                                  style={{
+                                    color: '#B0B0B0',
+                                    marginLeft: '9px',
+                                  }}
                                 >
                                   Fat:
                                 </div>
                                 <div
                                   className="text-[10px]"
-                                  style={{ color: '#888888', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#888888',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   {item.total_macro.Fats}
                                 </div>
                                 <div
                                   className="text-[8px]"
-                                  style={{ color: '#B0B0B0', marginLeft: '3px' }}
+                                  style={{
+                                    color: '#B0B0B0',
+                                    marginLeft: '3px',
+                                  }}
                                 >
                                   gr
                                 </div>
@@ -298,10 +325,16 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                           <tr>
                             <td colSpan={3} className="px-3 py-2">
                               <div className="flex items-start">
-                                <div className="text-[10px] font-medium mr-2" style={{fontSize:'10px'}}>
+                                <div
+                                  className="text-[10px] font-medium mr-2"
+                                  style={{ fontSize: '10px' }}
+                                >
                                   Notes:
                                 </div>
-                                <div className="text-[10px]" style={{ color: '#888888' }}>
+                                <div
+                                  className="text-[10px]"
+                                  style={{ color: '#888888' }}
+                                >
                                   {item.client_notes[0]}
                                 </div>
                               </div>
