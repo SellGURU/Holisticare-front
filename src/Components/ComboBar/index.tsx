@@ -28,7 +28,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     { name: 'Data Syncing', url: '/icons/sidbar-menu/cloud-change.svg' },
     { name: 'File History', url: '/icons/sidbar-menu/directbox-notif.svg' },
     {
-      name: 'Questionary Tracking',
+      name: 'Questionnaire Tracking',
       url: '/icons/sidbar-menu/task-square.svg',
     },
     { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
@@ -115,7 +115,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const [updated, setUpdated] = useState(false);
   subscribe('QuestionaryTrackingCall', () => {
     // setUpdated(true);
-    handleItemClick('Questionary Tracking');
+    handleItemClick('Questionnaire Tracking');
   });
   const handleItemClick = (name: string) => {
     if (isHolisticPlan && name !== 'Expert’s Note' && name !== 'Client Info') {
@@ -133,7 +133,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         return <DataSyncing></DataSyncing>;
       case 'File History':
         return <FilleHistory></FilleHistory>;
-      case 'Questionary Tracking':
+      case 'Questionnaire Tracking':
         return <Questionary></Questionary>;
       case 'Expert’s Note':
         return <Notes></Notes>;
@@ -279,6 +279,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           <img src={'/icons/add.svg'} />
         </div>
         <div
+        title='AI Copilot'
           ref={buttonRef}
           onClick={() => setToogleOpenChat(!toogleOpenChat)}
           className={
