@@ -20,7 +20,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
   }, {});
   console.log(classData);
 
-  const headers = ['Category', 'Title', 'Frequency', 'Note'];
+  const headers = ['Category', 'Title', 'Frequency',];
   return (
     <>
       {data && (
@@ -37,9 +37,9 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                     {headers.map((header, index) => (
                       <th
                         key={index}
-                        className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px]`}
+                        className={`px-4  pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px]`}
                       >
-                        <div className={`flex items-center`}>
+                        <div className={`flex items-center  ${header== "Frequency" ? 'justify-center' : ''}`}>
                           <div className="flex items-center">{header}</div>
                         </div>
                       </th>
@@ -54,6 +54,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                           console.log(item);
 
                           return (
+                            <>
                             <tr key={index}>
                               {/* Category */}
                               {index === 0 && (
@@ -66,7 +67,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                               )}
                               {/* Title */}
                               <td
-                                className={`py-3 text-xs whitespace-nowrap ${index == 0 && 'align-top'}`}
+                                className={`py-3 px-4 text-xs whitespace-nowrap ${index == 0 && 'align-top'}`}
                               >
                                 <div
                                   style={{
@@ -241,7 +242,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                             </td> */}
 
                               {/* Frequency */}
-                              <td className="px-4 py-3 whitespace-nowrap flex items-center">
+                              <td className="px-4 py-3 whitespace-nowrap flex flex-col gap-2 items-center">
                                 {item.frequency_type === 'weekly' && (
                                   <>
                                     <div className="w-[76px] h-[24px] rounded-2xl bg-[#DEF7EC] flex items-center justify-center gap-1 text-Primary-DeepTeal text-[10px]">
@@ -292,7 +293,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                   ''
                                 )}
                               </td>
-                              <td
+                              {/* <td
                                 className="px-4 py-3 whitespace-nowrap"
                                 // style={{ maxWidth: '100px' }}
                               >
@@ -330,7 +331,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                     -
                                   </div>
                                 )}
-                              </td>
+                              </td> */}
                               {/* Time */}
                               {/* <td className="px-4 py-3 whitespace-nowrap">
                               {item.times && item.times.length > 0 ? (
@@ -353,6 +354,27 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                               )}
                             </td> */}
                             </tr>
+                              {item.client_notes && item.client_notes.length > 0 && (
+                                <tr>
+                                  <td colSpan={3} className="px-3 py-2">
+                                    <div className="flex items-start text-justify">
+                                      <div
+                                        className="text-[10px] font-medium mr-2"
+                                        style={{ fontSize: '10px' }}
+                                      >
+                                        Notes:
+                                      </div>
+                                      <div
+                                        className="text-[10px]"
+                                        style={{ color: '#888888' }}
+                                      >
+                                        {item.client_notes[0]}
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </>
                           );
                         })}
                       </Fragment>
