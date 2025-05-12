@@ -21,7 +21,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const [files, setFiles] = useState<Array<any>>([]);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  
+
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
 
@@ -61,7 +61,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
     // Check for duplicate filename
     const isDuplicate = [...files, ...upLoadingFiles].some(
-      existingFile => existingFile.name === file.name
+      (existingFile) => existingFile.name === file.name,
     );
     if (isDuplicate) {
       return `${file.name} already exists. Please rename the file or choose another one`;
@@ -125,9 +125,9 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 onChange={(e: any) => {
                   const fileList = Array.from(e.target.files) as File[];
                   if (fileList.length === 0) return;
-                  
+
                   setErrorMessage('');
-                  
+
                   // Validate each file
                   const validFiles = [] as File[];
                   for (const file of fileList) {
@@ -139,7 +139,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
                     }
                     validFiles.push(file);
                   }
-                  
+
                   console.log(upLoadingFiles);
                   setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
                   setUploadingFiles([]);
