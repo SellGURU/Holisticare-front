@@ -26,8 +26,6 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
     refrence: modalRefrence,
     close: onClose,
   });
-  console.log(name);
-  console.log(currentName);
   useEffect(() => {
     setCurrentName(name);
   }, [isOpen]);

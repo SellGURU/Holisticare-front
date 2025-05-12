@@ -27,8 +27,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
   activeTab,
   onAssign,
 }) => {
-  console.log(client);
-
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -180,7 +178,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
     },
   });
   // const [showAsignList, setshowAsignList] = useState(false);
-  console.log(activeTab);
   const [showAssign, setshowAssign] = useState(false);
   interface Coach {
     username: string;
@@ -204,14 +201,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
     );
 
     // Send only the selected coach to API
-    console.log(client.assigned_to);
 
     Application.assignCoach({
       member_id: client.member_id,
       coach_usernames: [selectedCoach.username],
     }).then(() => {
       onAssign(client.member_id, selectedCoach.username);
-      console.log(client.assigned_to);
 
       // setshowAssign(false);
     });
@@ -327,8 +322,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       member_id: client.member_id,
                       username: AccessUserName,
                       password: AccessPassword,
-                    }).then((res) => {
-                      console.log(res);
+                    }).then(() => {
                       setIsShared(true);
                     });
                   }}
@@ -435,8 +429,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     Application.giveClientAccess({
                       member_id: client.member_id,
                     }).then((res) => {
-                      console.log(res);
-
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
@@ -562,8 +554,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     Application.giveClientAccess({
                       member_id: client.member_id,
                     }).then((res) => {
-                      console.log(res);
-
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
