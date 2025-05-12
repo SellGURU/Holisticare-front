@@ -322,7 +322,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         </tr>
                         {/* Notes Row */}
                         {item.client_notes && item.client_notes.length > 0 && (
-                          <tr style={{border:'none'}}>
+                          <tr style={{ border: 'none' }}>
                             <td colSpan={3} className="px-4 py-2">
                               <div className="flex items-start">
                                 <div
