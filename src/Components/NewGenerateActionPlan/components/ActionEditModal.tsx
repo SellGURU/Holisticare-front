@@ -66,9 +66,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
-  const [selectedTimes, ] = useState<string[]>(
-    defalts ? defalts.Times : [],
-  );
+  const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
   );

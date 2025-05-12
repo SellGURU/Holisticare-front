@@ -148,7 +148,7 @@ export const SwitchClient = () => {
               ) : (
                 <div className=" w-full h-full flex items-center justify-center flex-col text-xs font-medium">
                   <img src="/icons/EmptyInbox.svg" alt="" />
-                No client found.
+                  No client found.
                 </div>
               )}
             </>

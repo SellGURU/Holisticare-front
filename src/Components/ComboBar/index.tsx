@@ -279,7 +279,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           <img src={'/icons/add.svg'} />
         </div>
         <div
-        title='AI Copilot'
+          title="AI Copilot"
           ref={buttonRef}
           onClick={() => setToogleOpenChat(!toogleOpenChat)}
           className={

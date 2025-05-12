@@ -60,7 +60,7 @@ const StatusMenu: React.FC<StatusMenuProps> = ({
                       onChange(state);
                     }}
                     className={` 
-                     ${activeStatus == state ?  'text-white bg-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'}
+                     ${activeStatus == state ? 'text-white bg-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'}
                               rounded-2xl text-nowrap  px-3 w-full h-[24px] flex items-center justify-center cursor-pointer `}
                   >
                     {state}

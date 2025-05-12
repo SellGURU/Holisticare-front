@@ -453,13 +453,13 @@ export const Questionary = () => {
     <div className=" w-full">
       <div
         onClick={() => {
-          if(!tryComplete){
+          if (!tryComplete) {
             Application.AddQuestionaryList({}).then((res) => {
               setAddForms(res.data);
               setTryAdd(true);
             });
           }
-        
+
           // Application.getGoogleFormEmty()
           //   .then((res) => {
           //     setQuestionsFormData(res.data);
@@ -472,7 +472,7 @@ export const Questionary = () => {
           //   setTryComplete(false);
           // }
         }}
-        className={ ` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
         Add Questionnaire
@@ -688,7 +688,7 @@ export const Questionary = () => {
             <>
               <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
                 <div>Name</div>
-                <div className='w-[100px] text-end'>State</div>
+                <div className="w-[100px] text-end">State</div>
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">
