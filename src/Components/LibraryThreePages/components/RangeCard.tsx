@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 interface RangeCardProps {
   value: number;
   changeValue: (
-    key: 'score' | 'title' | 'description' | 'instruction',
+    key: 'score' | 'title'  | 'instruction',
     value: number,
   ) => void;
   showValidation?: boolean;

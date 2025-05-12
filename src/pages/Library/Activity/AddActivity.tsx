@@ -57,7 +57,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       if (editid) {
         Application.editActivity({
           Title: addData.title,
-          Description: addData.description,
+          // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
           Sections: rsolveSectionListforSendToApi(),
@@ -79,7 +79,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       } else {
         Application.addActivity({
           Title: addData.title,
-          Description: addData.description,
+          // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
           Sections: rsolveSectionListforSendToApi(),
@@ -112,7 +112,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       Application.getActivity(editid).then((res) => {
         setAddData({
           title: res.data.Title,
-          description: res.data.Description,
+          // description: res.data.Description,
           score: res.data.Base_Score,
           instruction: res.data.Instruction,
           type: res.data.Activity_Filters.Type,
@@ -146,7 +146,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   }, [editid]);
   const [addData, setAddData] = useState({
     title: '',
-    description: '',
+    // description: '',
     score: 0,
     instruction: '',
     type: '',
