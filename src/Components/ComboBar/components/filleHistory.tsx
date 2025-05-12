@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
-import { ButtonPrimary } from '../../Button/ButtonPrimary';
+// import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
 export const FilleHistory = () => {
