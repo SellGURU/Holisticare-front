@@ -110,7 +110,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Value: Number(value),
-        Unit:Unit
+        Unit: Unit,
       };
       onSubmit(data);
       clear();
@@ -139,7 +139,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     });
     setDose('');
     setValue('');
-    setUnit('')
+    setUnit('');
     setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
     setShowValidation(false);
     setSelectedRow();
@@ -265,7 +265,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           </div> */}
 
           {/* Base Score Field */}
-        
+
           {/* Instruction Field */}
           <div className="flex flex-col mt-4 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
@@ -360,7 +360,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                 Value must include a number and, if needed, be followed by a unit (e.g., 8 glasses of water).
+                  Value must include a number and, if needed, be followed by a
+                  unit (e.g., 8 glasses of water).
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
@@ -381,12 +382,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
-                  placeholder="Enter unit"
+                  placeholder="Enter Unit"
                   value={Unit}
                   type="text"
                   onChange={(e) => {
-                    setUnit(e.target.value);
-                  
+                    // Remove numbers using regex
+                    const filteredValue = e.target.value.replace(/[0-9]/g, '');
+                    setUnit(filteredValue);
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
                    bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -533,7 +535,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               </div>
             </div>
           )}
-            <div className="flex flex-col mt-4 w-full">
+          <div className="flex flex-col mt-4 w-full">
             <div className="text-xs font-medium text-Text-Primary">
               Base Score
             </div>
@@ -545,7 +547,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               required={true}
             />
           </div>
-
 
           {/* Action Buttons */}
           <div className="w-full flex justify-end items-center p-2 mt-5">
