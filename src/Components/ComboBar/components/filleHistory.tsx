@@ -5,11 +5,27 @@ import { useParams } from 'react-router-dom';
 // import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
+
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB in bytes
+const ALLOWED_FILE_TYPES = [
+  'application/pdf',
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/tiff',
+  'text/plain'
+];
+
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const fileInputRef = useRef<any>(null);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
+  const [error, setError] = useState<string>('');
+
   useEffect(() => {
     // setIsLoading(true);
     Application.getFilleList({ member_id: id })
@@ -51,11 +67,44 @@ export const FilleHistory = () => {
 
   //   return `${day} ${month} ${year}`;
   // };
+
+  const validateFile = (file: File): boolean => {
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`File ${file.name} is too large. Maximum size is 4MB.`);
+      return false;
+    }
+
+    // Check file type
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setError(`File ${file.name} has an unsupported format.`);
+      return false;
+    }
+
+    // Check for duplicate filename
+    const isDuplicate = data?.some((existingFile: any) => 
+      existingFile?.file_name && file.name && 
+      existingFile.file_name.toLowerCase() === file.name.toLowerCase()
+    );
+    
+    if (isDuplicate) {
+      setError(`File ${file.name} already exists.`);
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <div className=" w-full">
+      {error && (
+        <div className="mb-3 text-red-500 text-[10px]">
+          {error}
+        </div>
+      )}
       <div
         onClick={() => {
-          document.getElementById('uploadFile')?.click();
+          fileInputRef.current?.click();
         }}
         className=" mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
       >
@@ -111,16 +160,22 @@ export const FilleHistory = () => {
                 ref={fileInputRef}
                 accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
                 multiple
-                onChange={(e: any) => {
-                  const fileList = Array.from(e.target.files);
-                  // setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
-                  // setUploadingFiles([]);
-                  setTimeout(() => {
-                    setUploadingFiles(fileList);
-                  }, 200);
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setError(''); // Clear previous errors
+                  const fileList = Array.from(e.target.files || []);
+                  
+                  // Validate each file
+                  const validFiles = fileList.filter(file => validateFile(file));
+                  
+                  if (validFiles.length > 0) {
+                    setTimeout(() => {
+                      setUploadingFiles(validFiles);
+                    }, 200);
+                  }
+                  
                   fileInputRef.current.value = '';
                 }}
-                id="uploadFile"
+                id="uploadFileBoxes"
                 className="w-full absolute invisible h-full left-0 top-0"
               />
             </>
