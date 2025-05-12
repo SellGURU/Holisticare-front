@@ -10,11 +10,13 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
-  
+
   // Filter days to only show current month
-  const currentMonthDays = days.filter(day => {
+  const currentMonthDays = days.filter((day) => {
     const date = new Date(day);
-    return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    return (
+      date.getMonth() === currentMonth && date.getFullYear() === currentYear
+    );
   });
 
   // Sort days chronologically by converting to Date objects
@@ -23,7 +25,7 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
     const dateB = new Date(b);
     return dateA.getTime() - dateB.getTime();
   });
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [itemsPerRow, setItemsPerRow] = useState(1);
 
