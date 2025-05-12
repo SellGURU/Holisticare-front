@@ -18,7 +18,9 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
     acc[key].push(item);
     return acc;
   }, {});
-  const headers = ['Category', 'Title', 'Frequency', 'Time'];
+  console.log(classData);
+
+  const headers = ['Category', 'Title', 'Frequency', 'Note'];
   return (
     <>
       {data && (
@@ -59,13 +61,174 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                 {key.charAt(0).toUpperCase() + key.slice(1)}
                               </td>
                             )}
-
                             {/* Title */}
                             <td
+                              className={`py-3 text-xs whitespace-nowrap ${index == 0 && 'align-top'}`}
+                            >
+                              <div
+                                style={{
+                                  color: '#888888',
+                                }}
+                              >
+                                {item.title}
+                              </div>
+                              {item.dose ? (
+                                <div className="flex mt-3">
+                                  <div
+                                    className="text-[10px]"
+                                    style={{ color: '#B0B0B0' }}
+                                  >
+                                    Dose:
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      marginLeft: '2px',
+                                      width: '170px',
+                                      textWrap: 'wrap',
+                                    }}
+                                  >
+                                    {item.dose}
+                                  </div>
+                                </div>
+                              ) : item.value ? (
+                                <div className="flex items-center mt-3">
+                                  <div
+                                    className="text-[10px]"
+                                    style={{ color: '#B0B0B0' }}
+                                  >
+                                    Value:
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      marginLeft: '2px',
+                                    }}
+                                  >
+                                    {item.value}
+                                  </div>
+                                </div>
+                              ) : item.total_macro ? (
+                                <div className="flex items-center mt-3">
+                                  <div
+                                    className="text-[10px]"
+                                    style={{ color: '#B0B0B0' }}
+                                  >
+                                    Carb:
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    {item.total_macro.Carbs}
+                                  </div>
+                                  <div
+                                    className="text-[8px]"
+                                    style={{
+                                      color: '#B0B0B0',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    gr
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#B0B0B0',
+                                      marginLeft: '9px',
+                                    }}
+                                  >
+                                    Protein:
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    {item.total_macro.Protein}
+                                  </div>
+                                  <div
+                                    className="text-[8px]"
+                                    style={{
+                                      color: '#B0B0B0',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    gr
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#B0B0B0',
+                                      marginLeft: '9px',
+                                    }}
+                                  >
+                                    Fat:
+                                  </div>
+                                  <div
+                                    className="text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    {item.total_macro.Fats}
+                                  </div>
+                                  <div
+                                    className="text-[8px]"
+                                    style={{
+                                      color: '#B0B0B0',
+                                      marginLeft: '3px',
+                                    }}
+                                  >
+                                    gr
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="flex items-center mt-3">
+                                  {item.sections
+                                    ?.slice(0, 2)
+                                    ?.map((section: string, index: number) => {
+                                      return (
+                                        <div
+                                          key={index}
+                                          className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center mr-1"
+                                          style={{
+                                            backgroundColor: '#E9F0F2',
+                                            color: '#005F73',
+                                          }}
+                                        >
+                                          {section}
+                                        </div>
+                                      );
+                                    })}
+                                  {item?.sections?.length > 2 && (
+                                    <div
+                                      className="px-2 py-1 rounded-2xl text-[10px] flex items-center justify-center"
+                                      style={{
+                                        backgroundColor: '#E9F0F2',
+                                        color: '#005F73',
+                                      }}
+                                    >
+                                      +2
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                            {/* Title */}
+                            {/* <td
                               className={`py-3 text-xs text-Text-Quadruple whitespace-nowrap ${index == 0 && 'align-top'}`}
                             >
                               {item.title}
-                            </td>
+                            </td> */}
 
                             {/* Frequency */}
                             <td className="px-4 py-3 whitespace-nowrap flex items-center">
@@ -119,9 +282,44 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                 ''
                               )}
                             </td>
-
+                            <td
+                              className="px-4 py-3 whitespace-nowrap"
+                              // style={{ maxWidth: '100px' }}
+                            >
+                              {item.client_notes &&
+                              item.client_notes.length > 0 ? (
+                                item.client_notes[0].length > 50 ? (
+                                  <div
+                                    className="items-start text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      textWrap: 'wrap',
+                                    }}
+                                  >
+                                    {item.client_notes[0].slice(0, 50)} ...
+                                  </div>
+                                ) : (
+                                  <div
+                                    className="items-start text-[10px]"
+                                    style={{
+                                      color: '#888888',
+                                      textWrap: 'wrap',
+                                    }}
+                                  >
+                                    {item.client_notes[0]}
+                                  </div>
+                                )
+                              ) : (
+                                <div
+                                  className="flex items-center"
+                                  style={{ fontSize: '10px', color: '#888888' }}
+                                >
+                                  -
+                                </div>
+                              )}
+                            </td>
                             {/* Time */}
-                            <td className="px-4 py-3 whitespace-nowrap">
+                            {/* <td className="px-4 py-3 whitespace-nowrap">
                               {item.times && item.times.length > 0 ? (
                                 <div className="flex items-center gap-1">
                                   {item.times.map(
@@ -140,7 +338,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                   -
                                 </div>
                               )}
-                            </td>
+                            </td> */}
                           </tr>
                         ))}
                       </Fragment>
