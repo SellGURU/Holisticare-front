@@ -22,7 +22,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
           {data?.title}{' '}
           <div
             data-tooltip-id={`score-calc-${index}`}
-            className="text-Primary-DeepTeal select-none inline-flex ml-1 cursor-pointer text-[10px]"
+            className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
           >
             Analysis Info{' '}
             <Tooltip

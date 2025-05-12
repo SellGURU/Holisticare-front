@@ -4,7 +4,7 @@ import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
 import Checkbox from '../../checkbox';
-import RangeCard from './RangeCard';
+// import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
 import CustomSelect from '../../CustomSelect';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
@@ -66,9 +66,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
-  const [selectedTimes, setSelectedTimes] = useState<string[]>(
-    defalts ? defalts.Times : [],
-  );
+  const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
     defalts ? defalts?.Activity_Location : [],
   );
@@ -77,7 +75,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   );
   const [showSelect, setShowSelect] = useState(false);
   // const [practitionerComment, setPractitionerComment] = useState('');
-  const [description, setDescription] = useState('');
+  // const [description, setDescription] = useState('');
   // const [practitionerComments, setPractitionerComments] = useState<string[]>(
   //   defalts ? defalts['Practitioner Comments'] : [],
   // );
@@ -115,9 +113,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     });
   }, []);
 
-  const [baseScore, setBaseScore] = useState(
-    defalts?.Base_Score === 0 ? defalts?.Base_Score : 5,
-  );
+  // const [baseScore, setBaseScore] = useState(
+  //   defalts?.Base_Score === 0 ? defalts?.Base_Score : 5,
+  // );
   const [frequencyType, setFrequencyType] = useState(defalts?.Frequency_Type);
   useEffect(() => {
     if (defalts) {
@@ -141,10 +139,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Carbs: defalts?.['Total Macros']?.Carbs || 0,
       });
       setInstructions(defalts.Instruction || '');
-      setSelectedTimes(defalts.Times || []);
+      // setSelectedTimes(defalts.Times || []);
       setNotes(defalts['Client Notes'] || []);
-      setDescription(defalts.Description || '');
-      setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
+      // setDescription(defalts.Description || '');
+      // setBaseScore(defalts.Base_Score === 0 ? defalts.Base_Score : 5);
       setFrequencyType(defalts?.Frequency_Type || null);
       setAddData({
         Type: defalts?.Activity_Filters?.Type || [],
@@ -199,7 +197,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       // 'Practitioner Comments': practitionerComments,
       Instruction: instructions,
       Activity_Location: selectedLocations,
-      Times: selectedTimes,
+      // Times: selectedTimes,
       'Client Notes': notes,
       frequencyType: frequencyType,
       frequencyDates:
@@ -208,8 +206,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           : frequencyType == 'monthly'
             ? selectedDaysMonth
             : null,
-      Description: description,
-      Base_Score: baseScore,
+      // Description: description,
+      // Base_Score: baseScore,
       Activity_Filters: addData,
       Sections: rsolveSectionListforSendToApi(),
       Task_Type: 'Action',
@@ -276,10 +274,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Carbs: null,
     });
     setInstructions('');
-    setSelectedTimes([]);
+    // setSelectedTimes([]);
     setNotes([]);
-    setDescription('');
-    setBaseScore(5);
+    // setDescription('');
+    // setBaseScore(5);
     setFrequencyType(null);
     // setPractitionerComments([]);
     // setPractitionerComment('');
@@ -327,7 +325,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        Times: selectedTimes,
+        // Times: selectedTimes,
         Dose: dose,
         'Client Notes': notes,
         frequencyDates:
@@ -336,8 +334,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
-        Description: description,
-        Base_Score: baseScore,
+        // Description: description,
+        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -347,7 +345,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        Times: selectedTimes,
+        // Times: selectedTimes,
         Value: value,
         'Client Notes': notes,
         frequencyDates:
@@ -356,8 +354,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
-        Description: description,
-        Base_Score: baseScore,
+        // Description: description,
+        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -367,7 +365,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        Times: selectedTimes,
+        // Times: selectedTimes,
         'Total Macros': totalMacros,
         'Client Notes': notes,
         frequencyDates:
@@ -376,8 +374,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
-        Description: description,
-        Base_Score: baseScore,
+        // Description: description,
+        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -387,7 +385,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        Times: selectedTimes,
+        // Times: selectedTimes,
         'Client Notes': notes,
         frequencyDates:
           frequencyType == 'weekly'
@@ -395,8 +393,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             : frequencyType == 'monthly'
               ? selectedDaysMonth
               : null,
-        Description: description,
-        Base_Score: baseScore,
+        // Description: description,
+        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -409,13 +407,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   //   setPractitionerComments(updatedComments);
   // };
 
-  const toggleTimeSelection = (time: string) => {
-    setSelectedTimes((prevTimes) =>
-      prevTimes.includes(time)
-        ? prevTimes.filter((t) => t !== time)
-        : [...prevTimes, time],
-    );
-  };
+  // const toggleTimeSelection = (time: string) => {
+  //   setSelectedTimes((prevTimes) =>
+  //     prevTimes.includes(time)
+  //       ? prevTimes.filter((t) => t !== time)
+  //       : [...prevTimes, time],
+  //   );
+  // };
   const toggleLocationSelection = (time: string) => {
     setSelectedLocations((prevTimes) =>
       prevTimes.includes(time)
@@ -424,7 +422,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     );
   };
 
-  const times = ['morning', 'midday', 'night'];
+  // const times = ['morning', 'midday', 'night'];
   const locations = ['Home', 'Gym'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
   const dayMapping: Record<string, string> = {
@@ -646,7 +644,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </span>
                   )}
                 </div>
-                <div className={`mb-4`}>
+                {/* <div className={`mb-4`}>
                   <label className="block text-xs font-medium">
                     Description
                   </label>
@@ -663,13 +661,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       This field is required.
                     </span>
                   )}
-                </div>
-                <div className="mb-4">
-                  <div className="text-xs font-medium text-Text-Primary">
-                    Base Score
-                  </div>
-                  <RangeCard value={baseScore} changeValue={setBaseScore} />
-                </div>
+                </div> */}
+                {/*  */}
                 <div className="mb-4">
                   <label className="flex w-full justify-start gap-1 items-center text-xs font-medium">
                     Instruction
@@ -1177,7 +1170,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                   )}
                 </div>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label className="text-xs font-medium">Times</label>
                   <div className="flex w-full mt-2 gap-6">
                     {times.map((item, index) => {
@@ -1194,16 +1187,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       );
                     })}
                   </div>
-                </div>
+                </div> */}
                 {showAlert() ? (
                   <div className="mb-4">
-                    <div className="w-full rounded-2xl px-3 py-[7px] gap-2.5 bg-bg-color border border-Gray-50 flex items-center">
+                    <div className="w-full rounded-2xl px-3 py-[7px] gap-2.5 bg-bg-color border border-Gray-50 flex items-center text-justify">
                       <img
                         src="/icons/info-circle-blue.svg"
                         alt=""
                         className="w-4 h-4"
                       />
-                      <div className="text-xs text-Primary-DeepTeal flex flex-wrap leading-relaxed">
+                      <div className="text-xs text-Primary-DeepTeal flex flex-wrap leading-relaxed ">
                         <span>
                           {selectedGroup === 'Supplement' ||
                           selectedGroup === 'Lifestyle' ||
