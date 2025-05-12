@@ -290,7 +290,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                               item.client_notes.length > 0 ? (
                                 item.client_notes[0].length > 50 ? (
                                   <div
-                                    className="items-start text-[10px]"
+                                    className="items-start bullet-point text-[10px]"
                                     style={{
                                       color: '#888888',
                                       textWrap: 'wrap',
@@ -300,7 +300,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                   </div>
                                 ) : (
                                   <div
-                                    className="items-start text-[10px]"
+                                    className="items-start bullet-point text-[10px]"
                                     style={{
                                       color: '#888888',
                                       textWrap: 'wrap',
