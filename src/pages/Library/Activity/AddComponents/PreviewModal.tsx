@@ -104,7 +104,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               {exercise.Description}
             </div>
           </div> */}
-         
+
           <div className="flex w-full items-start gap-3">
             <div className="text-xs font-medium">Instruction</div>
             <div className="text-xs text-[#888888] text-justify">
@@ -293,7 +293,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
             </div>
           </div>
         </div>
-       
+
         <div
           onClick={onClose}
           className="absolute right-4 bottom-4 text-sm font-medium text-[#909090] cursor-pointer"

@@ -152,7 +152,6 @@ const InformationStep: FC<InformationStepProps> = ({
               </div>
             )}
           </div> */}
-        
 
           <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">

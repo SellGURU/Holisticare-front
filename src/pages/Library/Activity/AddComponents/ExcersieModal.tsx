@@ -387,7 +387,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               largeHeight
               onChange={(e) => setDescription(e.target.value)}
             /> */}
-          
+
             <div className="flex flex-col gap-1">
               <div className="text-xs font-medium text-Text-Primary">
                 Instruction

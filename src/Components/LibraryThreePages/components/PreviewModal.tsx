@@ -98,7 +98,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                 
                 </div>
               </div> */}
-             
+
               <div className="flex gap-8">
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
@@ -184,7 +184,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   </div>
                 </div>
               )}
-               <div className="flex gap-7 items-center">
+              <div className="flex gap-7 items-center">
                 <div className="font-medium text-Text-Primary text-xs">
                   Base Score
                 </div>
