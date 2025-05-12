@@ -19,7 +19,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
     return acc;
   }, {});
   console.log(data);
-  const headers = ['Category', 'Title', 'Frequency', 'Note'];
+  const headers = ['Category', 'Title', 'Frequency'];
   return (
     <div
       className="w-full relative mt-8"
@@ -293,7 +293,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                         </td>
 
                         {/* Time */}
-                        <td
+                        {/* <td
                           className="px-4 py-3 whitespace-nowrap"
                           // style={{ maxWidth: '100px' }}
                         >
@@ -303,7 +303,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                 className="items-start text-[10px]"
                                 style={{ color: '#888888', textWrap: 'wrap' }}
                               >
-                                {item.client_notes[0].slice(0, 50)} ...
+                                {item.client_notes[0]} 
                               </div>
                             ) : (
                               <div
@@ -321,7 +321,7 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                               -
                             </div>
                           )}
-                        </td>
+                        </td> */}
                       </tr>
                     ))}
                   </Fragment>

@@ -1382,7 +1382,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   </div>
                 </div>
                 <ActionPlanOverview
-                  classData={caldenderData.slice(0, 3)}
+                  classData={caldenderData.slice(0, 4)}
                 ></ActionPlanOverview>
               </>
             )}
@@ -1398,7 +1398,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {/* <PrintHeader /> */}
 
             <ActionPlanOverview
-              classData={caldenderData.slice(3, 6)}
+              classData={caldenderData.slice(4, 8)}
             ></ActionPlanOverview>
             {/* {caldenderData != null && caldenderData.length > 0 && (
               <CalenderPrint data={caldenderData}></CalenderPrint>
