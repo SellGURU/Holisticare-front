@@ -54,7 +54,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
         time: new Date().toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
-          hour12: false  // This is the key change
+          hour12: false, // This is the key change
         }),
       };
       setMessageData([...MessageData, newMessage]);
@@ -78,7 +78,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
           time: new Date().toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false  // This is the key change
+            hour12: false, // This is the key change
           }),
         };
         setMessageData((prevMessages) => [...prevMessages, aiMessage]);
@@ -99,7 +99,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
           <div className="w-full  flex flex-col items-center justify-center h-[533px]  ">
             <img src="/icons/EmptyInbox.svg" alt="" />
             <div className="text-Text-Primary font-medium text-xs">
-            No history found.
+              No history found.
             </div>
           </div>
           <div className="w-full absolute bottom-0 flex justify-center">

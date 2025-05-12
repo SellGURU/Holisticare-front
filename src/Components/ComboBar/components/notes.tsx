@@ -268,7 +268,7 @@ export const Notes = () => {
           <div className="flex flex-col items-center justify-start -mt-[300px]">
             <img src="/icons/EmptyNote.svg" alt="" />
             <div className="text-[12px] text-Text-Primary ">
-            No notes found.
+              No notes found.
             </div>
           </div>
         )}
