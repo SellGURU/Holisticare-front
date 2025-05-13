@@ -130,17 +130,17 @@ const MessagesChatBox = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  const handleUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setImages((prevImages) => [...prevImages, base64String]);
-    };
-    reader.readAsDataURL(file);
-  };
-  const handleDeleteImage = (indexToDelete: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== indexToDelete));
-  };
+  // const handleUpload = (file: File) => {
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     const base64String = reader.result as string;
+  //     setImages((prevImages) => [...prevImages, base64String]);
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
+  // const handleDeleteImage = (indexToDelete: number) => {
+  //   setImages((prev) => prev.filter((_, i) => i !== indexToDelete));
+  // };
 
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
@@ -151,29 +151,53 @@ const MessagesChatBox = () => {
     setIsImageModalOpen(false);
     setSelectedImage(null);
   };
+  const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
+  const getColorForUsername = (username: string): string => {
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+  const hexToRGBA = (hex: string, opacity: number = 1) => {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
 
   return (
     <>
-      <div className="w-full mx-auto bg-white shadow-200 h-[90%] rounded-[16px] relative flex flex-col">
+      <div className="w-full mx-auto bg-white shadow-200 h-full rounded-[16px] relative flex flex-col">
         {isLoading ? (
           <>
-            <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full">
+            <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
               <Circleloader />
             </div>
           </>
         ) : (
           <>
             {messages.length !== 0 && (
-              <div className="px-4 py-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]">
-                <div className="flex items-center gap-2 ">
-                  <div className="min-w-10 h-10   rounded-full bg-blue-300   flex items-center justify-center mr-3 opacity-35">
+              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
+                    style={{
+                      backgroundColor: hexToRGBA(
+                        getColorForUsername(username),
+                        0.2,
+                      ),
+                      color: hexToRGBA(getColorForUsername(username), 0.87),
+                    }}
+                  >
                     {username?.substring(0, 1).toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-[#383838]">
+                    <div className="text-sm font-medium text-Text-Primary">
                       {username}
                     </div>
-                    <div className="text-[10px] text-Text-Secondary">
+                    <div className="text-[10px] text-Text-Quadruple">
                       Offline
                     </div>
                   </div>
@@ -233,10 +257,10 @@ const MessagesChatBox = () => {
                       <div className="flex justify-end items-start gap-1">
                         <div className="flex flex-col items-end">
                           <div className="text-Text-Primary text-[12px]">
-                            Me{' '}
-                            <span className="text-Text-Primary ml-1">
+                            <span className="text-Text-Primary mr-1">
                               {message.time}
                             </span>
+                            Me{' '}
                           </div>
                           <div className="flex flex-row gap-2">
                             {message.images?.map((image, index) => {
@@ -272,7 +296,7 @@ const MessagesChatBox = () => {
                         <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                           <img
                             className="rounded-full"
-                            src={`https://ui-avatars.com/api/?name=${username}`}
+                            src={`https://ui-avatars.com/api/?name=Me`}
                             alt=""
                           />
                         </div>
@@ -285,7 +309,7 @@ const MessagesChatBox = () => {
                 </>
               ))}
               {messages.length === 0 && (
-                <div className="flex items-center justify-center w-full h-full text-[14px] text-Text-Secondary">
+                <div className="flex items-center justify-center w-full h-full text-[14px] pt-14 text-Text-Secondary">
                   No items have been selected to display the chat.
                 </div>
               )}
@@ -293,14 +317,15 @@ const MessagesChatBox = () => {
             {messages.length !== 0 && (
               <div className="px-2">
                 <InputMentions
-                  onUpload={handleUpload}
-                  handleDeleteImage={handleDeleteImage}
+                  // onUpload={handleUpload}
+                  // handleDeleteImage={handleDeleteImage}
                   changeBenchMarks={(val: Array<string>) => {
                     setSelectedBenchMarks(val);
                   }}
                   onChange={setInput}
                   onSubmit={handleSend}
                   value={input}
+                  PlaceHolder="Enter your message here..."
                 />
               </div>
             )}

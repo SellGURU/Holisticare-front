@@ -7,6 +7,7 @@ interface InputMentionsProps {
   changeBenchMarks: (benchs: Array<string>) => void;
   onUpload?: (file: File) => void;
   handleDeleteImage?: (indexToDelete: number) => void;
+  PlaceHolder?: string;
 }
 const InputMentions: React.FC<InputMentionsProps> = ({
   value,
@@ -15,6 +16,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   changeBenchMarks,
   onUpload,
   handleDeleteImage,
+  PlaceHolder = 'Write message here ...',
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -63,16 +65,18 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   return (
     <>
       <div className="w-[98%]  bg-[#E9F0F2] left-1 md:left-2  absolute bottom-0  mb-2  py-2 px-4 flex items-center gap-3 rounded-[16px]">
-        <img
-          className="cursor-pointer"
-          src="/icons/attach-svgrepo-com 1.svg"
-          alt=""
-          onClick={() => {
-            if (imagePreview.length < 6) {
-              handleAttachClick();
-            }
-          }}
-        />
+        {onUpload && (
+          <img
+            className="cursor-pointer"
+            src="/icons/attach-svgrepo-com 1.svg"
+            alt=""
+            onClick={() => {
+              if (imagePreview.length < 6) {
+                handleAttachClick();
+              }
+            }}
+          />
+        )}
         <input
           className="hidden"
           type="file"
@@ -83,7 +87,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
         <input
           className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Primary"
           type="text"
-          placeholder="Write message here ..."
+          placeholder={PlaceHolder}
           value={value}
           onChange={(e) => {
             handelChange(e.target.value);
