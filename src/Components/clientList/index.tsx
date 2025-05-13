@@ -431,90 +431,103 @@ const ClientList = () => {
                   </div>
                 </div>
               </div>
-              {activeList == 'grid' ? (
-                <div
-                  className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
-                >
-                  {filteredClientList.map((client: any) => {
-                    return (
-                      <ClientCard
-                        activeTab={active}
-                        ondelete={(memberId: any) => {
-                          setFilteredClientList((pre) => {
-                            const nes = [...pre];
-                            return nes.filter((el) => el.member_id != memberId);
-                          });
-                          setClientList((pre) => {
-                            const nes = [...pre];
-                            return nes.filter((el) => el.member_id != memberId);
-                          });
-                        }}
-                        onAssign={(memberId, coachUsername) => {
-                          setFilteredClientList((prevList) =>
-                            prevList.map((client) =>
-                              client.member_id === memberId
-                                ? {
-                                    ...client,
-                                    assigned_to: [
-                                      coachUsername,
-                                      ...(client.assigned_to || []),
-                                    ],
-                                  }
-                                : client,
-                            ),
-                          );
-
-                          setClientList((prevList) =>
-                            prevList.map((client) =>
-                              client.member_id === memberId
-                                ? {
-                                    ...client,
-                                    assigned_to: [
-                                      coachUsername,
-                                      ...(client.assigned_to || []),
-                                    ],
-                                  }
-                                : client,
-                            ),
-                          );
-                        }}
-                        onarchive={(memberId: any) => {
-                          setFilteredClientList((pre) => {
-                            const nes = [...pre];
-                            return nes.map((el) => {
-                              if (el.member_id != memberId) {
-                                return el;
-                              } else {
-                                return {
-                                  ...el,
-                                  archived: !el.archived,
-                                };
-                              }
-                            });
-                          });
-                          setClientList((pre) => {
-                            const nes = [...pre];
-                            return nes.map((el) => {
-                              if (el.member_id != memberId) {
-                                return el;
-                              } else {
-                                return {
-                                  ...el,
-                                  archived: !el.archived,
-                                };
-                              }
-                            });
-                          });
-                        }}
-                        onToggleHighPriority={toggleHighPriority}
-                        client={client}
-                      ></ClientCard>
-                    );
-                  })}
+              {filteredClientList.length == 0 ?
+              <>
+                <div className="flex justify-center mt-14">
+                  <img src="/icons/rafiki2.svg" alt="" />
                 </div>
-              ) : (
-                <Table classData={filteredClientList}></Table>
-              )}
+                <div className="text-Text-Primary text-base text-center font-medium mt-3">
+                  No results found.
+                </div>              
+              </>
+              :
+              <>
+                {activeList == 'grid' ? (
+                  <div
+                    className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
+                  >
+                    {filteredClientList.map((client: any) => {
+                      return (
+                        <ClientCard
+                          activeTab={active}
+                          ondelete={(memberId: any) => {
+                            setFilteredClientList((pre) => {
+                              const nes = [...pre];
+                              return nes.filter((el) => el.member_id != memberId);
+                            });
+                            setClientList((pre) => {
+                              const nes = [...pre];
+                              return nes.filter((el) => el.member_id != memberId);
+                            });
+                          }}
+                          onAssign={(memberId, coachUsername) => {
+                            setFilteredClientList((prevList) =>
+                              prevList.map((client) =>
+                                client.member_id === memberId
+                                  ? {
+                                      ...client,
+                                      assigned_to: [
+                                        coachUsername,
+                                        ...(client.assigned_to || []),
+                                      ],
+                                    }
+                                  : client,
+                              ),
+                            );
+
+                            setClientList((prevList) =>
+                              prevList.map((client) =>
+                                client.member_id === memberId
+                                  ? {
+                                      ...client,
+                                      assigned_to: [
+                                        coachUsername,
+                                        ...(client.assigned_to || []),
+                                      ],
+                                    }
+                                  : client,
+                              ),
+                            );
+                          }}
+                          onarchive={(memberId: any) => {
+                            setFilteredClientList((pre) => {
+                              const nes = [...pre];
+                              return nes.map((el) => {
+                                if (el.member_id != memberId) {
+                                  return el;
+                                } else {
+                                  return {
+                                    ...el,
+                                    archived: !el.archived,
+                                  };
+                                }
+                              });
+                            });
+                            setClientList((pre) => {
+                              const nes = [...pre];
+                              return nes.map((el) => {
+                                if (el.member_id != memberId) {
+                                  return el;
+                                } else {
+                                  return {
+                                    ...el,
+                                    archived: !el.archived,
+                                  };
+                                }
+                              });
+                            });
+                          }}
+                          onToggleHighPriority={toggleHighPriority}
+                          client={client}
+                        ></ClientCard>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <Table classData={filteredClientList}></Table>
+                )}
+              </> 
+              }
             </>
           ) : (
             <>
