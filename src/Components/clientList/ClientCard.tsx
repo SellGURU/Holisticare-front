@@ -194,12 +194,13 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const handleCoachSelection = (selectedCoach: Coach) => {
     // Toggle the assigned state for the selected coach
     const newAssignedState = !selectedCoach.assigned;
-    
+
     // Update UI - toggle the selected coach's assigned state
     setCoachList((prevCoaches) =>
       prevCoaches.map((coach) => ({
         ...coach,
-        assigned: coach.username === selectedCoach.username ? newAssignedState : false,
+        assigned:
+          coach.username === selectedCoach.username ? newAssignedState : false,
       })),
     );
 
@@ -208,7 +209,10 @@ const ClientCard: React.FC<ClientCardProps> = ({
       member_id: client.member_id,
       coach_usernames: newAssignedState ? [selectedCoach.username] : [],
     }).then(() => {
-      onAssign(client.member_id, newAssignedState ? selectedCoach.username : '');
+      onAssign(
+        client.member_id,
+        newAssignedState ? selectedCoach.username : '',
+      );
     });
   };
   //  handleAssignCoach = (index: number) => {
@@ -494,12 +498,11 @@ const ClientCard: React.FC<ClientCardProps> = ({
                         >
                           <div>
                             <Checkbox
-                              
                               onChange={() => handleCoachSelection(coach)}
                               checked={coach.assigned}
                             />
                           </div>
-                          <div  onClick={() => handleCoachSelection(coach)}>
+                          <div onClick={() => handleCoachSelection(coach)}>
                             {coach.username}
                           </div>
                         </div>
@@ -684,7 +687,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       Checked on
                     </div>
                     <div className="text-Text-Primary text-[10px] text-center sm:text-xs">
-                      {client.last_checkin !='No Data'?client.last_checkin:'-'}
+                      {client.last_checkin != 'No Data'
+                        ? client.last_checkin
+                        : '-'}
                     </div>
                   </div>
                 </div>

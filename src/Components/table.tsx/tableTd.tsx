@@ -132,7 +132,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <div className="text-xs text-Text-Secondary ">
-          {row.original.last_checkin !='No Data'?row.original.last_checkin:'-'}
+          {row.original.last_checkin != 'No Data'
+            ? row.original.last_checkin
+            : '-'}
         </div>
       );
     },
