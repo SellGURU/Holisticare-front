@@ -88,7 +88,7 @@ useEffect(() => {
             />
           </div>
 
-          <div className="w-full shadow-200 flex mt-3 ">
+          <div className="w-full  flex mt-3 ">
             {['All', 'Resolved', 'Pending'].map((type) => (
               <div
                 key={type}
