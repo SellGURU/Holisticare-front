@@ -312,7 +312,7 @@ const ClientList = () => {
                   Add Client
                 </ButtonSecondary>
               </div>
-              <div className="w-full h-[1px] bg-white my-3"></div>
+              <div className="w-full invisible h-[1px] bg-white my-3"></div>
               <div className="w-full select-none flex justify-between mb-3">
                 {/* <div
                   onClick={() => {
