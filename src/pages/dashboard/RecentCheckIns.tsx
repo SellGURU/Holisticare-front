@@ -376,12 +376,12 @@ const RecentCheckIns = () => {
         style={{ height: (window.innerHeight - 200) / 2 - 16 + 'px' }}
       >
         <div
-          className=" overflow-auto pb-3 pr-2 "
+          className={` ${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'}  pb-3 pr-2 `}
           style={{ height: (window.innerHeight - 350) / 2 - 24 + 'px' }}
         >
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
-              Recent Check-Ins{' '}
+              Recent Check-ins
               <span className="text-xs text-Text-Triarty -mt-1">
                 ({CheckIns.length})
               </span>
@@ -393,7 +393,7 @@ const RecentCheckIns = () => {
             />
           </div>
           {CheckIns.length < 1 ? (
-            <div className=" w-full flex flex-col items-center justify-center">
+            <div className=" w-full h-full flex flex-col items-center justify-center">
               <img src="/icons/EmptyState2.svg" alt="" />
               <div className="text-xs text-Text-Primary -mt-4 text-center">
                 No Data Found
