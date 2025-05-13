@@ -227,8 +227,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           {itemList.map((el, index) => (
             <>
               <li
-                title={el.name}
-                // data-tooltip-id="tooltip"
+                data-tooltip-id={el.name}
                 // data-tooltip-content={el.name}
                 key={index}
                 onClick={() => {
@@ -264,6 +263,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   // </div>
                 }
               </li>
+              <Tooltip
+                place="left"
+                className="!bg-white !w-fit  !text-wrap 
+                !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+                id={el.name}
+              >
+                {el.name}
+              </Tooltip>
             </>
           ))}
         </ul>
@@ -279,7 +290,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
           <img src={'/icons/add.svg'} />
         </div>
         <div
-          title="AI Copilot"
+          data-tooltip-id="AI Copilot"
           ref={buttonRef}
           onClick={() => setToogleOpenChat(!toogleOpenChat)}
           className={
@@ -292,6 +303,18 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
             <img src={'/icons/sidbar-menu/message-question.svg'} />
           )}
         </div>
+        <Tooltip
+          place="left"
+          className="!bg-white !w-fit  !text-wrap 
+                !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+          style={{
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+          id="AI Copilot"
+        >
+          AI Copilot
+        </Tooltip>
         <div ref={modalRef} className="w-full shadow-200">
           <PopUpChat
             isOpen={toogleOpenChat}
