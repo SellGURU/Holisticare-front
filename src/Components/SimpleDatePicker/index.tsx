@@ -11,7 +11,7 @@ interface DatePickerProps {
   inValid?: boolean;
   errorMessage?: string;
   ClassName?: string;
-  textStyle?: boolean
+  textStyle?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -23,7 +23,7 @@ export default function SimpleDatePicker({
   inValid,
   errorMessage,
   ClassName,
-  textStyle
+  textStyle,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);

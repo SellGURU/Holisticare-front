@@ -114,7 +114,7 @@ const EmployeeRow: React.FC<{
   const [showRemoveStaffModal, setshowRemoveStaffModal] = useState(false);
   const [isConfirm, setisConfirm] = useState(false);
   const [showAssignListModal, setshowAssignListModal] = useState(false);
-  const [AssignedClients, setAssignedClients] = useState<Client[]>([ ]);
+  const [AssignedClients, setAssignedClients] = useState<Client[]>([]);
   return (
     <>
       <MainModal
@@ -300,7 +300,8 @@ const EmployeeRow: React.FC<{
           <div>
             <p className="text-[10px] text-[#383838]">{employee.user_name}</p>
             <p className="text-[8px] text-[#888888]">
-             Role: {employee.role} <span className='mx-1'>|</span> Clients Assigned: {employee['clients assigned']}
+              Role: {employee.role} <span className="mx-1">|</span> Clients
+              Assigned: {employee['clients assigned']}
             </p>
           </div>
         </div>
@@ -326,20 +327,17 @@ const EmployeeRow: React.FC<{
               Remove
             </div> */}
             <div
-              onClick={() =>{
-                if(employee["clients assigned"]> 0){
-
-             
-                Application.getStaffAssignedClients({
-                  user_id: employee.user_id,
-                }).then((res) => {
-                  setAssignedClients(res.data);
-                  setshowAssignListModal(true);
-                })
-                   }
-              }
-              }
-              className={`flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer ${employee["clients assigned"] < 1 ? 'opacity-40' : ''}`}
+              onClick={() => {
+                if (employee['clients assigned'] > 0) {
+                  Application.getStaffAssignedClients({
+                    user_id: employee.user_id,
+                  }).then((res) => {
+                    setAssignedClients(res.data);
+                    setshowAssignListModal(true);
+                  });
+                }
+              }}
+              className={`flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer ${employee['clients assigned'] < 1 ? 'opacity-40' : ''}`}
             >
               <img src="/icons/firstline.svg" alt="" />
               Show Assign List

@@ -133,7 +133,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           </div>
 
           <TextField
-          className='text-Text-Primary'
+            className="text-Text-Primary"
             newStyle
             value={taskTitle}
             onChange={(e) => {
@@ -146,7 +146,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           <div className="w-full flex items-center mt-4 gap-3">
             <div className="flex flex-col min-w-[222px] text-xs font-medium">
               <label className="mb-1">Deadline</label>
-              <SimpleDatePicker textStyle ClassName='' isLarge date={deadline} setDate={setDeadline} />
+              <SimpleDatePicker
+                textStyle
+                ClassName=""
+                isLarge
+                date={deadline}
+                setDate={setDeadline}
+              />
             </div>
             <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
               <label className="mb-1">Priority</label>

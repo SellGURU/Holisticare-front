@@ -28,7 +28,7 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
   //   return 'dicress.svg';
   // };
   console.log(mode);
-  
+
   return (
     <Card>
       <div

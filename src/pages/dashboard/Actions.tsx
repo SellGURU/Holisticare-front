@@ -47,24 +47,24 @@ const Actions: React.FC = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
-const [, setOverflowingIndices] = useState<number[]>([]);
-const textRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [, setOverflowingIndices] = useState<number[]>([]);
+  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-useEffect(() => {
-  const checkOverflow = () => {
-    const newOverflowing: number[] = [];
-    textRefs.current.forEach((el, index) => {
-      if (el && el.scrollWidth > el.clientWidth) {
-        newOverflowing.push(index);
-      }
-    });
-    setOverflowingIndices(newOverflowing);
-  };
+  useEffect(() => {
+    const checkOverflow = () => {
+      const newOverflowing: number[] = [];
+      textRefs.current.forEach((el, index) => {
+        if (el && el.scrollWidth > el.clientWidth) {
+          newOverflowing.push(index);
+        }
+      });
+      setOverflowingIndices(newOverflowing);
+    };
 
-  checkOverflow();
-  window.addEventListener('resize', checkOverflow);
-  return () => window.removeEventListener('resize', checkOverflow);
-}, [filteredActions, expandedCards]);
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [filteredActions, expandedCards]);
 
   return (
     <>
@@ -104,7 +104,7 @@ useEffect(() => {
                 } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
                     ? 'bg-backgroundColor-Main  border-Primary-DeepTeal'
-                    : 'border-Gray-50 bg-white'
+                    : 'border-[#E2F1F8] bg-white'
                 }`}
               >
                 {type}
@@ -170,7 +170,7 @@ useEffect(() => {
                     }`}
                   >
                     <div
-                            ref={(el) => (textRefs.current[index] = el)}
+                      ref={(el) => (textRefs.current[index] = el)}
                       className={`  ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal'
