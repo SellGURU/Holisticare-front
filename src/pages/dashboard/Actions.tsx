@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
@@ -47,24 +47,6 @@ const Actions: React.FC = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
-  const [, setOverflowingIndices] = useState<number[]>([]);
-  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    const checkOverflow = () => {
-      const newOverflowing: number[] = [];
-      textRefs.current.forEach((el, index) => {
-        if (el && el.scrollWidth > el.clientWidth) {
-          newOverflowing.push(index);
-        }
-      });
-      setOverflowingIndices(newOverflowing);
-    };
-
-    checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [filteredActions, expandedCards]);
 
   return (
     <>
@@ -88,7 +70,7 @@ const Actions: React.FC = () => {
             />
           </div>
 
-          <div className="w-full  flex mt-3 ">
+          <div className="w-full shadow-200 flex mt-3">
             {['All', 'Resolved', 'Pending'].map((type) => (
               <div
                 key={type}
@@ -103,8 +85,8 @@ const Actions: React.FC = () => {
                       : ''
                 } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
-                    ? 'bg-backgroundColor-Main  border-Primary-DeepTeal'
-                    : 'border-[#E2F1F8] bg-white'
+                    ? 'bg-backgroundColor-Main border-Primary-DeepTeal'
+                    : 'border-Gray-50 bg-white'
                 }`}
               >
                 {type}
@@ -155,7 +137,7 @@ const Actions: React.FC = () => {
                         {action.state}
                       </div>
                       <img
-                        className={`size-3 cursor-pointer transform transition-transform  ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
+                        className={`size-3 cursor-pointer transform transition-transform ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
                         src="/icons/arrow-down-blue.svg"
                         alt=""
                         onClick={() => toggleExpand(index)}
@@ -163,24 +145,16 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] px-4 text-Text-Secondary flex justify-between items-start gap-4 mt-2 transition-all ${
-                      expandedCards.includes(index)
-                        ? 'h-auto'
-                        : 'h-[20px] overflow-hidden'
-                    }`}
+                    className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}
                   >
                     <div
-                      ref={(el) => (textRefs.current[index] = el)}
-                      className={`  ${
-                        expandedCards.includes(index)
-                          ? 'whitespace-normal'
-                          : 'truncate max-w-[277px]'
-                      }`}
+                      title={action.alert}
+                      className="max-w-[267px] truncate"
                     >
                       {action.alert}
                     </div>
 
-                    <div className="flex items-center gap-2 ">
+                    <div className="flex items-center gap-2 mr-2">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
                           Proceed{' '}

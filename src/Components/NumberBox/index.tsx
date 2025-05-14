@@ -9,26 +9,24 @@ interface numberBoxProps {
 }
 
 const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
-  // const resolveModeText = () => {
-  //   if (mode == 'added') {
-  //     return '2 new client added!';
-  //   }
-  //   if (mode == 'increase') {
-  //     return '10% increase compared to last month';
-  //   }
-  //   return '10% reduction compared to last month';
-  // };
-  // const resolveIcon = () => {
-  //   if (mode == 'increase') {
-  //     return 'increase.svg';
-  //   }
-  //   if (mode == 'added') {
-  //     return 'Added.svg';
-  //   }
-  //   return 'dicress.svg';
-  // };
-  console.log(mode);
-
+  const resolveModeText = () => {
+    if (mode == 'added') {
+      return '2 new client added!';
+    }
+    if (mode == 'increase') {
+      return '10% increase compared to last month';
+    }
+    return '10% reduction compared to last month';
+  };
+  const resolveIcon = () => {
+    if (mode == 'increase') {
+      return 'increase.svg';
+    }
+    if (mode == 'added') {
+      return 'Added.svg';
+    }
+    return 'dicress.svg';
+  };
   return (
     <Card>
       <div
@@ -57,7 +55,7 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
           </div>
         </div>
         <h1 className={'text-xs text-Text-Primary'}>{title} </h1>
-        {/* <div className="flex justify-start items-center">
+        <div className="flex justify-start items-center">
           <div
             className={`size-[15px] flex items-center justify-center rounded-full bg-opacity-10 ${mode === 'reduction' ? ' bg-[#FC5474]' : 'bg-[#005F73]'}`}
           >
@@ -67,7 +65,7 @@ const NumberBox: React.FC<numberBoxProps> = ({ mode, title, value, icon }) => {
           <div className={'text-[10px] text-Text-Secondary ml-1'}>
             {resolveModeText()}
           </div>
-        </div> */}
+        </div>
       </div>
     </Card>
   );

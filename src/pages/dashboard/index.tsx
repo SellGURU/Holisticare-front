@@ -37,10 +37,7 @@ const DashBoard = () => {
       {/* Check-In Comment Modal */}
 
       {/* Check in Modal */}
-      <div className="px-6 pt-4 pb-[80px]">
-        <div className="text-base font-medium text-Text-Primary mb-4">
-          Dashboard
-        </div>
+      <div className="px-6 pt-4">
         <NumberBoxes reports={reports}></NumberBoxes>
         <div className="w-full  mt-4 grid gap-4 grid-cols-4">
           {/* <MessageList /> */}

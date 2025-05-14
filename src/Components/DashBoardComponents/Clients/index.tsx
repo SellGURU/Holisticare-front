@@ -34,7 +34,7 @@ const RecentCheckIns: React.FC = () => {
     >
       <div
         className=" overflow-y-scroll pb-3 pr-[2px] "
-        style={{ height: (window.innerHeight - 240) / 2 - 24 + 'px' }}
+        style={{ height: (window.innerHeight - 350) / 2 - 24 + 'px' }}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm text-Text-Primary font-medium flex items-center">
