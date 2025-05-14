@@ -47,24 +47,24 @@ const Actions: React.FC = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
-  const [, setOverflowingIndices] = useState<number[]>([]);
+  // const [, setOverflowingIndices] = useState<number[]>([]);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      const newOverflowing: number[] = [];
-      textRefs.current.forEach((el, index) => {
-        if (el && el.scrollWidth > el.clientWidth) {
-          newOverflowing.push(index);
-        }
-      });
-      setOverflowingIndices(newOverflowing);
-    };
+  // useEffect(() => {
+  //   const checkOverflow = () => {
+  //     const newOverflowing: number[] = [];
+  //     textRefs.current.forEach((el, index) => {
+  //       if (el && el.scrollWidth > el.clientWidth) {
+  //         newOverflowing.push(index);
+  //       }
+  //     });
+  //     setOverflowingIndices(newOverflowing);
+  //   };
 
-    checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [filteredActions, expandedCards]);
+  //   checkOverflow();
+  //   window.addEventListener('resize', checkOverflow);
+  //   return () => window.removeEventListener('resize', checkOverflow);
+  // }, [filteredActions, expandedCards]);
 
   return (
     <>
