@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import TextField from '../../../Components/TextField';
-import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
-import AddQuestionsModal from './AddQuestionModal';
-import QuestionItem from './QuestionItem';
+import { FC, useEffect, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 import FormsApi from '../../../api/Forms';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Checkbox from '../../../Components/checkbox';
+import TextField from '../../../Components/TextField';
+import AddQuestionsModal from './AddQuestionModal';
+import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
 
 interface CheckInControllerModalProps {
@@ -16,7 +16,7 @@ interface CheckInControllerModalProps {
   onSave: (values: any) => void;
 }
 
-const CheckInControllerModal: React.FC<CheckInControllerModalProps> = ({
+const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   mode,
   onClose,
   onSave,
@@ -215,7 +215,7 @@ interface AddCheckInProps {
   upSeconds: number;
 }
 
-const AddCheckIn: React.FC<AddCheckInProps> = ({
+const AddCheckIn: FC<AddCheckInProps> = ({
   onChange,
   upQuestions,
   step,
@@ -388,7 +388,7 @@ interface RepositionCheckInProps {
   upQuestions: Array<checkinType>;
 }
 
-const RepositionCheckIn: React.FC<RepositionCheckInProps> = ({
+const RepositionCheckIn: FC<RepositionCheckInProps> = ({
   upQuestions,
   onChange,
 }) => {

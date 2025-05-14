@@ -1,22 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormik } from 'formik';
 
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
 import Application from '../../api/app';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
-import TextField from '../../Components/TextField';
-import { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import MainTopBar from '../../Components/MainTopBar';
-import * as yup from 'yup';
-import YoupValidation from '../../validation';
-import SpinnerLoader from '../../Components/SpinnerLoader';
-import SvgIcon from '../../utils/svgIcon';
 import SimpleDatePicker from '../../Components/SimpleDatePicker';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import TextField from '../../Components/TextField';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import YoupValidation from '../../validation';
 const AddClient = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [apiError, setApiError] = useState('');
   const [dobApiError, setDobApiError] = useState('');
+
+  const validationSchema = yup.object({
+    age: yup.number().min(12).max(60),
+    email: YoupValidation('email'),
+    firstName: yup.string().required('First name is required'),
+    lastName: yup.string().required('Last name is required'),
+    gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -26,13 +33,9 @@ const AddClient = () => {
       age: 30,
       gender: 'unset',
     },
-    validationSchema: yup.object({
-      age: yup.number().min(12).max(60),
-      email: YoupValidation('email'),
-      firstName: yup.string().required('First name is required'),
-      lastName: yup.string().required('Last name is required'),
-      gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
-    }),
+    validationSchema,
+    validateOnMount: true,
+    enableReinitialize: true,
     onSubmit: () => {
       submit();
       // Logic for submission
@@ -117,6 +120,17 @@ const AddClient = () => {
         setisLoading(false);
       });
   };
+  const handleSaveClick = () => {
+    setShowValidation(true);
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        // If there are validation errors, just show them without submitting
+        return;
+      }
+      // Only submit if there are no validation errors
+      formik.handleSubmit();
+    });
+  };
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
 
   useEffect(() => {
@@ -144,36 +158,32 @@ const AddClient = () => {
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
-              <div className=" w-[300px] md:w-[440px] h-[256px] md:h-[304px] bg-white rounded-[16px] border border-gray-50 shadow-200">
+              <div className=" w-[300px] md:w-[468px] h-[256px] md:h-[324px] bg-white rounded-[16px] border border-Gray-50 shadow-200">
                 <div className="w-full flex justify-center mt-4 md:mt-8">
-                  <SvgIcon
-                    color="#6CC24A"
-                    src="/icons/tick-circle.svg"
-                    width="64px"
-                    height="64px"
-                  />
-                  {/* <img
-                    src="/public/icons/tick-circle.svg"
-                    className="w-[64px] h-[64px]"
-                    alt=""
-                  /> */}
+                  <img src="/icons/tick-circle-background-new.svg" alt="" />
                 </div>
-                <div className="mt-4">
+                <div className="">
                   <div className="text-center font-medium text-xs md:text-[14px] text-Text-Primary">
                     The client has been successfully saved!
                   </div>
                   <div className="flex justify-center">
-                    <div className="text-justify w-[250px] md:w-[373px] text-[10px] md:text-xs text-Text-Primary mt-2">
+                    <div className="text-justify w-[90%] text-xs text-Text-Primary mt-2 leading-6">
                       To set up their profile or monitor their progress, please
-                      navigate to the client’s health profile. Here, you can
-                      view detailed insights and track all updates to ensure
-                      their wellness journey is progressing smoothly.
+                      navigate to the client’s Health Plan. Here, you can view
+                      detailed insights and track all updates to ensure their
+                      wellness journey is progressing smoothly.
                     </div>
                   </div>
                   <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
-                      style={{ width: '188ppx' }}
-                      size="small"
+                      style={{
+                        width: '188px',
+                        paddingRight: '32px',
+                        paddingLeft: '32px',
+                        paddingTop: '8px',
+                        paddingBottom: '8px',
+                      }}
+                      size="normal"
                       onClick={() => {
                         // setIsAdded(false);
                         // formik.resetForm();
@@ -184,15 +194,21 @@ const AddClient = () => {
                     >
                       <img
                         src={'/icons/arrow-back.svg'}
-                        className={'md:w-5 md:h-5 h-4 w-4'}
+                        className={'h-4 w-4'}
                       />
                       <div className=" text-nowrap text-[10px] md:text-xs  ">
                         Back to Client List
                       </div>
                     </ButtonPrimary>
                     <ButtonPrimary
+                      style={{
+                        paddingRight: '32px',
+                        paddingLeft: '32px',
+                        paddingTop: '8px',
+                        paddingBottom: '8px',
+                      }}
                       ClassName=" md:w-[200px]"
-                      size="small"
+                      size="normal"
                       onClick={() => {
                         navigate(
                           '/report/' +
@@ -203,10 +219,7 @@ const AddClient = () => {
                         );
                       }}
                     >
-                      <img
-                        src={'/icons/tick.svg'}
-                        className={' md:w-5 md:h-5  h-4 w-4'}
-                      />
+                      <img src={'/icons/tick.svg'} className={'h-4 w-4'} />
                       <div className=" text-nowrap text-[10px] md:text-xs  ">
                         Develop Health Plan
                       </div>
@@ -248,9 +261,12 @@ const AddClient = () => {
                       {...formik.getFieldProps('firstName')}
                       label="First Name"
                       placeholder="Enter client’s first name..."
+                      inValid={
+                        showValidation && Boolean(formik.errors.firstName)
+                      }
                     />
-                    {formik.touched.firstName && formik.errors.firstName ? (
-                      <div className="text-Red text-[10px] mt-[2px]">
+                    {showValidation && Boolean(formik.errors.firstName) ? (
+                      <div className="text-Red text-[10px] -mt-[2px]">
                         {formik.errors.firstName}
                       </div>
                     ) : null}
@@ -261,9 +277,12 @@ const AddClient = () => {
                       {...formik.getFieldProps('lastName')}
                       label="Last Name"
                       placeholder="Enter client’s last name..."
+                      inValid={
+                        showValidation && Boolean(formik.errors.lastName)
+                      }
                     />
-                    {formik.touched.lastName && formik.errors.lastName ? (
-                      <div className="text-Red text-[10px] mt-[2px]">
+                    {showValidation && Boolean(formik.errors.lastName) ? (
+                      <div className="text-Red text-[10px] -mt-[2px]">
                         {formik.errors.lastName}
                       </div>
                     ) : null}
@@ -277,10 +296,10 @@ const AddClient = () => {
                     <div
                       ref={selectButRef}
                       onClick={() => {
-                        formik.setFieldTouched('gender', true);
+                        // formik.setFieldTouched('gender', true);
                         setShowSelect(!showSelect);
                       }}
-                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${formik.errors.gender && formik.touched.gender ? 'border-Red' : ''}`}
+                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${showValidation && Boolean(formik.errors.gender) ? 'border-Red' : ''}`}
                     >
                       {formik.values.gender !== 'unset' ? (
                         <div className="text-[12px] text-Text-Primary">
@@ -324,11 +343,11 @@ const AddClient = () => {
                         </div>
                       </div>
                     )}
-                    {formik.touched.gender && (
+                    {showValidation && Boolean(formik.errors.gender) ? (
                       <div className="text-Red text-[10px] font-medium mt-[2px]">
                         {formik.errors.gender}
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="w-full  ml-2 ">
@@ -346,8 +365,16 @@ const AddClient = () => {
                             setDobApiError(''); // Reset error on valid date selection
                           }
                         }}
-                        inValid={showValidation && !!dobApiError}
-                        errorMessage={showValidation ? dobApiError : ''}
+                        inValid={
+                          showValidation && dateOfBirth == null
+                            ? true
+                            : !!dobApiError
+                        }
+                        errorMessage={
+                          showValidation && dateOfBirth == null
+                            ? 'Date of birth is required'
+                            : dobApiError
+                        }
                       />
                     </div>
                   </div>
@@ -429,14 +456,15 @@ const AddClient = () => {
                 </div>
                 <div className="w-full h-fit flex justify-center mt-4">
                   <ButtonPrimary
-                    disabled={
-                      isLoading ||
-                      !formik.isValid ||
-                      formik.values.email.length == 0 ||
-                      Object.values(formik.errors).some((error) => error !== '')
-                    }
+                    // disabled={
+                    //   isLoading ||
+                    //   !formik.isValid ||
+                    //   formik.values.email.length == 0 ||
+                    //   Object.values(formik.errors).some((error) => error !== '')
+                    // }
                     onClick={() => {
-                      formik.handleSubmit();
+                      handleSaveClick();
+                      setShowValidation(true);
                     }}
                   >
                     {isLoading ? (

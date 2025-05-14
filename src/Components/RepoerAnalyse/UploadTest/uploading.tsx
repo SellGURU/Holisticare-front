@@ -81,7 +81,7 @@ const Uploading: React.FC<UploadingProps> = ({
     return () => {
       isCancelled = true;
     };
-  }, [file, memberId, onSuccess]);
+  }, [file, memberId]);
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
     if (fileToDelete.id) {

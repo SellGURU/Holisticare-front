@@ -145,7 +145,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                             gap: '2px',
                             marginLeft:
                               index == 0
-                                ? '16px'
+                                ? '8px'
                                 : index ==
                                     sortKeysWithValues(data.chart_bounds)
                                       .length -

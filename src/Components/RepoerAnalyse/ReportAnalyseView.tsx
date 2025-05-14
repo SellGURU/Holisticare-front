@@ -640,7 +640,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   >
                     Holistic Plan
                   </div>
-                  <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip>
+                  {/* <InfoToltip mode="Treatment" isShare={isShare}></InfoToltip> */}
                   {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                 </div>
                 <TreatmentPlan

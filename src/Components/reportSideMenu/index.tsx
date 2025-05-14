@@ -122,7 +122,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
 
   return (
     <div
-      className={`h-fit min-h-[272px] md:max-h-[646px] md:min-h-[586px] w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
+      style={{ height: window.innerHeight - 100 + 'px' }}
+      className={` min-h-[272px]  w-[178px] bg-white '} border border-gray-50 rounded-[12px] p-4 shadow-100 relative`}
     >
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
