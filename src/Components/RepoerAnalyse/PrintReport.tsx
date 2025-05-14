@@ -53,17 +53,17 @@ const PrintReport: React.FC<PrintReportProps> = ({
 }) => {
   const transformConceringData = () => {
     const originalData = ResolveConceringData();
-    return originalData.flatMap(item => 
+    return originalData.flatMap((item) =>
       item.biomarkers.map((biomarker: any) => ({
         name: biomarker.name,
         Result: biomarker.Result,
         Units: biomarker.Units,
-        "Lab Ref Range": biomarker["Lab Ref Range"],
+        'Lab Ref Range': biomarker['Lab Ref Range'],
         Baseline: biomarker.Baseline,
-        "Optimal Range": biomarker["Optimal Range"],
+        'Optimal Range': biomarker['Optimal Range'],
         Changes: biomarker.Changes,
-        subcategory: item.subcategory
-      }))
+        subcategory: item.subcategory,
+      })),
     );
   };
 
@@ -808,202 +808,195 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
               {transformConceringData()
                 .slice(0, 14)
-                .map((el,index) => {
+                .map((el, index) => {
                   return (
                     <>
                       <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                            <div
-                              className=" text-gray-800"
-                              style={{
-                                fontSize: '12px',
-                                color: '#383838',
-                                width: 200,
-                              }}
-                            >
-                              <div>
-                                {el.subcategory}
-                              </div>
-                              <div>
-                                {el.name}
-                              </div>
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {el.Result}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {el.Units}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {el['Lab Ref Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {el.Baseline}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {el['Optimal Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {el.Changes}
-                            </div>
-                          </div>
+                        <div
+                          className=" text-gray-800"
+                          style={{
+                            fontSize: '12px',
+                            color: '#383838',
+                            width: 200,
+                          }}
+                        >
+                          <div>{el.subcategory}</div>
+                          <div>{el.name}</div>
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: colorsText[index % 4],
+                          }}
+                        >
+                          {el.Result}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el.Units}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el['Lab Ref Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el.Baseline}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el['Optimal Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: colorsText[index % 4],
+                          }}
+                        >
+                          {el.Changes}
+                        </div>
+                      </div>
                     </>
                   );
                 })}
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          {transformConceringData().length>14 &&
-          <>
-            {Array.from({length:Math.ceil((transformConceringData().length -14) /16 )}).map((_e,index1)=>{
-              return(
-                <>
-                  <div
-                    className=" "
-                    style={{
-                      backgroundColor: '#E9F0F2',
-                      minHeight: '100vh',
-                      padding: '24px 24px',
-                      position: 'relative',
-                      pageBreakAfter: 'always',
-                    }}
-                  >
-                    <div className="px-2 relative" style={{ zIndex: 60 }}>
-                      {transformConceringData()
-                        .slice(index1*16+14,index1*16+14+16)
-                        .map((el,index) => {
-                          return (
-                            <>
-                              <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                                    <div
-                                      className=" text-gray-800"
-                                      style={{
-                                        fontSize: '12px',
-                                        color: '#383838',
-                                        width: 200,
-                                      }}
-                                    >
-                                      <div>
-                                        {el.subcategory}
-                                      </div>
-                                      <div>
-                                        {el.name}
-                                      </div>
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: colorsText[index % 4],
-                                      }}
-                                    >
-                                      {el.Result}
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: '#888888',
-                                      }}
-                                    >
-                                      {el.Units}
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: '#888888',
-                                      }}
-                                    >
-                                      {el['Lab Ref Range']}
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: '#888888',
-                                      }}
-                                    >
-                                      {el.Baseline}
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: '#888888',
-                                      }}
-                                    >
-                                      {el['Optimal Range']}
-                                    </div>
-                                    <div
-                                      className=" text-gray-800 text-center"
-                                      style={{
-                                        fontSize: '12px',
-                                        width: '60px',
-                                        color: colorsText[index % 4],
-                                      }}
-                                    >
-                                      {el.Changes}
-                                    </div>
+          {transformConceringData().length > 14 && (
+            <>
+              {Array.from({
+                length: Math.ceil((transformConceringData().length - 14) / 16),
+              }).map((_e, index1) => {
+                return (
+                  <>
+                    <div
+                      className=" "
+                      style={{
+                        backgroundColor: '#E9F0F2',
+                        minHeight: '100vh',
+                        padding: '24px 24px',
+                        position: 'relative',
+                        pageBreakAfter: 'always',
+                      }}
+                    >
+                      <div className="px-2 relative" style={{ zIndex: 60 }}>
+                        {transformConceringData()
+                          .slice(index1 * 16 + 14, index1 * 16 + 14 + 16)
+                          .map((el, index) => {
+                            return (
+                              <>
+                                <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                                  <div
+                                    className=" text-gray-800"
+                                    style={{
+                                      fontSize: '12px',
+                                      color: '#383838',
+                                      width: 200,
+                                    }}
+                                  >
+                                    <div>{el.subcategory}</div>
+                                    <div>{el.name}</div>
                                   </div>
-                            </>
-                          );
-                        })}            
-
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Result}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Units}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Lab Ref Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Baseline}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Optimal Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Changes}
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          })}
+                      </div>
+                      <PrintFooter pageNumber={resolvePageNumber()} />
                     </div>
-                    <PrintFooter pageNumber={resolvePageNumber()} />
-                  </div>                
-                </>
-              )
-            })}
-          </>
-          }
+                  </>
+                );
+              })}
+            </>
+          )}
         </>
       )}
 
@@ -1375,7 +1368,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             )} */}
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          {caldenderData.length > 4 &&
+          {caldenderData.length > 4 && (
             <div
               className="relative min-h-screen"
               style={{ pageBreakAfter: 'always', padding: '24px' }}
@@ -1390,7 +1383,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               )} */}
               <PrintFooter pageNumber={resolvePageNumber()} />
             </div>
-          }
+          )}
         </>
       )}
     </div>
