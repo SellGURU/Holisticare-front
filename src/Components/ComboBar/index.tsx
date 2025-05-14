@@ -23,6 +23,12 @@ interface ComboBarProps {
 }
 export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
+  const [idData, setIdData] = useState<string>('');
+  useEffect(() => {
+    if (id) {
+      setIdData(id);
+    }
+  }, [id]);
   const itemList = [
     { name: 'Client Info', url: '/images/sidbar-menu/info-circle.svg' },
     { name: 'Data Syncing', url: '/icons/sidbar-menu/cloud-change.svg' },
@@ -141,7 +147,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Timeline':
         return <TimeLine />;
       case 'Client’s Chat History':
-        return <ChatModal memberId={id} info={patientInfo}></ChatModal>;
+        return <ChatModal memberId={parseInt(idData)}></ChatModal>;
       case 'Switch Client':
         return <SwitchClient></SwitchClient>;
       default:
