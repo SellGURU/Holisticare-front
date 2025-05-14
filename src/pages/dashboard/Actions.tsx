@@ -75,7 +75,7 @@ const Actions: React.FC = () => {
       ) : (
         <div
           className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4"
-          style={{ height: window.innerHeight - 200 + 'px' }}
+          style={{ height: window.innerHeight - 240 + 'px' }}
         >
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
@@ -115,7 +115,7 @@ const Actions: React.FC = () => {
             <>
               <div
                 className=" w-full pr-2 flex flex-col items-center justify-center"
-                style={{ height: window.innerHeight - 350 + 'px' }}
+                style={{ height: window.innerHeight - 370 + 'px' }}
               >
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
@@ -126,7 +126,7 @@ const Actions: React.FC = () => {
           ) : (
             <ul
               className="mt-5 w-full overflow-y-scroll pr-2"
-              style={{ height: window.innerHeight - 350 + 'px' }}
+              style={{ height: window.innerHeight - 370 + 'px' }}
             >
               {filteredActions.map((action, index) => (
                 <li
