@@ -68,8 +68,7 @@ type CheckIn = {
 // };
 
 const RecentCheckIns = () => {
-  const [CheckIns, setCheckIns] = useState<CheckIn[]>([
-  ]);
+  const [CheckIns, setCheckIns] = useState<CheckIn[]>([]);
   const [showcheckInModal, setCheckInModal] = useState(false);
   // const [isStickMealPlan, setisStickMealPlan] = useState(true);
   // const [hoursSlept, setHoursSlept] = useState<number>(0);
@@ -460,7 +459,6 @@ const RecentCheckIns = () => {
           )}
         </div>
       </div>
-     
     </>
   );
 };
