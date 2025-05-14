@@ -46,7 +46,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-Gray-50">
+                <tbody className="bg-white ">
                   {(Object.entries(grouped) as [string, any[]][]).map(
                     ([key, items]) => (
                       <Fragment key={key}>
@@ -55,7 +55,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
 
                           return (
                             <>
-                            <tr key={index}>
+                            <tr className={`${item.client_notes.length > 0 ? 'border-t' : 'border-y'} border-Gray-00`} key={index}>
                               {/* Category */}
                               {index === 0 && (
                                 <td
@@ -114,7 +114,15 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                       {item.value}
                                     </div>
                                   </div>
-                                ) : item.total_macro ? (
+                                ) :
+                                item.category === "Check-In"  ? (
+                                
+                                  <div   className="text-[10px]"
+                                      style={{ color: '#B0B0B0' }}>
+                                    Questions: {item.Questions}
+                                  </div>
+                                ):
+                                 item.total_macros ? (
                                   <div className="flex items-center mt-3">
                                     <div
                                       className="text-[10px]"
@@ -129,7 +137,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                         marginLeft: '3px',
                                       }}
                                     >
-                                      {item.total_macro.Carbs}
+                                      {item.total_macros.Carbs}
                                     </div>
                                     <div
                                       className="text-[8px]"
@@ -156,7 +164,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                         marginLeft: '3px',
                                       }}
                                     >
-                                      {item.total_macro.Protein}
+                                      {item.total_macros.Protein}
                                     </div>
                                     <div
                                       className="text-[8px]"
@@ -183,7 +191,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                         marginLeft: '3px',
                                       }}
                                     >
-                                      {item.total_macro.Fats}
+                                      {item.total_macros.Fats}
                                     </div>
                                     <div
                                       className="text-[8px]"

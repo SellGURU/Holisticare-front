@@ -37,6 +37,8 @@ const LibBox: FC<LibBoxProps> = ({
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
+  console.log(data);
+  
   return (
     <>
       <div className="w-full overflow-hidden bg-white border border-gray-50 rounded-[12px] py-3 px-3">

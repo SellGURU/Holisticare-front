@@ -16,9 +16,9 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
 
   return (
     <div
-      className={`border rounded-[4px] text-xs bg-white border-Gray-50 inline-flex lg:ml-4 ${ClassName}`}
+      className={`border rounded-[4px] text-[10px] bg-white border-Gray-50 inline-flex lg:ml-4 h-fit ${ClassName}`}
       style={{
-        width: '200px',
+        // width: '200px',
         height: '32px',
         borderRadius: '4px',
         paddingBottom: '4px',
@@ -29,7 +29,7 @@ const ChoosingDaysWeek: FC<ChoosingDaysWeekProps> = ({
           key={day}
           // onClick={() => toggleDaySelection(day)}
 
-          className={`w-full bg-383838 cursor-pointer flex items-center justify-center capitalize  ${index !== selectedDays.length - 1 ? 'border-r border-Gray-50' : ''} `}
+          className={`w-full  cursor-pointer flex items-center justify-center capitalize p-1 ${index !== selectedDays.length - 1 ? 'border-r border-Gray-50' : ''} `}
         >
           {day}
         </div>
