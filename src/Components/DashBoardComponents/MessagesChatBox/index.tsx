@@ -17,6 +17,7 @@ type Message = {
   replied_message_id: number | null;
   sender_type: string;
   images?: string[];
+  timestamp: number;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -56,9 +57,10 @@ const MessagesChatBox = () => {
   }, []);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-
   const usernameParams = searchParams.get('username');
+  const statusParams = searchParams.get('status');
   const userMessagesList = (member_id: number) => {
+    setIsLoading(true);
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
@@ -68,6 +70,7 @@ const MessagesChatBox = () => {
       });
   };
   const aiMessagesList = (member_id: number) => {
+    setIsLoading(true);
     Application.userMessagesList({ member_id: member_id, message_from: 'ai' })
       .then((res) => {
         setAiMessages(res.data.reverse());
@@ -78,18 +81,12 @@ const MessagesChatBox = () => {
   };
   useEffect(() => {
     if (id != undefined) {
-      setIsLoading(true);
       userMessagesList(parseInt(id));
-    } else {
-      setIsLoading(false);
     }
   }, [id]);
   useEffect(() => {
     if (id != undefined && aiMode === true) {
-      setIsLoading(true);
       aiMessagesList(parseInt(id));
-    } else {
-      setIsLoading(false);
     }
   }, [aiMode, id]);
   useEffect(() => {
@@ -102,10 +99,7 @@ const MessagesChatBox = () => {
       setMessages([]);
     }
   }, [id, usernameParams]);
-  const [selectedBenchMarks, setSelectedBenchMarks] = useState<Array<string>>(
-    [],
-  );
-  console.log(selectedBenchMarks);
+  const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const lastConversationId =
@@ -130,6 +124,7 @@ const MessagesChatBox = () => {
           sender_type: 'user',
           time: '',
           images: Images,
+          timestamp: Date.now(),
         },
       ]);
       setInput('');
@@ -234,7 +229,7 @@ const MessagesChatBox = () => {
                       {username}
                     </div>
                     <div className="text-[10px] text-Text-Quadruple">
-                      Offline
+                      {statusParams ? 'Online' : 'Offline'}
                     </div>
                   </div>
                 </div>
@@ -306,7 +301,13 @@ const MessagesChatBox = () => {
                               <div className="text-Text-Primary font-medium text-[12px]">
                                 {username}{' '}
                                 <span className="text-Text-Primary ml-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
                               </div>
                               <div className="flex flex-row gap-2">
@@ -337,7 +338,13 @@ const MessagesChatBox = () => {
                             <div className="flex flex-col items-end">
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-Text-Primary mr-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
                                 Me{' '}
                               </div>
@@ -410,7 +417,13 @@ const MessagesChatBox = () => {
                               <div className="text-Text-Primary font-medium text-xs">
                                 {username}{' '}
                                 <span className="text-Text-Primary ml-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
                               </div>
                               <div className="flex flex-row gap-2">
@@ -441,7 +454,13 @@ const MessagesChatBox = () => {
                             <div className="flex flex-col items-end">
                               <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-Text-Primary mr-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
                                 AI Copilot
                               </div>

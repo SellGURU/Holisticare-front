@@ -26,7 +26,7 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   useEffect(() => {
@@ -65,8 +65,12 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
     }
     return colors[Math.abs(hash) % colors.length];
   };
-  const handleClickMessage = (id: string, username: string) => {
-    navigate(`?id=${id}&username=${username}`);
+  const handleClickMessage = (
+    id: string,
+    username: string,
+    status: boolean,
+  ) => {
+    navigate(`?id=${id}&username=${username}&status=${status}`);
   };
   const handleClickAgainMessage = () => {
     navigate(``);
@@ -135,6 +139,7 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
                       handleClickMessage(
                         message.member_id.toString(),
                         message.name,
+                        message.online_status,
                       );
                     }
                   }}
