@@ -3,6 +3,7 @@ import { UserMsg } from '../../popupChat/userMsg.tsx';
 import { InputChat } from '../../popupChat/inputChat.tsx';
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app.ts';
+import Circleloader from '../../CircleLoader/index.tsx';
 interface ChatModalProps {
   memberId: number;
 }
@@ -28,15 +29,21 @@ type Message = {
 
 export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
   const [messageData, setMessageData] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('');
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const userMessagesList = (member_id: number) => {
-    Application.getListChats({ member_id: member_id }).then((res) => {
-      setMessageData(res.data.reverse());
-    });
+    setLoading(true);
+    Application.getListChats({ member_id: member_id })
+      .then((res) => {
+        setMessageData(res.data.reverse());
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   useEffect(() => {
     if (memberId) {
@@ -83,7 +90,12 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
   }, [messageData]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {loading && (
+        <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px] absolute">
+          <Circleloader />
+        </div>
+      )}
       {messageData.length < 1 ? (
         <div className="relative h-[85vh]">
           {' '}
@@ -109,7 +121,11 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                 return (
                   <>
                     <UserMsg
-                      time={message.time}
+                      time={new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })}
                       name={message.name}
                       msg={message.message_text}
                       key={message.conversation_id}
@@ -121,7 +137,11 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                 return (
                   <>
                     <BotMsg
-                      time={message.time}
+                      time={new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })}
                       msg={message.message_text}
                       key={message.conversation_id}
                       name={message.name}
