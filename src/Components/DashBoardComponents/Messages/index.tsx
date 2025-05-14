@@ -110,6 +110,14 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
               isMessages
             />
           </div>
+          {filteredMessages.length === 0 && (
+            <div className="flex flex-col items-center w-full h-[90%] justify-center">
+              <img src="/icons/empty-messages-coach.svg" alt="" />
+              <div className="text-base font-medium text-Text-Primary -mt-5">
+                No results found.
+              </div>
+            </div>
+          )}
           <ul className="mt-5 w-full h-[91%] pr-3 overflow-y-scroll divide-y divide-Boarder">
             {filteredMessages.map((message) => {
               return (
