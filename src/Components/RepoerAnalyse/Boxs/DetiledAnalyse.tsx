@@ -54,7 +54,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
-  const [showGeneInsights,setShowGeneInsights] = useState(false)
+  const [showGeneInsights, setShowGeneInsights] = useState(false);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -254,7 +254,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 </div>
                               )}
                             </div>
-                            {active.gene_insight!= null &&
+                            {active.gene_insight != null && (
                               <div
                                 onMouseEnter={() => {
                                   setShowGeneInsights(true);
@@ -264,7 +264,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 }}
                                 className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
                               >
-                              Gene Insights
+                                Gene Insights
                                 <img
                                   src="/icons/user-navbar/info-circle.svg"
                                   className="w-4  cursor-pointer h-4 ml-1"
@@ -273,12 +273,14 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 {showGeneInsights && active.gene_insight && (
                                   <div className="absolute p-2 left-6 top-4 bg-white w-[365px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
                                     <div>
-                                      <GeneticsDnaTable data={active.gene_insight}></GeneticsDnaTable>
+                                      <GeneticsDnaTable
+                                        data={active.gene_insight}
+                                      ></GeneticsDnaTable>
                                     </div>
                                   </div>
                                 )}
-                              </div>                            
-                            }
+                              </div>
+                            )}
                           </div>
                           <div className="flex items-center gap-4">
                             {active?.unit != '' && (
