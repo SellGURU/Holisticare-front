@@ -454,7 +454,7 @@ export const Questionary = () => {
       <div
         onClick={() => {
           if (!tryComplete) {
-            Application.AddQuestionaryList({}).then((res) => {
+            Application.AddQuestionaryList({ member_id: id }).then((res) => {
               setAddForms(res.data);
               setTryAdd(true);
             });
