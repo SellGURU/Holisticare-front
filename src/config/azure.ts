@@ -1,8 +1,10 @@
 import AzureBlobService from '../services/azureBlobService';
 
 // Azure Blob Storage configuration
-const AZURE_STORAGE_CONNECTION_STRING = import.meta.env.VITE_AZURE_STORAGE_CONNECTION_STRING;
-const AZURE_STORAGE_CONTAINER_NAME = import.meta.env.VITE_AZURE_STORAGE_CONTAINER_NAME || 'ocrtest';
+const AZURE_STORAGE_CONNECTION_STRING = import.meta.env
+  .VITE_AZURE_STORAGE_CONNECTION_STRING;
+const AZURE_STORAGE_CONTAINER_NAME =
+  import.meta.env.VITE_AZURE_STORAGE_CONTAINER_NAME || 'ocrtest';
 // const AZURE_KEY = "some-real-key"; // ← This kind of thing
 // Function to initialize Azure Blob Service
 export const initializeAzureBlobService = () => {
