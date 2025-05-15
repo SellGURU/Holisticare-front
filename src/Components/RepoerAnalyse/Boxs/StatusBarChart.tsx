@@ -108,7 +108,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
                           <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
-                          <div className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
+                          <div className="text-[9px] w-max flex justify-center ml-[-30x] items-center gap-[2px] text-Primary-DeepTeal">
                             <span className="opacity-40">You: </span>
                             {data.values[0]} <span>{data.unit}</span>
                           </div>
@@ -130,9 +130,9 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
                           <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
-                          <div className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
-                            <span className="opacity-40">You: </span>
-                            {data.values[0]} <span>{data.unit}</span>
+                          <div className="text-[9px] w-max flex justify-center ml-[-30px] items-center gap-[2px] text-Primary-DeepTeal">
+                            <span className="opacity-40 ">You: </span>
+                            {data.values[0]} <span className=''>{data.unit}</span>
                           </div>
                         </div>
                       )}
