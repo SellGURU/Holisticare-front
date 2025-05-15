@@ -4,7 +4,7 @@ import AzureBlobService from '../services/azureBlobService';
 const AZURE_STORAGE_CONNECTION_STRING =
   'DefaultEndpointsProtocol=https;AccountName=holisticareforms;AccountKey=r8amqQyRMJ/PN82vrnmb5Z0uk5H/gZUoIRVOLlGqo4Or9AR8ipL5ah+qqVJJqczs2NWo5B0g5ELL+AStUKlDgQ==;EndpointSuffix=core.windows.net';
 const AZURE_STORAGE_CONTAINER_NAME = 'ocrtest';
-
+// const AZURE_KEY = "some-real-key"; // ← This kind of thing
 // Function to initialize Azure Blob Service
 export const initializeAzureBlobService = () => {
   console.log('Initializing Azure Blob Service...');
