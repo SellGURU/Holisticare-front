@@ -91,7 +91,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[270px] text-opacity-100 opacity-100 bg-opacity-100 text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',

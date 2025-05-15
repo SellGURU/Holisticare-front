@@ -63,8 +63,8 @@ export const Overview: React.FC<OverviewProps> = ({
                 />
               </div>
             </div>
-            <div className="flex w-full px-6 justify-between items-center gap-6 mt-3">
-              <div className="">
+            <div className="flex w-full px-6 justify-between  items-center gap-6 mt-3">
+              <div className="flex items-center gap-12">
                 <img
                   className={`cursor-pointer ${
                     currentConflictIndex === 0
@@ -79,12 +79,13 @@ export const Overview: React.FC<OverviewProps> = ({
                     }
                   }}
                 />
-              </div>
-              <div className="text-[10px] text-Text-Primary min-w-[1091px] text-center truncate">
+                 <div className="text-[10px] text-Text-Primary min-w-[1091px] text-left truncate">
                 {Conflicts[currentConflictIndex]}
               </div>
+              </div>
+             
               <img
-                className={`cursor-pointer rotate-180 ${
+                className={`cursor-pointer  rotate-180 ${
                   currentConflictIndex === Conflicts.length - 1
                     ? 'opacity-50 cursor-not-allowed'
                     : ''

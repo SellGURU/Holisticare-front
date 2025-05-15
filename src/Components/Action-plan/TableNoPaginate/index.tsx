@@ -55,7 +55,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
 
                           return (
                             <>
-                            <tr className={`${item.client_notes.length > 0 ? 'border-t' : 'border-y'} border-Gray-00`} key={index}>
+                            <tr className={`${item.client_notes.length > 0 ? 'border-t' : 'border-y'} border-Gray-50`} key={index}>
                               {/* Category */}
                               {index === 0 && (
                                 <td
@@ -301,66 +301,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                                   ''
                                 )}
                               </td>
-                              {/* <td
-                                className="px-4 py-3 whitespace-nowrap"
-                                // style={{ maxWidth: '100px' }}
-                              >
-                                {item.client_notes &&
-                                item.client_notes.length > 0 ? (
-                                  item.client_notes[0].length > 50 ? (
-                                    <div
-                                      className="items-start bullet-point text-[10px]"
-                                      style={{
-                                        color: '#888888',
-                                        textWrap: 'wrap',
-                                      }}
-                                    >
-                                      {item.client_notes[0].slice(0, 50)} ...
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className="items-start bullet-point text-[10px]"
-                                      style={{
-                                        color: '#888888',
-                                        textWrap: 'wrap',
-                                      }}
-                                    >
-                                      {item.client_notes[0]}
-                                    </div>
-                                  )
-                                ) : (
-                                  <div
-                                    className="flex items-center"
-                                    style={{
-                                      fontSize: '10px',
-                                      color: '#888888',
-                                    }}
-                                  >
-                                    -
-                                  </div>
-                                )}
-                              </td> */}
-                              {/* Time */}
-                              {/* <td className="px-4 py-3 whitespace-nowrap">
-                              {item.times && item.times.length > 0 ? (
-                                <div className="flex items-center gap-1">
-                                  {item.times.map(
-                                    (time: string, index: number) => (
-                                      <div
-                                        key={index}
-                                        className="inline-block bg-bg-color text-Primary-DeepTeal text-[10px] px-2 rounded-2xl capitalize"
-                                      >
-                                        {time}
-                                      </div>
-                                    ),
-                                  )}
-                                </div>
-                              ) : (
-                                <div className="flex items-center text-[10px] text-Text-Primary">
-                                  -
-                                </div>
-                              )}
-                            </td> */}
+                        
                             </tr>
                               {item.client_notes && item.client_notes.length > 0 && (
                                 <tr>

@@ -42,7 +42,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
   // const [isHover,setIsHover] = useState(-1)
   return (
     <>
-      <div className="w-full relative flex">
+      <div className="w-full relative flex select-none">
         <div
           className={`absolute hidden top-[-26px]  z-10`}
           style={{
