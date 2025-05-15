@@ -59,8 +59,13 @@ const MessagesChatBox = () => {
   const id = searchParams.get('id');
   const usernameParams = searchParams.get('username');
   const statusParams = searchParams.get('status');
+  const [oneLoadingUser, setOneLoadingUser] = useState(true);
   const userMessagesList = (member_id: number) => {
-    setIsLoading(true);
+    if (oneLoadingUser) {
+      setIsLoading(true);
+      setOneLoadingUser(false);
+      console.log('salam');
+    }
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
