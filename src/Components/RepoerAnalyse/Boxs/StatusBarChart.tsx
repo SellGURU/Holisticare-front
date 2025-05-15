@@ -132,7 +132,8 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                           <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
                           <div className="text-[9px] w-max flex justify-center ml-[-30px] items-center gap-[2px] text-Primary-DeepTeal">
                             <span className="opacity-40 ">You: </span>
-                            {data.values[0]} <span className=''>{data.unit}</span>
+                            {data.values[0]}{' '}
+                            <span className="">{data.unit}</span>
                           </div>
                         </div>
                       )}

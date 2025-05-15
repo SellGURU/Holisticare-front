@@ -302,7 +302,7 @@ const Stadio: FC<StadioProps> = ({
               second_layer: '',
               third_layer: '',
             },
-            ["Practitioner Comments"] : addData["Practitioner Comments"] ?? [],
+            ['Practitioner Comments']: addData['Practitioner Comments'] ?? [],
             Sections: addData.Sections ?? [],
             Activity_Filters: addData.Activity_Filters ?? [],
             Frequency_Type: addData.frequencyType ?? '',
@@ -443,7 +443,6 @@ const Stadio: FC<StadioProps> = ({
               <>
                 <div className="flex flex-col gap-3 py-3 min-h-[420px]">
                   {actions.checkIn.map((act: any, index: number) => {
-                    
                     return (
                       <>
                         <ActionCard

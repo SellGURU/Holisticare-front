@@ -79,11 +79,11 @@ export const Overview: React.FC<OverviewProps> = ({
                     }
                   }}
                 />
-                 <div className="text-[10px] text-Text-Primary min-w-[1091px] text-left truncate">
-                {Conflicts[currentConflictIndex]}
+                <div className="text-[10px] text-Text-Primary min-w-[1091px] text-left truncate">
+                  {Conflicts[currentConflictIndex]}
+                </div>
               </div>
-              </div>
-             
+
               <img
                 className={`cursor-pointer  rotate-180 ${
                   currentConflictIndex === Conflicts.length - 1

@@ -87,6 +87,15 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Sex Hormones') {
     return '/icons/biomarkers/sex-hormone.svg';
   }
+  if (name == 'Genetics/DNA') {
+    return '/icons/biomarkers/DNA.svg';
+  }
+  if (name == 'Gut Health') {
+    return '/icons/biomarkers/Gut.svg';
+  }
+  if (name == 'Sleep Health') {
+    return '/icons/biomarkers/sleep.svg';
+  }
   // "./images/report/vitamine.svg",
   // :"./images/report/bone.svg",
   // ./images/report/heart_rate_02.svg
