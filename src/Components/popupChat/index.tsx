@@ -129,7 +129,9 @@ export const PopUpChat = ({
                     <BotMsg
                       time={MessageDatum.time}
                       msg={MessageDatum.text}
-                      key={MessageDatum.id} name={''}                    />
+                      key={MessageDatum.id}
+                      name={''}
+                    />
                   </>
                 );
               }
