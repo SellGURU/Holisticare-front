@@ -27,6 +27,7 @@ type Task = {
 interface TaskManagerProps {}
 const TaskManager: React.FC<TaskManagerProps> = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  console.log(tasks);
 
   useEffect(() => {
     DashboardApi.getTasksList({})
@@ -55,6 +56,8 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
   //   };
   const handleCheckBoxChange = (task_id: string | undefined) => {
+    console.log(task_id);
+
     // Find the task to check its current status
     const taskToUpdate = tasks.find((task) => task.task_id === task_id);
 
@@ -107,12 +110,18 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       priority: Priority,
       checked: false,
     };
+
     DashboardApi.AddTask(newTask).then(() => {
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-      setshowAddTaskModal(false);
-      setTaskTitle('');
-      setDeadline(null);
-      setPriority('High');
+      DashboardApi.getTasksList({}).then((response) => {
+        console.log(response);
+
+        setTasks(response.data);
+        setshowAddTaskModal(false);
+        setTaskTitle('');
+        setDeadline(null);
+        setPriority('High');
+      });
+      // setTasks((prevTasks) => [...prevTasks, newTask]);
     });
   };
   console.log(tasks);
@@ -233,7 +242,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       </MainModal>
       <div
         className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden"
-        style={{ height: (window.innerHeight - 200) / 2 + 'px' }}
+        style={{ height: (window.innerHeight - 240) / 2 + 'px' }}
       >
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex items-center gap-1">
