@@ -11,8 +11,8 @@ const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [isChanged, setIsChanged] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  // const [isChanged, setIsChanged] = useState(false);
+  // const [showSuccess, setShowSuccess] = useState(false);
   useEffect(() => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
@@ -23,20 +23,20 @@ const CustomBiomarkers = () => {
         setIsLoading(false);
       });
   }, []);
-  useEffect(() => {
-    if (biomarkers.length > 0 && isChanged) {
-      BiomarkersApi.saveBiomarkersList({
-        new_ranges: biomarkers,
-      }).then(() => {
-        if (isChanged) {
-          setShowSuccess(true);
-          setTimeout(() => {
-            setShowSuccess(false);
-          }, 3000);
-        }
-      });
-    }
-  }, [biomarkers]);
+  // useEffect(() => {
+  //   if (biomarkers.length > 0 && isChanged) {
+  //     BiomarkersApi.saveBiomarkersList({
+  //       new_ranges: biomarkers,
+  //     }).then(() => {
+  //       if (isChanged) {
+  //         setShowSuccess(true);
+  //         setTimeout(() => {
+  //           setShowSuccess(false);
+  //         }, 3000);
+  //       }
+  //     });
+  //   }
+  // }, [biomarkers]);
   const filteredBiomarkers = () => {
     if (!searchValue.trim()) {
       return biomarkers;
@@ -88,14 +88,14 @@ const CustomBiomarkers = () => {
           />
         </div>
       </div>
-      {showSuccess && (
+      {/* {showSuccess && (
         <div className="absolute right-12 top-[120px] w-[198px] h-[44px] rounded-xl border border-Gray-50 shadow-100 flex items-center justify-center bg-white gap-2 z-50">
           <img src="/icons/tick-circle-large.svg" alt="" className="w-5 h-5" />
           <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
             Changes applied successfully.
           </div>
         </div>
-      )}
+      )} */}
       {isLoading ? (
         <>
           <div className="w-full flex justify-center items-center min-h-[550px] px-6 py-[80px]">
@@ -107,8 +107,9 @@ const CustomBiomarkers = () => {
           {filteredBiomarkers().map((el) => {
             return (
               <BioMarkerBox
+              biomarkers={biomarkers}
                 onSave={(values) => {
-                  setIsChanged(true);
+                  // setIsChanged(true);
                   setBiomarkers((pre) => {
                     const resolved = pre.map((ol) => {
                       if (ol['Benchmark areas'] == values['Benchmark areas']) {
