@@ -18,6 +18,7 @@ type Message = {
   sender_type: string;
   images?: string[];
   timestamp: number;
+  name: string;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -85,6 +86,7 @@ const MessagesChatBox = () => {
   };
   useEffect(() => {
     if (id != undefined) {
+      setOneLoadingUser(true);
       userMessagesList(parseInt(id));
     }
   }, [id]);
@@ -129,6 +131,7 @@ const MessagesChatBox = () => {
           time: '',
           images: Images,
           timestamp: Date.now(),
+          name: '',
         },
       ]);
       setInput('');
@@ -350,7 +353,7 @@ const MessagesChatBox = () => {
                                     hour12: false,
                                   })}
                                 </span>
-                                Coach{' '}
+                                {message.name}
                               </div>
                               <div className="flex flex-row gap-2">
                                 {message.images?.map((image, index) => {
@@ -386,7 +389,7 @@ const MessagesChatBox = () => {
                             <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                               <img
                                 className="rounded-full"
-                                src={`https://ui-avatars.com/api/?name=Coach`}
+                                src={`https://ui-avatars.com/api/?name=${message.name}`}
                                 alt=""
                               />
                             </div>

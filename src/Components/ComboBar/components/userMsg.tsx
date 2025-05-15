@@ -4,10 +4,12 @@ export const UserMsg = ({
   msg,
   time,
   isSending,
+  name,
 }: {
   msg: string;
   time?: string;
   isSending?: boolean;
+  name: string;
 }) => {
   const formatText = (text: string) => {
     const boldedText = text.replace(
@@ -29,7 +31,7 @@ export const UserMsg = ({
       <div className={'pt-1  flex flex-col items-end'}>
         <div className={'flex items-center justify-end gap-1'}>
           <p className="text-xs text-Text-Quadruple">{time}</p>
-          <h1 className={'text-Text-Primary TextStyle-Headline-6'}>Coach</h1>
+          <h1 className={'text-Text-Primary TextStyle-Headline-6'}>{name}</h1>
         </div>
         <div className="flex items-end">
           {isSending && (
@@ -45,7 +47,7 @@ export const UserMsg = ({
       <div className="mr-1 w-[32px] h-[32px]">
         <img
           className="rounded-full w-[30px] h-[30px]"
-          src={`https://ui-avatars.com/api/?name=Coach`}
+          src={`https://ui-avatars.com/api/?name=${name}`}
           alt=""
         />
       </div>
