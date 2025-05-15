@@ -1,7 +1,11 @@
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import { useEffect, useState } from 'react';
-import { convertToBase64 } from '../../../help';
+import AzureBlobService from '../../../services/azureBlobService';
+import {
+  AZURE_STORAGE_CONNECTION_STRING,
+  AZURE_STORAGE_CONTAINER_NAME,
+} from '../../../config/azure';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxUploadProps {
@@ -11,21 +15,15 @@ interface FileBoxUploadProps {
 
 const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
   const { id } = useParams<{ id: string }>();
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
 
     const day = date.getDate();
@@ -34,50 +32,70 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
 
     return `${day} ${month} ${year}`;
   };
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [isFailed, setIsFailed] = useState(false);
-  const [progress, setProgress] = useState(0);
+
   useEffect(() => {
     let isCancelled = false;
 
-    convertToBase64(file).then((res) => {
-      Application.addLabReport(
-        {
-          member_id: id,
-          report: {
-            'file name': res.name,
-            'base64 string': res.url,
-          },
-        },
-        (progressEvent: any) => {
+    const uploadToAzure = async () => {
+      try {
+        // Initialize Azure Blob Service
+        AzureBlobService.initialize(
+          AZURE_STORAGE_CONNECTION_STRING,
+          AZURE_STORAGE_CONTAINER_NAME,
+        );
+
+        // Upload to Azure Blob Storage
+        const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
           if (isCancelled) return;
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total,
-          );
-          setProgress(percentCompleted);
-        },
-      )
-        .then((response) => {
-          if (isCancelled) return;
-          const fileWithId = {
-            file_id: response.data,
-            file_name: file.name,
-            date_uploaded: new Date().toString(),
-          };
-          onSuccess(fileWithId);
-          setIsCompleted(true);
-        })
-        .catch(() => {
-          if (isCancelled) return;
-          setIsFailed(true);
-          setIsCompleted(true);
+          setProgress(progress);
         });
-    });
+
+        if (isCancelled) return;
+
+        // Send the blob URL to backend
+        const response = await Application.addLabReport(
+          {
+            member_id: id,
+            report: {
+              'file name': file.name,
+              blob_url: blobUrl,
+            },
+          },
+          (progressEvent: any) => {
+            if (isCancelled) return;
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total,
+            );
+            setProgress(percentCompleted);
+          },
+        );
+
+        if (isCancelled) return;
+
+        const fileWithId = {
+          file_id: response.data,
+          file_name: file.name,
+          date_uploaded: new Date().toString(),
+          blob_url: blobUrl,
+        };
+
+        onSuccess(fileWithId);
+        setIsCompleted(true);
+      } catch (error) {
+        console.error('Upload error:', error);
+        if (isCancelled) return;
+        setIsFailed(true);
+        setIsCompleted(true);
+      }
+    };
+
+    uploadToAzure();
+
     return () => {
       isCancelled = true;
     };
-  }, [file]);
-  // console.log(file)
+  }, [file, id]);
+
   return (
     <>
       <div
@@ -86,21 +104,13 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
         <div className="flex justify-between items-center w-full">
           <div
             className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
-            // title={el.file_name}
           >
-            {/* {el.file_name} */}
             {file.name}
-            {/* 1111 */}
           </div>
           <div className="w-[70px] text-center">
             {formatDate(new Date().toString())}
           </div>
           <div className="flex w-[55px] justify-center gap-1">
-            {/* <img
-                        className="cursor-pointer"
-                        src="/icons/eye-green.svg"
-                        alt=""
-                        /> */}
             <img
               onClick={() => {
                 Application.downloadFille({
@@ -111,7 +121,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
                     /^data:application\/pdf;base64,/,
                     '',
                   );
-                  console.log(base64Data);
 
                   // Convert base64 string to a binary string
                   const byteCharacters = atob(base64Data);
@@ -133,7 +142,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
                   // Create a link element
                   const link = document.createElement('a');
                   link.href = window.URL.createObjectURL(blob);
-                  link.download = file.name; // Specify the file name
+                  link.download = file.name;
 
                   // Append to the body, click and remove
                   document.body.appendChild(link);
@@ -151,9 +160,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
           <>
             <div className="w-full flex justify-between">
               <div>
-                {/* <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                            Uploading...
-                        </div> */}
                 <div className="text-Text-Secondary  text-[10px] md:text-[10px] mt-1">
                   {progress}% • 30 seconds remaining
                 </div>
