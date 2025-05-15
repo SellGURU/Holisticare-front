@@ -22,8 +22,18 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
     const day = date.getDate();
@@ -102,9 +112,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
         className={`${isFailed ? 'border-red-500' : 'border-Gray-50'} bg-white border  mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]`}
       >
         <div className="flex justify-between items-center w-full">
-          <div
-            className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
-          >
+          <div className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis">
             {file.name}
           </div>
           <div className="w-[70px] text-center">
