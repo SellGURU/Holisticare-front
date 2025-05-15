@@ -3,35 +3,40 @@
 
 class AzureBlobService {
   private static isInitialized: boolean = false;
-//   private static connectionString: string = '';
+  //   private static connectionString: string = '';
   private static containerName: string = '';
   private static accountName: string = '';
-  private static sasToken: string = 'sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-05-15T18:04:55Z&st=2025-05-15T10:04:55Z&spr=https,http&sig=4YjBnWlQs5K8c3pcGfxkf3EC9RLVMU4MRjZISmPKfP4%3D';
-//   private static accountKey: string = '';
+  private static sasToken: string =
+    'sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-05-15T18:04:55Z&st=2025-05-15T10:04:55Z&spr=https,http&sig=4YjBnWlQs5K8c3pcGfxkf3EC9RLVMU4MRjZISmPKfP4%3D';
+  //   private static accountKey: string = '';
 
   static initialize(connectionString: string, containerName: string) {
     try {
       console.log('Starting Azure Blob Service initialization...');
-      
+
       if (!connectionString || !containerName) {
         throw new Error('Connection string and container name are required');
       }
 
       // Parse connection string
       const parts = connectionString.split(';');
-      const accountNameMatch = parts.find(p => p.startsWith('AccountName='))?.split('=')[1];
-      const accountKeyMatch = parts.find(p => p.startsWith('AccountKey='))?.split('=')[1];
+      const accountNameMatch = parts
+        .find((p) => p.startsWith('AccountName='))
+        ?.split('=')[1];
+      const accountKeyMatch = parts
+        .find((p) => p.startsWith('AccountKey='))
+        ?.split('=')[1];
 
       if (!accountNameMatch || !accountKeyMatch) {
         throw new Error('Invalid connection string format');
       }
 
       this.accountName = accountNameMatch;
-    //   this.accountKey = accountKeyMatch;
+      //   this.accountKey = accountKeyMatch;
       this.containerName = containerName;
-    //   this.connectionString = connectionString;
+      //   this.connectionString = connectionString;
       this.isInitialized = true;
-      
+
       console.log('Azure Blob Service initialized successfully');
     } catch (error) {
       console.error('Error initializing Azure Blob Service:', error);
@@ -40,7 +45,13 @@ class AzureBlobService {
     }
   }
 
-  private static getAuthorizationHeader(method: string, resourceType: string, date: string, contentLength: number = 0, contentType: string = ''): string {
+  private static getAuthorizationHeader(
+    method: string,
+    resourceType: string,
+    date: string,
+    contentLength: number = 0,
+    contentType: string = '',
+  ): string {
     const stringToSign = [
       method,
       '', // Content-Encoding
@@ -64,7 +75,10 @@ class AzureBlobService {
     return `SharedKey ${this.accountName}:${signature}`;
   }
 
-  static async uploadFile(file: File, onProgress?: (progress: number) => void): Promise<string> {
+  static async uploadFile(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<string> {
     if (!this.isInitialized) {
       throw new Error('Azure Blob Service not initialized.');
     }
@@ -110,7 +124,9 @@ class AzureBlobService {
 
   static async deleteFile(blobName: string): Promise<void> {
     if (!this.isInitialized) {
-      throw new Error('Azure Blob Service not initialized. Please check your configuration.');
+      throw new Error(
+        'Azure Blob Service not initialized. Please check your configuration.',
+      );
     }
 
     try {
@@ -122,7 +138,7 @@ class AzureBlobService {
       const response = await fetch(url, {
         method: 'DELETE',
         headers: {
-          'Authorization': authHeader,
+          Authorization: authHeader,
           'x-ms-date': date,
           'x-ms-version': '2018-03-28',
         },
@@ -140,4 +156,4 @@ class AzureBlobService {
   }
 }
 
-export default AzureBlobService; 
+export default AzureBlobService;

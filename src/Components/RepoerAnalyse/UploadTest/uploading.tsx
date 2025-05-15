@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import Application from '../../../api/app';
 import AzureBlobService from '../../../services/azureBlobService';
-import { AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME } from '../../../config/azure';
+import {
+  AZURE_STORAGE_CONNECTION_STRING,
+  AZURE_STORAGE_CONTAINER_NAME,
+} from '../../../config/azure';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface UploadingProps {
@@ -29,7 +32,10 @@ const Uploading: React.FC<UploadingProps> = ({
       try {
         // Initialize Azure Blob Service
         console.log('Initializing Azure Blob Service...');
-        AzureBlobService.initialize(AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME);
+        AzureBlobService.initialize(
+          AZURE_STORAGE_CONNECTION_STRING,
+          AZURE_STORAGE_CONTAINER_NAME,
+        );
         console.log('Azure Blob Service initialized successfully');
 
         // Upload to Azure Blob Storage
@@ -41,14 +47,16 @@ const Uploading: React.FC<UploadingProps> = ({
 
         if (isCancelled) return;
 
-        console.log('File uploaded to Azure successfully, sending to backend...');
+        console.log(
+          'File uploaded to Azure successfully, sending to backend...',
+        );
         // Send the blob URL to backend
         const response = await Application.addLabReport(
           {
             member_id: memberId,
             report: {
               'file name': file.name,
-              'blob_url': blobUrl,
+              blob_url: blobUrl,
             },
           },
           (progressEvent: any) => {
@@ -94,13 +102,13 @@ const Uploading: React.FC<UploadingProps> = ({
       if (fileToDelete.id) {
         // Delete from backend
         await Application.deleteLapReport({ file_id: fileToDelete.id });
-        
+
         // Delete from Azure Blob Storage if blobUrl exists
         if (fileToDelete.blobUrl) {
           const blobName = fileToDelete.blobUrl.split('/').pop();
           await AzureBlobService.deleteFile(blobName);
         }
-        
+
         onCancel();
       } else {
         onCancel();
@@ -125,11 +133,7 @@ const Uploading: React.FC<UploadingProps> = ({
               <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
                 {(file.size / 1024).toFixed(2)} KB
               </div>
-              {error && (
-                <div className="text-[10px] text-red-500">
-                  {error}
-                </div>
-              )}
+              {error && <div className="text-[10px] text-red-500">{error}</div>}
             </div>
           </div>
           <img
