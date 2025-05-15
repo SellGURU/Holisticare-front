@@ -124,35 +124,37 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
                 Application.downloadFille({
                   file_id: file.id || file.file_id,
                   member_id: id,
-                }).then((res) => {
-                  try {
-                    const blobUrl = res.data;
-                    
-                    // Create a direct download link for the blob URL
-                    const link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = file.name;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  } catch (error: any) {
+                })
+                  .then((res) => {
+                    try {
+                      const blobUrl = res.data;
+
+                      // Create a direct download link for the blob URL
+                      const link = document.createElement('a');
+                      link.href = blobUrl;
+                      link.download = file.name;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    } catch (error: any) {
+                      console.error('Error downloading file:', error);
+                      console.error('Error details:', {
+                        errorName: error?.name,
+                        errorMessage: error?.message,
+                        errorStack: error?.stack,
+                      });
+                      // You might want to show an error message to the user here
+                    }
+                  })
+                  .catch((error: any) => {
                     console.error('Error downloading file:', error);
                     console.error('Error details:', {
                       errorName: error?.name,
                       errorMessage: error?.message,
-                      errorStack: error?.stack
+                      errorStack: error?.stack,
                     });
                     // You might want to show an error message to the user here
-                  }
-                }).catch((error: any) => {
-                  console.error('Error downloading file:', error);
-                  console.error('Error details:', {
-                    errorName: error?.name,
-                    errorMessage: error?.message,
-                    errorStack: error?.stack
                   });
-                  // You might want to show an error message to the user here
-                });
               }}
               className="cursor-pointer size-5 -mt-[3px]"
               src="/icons/import.svg"

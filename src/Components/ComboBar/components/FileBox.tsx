@@ -53,33 +53,35 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
               Application.downloadFille({
                 file_id: el.file_id,
                 member_id: id,
-              }).then((res) => {
-                try {
-                  const blobUrl = res.data;
-                  
-                  // Create a direct download link for the blob URL
-                  const link = document.createElement('a');
-                  link.href = blobUrl;
-                  link.download = el.file_name;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                } catch (error: any) {
+              })
+                .then((res) => {
+                  try {
+                    const blobUrl = res.data;
+
+                    // Create a direct download link for the blob URL
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = el.file_name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  } catch (error: any) {
+                    console.error('Error downloading file:', error);
+                    console.error('Error details:', {
+                      errorName: error?.name,
+                      errorMessage: error?.message,
+                      errorStack: error?.stack,
+                    });
+                  }
+                })
+                .catch((error: any) => {
                   console.error('Error downloading file:', error);
                   console.error('Error details:', {
                     errorName: error?.name,
                     errorMessage: error?.message,
-                    errorStack: error?.stack
+                    errorStack: error?.stack,
                   });
-                }
-              }).catch((error: any) => {
-                console.error('Error downloading file:', error);
-                console.error('Error details:', {
-                  errorName: error?.name,
-                  errorMessage: error?.message,
-                  errorStack: error?.stack
                 });
-              });
             }}
             className="cursor-pointer -mt-[3px]"
             src="/icons/import.svg"
