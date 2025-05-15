@@ -119,7 +119,7 @@ export const PopUpChat = ({
                       time={MessageDatum.time}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
-                      name={info}
+                      info={info}
                     />
                   </>
                 );
@@ -130,7 +130,6 @@ export const PopUpChat = ({
                       time={MessageDatum.time}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
-                      name={''}
                     />
                   </>
                 );

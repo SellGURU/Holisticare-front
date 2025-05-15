@@ -1,8 +1,8 @@
-import { BotMsg } from '../../popupChat/botMsg.tsx';
-import { UserMsg } from '../../popupChat/userMsg.tsx';
 import { InputChat } from '../../popupChat/inputChat.tsx';
 import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app.ts';
+import { UserMsg } from './userMsg.tsx';
+import { BotMsg } from './botMsg.tsx';
 interface ChatModalProps {
   memberId: number;
 }
