@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import Application from '../../../api/app';
+import AzureBlobService from '../../../services/azureBlobService';
+import { AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME } from '../../../config/azure';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface UploadingProps {
@@ -15,85 +17,96 @@ const Uploading: React.FC<UploadingProps> = ({
   onSuccess,
   onCancel,
 }) => {
-  const convertToBase64 = (file: File): Promise<any> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.readAsDataURL(file);
-
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        resolve({
-          name: file.name,
-          url: base64,
-          type: file.type,
-          size: file.size,
-        });
-      };
-
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
   const [isCompleted, setIsCompleted] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     let isCancelled = false;
 
-    convertToBase64(file).then((res) => {
-      Application.addLabReport(
-        {
-          member_id: memberId,
-          report: {
-            'file name': res.name,
-            'base64 string': res.url,
-          },
-        },
-        (progressEvent: any) => {
-          if (isCancelled) return;
-          const percentCompleted = Math.round(
-            Math.sqrt(progressEvent.loaded / progressEvent.total) * 90,
-          );
-          setProgress(percentCompleted);
-        },
-      )
-        .then((response) => {
-          if (isCancelled) return;
-          const fileWithId = {
-            ...file,
-            id: response.data,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-          };
+    const uploadToAzure = async () => {
+      try {
+        // Initialize Azure Blob Service
+        console.log('Initializing Azure Blob Service...');
+        AzureBlobService.initialize(AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME);
+        console.log('Azure Blob Service initialized successfully');
 
-          onSuccess(fileWithId);
-          setIsCompleted(true);
-        })
-        .catch(() => {
+        // Upload to Azure Blob Storage
+        console.log('Starting file upload to Azure...');
+        const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
           if (isCancelled) return;
-          setIsFailed(true);
-          setIsCompleted(true);
+          setProgress(progress);
         });
-    });
+
+        if (isCancelled) return;
+
+        console.log('File uploaded to Azure successfully, sending to backend...');
+        // Send the blob URL to backend
+        const response = await Application.addLabReport(
+          {
+            member_id: memberId,
+            report: {
+              'file name': file.name,
+              'blob_url': blobUrl,
+            },
+          },
+          (progressEvent: any) => {
+            if (isCancelled) return;
+            const percentCompleted = Math.round(
+              Math.sqrt(progressEvent.loaded / progressEvent.total) * 90,
+            );
+            setProgress(percentCompleted);
+          },
+        );
+
+        if (isCancelled) return;
+
+        const fileWithId = {
+          ...file,
+          id: response.data,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          blobUrl: blobUrl,
+        };
+
+        onSuccess(fileWithId);
+        setIsCompleted(true);
+      } catch (error) {
+        console.error('Upload error:', error);
+        if (isCancelled) return;
+        setError(error instanceof Error ? error.message : 'Upload failed');
+        setIsFailed(true);
+        setIsCompleted(true);
+      }
+    };
+
+    uploadToAzure();
+
     return () => {
       isCancelled = true;
     };
   }, [file, memberId]);
-  const handleDeleteFile = (fileToDelete: any) => {
-    console.log(fileToDelete);
-    if (fileToDelete.id) {
-      Application.deleteLapReport({ file_id: fileToDelete.id })
-        .then(() => {
-          onCancel();
-        })
-        .catch((err) => {
-          console.error('Error deleting the file:', err);
-        });
-    } else {
-      onCancel();
+
+  const handleDeleteFile = async (fileToDelete: any) => {
+    try {
+      if (fileToDelete.id) {
+        // Delete from backend
+        await Application.deleteLapReport({ file_id: fileToDelete.id });
+        
+        // Delete from Azure Blob Storage if blobUrl exists
+        if (fileToDelete.blobUrl) {
+          const blobName = fileToDelete.blobUrl.split('/').pop();
+          await AzureBlobService.deleteFile(blobName);
+        }
+        
+        onCancel();
+      } else {
+        onCancel();
+      }
+    } catch (err) {
+      console.error('Error deleting the file:', err);
     }
   };
 
@@ -112,6 +125,11 @@ const Uploading: React.FC<UploadingProps> = ({
               <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
                 {(file.size / 1024).toFixed(2)} KB
               </div>
+              {error && (
+                <div className="text-[10px] text-red-500">
+                  {error}
+                </div>
+              )}
             </div>
           </div>
           <img
