@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef, useEffect } from 'react';
+import { useFormik } from 'formik';
+import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
+import * as Yup from 'yup';
+import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
-import Application from '../../../api/app';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Tooltip } from 'react-tooltip';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface EditModalProps {
   onSubmit: (data: any) => void;
 }
 
-const EditModal: React.FC<EditModalProps> = ({
+const EditModal: FC<EditModalProps> = ({
   isOpen,
   defalts,
   onClose,
@@ -95,7 +95,6 @@ const EditModal: React.FC<EditModalProps> = ({
     },
     validationSchema,
     validateOnMount: true,
-    enableReinitialize: true,
 
     onSubmit: (values) => {
       if (formik.isValid) {
@@ -161,12 +160,11 @@ const EditModal: React.FC<EditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleNoteKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (newNote.trim()) {
         setNotes([...notes, newNote]);
-
         setNewNote('');
       }
     }
@@ -298,6 +296,9 @@ const EditModal: React.FC<EditModalProps> = ({
                         key={index}
                         onClick={() => {
                           formik.setFieldValue('Category', groupName);
+                          if (groupName !== 'Supplement') {
+                            formik.setFieldValue('Dose', '');
+                          }
                           setShowSelect(false);
                         }}
                         className="text-[12px] text-Text-Primary my-1 cursor-pointer"
@@ -364,7 +365,7 @@ const EditModal: React.FC<EditModalProps> = ({
               {selectedGroupDose && (
                 <Tooltip
                   id="more-info"
-                  place="top"
+                  place="right"
                   className="!bg-white !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                 >
                   Dose must include a number followed by a unit (e.g., '50 mg')
@@ -434,7 +435,7 @@ const EditModal: React.FC<EditModalProps> = ({
               <Tooltip
                 id="more-info-notes"
                 place="right"
-                className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
               >
                 After writing each note, press the Enter key to save it and be
                 able to add another note.
