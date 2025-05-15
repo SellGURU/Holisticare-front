@@ -500,7 +500,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
                             src={resolveIcon(category)}
                             alt=""
                           />
-                          {category == "" ? 'Check-in' : category}
+                          {category == '' ? 'Check-in' : category}
                         </div>
                         {activitiesForTheDay
                           .filter(
