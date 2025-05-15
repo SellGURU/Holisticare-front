@@ -122,41 +122,39 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
             <img
               onClick={() => {
                 Application.downloadFille({
-                  file_id: '',
+                  file_id: file.id || file.file_id,
                   member_id: id,
-                }).then((res) => {
-                  const base64Data = res.data.replace(
-                    /^data:application\/pdf;base64,/,
-                    '',
-                  );
+                })
+                  .then((res) => {
+                    try {
+                      const blobUrl = res.data;
 
-                  // Convert base64 string to a binary string
-                  const byteCharacters = atob(base64Data);
-
-                  // Create an array for each character's byte
-                  const byteNumbers = new Array(byteCharacters.length);
-                  for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                  }
-
-                  // Convert the array to a Uint8Array
-                  const byteArray = new Uint8Array(byteNumbers);
-
-                  // Create a Blob from the Uint8Array
-                  const blob = new Blob([byteArray], {
-                    type: 'application/pdf',
+                      // Create a direct download link for the blob URL
+                      const link = document.createElement('a');
+                      link.href = blobUrl;
+                      link.download = file.name;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    } catch (error: any) {
+                      console.error('Error downloading file:', error);
+                      console.error('Error details:', {
+                        errorName: error?.name,
+                        errorMessage: error?.message,
+                        errorStack: error?.stack,
+                      });
+                      // You might want to show an error message to the user here
+                    }
+                  })
+                  .catch((error: any) => {
+                    console.error('Error downloading file:', error);
+                    console.error('Error details:', {
+                      errorName: error?.name,
+                      errorMessage: error?.message,
+                      errorStack: error?.stack,
+                    });
+                    // You might want to show an error message to the user here
                   });
-
-                  // Create a link element
-                  const link = document.createElement('a');
-                  link.href = window.URL.createObjectURL(blob);
-                  link.download = file.name;
-
-                  // Append to the body, click and remove
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                });
               }}
               className="cursor-pointer size-5 -mt-[3px]"
               src="/icons/import.svg"
