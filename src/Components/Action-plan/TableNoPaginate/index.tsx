@@ -48,7 +48,7 @@ const TableNoPaginateForActionPlan: FC<TableProps> = ({ classData }) => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-Gray-50">
+                <tbody className="bg-white ">
                   {(Object.entries(grouped) as [string, any[]][]).map(
                     ([key, items]) => (
                       <Fragment key={key}>

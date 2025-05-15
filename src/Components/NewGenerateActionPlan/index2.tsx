@@ -87,8 +87,12 @@ const GenerateActionPlan = () => {
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
-
+  console.log(actions);
     const flattenedData = prepareDataForBackend(actions);
+  
+    console.log(flattenedData);
+    
+    
     setISLoadingSaveChanges(true);
     Application.getActionPlanBlockSaveTasksNew({
       member_id: id,

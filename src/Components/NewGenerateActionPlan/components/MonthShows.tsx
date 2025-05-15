@@ -31,7 +31,7 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
   return (
     <div
       ref={containerRef}
-      className={`border flex flex-wrap h-auto rounded-[4px] text-xs bg-white border-Gray-50 ml-1 ${className}`}
+      className={`border flex flex-wrap h-auto rounded-[4px] text-[10px] bg-white border-Gray-50 ml-1 ${className}`}
       style={{ minHeight: '32px', maxWidth: '546px', borderRadius: '4px' }}
     >
       {sortedDays.map((day, index) => {
@@ -43,10 +43,10 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
         return (
           <div
             key={day}
-            className={`flex items-center justify-center capitalize text-Text-Primary
+            className={`flex items-center p-1 justify-center capitalize text-Text-Primary
               ${!isLastInRow ? 'border-r border-Gray-50' : ''}
               ${!isInLastRow ? 'border-b border-Gray-50' : ''}`}
-            style={{ width: '32px', height: '32px' }}
+            // style={{ width: '32px', height: '32px' }}
           >
             {day.split('-')[2]}
           </div>
