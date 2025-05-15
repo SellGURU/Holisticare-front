@@ -117,6 +117,7 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                       msg={message.message_text}
                       key={message.conversation_id}
                       isSending={message.isSending}
+                      name={message.name}
                     />
                   </>
                 );
