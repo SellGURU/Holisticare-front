@@ -350,7 +350,7 @@ const MessagesChatBox = () => {
                                     hour12: false,
                                   })}
                                 </span>
-                                Me{' '}
+                                Coach{' '}
                               </div>
                               <div className="flex flex-row gap-2">
                                 {message.images?.map((image, index) => {
@@ -386,7 +386,7 @@ const MessagesChatBox = () => {
                             <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                               <img
                                 className="rounded-full"
-                                src={`https://ui-avatars.com/api/?name=Me`}
+                                src={`https://ui-avatars.com/api/?name=Coach`}
                                 alt=""
                               />
                             </div>
