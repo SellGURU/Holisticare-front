@@ -148,6 +148,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       description: false,
       instruction: false,
       dose: false,
+      unit: false,
       value: false,
       score: false,
       macros: {
@@ -163,6 +164,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     description: false,
     instruction: false,
     dose: false,
+    unit: false,
     value: false,
     score: false,
     macros: {
@@ -179,6 +181,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       value: pageType === 'Lifestyle' && !value,
+      unit: pageType === 'Lifestyle' && !Unit,
       score: addData.score === 0,
       macros: {
         Fats: pageType === 'Diet' && !totalMacros.Fats,
@@ -377,38 +380,55 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
-                <input
-                  placeholder="Enter Value..."
-                  value={value}
-                  type="number"
-                  onChange={(e) => {
-                    setValue(e.target.value);
-                    if (e.target.value) {
-                      setErrors((prev) => ({ ...prev, value: false }));
-                    } else {
-                      setErrors((prev) => ({ ...prev, value: true }));
-                    }
-                  }}
-                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value ? 'border-Red' : 'border-Gray-50'
-                  } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                />
-                <input
-                  placeholder="Enter unit"
-                  value={Unit}
-                  type="text"
-                  onChange={(e) => {
-                    setUnit(e.target.value);
-                  }}
-                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
-                   bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                />
-              </div>
-              {errors.value && (
-                <div className="text-Red text-[10px]">
-                  This field is required.
+                <div className=" w-full flex flex-col gap-2">
+                  <input
+                    placeholder="Enter Value..."
+                    value={value}
+                    type="number"
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                      if (e.target.value) {
+                        setErrors((prev) => ({ ...prev, value: false }));
+                      } else {
+                        setErrors((prev) => ({ ...prev, value: true }));
+                      }
+                    }}
+                    className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                      errors.value ? 'border-Red' : 'border-Gray-50'
+                    } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                  />
+
+                  {errors.value && (
+                    <div className="text-Red text-[10px]">
+                      This field is required.
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <div className="flex flex-col gap-2">
+                  <input
+                    placeholder="Enter unit"
+                    value={Unit}
+                    type="text"
+                    onChange={(e) => {
+                      setUnit(e.target.value);
+                      if (e.target.value) {
+                        setErrors((prev) => ({ ...prev, unit: false }));
+                      } else {
+                        setErrors((prev) => ({ ...prev, unit: true }));
+                      }
+                    }}
+                    className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                      errors.unit ? 'border-Red' : 'border-Gray-50'
+                    } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                  />
+                  {errors.unit && (
+                    <div className="text-Red text-[10px]">
+                      This field is required.
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
