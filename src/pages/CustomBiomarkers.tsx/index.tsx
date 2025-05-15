@@ -107,7 +107,7 @@ const CustomBiomarkers = () => {
           {filteredBiomarkers().map((el) => {
             return (
               <BioMarkerBox
-              biomarkers={biomarkers}
+                biomarkers={biomarkers}
                 onSave={(values) => {
                   // setIsChanged(true);
                   setBiomarkers((pre) => {

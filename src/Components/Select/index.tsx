@@ -1,13 +1,18 @@
-import {useState, useRef} from 'react';
+import { useState, useRef } from 'react';
 
 type SelectProps = {
   onChange: (value: string) => void;
   options?: Array<string>;
   key?: string;
-  isCapital?: boolean
+  isCapital?: boolean;
 };
 
-const Select: React.FC<SelectProps> = ({ onChange, options, key,isCapital }) => {
+const Select: React.FC<SelectProps> = ({
+  onChange,
+  options,
+  key,
+  isCapital,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLSelectElement>(null);
 
@@ -19,8 +24,7 @@ const Select: React.FC<SelectProps> = ({ onChange, options, key,isCapital }) => 
   return (
     <div className="relative inline-block w-[120px] cursor-pointer font-normal">
       <select
-              onClick={() => setIsOpen(!isOpen)}
-
+        onClick={() => setIsOpen(!isOpen)}
         ref={selectRef}
         onBlur={() => setIsOpen(false)}
         onChange={(e) => {

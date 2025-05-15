@@ -124,7 +124,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
             </div>
             <div>
               <Select
-              isCapital
+                isCapital
                 key="gender"
                 onChange={(val) => {
                   setGender(val);
