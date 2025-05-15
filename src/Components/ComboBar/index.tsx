@@ -118,6 +118,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     close: closeModal,
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
+  const handleCloseSlideOutPanel = () => {
+    setIsSlideOutPanel(false);
+  };
   const [updated, setUpdated] = useState(false);
   subscribe('QuestionaryTrackingCall', () => {
     // setUpdated(true);
@@ -149,7 +152,11 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Client’s Chat History':
         return <ChatModal memberId={parseInt(idData)}></ChatModal>;
       case 'Switch Client':
-        return <SwitchClient></SwitchClient>;
+        return (
+          <SwitchClient
+            handleCloseSlideOutPanel={handleCloseSlideOutPanel}
+          ></SwitchClient>
+        );
       default:
         return <div>No Content</div>;
     }
@@ -160,7 +167,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       <SlideOutPanel
         isOpen={isSlideOutPanel}
         isCombo={true}
-        onClose={() => setIsSlideOutPanel(false)}
+        onClose={handleCloseSlideOutPanel}
         headline={activeItem || ''}
       >
         {renderModalContent()}
