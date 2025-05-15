@@ -114,7 +114,6 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
                         minute: '2-digit',
                         hour12: false,
                       })}
-                      name={message.name}
                       msg={message.message_text}
                       key={message.conversation_id}
                       isSending={message.isSending}

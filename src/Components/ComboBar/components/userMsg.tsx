@@ -3,12 +3,10 @@ import { MoonLoader } from 'react-spinners';
 export const UserMsg = ({
   msg,
   time,
-  name,
   isSending,
 }: {
   msg: string;
   time?: string;
-  name: string;
   isSending?: boolean;
 }) => {
   const formatText = (text: string) => {
@@ -31,7 +29,7 @@ export const UserMsg = ({
       <div className={'pt-1  flex flex-col items-end'}>
         <div className={'flex items-center justify-end gap-1'}>
           <p className="text-xs text-Text-Quadruple">{time}</p>
-          <h1 className={'text-Text-Primary TextStyle-Headline-6'}>{name}</h1>
+          <h1 className={'text-Text-Primary TextStyle-Headline-6'}>Coach</h1>
         </div>
         <div className="flex items-end">
           {isSending && (
@@ -47,7 +45,7 @@ export const UserMsg = ({
       <div className="mr-1 w-[32px] h-[32px]">
         <img
           className="rounded-full w-[30px] h-[30px]"
-          src={`https://ui-avatars.com/api/?name=${name}`}
+          src={`https://ui-avatars.com/api/?name=Coach`}
           alt=""
         />
       </div>
