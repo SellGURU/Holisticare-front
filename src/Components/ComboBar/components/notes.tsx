@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import Accordion from '../../Accordion';
+import Circleloader from '../../CircleLoader';
 export const Notes = () => {
   const [data, setData] = useState<any>([]);
   const { id } = useParams<{ id: string }>();
@@ -11,9 +13,10 @@ export const Notes = () => {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-  useEffect(() => {
-    // setIsLoading(true);
-    Application.getNotes({ member_id: id })
+  const [loading, setLoading] = useState(false);
+  const getNotes = (Id: any) => {
+    setLoading(true);
+    Application.getNotes({ member_id: Id })
       .then((res) => {
         if (res.data) {
           setData(res.data);
@@ -23,12 +26,30 @@ export const Notes = () => {
       })
       .catch((err) => {
         console.error(err);
-        // setError("Failed to fetch client data");
       })
       .finally(() => {
-        // setIsLoading(false);
+        setLoading(false);
       });
+  };
+  useEffect(() => {
+    getNotes(id);
   }, [id]);
+  const handleNoteDelete = (noteId: string) => {
+    setLoading(true);
+    Application.deleteNote(noteId).then(() => {
+      getNotes(id);
+    });
+  };
+  const handleNoteUpdate = (noteId: string) => {
+    setLoading(true);
+    const data = {
+      note_unique_id: noteId,
+      updated_note: editText,
+    };
+    Application.updateNote(data).then(() => {
+      getNotes(id);
+    });
+  };
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString('en-US', {
@@ -42,29 +63,30 @@ export const Notes = () => {
     setEditText(currentNote);
   };
 
-  const handleSaveEdit = (index: number) => {
-    const updatedData = [...data];
-    updatedData[index].note = editText;
-    setData(updatedData);
+  const handleSaveEdit = (id: string) => {
+    handleNoteUpdate(id);
     setEditIndex(null);
   };
   const handleDeleteClick = (index: number) => {
     setDeleteIndex(index);
   };
 
-  const handleConfirmDelete = (index: number) => {
-    setData((prevData: any) =>
-      prevData.filter((_: any, i: number) => i !== index),
-    );
+  const handleConfirmDelete = (id: string) => {
+    handleNoteDelete(id);
     setDeleteIndex(null);
   };
   return (
-    <div className=" w-full ">
+    <div className=" w-full relative">
       <div className="w-full flex justify-between px-3.5 py-3">
         {/* <div className="text-[14px] text-light-secandary-text dark:text-[#FFFFFFDE]">
         Trainer's Notes (
         {data?.notes ? data.notes.length : "0"})
       </div> */}
+        {loading && (
+          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px] absolute">
+            <Circleloader />
+          </div>
+        )}
         {!showAddNote && (
           <div
             onClick={() => {
@@ -116,50 +138,13 @@ export const Notes = () => {
                     note: commentText,
                   })
                     .then(() => {
-                      Application.getNotes({ member_id: id }).then((res) => {
-                        if (res.data) {
-                          setData(res.data);
-                          setCommentText('');
-                        } else {
-                          throw new Error('Unexpected data format');
-                        }
-                      });
-                      // setData((prevNotes: any[]) => [
-                      //   ...prevNotes,
-                      //   {
-                      //     date: Date.now(),
-                      //     time: new Date().toLocaleTimeString(),
-                      //     writer: 'clinic',
-                      //     note: commentText,
-                      //   },
-                      // ]);
+                      getNotes(id);
+                      setCommentText('');
                     })
                     .catch((error) => {
                       console.error('Error adding note:', error);
                     });
                 }}
-                //   onClick={() => {
-                //     Application.addNoteHelth({
-                //       member_id: id,
-                //       note: commentText,
-                //       writer: "",
-                //     }).then(() => {
-                //       setCommentText("");
-                //       setShowAddNote(false);
-                //       setData((pre: any) => ({
-                //         ...pre,
-                //         notes: [
-                //           ...pre.notes,
-                //           {
-                //             date: Date.now(),
-                //             time: "14:14:32.274416",
-                //             writer: "",
-                //             note: commentText,
-                //           },
-                //         ],
-                //       }));
-                //     });
-                //   }}
                 style={{ height: '24px' }}
               >
                 <div className=" w-[60px] md:w-[100px] text-xs">Save Note</div>
@@ -179,7 +164,7 @@ export const Notes = () => {
             <div className="w-full ">
               {data?.map((el: any, index: number) => {
                 return (
-                  <div className=" my-2">
+                  <div className="my-2" key={index}>
                     <Accordion time={el.time} title={formatDate(el.date)}>
                       {editIndex === index ? (
                         <textarea
@@ -206,7 +191,7 @@ export const Notes = () => {
                             </button>
                             <button
                               className="text-xs font-medium text-Primary-DeepTeal cursor-pointer"
-                              onClick={() => handleSaveEdit(index)}
+                              onClick={() => handleSaveEdit(el.unique_id)}
                             >
                               Save Changes
                             </button>
@@ -228,7 +213,9 @@ export const Notes = () => {
                                   className="size-5 cursor-pointer"
                                   src="/icons/confirm-tick-circle.svg"
                                   alt="Confirm"
-                                  onClick={() => handleConfirmDelete(index)}
+                                  onClick={() =>
+                                    handleConfirmDelete(el.unique_id)
+                                  }
                                 />
                                 <img
                                   className="size-5 cursor-pointer"
