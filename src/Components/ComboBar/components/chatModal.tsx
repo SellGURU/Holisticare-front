@@ -1,87 +1,85 @@
 import { BotMsg } from '../../popupChat/botMsg.tsx';
 import { UserMsg } from '../../popupChat/userMsg.tsx';
 import { InputChat } from '../../popupChat/inputChat.tsx';
-import { useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app.ts';
+import Circleloader from '../../CircleLoader/index.tsx';
 interface ChatModalProps {
-  memberId: undefined | string;
-  info: any;
+  memberId: number;
 }
+type SendMessage = {
+  conversation_id?: number;
+  receiver_id: number;
+  message_text: string;
+  replied_conv_id?: number;
+};
 type Message = {
-  id: number;
-  sender: 'user' | 'ai';
-  text: string;
+  date: string;
   time: string;
+  conversation_id: number;
+  message_text: string;
+  sender_id: number;
+  isSending?: boolean;
+  replied_message_id: number | null;
+  sender_type: string;
+  images?: string[];
+  timestamp: number;
+  name: string;
 };
 
-export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
-  const [MessageData, setMessageData] = useState<Message[]>([]);
+export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
+  const [messageData, setMessageData] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState('');
-  const [conversationId, setConversationId] = useState<number>(1);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    Application.getListChats({
-      member_id: memberId,
-    }).then((res) => {
-      const resolve = res.data.messages.flatMap((mes: any, index: number) => {
-        const request: Message = {
-          id: 1,
-          sender: 'user',
-          text: mes.request,
-          time: mes.entrytime,
-        };
-        const response: Message = {
-          id: index,
-          sender: 'ai',
-          text: mes.response,
-          time: mes.entrytime,
-        };
-        return [request, response];
+  const userMessagesList = (member_id: number) => {
+    setLoading(true);
+    Application.getListChats({ member_id: member_id })
+      .then((res) => {
+        setMessageData(res.data.reverse());
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      setMessageData(resolve);
-      // console.log(resolve)
-    });
-  }, []);
+  };
+  useEffect(() => {
+    if (memberId) {
+      userMessagesList(memberId);
+    }
+  }, [memberId]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
-      const newMessage: Message = {
-        id: MessageData.length + 1,
-        sender: 'user',
-        text: input,
-        time: new Date().toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false, // This is the key change
-        }),
+      const lastConversationId =
+        messageData.length > 0
+          ? messageData[messageData.length - 1].conversation_id
+          : undefined;
+      const newMessage: SendMessage = {
+        message_text: input,
+        receiver_id: memberId,
+        conversation_id: lastConversationId,
       };
-      setMessageData([...MessageData, newMessage]);
+      setMessageData([
+        ...messageData,
+        {
+          conversation_id: Number(lastConversationId),
+          date: new Date().toISOString(),
+          message_text: input,
+          replied_message_id: 0,
+          sender_id: Number(memberId),
+          isSending: true,
+          sender_type: 'user',
+          time: '',
+          timestamp: Date.now(),
+          name: '',
+        },
+      ]);
       setInput('');
       try {
-        const res = await Application.aiStudio_copilotChat({
-          text: newMessage.text,
-          member_id: memberId,
-          conversation_id: conversationId,
-          search: false,
-          benchmark_areas: [],
-        });
-        console.log(res);
-
-        const data = await res.data;
-        setConversationId(data.current_conversation_id);
-        const aiMessage: Message = {
-          id: MessageData.length + 2,
-          sender: 'ai',
-          text: data.answer,
-          time: new Date().toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false, // This is the key change
-          }),
-        };
-        setMessageData((prevMessages) => [...prevMessages, aiMessage]);
+        await Application.sendMessage(newMessage);
+        userMessagesList(memberId);
       } catch (err) {
         console.log(err);
       }
@@ -89,11 +87,16 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [MessageData]);
+  }, [messageData]);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   return (
-    <div className="w-full h-full  ">
-      {MessageData.length < 1 ? (
+    <div className="w-full h-full relative">
+      {loading && (
+        <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px] absolute">
+          <Circleloader />
+        </div>
+      )}
+      {messageData.length < 1 ? (
         <div className="relative h-[85vh]">
           {' '}
           <div className="w-full  flex flex-col items-center justify-center h-[533px]  ">
@@ -110,22 +113,23 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
           </div>
         </div>
       ) : (
-        <div className={'  h-[84vh] flex flex-col justify-between'}>
+        <div className={'h-[84vh] flex flex-col justify-between'}>
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
-          <div
-            className={
-              'w-[283px] h-[533px] overflow-y-auto overscroll-y-auto  '
-            }
-          >
-            {MessageData.map((MessageDatum) => {
-              if (MessageDatum.sender == 'user') {
+          <div className={'w-full h-[90%] overflow-y-auto overscroll-y-auto'}>
+            {messageData.map((message) => {
+              if (message.sender_type == 'user') {
                 return (
                   <>
                     <UserMsg
-                      time={MessageDatum.time}
-                      info={info}
-                      msg={MessageDatum.text}
-                      key={MessageDatum.id}
+                      time={new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })}
+                      name={message.name}
+                      msg={message.message_text}
+                      key={message.conversation_id}
+                      isSending={message.isSending}
                     />
                   </>
                 );
@@ -133,9 +137,14 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
                 return (
                   <>
                     <BotMsg
-                      time={MessageDatum.time}
-                      msg={MessageDatum.text}
-                      key={MessageDatum.id}
+                      time={new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })}
+                      msg={message.message_text}
+                      key={message.conversation_id}
+                      name={message.name}
                     />
                   </>
                 );
@@ -148,6 +157,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({ memberId, info }) => {
             <InputChat
               onChange={(event) => setInput(event.target.value)}
               sendHandler={handleSend}
+              Placeholder="Enter your message here..."
             />
           </div>
         </div>

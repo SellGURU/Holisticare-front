@@ -4,8 +4,13 @@ import { ChangeEventHandler, FC, useRef } from 'react';
 interface IInputChat {
   onChange: ChangeEventHandler<HTMLInputElement>;
   sendHandler: any;
+  Placeholder?: string;
 }
-export const InputChat: FC<IInputChat> = ({ onChange, sendHandler }) => {
+export const InputChat: FC<IInputChat> = ({
+  onChange,
+  sendHandler,
+  Placeholder = 'Ask me anything...',
+}) => {
   const btnSendRef = useRef<HTMLInputElement>(null);
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     // Check if Enter key was pressed
@@ -27,7 +32,7 @@ export const InputChat: FC<IInputChat> = ({ onChange, sendHandler }) => {
         onKeyDown={handleKeyDown}
         ref={btnSendRef}
         onChange={onChange}
-        placeholder={'Ask me anything...'}
+        placeholder={Placeholder}
         className={
           'bg-white w-full text-[12px] text-Text-Secondary pl-2 h-full !border-none !outline-none'
         }
@@ -40,6 +45,7 @@ export const InputChat: FC<IInputChat> = ({ onChange, sendHandler }) => {
           }
         }}
         src={'/icons/send-2.svg'}
+        className="cursor-pointer"
       />
     </div>
   );
