@@ -64,7 +64,6 @@ const MessagesChatBox = () => {
     if (oneLoadingUser) {
       setIsLoading(true);
       setOneLoadingUser(false);
-      console.log('salam');
     }
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
