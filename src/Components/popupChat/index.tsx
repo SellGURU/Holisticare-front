@@ -117,9 +117,9 @@ export const PopUpChat = ({
                   <>
                     <UserMsg
                       time={MessageDatum.time}
-                      info={info}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
+                      name={info}
                     />
                   </>
                 );
@@ -130,6 +130,7 @@ export const PopUpChat = ({
                       time={MessageDatum.time}
                       msg={MessageDatum.text}
                       key={MessageDatum.id}
+                      name={''}
                     />
                   </>
                 );
