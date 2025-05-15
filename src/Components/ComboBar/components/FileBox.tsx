@@ -80,7 +80,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
                 // Create a link element
                 const link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = 'downloaded-file.pdf'; // Specify the file name
+                link.download = el.file_name; // Specify the file name
 
                 // Append to the body, click and remove
                 document.body.appendChild(link);

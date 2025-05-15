@@ -1,21 +1,54 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import BiomarkerItem from './BiomarkerItem';
-
+import BiomarkersApi from '../../api/Biomarkers';
 interface BiomarkerBoxProps {
+  biomarkers: Array<any>;
   data: any;
   onSave: (values: any) => void;
 }
-const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data, onSave }) => {
+const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
+  data,
+  onSave,
+  biomarkers,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  useEffect(() => {
+    if (biomarkers.length > 0 && isChanged) {
+      BiomarkersApi.saveBiomarkersList({
+        new_ranges: biomarkers,
+      }).then(() => {
+        if (isChanged) {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+          }, 3000);
+        }
+      });
+    }
+  }, [biomarkers]);
   return (
     <>
-      <div className="w-full mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center ">
+      <div className="w-full relative mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
+        {showSuccess && (
+          <div className="absolute right-[54px] top-[12px] w-[198px] h-[44px] rounded-xl border border-Gray-50 shadow-100 flex items-center justify-center bg-white gap-2 z-50">
+            <img
+              src="/icons/tick-circle-large.svg"
+              alt=""
+              className="w-5 h-5"
+            />
+            <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
+              Changes applied successfully.
+            </div>
+          </div>
+        )}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center justify-center ">
             <div
-              className="w-10 h-10 items-center bg-Primary-DeepTeal rounded-full flex justify-center"
+              className="w-10 h-10 items-center border-2 border-Primary-DeepTeal rounded-full flex justify-center"
               style={
                 {
                   // background: `blue`,
@@ -71,6 +104,7 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({ data, onSave }) => {
                 <>
                   <BiomarkerItem
                     OnSave={(resovle) => {
+                      setIsChanged(true);
                       // console.log(resovle)
                       // const
                       onSave({

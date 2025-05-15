@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 
 interface RangeCardProps {
   value: number;
-  changeValue: (
-    key: 'score' | 'title' | 'description' | 'instruction',
-    value: number,
-  ) => void;
+  changeValue: (key: 'score' | 'title' | 'instruction', value: number) => void;
 
   error?: boolean;
   required?: boolean;

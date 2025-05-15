@@ -27,6 +27,7 @@ type Task = {
 interface TaskManagerProps {}
 const TaskManager: React.FC<TaskManagerProps> = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  console.log(tasks);
 
   useEffect(() => {
     DashboardApi.getTasksList({})
@@ -55,6 +56,8 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
   //   };
   const handleCheckBoxChange = (task_id: string | undefined) => {
+    console.log(task_id);
+
     // Find the task to check its current status
     const taskToUpdate = tasks.find((task) => task.task_id === task_id);
 
@@ -107,12 +110,18 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       priority: Priority,
       checked: false,
     };
+
     DashboardApi.AddTask(newTask).then(() => {
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-      setshowAddTaskModal(false);
-      setTaskTitle('');
-      setDeadline(null);
-      setPriority('High');
+      DashboardApi.getTasksList({}).then((response) => {
+        console.log(response);
+
+        setTasks(response.data);
+        setshowAddTaskModal(false);
+        setTaskTitle('');
+        setDeadline(null);
+        setPriority('High');
+      });
+      // setTasks((prevTasks) => [...prevTasks, newTask]);
     });
   };
   console.log(tasks);
@@ -133,6 +142,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           </div>
 
           <TextField
+            className="text-Text-Primary"
             newStyle
             value={taskTitle}
             onChange={(e) => {
@@ -145,7 +155,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           <div className="w-full flex items-center mt-4 gap-3">
             <div className="flex flex-col min-w-[222px] text-xs font-medium">
               <label className="mb-1">Deadline</label>
-              <SimpleDatePicker isLarge date={deadline} setDate={setDeadline} />
+              <SimpleDatePicker
+                textStyle
+                ClassName=""
+                isLarge
+                date={deadline}
+                setDate={setDeadline}
+              />
             </div>
             <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
               <label className="mb-1">Priority</label>
@@ -225,11 +241,11 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
         </div>
       </MainModal>
       <div
-        className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary"
-        style={{ height: (window.innerHeight - 200) / 2 + 'px' }}
+        className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden"
+        style={{ height: (window.innerHeight - 240) / 2 + 'px' }}
       >
         <div className="flex justify-between items-center mb-4 relative">
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
             {tasks.length > 1 && (
               <span className="text-xs font-medium text-Text-Triarty">
@@ -240,7 +256,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
           <ButtonPrimary onClick={() => setshowAddTaskModal(true)} size="small">
             <img src="/icons/add.svg" alt="" />
-            New task
+            New Task
           </ButtonPrimary>
         </div>
         {tasks.length < 1 ? (
@@ -251,7 +267,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-fit max-h-[193px]">
+          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-[80%]">
             {tasks.map((task) => (
               <li
                 key={task.task_id}

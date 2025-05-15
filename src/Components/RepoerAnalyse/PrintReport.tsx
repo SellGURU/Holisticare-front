@@ -51,6 +51,22 @@ const PrintReport: React.FC<PrintReportProps> = ({
   helthPlan,
   ActionPlan,
 }) => {
+  const transformConceringData = () => {
+    const originalData = ResolveConceringData();
+    return originalData.flatMap((item) =>
+      item.biomarkers.map((biomarker: any) => ({
+        name: biomarker.name,
+        Result: biomarker.Result,
+        Units: biomarker.Units,
+        'Lab Ref Range': biomarker['Lab Ref Range'],
+        Baseline: biomarker.Baseline,
+        'Optimal Range': biomarker['Optimal Range'],
+        Changes: biomarker.Changes,
+        subcategory: item.subcategory,
+      })),
+    );
+  };
+
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
       return '/icons/TreatmentPlan/IconApple.svg';
@@ -74,6 +90,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
     pageNumber++;
     return pageNumber;
   };
+  console.log(ResolveConceringData());
+  console.log(transformConceringData());
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
@@ -788,257 +806,197 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   Changes
                 </div>
               </div>
-              {ResolveConceringData()
-                .slice(0, 5)
-                .map((el) => {
+              {transformConceringData()
+                .slice(0, 14)
+                .map((el, index) => {
                   return (
                     <>
-                      <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
+                      <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
                         <div
-                          className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                          style={{ fontSize: 12, color: '#005F73' }}
+                          className=" text-gray-800"
+                          style={{
+                            fontSize: '12px',
+                            color: '#383838',
+                            width: 200,
+                          }}
                         >
-                          <div>
-                            <img src="/icons/arrow-square-down.svg" alt="" />
-                          </div>
-                          {el.subcategory}
+                          <div>{el.subcategory}</div>
+                          <div>{el.name}</div>
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: colorsText[index % 4],
+                          }}
+                        >
+                          {el.Result}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el.Units}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el['Lab Ref Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el.Baseline}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: '#888888',
+                          }}
+                        >
+                          {el['Optimal Range']}
+                        </div>
+                        <div
+                          className=" text-gray-800 text-center"
+                          style={{
+                            fontSize: '12px',
+                            width: '60px',
+                            color: colorsText[index % 4],
+                          }}
+                        >
+                          {el.Changes}
                         </div>
                       </div>
-                      {el.biomarkers.map((val: any, index: number) => {
-                        return (
-                          <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                            <div
-                              className=" text-gray-800"
-                              style={{
-                                fontSize: '12px',
-                                color: '#383838',
-                                width: 200,
-                              }}
-                            >
-                              {val.name}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {val.Result}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val.Units}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val['Lab Ref Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val.Baseline}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val['Optimal Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {val.Changes}
-                            </div>
-                          </div>
-                        );
-                      })}
                     </>
                   );
                 })}
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          <div
-            className=" "
-            style={{
-              backgroundColor: '#E9F0F2',
-              minHeight: '100vh',
-              padding: '24px 24px',
-              position: 'relative',
-              pageBreakAfter: 'always',
-            }}
-          >
-            <div className="px-2 relative" style={{ zIndex: 60 }}>
-              <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
-                <div
-                  className="text-gray-700 font-medium "
-                  style={{ width: 200, fontSize: 12, color: '#383838' }}
-                >
-                  Name
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Result
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Units
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Lab Ref Range
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Baseline
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Optimal Range
-                </div>
-                <div
-                  className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
-                >
-                  Changes
-                </div>
-              </div>
-              {ResolveConceringData()
-                .slice(5, 10)
-                .map((el) => {
-                  return (
-                    <>
-                      <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
-                        <div
-                          className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                          style={{ fontSize: 12, color: '#005F73' }}
-                        >
-                          <div>
-                            <img src="/icons/arrow-square-down.svg" alt="" />
-                          </div>
-                          {el.subcategory}
-                        </div>
+          {transformConceringData().length > 14 && (
+            <>
+              {Array.from({
+                length: Math.ceil((transformConceringData().length - 14) / 16),
+              }).map((_e, index1) => {
+                return (
+                  <>
+                    <div
+                      className=" "
+                      style={{
+                        backgroundColor: '#E9F0F2',
+                        minHeight: '100vh',
+                        padding: '24px 24px',
+                        position: 'relative',
+                        pageBreakAfter: 'always',
+                      }}
+                    >
+                      <div className="px-2 relative" style={{ zIndex: 60 }}>
+                        {transformConceringData()
+                          .slice(index1 * 16 + 14, index1 * 16 + 14 + 16)
+                          .map((el, index) => {
+                            return (
+                              <>
+                                <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                                  <div
+                                    className=" text-gray-800"
+                                    style={{
+                                      fontSize: '12px',
+                                      color: '#383838',
+                                      width: 200,
+                                    }}
+                                  >
+                                    <div>{el.subcategory}</div>
+                                    <div>{el.name}</div>
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Result}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Units}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Lab Ref Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Baseline}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Optimal Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Changes}
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          })}
                       </div>
-                      {el.biomarkers.map((val: any, index: number) => {
-                        return (
-                          <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
-                            <div
-                              className=" text-gray-800"
-                              style={{
-                                fontSize: '12px',
-                                color: '#383838',
-                                width: 200,
-                              }}
-                            >
-                              {val.name}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {val.Result}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val.Units}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val['Lab Ref Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val.Baseline}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: '#888888',
-                              }}
-                            >
-                              {val['Optimal Range']}
-                            </div>
-                            <div
-                              className=" text-gray-800 text-center"
-                              style={{
-                                fontSize: '12px',
-                                width: '60px',
-                                color: colorsText[index % 4],
-                              }}
-                            >
-                              {val.Changes}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  );
-                })}
-            </div>
-            <PrintFooter pageNumber={resolvePageNumber()} />
-          </div>
+                      <PrintFooter pageNumber={resolvePageNumber()} />
+                    </div>
+                  </>
+                );
+              })}
+            </>
+          )}
         </>
       )}
 
@@ -1177,78 +1135,97 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {TreatMentPlanData.map((el, index) => {
               return (
                 <>
-                  <div
-                    className="no-split relative  mt-14"
-                    style={{
-                      pageBreakAfter: 'always',
-                      minHeight: index == 0 ? '870px' : '1020px',
-                    }}
-                  >
-                    <div
-                      className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
-                      style={{
-                        width: '193px',
-                        borderRadius: '8px',
-                        borderBottomLeftRadius: '0px',
-                        borderBottomRightRadius: '0px',
-                        color: '#005F73',
-                      }}
-                    >
-                      <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                        <img
-                          src={resolveTreatmentPlanIcon(el.category)}
-                          alt=""
-                        />
-                      </div>
-                      {el.category}
-                    </div>
+                  {el.data.length > 0 ? (
+                    <>
+                      <div
+                        className="no-split relative  mt-14"
+                        style={{
+                          pageBreakAfter: 'always',
+                          minHeight: index == 0 ? '870px' : '1020px',
+                        }}
+                      >
+                        {index != 0 && <div className="h-8"></div>}
+                        <div
+                          className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
+                          style={{
+                            width: '193px',
+                            borderRadius: '8px',
+                            borderBottomLeftRadius: '0px',
+                            borderBottomRightRadius: '0px',
+                            color: '#005F73',
+                          }}
+                        >
+                          <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
+                            <img
+                              src={resolveTreatmentPlanIcon(el.category)}
+                              alt=""
+                            />
+                          </div>
+                          {el.category}
+                        </div>
 
-                    <div
-                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                      style={{ pageBreakAfter: 'always' }}
-                    >
-                      {el.data.slice(0, 5).map((el2: any) => {
-                        return (
-                          <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                        );
-                      })}
-                    </div>
-                    <PrintFooter pageNumber={resolvePageNumber()} />
-                  </div>
-                  {el.data.length > 5 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(5, 11).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
+                        <div
+                          className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                          style={{ pageBreakAfter: 'always' }}
+                        >
+                          {el.data.slice(0, 5).map((el2: any) => {
+                            return (
+                              <TreatmentPlanPrint
+                                data={el2}
+                              ></TreatmentPlanPrint>
+                            );
+                          })}
+                        </div>
+                        <PrintFooter pageNumber={resolvePageNumber()} />
                       </div>
-                      <PrintFooter pageNumber={resolvePageNumber()} />
-                    </div>
-                  )}
-                  {el.data.length > 10 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(11, 16).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
-                      </div>
-                    </div>
+                      {el.data.length > 5 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(5, 11).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                          <PrintFooter pageNumber={resolvePageNumber()} />
+                        </div>
+                      )}
+                      {el.data.length > 10 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(11, 16).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <></>
                   )}
                 </>
               );
@@ -1382,7 +1359,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   </div>
                 </div>
                 <ActionPlanOverview
-                  classData={caldenderData.slice(0, 4)}
+                  classData={caldenderData?.slice(0, 4)}
                 ></ActionPlanOverview>
               </>
             )}
@@ -1391,20 +1368,22 @@ const PrintReport: React.FC<PrintReportProps> = ({
             )} */}
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          <div
-            className="relative min-h-screen"
-            style={{ pageBreakAfter: 'always', padding: '24px' }}
-          >
-            {/* <PrintHeader /> */}
+          {caldenderData.length > 4 && (
+            <div
+              className="relative min-h-screen"
+              style={{ pageBreakAfter: 'always', padding: '24px' }}
+            >
+              {/* <PrintHeader /> */}
 
-            <ActionPlanOverview
-              classData={caldenderData.slice(4, 8)}
-            ></ActionPlanOverview>
-            {/* {caldenderData != null && caldenderData.length > 0 && (
-              <CalenderPrint data={caldenderData}></CalenderPrint>
-            )} */}
-            <PrintFooter pageNumber={resolvePageNumber()} />
-          </div>
+              <ActionPlanOverview
+                classData={caldenderData?.slice(4, 8)}
+              ></ActionPlanOverview>
+              {/* {caldenderData != null && caldenderData.length > 0 && (
+                <CalenderPrint data={caldenderData}></CalenderPrint>
+              )} */}
+              <PrintFooter pageNumber={resolvePageNumber()} />
+            </div>
+          )}
         </>
       )}
     </div>

@@ -23,7 +23,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 }) => {
   const [addData, setAddData] = useState({
     title: '',
-    description: '',
+    // description: '',
     score: 0,
     instruction: '',
   });
@@ -45,7 +45,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (selectedRow) {
       setAddData({
         title: selectedRow ? selectedRow.Title : '',
-        description: selectedRow ? selectedRow.Description : '',
+        // description: selectedRow ? selectedRow.Description : '',
         score: selectedRow ? selectedRow.Base_Score : 0,
         instruction: selectedRow ? selectedRow.Instruction : '',
       });
@@ -96,7 +96,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (pageType === 'Supplement') {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Dose: dose,
@@ -106,7 +106,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     } else if (pageType === 'Lifestyle') {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Value: Number(value),
@@ -117,7 +117,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     } else {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Total_Macros: {
@@ -133,7 +133,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const clear = () => {
     setAddData({
       title: '',
-      description: '',
+      // description: '',
       score: 0,
       instruction: '',
     });
@@ -145,7 +145,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     setSelectedRow();
     setErrors({
       title: false,
-      description: false,
+      // description: false,
       instruction: false,
       dose: false,
       unit: false,
@@ -161,7 +161,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
   const [errors, setErrors] = useState({
     title: false,
-    description: false,
+    // description: false,
     instruction: false,
     dose: false,
     unit: false,
@@ -177,7 +177,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const validateFields = () => {
     const newErrors = {
       title: !addData.title,
-      description: !addData.description,
+      // description: !addData.description,
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       value: pageType === 'Lifestyle' && !value,
@@ -241,7 +241,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           </div>
 
           {/* Description Field */}
-          <div className="flex flex-col mt-4 w-full gap-2">
+          {/* <div className="flex flex-col mt-4 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
               Description
             </div>
@@ -265,21 +265,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 This field is required.
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Base Score Field */}
-          <div className="flex flex-col mt-4 w-full">
-            <div className="text-xs font-medium text-Text-Primary">
-              Base Score
-            </div>
-            <RangeCardLibraryThreePages
-              value={addData.score}
-              changeValue={updateAddData}
-              showValidation={showValidation}
-              error={errors.score}
-              required={true}
-            />
-          </div>
 
           {/* Instruction Field */}
           <div className="flex flex-col mt-4 w-full gap-2">
@@ -565,6 +553,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               </div>
             </div>
           )}
+          <div className="flex flex-col mt-4 w-full">
+            <div className="text-xs font-medium text-Text-Primary">
+              Base Score
+            </div>
+            <RangeCardLibraryThreePages
+              value={addData.score}
+              changeValue={updateAddData}
+              showValidation={showValidation}
+              error={errors.score}
+              required={true}
+            />
+          </div>
 
           {/* Action Buttons */}
           <div className="w-full flex justify-end items-center p-2 mt-5">

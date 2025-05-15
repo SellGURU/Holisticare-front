@@ -160,10 +160,7 @@ const AddClient = () => {
             <div className="w-full flex justify-center items-center h-[80vh]">
               <div className=" w-[300px] md:w-[468px] h-[256px] md:h-[324px] bg-white rounded-[16px] border border-Gray-50 shadow-200">
                 <div className="w-full flex justify-center mt-4 md:mt-8">
-                  <img
-                    src="/public/icons/tick-circle-background-new.svg"
-                    alt=""
-                  />
+                  <img src="/icons/tick-circle-background-new.svg" alt="" />
                 </div>
                 <div className="">
                   <div className="text-center font-medium text-xs md:text-[14px] text-Text-Primary">
