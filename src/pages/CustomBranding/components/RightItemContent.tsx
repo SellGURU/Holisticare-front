@@ -15,7 +15,7 @@ interface RightItemContentProps {
 }
 
 const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
-  const [activeToggle, setActiveToggle] = useState('Health Plan Overview');
+  const [activeToggle, setActiveToggle] = useState('The App Overview');
   return (
     <div className="flex-grow-[1] h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
       <div className="w-full h-full">
