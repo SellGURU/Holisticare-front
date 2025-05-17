@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
 
-const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB in bytes
+const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB in bytes
 const ALLOWED_FILE_TYPES = [
   'application/pdf',
   'text/csv',
@@ -71,7 +71,7 @@ export const FilleHistory = () => {
   const validateFile = (file: File): boolean => {
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
-      setError(`File ${file.name} is too large. Maximum size is 4MB.`);
+      setError(`File ${file.name} is too large. Maximum size is 40MB.`);
       return false;
     }
 
