@@ -97,6 +97,35 @@ export const FilleHistory = () => {
     return true;
   };
 
+  const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const topSpacing = 80;
+      const addFileButtonHeight = 32;
+      const gapBetweenItems = 12;
+      const tableHeaderHeight = 48;
+      const bottomSpacing = 55;
+
+      const offset =
+        topSpacing +
+        addFileButtonHeight +
+        gapBetweenItems +
+        tableHeaderHeight +
+        bottomSpacing;
+
+      const height = window.innerHeight - offset;
+      setContainerMaxHeight(height);
+    };
+
+    calculateHeight();
+
+    window.addEventListener('resize', calculateHeight);
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+    };
+  }, []);
+
   return (
     <div className=" w-full">
       {error && <div className="mb-3 text-red-500 text-[10px]">{error}</div>}
@@ -119,7 +148,10 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto max-h-[77vh]">
+              <div
+                className="flex justify-center w-full items-start overflow-auto"
+                style={{ maxHeight: containerMaxHeight }}
+              >
                 <div className="w-full mt-2">
                   {upLoadingFiles.map((el: any) => {
                     return (
