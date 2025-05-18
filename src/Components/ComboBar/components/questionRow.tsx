@@ -22,7 +22,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   id,
   resolveForm,
   onTryComplete,
-  deleteRow,
+  // deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -48,7 +48,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
     if (countdown === 0 && timer !== undefined) {
       clearInterval(timer);
-      deleteRow();
+      // deleteRow();
       setisAssigned(false);
       // Remove the row or execute any other logic
     }
