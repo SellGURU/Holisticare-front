@@ -101,7 +101,7 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
   return (
     <>
       {isLoading ? (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           <Circleloader></Circleloader>
         </div>
       ) : (

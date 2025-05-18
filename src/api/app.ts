@@ -429,11 +429,13 @@ class Application extends Api {
   static addLabReport(
     data: any,
     onUploadProgress: (progressEvent: any) => void,
+    signal?: AbortSignal,
   ) {
     const response = this.post('/patients/add_lab_report', data, {
       onUploadProgress: (progressEvent: any) => {
         onUploadProgress(progressEvent);
       },
+      signal,
     });
     return response;
   }

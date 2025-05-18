@@ -119,7 +119,7 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto max-h-[450px]">
+              <div className="flex justify-center w-full items-start overflow-auto max-h-[77vh]">
                 <div className="w-full mt-2">
                   {upLoadingFiles.map((el: any) => {
                     return (
@@ -134,7 +134,12 @@ export const FilleHistory = () => {
                             prevUploadingFiles.filter((file) => file !== el),
                           );
                         }}
-                      ></FileBoxUpload>
+                        onCancel={(file) => {
+                          setUploadingFiles((prev) =>
+                            prev.filter((f) => f !== file),
+                          );
+                        }}
+                      />
                     );
                   })}
                   {data?.map((el: any) => {
