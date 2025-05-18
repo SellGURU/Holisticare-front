@@ -542,16 +542,19 @@ export const Questionary = () => {
               <div className="text-xs text-Text-Primary">
                 {questionsFormData.title}
               </div>
-              <div className='flex justify-end gap-2 items-center'>
-                <div className=' w-5 h-5 cursor-pointer' onClick={() => {
-                  setTryComplete(false)
-                }}>
+              <div className="flex justify-end gap-2 items-center">
+                <div
+                  className=" w-5 h-5 cursor-pointer"
+                  onClick={() => {
+                    setTryComplete(false);
+                  }}
+                >
                   <img src="/icons/close-red.svg" alt="" />
                 </div>
-                <div 
-                className={`${checkFormComplete()?'opacity-100 cursor-pointer':'opacity-50'} w-5 h-5 `}
-                onClick={() => {
-                  if(checkFormComplete()){
+                <div
+                  className={`${checkFormComplete() ? 'opacity-100 cursor-pointer' : 'opacity-50'} w-5 h-5 `}
+                  onClick={() => {
+                    if (checkFormComplete()) {
                       setSubmitLoading(true);
                       Application.SaveQuestionary({
                         member_id: id,
@@ -566,7 +569,9 @@ export const Questionary = () => {
                         .finally(() => {
                           setData((prevData: any) => {
                             return prevData.map((form: any) => {
-                              if (form.unique_id === questionsFormData.unique_id) {
+                              if (
+                                form.unique_id === questionsFormData.unique_id
+                              ) {
                                 return {
                                   ...form,
                                   status: 'completed',
@@ -577,23 +582,21 @@ export const Questionary = () => {
                           });
                           setSubmitLoading(false);
                         });
-                    
-                  }
-                  // Application.setGoogleFormEmty({
-                  //   data: questionsFormData,
-                  //   member_id: Number(id),
-                  // })
-                }}
+                    }
+                    // Application.setGoogleFormEmty({
+                    //   data: questionsFormData,
+                    //   member_id: Number(id),
+                    // })
+                  }}
                 >
-                {submitLoading ? (
-                  <div className=''>
-                    <SpinnerLoader color='#6CC24A'></SpinnerLoader>
-
-                  </div>
-                ) : (
-                  <img src="/icons/tick-square-background-green.svg" alt="" />
-                )}
-                </div>                
+                  {submitLoading ? (
+                    <div className="">
+                      <SpinnerLoader color="#6CC24A"></SpinnerLoader>
+                    </div>
+                  ) : (
+                    <img src="/icons/tick-square-background-green.svg" alt="" />
+                  )}
+                </div>
               </div>
               {/* <ButtonSecondary
                 disabled={!checkFormComplete()}
