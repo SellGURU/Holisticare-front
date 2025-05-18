@@ -1368,7 +1368,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             )} */}
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          {caldenderData.length > 4 && (
+          {caldenderData?.length > 4 && (
             <div
               className="relative min-h-screen"
               style={{ pageBreakAfter: 'always', padding: '24px' }}

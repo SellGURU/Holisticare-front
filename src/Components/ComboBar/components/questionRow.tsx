@@ -91,7 +91,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     //   setshowModal(false);
                     // });
                   }}
-                  className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+                  className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
                   <img className="" src="/icons/eye-green.svg" alt="" />
                   Preview
@@ -124,16 +124,18 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        Application.QuestionaryAction({
-                          member_id: id,
-                          q_unique_id: el.unique_id,
-                          action: 'assign',
-                        }).then(() => {
-                          setisAssigned(true);
-                          setshowModal(false);
-                        });
+                        if (!el.assinged_to_client) {
+                          Application.QuestionaryAction({
+                            member_id: id,
+                            q_unique_id: el.unique_id,
+                            action: 'assign',
+                          }).then(() => {
+                            setisAssigned(true);
+                            setshowModal(false);
+                          });
+                        }
                       }}
-                      className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                     >
                       <img
                         className="size-5"
