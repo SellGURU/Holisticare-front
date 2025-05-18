@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // import AddFilter from './addFilter';
-import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import MainModal from '../../MainModal';
-import TextField from '../../TextField';
-import SimpleDatePicker from '../../SimpleDatePicker';
 import DashboardApi from '../../../api/Dashboard';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import MainModal from '../../MainModal';
+import SimpleDatePicker from '../../SimpleDatePicker';
+import TextField from '../../TextField';
+import SpinnerLoader from '../../SpinnerLoader';
 // Define the new Task type
 type Task = {
   task_id?: string;
@@ -24,16 +24,13 @@ type Task = {
 //   date: { from: Date | null; to: Date | null };
 // };
 
-interface TaskManagerProps {}
-const TaskManager: React.FC<TaskManagerProps> = () => {
+const TaskManager = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  console.log(tasks);
-
+  const [loading, setLoading] = useState(false);
+  const [itemSelected, setItemSelected] = useState<string | undefined>('');
   useEffect(() => {
     DashboardApi.getTasksList({})
       .then((response) => {
-        console.log(response);
-
         setTasks(response.data);
       })
       .catch((error) => {
@@ -41,28 +38,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       });
   }, []);
 
-  // const [currentTasks, setCurrentTasks] = useState(tasks);
-
-  //   const handleCheckBoxChange = (task_id: string| undefined) => {
-  //     DashboardApi.checkTask({
-  //       task_id: task_id
-  //     }).then(()=>{
-  //  setTasks(
-  //       tasks.map((task) =>
-  //         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
-  //       ),
-  //     );
-  //     })
-
-  //   };
   const handleCheckBoxChange = (task_id: string | undefined) => {
-    console.log(task_id);
-
     // Find the task to check its current status
     const taskToUpdate = tasks.find((task) => task.task_id === task_id);
 
     // Proceed only if the task is found and it's not already checked
     if (taskToUpdate && !taskToUpdate.checked) {
+      setLoading(true);
       DashboardApi.checkTask({
         task_id: task_id,
       })
@@ -72,6 +54,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
               task.task_id === task_id ? { ...task, checked: true } : task,
             ),
           );
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error checking task:', error);
@@ -113,18 +96,14 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
     DashboardApi.AddTask(newTask).then(() => {
       DashboardApi.getTasksList({}).then((response) => {
-        console.log(response);
-
         setTasks(response.data);
         setshowAddTaskModal(false);
         setTaskTitle('');
         setDeadline(null);
         setPriority('High');
       });
-      // setTasks((prevTasks) => [...prevTasks, newTask]);
     });
   };
-  console.log(tasks);
   return (
     <>
       <MainModal
@@ -282,7 +261,10 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                       type="checkbox"
                       id={task.title}
                       checked={task.checked}
-                      onChange={() => handleCheckBoxChange(task.task_id)}
+                      onChange={() => {
+                        setItemSelected(task.task_id);
+                        handleCheckBoxChange(task.task_id);
+                      }}
                       className="hidden"
                     />
                     <div
@@ -307,6 +289,9 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                         </svg>
                       )}
                     </div>
+                    {loading && task.task_id === itemSelected && (
+                      <SpinnerLoader color="#005F73" />
+                    )}
 
                     <div
                       className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
