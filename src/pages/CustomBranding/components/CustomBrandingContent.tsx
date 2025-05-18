@@ -32,6 +32,9 @@ const CustomBrandingContent = () => {
       });
     }
   };
+  const handleDeleteImage = () => {
+    updateCustomTheme('selectedImage', null);
+  };
   const handleResetTheme = () => {
     setCustomTheme((prevTheme) => ({
       ...prevTheme,
@@ -62,7 +65,7 @@ const CustomBrandingContent = () => {
   const [loading, setLoading] = useState(false);
   const onSave = () => {
     setLoading(true);
-    if (customTheme.name) {
+    if (customTheme.name && customTheme.selectedImage) {
       const data: any = {
         logo: customTheme.selectedImage || '',
         name: customTheme.name,
@@ -87,10 +90,9 @@ const CustomBrandingContent = () => {
         <LeftItemContent
           customTheme={customTheme}
           handleImageUpload={handleImageUpload}
-          defaultPrimaryColor={defaultPrimaryColor}
-          defaultSecondaryColor={defaultSecondaryColor}
           handleResetTheme={handleResetTheme}
           updateCustomTheme={updateCustomTheme}
+          handleDeleteImage={handleDeleteImage}
           onSave={onSave}
           loading={loading}
         />

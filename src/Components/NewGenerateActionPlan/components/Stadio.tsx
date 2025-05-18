@@ -294,7 +294,7 @@ const Stadio: FC<StadioProps> = ({
             Score: addData.Score ?? 0,
             Days: addData.Days ?? [],
             Description: addData.Description ?? '',
-            Base_Score: addData.Base_Score ?? 0,
+            // Base_Score: addData.Base_Score ?? 0,
             'System Score': 0,
             Task_Type: 'Action',
             Layers: {
@@ -302,6 +302,7 @@ const Stadio: FC<StadioProps> = ({
               second_layer: '',
               third_layer: '',
             },
+            ['Practitioner Comments']: addData['Practitioner Comments'] ?? [],
             Sections: addData.Sections ?? [],
             Activity_Filters: addData.Activity_Filters ?? [],
             Frequency_Type: addData.frequencyType ?? '',

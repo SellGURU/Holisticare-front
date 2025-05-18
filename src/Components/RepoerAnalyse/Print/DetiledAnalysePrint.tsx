@@ -115,7 +115,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                   fontSize: '12px',
                 }}
               >
-                {el?.more_info}
+                {el?.more_info.substring(0, 500)}
               </div>
             </div>
           );

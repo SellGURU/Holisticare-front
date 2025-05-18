@@ -117,11 +117,9 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   </>
                 ) : (
                   <>
-                    {(data.chart_bounds[el.key].label.toLowerCase() ==
-                      data.values[0].toLowerCase() ||
+                    {
                       // el.value[0]?.toString().includes(data.values[0]) ||
-                      data.status[0] == el.key) &&
-                      !justView && (
+                      data.status[0] == el.key && !justView && (
                         <div
                           className={`absolute  top-[2px]  z-10`}
                           style={{
@@ -135,7 +133,8 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                             {data.values[0]} <span>{data.unit}</span>
                           </div>
                         </div>
-                      )}
+                      )
+                    }
                   </>
                 )}
               </div>

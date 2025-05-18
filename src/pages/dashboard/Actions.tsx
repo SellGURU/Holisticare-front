@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
@@ -47,6 +47,24 @@ const Actions: React.FC = () => {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
+  // const [, setOverflowingIndices] = useState<number[]>([]);
+  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // useEffect(() => {
+  //   const checkOverflow = () => {
+  //     const newOverflowing: number[] = [];
+  //     textRefs.current.forEach((el, index) => {
+  //       if (el && el.scrollWidth > el.clientWidth) {
+  //         newOverflowing.push(index);
+  //       }
+  //     });
+  //     setOverflowingIndices(newOverflowing);
+  //   };
+
+  //   checkOverflow();
+  //   window.addEventListener('resize', checkOverflow);
+  //   return () => window.removeEventListener('resize', checkOverflow);
+  // }, [filteredActions, expandedCards]);
 
   return (
     <>
@@ -57,7 +75,7 @@ const Actions: React.FC = () => {
       ) : (
         <div
           className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4"
-          style={{ height: window.innerHeight - 200 + 'px' }}
+          style={{ height: window.innerHeight - 240 + 'px' }}
         >
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">
@@ -70,7 +88,7 @@ const Actions: React.FC = () => {
             />
           </div>
 
-          <div className="w-full shadow-200 flex mt-3">
+          <div className="w-full  flex mt-3 ">
             {['All', 'Resolved', 'Pending'].map((type) => (
               <div
                 key={type}
@@ -85,8 +103,8 @@ const Actions: React.FC = () => {
                       : ''
                 } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
-                    ? 'bg-backgroundColor-Main border-Primary-DeepTeal'
-                    : 'border-Gray-50 bg-white'
+                    ? 'bg-backgroundColor-Main  border-Primary-DeepTeal'
+                    : 'border-[#E2F1F8] bg-white'
                 }`}
               >
                 {type}
@@ -97,7 +115,7 @@ const Actions: React.FC = () => {
             <>
               <div
                 className=" w-full pr-2 flex flex-col items-center justify-center"
-                style={{ height: window.innerHeight - 350 + 'px' }}
+                style={{ height: window.innerHeight - 370 + 'px' }}
               >
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
@@ -108,7 +126,7 @@ const Actions: React.FC = () => {
           ) : (
             <ul
               className="mt-5 w-full overflow-y-scroll pr-2"
-              style={{ height: window.innerHeight - 350 + 'px' }}
+              style={{ height: window.innerHeight - 370 + 'px' }}
             >
               {filteredActions.map((action, index) => (
                 <li
@@ -137,7 +155,7 @@ const Actions: React.FC = () => {
                         {action.state}
                       </div>
                       <img
-                        className={`size-3 cursor-pointer transform transition-transform ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
+                        className={`size-3 cursor-pointer transform transition-transform  ${expandedCards.includes(index) ? 'rotate-180' : ''}`}
                         src="/icons/arrow-down-blue.svg"
                         alt=""
                         onClick={() => toggleExpand(index)}
@@ -145,16 +163,24 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] text-Text-Secondary px-4 flex justify-between items-center gap-4 mt-2 text-ellipsis w-full text-justify ${expandedCards.includes(index) ? '' : 'truncate'}`}
+                    className={`text-[10px] px-4 text-Text-Secondary flex justify-between items-start gap-4 mt-2 transition-all ${
+                      expandedCards.includes(index)
+                        ? 'h-auto'
+                        : 'h-[20px] overflow-hidden'
+                    }`}
                   >
                     <div
-                      title={action.alert}
-                      className="max-w-[267px] truncate"
+                      ref={(el) => (textRefs.current[index] = el)}
+                      className={`  ${
+                        expandedCards.includes(index)
+                          ? 'whitespace-normal'
+                          : 'truncate max-w-[277px]'
+                      }`}
                     >
                       {action.alert}
                     </div>
 
-                    <div className="flex items-center gap-2 mr-2">
+                    <div className="flex items-center gap-2 ">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
                           Proceed{' '}

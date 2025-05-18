@@ -46,10 +46,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
   }, []);
 
   const validateFile = (file: File) => {
-    // Check file size (4MB limit = 4 * 1024 * 1024 bytes)
-    const maxSize = 4 * 1024 * 1024; // 4MB in bytes
+    // Check file size (40MB limit = 40 * 1024 * 1024 bytes)
+    const maxSize = 40 * 1024 * 1024; // 40MB in bytes
     if (file.size > maxSize) {
-      return `${file.name} exceeds the 4MB size limit`;
+      return `${file.name} exceeds the 40MB size limit`;
     }
 
     // Check file format based on extension
@@ -105,7 +105,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Drag and drop your test file here or click to upload.
               </div>
               <div className="text-Text-Secondary text-[12px] text-center mt-2 w-[220px] xs:w-[300px] md:w-[500px]">
-                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 4MB)`}
+                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 40MB)`}
               </div>
               {errorMessage && (
                 <div className="text-red-500 text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">

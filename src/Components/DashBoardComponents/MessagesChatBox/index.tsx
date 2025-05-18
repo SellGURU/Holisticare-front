@@ -17,6 +17,8 @@ type Message = {
   replied_message_id: number | null;
   sender_type: string;
   images?: string[];
+  timestamp: number;
+  name: string;
 };
 type SendMessage = {
   conversation_id?: number;
@@ -28,6 +30,7 @@ type SendMessage = {
 
 const MessagesChatBox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
   const [input, setInput] = useState('');
@@ -55,9 +58,14 @@ const MessagesChatBox = () => {
   }, []);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
-
   const usernameParams = searchParams.get('username');
+  const statusParams = searchParams.get('status');
+  const [oneLoadingUser, setOneLoadingUser] = useState(true);
   const userMessagesList = (member_id: number) => {
+    if (oneLoadingUser) {
+      setIsLoading(true);
+      setOneLoadingUser(false);
+    }
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
@@ -66,14 +74,27 @@ const MessagesChatBox = () => {
         setIsLoading(false);
       });
   };
+  const aiMessagesList = (member_id: number) => {
+    setIsLoading(true);
+    Application.userMessagesList({ member_id: member_id, message_from: 'ai' })
+      .then((res) => {
+        setAiMessages(res.data.reverse());
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   useEffect(() => {
     if (id != undefined) {
-      setIsLoading(true);
+      setOneLoadingUser(true);
       userMessagesList(parseInt(id));
-    } else {
-      setIsLoading(false);
     }
   }, [id]);
+  useEffect(() => {
+    if (id != undefined && aiMode === true) {
+      aiMessagesList(parseInt(id));
+    }
+  }, [aiMode, id]);
   useEffect(() => {
     if (id != undefined && usernameParams != undefined) {
       setMemberId(id);
@@ -84,10 +105,7 @@ const MessagesChatBox = () => {
       setMessages([]);
     }
   }, [id, usernameParams]);
-  const [selectedBenchMarks, setSelectedBenchMarks] = useState<Array<string>>(
-    [],
-  );
-  console.log(selectedBenchMarks);
+  const [, setSelectedBenchMarks] = useState<Array<string>>([]);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const lastConversationId =
@@ -112,6 +130,8 @@ const MessagesChatBox = () => {
           sender_type: 'user',
           time: '',
           images: Images,
+          timestamp: Date.now(),
+          name: '',
         },
       ]);
       setInput('');
@@ -147,7 +167,7 @@ const MessagesChatBox = () => {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, aiMode]);
   // const handleUpload = (file: File) => {
   //   const reader = new FileReader();
   //   reader.onloadend = () => {
@@ -216,7 +236,7 @@ const MessagesChatBox = () => {
                       {username}
                     </div>
                     <div className="text-[10px] text-Text-Quadruple">
-                      Offline
+                      {statusParams ? 'Online' : 'Offline'}
                     </div>
                   </div>
                 </div>
@@ -288,7 +308,13 @@ const MessagesChatBox = () => {
                               <div className="text-Text-Primary font-medium text-[12px]">
                                 {username}{' '}
                                 <span className="text-Text-Primary ml-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
                               </div>
                               <div className="flex flex-row gap-2">
@@ -317,11 +343,17 @@ const MessagesChatBox = () => {
                         <>
                           <div className="flex justify-end items-start gap-1">
                             <div className="flex flex-col items-end">
-                              <div className="text-Text-Primary text-[12px]">
+                              <div className="text-Text-Primary text-xs font-medium">
                                 <span className="text-Text-Primary mr-1">
-                                  {message.time}
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
                                 </span>
-                                Me{' '}
+                                {message.name}
                               </div>
                               <div className="flex flex-row gap-2">
                                 {message.images?.map((image, index) => {
@@ -357,7 +389,7 @@ const MessagesChatBox = () => {
                             <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                               <img
                                 className="rounded-full"
-                                src={`https://ui-avatars.com/api/?name=Me`}
+                                src={`https://ui-avatars.com/api/?name=${message.name}`}
                                 alt=""
                               />
                             </div>
@@ -371,7 +403,120 @@ const MessagesChatBox = () => {
                   ))}
                 </>
               )}
-              {messages.length === 0 || aiMode ? (
+              {aiMode && (
+                <>
+                  {aiMessages.map((message, index: number) => (
+                    <>
+                      {message.sender_type === 'patient' ? (
+                        <>
+                          {index == messages.length - 1 && (
+                            <div ref={messagesEndRef}></div>
+                          )}
+                          <div className="flex justify-start items-start gap-1">
+                            <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
+                              <img
+                                src={`https://ui-avatars.com/api/?name=${username}`}
+                                alt=""
+                                className="rounded-full"
+                              />
+                            </div>
+                            <div>
+                              <div className="text-Text-Primary font-medium text-xs">
+                                {username}{' '}
+                                <span className="text-Text-Primary ml-1">
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
+                                </span>
+                              </div>
+                              <div className="flex flex-row gap-2">
+                                {message.images?.map((image, index) => {
+                                  return (
+                                    <img
+                                      src={image}
+                                      alt=""
+                                      key={index}
+                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                      onClick={() => handleImageClick(image)}
+                                    />
+                                  );
+                                })}
+                              </div>
+                              <div
+                                className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
+                                style={{ lineHeight: '26px' }}
+                              >
+                                {formatText(message.message_text)}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex justify-end items-start gap-1">
+                            <div className="flex flex-col items-end">
+                              <div className="text-Text-Primary text-xs font-medium">
+                                <span className="text-Text-Primary mr-1">
+                                  {new Date(
+                                    message.timestamp,
+                                  ).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  })}
+                                </span>
+                                AI Copilot
+                              </div>
+                              <div className="flex flex-row gap-2">
+                                {message.images?.map((image, index) => {
+                                  return (
+                                    <img
+                                      src={image}
+                                      alt=""
+                                      key={index}
+                                      className="w-32 h-32 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                                      onClick={() => handleImageClick(image)}
+                                    />
+                                  );
+                                })}
+                              </div>
+                              <div className="flex items-end ml-1">
+                                {message.isSending ? (
+                                  <span>
+                                    <MoonLoader color="#383838" size={12} />
+                                  </span>
+                                ) : (
+                                  <span>
+                                    <SvgIcon
+                                      src="./icons/tick-green.svg"
+                                      color="#8a8a8a"
+                                    />
+                                  </span>
+                                )}
+                                <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                                  {formatText(message.message_text)}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center">
+                              <img src="/icons/ai-pic-messages.svg" alt="" />
+                            </div>
+                          </div>
+                          {index == messages.length - 1 && (
+                            <div ref={messagesEndRef}></div>
+                          )}
+                        </>
+                      )}
+                    </>
+                  ))}
+                </>
+              )}
+              {(aiMode === false && messages.length === 0) ||
+              (aiMode === true && aiMessages.length === 0) ? (
                 <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
                   <img src="/icons/empty-messages.svg" alt="" />
                   {username

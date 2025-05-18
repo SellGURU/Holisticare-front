@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import Application from '../../../api/app';
 import SearchBox from '../../SearchBox';
 import StatusMenu from '../../StatusMenu';
@@ -17,10 +17,14 @@ interface Patient {
   tags: string[];
   age: number;
 }
+interface SwitchClientProps {
+  handleCloseSlideOutPanel: () => void;
+}
 
-export const SwitchClient = () => {
+export const SwitchClient: FC<SwitchClientProps> = ({
+  handleCloseSlideOutPanel,
+}) => {
   const { id } = useParams<{ id: string }>();
-  console.log(id);
   const [activeMemberID, setActiveMemberID] = useState<any>(Number(id));
   const [isLoading, setisLoading] = useState(false);
   const [activeStatus, setActiveStatus] = useState('All');
@@ -101,6 +105,7 @@ export const SwitchClient = () => {
       if (activeClient) {
         const { member_id, name } = activeClient;
         navigate(`/report/${member_id}/${encodeURIComponent(name)}`);
+        handleCloseSlideOutPanel();
       }
     }
   };

@@ -32,6 +32,8 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
+  console.log(defalts);
+
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -199,13 +201,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Activity_Location: selectedLocations,
       // Times: selectedTimes,
       'Client Notes': notes,
-      frequencyType: frequencyType,
+      // frequencyType: frequencyType,
       frequencyDates:
         frequencyType == 'weekly'
           ? selectedDays
           : frequencyType == 'monthly'
             ? selectedDaysMonth
             : null,
+      frequencyType: frequencyType,
+
       // Description: description,
       // Base_Score: baseScore,
       Activity_Filters: addData,

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import SpinnerLoader from '../../../Components/SpinnerLoader';
 
 interface LeftItemContentProps {
@@ -14,8 +13,6 @@ interface LeftItemContentProps {
     lastUpdate: string;
   };
   handleImageUpload: (event: any) => void;
-  defaultPrimaryColor: string;
-  defaultSecondaryColor: string;
   handleResetTheme: () => void;
   updateCustomTheme: (
     key:
@@ -26,6 +23,7 @@ interface LeftItemContentProps {
       | 'selectedImage',
     value: any,
   ) => void;
+  handleDeleteImage: () => void;
   onSave: () => void;
   loading: boolean;
 }
@@ -33,10 +31,9 @@ interface LeftItemContentProps {
 const LeftItemContent: FC<LeftItemContentProps> = ({
   customTheme,
   handleImageUpload,
-  defaultPrimaryColor,
-  defaultSecondaryColor,
   handleResetTheme,
   updateCustomTheme,
+  handleDeleteImage,
   onSave,
   loading,
 }) => {
@@ -47,13 +44,15 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   const [errorName, setErrorName] = useState('');
   const handleChangeHeadLine = (e: any) => {
     const value = e.target.value;
+    updateCustomTheme('headLine', value);
+    if (value === '') {
+      setErrorHeadLine('');
+      return;
+    }
     if (value.length < 3 || value.length > 25) {
       setErrorHeadLine('Must be between 3 and 25 characters.');
     } else {
       setErrorHeadLine('');
-    }
-    if (value.length <= 25) {
-      updateCustomTheme('headLine', value);
     }
   };
   const handleChangeName = (e: any) => {
@@ -97,7 +96,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               </div>
               <Tooltip
                 id="logo-tooltip"
-                place="top"
+                place="right-end"
                 className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
               >
                 <div className="flex items-center gap-1">
@@ -110,28 +109,36 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 </div>
               </Tooltip>
             </div>
-            <div
-              className="w-[52px] h-[52px] border-[0.52px] border-Primary-DeepTeal rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {customTheme.selectedImage ? (
-                <img
-                  src={customTheme.selectedImage}
-                  alt="Uploaded"
-                  className="w-full h-full object-cover"
+            <div className="p-[1px] rounded-lg bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A] relative">
+              <div
+                className="w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {customTheme.selectedImage ? (
+                  <img
+                    src={customTheme.selectedImage}
+                    alt="Uploaded"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-Text-Quadruple text-[11px] text-center">
+                    Clinic Logo
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
                 />
-              ) : (
-                <div className="text-Text-Quadruple text-[11px] text-center">
-                  Clinic Logo
-                </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-              />
+              </div>
+              <div
+                className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
+                onClick={handleDeleteImage}
+              >
+                <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -146,7 +153,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               </div>
               <Tooltip
                 id="name-tooltip"
-                place="top"
+                place="right-end"
                 className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
               >
                 <div className="flex items-center gap-1">
@@ -182,7 +189,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               </div>
               <Tooltip
                 id="headline-tooltip"
-                place="top"
+                place="right-end"
                 className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
               >
                 <div className="flex items-center gap-1">
@@ -258,31 +265,19 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end mb-1 mr-1">
         <div
-          className={`font-medium text-xs cursor-pointer ${
-            defaultPrimaryColor !== customTheme.primaryColor ||
-            defaultSecondaryColor !== customTheme.secondaryColor
-              ? 'text-Primary-EmeraldGreen'
-              : 'text-Disable'
-          }`}
+          className="text-Disable text-sm font-medium cursor-pointer"
           onClick={handleResetTheme}
         >
           Back to Default
         </div>
-        <ButtonSecondary
-          ClassName={`rounded-[20px] !w-[160px] ml-10 text-nowrap shadow-Btn ${customTheme.name ? '' : '!bg-Disable'}`}
+        <div
+          className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer"
           onClick={onSave}
         >
-          {loading ? (
-            <SpinnerLoader />
-          ) : (
-            <>
-              <img src="/icons/tick-square.svg" alt="" />
-              Apply Changes
-            </>
-          )}
-        </ButtonSecondary>
+          {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
+        </div>
       </div>
     </div>
   );

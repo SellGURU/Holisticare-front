@@ -14,7 +14,7 @@ const ProgressCalenderView: FC<ProgressCalenderViewProps> = ({
     <div className="w-full h-[112px] rounded-2xl bg-backgroundColor-Card border border-Gray-50 p-4 flex justify-between">
       <div className="flex flex-col h-full justify-between">
         <div className="font-medium text-sm text-Text-Primary">Progress</div>
-        <div className="text-[10px] text-Text-Primary text-justify max-w-[400px] 2xl:max-w-[500px]">
+        <div className="text-[10px] text-Text-Primary text-justify xl:max-w-[300px] 2xl:max-w-[400px]">
           Stay connected to your clients' journey with real-time progress
           tracking. Visualize their achievements, identify trends, and celebrate
           milestones—all to foster accountability and inspire lasting wellness

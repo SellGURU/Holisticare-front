@@ -542,7 +542,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                     >
                       <img src="/icons/star.svg" alt="" />
-                      Remove from High-Priorities
+                      Remove from High-Priority
                     </div>
                   )
                 )}

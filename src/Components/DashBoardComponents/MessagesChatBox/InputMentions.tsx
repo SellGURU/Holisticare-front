@@ -29,7 +29,6 @@ const InputMentions: React.FC<InputMentionsProps> = ({
     const mentionRegex = /@\w+(\s\w+)?/g;
 
     onChange(inputValue);
-    console.log(inputValue);
 
     const foundMentions = inputValue.match(mentionRegex) || [];
     changeBenchMarks(foundMentions);
