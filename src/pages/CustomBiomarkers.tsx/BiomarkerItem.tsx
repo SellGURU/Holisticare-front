@@ -15,6 +15,7 @@ interface BiomarkerItemProps {
 
 const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   const [activeEdit, setActiveEdit] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -53,6 +54,14 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
       )[0],
     );
   }, [gender, ageRange, data]);
+  // useEffect(() => {
+  //   if (showSuccess) {
+  //     setTimeout(() => {
+  //       setActiveEdit(false);
+  //       setShowSuccess(false);
+  //     }, 30000);
+  //   }
+  // }, [showSuccess]);
   const changeValue = (key: string, index: number, newValue: any) => {
     setActive('Edited');
     setValues((pre) => {
@@ -76,6 +85,13 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
       return newData;
     });
   };
+  useEffect(() => {
+    if (showSuccess) {
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+    }
+  }, [showSuccess]);
   const [active, setActive] = useState('Edited');
   const avilableGenders = () => {
     const resolvedValues: Array<string> = [];
@@ -136,115 +152,149 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
             {activeEdit ? (
               <>
                 {Editvalues.length > 0 && (
-                  <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
-                    <div
-                      onClick={() => {
-                        setActive('Edited');
-                        setValues(Editvalues);
-                      }}
-                      className="flex justify-center cursor-pointer gap-1 items-center"
-                    >
-                      <SvgIcon
-                        width="16px"
-                        height="16px"
-                        color={active == 'Edited' ? '#005F73' : '#888888'}
-                        src="./icons/edit-green.svg"
-                      ></SvgIcon>
-                      <div
-                        className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                      >
-                        Edited
-                      </div>
-                    </div>
-                    <div
-                      onClick={() => {
-                        setActive('Original');
-                        setValues(
-                          sortKeysWithValues(activeBiomarker.chart_bounds),
-                        );
-                      }}
-                      className="flex justify-center cursor-pointer gap-1 items-center"
-                    >
-                      <SvgIcon
-                        width="16px"
-                        height="16px"
-                        color={active == 'Original' ? '#005F73' : '#888888'}
-                        src="/icons/task-square.svg"
-                      ></SvgIcon>
-                      <div
-                        className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                      >
-                        Original
-                      </div>
-                    </div>
-                    <div
-                      onClick={() => {
-                        setActiveEdit(false);
-                        console.log(values);
-                        const groupsData = data.age_groups.map((el: any) => {
-                          if (
-                            el.gender == gender &&
-                            el.min_age + '-' + el.max_age == ageRange
-                          ) {
-                            return {
-                              ...el,
-                              chart_bounds: {
-                                ...el.chart_bounds,
-                                ...(el.chart_bounds.Ok && {
-                                  Ok: {
-                                    label: el.chart_bounds.Ok.label,
-                                    range: [
-                                      values.filter((e) => e.key == 'Ok')[0]
-                                        .value,
-                                    ],
-                                  },
-                                }),
-                                ...(el.chart_bounds['Needs Focus'] && {
-                                  'Needs Focus': {
-                                    label:
-                                      el.chart_bounds['Needs Focus']?.label,
-                                    range: [
-                                      values.filter(
-                                        (e) => e.key == 'Needs Focus',
-                                      )[0].value,
-                                    ],
-                                  },
-                                }),
-                                ...(el.chart_bounds['Good'] && {
-                                  Good: {
-                                    label: el.chart_bounds['Good']?.label,
-                                    range: [
-                                      values.filter((e) => e.key == 'Good')[0]
-                                        .value,
-                                    ],
-                                  },
-                                }),
-                                ...(el.chart_bounds['Excellent'] && {
-                                  Excellent: {
-                                    label: el.chart_bounds['Excellent']?.label,
-                                    range: [
-                                      values.filter(
-                                        (e) => e.key == 'Excellent',
-                                      )[0].value,
-                                    ],
-                                  },
-                                }),
-                              },
-                            };
-                          } else {
-                            return el;
-                          }
-                        });
-                        OnSave({ ...data, age_groups: groupsData });
-                      }}
-                    >
-                      <SvgIcon
-                        color="#6CC24A"
-                        src="./icons/tick-circle-background.svg"
-                      ></SvgIcon>
-                      {/* <img src="./icons/tick-circle-background.svg" alt="" /> */}
-                    </div>
-                  </div>
+                  <>
+                    {showSuccess ? (
+                      <>
+                        <div className=" bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
+                          <img
+                            src="/icons/tick-circle-large.svg"
+                            alt=""
+                            className="w-5 h-5"
+                          />
+                          <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
+                            Changes applied successfully.
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
+                          <div
+                            onClick={() => {
+                              setActive('Edited');
+                              setValues(Editvalues);
+                            }}
+                            className="flex justify-center cursor-pointer gap-1 items-center"
+                          >
+                            <SvgIcon
+                              width="16px"
+                              height="16px"
+                              color={active == 'Edited' ? '#005F73' : '#888888'}
+                              src="./icons/edit-green.svg"
+                            ></SvgIcon>
+                            <div
+                              className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                            >
+                              Edited
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => {
+                              setActive('Original');
+                              setValues(
+                                sortKeysWithValues(
+                                  activeBiomarker.chart_bounds,
+                                ),
+                              );
+                            }}
+                            className="flex justify-center cursor-pointer gap-1 items-center"
+                          >
+                            <SvgIcon
+                              width="16px"
+                              height="16px"
+                              color={
+                                active == 'Original' ? '#005F73' : '#888888'
+                              }
+                              src="/icons/task-square.svg"
+                            ></SvgIcon>
+                            <div
+                              className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
+                            >
+                              Original
+                            </div>
+                          </div>
+                          <div
+                            onClick={() => {
+                              // console.log(values);
+                              const groupsData = data.age_groups.map(
+                                (el: any) => {
+                                  if (
+                                    el.gender == gender &&
+                                    el.min_age + '-' + el.max_age == ageRange
+                                  ) {
+                                    return {
+                                      ...el,
+                                      chart_bounds: {
+                                        ...el.chart_bounds,
+                                        ...(el.chart_bounds.Ok && {
+                                          Ok: {
+                                            label: el.chart_bounds.Ok.label,
+                                            range: [
+                                              values.filter(
+                                                (e) => e.key == 'Ok',
+                                              )[0].value,
+                                            ],
+                                          },
+                                        }),
+                                        ...(el.chart_bounds['Needs Focus'] && {
+                                          'Needs Focus': {
+                                            label:
+                                              el.chart_bounds['Needs Focus']
+                                                ?.label,
+                                            range: [
+                                              values.filter(
+                                                (e) => e.key == 'Needs Focus',
+                                              )[0].value,
+                                            ],
+                                          },
+                                        }),
+                                        ...(el.chart_bounds['Good'] && {
+                                          Good: {
+                                            label:
+                                              el.chart_bounds['Good']?.label,
+                                            range: [
+                                              values.filter(
+                                                (e) => e.key == 'Good',
+                                              )[0].value,
+                                            ],
+                                          },
+                                        }),
+                                        ...(el.chart_bounds['Excellent'] && {
+                                          Excellent: {
+                                            label:
+                                              el.chart_bounds['Excellent']
+                                                ?.label,
+                                            range: [
+                                              values.filter(
+                                                (e) => e.key == 'Excellent',
+                                              )[0].value,
+                                            ],
+                                          },
+                                        }),
+                                      },
+                                    };
+                                  } else {
+                                    return el;
+                                  }
+                                },
+                              );
+                              setShowSuccess(true);
+                              setTimeout(() => {
+                                OnSave({ ...data, age_groups: groupsData });
+                                setActiveEdit(false);
+                              }, 3000);
+                            }}
+                          >
+                            <SvgIcon
+                              color="#6CC24A"
+                              src="./icons/tick-circle-background.svg"
+                            ></SvgIcon>
+                            {/* <img src="./icons/tick-circle-background.svg" alt="" /> */}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </>
                 )}
               </>
             ) : (
