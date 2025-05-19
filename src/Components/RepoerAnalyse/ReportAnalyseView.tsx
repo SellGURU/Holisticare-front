@@ -16,7 +16,7 @@ import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofr
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 
 import Point from './Point';
-import resolvePosition from './resolvePosition';
+import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
 import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
@@ -68,6 +68,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
       (res) => {
         setReferenceData(res.data);
+        clearUsedPositions();
       },
     );
     Application.getClientSummaryCategories({
@@ -242,6 +243,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     console.log(refData);
     return refData;
   };
+  // useEffect(() => {
+  //   clearUsedPositions();
+  // }, [memberID]);
   const resolveSubCategories = () => {
     const refData: Array<any> = [];
     referenceData?.categories.forEach((el: any) => {
