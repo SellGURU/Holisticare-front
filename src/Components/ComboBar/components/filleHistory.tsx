@@ -60,7 +60,9 @@ export const FilleHistory = () => {
     const validFormats = ['.pdf', '.docx'];
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!validFormats.includes(fileExtension)) {
-      setError(`File ${file.name} has an unsupported format. Supported formats: PDF and DOCX files`);
+      setError(
+        `File ${file.name} has an unsupported format. Supported formats: PDF and DOCX files`,
+      );
       return false;
     }
 

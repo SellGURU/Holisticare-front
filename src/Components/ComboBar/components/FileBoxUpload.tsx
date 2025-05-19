@@ -147,7 +147,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
                 onClick={handleCancelUpload}
               />
             ) : isFailed ? (
-            <></>
+              <></>
             ) : (
               <img
                 onClick={() => {
@@ -194,9 +194,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
           </div>
         </div>
         {isFailed && (
-          <div className="text-red-500 text-[10px] mt-1">
-            {errorMessage}
-          </div>
+          <div className="text-red-500 text-[10px] mt-1">{errorMessage}</div>
         )}
         {!isCompleted && (
           <>
