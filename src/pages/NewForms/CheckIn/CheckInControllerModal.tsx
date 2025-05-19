@@ -30,7 +30,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
-        return 'Create a Check-In';
+        return 'Create a Check-in';
       case 'Reposition':
         return 'Reposition Check-in';
       case 'Edit':
@@ -59,6 +59,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
       case 'Reposition':
@@ -92,6 +93,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
     }
@@ -174,7 +176,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <div
             onClick={() => {
               if (!isDisable()) {
-                if (step == 0) {
+                if (step == 0 && mode != 'Reposition') {
                   setStep(1);
                 } else {
                   addCheckinForm();
@@ -213,6 +215,7 @@ interface AddCheckInProps {
   upChecked: boolean;
   upMinutes: number;
   upSeconds: number;
+  mode: string;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -225,6 +228,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   upChecked,
   upMinutes,
   upSeconds,
+  mode,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -247,7 +251,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
   return (
     <>
-      {step == 0 ? (
+      {step == 0 || mode == 'Reposition' ? (
         <>
           {questions.length > 0 && (
             <>

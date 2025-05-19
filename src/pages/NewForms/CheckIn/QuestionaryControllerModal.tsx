@@ -68,6 +68,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
       case 'Reposition':
@@ -101,6 +102,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
     }
@@ -157,7 +159,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-              {templateData == null && mode == 'Add' && (
+              {templateData == null && mode == 'Add' ? (
                 <div className="w-full mt-6">
                   <TextField
                     type="text"
@@ -168,6 +170,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                     onChange={(e) => setTitleForm(e.target.value)}
                   />
                 </div>
+              ) : (
+                ''
               )}
               <div className="w-full text-xs text-Text-Primary font-medium mt-6">
                 {templateData == null ? 'Questions' : 'Initial Questionnaire'}
@@ -190,7 +194,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div
             onClick={() => {
               if (!isDisable()) {
-                if (step == 0) {
+                if (step == 0 && mode != 'Reposition') {
                   setStep(1);
                 } else {
                   addCheckinForm();
@@ -229,6 +233,7 @@ interface AddCheckInProps {
   upChecked: boolean;
   upMinutes: number;
   upSeconds: number;
+  mode: string;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -241,6 +246,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   upChecked,
   upMinutes,
   upSeconds,
+  mode,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -266,7 +272,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   }, [upQuestions]);
   return (
     <>
-      {step == 0 ? (
+      {step == 0 || mode == 'Reposition' ? (
         <>
           {questions.length > 0 && (
             <>
@@ -357,7 +363,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                       order: index + 1,
                     }),
                   );
-
+                  setEditingQuestionIndex(-1);
                   setQuestions(questionsWithOrder);
                   setAddMore(false);
                 }}
@@ -365,7 +371,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                   setEditingQuestionIndex(-1);
                   setAddMore(false);
                 }}
-              ></AddQuestionsModal>
+              />
             </>
           )}
         </>

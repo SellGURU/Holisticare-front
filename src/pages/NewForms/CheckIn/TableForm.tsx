@@ -70,7 +70,14 @@ const TableForm: FC<TableProps> = ({
                     {headerGroup.headers.map((header, index) => (
                       <th
                         key={header.id}
-                        className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px]`}
+                        className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer first:rounded-tl-[12px] last:rounded-tr-[12px] ${
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          ) === 'Title'
+                            ? 'w-[300px]'
+                            : 'w-[250px]'
+                        }`}
                       >
                         <div
                           className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
@@ -94,7 +101,7 @@ const TableForm: FC<TableProps> = ({
                       </th>
                     ))}
                     <th
-                      className={`px-3 pt-4 pb-3.5 text-xs font-medium first:rounded-tl-[12px] last:rounded-tr-[12px]`}
+                      className={`px-3 pt-4 pb-3.5 text-xs font-medium first:rounded-tl-[12px] last:rounded-tr-[12px] w-[200px]`}
                     >
                       <div className={`flex items-center justify-center`}>
                         <div className="flex items-center justify-center">

@@ -56,7 +56,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                       }}
                     >
                       <img src={resolveStapImage(el.title)} alt="" />
-                      <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
+                      <div className="flex gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
                         <img
                           src="/icons/book-green.svg"
                           alt=""

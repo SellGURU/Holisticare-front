@@ -119,7 +119,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           <div className="flex flex-col w-full mt-4">
             <div className="w-full flex items-center justify-between mb-3">
               <div className="text-Text-Primary font-medium text-sm">
-                {isQuestionary ? 'Questionary Forms' : 'Check-In Forms'}
+                {isQuestionary ? 'Questionary Forms' : 'Check-in Forms'}
               </div>
               <ButtonSecondary
                 ClassName="rounded-[20px] w-[152px]"

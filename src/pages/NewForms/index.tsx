@@ -4,7 +4,7 @@ import Toggle from '../../Components/Toggle';
 import CheckInForm from './CheckIn/CheckinForm';
 
 const NewForms = () => {
-  const [active, setActive] = useState('Check-In');
+  const [active, setActive] = useState('Check-in');
   const [search, setSearch] = useState('');
   return (
     <>
@@ -19,18 +19,17 @@ const NewForms = () => {
             onSearch={(e) => setSearch(e)}
           />
         </div>
-        <div className="w-full h-[1px] bg-white my-3 mt-5"></div>
-        <div className="w-full flex justify-center ">
+        <div className="w-full flex justify-center mt-4">
           <Toggle
             active={active}
             setActive={setActive}
-            value={['Check-In', 'Questionary']}
+            value={['Check-in', 'Questionary']}
           />
         </div>
       </div>
-      <div className="px-6 pt-8 mt-20 ">
+      <div className="px-6 pt-8 mt-[75px] ">
         <div className="w-full flex mb-16 justify-center items-center flex-col">
-          {active === 'Check-In' ? (
+          {active === 'Check-in' ? (
             <>
               <CheckInForm search={search}></CheckInForm>
             </>
