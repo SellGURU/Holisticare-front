@@ -536,7 +536,7 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
 
         <img
           onClick={onDelete}
-          className="w-4 h-4 cursor-pointer"
+          className="w-6 h-6 cursor-pointer"
           src="/icons/close.svg"
           alt=""
         />

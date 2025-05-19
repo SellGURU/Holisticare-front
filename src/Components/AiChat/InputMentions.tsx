@@ -114,20 +114,20 @@ const InputMentions: React.FC<InputMentionsProps> = ({
       reader.readAsDataURL(file);
     }
   };
-  const handleAttachClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
+  // const handleAttachClick = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
   return (
     <>
       <div className="w-[98%]  bg-[#E9F0F2] py-2 px-4 flex items-center gap-3 rounded-[16px]">
-        <img
+        {/* <img
           className="cursor-default"
           src="/icons/attach-svgrepo-com 1.svg"
           alt=""
           onClick={handleAttachClick}
-        />
+        /> */}
         <input
           className="hidden"
           type="file"

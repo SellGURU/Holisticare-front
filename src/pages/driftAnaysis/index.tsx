@@ -333,7 +333,7 @@ export const DriftAnaysis = () => {
                 style={{
                   height: !isMobile ? window.innerHeight - 172 + 'px' : '',
                 }}
-                className="hidden md:block overflow-hidden md:overflow-y-auto pt-2 "
+                className={`hidden md:block overflow-hidden md:overflow-y-auto ${activeMenu === 'Copilot' ? '' : 'pt-3'} `}
               >
                 {activeMenu === 'Copilot' ? (
                   <AiChat memberID={activeMemberID} />
