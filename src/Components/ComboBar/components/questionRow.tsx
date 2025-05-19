@@ -182,7 +182,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   <div
                     className={`text-[10px]  text-[#B0B0B0] flex items-end gap-1 ${isView ? 'inline-block' : 'flex'} `}
                   >
-                    Filled by: <span>{viewQuestienry.filled_by}</span>
+                    Filled by: <span>{viewQuestienry.filled_by!=null?viewQuestienry.filled_by:'-'}</span>
                   </div>
                 ) : (
                   <div
