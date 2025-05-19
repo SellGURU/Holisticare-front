@@ -89,11 +89,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
+        if (res.data.length == 0) {
+          publish('HolisticPlanStatus', { isempty: true });
+        } else {
+          publish('HolisticPlanStatus', { isempty: false });
+        }
       },
     );
     Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
       (res) => {
         setCalenderData(res.data);
+        if (res.data.length == 0) {
+          publish('ActionPlanStatus', { isempty: true });
+        } else {
+          publish('ActionPlanStatus', { isempty: false });
+        }
       },
     );
     Application.getPatientsInfo({

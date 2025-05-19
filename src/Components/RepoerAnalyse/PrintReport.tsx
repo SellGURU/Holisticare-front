@@ -200,7 +200,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         groups.push(
           <div
             className="pt-6 relative "
-            style={{ minHeight: '1050px' }}
+            style={{ minHeight: '1030px' }}
             key={`group-${i}`}
           >
             <DetiledAnalyse
@@ -473,46 +473,50 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Detailed Analysis
               </a>
             </div>
-            <div className="flex justify-start gap-4 mt-6 items-center">
-              <img
-                src="/icons/icon-list-report.svg"
-                alt=""
-                style={{ marginRight: '-8px' }}
-              />
-              <div
-                className="text-xl"
-                style={{ color: '#005F73', fontWeight: '500' }}
-              >
-                Section 04
+            {printOptins.filter((el) => el.name === 'Holistic Plan')[0].checked && (
+              <div className="flex justify-start gap-4 mt-6 items-center">
+                <img
+                  src="/icons/icon-list-report.svg"
+                  alt=""
+                  style={{ marginRight: '-8px' }}
+                />
+                <div
+                  className="text-xl"
+                  style={{ color: '#005F73', fontWeight: '500' }}
+                >
+                  Section 04
+                </div>
+                <a
+                  href="#holistic-plan"
+                  className="text-xl cursor-pointer hover:underline"
+                  style={{ color: '#383838', fontWeight: '500' }}
+                >
+                  Holistic Plan
+                </a>
               </div>
-              <a
-                href="#holistic-plan"
-                className="text-xl cursor-pointer hover:underline"
-                style={{ color: '#383838', fontWeight: '500' }}
-              >
-                Holistic Plan
-              </a>
-            </div>
-            <div className="flex justify-start gap-4 mt-6 items-center">
-              <img
-                src="/icons/icon-list-report.svg"
-                alt=""
-                style={{ marginRight: '-8px' }}
-              />
-              <div
-                className="text-xl"
-                style={{ color: '#005F73', fontWeight: '500' }}
-              >
-                Section 05
+            )}
+            {printOptins.filter((el) => el.name === 'Action Plan')[0].checked && (
+              <div className="flex justify-start gap-4 mt-6 items-center">
+                <img
+                  src="/icons/icon-list-report.svg"
+                  alt=""
+                  style={{ marginRight: '-8px' }}
+                />
+                <div
+                  className="text-xl"
+                  style={{ color: '#005F73', fontWeight: '500' }}
+                >
+                  Section 05
+                </div>
+                <a
+                  href="#action-plan"
+                  className="text-xl cursor-pointer hover:underline"
+                  style={{ color: '#383838', fontWeight: '500' }}
+                >
+                  Action Plan
+                </a>
               </div>
-              <a
-                href="#action-plan"
-                className="text-xl cursor-pointer hover:underline"
-                style={{ color: '#383838', fontWeight: '500' }}
-              >
-                Action Plan
-              </a>
-            </div>
+            )}
           </div>
         </div>
       </div>
