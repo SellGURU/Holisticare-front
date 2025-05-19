@@ -23,6 +23,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   const [isCompleted, setIsCompleted] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const controller = useRef<AbortController | null>(null);
 
   const formatDate = (dateString: string) => {
@@ -97,10 +98,16 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
         setIsCompleted(true);
       } catch (error: any) {
         if (error.name === 'CanceledError' || error.name === 'AbortError') {
-          console.warn('آپلود لغو شد.');
+          // console.warn('آپلود لغو شد.');
         } else {
           console.error('Upload error:', error);
           setIsFailed(true);
+          // Show the API error message if available
+          if (error?.detail) {
+            setErrorMessage(error?.detail);
+          } else {
+            setErrorMessage('Failed to upload file. Please try again.');
+          }
         }
         if (!isCancelled) setIsCompleted(true);
       }
@@ -139,6 +146,8 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
                 className="w-5 h-5 cursor-pointer"
                 onClick={handleCancelUpload}
               />
+            ) : isFailed ? (
+            <></>
             ) : (
               <img
                 onClick={() => {
@@ -184,6 +193,11 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
             )}
           </div>
         </div>
+        {isFailed && (
+          <div className="text-red-500 text-[10px] mt-1">
+            {errorMessage}
+          </div>
+        )}
         {!isCompleted && (
           <>
             <div className="w-full flex justify-between">

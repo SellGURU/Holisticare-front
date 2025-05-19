@@ -46,17 +46,11 @@ const UploadTest: React.FC<UploadTestProps> = ({
   }, []);
 
   const validateFile = (file: File) => {
-    // Check file size (40MB limit = 40 * 1024 * 1024 bytes)
-    const maxSize = 40 * 1024 * 1024; // 40MB in bytes
-    if (file.size > maxSize) {
-      return `${file.name} exceeds the 40MB size limit`;
-    }
-
     // Check file format based on extension
-    const validFormats = ['.pdf', '.csv', '.xls', '.xlsx', '.txt'];
+    const validFormats = ['.pdf', '.docx'];
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!validFormats.includes(fileExtension)) {
-      return `${file.name} has an invalid format. Supported formats: PDF, CSV, Excel, and Text files`;
+      return `${file.name} has an invalid format. Supported formats: PDF and DOCX files`;
     }
 
     // Check for duplicate filename
@@ -105,7 +99,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Drag and drop your test file here or click to upload.
               </div>
               <div className="text-Text-Secondary text-[12px] text-center mt-2 w-[220px] xs:w-[300px] md:w-[500px]">
-                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 40MB)`}
+                {`Supported formats: PDF and DOCX files.`}
               </div>
               {errorMessage && (
                 <div className="text-red-500 text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
@@ -120,7 +114,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
               <input
                 type="file"
                 ref={fileInputRef}
-                accept=".pdf, .csv, .xls, .xlsx, .txt"
+                accept=".pdf, .docx"
                 multiple
                 onChange={(e: any) => {
                   const fileList = Array.from(e.target.files) as File[];
