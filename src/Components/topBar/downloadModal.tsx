@@ -38,25 +38,33 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   subscribe('ActionPlanStatus', (data: any) => {
     console.log('ActionPlanStatus:' + data);
     console.log(data.detail.isempty);
-    setDownloadSelect(prev => prev.map(item => 
-      item.name === 'Action Plan' ? { 
-        ...item, 
-        disabled: data.detail.isempty,
-        checked: !data.detail.isempty 
-      } : item
-    ));
+    setDownloadSelect((prev) =>
+      prev.map((item) =>
+        item.name === 'Action Plan'
+          ? {
+              ...item,
+              disabled: data.detail.isempty,
+              checked: !data.detail.isempty,
+            }
+          : item,
+      ),
+    );
   });
 
   subscribe('HolisticPlanStatus', (data: any) => {
     console.log('HolisticPlanStatus:' + data);
     console.log(data.detail.isempty);
-    setDownloadSelect(prev => prev.map(item => 
-      item.name === 'Holistic Plan' ? { 
-        ...item, 
-        disabled: data.detail.isempty,
-        checked: !data.detail.isempty 
-      } : item
-    ));
+    setDownloadSelect((prev) =>
+      prev.map((item) =>
+        item.name === 'Holistic Plan'
+          ? {
+              ...item,
+              disabled: data.detail.isempty,
+              checked: !data.detail.isempty,
+            }
+          : item,
+      ),
+    );
   });
 
   const removeAll = () => {

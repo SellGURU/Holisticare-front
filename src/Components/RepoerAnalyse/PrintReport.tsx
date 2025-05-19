@@ -473,7 +473,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Detailed Analysis
               </a>
             </div>
-            {printOptins.filter((el) => el.name === 'Holistic Plan')[0].checked && (
+            {printOptins.filter((el) => el.name === 'Holistic Plan')[0]
+              .checked && (
               <div className="flex justify-start gap-4 mt-6 items-center">
                 <img
                   src="/icons/icon-list-report.svg"
@@ -495,7 +496,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </a>
               </div>
             )}
-            {printOptins.filter((el) => el.name === 'Action Plan')[0].checked && (
+            {printOptins.filter((el) => el.name === 'Action Plan')[0]
+              .checked && (
               <div className="flex justify-start gap-4 mt-6 items-center">
                 <img
                   src="/icons/icon-list-report.svg"
