@@ -60,6 +60,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [groups, setGroups] = useState<any[]>([]);
 
   const [newNote, setNewNote] = useState('');
+  const [noteError, setNoteError] = useState('');
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
@@ -242,13 +243,23 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   if (!isOpen) return null;
 
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= 400) {
+      setNewNote(value);
+      setNoteError('');
+    } else {
+      setNoteError('Note cannot exceed 400 characters');
+    }
+  };
+
   const handleNoteKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (newNote.trim()) {
+      if (newNote.trim() && !noteError) {
         setNotes([...notes, newNote]);
-
         setNewNote('');
+        setNoteError('');
       }
     }
   };
@@ -1296,14 +1307,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                   <label className="block text-xs font-medium">
                     Client Note
                   </label>
-                  <textarea
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                    onKeyDown={handleNoteKeyDown}
-                    className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none placeholder:text-Text-Fivefold"
-                    rows={4}
-                    placeholder="Enter your observations, concerns, or feedback here..."
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={newNote}
+                      onChange={handleNoteChange}
+                      onKeyDown={handleNoteKeyDown}
+                      className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${noteError ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
+                      rows={4}
+                      placeholder="Enter your observations, concerns, or feedback here..."
+                    />
+                    <div className="absolute bottom-2 right-3 text-[10px] text-Text-Quadruple">
+                      {newNote.length}/400
+                    </div>
+                  </div>
+                  {noteError && (
+                    <span className="text-[10px] mt-1 ml-2 text-red-500">
+                      {noteError}
+                    </span>
+                  )}
                 </div>
                 <div
                   className={`${
