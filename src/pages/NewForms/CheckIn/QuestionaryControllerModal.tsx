@@ -112,6 +112,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     if (templateData == null) {
       if (titleForm.length == 0) {
         return true;
+      } else if (questions.length == 0) {
+        return true;
       }
     }
     return false;
@@ -391,7 +393,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               borderColor="border-Text-Quadruple"
               width="w-3.5"
               height="h-3.5"
-              label="Share with Client"
+              label="Share with client"
             />
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
@@ -445,7 +447,9 @@ const RepositionCheckIn: FC<RepositionCheckInProps> = ({
     <>
       {questions.length > 0 && (
         <>
-          <div className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full`}>
+          <div
+            className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
+          >
             <div className="flex flex-col items-center justify-center gap-1 w-full">
               {questions.map((item: any, index: number) => {
                 return (

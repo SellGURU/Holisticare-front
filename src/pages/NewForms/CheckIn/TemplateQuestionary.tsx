@@ -87,7 +87,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                 </div>
                 <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
                   <img src="/icons/book-green.svg" alt="" className="w-4 h-4" />
-                  Custom Form
+                  Personal Form
                   {/* {el.title} */}
                 </div>
                 <div className="text-[10px] text-justify  text-Text-Quadruple mt-2">

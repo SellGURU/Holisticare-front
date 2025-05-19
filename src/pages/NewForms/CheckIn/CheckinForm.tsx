@@ -117,29 +117,35 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       {checkInList.length > 0 ? (
         <>
           <div className="flex flex-col w-full mt-4">
-            <div className="w-full flex items-center justify-between mb-3">
-              <div className="text-Text-Primary font-medium text-sm">
-                {isQuestionary ? 'Questionary Forms' : 'Check-in Forms'}
+            {checkInList.filter((el) =>
+              el.title.toLowerCase().includes(search?.toLowerCase() || ''),
+            ).length ? (
+              <div className="w-full flex items-center justify-between mb-3">
+                <div className="text-Text-Primary font-medium text-sm">
+                  {isQuestionary ? 'Questionary Forms' : 'Check-in Forms'}
+                </div>
+                <ButtonSecondary
+                  ClassName="rounded-[20px] w-[152px]"
+                  onClick={() => {
+                    if (isQuestionary) {
+                      setShowTemplates(true);
+                    } else {
+                      setShowAddModal(true);
+                    }
+                    // setCheckInList([]);
+                    // setMainTitle('');
+                    // setEditModeModal(false);
+                    // setShowModal(true);
+                    // setRepositionModeModal(false);
+                  }}
+                >
+                  <SvgIcon src="/icons/firstline.svg" color="#FFF" />
+                  Create New
+                </ButtonSecondary>
               </div>
-              <ButtonSecondary
-                ClassName="rounded-[20px] w-[152px]"
-                onClick={() => {
-                  if (isQuestionary) {
-                    setShowTemplates(true);
-                  } else {
-                    setShowAddModal(true);
-                  }
-                  // setCheckInList([]);
-                  // setMainTitle('');
-                  // setEditModeModal(false);
-                  // setShowModal(true);
-                  // setRepositionModeModal(false);
-                }}
-              >
-                <SvgIcon src="/icons/firstline.svg" color="#FFF" />
-                Create New
-              </ButtonSecondary>
-            </div>
+            ) : (
+              ''
+            )}
             <TableForm
               classData={checkInList.filter((el) =>
                 el.title.toLowerCase().includes(search?.toLowerCase() || ''),
