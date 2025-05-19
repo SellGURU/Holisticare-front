@@ -952,7 +952,7 @@ class Application extends Api {
   };
   static has_unread_message = (data: any) => {
     return this.post('/has_unread_message', data);
-  };  
+  };
 }
 
 export default Application;
