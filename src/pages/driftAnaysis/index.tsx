@@ -184,7 +184,7 @@ export const DriftAnaysis = () => {
   //   }, [activeMemberID]);
   const status: Array<string> = [
     'All',
-    'Need to check',
+    'needs check',
     'Checked',
     'incomplete data',
   ];

@@ -23,6 +23,9 @@ interface MessageOption extends RoadMapOption {
   isDone?: boolean;
 }
 
+// Add this CSS at the top of the file or in your global CSS file
+
+
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
@@ -366,10 +369,10 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         )}
         {RoadMapData?.length > 0 ? (
-          <div className="w-full  md:min-h-[220px] md:h-[41%] md:overflow-y-scroll  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[220px] md:h-[41%] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
-                Road Map
+                Roadmap
               </h5>
               {/* <img
             onClick={() => setisRoadMapOpen(!isRoadMapOpen)}
@@ -405,7 +408,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 </div>
               </div>
             ) : (
-              <div className={`flex flex-col gap-2 pr-3 mt-2`}>
+              <div className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto pr-1 `}>
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard
                     onClick={() => {
@@ -429,7 +432,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         ) : null}
         {MessagesData.length > 0 && (
-          <div className="w-full  md:min-h-[220px] md:h-[41%] md:overflow-y-auto bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[220px] md:h-[41%] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Messages{' '}
@@ -443,7 +446,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
       alt=""
     /> */}
             </div>
-            <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] `}>
+            <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px]  `}>
               {MessagesData.map((option) =>
                 option.isDone ? (
                   <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
@@ -453,16 +456,18 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                     </div>
                   </div>
                 ) : (
-                  <AccordionCard
-                    key={option.id}
-                    title={option.id}
-                    description={option.description}
-                    onClick={() =>
+                  <div className="h-[85%] mt-2 md:overflow-y-auto pr-1 ">
+                    <AccordionCard
+                      key={option.id}
+                      title={option.id}
+                      description={option.description}
+                      onClick={() =>
                       handleMessageDone(option.id, option.description)
                     }
                     onDelete={() => handleDelete(option.id)}
                     buttonText={'Apporve'}
                   />
+                  </div>
                 ),
               )}
             </div>
