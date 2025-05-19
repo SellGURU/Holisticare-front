@@ -6,19 +6,6 @@ import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
 
-const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB in bytes
-const ALLOWED_FILE_TYPES = [
-  'application/pdf',
-  'text/csv',
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/tiff',
-  'text/plain',
-];
-
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
@@ -69,28 +56,13 @@ export const FilleHistory = () => {
   // };
 
   const validateFile = (file: File): boolean => {
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      setError(`File ${file.name} is too large. Maximum size is 40MB.`);
-      return false;
-    }
-
     // Check file type
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      setError(`File ${file.name} has an unsupported format.`);
-      return false;
-    }
-
-    // Check for duplicate filename
-    const isDuplicate = data?.some(
-      (existingFile: any) =>
-        existingFile?.file_name &&
-        file.name &&
-        existingFile.file_name.toLowerCase() === file.name.toLowerCase(),
-    );
-
-    if (isDuplicate) {
-      setError(`File ${file.name} already exists.`);
+    const validFormats = ['.pdf', '.docx'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!validFormats.includes(fileExtension)) {
+      setError(
+        `File ${file.name} has an unsupported format. Supported formats: PDF and DOCX files`,
+      );
       return false;
     }
 

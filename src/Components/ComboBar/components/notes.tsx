@@ -177,7 +177,7 @@ export const Notes = () => {
                           <div className="text-[#005F73] text-xs">
                             {el.writer}
                           </div>
-                          <p className="text-[12px]">{el.note}</p>
+                          <p className="text-[12px] break-words">{el.note}</p>
                         </>
                       )}
                       <div className="flex w-full justify-end items-center gap-1">

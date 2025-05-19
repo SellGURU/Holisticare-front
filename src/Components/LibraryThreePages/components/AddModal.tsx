@@ -148,6 +148,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       // description: false,
       instruction: false,
       dose: false,
+      doseFormat: false,
       value: false,
       score: false,
       macros: {
@@ -163,6 +164,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     // description: false,
     instruction: false,
     dose: false,
+    doseFormat: false,
     value: false,
     score: false,
     macros: {
@@ -173,11 +175,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
+    const doseRegex =
+      /^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/i;
+    const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
+
     const newErrors = {
       title: !addData.title,
       // description: !addData.description,
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
+      doseFormat: Boolean(pageType === 'Supplement' && dose && !isDoseValid),
       value: pageType === 'Lifestyle' && !value,
       score: addData.score === 0,
       macros: {
@@ -309,19 +316,37 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 value={dose}
                 onChange={(e) => {
                   setDose(e.target.value);
+                  const doseRegex =
+                    /^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/i;
                   if (e.target.value) {
-                    setErrors((prev) => ({ ...prev, dose: false }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      dose: false,
+                      doseFormat: Boolean(!doseRegex.test(e.target.value)),
+                    }));
                   } else {
-                    setErrors((prev) => ({ ...prev, dose: true }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      dose: true,
+                      doseFormat: false,
+                    }));
                   }
                 }}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  errors.dose ? 'border-Red' : 'border-Gray-50'
+                  errors.dose || errors.doseFormat
+                    ? 'border-Red'
+                    : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {errors.dose && (
                 <div className="text-Red text-[10px]">
                   This field is required.
+                </div>
+              )}
+              {errors.doseFormat && (
+                <div className="text-Red text-[10px]">
+                  Invalid dose format. Please use format like "50mg",
+                  "50-100mg", "50 mg", "50-100 mg", "50mg/day"
                 </div>
               )}
               <Tooltip

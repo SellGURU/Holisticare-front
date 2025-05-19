@@ -950,6 +950,9 @@ class Application extends Api {
   static assignCoach = (data: any) => {
     return this.post('/patients/assign_to_coach', data);
   };
+  static has_unread_message = (data: any) => {
+    return this.post('/has_unread_message', data);
+  };
 }
 
 export default Application;
