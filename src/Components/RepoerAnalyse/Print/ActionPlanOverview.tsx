@@ -332,10 +332,10 @@ const ActionPlanOverview: FC<TableProps> = ({ classData }) => {
                                   Notes:
                                 </div>
                                 <div
-                                  className="text-[10px]"
+                                  className="text-[10px] break-words text-justify"
                                   style={{ color: '#888888' }}
                                 >
-                                  {item.client_notes[0]}
+                                  {item.client_notes[0].substring(0, 400)}
                                 </div>
                               </div>
                             </td>

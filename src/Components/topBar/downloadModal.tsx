@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { subscribe } from '../../utils/event';
 
 interface DownloadModalProps {
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
-  isOpen: boolean;
 }
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const DownloadModal: React.FC<DownloadModalProps> = ({
   onclose,
   onconfirm,
-  isOpen,
 }) => {
   const [downloadSelect, setDownloadSelect] = useState([
     {
@@ -36,34 +35,37 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       disabled: false,
     },
   ]);
+  subscribe('ActionPlanStatus', (data: any) => {
+    console.log('ActionPlanStatus:' + data);
+    console.log(data.detail.isempty);
+    setDownloadSelect((prev) =>
+      prev.map((item) =>
+        item.name === 'Action Plan'
+          ? {
+              ...item,
+              disabled: data.detail.isempty,
+              checked: !data.detail.isempty,
+            }
+          : item,
+      ),
+    );
+  });
 
-  useEffect(() => {
-    if (isOpen) {
-      setDownloadSelect([
-        {
-          name: 'Client Summary',
-          checked: true,
-        },
-        {
-          name: 'Needs Focus Biomarker',
-          checked: true,
-        },
-        {
-          name: 'Detailed Analysis',
-          checked: true,
-        },
-        {
-          name: 'Holistic Plan',
-          checked: true,
-        },
-        {
-          name: 'Action Plan',
-          checked: true,
-          disabled: false,
-        },
-      ]);
-    }
-  }, [isOpen]);
+  subscribe('HolisticPlanStatus', (data: any) => {
+    console.log('HolisticPlanStatus:' + data);
+    console.log(data.detail.isempty);
+    setDownloadSelect((prev) =>
+      prev.map((item) =>
+        item.name === 'Holistic Plan'
+          ? {
+              ...item,
+              disabled: data.detail.isempty,
+              checked: !data.detail.isempty,
+            }
+          : item,
+      ),
+    );
+  });
 
   const removeAll = () => {
     setDownloadSelect((pre) => {
