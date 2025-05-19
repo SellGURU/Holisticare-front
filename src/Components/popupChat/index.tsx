@@ -6,10 +6,25 @@ import { useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
 
 type Message = {
-  id: number;
-  sender: 'user' | 'ai';
-  text: string;
+  date: string;
   time: string;
+  conversation_id: number;
+  message_text: string;
+  sender_id: number;
+  isSending?: boolean;
+  replied_message_id: number | null;
+  sender_type: string;
+  images?: string[];
+  timestamp: number;
+  name: string;
+};
+
+type SendMessage = {
+  conversation_id?: number;
+  receiver_id: number;
+  message_text: string;
+  replied_conv_id?: number;
+  images: string[];
 };
 
 export const PopUpChat = ({
@@ -21,7 +36,6 @@ export const PopUpChat = ({
   isOpen: boolean;
   info: any;
 }) => {
-  // const memberIdTest="872642194025"
   const [MessageData, setMessageData] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [conversationId, setConversationId] = useState<number>(1);
@@ -30,61 +44,63 @@ export const PopUpChat = ({
   };
 
   useEffect(() => {
-    Application.getListChats({
+    Application.userMessagesList({
       member_id: memberId,
+      message_from: 'ai',
     }).then((res) => {
-      const resolve = res.data.messages.flatMap((mes: any, index: number) => {
-        const request: Message = {
-          id: 1,
-          sender: 'user',
-          text: mes.request,
-          time: mes.entrytime,
-        };
-        const response: Message = {
-          id: index,
-          sender: 'ai',
-          text: mes.response,
-          time: mes.entrytime,
-        };
-        return [request, response];
-      });
-      setMessageData(resolve);
-      // console.log(resolve)
+      setMessageData(res.data);
     });
   }, []);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
-      const newMessage: Message = {
-        id: MessageData.length + 1,
-        sender: 'user',
-        text: input,
-        time: new Date().toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
+      const lastConversationId =
+        MessageData.length > 0
+          ? MessageData[MessageData.length - 1].conversation_id
+          : undefined;
+      const newMessage: SendMessage = {
+        message_text: input,
+        receiver_id: Number(memberId),
+        images: [],
+        conversation_id: lastConversationId,
       };
-      setMessageData([...MessageData, newMessage]);
+      setMessageData([
+        ...MessageData,
+        {
+          conversation_id: Number(lastConversationId),
+          date: new Date().toISOString(),
+          message_text: input,
+          replied_message_id: 0,
+          sender_id: Number(memberId),
+          isSending: true,
+          sender_type: 'patient',
+          time: '',
+          images: [],
+          timestamp: Date.now(),
+          name: '',
+        },
+      ]);
       setInput('');
       try {
         const res = await Application.aiStudio_copilotChat({
-          text: newMessage.text,
+          text: newMessage.message_text,
           member_id: memberId,
           conversation_id: conversationId,
           search: false,
           benchmark_areas: [],
         });
-        console.log(res);
 
         const data = await res.data;
         setConversationId(data.current_conversation_id);
         const aiMessage: Message = {
-          id: MessageData.length + 2,
-          sender: 'ai',
-          text: data.answer,
-          time: new Date().toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
+          conversation_id: MessageData.length + 2,
+          sender_id: 2,
+          message_text: data.answer,
+          date: new Date().toISOString(),
+          replied_message_id: 0,
+          sender_type: 'ai',
+          timestamp: Date.now(),
+          name: '',
+          time: new Date().toLocaleTimeString(),
         };
         setMessageData((prevMessages) => [...prevMessages, aiMessage]);
       } catch (err) {
@@ -110,15 +126,13 @@ export const PopUpChat = ({
             className={'w-[283px] h-[293px] overflow-y-auto overscroll-y-auto'}
           >
             {MessageData.map((MessageDatum) => {
-              console.log(MessageDatum);
-
-              if (MessageDatum.sender == 'user') {
+              if (MessageDatum.sender_type == 'patient') {
                 return (
                   <>
                     <UserMsg
                       time={MessageDatum.time}
-                      msg={MessageDatum.text}
-                      key={MessageDatum.id}
+                      msg={MessageDatum.message_text}
+                      key={MessageDatum.conversation_id}
                       info={info}
                     />
                   </>
@@ -128,8 +142,8 @@ export const PopUpChat = ({
                   <>
                     <BotMsg
                       time={MessageDatum.time}
-                      msg={MessageDatum.text}
-                      key={MessageDatum.id}
+                      msg={MessageDatum.message_text}
+                      key={MessageDatum.conversation_id}
                     />
                   </>
                 );
