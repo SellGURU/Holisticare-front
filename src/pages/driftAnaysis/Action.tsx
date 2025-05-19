@@ -25,7 +25,6 @@ interface MessageOption extends RoadMapOption {
 
 // Add this CSS at the top of the file or in your global CSS file
 
-
 export const Action: React.FC<ActionProps> = ({ memberID }) => {
   console.log(memberID);
 
@@ -408,7 +407,9 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                 </div>
               </div>
             ) : (
-              <div className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto pr-1 `}>
+              <div
+                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto pr-1 `}
+              >
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard
                     onClick={() => {
@@ -462,11 +463,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                       title={option.id}
                       description={option.description}
                       onClick={() =>
-                      handleMessageDone(option.id, option.description)
-                    }
-                    onDelete={() => handleDelete(option.id)}
-                    buttonText={'Apporve'}
-                  />
+                        handleMessageDone(option.id, option.description)
+                      }
+                      onDelete={() => handleDelete(option.id)}
+                      buttonText={'Apporve'}
+                    />
                   </div>
                 ),
               )}
