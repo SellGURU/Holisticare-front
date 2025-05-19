@@ -9,7 +9,7 @@ export const clearUsedPositions = (name?: string) => {
     usedPositions[baseName] = new Set();
   } else {
     // Clear all positions
-    Object.keys(usedPositions).forEach(key => {
+    Object.keys(usedPositions).forEach((key) => {
       usedPositions[key] = new Set();
     });
   }
@@ -18,7 +18,7 @@ export const clearUsedPositions = (name?: string) => {
 const resolvePosition = (name: string) => {
   // Remove any numbers from the input name
   const baseName = name.replace(/\d+/g, '').trim();
-  
+
   const positions = [
     {
       name: 'abdomen1',
@@ -33,14 +33,14 @@ const resolvePosition = (name: string) => {
         top: 254,
         left: 182,
       },
-    },    
+    },
     {
       name: 'abdomen3',
       position: {
         top: 244,
         left: 192,
       },
-    },      
+    },
     {
       name: 'abdomen4',
       position: {
@@ -75,14 +75,14 @@ const resolvePosition = (name: string) => {
         top: 247,
         left: 157,
       },
-    },    
+    },
     {
       name: 'abdomen9',
       position: {
         top: 227,
         left: 147,
       },
-    },       
+    },
     {
       name: 'right hand1',
       position: {
@@ -159,28 +159,28 @@ const resolvePosition = (name: string) => {
         top: 160,
         left: 195,
       },
-    },  
+    },
     {
       name: 'head2',
       position: {
         top: 60,
         left: 175,
       },
-    },   
+    },
     {
       name: 'head3',
       position: {
         top: 62,
         left: 155,
       },
-    },      
+    },
     {
       name: 'head1',
       position: {
         top: 60,
         left: 155,
       },
-    },          
+    },
     {
       name: 'chest',
       position: {
@@ -201,7 +201,7 @@ const resolvePosition = (name: string) => {
         top: 165,
         left: 150,
       },
-    },    
+    },
     {
       name: 'neck2',
       position: {
@@ -215,7 +215,7 @@ const resolvePosition = (name: string) => {
         top: 123,
         left: 163,
       },
-    },    
+    },
     {
       name: 'torso1',
       position: {

@@ -65,11 +65,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
-   
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
       (res) => {
         setReferenceData(res.data);
-        clearUsedPositions()
+        clearUsedPositions();
       },
     );
     Application.getClientSummaryCategories({
