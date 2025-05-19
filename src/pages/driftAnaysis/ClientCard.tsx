@@ -64,7 +64,7 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           : 'border-Gray-50'
       } cursor-pointer ${
         memberID == 1 ? 'hidden' : 'block'
-      }  px-3 py-2 border rounded-[16px] bg-white relative mt-[6px] w-full text-Text-Primary  `}
+      }  px-4 py-2 border rounded-[16px] bg-white relative mt-[6px] w-full text-Text-Primary  `}
     >
       <div className="w-full flex justify-between items-start text-[10px]">
         <div className="flex gap-3 items-center">
@@ -113,13 +113,12 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           >
             Email-address{' '}
           </span>
-          <span className="text-[10px] text-Text-Secondary  font-normal">
+          <span className="text-[10px] text-Text-Primary  font-normal">
             {email}
           </span>
         </div>
-      </div>
-      <div
-        className={` ${isSwitch && 'hidden'} absolute right-1 bottom-1 flex flex-col gap-4`}
+        <div
+        className={` ${isSwitch && 'hidden'}flex flex-col gap-4`}
       >
         <div
           onClick={() => navigate(`/report/${memberID}/${name}`)}
@@ -130,6 +129,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           {/* <img src="/icons/export.svg" alt="" /> */}
         </div>
       </div>
+      </div>
+     
     </div>
   );
 };

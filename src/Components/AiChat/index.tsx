@@ -92,6 +92,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   };
 
   const formatText = (text: string) => {
+    if(text){
     // First, replace the bold formatting *text* with <strong>text</strong>
     const boldedText = text.replace(
       /\*(.*?)\*/g,
@@ -109,6 +110,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
         <br />
       </span>
     ));
+  }
   };
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
@@ -127,14 +129,14 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
         const request: Message = {
           id: 1,
           sender: 'user',
-          text: mes.request,
-          time: mes.entrytime,
+          text: mes.message_text,
+          time: mes.time,
         };
         const response: Message = {
           id: index,
           sender: 'ai',
-          text: mes.response,
-          time: mes.entrytime,
+          text: mes.message_text,
+          time: mes.time,
         };
         return [request, response];
       });
@@ -142,16 +144,17 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
       // console.log(resolve)
     });
   }, [memberId]);
+  console.log(messages);
   return (
-    <div className="w-full  mx-auto bg-white shadow-200 h-[480px] md:min-h-[545px]  rounded-[16px] relative flex flex-col p-4 ">
-      <div className="text-Text-Primary text-sm font-medium">State</div>
+    <div
+      style={{ height: window.innerHeight - 172 + 'px' }}
+      className="w-full  mx-auto bg-white shadow-200  md:min-h-[545px] overflow-hidden rounded-[16px] relative flex flex-col justify-between jus p-4 "
+    >
+      {/* <div className="text-Text-Primary text-sm font-medium">State</div> */}
       <div className="p-4 text-center text-primary-text text-xs">
         {messages.length > 1 && chatStartDate}
       </div>
-      <div
-        id="aiChat"
-        className="p-4 space-y-4 max-h-[380px] overflow-y-scroll"
-      >
+      <div id="aiChat" className="p-4 space-y-4 max-h-full overflow-y-scroll">
         {messages.map((msg, index: number) => (
           <>
             {msg.sender == 'ai' ? (
@@ -166,7 +169,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
                   <div>
                     <div className="text-Text-Primary font-medium text-[12px]">
                       AI-Copilot{' '}
-                      <span className="text-Text-Primary ml-1">{msg.time}</span>
+                      <span className="text-Text-Secondary text-xs ml-1">{msg.time}</span>
                     </div>
                     <div
                       className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
@@ -183,7 +186,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
                   <div className="flex flex-col items-end">
                     <div className="text-Text-Primary text-[12px]">
                       Coach{' '}
-                      <span className="text-Text-Primary dark:text-[#FFFFFF99] ml-1">
+                      <span className="text-Text-Secondary text-xs  ml-1">
                         {msg.time}
                       </span>
                     </div>
@@ -218,7 +221,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
           // </div>
         ))}
       </div>
-      <div className="w-full flex justify-center ">
+      <div className="">
         <InputMentions
           changeBenchMarks={(val: Array<string>) => {
             setSelectedBenchMarks(val);

@@ -54,7 +54,7 @@ const StatusMenu: React.FC<StatusMenuProps> = ({
           status.map((state, index) => {
             return (
               <div key={index} className="w-full ">
-                <div className=" py-1 flex items-center justify-between gap-1  ">
+                <div className=" py-1 flex items-center capitalize justify-between gap-1  ">
                   <div
                     onClick={() => {
                       onChange(state);
