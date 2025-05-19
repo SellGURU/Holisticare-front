@@ -175,8 +175,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
-    
-    const doseRegex = /(?i:)^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/;
+    const doseRegex =
+      /(?i:)^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/;
     const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
 
     const newErrors = {
@@ -316,23 +316,26 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 value={dose}
                 onChange={(e) => {
                   setDose(e.target.value);
-                  const doseRegex = /(?i:)^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/;
+                  const doseRegex =
+                    /(?i:)^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/;
                   if (e.target.value) {
-                    setErrors((prev) => ({ 
-                      ...prev, 
+                    setErrors((prev) => ({
+                      ...prev,
                       dose: false,
-                      doseFormat: Boolean(!doseRegex.test(e.target.value))
+                      doseFormat: Boolean(!doseRegex.test(e.target.value)),
                     }));
                   } else {
-                    setErrors((prev) => ({ 
-                      ...prev, 
+                    setErrors((prev) => ({
+                      ...prev,
                       dose: true,
-                      doseFormat: false
+                      doseFormat: false,
                     }));
                   }
                 }}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  errors.dose || errors.doseFormat ? 'border-Red' : 'border-Gray-50'
+                  errors.dose || errors.doseFormat
+                    ? 'border-Red'
+                    : 'border-Gray-50'
                 } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {errors.dose && (
@@ -342,7 +345,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               )}
               {errors.doseFormat && (
                 <div className="text-Red text-[10px]">
-                  Invalid dose format. Please use format like "50mg", "50-100mg", "50 mg", "50-100 mg", "50mg/day"
+                  Invalid dose format. Please use format like "50mg",
+                  "50-100mg", "50 mg", "50-100 mg", "50mg/day"
                 </div>
               )}
               <Tooltip
