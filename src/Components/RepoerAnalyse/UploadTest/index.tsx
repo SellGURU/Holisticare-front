@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
@@ -20,6 +20,8 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const fileInputRef = useRef<any>(null);
   const [files, setFiles] = useState<Array<any>>([]);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
 
@@ -34,6 +36,40 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const handleCancelUpload = (fileToCancel: any) => {
     setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
   };
+
+  const handleSuccessUpload = useCallback((fileWithId: any, el: any) => {
+    setFiles((prevFiles) => [...prevFiles, fileWithId]);
+    // Commented code left as-is
+    setUploadingFiles((prevUploadingFiles) =>
+      prevUploadingFiles.filter((file) => file !== el),
+    );
+  }, []);
+
+  const validateFile = (file: File) => {
+    // Check file size (40MB limit = 40 * 1024 * 1024 bytes)
+    const maxSize = 40 * 1024 * 1024; // 40MB in bytes
+    if (file.size > maxSize) {
+      return `${file.name} exceeds the 40MB size limit`;
+    }
+
+    // Check file format based on extension
+    const validFormats = ['.pdf', '.csv', '.xls', '.xlsx', '.txt'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!validFormats.includes(fileExtension)) {
+      return `${file.name} has an invalid format. Supported formats: PDF, CSV, Excel, and Text files`;
+    }
+
+    // Check for duplicate filename
+    const isDuplicate = [...files, ...upLoadingFiles].some(
+      (existingFile) => existingFile.name === file.name,
+    );
+    if (isDuplicate) {
+      return `${file.name} already exists. Please rename the file or choose another one`;
+    }
+
+    return null; // No error
+  };
+
   console.log(files);
 
   return (
@@ -49,7 +85,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
           </div>
           <div className={isShare ? 'opacity-20' : ''}>
             <div className=" text-[10px] xs:text-[12px] text-Text-Primary  text-center mt-1 ">
-              It looks like you haven’t uploaded any test results or completed
+              It looks like you haven't uploaded any test results or completed
               any questionary yet. To view detailed insights, please upload your
               test results or complete the questionnaires now.
             </div>
@@ -69,8 +105,13 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 Drag and drop your test file here or click to upload.
               </div>
               <div className="text-Text-Secondary text-[12px] text-center mt-2 w-[220px] xs:w-[300px] md:w-[500px]">
-                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 10MB)`}
+                {`Supported formats: PDF, CSV, Excel and Text files. (Max file size: 40MB)`}
               </div>
+              {errorMessage && (
+                <div className="text-red-500 text-[12px] text-center mt-1 w-[220px] xs:w-[300px] md:w-[500px]">
+                  {errorMessage}
+                </div>
+              )}
               <div className="w-full mt-3 flex justify-center">
                 <div className="text-Primary-DeepTeal cursor-pointer text-[12px] underline">
                   Upload Test Results
@@ -79,30 +120,33 @@ const UploadTest: React.FC<UploadTestProps> = ({
               <input
                 type="file"
                 ref={fileInputRef}
-                accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
+                accept=".pdf, .csv, .xls, .xlsx, .txt"
                 multiple
                 onChange={(e: any) => {
-                  const fileList = Array.from(e.target.files);
+                  const fileList = Array.from(e.target.files) as File[];
+                  if (fileList.length === 0) return;
+
+                  setErrorMessage('');
+
+                  // Validate each file
+                  const validFiles = [] as File[];
+                  for (const file of fileList) {
+                    const error = validateFile(file);
+                    if (error) {
+                      setErrorMessage(error);
+                      fileInputRef.current.value = '';
+                      return;
+                    }
+                    validFiles.push(file);
+                  }
+
                   console.log(upLoadingFiles);
                   setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
                   setUploadingFiles([]);
                   setTimeout(() => {
-                    setUploadingFiles(fileList);
+                    setUploadingFiles(validFiles);
                   }, 200);
                   fileInputRef.current.value = '';
-                  // fileList.forEach((file:any) => {
-                  //     convertToBase64(file).then((res) => {
-                  //         Application.addLabReport({
-                  //             member_id:memberId,
-                  //             report:{
-                  //                 "file name":res.name,
-                  //                 "base64 string":res.url
-                  //             }
-                  //         }).then(() => {
-                  //             setFiles([...files,file])
-                  //         })
-                  //     })
-                  // });
                 }}
                 id="uploadFile"
                 className="w-full absolute invisible h-full left-0 top-0"
@@ -141,19 +185,16 @@ const UploadTest: React.FC<UploadTestProps> = ({
               })}
               {upLoadingFiles.map((el: any) => {
                 return (
-                  <>
+                  <div key={el.name + el.size + el.lastModified}>
                     <Uploading
                       memberId={memberId}
                       file={el}
-                      onSuccess={(fileWithId) => {
-                        setFiles((prevFiles) => [...prevFiles, fileWithId]);
-                        setUploadingFiles((prevUploadingFiles) =>
-                          prevUploadingFiles.filter((file) => file !== el),
-                        );
-                      }}
+                      onSuccess={(fileWithId) =>
+                        handleSuccessUpload(fileWithId, el)
+                      }
                       onCancel={() => handleCancelUpload(el)}
                     ></Uploading>
-                  </>
+                  </div>
                 );
               })}
             </div>
@@ -169,16 +210,6 @@ const UploadTest: React.FC<UploadTestProps> = ({
               <div
                 onClick={() => {
                   publish('QuestionaryTrackingCall', {});
-                  // Application.questionaryLink({})
-                  //   .then((res) => {
-                  //     const url = res.data['Personal Information'];
-                  //     if (url) {
-                  //       window.open(url, '_blank');
-                  //     }
-                  //   })
-                  //   .catch((err) => {
-                  //     console.error('Error fetching the link:', err);
-                  //   });
                 }}
                 className="text-Primary-DeepTeal cursor-pointer text-[12px] underline"
               >

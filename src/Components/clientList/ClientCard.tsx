@@ -27,8 +27,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
   activeTab,
   onAssign,
 }) => {
-  console.log(client);
-
   const navigate = useNavigate();
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
@@ -162,14 +160,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const copyToClipboard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // Optional: Add a success notification
       setNotifType(type);
       setNotificationMessage('Text Copied to Clipboard');
-      // Auto-close after 3 seconds
-
-      // alert('Copied to clipboard!');
-      // Or use a toast notification if you have a toast library
-      // toast.success('Copied to clipboard!');
+      setTimeout(() => {
+        setNotifType('');
+        setNotificationMessage('');
+      }, 3000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -182,15 +178,12 @@ const ClientCard: React.FC<ClientCardProps> = ({
     },
   });
   // const [showAsignList, setshowAsignList] = useState(false);
-  console.log(activeTab);
   const [showAssign, setshowAssign] = useState(false);
   interface Coach {
     username: string;
     assigned: boolean;
-    // ... other coach properties
   }
   const [CoachList, setCoachList] = useState<Array<any>>([]);
-  console.log(CoachList);
 
   const handleAssignClick = () => {
     Application.getCoachList({ member_id: client.member_id }).then((res) => {
@@ -199,25 +192,27 @@ const ClientCard: React.FC<ClientCardProps> = ({
     });
   };
   const handleCoachSelection = (selectedCoach: Coach) => {
-    // Update UI - uncheck previous coach and check new one
+    // Toggle the assigned state for the selected coach
+    const newAssignedState = !selectedCoach.assigned;
+
+    // Update UI - toggle the selected coach's assigned state
     setCoachList((prevCoaches) =>
       prevCoaches.map((coach) => ({
         ...coach,
-        assigned: coach.username === selectedCoach.username,
+        assigned:
+          coach.username === selectedCoach.username ? newAssignedState : false,
       })),
     );
 
-    // Send only the selected coach to API
-    console.log(client.assigned_to);
-
+    // Send the updated assignment to API
     Application.assignCoach({
       member_id: client.member_id,
-      coach_usernames: [selectedCoach.username],
+      coach_usernames: newAssignedState ? [selectedCoach.username] : [],
     }).then(() => {
-      onAssign(client.member_id, selectedCoach.username);
-      console.log(client.assigned_to);
-
-      // setshowAssign(false);
+      onAssign(
+        client.member_id,
+        newAssignedState ? selectedCoach.username : '',
+      );
     });
   };
   //  handleAssignCoach = (index: number) => {
@@ -331,8 +326,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       member_id: client.member_id,
                       username: AccessUserName,
                       password: AccessPassword,
-                    }).then((res) => {
-                      console.log(res);
+                    }).then(() => {
                       setIsShared(true);
                     });
                   }}
@@ -439,8 +433,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     Application.giveClientAccess({
                       member_id: client.member_id,
                     }).then((res) => {
-                      console.log(res);
-
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
@@ -479,7 +471,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     <div className="flex items-center gap-1">
                       {' '}
                       <img src="/icons/assign-green.svg" alt="" />
-                      Assign
+                      Assign to
                     </div>
 
                     <div
@@ -501,8 +493,8 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
                       {CoachList.map((coach: Coach) => (
                         <div
-                          onClick={() => handleCoachSelection(coach)}
-                          className={`p-1 cursor-pointer w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
+                          // onClick={() => handleCoachSelection(coach)}
+                          className={`p-1 cursor-pointer select-none w-full flex items-center gap-2 rounded text-Text-Secondary text-xs ${coach.assigned ? 'bg-[#E9F0F2]' : 'bg-white'}`}
                         >
                           <div>
                             <Checkbox
@@ -510,8 +502,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                               checked={coach.assigned}
                             />
                           </div>
-
-                          {coach.username}
+                          <div onClick={() => handleCoachSelection(coach)}>
+                            {coach.username}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -539,16 +532,17 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                   >
                     <img src="/icons/star.svg" alt="" />
-                    Add to High-Priorities
+                    Add to High-Priority
                   </div>
                 ) : (
                   client.favorite &&
                   activeTab == 'High-Priority' && (
                     <div
+                      onClick={handleRemoveFromHighPriority}
                       className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                     >
                       <img src="/icons/star.svg" alt="" />
-                      Remove from High-Priorities
+                      Remove from High-Priority
                     </div>
                   )
                 )}
@@ -566,8 +560,6 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     Application.giveClientAccess({
                       member_id: client.member_id,
                     }).then((res) => {
-                      console.log(res);
-
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
@@ -590,7 +582,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete
@@ -692,16 +684,18 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.enroll_date}
                     </div>
                     <div className=" text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap">
-                      Last Check-In
+                      Checked on
                     </div>
-                    <div className="text-Text-Primary text-[10px] sm:text-xs">
-                      {client.last_checkin}
+                    <div className="text-Text-Primary text-[10px] text-center sm:text-xs">
+                      {client.last_checkin != 'No Data'
+                        ? client.last_checkin
+                        : '-'}
                     </div>
                   </div>
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs ">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] mr-3">
+                    <div className="flex w-[85px] items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px]">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
@@ -731,7 +725,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div> */}
                   </div>
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[38px]">
+                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
                       <img src="/icons/status.svg" alt="" />
                       Status
                     </div>
@@ -748,14 +742,14 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   </div>
                   <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-9">
+                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px]">
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
                     </div>
                     {client.sex}
                   </div>
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] mr-[51px]">
+                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] ">
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
@@ -763,24 +757,24 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     {/* {client.age}  */}
                   </div>
                   <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px]">
+                    <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px]">
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
                     <div
-                      className="text-nowrap max-w-[110px] ml-[28px]    truncate"
+                      className="text-nowrap max-w-[110px]     truncate"
                       title={client['Check-in']}
                     >
                       {client['Check-in']}
                     </div>
                   </div>
                   <div className="flex w-full  text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
+                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
                     </div>
                     <div
-                      className="text-nowrap max-w-[100px] ml-[13px] truncate"
+                      className="text-nowrap max-w-[100px] truncate"
                       title={client.Questionary}
                     >
                       {client.Questionary}

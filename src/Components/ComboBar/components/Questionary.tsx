@@ -8,7 +8,7 @@ import Checkbox from './CheckBox';
 // import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
+// import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
 import {
   FeelingCard,
@@ -453,10 +453,13 @@ export const Questionary = () => {
     <div className=" w-full">
       <div
         onClick={() => {
-          Application.AddQuestionaryList({}).then((res) => {
-            setAddForms(res.data);
-            setTryAdd(true);
-          });
+          if (!tryComplete) {
+            Application.AddQuestionaryList({ member_id: id }).then((res) => {
+              setAddForms(res.data);
+              setTryAdd(true);
+            });
+          }
+
           // Application.getGoogleFormEmty()
           //   .then((res) => {
           //     setQuestionsFormData(res.data);
@@ -465,14 +468,14 @@ export const Questionary = () => {
           //   .catch((err) => {
           //     console.error('Error fetching the link:', err);
           //   });
-          if (tryComplete) {
-            setTryComplete(false);
-          }
+          // if (tryComplete) {
+          //   setTryComplete(false);
+          // }
         }}
-        className={`text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
+        className={` ${tryComplete && 'opacity-40'} text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal ${tryAdd && 'hidden'} `}
       >
         <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-        Add Questionary
+        Add Questionnaire
       </div>
       <div className=" mt-3">
         {tryAdd && (
@@ -506,6 +509,7 @@ export const Questionary = () => {
                     setTryAdd(false);
                   }}
                   outLine
+                  size="small"
                   style={{
                     backgroundColor: '#fff',
                     color: '#005F73',
@@ -516,6 +520,7 @@ export const Questionary = () => {
                 </ButtonPrimary>
                 <ButtonPrimary
                   disabled={selectedFormIDs.length == 0}
+                  size="small"
                   onClick={() => {
                     handleAddQuestionnaires();
                     // Application.AddQuestionary({
@@ -537,7 +542,63 @@ export const Questionary = () => {
               <div className="text-xs text-Text-Primary">
                 {questionsFormData.title}
               </div>
-              <ButtonSecondary
+              <div className="flex justify-end gap-2 items-center">
+                <div
+                  className=" w-5 h-5 cursor-pointer"
+                  onClick={() => {
+                    setTryComplete(false);
+                  }}
+                >
+                  <img src="/icons/close-red.svg" alt="" />
+                </div>
+                <div
+                  className={`${checkFormComplete() ? 'opacity-100 cursor-pointer' : 'opacity-50'} w-5 h-5 `}
+                  onClick={() => {
+                    if (checkFormComplete()) {
+                      setSubmitLoading(true);
+                      Application.SaveQuestionary({
+                        member_id: id,
+                        q_unique_id: questionsFormData.unique_id,
+                        respond: questionsFormData.questions,
+                      })
+                        .then(() => {
+                          setTimeout(() => {
+                            setTryComplete(false);
+                          }, 300);
+                        })
+                        .finally(() => {
+                          setData((prevData: any) => {
+                            return prevData.map((form: any) => {
+                              if (
+                                form.unique_id === questionsFormData.unique_id
+                              ) {
+                                return {
+                                  ...form,
+                                  status: 'completed',
+                                };
+                              }
+                              return form;
+                            });
+                          });
+                          setSubmitLoading(false);
+                        });
+                    }
+                    // Application.setGoogleFormEmty({
+                    //   data: questionsFormData,
+                    //   member_id: Number(id),
+                    // })
+                  }}
+                >
+                  {submitLoading ? (
+                    <div className="">
+                      <SpinnerLoader color="#6CC24A"></SpinnerLoader>
+                    </div>
+                  ) : (
+                    <img src="/icons/tick-square-background-green.svg" alt="" />
+                  )}
+                </div>
+              </div>
+              {/* <ButtonSecondary
                 disabled={!checkFormComplete()}
                 onClick={() => {
                   setSubmitLoading(true);
@@ -583,7 +644,7 @@ export const Questionary = () => {
                   />
                 )}
                 Submit
-              </ButtonSecondary>
+              </ButtonSecondary> */}
             </div>
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-[6px] px-8 min-h-[108px] text-center rounded-t-[6px] flex items-center">
@@ -684,8 +745,8 @@ export const Questionary = () => {
           {data?.length > 0 && !tryComplete ? (
             <>
               <div className="w-full text-[10px] md:text-[12px] mt-4 px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
-                <div>Questionary Name</div>
-                <div>State</div>
+                <div>Name</div>
+                <div className="w-[100px] text-end">State</div>
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">

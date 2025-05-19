@@ -2,10 +2,7 @@ import { useEffect, useState } from 'react';
 
 interface RangeCardProps {
   value: number;
-  changeValue: (
-    key: 'score' | 'title' | 'description' | 'instruction',
-    value: number,
-  ) => void;
+  changeValue: (key: 'score' | 'title' | 'instruction', value: number) => void;
   showValidation?: boolean;
   error?: boolean;
   required?: boolean;
@@ -47,17 +44,105 @@ const RangeCardLibraryThreePages: React.FC<RangeCardProps> = ({
           }}
         />
         <div className="w-full flex justify-between items-center">
-          <div className="text-[10px] ml-1 text-Text-Secondary">0</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">1</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">2</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">3</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">4</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">5</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">6</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">7</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">8</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">9</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(0);
+              changeValue('score', 0);
+            }}
+          >
+            0
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(1);
+              changeValue('score', 1);
+            }}
+          >
+            1
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(2);
+              changeValue('score', 2);
+            }}
+          >
+            2
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(3);
+              changeValue('score', 3);
+            }}
+          >
+            3
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(4);
+              changeValue('score', 4);
+            }}
+          >
+            4
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(5);
+              changeValue('score', 5);
+            }}
+          >
+            5
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(6);
+              changeValue('score', 6);
+            }}
+          >
+            6
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(7);
+              changeValue('score', 7);
+            }}
+          >
+            7
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(8);
+              changeValue('score', 8);
+            }}
+          >
+            8
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(9);
+              changeValue('score', 9);
+            }}
+          >
+            9
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(10);
+              changeValue('score', 10);
+            }}
+          >
+            10
+          </div>
         </div>
       </div>
       {showValidation && error && required && !val && (

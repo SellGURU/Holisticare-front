@@ -51,6 +51,22 @@ const PrintReport: React.FC<PrintReportProps> = ({
   helthPlan,
   ActionPlan,
 }) => {
+  const transformConceringData = () => {
+    const originalData = ResolveConceringData();
+    return originalData.flatMap((item) =>
+      item.biomarkers.map((biomarker: any) => ({
+        name: biomarker.name,
+        Result: biomarker.Result,
+        Units: biomarker.Units,
+        'Lab Ref Range': biomarker['Lab Ref Range'],
+        Baseline: biomarker.Baseline,
+        'Optimal Range': biomarker['Optimal Range'],
+        Changes: biomarker.Changes,
+        subcategory: item.subcategory,
+      })),
+    );
+  };
+
   const resolveTreatmentPlanIcon = (category: string) => {
     if (category == 'Diet') {
       return '/icons/TreatmentPlan/IconApple.svg';
@@ -74,6 +90,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
     pageNumber++;
     return pageNumber;
   };
+  console.log(ResolveConceringData());
+  console.log(transformConceringData());
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
@@ -475,7 +493,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Holistic Plan
               </a>
             </div>
-            <div className="hidden justify-start gap-4 mt-6 items-center">
+            <div className="flex justify-start gap-4 mt-6 items-center">
               <img
                 src="/icons/icon-list-report.svg"
                 alt=""
@@ -721,88 +739,78 @@ const PrintReport: React.FC<PrintReportProps> = ({
         )}
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
-        <div
-          className=" "
-          style={{
-            backgroundColor: '#E9F0F2',
-            minHeight: '100vh',
-            padding: '24px 24px',
-            position: 'relative',
-            pageBreakAfter: 'always',
-          }}
-        >
+        <>
           <div
-            className="w-full relative mb-3 mt-4 flex items-center justify-between"
-            style={{ zIndex: 60 }}
+            className=" "
+            style={{
+              backgroundColor: '#E9F0F2',
+              minHeight: '100vh',
+              padding: '24px 24px',
+              position: 'relative',
+              pageBreakAfter: 'always',
+            }}
           >
             <div
-              className="text-lg"
-              style={{ color: '#005F73', fontWeight: '600' }}
+              className="w-full relative mb-3 mt-4 flex items-center justify-between"
+              style={{ zIndex: 60 }}
             >
-              Conclusion
-            </div>
-          </div>
-          <div className="px-2 relative" style={{ zIndex: 60 }}>
-            <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
               <div
-                className="text-gray-700 font-medium "
-                style={{ width: 200, fontSize: 12, color: '#383838' }}
+                className="text-lg"
+                style={{ color: '#005F73', fontWeight: '600' }}
               >
-                Name
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Result
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Units
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Lab Ref Range
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Baseline
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Optimal Range
-              </div>
-              <div
-                className="text-gray-700 text-center font-medium "
-                style={{ fontSize: 12, width: '60px', color: '#383838' }}
-              >
-                Changes
+                Conclusion
               </div>
             </div>
-            {ResolveConceringData().map((el) => {
-              return (
-                <>
-                  <div className="w-full border bg-white border-gray-200  py-3 px-2 flex justify-between items-center">
-                    <div
-                      className="text-xs flex justify-start gap-2 items-center text-gray-800"
-                      style={{ fontSize: 12, color: '#005F73' }}
-                    >
-                      <div>
-                        <img src="/icons/arrow-square-down.svg" alt="" />
-                      </div>
-                      {el.subcategory}
-                    </div>
-                  </div>
-                  {el.biomarkers.map((val: any, index: number) => {
-                    return (
+            <div className="px-2 relative" style={{ zIndex: 60 }}>
+              <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
+                <div
+                  className="text-gray-700 font-medium "
+                  style={{ width: 200, fontSize: 12, color: '#383838' }}
+                >
+                  Name
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Result
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Units
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Lab Ref Range
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Baseline
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Optimal Range
+                </div>
+                <div
+                  className="text-gray-700 text-center font-medium "
+                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                >
+                  Changes
+                </div>
+              </div>
+              {transformConceringData()
+                .slice(0, 14)
+                .map((el, index) => {
+                  return (
+                    <>
                       <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
                         <div
                           className=" text-gray-800"
@@ -812,7 +820,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             width: 200,
                           }}
                         >
-                          {val.name}
+                          <div>{el.subcategory}</div>
+                          <div>{el.name}</div>
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -822,7 +831,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: colorsText[index % 4],
                           }}
                         >
-                          {val.Result}
+                          {el.Result}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -832,7 +841,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {val.Units}
+                          {el.Units}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -842,7 +851,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {val['Lab Ref Range']}
+                          {el['Lab Ref Range']}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -852,7 +861,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {val.Baseline}
+                          {el.Baseline}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -862,7 +871,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {val['Optimal Range']}
+                          {el['Optimal Range']}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -872,17 +881,123 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: colorsText[index % 4],
                           }}
                         >
-                          {val.Changes}
+                          {el.Changes}
                         </div>
                       </div>
-                    );
-                  })}
-                </>
-              );
-            })}
+                    </>
+                  );
+                })}
+            </div>
+            <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          <PrintFooter pageNumber={resolvePageNumber()} />
-        </div>
+          {transformConceringData().length > 14 && (
+            <>
+              {Array.from({
+                length: Math.ceil((transformConceringData().length - 14) / 16),
+              }).map((_e, index1) => {
+                return (
+                  <>
+                    <div
+                      className=" "
+                      style={{
+                        backgroundColor: '#E9F0F2',
+                        minHeight: '100vh',
+                        padding: '24px 24px',
+                        position: 'relative',
+                        pageBreakAfter: 'always',
+                      }}
+                    >
+                      <div className="px-2 relative" style={{ zIndex: 60 }}>
+                        {transformConceringData()
+                          .slice(index1 * 16 + 14, index1 * 16 + 14 + 16)
+                          .map((el, index) => {
+                            return (
+                              <>
+                                <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
+                                  <div
+                                    className=" text-gray-800"
+                                    style={{
+                                      fontSize: '12px',
+                                      color: '#383838',
+                                      width: 200,
+                                    }}
+                                  >
+                                    <div>{el.subcategory}</div>
+                                    <div>{el.name}</div>
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Result}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Units}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Lab Ref Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el.Baseline}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: '#888888',
+                                    }}
+                                  >
+                                    {el['Optimal Range']}
+                                  </div>
+                                  <div
+                                    className=" text-gray-800 text-center"
+                                    style={{
+                                      fontSize: '12px',
+                                      width: '60px',
+                                      color: colorsText[index % 4],
+                                    }}
+                                  >
+                                    {el.Changes}
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          })}
+                      </div>
+                      <PrintFooter pageNumber={resolvePageNumber()} />
+                    </div>
+                  </>
+                );
+              })}
+            </>
+          )}
+        </>
       )}
 
       {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
@@ -1020,78 +1135,97 @@ const PrintReport: React.FC<PrintReportProps> = ({
             {TreatMentPlanData.map((el, index) => {
               return (
                 <>
-                  <div
-                    className="no-split relative  mt-14"
-                    style={{
-                      pageBreakAfter: 'always',
-                      minHeight: index == 0 ? '870px' : '1020px',
-                    }}
-                  >
-                    <div
-                      className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
-                      style={{
-                        width: '193px',
-                        borderRadius: '8px',
-                        borderBottomLeftRadius: '0px',
-                        borderBottomRightRadius: '0px',
-                        color: '#005F73',
-                      }}
-                    >
-                      <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
-                        <img
-                          src={resolveTreatmentPlanIcon(el.category)}
-                          alt=""
-                        />
-                      </div>
-                      {el.category}
-                    </div>
+                  {el.data.length > 0 ? (
+                    <>
+                      <div
+                        className="no-split relative  mt-14"
+                        style={{
+                          pageBreakAfter: 'always',
+                          minHeight: index == 0 ? '870px' : '1020px',
+                        }}
+                      >
+                        {index != 0 && <div className="h-8"></div>}
+                        <div
+                          className="text-sm flex bg-white text-center rounded-md w-full justify-center items-center gap-1"
+                          style={{
+                            width: '193px',
+                            borderRadius: '8px',
+                            borderBottomLeftRadius: '0px',
+                            borderBottomRightRadius: '0px',
+                            color: '#005F73',
+                          }}
+                        >
+                          <div className="w-8 h-8  flex justify-center items-center rounded-[8px]">
+                            <img
+                              src={resolveTreatmentPlanIcon(el.category)}
+                              alt=""
+                            />
+                          </div>
+                          {el.category}
+                        </div>
 
-                    <div
-                      className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                      style={{ pageBreakAfter: 'always' }}
-                    >
-                      {el.data.slice(0, 5).map((el2: any) => {
-                        return (
-                          <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                        );
-                      })}
-                    </div>
-                    <PrintFooter pageNumber={resolvePageNumber()} />
-                  </div>
-                  {el.data.length > 5 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(5, 11).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
+                        <div
+                          className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                          style={{ pageBreakAfter: 'always' }}
+                        >
+                          {el.data.slice(0, 5).map((el2: any) => {
+                            return (
+                              <TreatmentPlanPrint
+                                data={el2}
+                              ></TreatmentPlanPrint>
+                            );
+                          })}
+                        </div>
+                        <PrintFooter pageNumber={resolvePageNumber()} />
                       </div>
-                      <PrintFooter pageNumber={resolvePageNumber()} />
-                    </div>
-                  )}
-                  {el.data.length > 10 && (
-                    <div
-                      className="no-split relative mt-14"
-                      style={{ pageBreakAfter: 'always', minHeight: '1020px' }}
-                    >
-                      <div
-                        className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                        style={{ pageBreakAfter: 'always' }}
-                      >
-                        {el.data.slice(11, 16).map((el2: any) => {
-                          return (
-                            <TreatmentPlanPrint data={el2}></TreatmentPlanPrint>
-                          );
-                        })}
-                      </div>
-                    </div>
+                      {el.data.length > 5 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(5, 11).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                          <PrintFooter pageNumber={resolvePageNumber()} />
+                        </div>
+                      )}
+                      {el.data.length > 10 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(11, 16).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <></>
                   )}
                 </>
               );
@@ -1103,130 +1237,154 @@ const PrintReport: React.FC<PrintReportProps> = ({
       )}
 
       {printOptins.filter((el) => el.name == 'Action Plan')[0].checked && (
-        <div
-          id="action-plan"
-          className="relative min-h-screen"
-          style={{ pageBreakAfter: 'always', padding: '24px' }}
-        >
-          {/* <PrintHeader /> */}
+        <>
           <div
-            className="flex justify-between relative items-center"
-            style={{ marginTop: '16px', zIndex: '60' }}
+            id="action-plan"
+            className="relative min-h-screen"
+            style={{ pageBreakAfter: 'always', padding: '24px' }}
           >
+            {/* <PrintHeader /> */}
             <div
-              className="text-xl"
-              style={{ color: '#383838', fontWeight: '600' }}
-            >
-              Action Plan
-            </div>
-          </div>
-          <a
-            href="#table-of-contents"
-            className="text-sm mt-2 inline-block cursor-pointer hover:underline"
-            style={{ color: '#005F73', zIndex: 60 }}
-          >
-            ← Back to Table of Contents
-          </a>
-          {ActionPlan && (
-            <div
-              className="w-full relative mb-4 mt-4"
-              style={{
-                borderRadius: '12px',
-                zIndex: 60,
-                background:
-                  'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
-                padding: '1px',
-              }}
+              className="flex justify-between relative items-center"
+              style={{ marginTop: '16px', zIndex: '60' }}
             >
               <div
-                style={{
-                  borderRadius: '11px',
-                  background: '#FFFFFF',
-                  width: '100%',
-                }}
-                className="py-2 px-4"
+                className="text-xl"
+                style={{ color: '#383838', fontWeight: '600' }}
               >
-                <div className="text-sm mb-2" style={{ color: '#005F73' }}>
-                  {ActionPlan[ActionPlan.length - 1]?.title}
-                </div>
-                <div className="text-xs" style={{ color: '#383838' }}>
-                  {ActionPlan[ActionPlan.length - 1]?.description}
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="mt-2">
-                    <div className="flex justify-between items-center">
-                      <div style={{ color: '#383838', fontSize: '12px' }}>
-                        Progress
-                      </div>
-                      <div style={{ color: '#005F73', fontSize: '12px' }}>
-                        {ActionPlan[ActionPlan?.length - 1]?.progress
-                          ? ActionPlan[ActionPlan?.length - 1]?.progress + '%'
-                          : '0%'}
-                      </div>
-                    </div>
-                    <div>
-                      <div
-                        className="relative"
-                        style={{
-                          width: '250px',
-                          height: '8px',
-                          borderRadius: '12px',
-                          background: '#E5E5E5',
-                        }}
-                      >
-                        <div
-                          className="absolute left-0  "
-                          style={{
-                            height: '6px',
-                            backgroundColor: '#6CC24A',
-                            borderRadius: '12px',
-                            width: ActionPlan[ActionPlan.length - 1]?.progress
-                              ? ActionPlan[ActionPlan.length - 1]?.progress +
-                                '%'
-                              : '0%',
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex justify-end items-center">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: '#4C88FF' }}
-                    ></div>
-                    <div
-                      className="ml-1"
-                      style={{ fontSize: '12px', color: '#383838' }}
-                    >
-                      {ActionPlan[ActionPlan.length - 1]?.state}
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: '#E5E5E5',
-                        marginLeft: '24px',
-                        padding: '2.5px 12px',
-                        borderRadius: '12px',
-                      }}
-                    >
-                      <div
-                        className="flex justify-center gap-1 items-center"
-                        style={{ fontSize: '12px', color: '#005F73' }}
-                      >
-                        <img src="/icons/timerprint.svg" alt="" />
-                        {ActionPlan[ActionPlan.length - 1]?.to_date}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                Action Plan
               </div>
             </div>
+            <a
+              href="#table-of-contents"
+              className="text-sm mt-2 inline-block cursor-pointer hover:underline"
+              style={{ color: '#005F73', zIndex: 60 }}
+            >
+              ← Back to Table of Contents
+            </a>
+            {ActionPlan && (
+              <>
+                <div
+                  className="w-full relative mb-4 mt-4"
+                  style={{
+                    borderRadius: '12px',
+                    zIndex: 60,
+                    background:
+                      'linear-gradient(88.52deg, #005F73 3%, #6CC24A 140.48%)',
+                    padding: '1px',
+                  }}
+                >
+                  <div
+                    style={{
+                      borderRadius: '11px',
+                      background: '#FFFFFF',
+                      width: '100%',
+                    }}
+                    className="py-2 px-4"
+                  >
+                    <div className="text-sm mb-2" style={{ color: '#005F73' }}>
+                      {ActionPlan[ActionPlan.length - 1]?.title}
+                    </div>
+                    <div className="text-xs" style={{ color: '#383838' }}>
+                      {ActionPlan[ActionPlan.length - 1]?.description}
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center">
+                          <div style={{ color: '#383838', fontSize: '12px' }}>
+                            Progress
+                          </div>
+                          <div style={{ color: '#005F73', fontSize: '12px' }}>
+                            {ActionPlan[ActionPlan?.length - 1]?.progress
+                              ? ActionPlan[ActionPlan?.length - 1]?.progress +
+                                '%'
+                              : '0%'}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            className="relative"
+                            style={{
+                              width: '250px',
+                              height: '8px',
+                              borderRadius: '12px',
+                              background: '#E5E5E5',
+                            }}
+                          >
+                            <div
+                              className="absolute left-0  "
+                              style={{
+                                height: '6px',
+                                backgroundColor: '#6CC24A',
+                                borderRadius: '12px',
+                                width: ActionPlan[ActionPlan.length - 1]
+                                  ?.progress
+                                  ? ActionPlan[ActionPlan.length - 1]
+                                      ?.progress + '%'
+                                  : '0%',
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-end items-center">
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: '#4C88FF' }}
+                        ></div>
+                        <div
+                          className="ml-1"
+                          style={{ fontSize: '12px', color: '#383838' }}
+                        >
+                          {ActionPlan[ActionPlan.length - 1]?.state}
+                        </div>
+                        <div
+                          style={{
+                            backgroundColor: '#E5E5E5',
+                            marginLeft: '24px',
+                            padding: '2.5px 12px',
+                            borderRadius: '12px',
+                          }}
+                        >
+                          <div
+                            className="flex justify-center gap-1 items-center"
+                            style={{ fontSize: '12px', color: '#005F73' }}
+                          >
+                            <img src="/icons/timerprint.svg" alt="" />
+                            {ActionPlan[ActionPlan.length - 1]?.to_date}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ActionPlanOverview
+                  classData={caldenderData?.slice(0, 4)}
+                ></ActionPlanOverview>
+              </>
+            )}
+            {/* {caldenderData != null && caldenderData.length > 0 && (
+              <CalenderPrint data={caldenderData}></CalenderPrint>
+            )} */}
+            <PrintFooter pageNumber={resolvePageNumber()} />
+          </div>
+          {caldenderData?.length > 4 && (
+            <div
+              className="relative min-h-screen"
+              style={{ pageBreakAfter: 'always', padding: '24px' }}
+            >
+              {/* <PrintHeader /> */}
+
+              <ActionPlanOverview
+                classData={caldenderData?.slice(4, 8)}
+              ></ActionPlanOverview>
+              {/* {caldenderData != null && caldenderData.length > 0 && (
+                <CalenderPrint data={caldenderData}></CalenderPrint>
+              )} */}
+              <PrintFooter pageNumber={resolvePageNumber()} />
+            </div>
           )}
-          {/* {caldenderData != null && caldenderData.length > 0 && (
-            <CalenderPrint data={caldenderData}></CalenderPrint>
-          )} */}
-          <ActionPlanOverview classData={caldenderData}></ActionPlanOverview>
-          <PrintFooter pageNumber={resolvePageNumber()} />
-        </div>
+        </>
       )}
     </div>
   );

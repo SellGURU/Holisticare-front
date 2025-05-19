@@ -10,6 +10,8 @@ interface DatePickerProps {
   isAddClient?: boolean;
   inValid?: boolean;
   errorMessage?: string;
+  ClassName?: string;
+  textStyle?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -20,6 +22,8 @@ export default function SimpleDatePicker({
   isAddClient,
   inValid,
   errorMessage,
+  ClassName,
+  textStyle,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -56,9 +60,9 @@ export default function SimpleDatePicker({
       <button
         onClick={() => setOpen(!open)}
         className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ''}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
-         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between text-[10px] text-Text-Secondary ${
+         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
            inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
-         }`}
+         } ${ClassName}`}
       >
         {date ? (
           ` ${date.toLocaleDateString()}`

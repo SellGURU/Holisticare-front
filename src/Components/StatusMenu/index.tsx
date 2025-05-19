@@ -6,42 +6,42 @@ interface StatusMenuProps {
   activeStatus: Status;
   onChange: (status: string) => void;
 }
-const getStatusBgColorClass = (
-  status: string,
-  currentStatus: string,
-): string => {
-  if (status.toLowerCase() === currentStatus.toLowerCase()) {
-    switch (status.toLowerCase()) {
-      case 'high':
-        return 'bg-red-status text-black';
-      case 'low':
-        return 'bg-brand-primary-color text-black';
-      case 'medium':
-        return 'bg-orange-status  text-black';
-      case 'excellent':
-        return 'bg-[#7F39FB] text-black';
-      case 'good':
-        return 'bg-[#03DAC5] text-black';
-      case 'ok':
-        return 'bg-[#FBAD37] text-black';
-      case 'needs focus':
-        return 'bg-[#FC5474] text-black';
-      case 'incompleted':
-        return 'bg-[#FC5474] text-white';
-      case 'incomplete data':
-        return 'bg-[#FC5474] text-white';
-      case 'all':
-        return 'text-white bg-Primary-DeepTeal';
-      case 'need to check':
-        return 'bg-[#FFBD59] text-black';
-      case 'checked':
-        return 'bg-[#06C78D] text-white';
-      default:
-        return 'border border-light-blue-active  text-[8px]';
-    }
-  }
-  return 'border bg-backgroundColor-Main border-Gray-50 text-[8px] text-Text-Primary  ';
-};
+// const getStatusBgColorClass = (
+//   status: string,
+//   currentStatus: string,
+// ): string => {
+//   if (status.toLowerCase() === currentStatus.toLowerCase()) {
+//     switch (status.toLowerCase()) {
+//       case 'high':
+//         return 'bg-red-status text-black';
+//       case 'low':
+//         return 'bg-brand-primary-color text-black';
+//       case 'medium':
+//         return 'bg-orange-status  text-black';
+//       case 'excellent':
+//         return 'bg-[#7F39FB] text-black';
+//       case 'good':
+//         return 'bg-[#03DAC5] text-black';
+//       case 'ok':
+//         return 'bg-[#FBAD37] text-black';
+//       case 'needs focus':
+//         return 'bg-[#FC5474] text-black';
+//       case 'incompleted':
+//         return 'bg-[#FC5474] text-white';
+//       case 'incomplete data':
+//         return 'bg-[#FC5474] text-white';
+//       case 'all':
+//         return 'text-white bg-Primary-DeepTeal';
+//       case 'needs check':
+//         return 'bg-[#FFBD59] text-black';
+//       case 'checked':
+//         return 'bg-[#06C78D] text-white';
+//       default:
+//         return 'border border-light-blue-active  text-[8px]';
+//     }
+//   }
+//   return 'border bg-backgroundColor-Main border-Gray-50 text-[8px] text-Text-Primary  ';
+// };
 const StatusMenu: React.FC<StatusMenuProps> = ({
   status,
   activeStatus,
@@ -59,8 +59,9 @@ const StatusMenu: React.FC<StatusMenuProps> = ({
                     onClick={() => {
                       onChange(state);
                     }}
-                    className={` ${getStatusBgColorClass(activeStatus, state)} 
-                                rounded-2xl text-nowrap  px-3 w-full h-[24px] flex items-center justify-center cursor-pointer `}
+                    className={` 
+                     ${activeStatus == state ? 'text-white bg-Primary-DeepTeal' : 'bg-backgroundColor-Main text-Text-Primary'}
+                              rounded-2xl text-nowrap  px-3 w-full h-[24px] flex items-center justify-center cursor-pointer `}
                   >
                     {state}
                   </div>

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from 'react';
 import MainModal from '../../MainModal';
+import { Tooltip } from 'react-tooltip';
 
 interface PreviewModalProps {
   previewShowModal: boolean;
@@ -17,6 +18,54 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
   selectedRow,
   handleOpenModal,
 }) => {
+  const renderNutrient = (
+    label: string,
+    value: number | undefined,
+    iconSrc: string,
+  ) => {
+    if (value === undefined) {
+      return null; // or handle it with a default value
+    }
+
+    const valueStr = value.toString(); // Convert number to string
+    const isOverflowing = valueStr.length > 2;
+
+    return (
+      <div className="flex items-center gap-1 select-none">
+        <img src={iconSrc} alt="" className="w-[30px] h-[30px]" />
+        <div className="text-xs text-Text-Fivefold flex items-center gap-[4px]">
+          {label}:
+          <div
+            className="text-Text-Quadruple"
+            data-tooltip-id={isOverflowing ? `${label}-tooltip` : undefined}
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '20px',
+            }}
+          >
+            {valueStr}
+          </div>
+          gr
+        </div>
+        {isOverflowing && (
+          <Tooltip
+            id={`${label}-tooltip`}
+            place="top"
+            className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !shadow-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            style={{
+              zIndex: 9999,
+              pointerEvents: 'none',
+            }}
+          >
+            {valueStr}
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
   return (
     <>
       <MainModal isOpen={previewShowModal} onClose={handlePreviewCloseModal}>
@@ -40,31 +89,16 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
             </div>
             <div className="w-full h-[1px] bg-Boarder my-3"></div>
             <div className="flex flex-col w-full gap-4 mt-6">
-              <div className="flex gap-7">
+              {/* <div className="flex gap-7">
                 <div className="font-medium text-Text-Primary text-xs">
                   Description
                 </div>
                 <div className="text-xs text-Text-Secondary text-justify leading-5">
                   {selectedRow?.Description}
-                  {/* Eat a balanced diet with a variety of fruits, vegetables, lean
-                  proteins, healthy fats, and whole grains. Drink at least 8
-                  glasses of water per day to stay hydrated. Limit processed
-                  foods, sugary drinks, and excessive salt intake. Avoid
-                  skipping meals; aim for three main meals and healthy snacks if
-                  needed. */}
+                
                 </div>
-              </div>
-              <div className="flex gap-7 items-center">
-                <div className="font-medium text-Text-Primary text-xs">
-                  Base Score
-                </div>
-                <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
-                  <div className="text-[10px] text-Text-Primary">
-                    {selectedRow?.Base_Score}
-                  </div>
-                  <div className="text-[10px] text-Text-Quadruple">/10</div>
-                </div>
-              </div>
+              </div> */}
+
               <div className="flex gap-8">
                 <div className="font-medium text-Text-Primary text-xs">
                   Instruction
@@ -90,7 +124,22 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                     Macros Goal
                   </div>
                   <div className="flex items-center flex-grow-[1] justify-between pr-2">
-                    <div className="flex items-center gap-1">
+                    {renderNutrient(
+                      'Carbs',
+                      selectedRow?.['Total Macros'].Carbs ?? 0,
+                      '/icons/carbs-preview.svg',
+                    )}
+                    {renderNutrient(
+                      'Proteins',
+                      selectedRow?.['Total Macros'].Protein ?? 0,
+                      '/icons/proteins-preview.svg',
+                    )}
+                    {renderNutrient(
+                      'Fats',
+                      selectedRow?.['Total Macros'].Fats ?? 0,
+                      '/icons/fats-preview.svg',
+                    )}
+                    {/* <div className="flex items-center gap-1">
                       <img
                         src="/icons/carbs-preview.svg"
                         alt=""
@@ -131,10 +180,21 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                         </div>
                         gr
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
+              <div className="flex gap-7 items-center">
+                <div className="font-medium text-Text-Primary text-xs">
+                  Base Score
+                </div>
+                <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
+                  <div className="text-[10px] text-Text-Primary">
+                    {selectedRow?.Base_Score}
+                  </div>
+                  <div className="text-[10px] text-Text-Quadruple">/10</div>
+                </div>
+              </div>
             </div>
             <div className="w-full flex justify-end items-center p-2 mt-3">
               <div

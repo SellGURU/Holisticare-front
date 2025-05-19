@@ -99,7 +99,11 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                 >
                   {
                     <div className="text-center" style={{ color: '#888888' }}>
-                      <div>{data.chart_bounds[el.key].label}</div>
+                      <div
+                        style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+                      >
+                        {data.chart_bounds[el.key].label}
+                      </div>
                       <div>
                         {'' +
                           '(' +
@@ -145,7 +149,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                             gap: '2px',
                             marginLeft:
                               index == 0
-                                ? '16px'
+                                ? '8px'
                                 : index ==
                                     sortKeysWithValues(data.chart_bounds)
                                       .length -

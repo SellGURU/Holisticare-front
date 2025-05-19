@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import Application from '../../../api/app';
 import SearchBox from '../../SearchBox';
 import StatusMenu from '../../StatusMenu';
@@ -17,10 +17,14 @@ interface Patient {
   tags: string[];
   age: number;
 }
+interface SwitchClientProps {
+  handleCloseSlideOutPanel: () => void;
+}
 
-export const SwitchClient = () => {
+export const SwitchClient: FC<SwitchClientProps> = ({
+  handleCloseSlideOutPanel,
+}) => {
   const { id } = useParams<{ id: string }>();
-  console.log(id);
   const [activeMemberID, setActiveMemberID] = useState<any>(Number(id));
   const [isLoading, setisLoading] = useState(false);
   const [activeStatus, setActiveStatus] = useState('All');
@@ -101,6 +105,7 @@ export const SwitchClient = () => {
       if (activeClient) {
         const { member_id, name } = activeClient;
         navigate(`/report/${member_id}/${encodeURIComponent(name)}`);
+        handleCloseSlideOutPanel();
       }
     }
   };
@@ -123,31 +128,34 @@ export const SwitchClient = () => {
             onChange={(value) => setActiveStatus(value)}
           />
 
-          <div className="flex flex-col pr-1  max-h-[400px] w-full overflow-auto">
+          <div className="flex flex-col pr-1  h-[400px] w-full overflow-auto">
             <>
-              {resolvedFiltersData().map((client, i) => {
-                console.log(client);
+              {resolvedFiltersData().length > 0 ? (
+                resolvedFiltersData().map((client, i) => {
+                  console.log(client);
 
-                return (
-                  <ClientCard
-                    index={i}
-                    key={i}
-                    name={client.name}
-                    email={client.email}
-                    picture={client.picture}
-                    memberID={client.member_id}
-                    setCardActive={setActiveMemberID}
-                    // onClick={() => {
-                    //   setcardActive(i + 1); // Update the active card index
-                    //   setActiveMemberID(client.member_id); // Set active member ID
-                    // }}
-                    status={client.status}
-                    cardActive={activeMemberID}
-                    tags={client.tags}
-                    isSwitch
-                  />
-                );
-              })}
+                  return (
+                    <ClientCard
+                      index={i}
+                      key={i}
+                      name={client.name}
+                      email={client.email}
+                      picture={client.picture}
+                      memberID={client.member_id}
+                      setCardActive={setActiveMemberID}
+                      status={client.status}
+                      cardActive={activeMemberID}
+                      tags={client.tags}
+                      isSwitch
+                    />
+                  );
+                })
+              ) : (
+                <div className=" w-full h-full flex items-center justify-center flex-col text-xs font-medium">
+                  <img src="/icons/EmptyInbox.svg" alt="" />
+                  No client found.
+                </div>
+              )}
             </>
           </div>
           <div className="w-full flex justify-center mt-3 md:mt-6">

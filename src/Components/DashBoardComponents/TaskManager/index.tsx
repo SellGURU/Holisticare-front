@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // import AddFilter from './addFilter';
-import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import MainModal from '../../MainModal';
-import TextField from '../../TextField';
-import SimpleDatePicker from '../../SimpleDatePicker';
 import DashboardApi from '../../../api/Dashboard';
+import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import { ButtonPrimary } from '../../Button/ButtonPrimary';
+import MainModal from '../../MainModal';
+import SimpleDatePicker from '../../SimpleDatePicker';
+import TextField from '../../TextField';
+import SpinnerLoader from '../../SpinnerLoader';
 // Define the new Task type
 type Task = {
   task_id?: string;
@@ -24,15 +24,13 @@ type Task = {
 //   date: { from: Date | null; to: Date | null };
 // };
 
-interface TaskManagerProps {}
-const TaskManager: React.FC<TaskManagerProps> = () => {
+const TaskManager = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-
+  const [loading, setLoading] = useState(false);
+  const [itemSelected, setItemSelected] = useState<string | undefined>('');
   useEffect(() => {
     DashboardApi.getTasksList({})
       .then((response) => {
-        console.log(response);
-
         setTasks(response.data);
       })
       .catch((error) => {
@@ -40,26 +38,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       });
   }, []);
 
-  // const [currentTasks, setCurrentTasks] = useState(tasks);
-
-  //   const handleCheckBoxChange = (task_id: string| undefined) => {
-  //     DashboardApi.checkTask({
-  //       task_id: task_id
-  //     }).then(()=>{
-  //  setTasks(
-  //       tasks.map((task) =>
-  //         task.task_id === task_id ? { ...task, checked: !task.checked } : task,
-  //       ),
-  //     );
-  //     })
-
-  //   };
   const handleCheckBoxChange = (task_id: string | undefined) => {
     // Find the task to check its current status
     const taskToUpdate = tasks.find((task) => task.task_id === task_id);
 
     // Proceed only if the task is found and it's not already checked
     if (taskToUpdate && !taskToUpdate.checked) {
+      setLoading(true);
       DashboardApi.checkTask({
         task_id: task_id,
       })
@@ -69,6 +54,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
               task.task_id === task_id ? { ...task, checked: true } : task,
             ),
           );
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error checking task:', error);
@@ -107,15 +93,17 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
       priority: Priority,
       checked: false,
     };
+
     DashboardApi.AddTask(newTask).then(() => {
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-      setshowAddTaskModal(false);
-      setTaskTitle('');
-      setDeadline(null);
-      setPriority('High');
+      DashboardApi.getTasksList({}).then((response) => {
+        setTasks(response.data);
+        setshowAddTaskModal(false);
+        setTaskTitle('');
+        setDeadline(null);
+        setPriority('High');
+      });
     });
   };
-  console.log(tasks);
   return (
     <>
       <MainModal
@@ -133,6 +121,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           </div>
 
           <TextField
+            className="text-Text-Primary"
             newStyle
             value={taskTitle}
             onChange={(e) => {
@@ -145,7 +134,13 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
           <div className="w-full flex items-center mt-4 gap-3">
             <div className="flex flex-col min-w-[222px] text-xs font-medium">
               <label className="mb-1">Deadline</label>
-              <SimpleDatePicker isLarge date={deadline} setDate={setDeadline} />
+              <SimpleDatePicker
+                textStyle
+                ClassName=""
+                isLarge
+                date={deadline}
+                setDate={setDeadline}
+              />
             </div>
             <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
               <label className="mb-1">Priority</label>
@@ -225,11 +220,11 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
         </div>
       </MainModal>
       <div
-        className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary"
-        style={{ height: (window.innerHeight - 200) / 2 + 'px' }}
+        className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden"
+        style={{ height: (window.innerHeight - 240) / 2 + 'px' }}
       >
         <div className="flex justify-between items-center mb-4 relative">
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
             {tasks.length > 1 && (
               <span className="text-xs font-medium text-Text-Triarty">
@@ -240,7 +235,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
 
           <ButtonPrimary onClick={() => setshowAddTaskModal(true)} size="small">
             <img src="/icons/add.svg" alt="" />
-            New task
+            New Task
           </ButtonPrimary>
         </div>
         {tasks.length < 1 ? (
@@ -251,7 +246,7 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-fit max-h-[193px]">
+          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-[80%]">
             {tasks.map((task) => (
               <li
                 key={task.task_id}
@@ -266,7 +261,10 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                       type="checkbox"
                       id={task.title}
                       checked={task.checked}
-                      onChange={() => handleCheckBoxChange(task.task_id)}
+                      onChange={() => {
+                        setItemSelected(task.task_id);
+                        handleCheckBoxChange(task.task_id);
+                      }}
                       className="hidden"
                     />
                     <div
@@ -291,6 +289,9 @@ const TaskManager: React.FC<TaskManagerProps> = () => {
                         </svg>
                       )}
                     </div>
+                    {loading && task.task_id === itemSelected && (
+                      <SpinnerLoader color="#005F73" />
+                    )}
 
                     <div
                       className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${

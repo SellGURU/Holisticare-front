@@ -9,6 +9,7 @@ import Toggle from './Toggle';
 import UnitPopUp from '../../UnitPopup';
 import { sortKeysWithValues } from './Help';
 import HistoricalChart from '../HistoricalChart';
+import GeneticsDnaTable from './GeneticsDnaTable';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -23,6 +24,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [activeBox, setActiveBOx] = useState<any>(
     refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
   );
+  useEffect(() => {
+    setIsCheced(false);
+  }, [activeBox]);
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'
@@ -50,6 +54,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
+  const [showGeneInsights, setShowGeneInsights] = useState(false);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -249,6 +254,33 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                 </div>
                               )}
                             </div>
+                            {active?.gene_insight != null && (
+                              <div
+                                onMouseEnter={() => {
+                                  setShowGeneInsights(true);
+                                }}
+                                onMouseLeave={() => {
+                                  setShowGeneInsights(false);
+                                }}
+                                className="flex relative justify-start ml-2 items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                              >
+                                Gene Insights
+                                <img
+                                  src="/icons/user-navbar/info-circle.svg"
+                                  className="w-4  cursor-pointer h-4 ml-1"
+                                  alt=""
+                                />
+                                {showGeneInsights && active?.gene_insight && (
+                                  <div className="absolute p-2 left-6 top-4 bg-white w-[365px] z-20 h-auto rounded-[16px] border border-gray-50 shadow-100">
+                                    <div>
+                                      <GeneticsDnaTable
+                                        data={active?.gene_insight}
+                                      ></GeneticsDnaTable>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="flex items-center gap-4">
                             {active?.unit != '' && (

@@ -13,9 +13,9 @@ interface EmailOverviewProps {
 
 const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
   return (
-    <div className="w-[400px] h-[250px] rounded-[20px] bg-white border border-Gray-50 shadow-100 flex flex-col justify-between">
+    <div className="w-[450px] h-[275px] rounded-[20px] bg-white border border-Gray-50 shadow-100 flex flex-col justify-between">
       <div className="flex flex-col">
-        <div className="flex w-full pt-2 pl-2 gap-2 items-center">
+        <div className="flex w-full pt-3 pl-2 gap-2 items-center">
           <img
             src={
               customTheme.selectedImage

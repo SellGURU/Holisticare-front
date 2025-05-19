@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import SvgIcon from '../../../utils/svgIcon';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import SearchBox from '../../SearchBox';
+import Toggle from '../../Toggle';
 
 type Message = {
   name: string;
@@ -14,20 +13,20 @@ type Message = {
   sender_type: string;
   unread: boolean;
   unread_count: number;
+  online_status: boolean;
 };
 
 interface MessageListProps {
-  isMessages?: boolean;
+  search: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
+const MessageList: React.FC<MessageListProps> = ({ search }) => {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<'All' | 'Read' | 'Unread'>('All');
+  const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showSearch, setshowSearch] = useState(false);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   useEffect(() => {
@@ -66,8 +65,12 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     }
     return colors[Math.abs(hash) % colors.length];
   };
-  const handleClickMessage = (id: string, username: string) => {
-    navigate(`?id=${id}&username=${username}`);
+  const handleClickMessage = (
+    id: string,
+    username: string,
+    status: boolean,
+  ) => {
+    navigate(`?id=${id}&username=${username}&status=${status}`);
   };
   const handleClickAgainMessage = () => {
     navigate(``);
@@ -83,6 +86,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
     );
     setMessagesSearched(searchResult);
   };
+  useEffect(() => {
+    if (search) {
+      handleSearch(search);
+    }
+  }, [search]);
   const hexToRGBA = (hex: string, opacity: number = 1) => {
     hex = hex.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
@@ -93,76 +101,28 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
   return (
     <>
       {isLoading ? (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="w-full h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
-          <div className="flex w-full justify-between">
-            {!showSearch && (
-              <h2 className="text-sm text-Text-Primary font-medium">
-                {' '}
-                {isMessages ? 'Messages' : ' Recently Messages'}
-              </h2>
-            )}
-            {isMessages && (
-              <div className="flex items-center gap-1">
-                <div className="cursor-pointer">
-                  {showSearch ? (
-                    <div>
-                      <SearchBox
-                        id="searchBar"
-                        ClassName={`rounded-md w-full !min-w-[120%]`}
-                        onSearch={handleSearch}
-                        placeHolder="Search for users ..."
-                        onBlur={() => {
-                          setshowSearch(false);
-                        }}
-                      ></SearchBox>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => {
-                        setshowSearch(true);
-                        setTimeout(() => {
-                          document.getElementById('searchBar')?.focus();
-                        }, 200);
-                      }}
-                      className="cursor-pointer flex justify-center items-center"
-                    >
-                      <SvgIcon
-                        width="20px"
-                        height="20px"
-                        src="/icons/search.svg"
-                        color="#005F73"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* {!showSearch && (
-                  <img
-                    className="cursor-pointer"
-                    src="/icons/setting-2.svg"
-                    alt=""
-                  />
-                )} */}
-              </div>
-            )}
+        <div className="w-[315px] h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+          <div className="w-full flex mt-2">
+            <Toggle
+              active={filter}
+              setActive={setFilter}
+              value={['All', 'Read', 'Unread']}
+              isMessages
+            />
           </div>
-
-          <div className="w-full  shadow-200  flex mt-3">
-            {['All', 'Read', 'Unread'].map((type) => (
-              <div
-                key={type}
-                onClick={() => setFilter(type as 'All' | 'Read' | 'Unread')}
-                className={` ${type === 'All' ? 'rounded-tl-xl rounded-bl-xl' : type === 'Unread' ? 'rounded-tr-xl rounded-br-xl' : ''} w-full text-center px-4 py-2 border border-Boarder text-xs cursor-pointer ${filter === type ? 'bg-Primary-EmeraldGreen text-white' : ''}`}
-              >
-                {type}
+          {filteredMessages.length === 0 && (
+            <div className="flex flex-col items-center w-full h-[90%] justify-center">
+              <img src="/icons/empty-messages-coach.svg" alt="" />
+              <div className="text-base font-medium text-Text-Primary -mt-5">
+                No results found.
               </div>
-            ))}
-          </div>
-          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll">
+            </div>
+          )}
+          <ul className="mt-5 w-full h-[91%] pr-3 overflow-y-scroll divide-y divide-Boarder">
             {filteredMessages.map((message) => {
               return (
                 <li
@@ -179,10 +139,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                       handleClickMessage(
                         message.member_id.toString(),
                         message.name,
+                        message.online_status,
                       );
                     }
                   }}
-                  className={`mb-5 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card  shadow-200 rounded-2xl p-2 '}`}
+                  className={`pt-2 mb-2 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
                 >
                   <div className="flex justify-start">
                     <div
@@ -196,11 +157,11 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                           0.87,
                         ),
                       }}
-                      className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 "
+                      className="min-w-10 h-10   rounded-full  flex items-center justify-center mr-3 capitalize"
                     >
                       {message.name.charAt(0)}
                     </div>
-                    <div className="border-b w-full border-Boarder pb-2">
+                    <div className="w-full flex flex-col justify-center">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
                           <div className="text-[10px] font-medium text-Text-Primary">
@@ -233,7 +194,7 @@ const MessageList: React.FC<MessageListProps> = ({ isMessages }) => {
                         )} */}
                       </div>
                       <div
-                        className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[120px] max-w-[150px] text-Text-Secondary   ${
+                        className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${
                           expandedMessage === message.member_id ? '' : ''
                         } `}
                       >

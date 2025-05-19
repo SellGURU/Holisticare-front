@@ -2,6 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import MainModal from '../../MainModal';
 import RangeCardLibraryThreePages from './RangeCard';
+import { Tooltip } from 'react-tooltip';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -22,7 +23,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 }) => {
   const [addData, setAddData] = useState({
     title: '',
-    description: '',
+    // description: '',
     score: 0,
     instruction: '',
   });
@@ -34,6 +35,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   };
   const [dose, setDose] = useState('');
   const [value, setValue] = useState('');
+  const [Unit, setUnit] = useState('');
   const [totalMacros, setTotalMacros] = useState({
     Fats: '',
     Protein: '',
@@ -43,12 +45,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (selectedRow) {
       setAddData({
         title: selectedRow ? selectedRow.Title : '',
-        description: selectedRow ? selectedRow.Description : '',
+        // description: selectedRow ? selectedRow.Description : '',
         score: selectedRow ? selectedRow.Base_Score : 0,
         instruction: selectedRow ? selectedRow.Instruction : '',
       });
       setDose(selectedRow ? selectedRow.Dose : '');
       setValue(selectedRow ? selectedRow.Value : '');
+      setUnit(selectedRow ? selectedRow.Unit : '');
       setTotalMacros({
         Fats: selectedRow ? selectedRow['Total Macros']?.Fats : '',
         Protein: selectedRow ? selectedRow['Total Macros']?.Protein : '',
@@ -93,7 +96,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     if (pageType === 'Supplement') {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Dose: dose,
@@ -103,17 +106,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     } else if (pageType === 'Lifestyle') {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Value: Number(value),
+        Unit: Unit,
       };
       onSubmit(data);
       clear();
     } else {
       const data: any = {
         Title: addData.title,
-        Description: addData.description,
+        // Description: addData.description,
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Total_Macros: {
@@ -129,18 +133,19 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const clear = () => {
     setAddData({
       title: '',
-      description: '',
+      // description: '',
       score: 0,
       instruction: '',
     });
     setDose('');
     setValue('');
+    setUnit('');
     setTotalMacros({ Carbs: '', Fats: '', Protein: '' });
     setShowValidation(false);
     setSelectedRow();
     setErrors({
       title: false,
-      description: false,
+      // description: false,
       instruction: false,
       dose: false,
       value: false,
@@ -155,7 +160,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
 
   const [errors, setErrors] = useState({
     title: false,
-    description: false,
+    // description: false,
     instruction: false,
     dose: false,
     value: false,
@@ -170,7 +175,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   const validateFields = () => {
     const newErrors = {
       title: !addData.title,
-      description: !addData.description,
+      // description: !addData.description,
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       value: pageType === 'Lifestyle' && !value,
@@ -233,7 +238,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           </div>
 
           {/* Description Field */}
-          <div className="flex flex-col mt-4 w-full gap-2">
+          {/* <div className="flex flex-col mt-4 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
               Description
             </div>
@@ -257,21 +262,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 This field is required.
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Base Score Field */}
-          <div className="flex flex-col mt-4 w-full">
-            <div className="text-xs font-medium text-Text-Primary">
-              Base Score
-            </div>
-            <RangeCardLibraryThreePages
-              value={addData.score}
-              changeValue={updateAddData}
-              showValidation={showValidation}
-              error={errors.score}
-              required={true}
-            />
-          </div>
 
           {/* Instruction Field */}
           <div className="flex flex-col mt-4 w-full gap-2">
@@ -303,7 +296,14 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Dose</div>
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
+                Dose
+                <img
+                  data-tooltip-id="dose-info"
+                  src="/icons/info-circle.svg"
+                  alt=""
+                />
+              </div>
               <input
                 placeholder="Enter the supplement's dose..."
                 value={dose}
@@ -324,29 +324,76 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
+              <Tooltip
+                id={`dose-info`}
+                place="top-start"
+                className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+              >
+                Dose must include a number followed by a unit (e.g., '50 mg'){' '}
+              </Tooltip>
             </div>
           )}
 
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
             <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary">Value</div>
-              <input
-                placeholder="Enter Value..."
-                value={value}
-                type="number"
-                onChange={(e) => {
-                  setValue(e.target.value);
-                  if (e.target.value) {
-                    setErrors((prev) => ({ ...prev, value: false }));
-                  } else {
-                    setErrors((prev) => ({ ...prev, value: true }));
-                  }
-                }}
-                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  errors.value ? 'border-Red' : 'border-Gray-50'
-                } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-              />
+              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
+                Value
+                <img
+                  data-tooltip-id="value-info"
+                  className="size-2 cursor-pointer"
+                  src="/icons/info-circle-blue.svg"
+                  alt=""
+                />
+                <Tooltip
+                  id={`value-info`}
+                  place="top-start"
+                  className="!bg-white !w-fit !text-wrap 
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  style={{
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  Value must include a number and, if needed, be followed by a
+                  unit (e.g., 8 glasses of water).
+                </Tooltip>
+              </div>
+              <div className="flex w-full gap-3">
+                <input
+                  placeholder="Enter Value..."
+                  value={value}
+                  type="number"
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    if (e.target.value) {
+                      setErrors((prev) => ({ ...prev, value: false }));
+                    } else {
+                      setErrors((prev) => ({ ...prev, value: true }));
+                    }
+                  }}
+                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
+                    errors.value ? 'border-Red' : 'border-Gray-50'
+                  } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                />
+                <input
+                  placeholder="Enter Unit"
+                  value={Unit}
+                  type="text"
+                  onChange={(e) => {
+                    // Remove numbers using regex
+                    const filteredValue = e.target.value.replace(/[0-9]/g, '');
+                    setUnit(filteredValue);
+                  }}
+                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
+                   bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                />
+              </div>
               {errors.value && (
                 <div className="text-Red text-[10px]">
                   This field is required.
@@ -488,6 +535,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               </div>
             </div>
           )}
+          <div className="flex flex-col mt-4 w-full">
+            <div className="text-xs font-medium text-Text-Primary">
+              Base Score
+            </div>
+            <RangeCardLibraryThreePages
+              value={addData.score}
+              changeValue={updateAddData}
+              showValidation={showValidation}
+              error={errors.score}
+              required={true}
+            />
+          </div>
 
           {/* Action Buttons */}
           <div className="w-full flex justify-end items-center p-2 mt-5">

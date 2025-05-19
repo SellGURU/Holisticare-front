@@ -2,14 +2,30 @@
 import { useState, useEffect, useRef } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
-import { ButtonPrimary } from '../../Button/ButtonPrimary';
+// import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
+
+const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB in bytes
+const ALLOWED_FILE_TYPES = [
+  'application/pdf',
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/tiff',
+  'text/plain',
+];
+
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const fileInputRef = useRef<any>(null);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
+  const [error, setError] = useState<string>('');
+
   useEffect(() => {
     // setIsLoading(true);
     Application.getFilleList({ member_id: id })
@@ -51,9 +67,78 @@ export const FilleHistory = () => {
 
   //   return `${day} ${month} ${year}`;
   // };
+
+  const validateFile = (file: File): boolean => {
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`File ${file.name} is too large. Maximum size is 40MB.`);
+      return false;
+    }
+
+    // Check file type
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setError(`File ${file.name} has an unsupported format.`);
+      return false;
+    }
+
+    // Check for duplicate filename
+    const isDuplicate = data?.some(
+      (existingFile: any) =>
+        existingFile?.file_name &&
+        file.name &&
+        existingFile.file_name.toLowerCase() === file.name.toLowerCase(),
+    );
+
+    if (isDuplicate) {
+      setError(`File ${file.name} already exists.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const topSpacing = 80;
+      const addFileButtonHeight = 32;
+      const gapBetweenItems = 12;
+      const tableHeaderHeight = 48;
+      const bottomSpacing = 55;
+
+      const offset =
+        topSpacing +
+        addFileButtonHeight +
+        gapBetweenItems +
+        tableHeaderHeight +
+        bottomSpacing;
+
+      const height = window.innerHeight - offset;
+      setContainerMaxHeight(height);
+    };
+
+    calculateHeight();
+
+    window.addEventListener('resize', calculateHeight);
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+    };
+  }, []);
+
   return (
     <div className=" w-full">
-      <div className="px-2">
+      {error && <div className="mb-3 text-red-500 text-[10px]">{error}</div>}
+      <div
+        onClick={() => {
+          fileInputRef.current?.click();
+        }}
+        className=" mb-3 text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
+      >
+        <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+        Add File
+      </div>
+      <div className="">
         <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
           <div>File Name</div>
           <div>Upload Date</div>
@@ -63,7 +148,10 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto max-h-[450px]">
+              <div
+                className="flex justify-center w-full items-start overflow-auto"
+                style={{ maxHeight: containerMaxHeight }}
+              >
                 <div className="w-full mt-2">
                   {upLoadingFiles.map((el: any) => {
                     return (
@@ -78,7 +166,12 @@ export const FilleHistory = () => {
                             prevUploadingFiles.filter((file) => file !== el),
                           );
                         }}
-                      ></FileBoxUpload>
+                        onCancel={(file) => {
+                          setUploadingFiles((prev) =>
+                            prev.filter((f) => f !== file),
+                          );
+                        }}
+                      />
                     );
                   })}
                   {data?.map((el: any) => {
@@ -86,7 +179,7 @@ export const FilleHistory = () => {
                   })}
                 </div>
               </div>
-              <div className="w-full mt-5 flex justify-center">
+              {/* <div className="w-full mt-5 flex justify-center">
                 <ButtonPrimary
                   onClick={() => {
                     document.getElementById('uploadFile')?.click();
@@ -96,22 +189,30 @@ export const FilleHistory = () => {
                   <img src="/icons/add-square.svg" alt="" />
                   Add File
                 </ButtonPrimary>
-              </div>
+              </div> */}
               <input
                 type="file"
                 ref={fileInputRef}
                 accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
                 multiple
-                onChange={(e: any) => {
-                  const fileList = Array.from(e.target.files);
-                  // setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
-                  // setUploadingFiles([]);
-                  setTimeout(() => {
-                    setUploadingFiles(fileList);
-                  }, 200);
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setError(''); // Clear previous errors
+                  const fileList = Array.from(e.target.files || []);
+
+                  // Validate each file
+                  const validFiles = fileList.filter((file) =>
+                    validateFile(file),
+                  );
+
+                  if (validFiles.length > 0) {
+                    setTimeout(() => {
+                      setUploadingFiles(validFiles);
+                    }, 200);
+                  }
+
                   fileInputRef.current.value = '';
                 }}
-                id="uploadFile"
+                id="uploadFileBoxes"
                 className="w-full absolute invisible h-full left-0 top-0"
               />
             </>

@@ -65,7 +65,7 @@ const Employes: React.FC = () => {
   return (
     <div
       className="w-full  overflow-hidden bg-white -mt-4 rounded-2xl shadow-200 p-4 "
-      style={{ height: (window.innerHeight - 200) / 2 + 'px' }}
+      style={{ height: (window.innerHeight - 240) / 2 + 'px' }}
     >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
@@ -231,7 +231,7 @@ const EmployeeRow: React.FC<{
                     <td className="py-1 text-[10px] text-center text-[#888888]">
                       {client.Age}
                     </td>
-                    <td className="py-1 text-[10px] text-center text-[#888888]">
+                    <td className="py-1 text-[10px] capitalize text-center text-[#888888]">
                       {client.Gender}
                     </td>
                     <td className="py-1 text-[10px] text-center text-[#888888]">
@@ -242,10 +242,10 @@ const EmployeeRow: React.FC<{
                     </td>
                     <td className="py-2 text-[10px]   text-[#888888] w-[70px]   ">
                       <div
-                        className={`px-2 rounded-full w-fit text-[8px] ${client.Status == 'Waiting' ? 'bg-[#F9DEDC]' : client.Status == 'In progress' ? 'bg-[#E9F0F2]' : 'bg-[#DEF7EC]'}  flex items-center justify-center gap-[2px] ml-8 text-Text-Primary`}
+                        className={` text-nowrap capitalize px-2 rounded-full w-fit text-[8px] ${client.Status == 'Checked' ? 'bg-[#F9DEDC]' : client.Status == 'incomplete data' ? 'bg-[#F9DEDC]' : 'bg-[#FFD8E4]'}  flex items-center justify-center gap-[2px]  ml-8 text-Text-Primary`}
                       >
                         <div
-                          className={`size-2 rounded-full ${client.Status == 'Waiting' ? 'bg-[#FFAB2C]' : client.Status == 'In progress' ? 'bg-[#4C88FF]' : 'bg-[#06C78D]'}`}
+                          className={`size-2 rounded-full ${client.Status == 'Checked' ? 'bg-[#06C78D]' : client.Status == 'incomplete data' ? 'bg-[#FFAB2C]' : 'bg-[#FC5474]'}`}
                         ></div>{' '}
                         {client.Status}
                       </div>
@@ -300,7 +300,8 @@ const EmployeeRow: React.FC<{
           <div>
             <p className="text-[10px] text-[#383838]">{employee.user_name}</p>
             <p className="text-[8px] text-[#888888]">
-              Clients Assigned: {employee['clients assigned']}
+              Role: {employee.role} <span className="mx-1">|</span> Clients
+              Assigned: {employee['clients assigned']}
             </p>
           </div>
         </div>
@@ -316,7 +317,7 @@ const EmployeeRow: React.FC<{
             ref={modalRef}
             className="absolute top-5 right-[16px] z-[90] w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
-            <div
+            {/* <div
               onClick={() => {
                 setshowRemoveStaffModal(true);
               }}
@@ -324,17 +325,19 @@ const EmployeeRow: React.FC<{
             >
               <img src="/icons/user-minus.svg" alt="" />
               Remove
-            </div>
+            </div> */}
             <div
-              onClick={() =>
-                Application.getStaffAssignedClients({
-                  user_id: employee.user_id,
-                }).then((res) => {
-                  setAssignedClients(res.data);
-                  setshowAssignListModal(true);
-                })
-              }
-              className="flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+              onClick={() => {
+                if (employee['clients assigned'] > 0) {
+                  Application.getStaffAssignedClients({
+                    user_id: employee.user_id,
+                  }).then((res) => {
+                    setAssignedClients(res.data);
+                    setshowAssignListModal(true);
+                  });
+                }
+              }}
+              className={`flex items-center gap-1 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer ${employee['clients assigned'] < 1 ? 'opacity-40' : ''}`}
             >
               <img src="/icons/firstline.svg" alt="" />
               Show Assign List

@@ -22,7 +22,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   id,
   resolveForm,
   onTryComplete,
-  deleteRow,
+  // deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -48,7 +48,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
     if (countdown === 0 && timer !== undefined) {
       clearInterval(timer);
-      deleteRow();
+      // deleteRow();
       setisAssigned(false);
       // Remove the row or execute any other logic
     }
@@ -72,32 +72,31 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               className="absolute top-10 right-[16px] z-20  w-[155px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
             >
               <>
-                {el.status == 'completed' ? (
-                  <div
-                    onClick={() => {
-                      Application.PreviewQuestionary({
-                        member_id: id,
-                        q_unique_id: el.unique_id,
-                      }).then((res) => {
-                        setViewQuestienry(res.data);
-                        setIsView(true);
-                        setshowModal(false);
-                      });
-                      // Application.Questionary_tracking_action({
-                      //   form_name: el.title,
-                      //   member_id: id,
-                      // }).then((res) => {
-                      //   setViewQuestienry(res.data);
-                      //   setIsView(true);
-                      //   setshowModal(false);
-                      // });
-                    }}
-                    className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
-                  >
-                    <img src="/icons/eye-green.svg" alt="" />
-                    Preview
-                  </div>
-                ) : (
+                <div
+                  onClick={() => {
+                    Application.PreviewQuestionary({
+                      member_id: id,
+                      q_unique_id: el.unique_id,
+                    }).then((res) => {
+                      setViewQuestienry(res.data);
+                      setIsView(true);
+                      setshowModal(false);
+                    });
+                    // Application.Questionary_tracking_action({
+                    //   form_name: el.title,
+                    //   member_id: id,
+                    // }).then((res) => {
+                    //   setViewQuestienry(res.data);
+                    //   setIsView(true);
+                    //   setshowModal(false);
+                    // });
+                  }}
+                  className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
+                >
+                  <img className="" src="/icons/eye-green.svg" alt="" />
+                  Preview
+                </div>
+                {el.status == 'completed' ? null : (
                   <>
                     <div
                       onClick={() => {
@@ -125,16 +124,18 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        Application.QuestionaryAction({
-                          member_id: id,
-                          q_unique_id: el.unique_id,
-                          action: 'assign',
-                        }).then(() => {
-                          setisAssigned(true);
-                          setshowModal(false);
-                        });
+                        if (!el.assinged_to_client) {
+                          Application.QuestionaryAction({
+                            member_id: id,
+                            q_unique_id: el.unique_id,
+                            action: 'assign',
+                          }).then(() => {
+                            setisAssigned(true);
+                            setshowModal(false);
+                          });
+                        }
                       }}
-                      className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                     >
                       <img
                         className="size-5"
@@ -178,7 +179,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
               <div className="text-[8px] w-[100px] text-center ">
                 {isView ? (
-                  <div className="text-[10px] text-[#B0B0B0] flex items-end gap-1 ">
+                  <div
+                    className={`text-[10px]  text-[#B0B0B0] flex items-end gap-1 ${isView ? 'inline-block' : 'flex'} `}
+                  >
                     Filled by: <span>{viewQuestienry.filled_by}</span>
                   </div>
                 ) : (
@@ -233,7 +236,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   // }}
                 >
                   <img
-                    className="cursor-pointer"
+                    className="cursor-pointer size-5"
                     src="/icons/more-green.svg"
                     alt=""
                   />

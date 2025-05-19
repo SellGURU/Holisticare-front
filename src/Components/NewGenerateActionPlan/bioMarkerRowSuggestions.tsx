@@ -259,7 +259,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                       data-tooltip-id={`tooltip-score-calculation-${index}`}
                     >
-                      Score Calculation
+                      Analysis Info{' '}
                     </div>
                     {value['Practitioner Comments']?.length > 0 && (
                       <Tooltip
@@ -298,7 +298,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     {value.Instruction}
                   </div>
                 </div>
-                <div
+                {/* <div
                   className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
                   <div className="flex items-center text-Text-Quadruple text-xs text-nowrap">
@@ -307,7 +307,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className="flex items-center text-Text-Primary text-xs ml-1 text-wrap">
                     {value.Description}
                   </div>
-                </div>
+                </div> */}
                 {/* <div
                   className={`flex items-start mt-2 ml-2 ${expandedItems[index] ? '' : 'hidden'}`}
                 >
@@ -444,11 +444,11 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 )}
               </div>
               <div className="flex">
-                <div
+                {/* <div
                   className={`text-Text-Quadruple text-xs text-nowrap capitalize ${expandedItems[index] ? 'mr-3.5 mt-1' : 'mr-9'}`}
                 >
                   {value?.Times?.join(' & ')}
-                </div>
+                </div> */}
                 <div
                   className={`flex flex-col items-center ${expandedItems[index] ? '' : 'hidden'}`}
                 >
@@ -552,17 +552,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 Category: editedData.Category ?? '',
                 Title: editedData.Title ?? '',
                 'Based on': editedData['Based on'] ?? '',
-                'Practitioner Comments':
-                  editedData['Practitioner Comments'] ?? [],
+                // 'Practitioner Comments': editedData['Practitioner Comments'] ?? [],
                 Description: editedData.Description ?? '',
-                Base_Score: editedData.Base_Score ?? '',
+                // Base_Score: editedData.Base_Score ?? '',
                 Instruction: editedData.Instruction ?? '',
                 Times: editedData.Times ?? [],
                 Dose: editedData.Dose ?? null,
                 Value: editedData.Value ?? null,
                 'Total Macros': editedData['Total Macros'] ?? null,
                 'Client Notes': editedData['Client Notes'] ?? [],
-                Score: editedData.Score ?? '',
+                Score: editedData.Score ?? 0,
                 Days: editedData.Days ?? [],
                 Layers: {
                   first_layer: editedData.Layers?.first_layer ?? '',

@@ -429,11 +429,13 @@ class Application extends Api {
   static addLabReport(
     data: any,
     onUploadProgress: (progressEvent: any) => void,
+    signal?: AbortSignal,
   ) {
     const response = this.post('/patients/add_lab_report', data, {
       onUploadProgress: (progressEvent: any) => {
         onUploadProgress(progressEvent);
       },
+      signal,
     });
     return response;
   }
@@ -576,6 +578,15 @@ class Application extends Api {
   static getNotes = (data: any) => {
     const response = this.post(`/health_profile/notes/show_notes`, data);
     return response;
+  };
+  static updateNote = (data: any) => {
+    const response = this.post(`/health_profile/notes/update_note`, data);
+    return response;
+  };
+  static deleteNote = (id: string) => {
+    return this.post('/health_profile/notes/delete_note', {
+      note_unique_id: id,
+    });
   };
   static addNote = (data: any) => {
     const response = this.post(`/health_profile/notes/add_notes`, data);
