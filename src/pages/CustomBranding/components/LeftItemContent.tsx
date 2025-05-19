@@ -66,7 +66,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       updateCustomTheme('name', value);
     }
   };
-const isNameValid = errorName === '' && customTheme.name !== '';
+  const isNameValid = errorName === '' && customTheme.name !== '';
   return (
     <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
       <div>
@@ -274,7 +274,7 @@ const isNameValid = errorName === '' && customTheme.name !== '';
         </div>
         <div
           className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer"
-    onClick={isNameValid ? onSave : undefined}
+          onClick={isNameValid ? onSave : undefined}
         >
           {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
         </div>
