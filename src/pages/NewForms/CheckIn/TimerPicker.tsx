@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from 'react';
+import { FC, ChangeEvent } from 'react';
 
 interface TimerPickerProps {
   minutes: number;
@@ -26,6 +26,17 @@ const TimerPicker: FC<TimerPickerProps> = ({
     else setSeconds((prev: any) => (prev - 1 + 60) % 60);
   };
 
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    type: 'minutes' | 'seconds',
+  ) => {
+    let value = parseInt(e.target.value, 10);
+    if (isNaN(value)) value = 0;
+    value = Math.min(59, Math.max(0, value));
+    if (type === 'minutes') setMinutes(value);
+    else setSeconds(value);
+  };
+
   return (
     <div className="flex items-center gap-4 text-center">
       {/* Minutes */}
@@ -37,9 +48,14 @@ const TimerPicker: FC<TimerPickerProps> = ({
           onClick={() => increment('minutes')}
           className="w-[24px] h-[16px] mb-1 cursor-pointer"
         />
-        <div className="border border-Gray-50 rounded-xl w-[70px] h-[40px] text-base font-medium text-Text-Primary flex items-center justify-center">
-          {padTime(minutes)}
-        </div>
+        <input
+          type="number"
+          value={padTime(minutes)}
+          onChange={(e) => handleInputChange(e, 'minutes')}
+          className="border border-Gray-50 rounded-xl w-[70px] h-[40px] text-base font-medium text-center text-Text-Primary appearance-none no-spinners"
+          min={0}
+          max={59}
+        />
         <img
           src="/icons/arrow-down-new.svg"
           alt=""
@@ -60,9 +76,14 @@ const TimerPicker: FC<TimerPickerProps> = ({
           onClick={() => increment('seconds')}
           className="w-[24px] h-[16px] mb-1 cursor-pointer"
         />
-        <div className="border border-Gray-50 rounded-xl w-[70px] h-[40px] text-base font-medium text-Text-Primary flex items-center justify-center">
-          {padTime(seconds)}
-        </div>
+        <input
+          type="number"
+          value={padTime(seconds)}
+          onChange={(e) => handleInputChange(e, 'seconds')}
+          className="border border-Gray-50 rounded-xl w-[70px] h-[40px] text-base font-medium text-center text-Text-Primary appearance-none no-spinners"
+          min={0}
+          max={59}
+        />
         <img
           src="/icons/arrow-down-new.svg"
           alt=""

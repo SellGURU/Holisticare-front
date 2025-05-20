@@ -108,7 +108,18 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
                           <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
-                          <div className="text-[10px] w-max flex justify-center ml-[-36px] items-center gap-[2px] text-Primary-DeepTeal">
+                          <div
+                            className="text-[10px] w-max flex justify-center  items-center gap-[2px] text-Primary-DeepTeal"
+                            style={{
+                              marginLeft:
+                                index == 0
+                                  ? '0px'
+                                  : '-' +
+                                    (data.values[0].length + data.unit.length) *
+                                      7 +
+                                    'px',
+                            }}
+                          >
                             <span className="opacity-40">You: </span>
                             {data.values[0]} <span>{data.unit}</span>
                           </div>
@@ -128,7 +139,18 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         >
                           <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
                           <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
-                          <div className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal">
+                          <div
+                            className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
+                            style={{
+                              marginLeft:
+                                index == 0
+                                  ? '0px'
+                                  : '-' +
+                                    (data.values[0].length + data.unit.length) *
+                                      5 +
+                                    'px',
+                            }}
+                          >
                             <span className="opacity-40">You: </span>
                             {data.values[0]} <span>{data.unit}</span>
                           </div>

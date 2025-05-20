@@ -70,8 +70,8 @@ const HistoricalChart = ({
             const currentStatus = dataStatus[index];
             const nextStatus = dataStatus[index + 1];
 
-            const x1 = index * 40 + 14;
-            const x2 = (index + 1) * 40 + 14;
+            const x1 = index * 45 + 14;
+            const x2 = (index + 1) * 45 + 14;
             const y1 = getStatusVerticalPosition(currentStatus);
             const y2 = getStatusVerticalPosition(nextStatus);
 
