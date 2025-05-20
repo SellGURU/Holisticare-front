@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import { useParams } from 'react-router-dom';
 import { SlideOutPanel } from '../SlideOutPanel';
-import { subscribe } from '../../utils/event.ts';
+import { publish, subscribe } from '../../utils/event.ts';
 import Application from '../../api/app.ts';
 
 import TimeLine from './components/timeLine.tsx';
@@ -33,6 +33,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         member_id: id,
       }).then((res) => {
         setHasUnreadMessage(res.data.has_unread);
+        publish('hasUnreadMessage', {});
       });
 
       // Set up interval to check every minute
@@ -266,6 +267,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   if (el.name == 'Questionary Tracking' && !isHolisticPlan) {
                     setIsSlideOutPanel(true);
                     setUpdated(false);
+                  }
+                  if(el.name=="Client's Chat History"){
+                    setHasUnreadMessage(false);
                   }
                   handleItemClick(el.name);
                 }}
