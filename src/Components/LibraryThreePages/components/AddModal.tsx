@@ -385,7 +385,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                Provide the numerical value, and if needed, enter the unit manually (e.g., 8 + Hours)
+                  Provide the numerical value, and if needed, enter the unit
+                  manually (e.g., 8 + Hours)
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">

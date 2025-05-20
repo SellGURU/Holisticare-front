@@ -165,40 +165,39 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               pageType={pageType}
               tableData={filteredData}
               onDelete={(id) => {
-            if (pageType === 'Supplement') {
-              setLoading(true);
-              Application.deleteSupplement(id).then(() => {
-                getSupplements();
-                setLoading(false);
-              });
-            } else if (pageType === 'Lifestyle') {
-              setLoading(true);
-              Application.deleteLifestyle(id).then(() => {
-                getLifestyles();
-                setLoading(false);
-              });
-            } else {
-              setLoading(true);
-              Application.deleteDiet(id).then(() => {
-                getDiets();
-                setLoading(false);
-              });
-            }
-          }}
-          onEdit={(row) => {
-            setSelectedRow(row);
-            handleOpenModal();
-          }}
-          onPreview={(row) => {
-            setSelectedRow(row);
-            handlePreviewOpenModal();
+                if (pageType === 'Supplement') {
+                  setLoading(true);
+                  Application.deleteSupplement(id).then(() => {
+                    getSupplements();
+                    setLoading(false);
+                  });
+                } else if (pageType === 'Lifestyle') {
+                  setLoading(true);
+                  Application.deleteLifestyle(id).then(() => {
+                    getLifestyles();
+                    setLoading(false);
+                  });
+                } else {
+                  setLoading(true);
+                  Application.deleteDiet(id).then(() => {
+                    getDiets();
+                    setLoading(false);
+                  });
+                }
+              }}
+              onEdit={(row) => {
+                setSelectedRow(row);
+                handleOpenModal();
+              }}
+              onPreview={(row) => {
+                setSelectedRow(row);
+                handlePreviewOpenModal();
               }}
             />
           ) : (
             <div className="w-full h-full h-sm:h-[500px] flex flex-col justify-center items-center text-base font-medium text-Text-Primary ">
               <img src="/icons/search-status.svg" alt="" />
-              <span className='-mt-6'>  No results found.</span>
-            
+              <span className="-mt-6"> No results found.</span>
             </div>
           )}
         </>
