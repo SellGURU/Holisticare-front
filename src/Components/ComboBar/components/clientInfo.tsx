@@ -167,7 +167,7 @@ export const ClientInfo = () => {
               <div className="w-full mt-16 flex flex-col items-center justify-center">
                 <img src="/icons/document-text-rectangle.svg" alt="" />
                 <div className="font-medium text-xs text-Text-Primary -mt-3">
-                  No client goals available yet.
+                  No client goals found.
                 </div>
                 <div className="text-[10px] text-Text-Quadruple text-center leading-5 mt-[2px]">
                   Once the client completes their assessment, their goals will
