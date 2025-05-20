@@ -136,12 +136,14 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   onChange={handleImageUpload}
                 />
               </div>
-              <div
-                className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
-                onClick={handleDeleteImage}
-              >
-                <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
-              </div>
+              {customTheme?.selectedImage && (
+                <div
+                  className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
+                  onClick={handleDeleteImage}
+                >
+                  <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">

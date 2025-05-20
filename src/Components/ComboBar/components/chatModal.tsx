@@ -3,6 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app.ts';
 import { UserMsg } from './userMsg.tsx';
 import { BotMsg } from './botMsg.tsx';
+import { subscribe } from '../../../utils/event.ts';
 interface ChatModalProps {
   memberId: number;
 }
@@ -43,6 +44,9 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
       userMessagesList(memberId);
     }
   }, [memberId]);
+  subscribe('hasUnreadMessage', () => {
+    userMessagesList(memberId);
+  });
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const lastConversationId =
