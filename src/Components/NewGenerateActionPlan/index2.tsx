@@ -108,7 +108,6 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
-  console.log(calendarViewData);
 
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
