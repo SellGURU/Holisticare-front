@@ -55,6 +55,13 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       ? editQUestion.options
       : ['', ''],
   );
+  const clear = () => {
+    setQuestion('');
+    setRequired(false);
+    setType('');
+    setCheckBoxOptions(['', '']);
+    setMutiChoiceOptions(['', '']);
+  };
   const isDisabled = () => {
     return qustion.length == 0 || type == '';
   };
@@ -73,13 +80,6 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     };
     onSubmit(resolvedQuestion);
     clear();
-  };
-  const clear = () => {
-    setQuestion('');
-    setRequired(false);
-    setType('');
-    setCheckBoxOptions(['', '']);
-    setMutiChoiceOptions(['', '']);
   };
 
   return (
