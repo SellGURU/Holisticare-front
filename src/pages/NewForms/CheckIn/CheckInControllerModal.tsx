@@ -30,7 +30,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
-        return 'Create a Check-In';
+        return 'Create a Check-in';
       case 'Reposition':
         return 'Reposition Check-in';
       case 'Edit':
@@ -59,6 +59,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
       case 'Reposition':
@@ -92,13 +93,14 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             upMinutes={minutes}
             upSeconds={seconds}
             step={step}
+            mode={mode}
           />
         );
     }
   };
   const [titleForm, setTitleForm] = useState('');
   const isDisable = () => {
-    return titleForm.length == 0;
+    return titleForm.length == 0 || questions.length == 0;
   };
   const [isSaveLoding, setIsSaveLoading] = useState(false);
   const addCheckinForm = () => {
@@ -174,7 +176,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           <div
             onClick={() => {
               if (!isDisable()) {
-                if (step == 0) {
+                if (step == 0 && mode != 'Reposition') {
                   setStep(1);
                 } else {
                   addCheckinForm();
@@ -213,6 +215,7 @@ interface AddCheckInProps {
   upChecked: boolean;
   upMinutes: number;
   upSeconds: number;
+  mode: string;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -225,6 +228,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   upChecked,
   upMinutes,
   upSeconds,
+  mode,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -247,7 +251,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
   return (
     <>
-      {step == 0 ? (
+      {step == 0 || mode == 'Reposition' ? (
         <>
           {questions.length > 0 && (
             <>
@@ -366,7 +370,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               borderColor="border-Text-Quadruple"
               width="w-3.5"
               height="h-3.5"
-              label="Share with Client"
+              label="Share with client"
             />
           </div>
           <div className="w-full flex items-center justify-center mt-4 mb-5">
@@ -420,7 +424,9 @@ const RepositionCheckIn: FC<RepositionCheckInProps> = ({
     <>
       {questions.length > 0 && (
         <>
-          <div className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full`}>
+          <div
+            className={`max-h-[200px] min-h-[60px] overflow-y-auto w-full mb-3`}
+          >
             <div className="flex flex-col items-center justify-center gap-1 w-full">
               {questions.map((item: any, index: number) => {
                 return (

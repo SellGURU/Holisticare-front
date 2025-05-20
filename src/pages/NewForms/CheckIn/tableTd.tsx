@@ -18,9 +18,7 @@ export const columns = (): ColumnDef<any>[] => [
   },
   {
     accessorKey: 'title',
-    header: () => {
-      return <>Title</>;
-    },
+    header: 'Title',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -34,9 +32,7 @@ export const columns = (): ColumnDef<any>[] => [
   },
   {
     accessorKey: 'questions',
-    header: () => {
-      return <>Questions</>;
-    },
+    header: 'Questions',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -47,10 +43,26 @@ export const columns = (): ColumnDef<any>[] => [
     },
   },
   {
-    accessorKey: 'created_on',
-    header: () => {
-      return <>Created on</>;
+    accessorKey: 'time_required',
+    header: 'Time Required',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <div className="text-xs text-Text-Secondary ">
+          {(() => {
+            const ms = row.original?.time_required;
+            if (!ms) return '-';
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes} min, ${seconds} sec`;
+          })() || '-'}
+        </div>
+      );
     },
+  },
+  {
+    accessorKey: 'created_on',
+    header: 'Created on',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -62,9 +74,7 @@ export const columns = (): ColumnDef<any>[] => [
   },
   {
     accessorKey: 'created_by',
-    header: () => {
-      return <>Created by</>;
-    },
+    header: 'Created by',
     enableSorting: false,
     cell: ({ row }) => {
       return (

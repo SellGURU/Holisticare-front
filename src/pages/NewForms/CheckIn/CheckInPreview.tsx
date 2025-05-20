@@ -43,12 +43,19 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
           Preview
         </div>
         <div className="w-full flex justify-between items-center mt-3">
-          <div className="text-[12px] text-Text-Primary font-medium">
+          <div className="text-xs text-Text-Primary font-medium">
             {data?.title}
           </div>
-          {/* <div className="text-Text-Secondary text-[10px]">
-            Last update: 20 days ago
-          </div> */}
+          <div className="text-Text-Quadruple text-xs flex items-center gap-1">
+            <img src="/icons/timer-grey.svg" alt="" className="w-4 h-4" />
+            {(() => {
+              const ms = data?.time;
+              if (!ms) return '-';
+              const minutes = Math.floor(ms / 60000);
+              const seconds = Math.floor((ms % 60000) / 1000);
+              return `${minutes} min, ${seconds} sec`;
+            })() || '-'}
+          </div>
         </div>
         <div className="w-full h-[350px] mt-2 overflow-y-auto">
           <Checkin upData={data?.questions}></Checkin>
