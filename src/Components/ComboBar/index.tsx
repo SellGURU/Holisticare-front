@@ -268,7 +268,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                     setIsSlideOutPanel(true);
                     setUpdated(false);
                   }
-                  if(el.name=="Client's Chat History"){
+                  if (el.name == "Client's Chat History") {
                     setHasUnreadMessage(false);
                   }
                   handleItemClick(el.name);
