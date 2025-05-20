@@ -429,11 +429,13 @@ class Application extends Api {
   static addLabReport(
     data: any,
     onUploadProgress: (progressEvent: any) => void,
+    signal?: AbortSignal,
   ) {
     const response = this.post('/patients/add_lab_report', data, {
       onUploadProgress: (progressEvent: any) => {
         onUploadProgress(progressEvent);
       },
+      signal,
     });
     return response;
   }
@@ -947,6 +949,9 @@ class Application extends Api {
   };
   static assignCoach = (data: any) => {
     return this.post('/patients/assign_to_coach', data);
+  };
+  static has_unread_message = (data: any) => {
+    return this.post('/has_unread_message', data);
   };
 }
 

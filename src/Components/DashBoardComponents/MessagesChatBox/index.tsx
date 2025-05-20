@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -78,7 +78,7 @@ const MessagesChatBox = () => {
     setIsLoading(true);
     Application.userMessagesList({ member_id: member_id, message_from: 'ai' })
       .then((res) => {
-        setAiMessages(res.data.reverse());
+        setAiMessages(res.data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -290,7 +290,7 @@ const MessagesChatBox = () => {
               {!aiMode && (
                 <>
                   {messages.map((message, index: number) => (
-                    <>
+                    <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
                           {index == messages.length - 1 && (
@@ -399,17 +399,17 @@ const MessagesChatBox = () => {
                           )}
                         </>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </>
               )}
               {aiMode && (
                 <>
                   {aiMessages.map((message, index: number) => (
-                    <>
+                    <Fragment key={index}>
                       {message.sender_type === 'patient' ? (
                         <>
-                          {index == messages.length - 1 && (
+                          {index == aiMessages.length - 1 && (
                             <div ref={messagesEndRef}></div>
                           )}
                           <div className="flex justify-start items-start gap-1">
@@ -511,7 +511,7 @@ const MessagesChatBox = () => {
                           )}
                         </>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </>
               )}

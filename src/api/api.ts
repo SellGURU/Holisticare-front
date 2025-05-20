@@ -23,6 +23,7 @@ class Api {
           config.onUploadProgress(progressEvent);
         }
       },
+      signal: config?.signal,
       // timeout:15000
     });
     return response;

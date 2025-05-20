@@ -22,7 +22,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   id,
   resolveForm,
   onTryComplete,
-  deleteRow,
+  // deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
@@ -48,7 +48,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
     if (countdown === 0 && timer !== undefined) {
       clearInterval(timer);
-      deleteRow();
+      // deleteRow();
       setisAssigned(false);
       // Remove the row or execute any other logic
     }
@@ -91,7 +91,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     //   setshowModal(false);
                     // });
                   }}
-                  className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+                  className={`flex items-center ${el.status != 'completed' && 'border-b border-Secondary-SelverGray '}  gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                 >
                   <img className="" src="/icons/eye-green.svg" alt="" />
                   Preview
@@ -124,16 +124,18 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     </div>
                     <div
                       onClick={() => {
-                        Application.QuestionaryAction({
-                          member_id: id,
-                          q_unique_id: el.unique_id,
-                          action: 'assign',
-                        }).then(() => {
-                          setisAssigned(true);
-                          setshowModal(false);
-                        });
+                        if (!el.assinged_to_client) {
+                          Application.QuestionaryAction({
+                            member_id: id,
+                            q_unique_id: el.unique_id,
+                            action: 'assign',
+                          }).then(() => {
+                            setisAssigned(true);
+                            setshowModal(false);
+                          });
+                        }
                       }}
-                      className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer"
+                      className={`${el.assinged_to_client ? 'opacity-50' : 'opacity-100'} flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-1  cursor-pointer`}
                     >
                       <img
                         className="size-5"
@@ -180,7 +182,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                   <div
                     className={`text-[10px]  text-[#B0B0B0] flex items-end gap-1 ${isView ? 'inline-block' : 'flex'} `}
                   >
-                    Filled by: <span>{viewQuestienry.filled_by}</span>
+                    Filled by:{' '}
+                    <span>
+                      {viewQuestienry.filled_by != null
+                        ? viewQuestienry.filled_by
+                        : '-'}
+                    </span>
                   </div>
                 ) : (
                   <div

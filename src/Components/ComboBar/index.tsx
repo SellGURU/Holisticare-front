@@ -24,9 +24,28 @@ interface ComboBarProps {
 export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const { id } = useParams<{ id: string }>();
   const [idData, setIdData] = useState<string>('');
+  const [hasUnreadMessage, setHasUnreadMessage] = useState<boolean>(false);
   useEffect(() => {
     if (id) {
       setIdData(id);
+      // Initial check
+      Application.has_unread_message({
+        member_id: id,
+      }).then((res) => {
+        setHasUnreadMessage(res.data.has_unread);
+      });
+
+      // Set up interval to check every minute
+      const intervalId = setInterval(() => {
+        Application.has_unread_message({
+          member_id: id,
+        }).then((res) => {
+          setHasUnreadMessage(res.data.has_unread);
+        });
+      }, 60000); // 60000 ms = 1 minute
+
+      // Cleanup interval on component unmount
+      return () => clearInterval(intervalId);
     }
   }, [id]);
   const itemList = [
@@ -38,8 +57,8 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       url: '/icons/sidbar-menu/task-square.svg',
     },
     { name: 'Timeline', url: '/icons/sidbar-menu/timeline.svg' },
-    { name: 'Expert’s Note', url: '/icons/sidbar-menu/note-2.svg' },
-    { name: 'Client’s Chat History', url: '/icons/sidbar-menu/messages.svg' },
+    { name: "Expert's Note", url: '/icons/sidbar-menu/note-2.svg' },
+    { name: "Client's Chat History", url: '/icons/sidbar-menu/messages.svg' },
     { name: 'Switch Client', url: '/icons/sidbar-menu/repeat.svg' },
   ];
   const [patientInfo, setPatientInfo] = useState({
@@ -127,7 +146,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     handleItemClick('Questionnaire Tracking');
   });
   const handleItemClick = (name: string) => {
-    if (isHolisticPlan && name !== 'Expert’s Note' && name !== 'Client Info') {
+    if (isHolisticPlan && name !== "Expert's Note" && name !== 'Client Info') {
       return; // Prevent click action if isHolisticPlan is true and it's not the Expert's Note
     }
     setActiveItem(name);
@@ -144,12 +163,12 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         return <FilleHistory></FilleHistory>;
       case 'Questionnaire Tracking':
         return <Questionary></Questionary>;
-      case 'Expert’s Note':
+      case "Expert's Note":
         return <Notes></Notes>;
       // Add more cases as needed
       case 'Timeline':
         return <TimeLine />;
-      case 'Client’s Chat History':
+      case "Client's Chat History":
         return <ChatModal memberId={parseInt(idData)}></ChatModal>;
       case 'Switch Client':
         return (
@@ -256,7 +275,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
                   'border-2 border-Orange'
                 } ${
                   isHolisticPlan &&
-                  el.name !== 'Expert’s Note' &&
+                  el.name !== "Expert's Note" &&
                   el.name !== 'Client Info'
                     ? 'opacity-50 cursor-not-allowed'
                     : ''
@@ -264,17 +283,20 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
               >
                 <SvgIcon src={el.url} width="16" height="16" color="#005F73" />
                 {/* <img src={el.url} className={'w-5 h-5 object-cover'} /> */}
-                {
-                  updated && el.name == 'Questionary Tracking' && (
-                    <img
-                      className="absolute top-[-4px]  right-[-3px]"
-                      src="/icons/warning.svg"
-                      alt=""
-                    />
-                  )
-                  // <div className="w-[12px] h-[12px] bg-[#FFBD59] rounded-full absolute top-[-4px]  right-[-3px]">
-                  // </div>
-                }
+                {updated && el.name == 'Questionary Tracking' && (
+                  <img
+                    className="absolute top-[-4px]  right-[-3px]"
+                    src="/icons/warning.svg"
+                    alt=""
+                  />
+                )}
+                {hasUnreadMessage && el.name == "Client's Chat History" && (
+                  <img
+                    className="absolute top-[-4px]  right-[-3px]"
+                    src="/icons/warning.svg"
+                    alt=""
+                  />
+                )}
               </li>
               <Tooltip
                 place="left"

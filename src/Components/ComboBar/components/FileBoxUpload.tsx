@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AzureBlobService from '../../../services/azureBlobService';
 import {
   AZURE_STORAGE_CONNECTION_STRING,
@@ -11,13 +11,20 @@ import {
 interface FileBoxUploadProps {
   file: any;
   onSuccess: (file: any) => void;
+  onCancel: (file: any) => void;
 }
 
-const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
+const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
+  file,
+  onSuccess,
+  onCancel,
+}) => {
   const { id } = useParams<{ id: string }>();
   const [isCompleted, setIsCompleted] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const controller = useRef<AbortController | null>(null);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -35,7 +42,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
       'Nov',
       'Dec',
     ];
-
     const day = date.getDate();
     const month = months[date.getMonth()];
     const year = date.getFullYear();
@@ -44,17 +50,16 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
   };
 
   useEffect(() => {
+    controller.current = new AbortController();
     let isCancelled = false;
 
     const uploadToAzure = async () => {
       try {
-        // Initialize Azure Blob Service
         AzureBlobService.initialize(
           AZURE_STORAGE_CONNECTION_STRING,
           AZURE_STORAGE_CONTAINER_NAME,
         );
 
-        // Upload to Azure Blob Storage
         const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
           if (isCancelled) return;
           setProgress(progress);
@@ -62,7 +67,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
 
         if (isCancelled) return;
 
-        // Send the blob URL to backend
         const response = await Application.addLabReport(
           {
             member_id: id,
@@ -78,6 +82,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
             );
             setProgress(percentCompleted);
           },
+          controller.current?.signal,
         );
 
         if (isCancelled) return;
@@ -91,11 +96,20 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
 
         onSuccess(fileWithId);
         setIsCompleted(true);
-      } catch (error) {
-        console.error('Upload error:', error);
-        if (isCancelled) return;
-        setIsFailed(true);
-        setIsCompleted(true);
+      } catch (error: any) {
+        if (error.name === 'CanceledError' || error.name === 'AbortError') {
+          // console.warn('آپلود لغو شد.');
+        } else {
+          console.error('Upload error:', error);
+          setIsFailed(true);
+          // Show the API error message if available
+          if (error?.detail) {
+            setErrorMessage(error?.detail);
+          } else {
+            setErrorMessage('Failed to upload file. Please try again.');
+          }
+        }
+        if (!isCancelled) setIsCompleted(true);
       }
     };
 
@@ -103,8 +117,14 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
 
     return () => {
       isCancelled = true;
+      controller.current?.abort();
     };
   }, [file, id]);
+
+  const handleCancelUpload = () => {
+    controller.current?.abort();
+    onCancel(file);
+  };
 
   return (
     <>
@@ -119,24 +139,44 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
             {formatDate(new Date().toString())}
           </div>
           <div className="flex w-[55px] justify-center gap-1">
-            <img
-              onClick={() => {
-                Application.downloadFille({
-                  file_id: file.id || file.file_id,
-                  member_id: id,
-                })
-                  .then((res) => {
-                    try {
-                      const blobUrl = res.data;
+            {!isCompleted ? (
+              <img
+                src="/icons/add-green.svg"
+                alt=""
+                className="w-5 h-5 cursor-pointer"
+                onClick={handleCancelUpload}
+              />
+            ) : isFailed ? (
+              <></>
+            ) : (
+              <img
+                onClick={() => {
+                  Application.downloadFille({
+                    file_id: file.id || file.file_id,
+                    member_id: id,
+                  })
+                    .then((res) => {
+                      try {
+                        const blobUrl = res.data;
 
-                      // Create a direct download link for the blob URL
-                      const link = document.createElement('a');
-                      link.href = blobUrl;
-                      link.download = file.name;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    } catch (error: any) {
+                        // Create a direct download link for the blob URL
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = file.name;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      } catch (error: any) {
+                        console.error('Error downloading file:', error);
+                        console.error('Error details:', {
+                          errorName: error?.name,
+                          errorMessage: error?.message,
+                          errorStack: error?.stack,
+                        });
+                        // You might want to show an error message to the user here
+                      }
+                    })
+                    .catch((error: any) => {
                       console.error('Error downloading file:', error);
                       console.error('Error details:', {
                         errorName: error?.name,
@@ -144,24 +184,18 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({ file, onSuccess }) => {
                         errorStack: error?.stack,
                       });
                       // You might want to show an error message to the user here
-                    }
-                  })
-                  .catch((error: any) => {
-                    console.error('Error downloading file:', error);
-                    console.error('Error details:', {
-                      errorName: error?.name,
-                      errorMessage: error?.message,
-                      errorStack: error?.stack,
                     });
-                    // You might want to show an error message to the user here
-                  });
-              }}
-              className="cursor-pointer size-5 -mt-[3px]"
-              src="/icons/import.svg"
-              alt=""
-            />
+                }}
+                className="cursor-pointer size-5 -mt-[3px]"
+                src="/icons/import.svg"
+                alt=""
+              />
+            )}
           </div>
         </div>
+        {isFailed && (
+          <div className="text-red-500 text-[10px] mt-1">{errorMessage}</div>
+        )}
         {!isCompleted && (
           <>
             <div className="w-full flex justify-between">

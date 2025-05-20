@@ -15,17 +15,17 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  // const [showSuccess, setShowSuccess] = useState(false);
   useEffect(() => {
     if (biomarkers.length > 0 && isChanged) {
       BiomarkersApi.saveBiomarkersList({
         new_ranges: biomarkers,
       }).then(() => {
         if (isChanged) {
-          setShowSuccess(true);
-          setTimeout(() => {
-            setShowSuccess(false);
-          }, 3000);
+          // setShowSuccess(true);
+          // setTimeout(() => {
+          //   setShowSuccess(false);
+          // }, 3000);
         }
       });
     }
@@ -33,7 +33,7 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
   return (
     <>
       <div className="w-full relative mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
-        {showSuccess && (
+        {/* {showSuccess && (
           <div className="absolute right-[54px] top-[12px] w-[198px] h-[44px] rounded-xl border border-Gray-50 shadow-100 flex items-center justify-center bg-white gap-2 z-50">
             <img
               src="/icons/tick-circle-large.svg"
@@ -44,7 +44,7 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
               Changes applied successfully.
             </div>
           </div>
-        )}
+        )} */}
         <div className="flex justify-between items-center">
           <div className="flex items-center justify-center ">
             <div

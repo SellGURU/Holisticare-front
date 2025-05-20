@@ -6,19 +6,6 @@ import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
 
-const MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB in bytes
-const ALLOWED_FILE_TYPES = [
-  'application/pdf',
-  'text/csv',
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/tiff',
-  'text/plain',
-];
-
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
@@ -69,33 +56,47 @@ export const FilleHistory = () => {
   // };
 
   const validateFile = (file: File): boolean => {
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      setError(`File ${file.name} is too large. Maximum size is 40MB.`);
-      return false;
-    }
-
     // Check file type
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      setError(`File ${file.name} has an unsupported format.`);
-      return false;
-    }
-
-    // Check for duplicate filename
-    const isDuplicate = data?.some(
-      (existingFile: any) =>
-        existingFile?.file_name &&
-        file.name &&
-        existingFile.file_name.toLowerCase() === file.name.toLowerCase(),
-    );
-
-    if (isDuplicate) {
-      setError(`File ${file.name} already exists.`);
+    const validFormats = ['.pdf', '.docx'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!validFormats.includes(fileExtension)) {
+      setError(
+        `File ${file.name} has an unsupported format. Supported formats: PDF and DOCX files`,
+      );
       return false;
     }
 
     return true;
   };
+
+  const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const topSpacing = 80;
+      const addFileButtonHeight = 32;
+      const gapBetweenItems = 12;
+      const tableHeaderHeight = 48;
+      const bottomSpacing = 55;
+
+      const offset =
+        topSpacing +
+        addFileButtonHeight +
+        gapBetweenItems +
+        tableHeaderHeight +
+        bottomSpacing;
+
+      const height = window.innerHeight - offset;
+      setContainerMaxHeight(height);
+    };
+
+    calculateHeight();
+
+    window.addEventListener('resize', calculateHeight);
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+    };
+  }, []);
 
   return (
     <div className=" w-full">
@@ -119,7 +120,10 @@ export const FilleHistory = () => {
         <>
           {data?.length > 0 ? (
             <>
-              <div className="flex justify-center w-full items-start overflow-auto max-h-[450px]">
+              <div
+                className="flex justify-center w-full items-start overflow-auto"
+                style={{ maxHeight: containerMaxHeight }}
+              >
                 <div className="w-full mt-2">
                   {upLoadingFiles.map((el: any) => {
                     return (
@@ -134,7 +138,12 @@ export const FilleHistory = () => {
                             prevUploadingFiles.filter((file) => file !== el),
                           );
                         }}
-                      ></FileBoxUpload>
+                        onCancel={(file) => {
+                          setUploadingFiles((prev) =>
+                            prev.filter((f) => f !== file),
+                          );
+                        }}
+                      />
                     );
                   })}
                   {data?.map((el: any) => {

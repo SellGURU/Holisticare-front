@@ -8,7 +8,7 @@ import Checkbox from './CheckBox';
 // import SpinnerLoader from '../../SpinnerLoader';
 import Circleloader from '../../CircleLoader';
 import QuestionRow from './questionRow';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
+// import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import SpinnerLoader from '../../SpinnerLoader';
 import {
   FeelingCard,
@@ -509,6 +509,7 @@ export const Questionary = () => {
                     setTryAdd(false);
                   }}
                   outLine
+                  size="small"
                   style={{
                     backgroundColor: '#fff',
                     color: '#005F73',
@@ -519,6 +520,7 @@ export const Questionary = () => {
                 </ButtonPrimary>
                 <ButtonPrimary
                   disabled={selectedFormIDs.length == 0}
+                  size="small"
                   onClick={() => {
                     handleAddQuestionnaires();
                     // Application.AddQuestionary({
@@ -540,7 +542,63 @@ export const Questionary = () => {
               <div className="text-xs text-Text-Primary">
                 {questionsFormData.title}
               </div>
-              <ButtonSecondary
+              <div className="flex justify-end gap-2 items-center">
+                <div
+                  className=" w-5 h-5 cursor-pointer"
+                  onClick={() => {
+                    setTryComplete(false);
+                  }}
+                >
+                  <img src="/icons/close-red.svg" alt="" />
+                </div>
+                <div
+                  className={`${checkFormComplete() ? 'opacity-100 cursor-pointer' : 'opacity-50'} w-5 h-5 `}
+                  onClick={() => {
+                    if (checkFormComplete()) {
+                      setSubmitLoading(true);
+                      Application.SaveQuestionary({
+                        member_id: id,
+                        q_unique_id: questionsFormData.unique_id,
+                        respond: questionsFormData.questions,
+                      })
+                        .then(() => {
+                          setTimeout(() => {
+                            setTryComplete(false);
+                          }, 300);
+                        })
+                        .finally(() => {
+                          setData((prevData: any) => {
+                            return prevData.map((form: any) => {
+                              if (
+                                form.unique_id === questionsFormData.unique_id
+                              ) {
+                                return {
+                                  ...form,
+                                  status: 'completed',
+                                };
+                              }
+                              return form;
+                            });
+                          });
+                          setSubmitLoading(false);
+                        });
+                    }
+                    // Application.setGoogleFormEmty({
+                    //   data: questionsFormData,
+                    //   member_id: Number(id),
+                    // })
+                  }}
+                >
+                  {submitLoading ? (
+                    <div className="">
+                      <SpinnerLoader color="#6CC24A"></SpinnerLoader>
+                    </div>
+                  ) : (
+                    <img src="/icons/tick-square-background-green.svg" alt="" />
+                  )}
+                </div>
+              </div>
+              {/* <ButtonSecondary
                 disabled={!checkFormComplete()}
                 onClick={() => {
                   setSubmitLoading(true);
@@ -586,7 +644,7 @@ export const Questionary = () => {
                   />
                 )}
                 Submit
-              </ButtonSecondary>
+              </ButtonSecondary> */}
             </div>
             <div className="mt-2">
               <div className="bg-[#E9F0F2] w-full py-[6px] px-8 min-h-[108px] text-center rounded-t-[6px] flex items-center">
