@@ -132,7 +132,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
         handleChangeSearch={handleChangeSearch}
         handleOpenModal={handleOpenModal}
       />
-      {!filteredData.length ? (
+      {!tableData.length ? (
         <div
           className={`w-full flex justify-center items-center flex-col mt-16`}
         >
@@ -148,7 +148,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
               : pageType === 'Lifestyle'
                 ? 'lifestyle'
                 : 'diet'}{' '}
-            existed yet.
+            found.
           </div>
           <ButtonSecondary
             ClassName="w-[210px] rounded-[20px] shadow-Btn mt-4"
@@ -159,10 +159,12 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           </ButtonSecondary>
         </div>
       ) : (
-        <TableNoPaginateForLibraryThreePages
-          pageType={pageType}
-          tableData={filteredData}
-          onDelete={(id) => {
+        <>
+          {filteredData.length ? (
+            <TableNoPaginateForLibraryThreePages
+              pageType={pageType}
+              tableData={filteredData}
+              onDelete={(id) => {
             if (pageType === 'Supplement') {
               setLoading(true);
               Application.deleteSupplement(id).then(() => {
@@ -190,8 +192,16 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
           onPreview={(row) => {
             setSelectedRow(row);
             handlePreviewOpenModal();
-          }}
-        />
+              }}
+            />
+          ) : (
+            <div className="w-full h-full h-sm:h-[500px] flex flex-col justify-center items-center text-base font-medium text-Text-Primary ">
+              <img src="/icons/search-status.svg" alt="" />
+              <span className='-mt-6'>  No results found.</span>
+            
+            </div>
+          )}
+        </>
       )}
       <AddModalLibraryTreePages
         addShowModal={addShowModal}

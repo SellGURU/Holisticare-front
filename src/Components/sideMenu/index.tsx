@@ -72,7 +72,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                           //   border: "1px solid transparent",
                           //   borderRadius: "16px",
                           // }}
-                          className={` flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
+                          className={` cursor-pointer flex border rounded-[20px]  border-Primary-DeepTeal flex-row  items-center gap-x-2 w-[133px] justify-center text-center text-[8px] h-sm:text-[9px] text-white font-semibold py-[2px] px-3 ${
                             activeMenu.name === menu.name
                               ? 'bg-gradient-to-r from-[#005F73] to-[#6CC24A]'
                               : ''
