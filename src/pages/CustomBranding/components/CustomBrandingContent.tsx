@@ -72,14 +72,16 @@ const CustomBrandingContent = () => {
         headline: customTheme.headLine,
         primary_color: customTheme.primaryColor,
         secondary_color: customTheme.secondaryColor,
-        html_email:""
+        html_email: '',
       };
-      Application.saveBrandInfo(data).then(() => {
-        getShowBrandInfo();
-        setLoading(false);
-      }).catch(() => {
-        setLoading(false);
-      });
+      Application.saveBrandInfo(data)
+        .then(() => {
+          getShowBrandInfo();
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     }
   };
   return (
