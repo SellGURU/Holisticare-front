@@ -12,12 +12,14 @@ interface FileBoxUploadProps {
   file: any;
   onSuccess: (file: any) => void;
   onCancel: (file: any) => void;
+  isFileExists?: boolean;
 }
 
 const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   file,
   onSuccess,
   onCancel,
+  isFileExists = false,
 }) => {
   const { id } = useParams<{ id: string }>();
   const [isCompleted, setIsCompleted] = useState(false);
@@ -50,6 +52,12 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   };
 
   useEffect(() => {
+    // If file exists, mark as completed immediately
+    if (isFileExists) {
+      setIsCompleted(true);
+      return;
+    }
+
     controller.current = new AbortController();
     let isCancelled = false;
 
@@ -119,7 +127,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
       isCancelled = true;
       controller.current?.abort();
     };
-  }, [file, id]);
+  }, [file, id, isFileExists]);
 
   const handleCancelUpload = () => {
     controller.current?.abort();
@@ -129,15 +137,17 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   return (
     <>
       <div
-        className={`${isFailed ? 'border-red-500' : 'border-Gray-50'} bg-white border  mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]`}
+        className={`${isFailed || isFileExists ? 'border-red-500' : 'border-Gray-50'} bg-white border  mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]`}
       >
         <div className="flex justify-between items-center w-full">
           <div className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis">
             {file.name}
           </div>
-          <div className="w-[70px] text-center">
-            {formatDate(new Date().toString())}
-          </div>
+          {!isFileExists && (
+            <div className="w-[70px] text-center">
+              {formatDate(new Date().toString())}
+            </div>
+          )}
           <div className="flex w-[55px] justify-center gap-1">
             {!isCompleted ? (
               <img
@@ -148,6 +158,13 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
               />
             ) : isFailed ? (
               <></>
+            ) : isFileExists ? (
+              <img
+                src="/icons/add-green.svg"
+                alt=""
+                className="w-5 h-5 cursor-pointer"
+                onClick={handleCancelUpload}
+              />
             ) : (
               <img
                 onClick={() => {
@@ -158,8 +175,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
                     .then((res) => {
                       try {
                         const blobUrl = res.data;
-
-                        // Create a direct download link for the blob URL
                         const link = document.createElement('a');
                         link.href = blobUrl;
                         link.download = file.name;
@@ -173,7 +188,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
                           errorMessage: error?.message,
                           errorStack: error?.stack,
                         });
-                        // You might want to show an error message to the user here
                       }
                     })
                     .catch((error: any) => {
@@ -183,7 +197,6 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
                         errorMessage: error?.message,
                         errorStack: error?.stack,
                       });
-                      // You might want to show an error message to the user here
                     });
                 }}
                 className="cursor-pointer size-5 -mt-[3px]"
@@ -193,10 +206,11 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
             )}
           </div>
         </div>
-        {isFailed && (
+        {isFailed&& !isFileExists && (
           <div className="text-red-500 text-[10px] mt-1">{errorMessage}</div>
         )}
-        {!isCompleted && (
+
+        {!isCompleted && !isFileExists && (
           <>
             <div className="w-full flex justify-between">
               <div>
@@ -214,6 +228,9 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
           </>
         )}
       </div>
+        {isFileExists && (
+          <div className="text-red-500 mb-2 text-[10px] mt-1">This file has already been uploaded.</div>
+        )}
     </>
   );
 };
