@@ -174,17 +174,20 @@ export const FilleHistory = () => {
                   const fileList = Array.from(e.target.files || []);
 
                   // Validate each file
-                  const validFiles = fileList.map((file) => {
-                    // Check if file already exists in data
-                    const fileExists = data?.some(
-                      (existingFile: any) => 
-                        existingFile.file_name.toLowerCase() === file.name.toLowerCase()
-                    );
-                    
-                    // Add isFileExists to the file object itself
-                    (file as any).isFileExists = fileExists;
-                    return file;
-                  }).filter(file => validateFile(file));
+                  const validFiles = fileList
+                    .map((file) => {
+                      // Check if file already exists in data
+                      const fileExists = data?.some(
+                        (existingFile: any) =>
+                          existingFile.file_name.toLowerCase() ===
+                          file.name.toLowerCase(),
+                      );
+
+                      // Add isFileExists to the file object itself
+                      (file as any).isFileExists = fileExists;
+                      return file;
+                    })
+                    .filter((file) => validateFile(file));
                   if (validFiles.length > 0) {
                     setTimeout(() => {
                       setUploadingFiles(validFiles);

@@ -206,7 +206,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
             )}
           </div>
         </div>
-        {isFailed&& !isFileExists && (
+        {isFailed && !isFileExists && (
           <div className="text-red-500 text-[10px] mt-1">{errorMessage}</div>
         )}
 
@@ -228,9 +228,11 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
           </>
         )}
       </div>
-        {isFileExists && (
-          <div className="text-red-500 mb-2 text-[10px] mt-1">This file has already been uploaded.</div>
-        )}
+      {isFileExists && (
+        <div className="text-red-500 mb-2 text-[10px] mt-1">
+          This file has already been uploaded.
+        </div>
+      )}
     </>
   );
 };
