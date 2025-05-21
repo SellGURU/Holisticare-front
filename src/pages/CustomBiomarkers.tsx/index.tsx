@@ -125,16 +125,20 @@ const CustomBiomarkers = () => {
               ></BioMarkerBox>
             );
           })}
-          {filteredBiomarkers().length == 0 &&
-          <>
-            <div className='flex justify-center items-center mt-12 flex-col gap-2'>
-              <img className='w-[220px]' src="/icons/empty-messages-coach.svg" alt="" />
-            </div>
-            <div className='text-Text-Primary -mt-10 text-center text-base font-medium'>
-              No results found.
-            </div>
-          </>
-          }
+          {filteredBiomarkers().length == 0 && (
+            <>
+              <div className="flex justify-center items-center mt-12 flex-col gap-2">
+                <img
+                  className="w-[220px]"
+                  src="/icons/empty-messages-coach.svg"
+                  alt=""
+                />
+              </div>
+              <div className="text-Text-Primary -mt-10 text-center text-base font-medium">
+                No results found.
+              </div>
+            </>
+          )}
         </div>
       )}
     </>

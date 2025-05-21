@@ -151,7 +151,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
 
             {activeEdit ? (
               <>
-                {Editvalues.length > 0 ?(
+                {Editvalues.length > 0 ? (
                   <>
                     {showSuccess ? (
                       <>
@@ -295,15 +295,20 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                       </>
                     )}
                   </>
-                ):
-                <div
-                  onClick={() => {
-                    setActiveEdit(false);
-                  }}
-                >
-                  <SvgIcon width='20px' height='20px' color="#005F73" src="./icons/close-square-outline.svg"></SvgIcon>
-                </div>
-                }
+                ) : (
+                  <div
+                    onClick={() => {
+                      setActiveEdit(false);
+                    }}
+                  >
+                    <SvgIcon
+                      width="20px"
+                      height="20px"
+                      color="#005F73"
+                      src="./icons/close-square-outline.svg"
+                    ></SvgIcon>
+                  </div>
+                )}
               </>
             ) : (
               <div
