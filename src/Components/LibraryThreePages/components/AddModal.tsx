@@ -407,7 +407,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
-                  placeholder="Enter Unit"
+                  placeholder="Enter Unit..."
                   value={Unit}
                   type="text"
                   onChange={(e) => {
