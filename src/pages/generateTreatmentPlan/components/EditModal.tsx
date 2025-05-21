@@ -446,7 +446,9 @@ const EditModal: FC<EditModalProps> = ({
                   After writing each note, press the Enter key to save it and be
                   able to add another note.
                 </Tooltip>
-                <span className="text-[10px] text-Text-Quadruple">{newNote.length}/400 characters</span>
+                <span className="text-[10px] text-Text-Quadruple">
+                  {newNote.length}/400 characters
+                </span>
               </div>
             </div>
 
