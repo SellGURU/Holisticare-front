@@ -167,9 +167,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
                 <div className="flex justify-start items-start ml-2">
-                  {value.Category === 'Diet' &&
-                  value.Category === 'Activity' &&
-                  value.Category === 'Lifestyle' &&
+                  {value.Category === 'Diet' ||
+                  value.Category === 'Activity' ||
+                  value.Category === 'Lifestyle' ||
                   value.Category === 'Supplement' ? (
                     <>
                       <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
@@ -178,7 +178,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       {valueData == 'File' && (
                         <div
                           onClick={() => setShowFilePreviewModal(true)}
-                          className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 hover:underline"
+                          className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 mr-2 hover:underline"
                         >
                           Youtube Link / Video
                         </div>
@@ -186,17 +186,17 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-xs text-Text-Primary text-justify ml-1">
                         {valueData === 'Macros' ? (
                           <div className="flex justify-start items-center gap-4">
-                            <div className="flex justify-start items-center">
+                            <div className="flex justify-start items-center gap-1">
                               Carbs: {value['Total Macros']?.Carbs}
-                              <div className="text-Text-Quadruple">gr</div>
+                              <div>gr</div>
                             </div>
-                            <div className="flex justify-start items-center">
+                            <div className="flex justify-start items-center gap-1">
                               Protein: {value['Total Macros']?.Protein}
-                              <div className="text-Text-Quadruple">gr</div>
+                              <div>gr</div>
                             </div>
-                            <div className="flex justify-start items-center">
+                            <div className="flex justify-start items-center gap-1">
                               Fat: {value['Total Macros']?.Fats}
-                              <div className="text-Text-Quadruple">gr</div>
+                              <div>gr</div>
                             </div>
                           </div>
                         ) : (
@@ -208,7 +208,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     ''
                   )}
                   <div
-                    className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ${value.Category === 'Diet' && 'ml-5'} mr-2`}
+                    className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-4 ${value.Category === 'Diet' && 'ml-5'} mr-2`}
                   >
                     • Score:
                   </div>

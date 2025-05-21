@@ -48,14 +48,28 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
     setIsLoading(true);
     messagesUsersList();
   }, []);
+  const applyFilters = () => {
+    let filtered = [...messages];
 
-  const filteredMessages = messagesSearched.filter((message) =>
-    filter === 'All'
-      ? true
-      : filter === 'Read'
-        ? message.unread === false
-        : message.unread === true,
-  );
+    if (search) {
+      filtered = filtered.filter((message) =>
+        message.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+    if (filter === 'Read') {
+      filtered = filtered.filter((message) => message.unread === false);
+    } else if (filter === 'Unread') {
+      filtered = filtered.filter((message) => message.unread === true);
+    }
+
+    setMessagesSearched(filtered);
+  };
+
+  useEffect(() => {
+    applyFilters();
+  }, [search, filter, messages]);
+
   const colors = ['#CC85FF', '#90CAFA', '#FABA90', '#90FAB2'];
 
   const getColorForUsername = (username: string): string => {
@@ -75,22 +89,6 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
   const handleClickAgainMessage = () => {
     navigate(``);
   };
-  const handleSearch = (searchTerm: string) => {
-    if (!searchTerm) {
-      setMessagesSearched(messages);
-      return;
-    }
-
-    const searchResult = messages.filter((message) =>
-      message.name.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-    setMessagesSearched(searchResult);
-  };
-  useEffect(() => {
-    if (search) {
-      handleSearch(search);
-    }
-  }, [search]);
   const hexToRGBA = (hex: string, opacity: number = 1) => {
     hex = hex.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
@@ -114,7 +112,7 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
               isMessages
             />
           </div>
-          {filteredMessages.length === 0 && (
+          {messagesSearched.length === 0 && (
             <div className="flex flex-col items-center w-full h-[90%] justify-center">
               <img src="/icons/empty-messages-coach.svg" alt="" />
               <div className="text-base font-medium text-Text-Primary -mt-5">
@@ -123,7 +121,7 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
             </div>
           )}
           <ul className="mt-5 w-full h-[91%] pr-3 overflow-y-scroll divide-y divide-Boarder">
-            {filteredMessages.map((message) => {
+            {messagesSearched.map((message) => {
               return (
                 <li
                   key={message.member_id}

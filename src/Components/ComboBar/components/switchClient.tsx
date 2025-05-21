@@ -43,29 +43,17 @@ export const SwitchClient: FC<SwitchClientProps> = ({
   ]);
   const navigate = useNavigate();
   const resolvedFiltersData = () => {
-    if (searchQuery != '' && activeStatus != 'All') {
-      return patients.filter(
-        (el) =>
-          el.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          el.status == activeStatus,
-      );
-    } else {
-      if (activeStatus != 'All') {
-        return patients.filter((el) => {
-          return (
-            el.status.toLocaleLowerCase() == activeStatus.toLocaleLowerCase()
-          );
-        });
-      } else if (searchQuery != '') {
-        // console.log(patients.filter(el =>el.Name.toUpperCase().includes(searchQuery.toUpperCase())))
-        return patients.filter((el) =>
-          el.name.toUpperCase().includes(searchQuery.toUpperCase()),
-        );
-      } else if (searchQuery == '' && activeStatus == 'All') {
-        return patients;
-      }
-    }
-    return patients;
+    return patients.filter((el) => {
+      const matchesSearch =
+        searchQuery.trim() === '' ||
+        el.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        activeStatus === 'All' ||
+        el.status.toLowerCase() === activeStatus.toLowerCase();
+
+      return matchesSearch && matchesStatus;
+    });
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -132,8 +120,6 @@ export const SwitchClient: FC<SwitchClientProps> = ({
             <>
               {resolvedFiltersData().length > 0 ? (
                 resolvedFiltersData().map((client, i) => {
-                  console.log(client);
-
                   return (
                     <ClientCard
                       index={i}
@@ -150,10 +136,19 @@ export const SwitchClient: FC<SwitchClientProps> = ({
                     />
                   );
                 })
+              ) : searchQuery === '' ? (
+                <div className=" w-full h-full flex items-center justify-center flex-col">
+                  <img src="/icons/empty-inbox-people.svg" alt="" />
+                  <div className="text-sm font-medium text-Text-Primary -mt-5">
+                    No client found.
+                  </div>
+                </div>
               ) : (
-                <div className=" w-full h-full flex items-center justify-center flex-col text-xs font-medium">
-                  <img src="/icons/EmptyInbox.svg" alt="" />
-                  No client found.
+                <div className=" w-full h-full flex items-center justify-center flex-col">
+                  <img src="/icons/empty-messages-coach.svg" alt="" />
+                  <div className="text-sm font-medium text-Text-Primary -mt-5">
+                    No results found.
+                  </div>
                 </div>
               )}
             </>

@@ -509,7 +509,6 @@ const Stadio: FC<StadioProps> = ({
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (
                       <div
-                        // key={`${value.Category}-${value.Title}`}
                         key={index}
                         draggable
                         onDragStart={(e) => handleDragStart(e, value)}
@@ -528,7 +527,6 @@ const Stadio: FC<StadioProps> = ({
                   {filteredDataCheckIn.map((value: any, index: number) => {
                     return (
                       <div
-                        // key={`${value.Task_Type}-${value.Title}`}
                         key={index}
                         draggable
                         onDragStart={(e) => handleDragStart(e, value)}
@@ -544,6 +542,24 @@ const Stadio: FC<StadioProps> = ({
                     );
                   })}
                 </div>
+                {filteredDataCategory.length === 0 &&
+                  selectCategory !== 'Checkin' && (
+                    <div className="w-full h-[80%] flex flex-col items-center justify-center">
+                      <img src="/icons/empty-messages-coach.svg" alt="" />
+                      <div className="text-Text-Primary font-medium text-xs -mt-6">
+                        No results found.
+                      </div>
+                    </div>
+                  )}
+                {filteredDataCheckIn.length === 0 &&
+                  selectCategory === 'Checkin' && (
+                    <div className="w-full h-[80%] flex flex-col items-center justify-center">
+                      <img src="/icons/empty-messages-coach.svg" alt="" />
+                      <div className="text-Text-Primary font-medium text-xs -mt-6">
+                        No results found.
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
