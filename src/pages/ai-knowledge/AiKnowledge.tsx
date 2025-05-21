@@ -466,32 +466,36 @@ const AiKnowledge = () => {
   const [FilleType] = useState('Activity');
   const [fileTitle, setFileTitle] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<{[key: string]: number}>({});
-  const [uploadComplete, setUploadComplete] = useState<{[key: string]: boolean}>({});
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
+  const [uploadComplete, setUploadComplete] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       const newFiles = Array.from(files);
-      setSelectedFiles(prev => [...prev, ...newFiles]);
-      
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+
       // Initialize progress and complete state for new files
-      newFiles.forEach(file => {
-        setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-        setUploadComplete(prev => ({ ...prev, [file.name]: false }));
+      newFiles.forEach((file) => {
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+        setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
         simulateUploadProgress(file.name);
       });
     }
   };
 
   const simulateUploadProgress = (fileName: string) => {
-    setUploadProgress(prev => ({ ...prev, [fileName]: 0 }));
+    setUploadProgress((prev) => ({ ...prev, [fileName]: 0 }));
     const interval = setInterval(() => {
-      setUploadProgress(prev => {
+      setUploadProgress((prev) => {
         const currentProgress = prev[fileName];
         if (currentProgress >= 100) {
           clearInterval(interval);
-          setUploadComplete(prev => ({ ...prev, [fileName]: true }));
+          setUploadComplete((prev) => ({ ...prev, [fileName]: true }));
           return prev;
         }
         return { ...prev, [fileName]: currentProgress + 10 };
@@ -500,13 +504,13 @@ const AiKnowledge = () => {
   };
 
   const handleCancelUpload = (fileName: string) => {
-    setSelectedFiles(prev => prev.filter(file => file.name !== fileName));
-    setUploadProgress(prev => {
+    setSelectedFiles((prev) => prev.filter((file) => file.name !== fileName));
+    setUploadProgress((prev) => {
       const newProgress = { ...prev };
       delete newProgress[fileName];
       return newProgress;
     });
-    setUploadComplete(prev => {
+    setUploadComplete((prev) => {
       const newComplete = { ...prev };
       delete newComplete[fileName];
       return newComplete;
@@ -515,14 +519,14 @@ const AiKnowledge = () => {
 
   const handleAddFile = () => {
     if (selectedFiles.length > 0) {
-      const newUploads = selectedFiles.map(file => ({
+      const newUploads = selectedFiles.map((file) => ({
         id: userUploads.length + 1,
         type: fileTitle || file.name,
         date: new Date().toLocaleDateString(),
         disabled: false,
       }));
-      
-      setUserUploads(prev => [...prev, ...newUploads]);
+
+      setUserUploads((prev) => [...prev, ...newUploads]);
       setSelectedFiles([]);
       setUploadProgress({});
       setUploadComplete({});
@@ -738,36 +742,41 @@ const AiKnowledge = () => {
             <div className="overflow-auto h-[75px]">
               {selectedFiles.map((file) => (
                 <div key={file.name}>
-                  {uploadProgress[file.name] > 0 && uploadProgress[file.name] < 100 && (
-                    <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
-                      <div className="w-full flex justify-between">
-                        <div>
-                          <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                            Uploading {file.name}...
+                  {uploadProgress[file.name] > 0 &&
+                    uploadProgress[file.name] < 100 && (
+                      <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
+                        <div className="w-full flex justify-between">
+                          <div>
+                            <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                              Uploading {file.name}...
+                            </div>
+                            <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                              {uploadProgress[file.name]}% • 30 seconds
+                              remaining
+                            </div>
                           </div>
-                          <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
-                            {uploadProgress[file.name]}% • 30 seconds remaining
-                          </div>
+                          <img
+                            onClick={() => handleCancelUpload(file.name)}
+                            className="cursor-pointer"
+                            src="/icons/close.svg"
+                            alt=""
+                          />
                         </div>
-                        <img
-                          onClick={() => handleCancelUpload(file.name)}
-                          className="cursor-pointer"
-                          src="/icons/close.svg"
-                          alt=""
-                        />
+                        <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                          <div
+                            className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                            style={{ width: uploadProgress[file.name] + '%' }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-                        <div
-                          className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                          style={{ width: uploadProgress[file.name] + '%' }}
-                        ></div>
-                      </div>
-                    </div>
-                  )}
+                    )}
                   {uploadComplete[file.name] && (
                     <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
                       <div className="flex items-center gap-4">
-                        <img src="/icons/PDF_file_icon.svg 1.svg" alt="PDF Icon" />
+                        <img
+                          src="/icons/PDF_file_icon.svg 1.svg"
+                          alt="PDF Icon"
+                        />
                         <div className="flex flex-col">
                           <span className="text-xs">{file.name}</span>
                           <span className="text-xs text-[#888888]">
@@ -1070,7 +1079,6 @@ const AiKnowledge = () => {
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
                       isEmpty={getCurrentPageData().length === 0}
-
                     />
                   </div>
                 </div>
@@ -1127,11 +1135,9 @@ const AiKnowledge = () => {
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
                       isEmpty={getCurrentPageData().length === 0}
-                      
                     />
                   </div>
                 </div>
-               
               </>
             )}
 
