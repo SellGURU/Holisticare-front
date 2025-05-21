@@ -25,6 +25,20 @@ const Activity = () => {
       activity.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   };
+  const getExercisesList = () => {
+    setLoading(true);
+    Application.getExercisesList({}).then((res) => {
+      setExcercisesList(res.data);
+      setLoading(false);
+    });
+  };
+  const getActivityList = () => {
+    setLoading(true);
+    Application.activityList().then((res) => {
+      setDataList(res.data);
+      setLoading(false);
+    });
+  };
   useEffect(() => {
     if (active == 'Exercise') {
       getExercisesList();
@@ -32,18 +46,6 @@ const Activity = () => {
       getActivityList();
     }
   }, [active]);
-  const getExercisesList = () => {
-    Application.getExercisesList({}).then((res) => {
-      setExcercisesList(res.data);
-      setLoading(false);
-    });
-  };
-  const getActivityList = () => {
-    Application.activityList().then((res) => {
-      setDataList(res.data);
-      setLoading(false);
-    });
-  };
   return (
     <>
       {loading && (

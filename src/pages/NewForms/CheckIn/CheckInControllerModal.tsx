@@ -8,7 +8,7 @@ import TextField from '../../../Components/TextField';
 import AddQuestionsModal from './AddQuestionModal';
 import QuestionItem from './QuestionItem';
 import TimerPicker from './TimerPicker';
-
+import Circleloader from '../../../Components/CircleLoader';
 interface CheckInControllerModalProps {
   editId?: string;
   mode?: 'Edit' | 'Reposition' | 'Add';
@@ -119,8 +119,10 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     //   questions: questions,
     // });
   };
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (editId != '' && editId) {
+      setLoading(true);
       FormsApi.showCheckIn(editId).then((res) => {
         setQuestions(res.data.questions);
         setTitleForm(res.data.title);
@@ -130,11 +132,17 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
         setMinutes(mins);
         setSeconds(secs);
         setChecked(res.data.share_with_client);
+        setLoading(false);
       });
     }
   }, [editId]);
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="flex flex-col justify-between bg-white w-[664px] rounded-[20px] p-4">
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
@@ -256,7 +264,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           {questions.length > 0 && (
             <>
               <div
-                className={`${addMore ? 'max-h-[100px]' : 'max-h-[200px]'} min-h-[60px] overflow-y-auto w-full`}
+                className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
                 style={{
                   scrollbarWidth: 'thin',
                   scrollbarColor: '#E5E5E5 transparent',
