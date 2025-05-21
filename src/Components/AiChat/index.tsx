@@ -92,25 +92,25 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   };
 
   const formatText = (text: string) => {
-    if(text){
-    // First, replace the bold formatting *text* with <strong>text</strong>
-    const boldedText = text.replace(
-      /\*(.*?)\*/g,
-      (_match, p1) => `<strong>${p1}</strong>`,
-    );
+    if (text) {
+      // First, replace the bold formatting *text* with <strong>text</strong>
+      const boldedText = text.replace(
+        /\*(.*?)\*/g,
+        (_match, p1) => `<strong>${p1}</strong>`,
+      );
 
-    // Then, split the text by \n to handle newlines
-    const lines = boldedText.split('\n');
+      // Then, split the text by \n to handle newlines
+      const lines = boldedText.split('\n');
 
-    // Return the formatted text as JSX
-    return lines.map((line, index) => (
-      <span key={index}>
-        {/* Use dangerouslySetInnerHTML to render HTML inside the span */}
-        <span dangerouslySetInnerHTML={{ __html: line }} />
-        <br />
-      </span>
-    ));
-  }
+      // Return the formatted text as JSX
+      return lines.map((line, index) => (
+        <span key={index}>
+          {/* Use dangerouslySetInnerHTML to render HTML inside the span */}
+          <span dangerouslySetInnerHTML={{ __html: line }} />
+          <br />
+        </span>
+      ));
+    }
   };
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
@@ -169,7 +169,9 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
                   <div>
                     <div className="text-Text-Primary font-medium text-[12px]">
                       AI-Copilot{' '}
-                      <span className="text-Text-Secondary text-xs ml-1">{msg.time}</span>
+                      <span className="text-Text-Secondary text-xs ml-1">
+                        {msg.time}
+                      </span>
                     </div>
                     <div
                       className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "

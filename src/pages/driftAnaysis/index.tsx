@@ -369,50 +369,55 @@ export const DriftAnaysis = () => {
                 />
               </div>
 
-                {dataToMap.length > 0 ? (
-                  <div
-                    style={{
-                      height: !isMobile ? window.innerHeight - 100 + 'px' : '',
-                    }}
-                    className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto w-[102%]"
-                  >
-                    {dataToMap.map((client, i) => (
-                      <ClientCard
-                        index={i}
-                        key={i}
-                        name={client.name}
-                        email={client.email}
-                        picture={client.picture}
-                        memberID={client.member_id}
-                        setCardActive={() =>
-                          handleClientCardClick(client.member_id, client.name)
-                        }
-                        status={client.status}
-                        cardActive={activeMemberID}
-                        tags={client.tags}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      height: !isMobile ? window.innerHeight - 100 + 'px' : '',
-                    }}
-                    className="flex flex-col items-center justify-center bg-white rounded-lg p-3  w-[102%]"
-                  >
-                    <img className='w-[200px] h-[161px]' src="/icons/search-status.svg" alt="" />
-                    <p className='text-Text-primary text-xs font-medium'>No results found.</p>
-                  </div>
-                )}
-              </div>
-              <div className="w-full flex md:hidden justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </div>
-           
+              {dataToMap.length > 0 ? (
+                <div
+                  style={{
+                    height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+                  }}
+                  className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto w-[102%]"
+                >
+                  {dataToMap.map((client, i) => (
+                    <ClientCard
+                      index={i}
+                      key={i}
+                      name={client.name}
+                      email={client.email}
+                      picture={client.picture}
+                      memberID={client.member_id}
+                      setCardActive={() =>
+                        handleClientCardClick(client.member_id, client.name)
+                      }
+                      status={client.status}
+                      cardActive={activeMemberID}
+                      tags={client.tags}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+                  }}
+                  className="flex flex-col items-center justify-center bg-white rounded-lg p-3  w-[102%]"
+                >
+                  <img
+                    className="w-[200px] h-[161px]"
+                    src="/icons/search-status.svg"
+                    alt=""
+                  />
+                  <p className="text-Text-primary text-xs font-medium">
+                    No results found.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="w-full flex md:hidden justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </>
         )}
       </>
