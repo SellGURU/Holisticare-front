@@ -1069,6 +1069,8 @@ const AiKnowledge = () => {
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
+
                     />
                   </div>
                 </div>
@@ -1119,13 +1121,15 @@ const AiKnowledge = () => {
                       ))}
                     </tbody>
                   </table>
-                  <div className=" py-2 flex justify-center  absolute bottom-0 w-full">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
+                  <div className="py-2 flex justify-center absolute bottom-0 w-full">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
+                      
+                    />
+                  </div>
                 </div>
                
               </>
