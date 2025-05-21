@@ -308,6 +308,7 @@ const Stadio: FC<StadioProps> = ({
             Frequency_Type: addData.frequencyType ?? '',
             Activity_Location: addData.Activity_Location ?? '',
             Frequency_Dates: addData.frequencyDates ?? [],
+            Unit: addData.Unit ?? '',
           };
 
           setActions((prevData: any) => ({

@@ -65,9 +65,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       case 'Supplement':
         setValueData('Dose');
         break;
-      case 'Lifestyle':
-        setValueData('Value');
-        break;
       case 'Activity':
         setValueData('File');
         break;
@@ -169,7 +166,6 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="flex justify-start items-start ml-2">
                   {value.Category === 'Diet' ||
                   value.Category === 'Activity' ||
-                  value.Category === 'Lifestyle' ||
                   value.Category === 'Supplement' ? (
                     <>
                       <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
@@ -206,6 +202,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </>
                   ) : (
                     ''
+                  )}
+                  {value.Category === 'Lifestyle' && (
+                    <>
+                      <div className="text-Text-Secondary text-xs  flex justify-start items-center text-nowrap">
+                        • Value:
+                      </div>
+                      <div className="text-xs text-Text-Primary text-justify ml-1">
+                        {value.Value} {value.Unit}
+                      </div>
+                    </>
                   )}
                   <div
                     className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-4 ${value.Category === 'Diet' && 'ml-5'} mr-2`}

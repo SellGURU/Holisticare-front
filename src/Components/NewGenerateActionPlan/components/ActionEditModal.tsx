@@ -39,6 +39,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
   const [value, setValue] = useState(defalts?.Value || '');
+  const [unit, setUnit] = useState(defalts?.Unit || '');
   const [totalMacros, setTotalMacros] = useState({
     Fats: defalts?.['Total Macros']?.Fats || '',
     Protein: defalts?.['Total Macros']?.Protein || '',
@@ -135,6 +136,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setTitle(defalts.Title || '');
       setDose(defalts.Dose || null);
       setValue(defalts.Value || null);
+      setUnit(defalts.Unit || null);
       setTotalMacros({
         Fats: defalts?.['Total Macros']?.Fats || 0,
         Protein: defalts?.['Total Macros']?.Protein || 0,
@@ -299,6 +301,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setTitle('');
     setDose(null);
     setValue('');
+    setUnit('');
     setAddData({
       Type: [],
       Terms: [],
@@ -372,6 +375,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
+        Unit: unit,
       });
     } else if (selectedGroup === 'Diet') {
       onSubmit({
@@ -751,22 +755,35 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         </div>
                       </Tooltip>
                     </div>
-                    <input
-                      placeholder="Enter Value..."
-                      value={value}
-                      type="number"
-                      onChange={(e) =>
-                        setValue(
-                          e.target.value === '' ? '' : Number(e.target.value),
-                        )
-                      }
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                    />
-                    {!value && showValidation && (
-                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        This field is required.
-                      </span>
-                    )}
+                    <div className="flex justify-between">
+                      <div className="w-[48%]">
+                        <input
+                          placeholder="Enter Value..."
+                          value={value}
+                          type="number"
+                          onChange={(e) =>
+                            setValue(
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
+                          }
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                        />
+                        {!value && showValidation && (
+                          <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
+                            This field is required.
+                          </span>
+                        )}
+                      </div>
+                      <input
+                        placeholder="Enter Unit..."
+                        value={unit}
+                        type="text"
+                        onChange={(e) => setUnit(e.target.value)}
+                        className={`w-[48%] h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      />
+                    </div>
                   </div>
                 )}
                 {selectedGroup === 'Diet' && (
