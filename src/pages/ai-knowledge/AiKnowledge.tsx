@@ -461,60 +461,80 @@ const AiKnowledge = () => {
   const [userUploads, setUserUploads] = useState<Document[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 13;
+  const itemsPerPage = 12;
   const [AddFilleModal, setAddFilleModal] = useState(false);
   const [FilleType] = useState('Activity');
   const [fileTitle, setFileTitle] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadComplete, setUploadComplete] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{[key: string]: number}>({});
+  const [uploadComplete, setUploadComplete] = useState<{[key: string]: boolean}>({});
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setUploadComplete(false);
-      simulateUploadProgress();
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setSelectedFiles(prev => [...prev, ...newFiles]);
+      
+      // Initialize progress and complete state for new files
+      newFiles.forEach(file => {
+        setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
+        setUploadComplete(prev => ({ ...prev, [file.name]: false }));
+        simulateUploadProgress(file.name);
+      });
     }
   };
 
-  const simulateUploadProgress = () => {
-    setUploadProgress(0);
+  const simulateUploadProgress = (fileName: string) => {
+    setUploadProgress(prev => ({ ...prev, [fileName]: 0 }));
     const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
+      setUploadProgress(prev => {
+        const currentProgress = prev[fileName];
+        if (currentProgress >= 100) {
           clearInterval(interval);
-          setUploadComplete(true);
-          // Add file to user uploads
-          if (selectedFile) {
-            setUserUploads((prevUploads) => [
-              ...prevUploads,
-              {
-                id: prevUploads.length + 1,
-                type: selectedFile.name,
-                date: new Date().toLocaleDateString(),
-                disabled: false,
-              },
-            ]);
-          }
+          setUploadComplete(prev => ({ ...prev, [fileName]: true }));
           return prev;
         }
-        return prev + 10;
+        return { ...prev, [fileName]: currentProgress + 10 };
       });
     }, 500);
   };
 
-  const handleCancelUpload = () => {
-    setUploadProgress(0);
-    setSelectedFile(null);
-    setUploadComplete(false);
+  const handleCancelUpload = (fileName: string) => {
+    setSelectedFiles(prev => prev.filter(file => file.name !== fileName));
+    setUploadProgress(prev => {
+      const newProgress = { ...prev };
+      delete newProgress[fileName];
+      return newProgress;
+    });
+    setUploadComplete(prev => {
+      const newComplete = { ...prev };
+      delete newComplete[fileName];
+      return newComplete;
+    });
+  };
+
+  const handleAddFile = () => {
+    if (selectedFiles.length > 0) {
+      const newUploads = selectedFiles.map(file => ({
+        id: userUploads.length + 1,
+        type: fileTitle || file.name,
+        date: new Date().toLocaleDateString(),
+        disabled: false,
+      }));
+      
+      setUserUploads(prev => [...prev, ...newUploads]);
+      setSelectedFiles([]);
+      setUploadProgress({});
+      setUploadComplete({});
+      closeModal();
+    }
   };
 
   const closeModal = () => {
     setAddFilleModal(false);
-    setUploadProgress(0);
-    setSelectedFile(null);
-    setUploadComplete(false);
+    setSelectedFiles([]);
+    setUploadProgress({});
+    setUploadComplete({});
     setFileTitle('');
   };
 
@@ -554,6 +574,29 @@ const AiKnowledge = () => {
   //   activaTab === 'System Docs'
   //     ? systemDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   //     : userUploads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  type TableItem = {
+    id: number;
+    type: string;
+    date?: string;
+    disabled?: boolean;
+  };
+  const getCurrentPageData = (): TableItem[] => {
+    if (activaTab === 'System Docs') {
+      const categories = [
+        ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+      ] as string[];
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return categories.slice(startIndex, endIndex).map((category, index) => ({
+        id: index + 1,
+        type: category,
+      }));
+    } else {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return userUploads.slice(startIndex, endIndex);
+    }
+  };
 
   const totalPages =
     activaTab === 'System Docs'
@@ -562,20 +605,6 @@ const AiKnowledge = () => {
             itemsPerPage,
         )
       : Math.ceil(userUploads.length / itemsPerPage);
-  const handleAddFile = () => {
-    if (selectedFile) {
-      setUserUploads((prevUploads) => [
-        ...prevUploads,
-        {
-          id: prevUploads.length + 1,
-          type: fileTitle,
-          date: new Date().toLocaleDateString(),
-          disabled: false,
-        },
-      ]);
-      closeModal();
-    }
-  };
 
   const handleSearch = (term: string) => {
     if (!graphData || !term.trim()) {
@@ -691,6 +720,7 @@ const AiKnowledge = () => {
             />
             <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
               <input
+                multiple
                 type="file"
                 // accept=".rdf,.owl,.csv,.json,.pdf"
                 style={{ display: 'none' }}
@@ -706,51 +736,55 @@ const AiKnowledge = () => {
               </div>
             </label>
             <div className="overflow-auto h-[75px]">
-              {selectedFile && uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
-                  <div className="w-full flex justify-between">
-                    <div>
-                      <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                        Uploading {selectedFile.name}...
+              {selectedFiles.map((file) => (
+                <div key={file.name}>
+                  {uploadProgress[file.name] > 0 && uploadProgress[file.name] < 100 && (
+                    <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
+                      <div className="w-full flex justify-between">
+                        <div>
+                          <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                            Uploading {file.name}...
+                          </div>
+                          <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                            {uploadProgress[file.name]}% • 30 seconds remaining
+                          </div>
+                        </div>
+                        <img
+                          onClick={() => handleCancelUpload(file.name)}
+                          className="cursor-pointer"
+                          src="/icons/close.svg"
+                          alt=""
+                        />
                       </div>
-                      <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
-                        {uploadProgress}% • 30 seconds remaining
+                      <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                        <div
+                          className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                          style={{ width: uploadProgress[file.name] + '%' }}
+                        ></div>
                       </div>
                     </div>
-                    <img
-                      onClick={handleCancelUpload}
-                      className="cursor-pointer"
-                      src="/icons/close.svg"
-                      alt=""
-                    />
-                  </div>
-                  <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-                    <div
-                      className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                      style={{ width: uploadProgress + '%' }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-              {selectedFile && uploadComplete && (
-                <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50">
-                  <div className="flex items-center gap-4">
-                    <img src="/icons/PDF_file_icon.svg 1.svg" alt="PDF Icon" />
-                    <div className="flex flex-col">
-                      <span className="text-xs">{selectedFile.name}</span>
-                      <span className="text-xs text-[#888888]">
-                        {formatFileSize(selectedFile.size)}
-                      </span>
+                  )}
+                  {uploadComplete[file.name] && (
+                    <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                      <div className="flex items-center gap-4">
+                        <img src="/icons/PDF_file_icon.svg 1.svg" alt="PDF Icon" />
+                        <div className="flex flex-col">
+                          <span className="text-xs">{file.name}</span>
+                          <span className="text-xs text-[#888888]">
+                            {formatFileSize(file.size)}
+                          </span>
+                        </div>
+                      </div>
+                      <img
+                        onClick={() => handleCancelUpload(file.name)}
+                        className="cursor-pointer"
+                        src="/icons/trash-blue.svg"
+                        alt="Delete Icon"
+                      />
                     </div>
-                  </div>
-                  <img
-                    onClick={handleCancelUpload}
-                    className="cursor-pointer"
-                    src="/icons/trash-blue.svg"
-                    alt="Delete Icon"
-                  />
+                  )}
                 </div>
-              )}
+              ))}
             </div>
           </div>
           <div className="w-full flex items-center justify-end gap-2 text-sm font-medium">
@@ -924,6 +958,7 @@ const AiKnowledge = () => {
         ) : (
           <div className=" hidden fixed right-5 top-[8%] w-[315px] h-[80vh] text-primary-text  md:flex flex-col ">
             <SearchBox
+              isGrayIcon
               ClassName="rounded-[12px]"
               placeHolder="Search for document ..."
               onSearch={handleSearch}
@@ -962,10 +997,10 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {userUploads.map((doc, index) => (
+                      {getCurrentPageData().map((doc, index) => (
                         <tr
                           key={doc.id}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
                         >
                           <td
                             className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
@@ -975,7 +1010,7 @@ const AiKnowledge = () => {
                           <td
                             className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
                           >
-                            {doc.date}
+                            {doc.date || 'No Date'}
                           </td>
                           <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
                             {confirmDeleteId === doc.id ? (
@@ -1029,86 +1064,74 @@ const AiKnowledge = () => {
                     </tbody>
                   </table>
 
-                  <div className="flex justify-center pb-4 absolute bottom-0 w-full">
+                  <div className="flex justify-center py-2 absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
+
                     />
                   </div>
                 </div>
               </>
             ) : (
               <>
-                <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px] ">
-                  <div className="max-h-[510px] overflow-auto">
-                    <table className="min-w-full bg-white ">
-                      <thead>
-                        <tr className="bg-[#E5E5E5]">
-                          <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
-                            Node Type
-                          </th>
-                          <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
-                            Date of Update
-                          </th>
-                          <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
-                            Action
-                          </th>
+                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                  <table className="min-w-full bg-white ">
+                    <thead>
+                      <tr className="bg-[#E5E5E5]">
+                        <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
+                          Node Type
+                        </th>
+                        <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
+                          Date of Update
+                        </th>
+                        <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getCurrentPageData().map((doc, index) => (
+                        <tr
+                          key={doc.id}
+                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
+                        >
+                          <td
+                            className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                          >
+                            {doc.type}
+                          </td>
+                          <td
+                            className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                          >
+                            {doc.date || 'No Date'}
+                          </td>
+                          <td className="py-2 pr-2 w-[40px] text-center">
+                            <button onClick={() => handleButtonClick(doc.type)}>
+                              {activeFilters.includes(doc.type) ? (
+                                <img src="/icons/eye-blue.svg" alt="" />
+                              ) : (
+                                <img src="/icons/eye-slash-blue.svg" alt="" />
+                              )}
+                            </button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ...new Set(
-                            graphData?.nodes.map((e: any) => e.category2),
-                          ),
-                        ].map((doc: any, index: number) => {
-                          return (
-                            <tr
-                              key={doc.id}
-                              className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
-                            >
-                              <td
-                                className={`pl-2 py-2 max-w-[140px] truncate w-[140px] ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
-                              >
-                                {doc}
-                              </td>
-                              <td
-                                className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
-                              >
-                                {doc.date || 'No Date'}
-                              </td>
-                              <td className="py-2 pr-2 w-[40px] text-center">
-                                <button
-                                  onClick={() =>
-                                    // toggleDisable(doc.id, 'System Uploads')
-                                    handleButtonClick(doc)
-                                  }
-                                >
-                                  {activeFilters.includes(doc) ? (
-                                    <img src="/icons/eye-blue.svg" alt="" />
-                                  ) : (
-                                    // Eye icon for disabled
-                                    <img
-                                      src="/icons/eye-slash-blue.svg"
-                                      alt=""
-                                    />
-                                  )}
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="hidden justify-center pb-4 absolute bottom-0 w-full">
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="py-2 flex justify-center absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
+                      
                     />
                   </div>
                 </div>
+               
               </>
             )}
 
