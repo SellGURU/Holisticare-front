@@ -359,7 +359,7 @@ export const DriftAnaysis = () => {
                 style={{
                   height: !isMobile ? window.innerHeight - 100 + 'px' : '',
                 }}
-                className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto    w-[102%] "
+                className="flex flex-col pr-1  overflow-hidden md:overflow-y-auto pb-[80px]   w-[102%] "
               >
                 {dataToMap.map((client, i) => {
                   console.log(client);

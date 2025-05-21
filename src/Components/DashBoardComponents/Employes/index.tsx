@@ -90,7 +90,7 @@ const Employes: React.FC = () => {
           </div>
         </div>
       ) : (
-        <ul className="space-y-3 max-h-[220px] overflow-auto pr-1 ">
+        <ul className="space-y-3 max-h-[180px] overflow-auto pr-1 ">
           {Employees.map((employee, index) => (
             <EmployeeRow employee={employee} index={index}></EmployeeRow>
           ))}
