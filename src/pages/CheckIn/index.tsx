@@ -19,7 +19,6 @@ interface CheckinProps {
 
 const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
   const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
-  console.log(chekinData);
   useEffect(() => {
     if (upData) {
       setCheckinData(upData);

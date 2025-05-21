@@ -10,13 +10,14 @@ import CheckInControllerModal from './CheckInControllerModal';
 import CheckInPreview from './CheckInPreview';
 import TemplateQuestinary from './TemplateQuestionary';
 import QuestionaryControllerModal from './QuestionaryControllerModal';
-
+import Circleloader from '../../../Components/CircleLoader';
 interface CheckInFormProps {
   isQuestionary?: boolean;
   search?: string;
 }
 
 const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
+  const [loading, setLoading] = useState(true);
   const [checkInList, setCheckInList] = useState<Array<CheckInDataRowType>>([]);
   const [showaddModal, setShowAddModal] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -26,13 +27,17 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [showFeedback, setShowFeedBack] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const getChechins = () => {
+    setLoading(true);
     FormsApi.getCheckinList().then((res) => {
       setCheckInList(res.data);
+      setLoading(false);
     });
   };
   const getQuestionary = () => {
+    setLoading(true);
     FormsApi.getQuestionaryList().then((res) => {
       setCheckInList(res.data);
+      setLoading(false);
     });
   };
   useEffect(() => {
@@ -114,6 +119,11 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   };
   return (
     <>
+      {loading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-[50]">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       {checkInList.length > 0 ? (
         <>
           <div className="flex flex-col w-full mt-4">

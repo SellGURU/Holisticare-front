@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import Toggle from '../../../Components/Toggle';
 import SearchBox from '../../../Components/SearchBox';
 import ActivityHandler from './ActivityHandler';
-import { Exercise } from './Exercise';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
-
+import Exercise from './Exercise';
 const Activity = () => {
   const [active, setActive] = useState<'Activity' | 'Exercise'>('Activity');
   const [loading, setLoading] = useState(true);
@@ -22,9 +21,23 @@ const Activity = () => {
     );
   };
   const getFilteredActivity = () => {
-    return dataList.filter((exercise) =>
-      exercise.Title.toLowerCase().includes(searchQuery.toLowerCase()),
+    return dataList.filter((activity) =>
+      activity.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+  };
+  const getExercisesList = () => {
+    setLoading(true);
+    Application.getExercisesList({}).then((res) => {
+      setExcercisesList(res.data);
+      setLoading(false);
+    });
+  };
+  const getActivityList = () => {
+    setLoading(true);
+    Application.activityList().then((res) => {
+      setDataList(res.data);
+      setLoading(false);
+    });
   };
   useEffect(() => {
     if (active == 'Exercise') {
@@ -33,18 +46,6 @@ const Activity = () => {
       getActivityList();
     }
   }, [active]);
-  const getExercisesList = () => {
-    Application.getExercisesList({}).then((res) => {
-      setExcercisesList(res.data);
-      setLoading(false);
-    });
-  };
-  const getActivityList = () => {
-    Application.activityList().then((res) => {
-      setDataList(res.data);
-      setLoading(false);
-    });
-  };
   return (
     <>
       {loading && (
@@ -110,6 +111,7 @@ const Activity = () => {
                 getActivityList();
               }}
               data={getFilteredActivity()}
+              dataListLength={dataList.length}
             />
           ) : (
             <Exercise
@@ -117,6 +119,7 @@ const Activity = () => {
               onAdd={getExercisesList}
               showAdd={showAdd}
               setShowAdd={setShowAdd}
+              ExcercisesListLength={ExcercisesList.length}
             />
           )}
         </div>

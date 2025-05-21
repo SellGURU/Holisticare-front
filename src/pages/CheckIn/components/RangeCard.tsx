@@ -23,8 +23,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
   required,
   showTitleRequired,
 }) => {
-  const [val, setVal] = useState(value || 0);
-
+  const [val, setVal] = useState(Number(value) || 5);
   useEffect(() => {
     if (onSubmit) {
       onSubmit(val);
@@ -32,7 +31,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
   }, [val]);
 
   useEffect(() => {
-    setVal(value);
+    setVal(Number(value) || 5);
   }, [value]);
 
   return (
@@ -49,9 +48,9 @@ const RangeCard: React.FC<RangeCardProps> = ({
           <input
             type="range"
             value={val}
-            onChange={(e) => {
-              setVal(Number(e.target.value));
-            }}
+            // onChange={(e) => {
+            //   setVal(Number(e.target.value));
+            // }}
             min={0}
             max={10}
             className="w-full h-[2px] sliderCheckin border-none"
