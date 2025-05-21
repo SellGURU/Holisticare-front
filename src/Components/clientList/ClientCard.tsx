@@ -786,7 +786,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div
                   onClick={() =>
                     navigate(
-                      `/drift-analysis?activeMemberId=${client.member_id}`,
+                      `/drift-analysis?activeMemberId=${client.member_id}&showBack=true`,
                     )
                   }
                   className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
