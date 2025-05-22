@@ -780,7 +780,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         placeholder="Enter Unit..."
                         value={unit}
                         type="text"
-                        onChange={(e) => setUnit(e.target.value)}
+                        onChange={(e) => {
+                          const onlyLetters = e.target.value.replace(
+                            /[^a-zA-Z]/g,
+                            '',
+                          );
+                          setUnit(onlyLetters);
+                        }}
                         className={`w-[48%] h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                       />
                     </div>
