@@ -38,9 +38,9 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
             return (
               <>
                 <div
-                  onClick={() => {
-                    setResolvedValue(el);
-                  }}
+                  // onClick={() => {
+                  //   setResolvedValue(el);
+                  // }}
                   className="flex gap-1 items-center"
                 >
                   <div
