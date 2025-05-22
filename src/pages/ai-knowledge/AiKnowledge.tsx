@@ -459,6 +459,7 @@ const AiKnowledge = () => {
   // ]);
 
   const [userUploads, setUserUploads] = useState<Document[]>([]);
+  const [filteredUserUploads, setFilteredUserUploads] = useState<Document[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
@@ -580,11 +581,13 @@ const AiKnowledge = () => {
     date?: string;
     disabled?: boolean;
   };
+  const [filteredSystemDocs, setFilteredSystemDocs] = useState<string[]>([]);
+
   const getCurrentPageData = (): TableItem[] => {
     if (activaTab === 'System Docs') {
-      const categories = [
-        ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-      ] as string[];
+      const categories = filteredSystemDocs.length > 0 
+        ? filteredSystemDocs 
+        : [...new Set(graphData?.nodes.map((e: any) => e.category2))] as string[];
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
       return categories.slice(startIndex, endIndex).map((category, index) => ({
@@ -592,69 +595,88 @@ const AiKnowledge = () => {
         type: category,
       }));
     } else {
+      // For User Uploads tab, use filteredUserUploads
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
-      return userUploads.slice(startIndex, endIndex);
+      return filteredUserUploads.slice(startIndex, endIndex);
     }
   };
 
   const totalPages =
     activaTab === 'System Docs'
       ? Math.ceil(
-          [...new Set(graphData?.nodes.map((e: any) => e.category2))].length /
+          (filteredSystemDocs.length > 0 
+            ? filteredSystemDocs.length 
+            : [...new Set(graphData?.nodes.map((e: any) => e.category2))].length) /
             itemsPerPage,
         )
-      : Math.ceil(userUploads.length / itemsPerPage);
+      : Math.ceil(filteredUserUploads.length / itemsPerPage);
 
   const handleSearch = (term: string) => {
-    if (!graphData || !term.trim()) {
-      // If search is cleared, show all nodes
-      // @ts-expect-error - Accessing the custom property we added to the window object
-      const sigmaInstance = window.sigmaInstance;
+    const searchTerm = term.toLowerCase();
 
-      if (sigmaInstance) {
-        const graph = sigmaInstance.getGraph();
-
-        // Show all nodes
-        graph.forEachNode((nodeId: string) => {
-          graph.setNodeAttribute(nodeId, 'hidden', false);
-          graph.setNodeAttribute(nodeId, 'highlighted', false);
-          graph.setNodeAttribute(
-            nodeId,
-            'size',
-            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
-          );
-        });
-
-        // Show all edges
-        graph.forEachEdge((edgeId: string) => {
-          graph.setEdgeAttribute(edgeId, 'hidden', false);
-        });
-
-        sigmaInstance.refresh();
+    // Handle document search for both tabs
+    if (!term.trim()) {
+      // Reset both document lists when search is cleared
+      setFilteredUserUploads(userUploads);
+      setFilteredSystemDocs([]);
+      setCurrentPage(1);
+    } else {
+      if (activaTab === 'User Uploads') {
+        // Filter User Uploads
+        const filteredUserDocs = userUploads.filter(doc => 
+          doc.type.toLowerCase().includes(searchTerm)
+        );
+        setFilteredUserUploads(filteredUserDocs);
+      } else if (activaTab === 'System Docs' && graphData) {
+        // Filter System Docs
+        const filteredDocs = graphData.nodes
+          .filter((node: any) =>
+            node.category2.toLowerCase().includes(searchTerm)
+          )
+          .map((node: any) => node.category2 as string);
+        const uniqueFilteredDocs = [...new Set(filteredDocs)] as string[];
+        setFilteredSystemDocs(uniqueFilteredDocs);
       }
-      return;
+      setCurrentPage(1);
     }
 
-    const matchingNodes = graphData.nodes
-      .filter(
-        (node: any) =>
-          node.label.toLowerCase().includes(term.toLowerCase()) ||
-          (node.category1 &&
-            node.category1.toLowerCase().includes(term.toLowerCase())) ||
-          (node.category2 &&
-            node.category2.toLowerCase().includes(term.toLowerCase())),
-      )
-      .map((node: any) => node.id);
+    // Handle graph visualization
+    if (!graphData) return;
 
-    // Access the sigma instance from the window object
     // @ts-expect-error - Accessing the custom property we added to the window object
     const sigmaInstance = window.sigmaInstance;
+    if (!sigmaInstance) return;
 
-    if (sigmaInstance) {
-      const graph = sigmaInstance.getGraph();
+    const graph = sigmaInstance.getGraph();
 
-      // First, hide all nodes and edges
+    if (!searchTerm.trim()) {
+      // Show all nodes and edges
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', false);
+      });
+    } else {
+      // Filter graph nodes
+      const matchingNodes = graphData.nodes
+        .filter(
+          (node: any) =>
+            node.label.toLowerCase().includes(searchTerm) ||
+            (node.category1 && node.category1.toLowerCase().includes(searchTerm)) ||
+            (node.category2 && node.category2.toLowerCase().includes(searchTerm)),
+        )
+        .map((node: any) => node.id);
+
+      // Hide all nodes and edges first
       graph.forEachNode((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', true);
         graph.setNodeAttribute(nodeId, 'highlighted', false);
@@ -669,7 +691,7 @@ const AiKnowledge = () => {
         graph.setEdgeAttribute(edgeId, 'hidden', true);
       });
 
-      // Then show and highlight matching nodes
+      // Show and highlight matching nodes
       matchingNodes.forEach((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', false);
         graph.setNodeAttribute(nodeId, 'highlighted', true);
@@ -689,10 +711,26 @@ const AiKnowledge = () => {
           }
         });
       });
-
-      sigmaInstance.refresh();
     }
+
+    sigmaInstance.refresh();
   };
+
+  // Initialize filteredUserUploads when userUploads changes
+  useEffect(() => {
+    setFilteredUserUploads(userUploads);
+  }, [userUploads]);
+
+  // Reset filteredUserUploads when switching to User Uploads tab
+  useEffect(() => {
+    if (activaTab === 'User Uploads') {
+      setFilteredUserUploads(userUploads);
+    }
+  }, [activaTab, userUploads]);
+
+  useEffect(()=>{
+    getCurrentPageData()
+  },[filteredUserUploads, filteredSystemDocs, currentPage])
 
   return (
     <>
@@ -722,14 +760,14 @@ const AiKnowledge = () => {
               <input
                 multiple
                 type="file"
-                // accept=".rdf,.owl,.csv,.json,.pdf"
+                accept=".png,.svg,.jpg,.jpeg"
                 style={{ display: 'none' }}
                 id="file-upload"
                 onChange={handleFileUpload}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-xs text-[#888888] text-center">
-                Supported formats: RDF, OWL, CSV, JSON, PDF
+                Supported formats: PNG, SVG, JPG, JPEG
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
                 Upload File
