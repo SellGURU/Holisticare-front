@@ -459,6 +459,9 @@ const AiKnowledge = () => {
   // ]);
 
   const [userUploads, setUserUploads] = useState<Document[]>([]);
+  const [filteredUserUploads, setFilteredUserUploads] = useState<Document[]>(
+    [],
+  );
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
@@ -584,11 +587,20 @@ const AiKnowledge = () => {
     date?: string;
     disabled?: boolean;
   };
+  const [filteredSystemDocs, setFilteredSystemDocs] = useState<string[]>([]);
+  const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] =
+    useState(false);
+
   const getCurrentPageData = (): TableItem[] => {
     if (activaTab === 'System Docs') {
-      const categories = [
-        ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-      ] as string[];
+      let categories: string[];
+      if (isSystemDocsSearchActive) {
+        categories = filteredSystemDocs;
+      } else {
+        categories = [
+          ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+        ] as string[];
+      }
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
       return categories.slice(startIndex, endIndex).map((category, index) => ({
@@ -596,69 +608,87 @@ const AiKnowledge = () => {
         type: category,
       }));
     } else {
+      // For User Uploads tab, use filteredUserUploads
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
-      return userUploads.slice(startIndex, endIndex);
+      return filteredUserUploads.slice(startIndex, endIndex);
     }
   };
 
   const totalPages =
     activaTab === 'System Docs'
       ? Math.ceil(
-          [...new Set(graphData?.nodes.map((e: any) => e.category2))].length /
-            itemsPerPage,
+          (filteredSystemDocs.length > 0
+            ? filteredSystemDocs.length
+            : [...new Set(graphData?.nodes.map((e: any) => e.category2))]
+                .length) / itemsPerPage,
         )
-      : Math.ceil(userUploads.length / itemsPerPage);
+      : Math.ceil(filteredUserUploads.length / itemsPerPage);
+
+  const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
   const handleSearch = (term: string) => {
-    if (!graphData || !term.trim()) {
-      // If search is cleared, show all nodes
-      // @ts-expect-error - Accessing the custom property we added to the window object
-      const sigmaInstance = window.sigmaInstance;
+    const searchTerm = term.toLowerCase();
 
-      if (sigmaInstance) {
-        const graph = sigmaInstance.getGraph();
-
-        // Show all nodes
-        graph.forEachNode((nodeId: string) => {
-          graph.setNodeAttribute(nodeId, 'hidden', false);
-          graph.setNodeAttribute(nodeId, 'highlighted', false);
-          graph.setNodeAttribute(
-            nodeId,
-            'size',
-            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+    if (searchType === 'Docs') {
+      if (!term.trim()) {
+        setFilteredUserUploads(userUploads);
+        setFilteredSystemDocs([]);
+        setIsSystemDocsSearchActive(false);
+        setCurrentPage(1);
+      } else {
+        if (activaTab === 'User Uploads') {
+          const filteredUserDocs = userUploads.filter((doc) =>
+            doc.type.toLowerCase().includes(searchTerm),
           );
-        });
-
-        // Show all edges
-        graph.forEachEdge((edgeId: string) => {
-          graph.setEdgeAttribute(edgeId, 'hidden', false);
-        });
-
-        sigmaInstance.refresh();
+          setFilteredUserUploads(filteredUserDocs);
+        } else if (activaTab === 'System Docs' && graphData) {
+          const filteredDocs = graphData.nodes
+            .filter((node: any) =>
+              node.category2.toLowerCase().includes(searchTerm),
+            )
+            .map((node: any) => node.category2 as string);
+          const uniqueFilteredDocs = [...new Set(filteredDocs)] as string[];
+          setFilteredSystemDocs(uniqueFilteredDocs);
+          setIsSystemDocsSearchActive(true);
+        }
+        setCurrentPage(1);
       }
       return;
     }
 
-    const matchingNodes = graphData.nodes
-      .filter(
-        (node: any) =>
-          node.label.toLowerCase().includes(term.toLowerCase()) ||
-          (node.category1 &&
-            node.category1.toLowerCase().includes(term.toLowerCase())) ||
-          (node.category2 &&
-            node.category2.toLowerCase().includes(term.toLowerCase())),
-      )
-      .map((node: any) => node.id);
-
-    // Access the sigma instance from the window object
+    // If "Nodes" is selected, only search in the graph
+    if (!graphData) return;
     // @ts-expect-error - Accessing the custom property we added to the window object
     const sigmaInstance = window.sigmaInstance;
+    if (!sigmaInstance) return;
+    const graph = sigmaInstance.getGraph();
 
-    if (sigmaInstance) {
-      const graph = sigmaInstance.getGraph();
+    if (!searchTerm.trim()) {
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', false);
+      });
+    } else {
+      const matchingNodes = graphData.nodes
+        .filter(
+          (node: any) =>
+            node.label.toLowerCase().includes(searchTerm) ||
+            (node.category1 &&
+              node.category1.toLowerCase().includes(searchTerm)) ||
+            (node.category2 &&
+              node.category2.toLowerCase().includes(searchTerm)),
+        )
+        .map((node: any) => node.id);
 
-      // First, hide all nodes and edges
       graph.forEachNode((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', true);
         graph.setNodeAttribute(nodeId, 'highlighted', false);
@@ -673,7 +703,6 @@ const AiKnowledge = () => {
         graph.setEdgeAttribute(edgeId, 'hidden', true);
       });
 
-      // Then show and highlight matching nodes
       matchingNodes.forEach((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', false);
         graph.setNodeAttribute(nodeId, 'highlighted', true);
@@ -682,21 +711,41 @@ const AiKnowledge = () => {
           'size',
           (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.5,
         );
-
-        // Show edges connected to matching nodes
         graph.forEachEdge((edgeId: string) => {
           const source = graph.source(edgeId);
           const target = graph.target(edgeId);
-
           if (source === nodeId || target === nodeId) {
             graph.setEdgeAttribute(edgeId, 'hidden', false);
           }
         });
       });
-
-      sigmaInstance.refresh();
     }
+    sigmaInstance.refresh();
   };
+
+  // Initialize filteredUserUploads when userUploads changes
+  useEffect(() => {
+    setFilteredUserUploads(userUploads);
+  }, [userUploads]);
+
+  // Reset filteredUserUploads when switching to User Uploads tab
+  useEffect(() => {
+    if (activaTab === 'User Uploads') {
+      setFilteredUserUploads(userUploads);
+    }
+  }, [activaTab, userUploads]);
+
+  useEffect(() => {
+    getCurrentPageData();
+  }, [filteredUserUploads, filteredSystemDocs, currentPage]);
+
+  useEffect(() => {
+    if (activaTab === 'System Docs') {
+      // do nothing
+    } else {
+      setIsSystemDocsSearchActive(false);
+    }
+  }, [activaTab]);
 
   return (
     <>
@@ -726,14 +775,14 @@ const AiKnowledge = () => {
               <input
                 multiple
                 type="file"
-                // accept=".rdf,.owl,.csv,.json,.pdf"
+                accept=".png,.svg,.jpg,.jpeg"
                 style={{ display: 'none' }}
                 id="file-upload"
                 onChange={handleFileUpload}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-xs text-[#888888] text-center">
-                Supported formats: RDF, OWL, CSV, JSON, PDF
+                Supported formats: PNG, SVG, JPG, JPEG
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
                 Upload File
@@ -868,9 +917,10 @@ const AiKnowledge = () => {
               <SearchBox
                 isHaveBorder
                 ClassName="rounded-[12px]"
-                placeHolder="Search for document ..."
+                placeHolder="Search documents or knowledge graph nodes..."
                 onSearch={handleSearch}
               ></SearchBox>
+
               <ActivityMenu
                 activeMenu={activeMenu}
                 menus={menus}
@@ -969,9 +1019,54 @@ const AiKnowledge = () => {
             <SearchBox
               isGrayIcon
               ClassName="rounded-[12px]"
-              placeHolder="Search for document ..."
+              placeHolder="Search documents or knowledge graph nodes..."
               onSearch={handleSearch}
             ></SearchBox>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
+              <span>Search by:</span>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Docs'}
+                  onChange={() => setSearchType('Docs')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Docs'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-[#383838]'
+                  }`}
+                >
+                  {searchType === 'Docs' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Docs
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Nodes'}
+                  onChange={() => setSearchType('Nodes')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Nodes'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-Text-Primary'
+                  }`}
+                >
+                  {searchType === 'Nodes' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Nodes
+              </label>
+            </div>
             <div className="mt-3 w-full">
               <Toggle
                 active={activaTab}
@@ -1006,7 +1101,9 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getCurrentPageData().map((doc, index) => (
+                      {
+                      
+                      getCurrentPageData().map((doc, index) => (
                         <tr
                           key={doc.id}
                           className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
@@ -1101,32 +1198,42 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getCurrentPageData().map((doc, index) => (
-                        <tr
-                          key={doc.id}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
-                        >
-                          <td
-                            className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                      {getCurrentPageData().length < 1 ? (
+                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                          <img className='w-[200px] h-[161px]' src="/icons/search-status.svg" alt="" />
+                          No results found.
+                         
+                        </div>
+                      ) : (
+                        getCurrentPageData().map((doc, index) => (
+                          <tr
+                            key={doc.id}
+                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
                           >
-                            {doc.type}
-                          </td>
-                          <td
-                            className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
-                          >
-                            {doc.date || 'No Date'}
-                          </td>
-                          <td className="py-2 pr-2 w-[40px] text-center">
-                            <button onClick={() => handleButtonClick(doc.type)}>
-                              {activeFilters.includes(doc.type) ? (
-                                <img src="/icons/eye-blue.svg" alt="" />
-                              ) : (
-                                <img src="/icons/eye-slash-blue.svg" alt="" />
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                            <td
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                            >
+                              {doc.type}
+                            </td>
+                            <td
+                              className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                            >
+                              {doc.date || 'No Date'}
+                            </td>
+                            <td className="py-2 pr-2 w-[40px] text-center">
+                              <button
+                                onClick={() => handleButtonClick(doc.type)}
+                              >
+                                {activeFilters.includes(doc.type) ? (
+                                  <img src="/icons/eye-blue.svg" alt="" />
+                                ) : (
+                                  <img src="/icons/eye-slash-blue.svg" alt="" />
+                                )}
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                   <div className="py-2 flex justify-center absolute bottom-0 w-full">
