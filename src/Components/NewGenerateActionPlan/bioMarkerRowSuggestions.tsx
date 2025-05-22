@@ -14,6 +14,7 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
+  checkValid:boolean
   // isInvalid?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -21,7 +22,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   setValues,
   index,
   onRemove,
-  // isInvalid,
+  checkValid,
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
@@ -85,12 +86,19 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/others.svg';
     }
   };
+  const isinvalid = () =>{
+    if((!value.Frequency_Type || value.Frequency_Type.length === 0 ) && checkValid){
+      return true
+    }else {
+      return false
+    }
+  }
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${!value.Frequency_Type || value.Frequency_Type.length === 0 ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex flex-col justify-start text-Text-Primary items-center border ${isinvalid() ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
@@ -141,7 +149,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
                 {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
-                  <div className="flex items-center gap-1 text-xs text-[#FC5474]">
+                  <div className="flex items-center gap-1 text-xs text-[#FC5474]" style={{color:isinvalid() ? '#FC5474' : '#FFAB2C'}}>
                     <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                     No Scheduled
                   </div>
