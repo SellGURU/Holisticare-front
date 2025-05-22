@@ -87,6 +87,7 @@ const GenerateActionPlan = () => {
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   const saveChanges = () => {
+    setCheckSave(true);
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
@@ -108,6 +109,7 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
+  const [checkSave, setCheckSave] = useState(false);
 
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
@@ -234,6 +236,7 @@ const GenerateActionPlan = () => {
             <>
               <div className="w-full h-full mt-[190px] pr-[70px] ">
                 <Stadio
+                  isCheckSave={checkSave}
                   actions={actions}
                   setActions={setActions}
                   setData={setCategories}

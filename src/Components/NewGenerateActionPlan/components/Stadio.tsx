@@ -25,6 +25,7 @@ interface StadioProps {
   setData: (values: any) => void;
   setCalendarView: (value: boolean) => void;
   plans: any;
+  isCheckSave: boolean;
   handleShowConflictsModal: () => void;
 }
 
@@ -36,6 +37,7 @@ const Stadio: FC<StadioProps> = ({
   setCalendarView,
   plans,
   handleShowConflictsModal,
+  isCheckSave,
 }) => {
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
@@ -445,6 +447,7 @@ const Stadio: FC<StadioProps> = ({
                       <>
                         <ActionCard
                           data={act}
+                          checkValid={isCheckSave}
                           onRemove={() => removeFromActions(act)}
                           setActions={setActions}
                           key={index}
@@ -459,6 +462,7 @@ const Stadio: FC<StadioProps> = ({
                       <>
                         <ActionCard
                           data={act}
+                          checkValid={isCheckSave}
                           onRemove={() => removeFromActions(act)}
                           setActions={setActions}
                           key={index}
