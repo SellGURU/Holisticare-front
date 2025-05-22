@@ -385,8 +385,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  Value must include a number and, if needed, be followed by a
-                  unit (e.g., 8 glasses of water).
+                  Provide the numerical value, and if needed, enter the unit
+                  manually (e.g., 8 + Hours)
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
@@ -407,13 +407,15 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
-                  placeholder="Enter Unit"
+                  placeholder="Enter Unit..."
                   value={Unit}
                   type="text"
                   onChange={(e) => {
-                    // Remove numbers using regex
-                    const filteredValue = e.target.value.replace(/[0-9]/g, '');
-                    setUnit(filteredValue);
+                    const onlyLetters = e.target.value.replace(
+                      /[^a-zA-Z]/g,
+                      '',
+                    );
+                    setUnit(onlyLetters);
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
                    bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}

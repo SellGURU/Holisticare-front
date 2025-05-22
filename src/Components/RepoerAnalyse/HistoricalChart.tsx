@@ -50,7 +50,7 @@ const HistoricalChart = ({
         {/* SVG for connecting points across different status categories */}
         <svg
           className="absolute w-full h-full top-0 left-3"
-          style={{ zIndex: 1, overflow: 'visible' }}
+          style={{ zIndex: 0, overflow: 'visible' }}
         >
           <defs>
             <marker
@@ -70,8 +70,8 @@ const HistoricalChart = ({
             const currentStatus = dataStatus[index];
             const nextStatus = dataStatus[index + 1];
 
-            const x1 = index * 40 + 14;
-            const x2 = (index + 1) * 40 + 14;
+            const x1 = index * 43 + 10;
+            const x2 = (index + 1) * 43 + 10;
             const y1 = getStatusVerticalPosition(currentStatus);
             const y2 = getStatusVerticalPosition(nextStatus);
 
@@ -111,7 +111,7 @@ const HistoricalChart = ({
                 {dataPoints.map((point, index) => (
                   <div
                     key={`point-${index}`}
-                    className="w-[40px] ml-2 relative"
+                    className="w-[40px] ml-1 relative"
                   >
                     <div
                       style={{

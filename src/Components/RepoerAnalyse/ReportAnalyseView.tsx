@@ -280,10 +280,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       // Ensure loading is complete
       const element = document.getElementById(section);
       if (element) {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
+        setTimeout(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 500);
       } else {
         console.warn(`Element with ID '${section}' not found.`);
       }

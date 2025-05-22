@@ -408,7 +408,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto pr-1 `}
+                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto  `}
               >
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard

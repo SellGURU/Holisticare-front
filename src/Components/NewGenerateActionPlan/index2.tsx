@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { TopBar } from '../topBar';
-import CategorieyWeight from './components/CategorieyWeight';
+// import CategorieyWeight from './components/CategorieyWeight';
 import Application from '../../api/app';
 import LoaderBox from './components/LoaderBox';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -56,11 +56,11 @@ const GenerateActionPlan = () => {
         setIsLoadingPlans(false);
       });
   };
-  const savePlan = (newPlans: any) => {
+  const savePlan = () => {
     setIsLoadingPlans(true);
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
-      percents: newPlans,
+      // percents: newPlans,
     }).then((res) => {
       const checkInItems = res.data.filter(
         (item: any) => item.Task_Type === 'Checkin',
@@ -78,19 +78,20 @@ const GenerateActionPlan = () => {
       checkSelectedTaskConflict(res.data);
     });
   };
+  useEffect(() => {
+    savePlan();
+  }, []);
   const [isLoadingSaveChanges, setISLoadingSaveChanges] = useState(false);
   const [isLoadingCalendarView, setIsLoadingCalendarView] = useState(false);
   const navigate = useNavigate();
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   const saveChanges = () => {
+    setCheckSave(true);
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
-    console.log(actions);
     const flattenedData = prepareDataForBackend(actions);
-
-    console.log(flattenedData);
 
     setISLoadingSaveChanges(true);
     Application.getActionPlanBlockSaveTasksNew({
@@ -108,7 +109,7 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
-  console.log(calendarViewData);
+  const [checkSave, setCheckSave] = useState(false);
 
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
@@ -136,7 +137,6 @@ const GenerateActionPlan = () => {
   const handleShowConflictsModal = () => {
     setShowConflictsModal(!showConflictsModal);
   };
-  console.log(calendarViewData?.scheduled_tasks.length > 0);
 
   return (
     <>
@@ -220,9 +220,9 @@ const GenerateActionPlan = () => {
 
         {!calendarView ? (
           <>
-            {!isWeighted ? (
-              <>
-                <div className="w-full h-full flex justify-center items-center">
+            {/* {!isWeighted ? ( */}
+            {/* <> */}
+            {/* <div className="w-full h-full flex justify-center items-center">
                   <CategorieyWeight
                     data={plans}
                     onSubmit={(values) => {
@@ -230,26 +230,27 @@ const GenerateActionPlan = () => {
                       setPlans(values);
                     }}
                   />
+                </div> */}
+            {/* </> */}
+            {/* ) : ( */}
+            <>
+              <div className="w-full h-full mt-[190px] pr-[70px] ">
+                <Stadio
+                  isCheckSave={checkSave}
+                  actions={actions}
+                  setActions={setActions}
+                  setData={setCategories}
+                  data={categories}
+                  setCalendarView={setCalendarView}
+                  plans={plans}
+                  handleShowConflictsModal={handleShowConflictsModal}
+                />
+                <div className="absolute right-5 top-[75px] z-50">
+                  <ComboBar isHolisticPlan></ComboBar>
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="w-full h-full mt-[190px] pr-[70px] ">
-                  <Stadio
-                    actions={actions}
-                    setActions={setActions}
-                    setData={setCategories}
-                    data={categories}
-                    setCalendarView={setCalendarView}
-                    plans={plans}
-                    handleShowConflictsModal={handleShowConflictsModal}
-                  />
-                  <div className="absolute right-5 top-[75px] z-50">
-                    <ComboBar isHolisticPlan></ComboBar>
-                  </div>
-                </div>
-              </>
-            )}
+              </div>
+            </>
+            {/* )} */}
           </>
         ) : (
           <>

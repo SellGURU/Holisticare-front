@@ -58,6 +58,7 @@ export const FilleHistory = () => {
   const validateFile = (file: File): boolean => {
     // Check file type
     const validFormats = ['.pdf', '.docx'];
+    console.log(file);
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!validFormats.includes(fileExtension)) {
       setError(
@@ -129,6 +130,7 @@ export const FilleHistory = () => {
                     return (
                       <FileBoxUpload
                         file={el}
+                        isFileExists={el.isFileExists}
                         onSuccess={(fileWithId) => {
                           setData((prevFiles: any) => [
                             ...prevFiles,
@@ -165,17 +167,27 @@ export const FilleHistory = () => {
               <input
                 type="file"
                 ref={fileInputRef}
-                accept=".pdf, .csv, .xls, .xlsx, .jpeg, .jpg, .png, .tiff, .txt"
+                accept=".pdf, .xls, .xlsx"
                 multiple
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setError(''); // Clear previous errors
                   const fileList = Array.from(e.target.files || []);
 
                   // Validate each file
-                  const validFiles = fileList.filter((file) =>
-                    validateFile(file),
-                  );
+                  const validFiles = fileList
+                    .map((file) => {
+                      // Check if file already exists in data
+                      const fileExists = data?.some(
+                        (existingFile: any) =>
+                          existingFile.file_name.toLowerCase() ===
+                          file.name.toLowerCase(),
+                      );
 
+                      // Add isFileExists to the file object itself
+                      (file as any).isFileExists = fileExists;
+                      return file;
+                    })
+                    .filter((file) => validateFile(file));
                   if (validFiles.length > 0) {
                     setTimeout(() => {
                       setUploadingFiles(validFiles);

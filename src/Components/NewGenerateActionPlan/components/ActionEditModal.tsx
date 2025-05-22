@@ -32,7 +32,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setGroups(res.data);
     });
   }, []);
-  console.log(defalts);
 
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>([]);
@@ -40,6 +39,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [title, setTitle] = useState(defalts?.Title);
   const [dose, setDose] = useState(defalts?.Dose);
   const [value, setValue] = useState(defalts?.Value || '');
+  const [unit, setUnit] = useState(defalts?.Unit || '');
   const [totalMacros, setTotalMacros] = useState({
     Fats: defalts?.['Total Macros']?.Fats || '',
     Protein: defalts?.['Total Macros']?.Protein || '',
@@ -136,6 +136,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setTitle(defalts.Title || '');
       setDose(defalts.Dose || null);
       setValue(defalts.Value || null);
+      setUnit(defalts.Unit || null);
       setTotalMacros({
         Fats: defalts?.['Total Macros']?.Fats || 0,
         Protein: defalts?.['Total Macros']?.Protein || 0,
@@ -201,7 +202,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Instruction: instructions,
       Activity_Location: selectedLocations,
       // Times: selectedTimes,
-      'Client Notes': notes,
+      'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
       // frequencyType: frequencyType,
       frequencyDates:
         frequencyType == 'weekly'
@@ -300,6 +301,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setTitle('');
     setDose(null);
     setValue('');
+    setUnit('');
     setAddData({
       Type: [],
       Terms: [],
@@ -342,7 +344,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         // Times: selectedTimes,
         Dose: dose,
-        'Client Notes': notes,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType == 'weekly'
             ? selectedDays
@@ -362,7 +364,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         // Times: selectedTimes,
         Value: value,
-        'Client Notes': notes,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType == 'weekly'
             ? selectedDays
@@ -373,6 +375,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
+        Unit: unit,
       });
     } else if (selectedGroup === 'Diet') {
       onSubmit({
@@ -382,7 +385,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         // Times: selectedTimes,
         'Total Macros': totalMacros,
-        'Client Notes': notes,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType == 'weekly'
             ? selectedDays
@@ -401,7 +404,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
         // Times: selectedTimes,
-        'Client Notes': notes,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType == 'weekly'
             ? selectedDays
@@ -569,9 +572,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       isOpen={isOpen}
     >
       <div
-        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative ${selectedGroup == 'Activity' ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary`}
+        className={`bg-white p-2 pb-6 rounded-2xl shadow-800 relative pt-10 ${selectedGroup == 'Activity' ? 'w-[920px]' : 'w-[530px]'}  text-Text-Primary`}
       >
-        <div className="overflow-auto max-h-[660px] p-4 pt-8">
+        <div className="overflow-auto max-h-[620px] p-4 pt-0">
           <h2
             className={`${selectedGroup == 'Activity' ? 'w-[95%]' : 'w-[90%]'} border-b border-Gray-50 pb-2 pt-4 text-sm font-medium text-Text-Primary absolute top-0 bg-white z-10`}
           >
@@ -581,7 +584,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
           </h2>
           {step == 0 && (
             <div
-              className={`grid ${selectedGroup == 'Activity' && 'grid-cols-2 gap-4'} `}
+              className={`grid ${selectedGroup == 'Activity' && 'grid-cols-2 gap-4'}`}
             >
               <div className="">
                 <div
@@ -744,29 +747,49 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       <Tooltip
                         id="value-tooltip"
                         place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+                        className="!bg-white !shadow-100 !text-Text-Quadruple !w-[284px] !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                          Value must contain just Natural Numbers.
+                          Provide the numerical value, and if needed, enter the
+                          unit manually (e.g., 8 + Hours)
                         </div>
                       </Tooltip>
                     </div>
-                    <input
-                      placeholder="Enter Value..."
-                      value={value}
-                      type="number"
-                      onChange={(e) =>
-                        setValue(
-                          e.target.value === '' ? '' : Number(e.target.value),
-                        )
-                      }
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                    />
-                    {!value && showValidation && (
-                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        This field is required.
-                      </span>
-                    )}
+                    <div className="flex justify-between">
+                      <div className="w-[48%]">
+                        <input
+                          placeholder="Enter Value..."
+                          value={value}
+                          type="number"
+                          onChange={(e) =>
+                            setValue(
+                              e.target.value === ''
+                                ? ''
+                                : Number(e.target.value),
+                            )
+                          }
+                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                        />
+                        {!value && showValidation && (
+                          <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
+                            This field is required.
+                          </span>
+                        )}
+                      </div>
+                      <input
+                        placeholder="Enter Unit..."
+                        value={unit}
+                        type="text"
+                        onChange={(e) => {
+                          const onlyLetters = e.target.value.replace(
+                            /[^a-zA-Z]/g,
+                            '',
+                          );
+                          setUnit(onlyLetters);
+                        }}
+                        className={`w-[48%] h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      />
+                    </div>
                   </div>
                 )}
                 {selectedGroup === 'Diet' && (
@@ -1336,7 +1359,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       key={index}
                       className="flex justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary  bg-backgroundColor-Card rounded-2xl"
                     >
-                      <span>{note}</span>
+                      <span className="break-all">{note}</span>
                       <div
                         onClick={() => handleDeleteNote(index)}
                         className="cursor-pointer"

@@ -426,20 +426,30 @@ const EditModal: FC<EditModalProps> = ({
               </label>
               <textarea
                 value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 400) {
+                    setNewNote(e.target.value);
+                  }
+                }}
                 onKeyDown={handleNoteKeyDown}
                 className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
                 rows={4}
                 placeholder="Write notes ..."
+                maxLength={400}
               />
-              <Tooltip
-                id="more-info-notes"
-                place="right"
-                className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-              >
-                After writing each note, press the Enter key to save it and be
-                able to add another note.
-              </Tooltip>
+              <div className="flex justify-between items-center mt-1">
+                <Tooltip
+                  id="more-info-notes"
+                  place="right"
+                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  After writing each note, press the Enter key to save it and be
+                  able to add another note.
+                </Tooltip>
+                <span className="text-[10px] text-Text-Quadruple">
+                  {newNote.length}/400 characters
+                </span>
+              </div>
             </div>
 
             {/* Notes List */}

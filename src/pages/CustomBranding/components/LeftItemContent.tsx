@@ -66,7 +66,10 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       updateCustomTheme('name', value);
     }
   };
-  const isNameValid = errorName === '' && customTheme.name !== '';
+  const isValidSave =
+    errorName === '' &&
+    customTheme.name !== '' &&
+    customTheme.selectedImage !== null;
   return (
     <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
       <div>
@@ -103,10 +106,10 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   Supported files:{' '}
                   <div className="!text-Text-Primary">PNG, SVG, JPG, JPEG</div>
                 </div>
-                <div className="flex items-center gap-1">
+                {/* <div className="flex items-center gap-1">
                   Maximum file size:{' '}
                   <div className="!text-Text-Primary">5MB</div>
-                </div>
+                </div> */}
               </Tooltip>
             </div>
             <div className="p-[1px] rounded-lg bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A] relative">
@@ -127,18 +130,20 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 )}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept=".png,.svg,.jpg,.jpeg"
                   className="hidden"
                   ref={fileInputRef}
                   onChange={handleImageUpload}
                 />
               </div>
-              <div
-                className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
-                onClick={handleDeleteImage}
-              >
-                <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
-              </div>
+              {customTheme?.selectedImage && (
+                <div
+                  className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
+                  onClick={handleDeleteImage}
+                >
+                  <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -273,8 +278,8 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
           Back to Default
         </div>
         <div
-          className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer"
-          onClick={isNameValid ? onSave : undefined}
+          className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
+          onClick={isValidSave ? onSave : undefined}
         >
           {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
         </div>

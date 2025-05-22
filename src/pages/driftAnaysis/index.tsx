@@ -56,17 +56,28 @@ export const DriftAnaysis = () => {
     },
   ]);
   const [activeMemberID, setActiveMemberID] = useState<number | null>(null);
+  const [showBack, setShowBack] = useState(false);
   //   const [, setOverviewData] = useState<any>(null);
   useEffect(() => {
     if (activeMemberID != null) {
-      setSearchParams({ ['activeMemberId']: activeMemberID.toString() });
+      setSearchParams({
+        activeMemberId: activeMemberID.toString(),
+        showBack: showBack.toString(),
+      });
     }
-    // setSearchParams({['activeMemberId':activeMemberID]})
-  }, [activeMemberID]);
+  }, [activeMemberID, showBack]);
+
   useEffect(() => {
-    setActiveMemberID(Number(searchParams.get('activeMemberId')));
-    // document.getElementById(searchParams.get("activeMemberId") as any)?.scrollIntoView()
-  }, []);
+    const memberId = searchParams.get('activeMemberId');
+    const shouldShowBack = searchParams.get('showBack');
+
+    if (memberId) {
+      setActiveMemberID(Number(memberId));
+    }
+    if (shouldShowBack) {
+      setShowBack(shouldShowBack === 'true');
+    }
+  }, [searchParams]);
   // const toggleStateSection = () => setIsStateOpen(!isStateOpen);
   // const toggleAlertSection = () => setIsAlertOpen(!isAlertOpen);
   // const toggleEngagementSection = () => setIsEngagementOpen(!isEngagementOpen);
@@ -253,6 +264,7 @@ export const DriftAnaysis = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const dataToMap = isMobile ? paginatedData : resolvedFiltersData();
+  console.log(activeMemberID);
 
   return (
     <div
@@ -269,14 +281,16 @@ export const DriftAnaysis = () => {
             <div className=" w-full md:w-[75%] flex flex-col gap-3">
               <div className="w-full font-medium text-Text-Primary">
                 <div className="flex items-center gap-3">
-                  <div
-                    onClick={() => {
-                      navigate('/');
-                    }}
-                    className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white rounded-lg`}
-                  >
-                    <img className="w-6 h-6" src="/icons/arrow-back.svg" />
-                  </div>
+                  {showBack && (
+                    <div
+                      onClick={() => {
+                        navigate('/');
+                      }}
+                      className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white rounded-lg`}
+                    >
+                      <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+                    </div>
+                  )}
                   Drift Analysis
                 </div>
 
@@ -355,16 +369,14 @@ export const DriftAnaysis = () => {
                 />
               </div>
 
-              <div
-                style={{
-                  height: !isMobile ? window.innerHeight - 100 + 'px' : '',
-                }}
-                className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto    w-[102%] "
-              >
-                {dataToMap.map((client, i) => {
-                  console.log(client);
-
-                  return (
+              {dataToMap.length > 0 ? (
+                <div
+                  style={{
+                    height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+                  }}
+                  className="flex flex-col pr-1 h-full overflow-hidden md:overflow-y-auto w-[102%]"
+                >
+                  {dataToMap.map((client, i) => (
                     <ClientCard
                       index={i}
                       key={i}
@@ -375,24 +387,36 @@ export const DriftAnaysis = () => {
                       setCardActive={() =>
                         handleClientCardClick(client.member_id, client.name)
                       }
-                      // onClick={() => {
-                      //   setcardActive(i + 1); // Update the active card index
-                      //   setActiveMemberID(client.member_id); // Set active member ID
-                      // }}
                       status={client.status}
                       cardActive={activeMemberID}
                       tags={client.tags}
                     />
-                  );
-                })}
-              </div>
-              <div className="w-full flex md:hidden justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: !isMobile ? window.innerHeight - 100 + 'px' : '',
+                  }}
+                  className="flex flex-col items-center justify-center bg-white rounded-lg p-3  w-[102%]"
+                >
+                  <img
+                    className="w-[200px] h-[161px]"
+                    src="/icons/search-status.svg"
+                    alt=""
+                  />
+                  <p className="text-Text-primary text-xs font-medium">
+                    No results found.
+                  </p>
+                </div>
+              )}
+            </div>
+            <div className="w-full flex md:hidden justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </div>
           </>
         )}
