@@ -39,9 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({
         >
           &lt;
         </button>
-        <button
-          className="px-3 h-[24px] w-[31px] text-Text-Primary rounded-sm  bg-backgroundColor-Main border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 bg-backgroundColor-Main"
-        >
+        <button className="px-3 h-[24px] w-[31px] text-Text-Primary rounded-sm  bg-backgroundColor-Main border-x border-Gray-50 flex items-center justify-center text-[12px] py-1 bg-backgroundColor-Main">
           1
         </button>
         <button
