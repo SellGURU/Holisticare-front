@@ -51,6 +51,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
 }) => {
   const [exercises, setExercises] = useState<ExerciseGroup[]>(sectionList);
   const [exerciseList, setExerciseList] = useState<Exercise[]>([]);
+  const [filteredExerciseList, setFilteredExerciseList] = useState<Exercise[]>(
+    [],
+  );
   const [activeTab, setActiveTab] = useState('Warm-Up');
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
@@ -273,9 +276,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
     onChange(exercises);
   }, [exercises, onChange]);
 
-  const filteredExerciseList = exerciseList.filter((exercise) =>
-    exercise.Title.toLowerCase().includes(searchValue.toLowerCase()),
-  );
+  useEffect(() => {
+    setFilteredExerciseList(
+      exerciseList.filter((exercise) =>
+        (exercise?.Title ?? '')
+          .toLowerCase()
+          .includes((searchValue ?? '').toLowerCase()),
+      ),
+    );
+  }, [exerciseList, searchValue]);
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
@@ -335,11 +344,11 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {showValidation && exercises.length === 0 && (
+              {exercises.length === 0 && (
                 <>
                   <img src="/icons/amico.svg" alt="" />
                   <div className="font-medium text-xs text-Text-Primary mt-8">
-                    No exercise existed yet.
+                    No exercise found.
                   </div>
                 </>
               )}
@@ -410,16 +419,24 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
               </div>
             </div>
             <SearchBox
-              ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !py-[0px] !px-3 !shadow-[unset] !bg-white mt-3"
-              placeHolder="Search ..."
+              ClassName="rounded-2xl !h-8 !min-w-full border border-Gray-50 !px-3 !py-[10px] !shadow-[unset] !bg-white mt-3"
+              placeHolder="Search exercises..."
               value={searchValue}
               onSearch={(value: any) => setSearchValue(value)}
             />
             <div className="flex flex-col overflow-y-auto w-full min-h-[300px] gap-1 mt-2">
-              {filteredExerciseList.map((el: any) => {
+              {filteredExerciseList.length === 0 && (
+                <div className="flex flex-col items-center justify-center w-full h-full bg-white rounded-2xl pb-4">
+                  <img src="/icons/empty-messages-coach.svg" alt="" />
+                  <div className="font-medium text-xs text-Text-Primary -mt-6">
+                    No results found.
+                  </div>
+                </div>
+              )}
+              {filteredExerciseList.map((el: any, index: number) => {
                 return (
                   <div
-                    key={el.Title}
+                    key={index}
                     draggable
                     onDragStart={(e) => handleDragStart(e, el)}
                     onDragEnd={handleDragEnd}

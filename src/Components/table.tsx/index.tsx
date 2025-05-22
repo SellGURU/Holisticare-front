@@ -16,6 +16,7 @@ import Pagination from '../pagination/index.tsx';
 // import Application from "@/api/app.ts";
 interface TableProps {
   classData: Array<any>;
+  search: string;
 }
 
 // Custom filter function to handle nested fields
@@ -29,7 +30,7 @@ const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
   return String(rowValue).toLowerCase().includes(filterValue.toLowerCase());
 };
 
-const Table: React.FC<TableProps> = ({ classData }) => {
+const Table: React.FC<TableProps> = ({ classData, search }) => {
   const [data, setData] = useState(classData);
   const [globalFilter, setGlobalFilter] = useState(''); // State for global filter
 
@@ -73,8 +74,35 @@ const Table: React.FC<TableProps> = ({ classData }) => {
     <div className="flex items-center justify-center flex-col">
       <div className="w-full mt-4">
         <div
-          className={`overflow-x-auto overflow-y-hidden  bg-white shadow-200  rounded-[16px] text-Text-Primary   mt-[-12px] h-[67vh]`}
+          className={`overflow-x-auto overflow-y-hidden bg-white shadow-200 rounded-[16px] text-Text-Primary mt-[-12px] h-[67vh]`}
         >
+          {classData.length == 0 ? (
+            search.length > 0 ? (
+              <>
+                <div className="flex justify-center mt-32">
+                  <img
+                    src="/icons/empty-messages-coach.svg"
+                    alt=""
+                    className="w-[320px]"
+                  />
+                </div>
+                <div className="text-Text-Primary text-base text-center font-medium -mt-8">
+                  No results found.
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-center mt-32">
+                  <img src="/icons/rafiki2.svg" alt="" />
+                </div>
+                <div className="text-Text-Primary text-base text-center font-medium mt-3">
+                  No results found.
+                </div>
+              </>
+            )
+          ) : (
+            ''
+          )}
           {table.getRowModel().rows.length > 0 ? (
             <table
               className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
