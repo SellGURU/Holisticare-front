@@ -27,6 +27,8 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const controller = useRef<AbortController | null>(null);
+  const startTime = useRef<number>(Date.now());
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -50,6 +52,24 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
 
     return `${day} ${month} ${year}`;
   };
+
+  useEffect(() => {
+    if (progress > 0 && progress < 100) {
+      const elapsedTime = (Date.now() - startTime.current) / 1000; // in seconds
+      const estimatedTotalTime = elapsedTime / (progress / 100);
+      const remainingTime = Math.max(0, Math.round(estimatedTotalTime - elapsedTime));
+      
+      if (remainingTime < 60) {
+        setTimeRemaining(`${remainingTime} seconds remaining`);
+      } else {
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+        setTimeRemaining(`${minutes}m ${seconds}s remaining`);
+      }
+    } else if (progress === 100) {
+      setTimeRemaining('Completed');
+    }
+  }, [progress]);
 
   useEffect(() => {
     // If file exists, mark as completed immediately
@@ -215,7 +235,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
             <div className="w-full flex justify-between">
               <div>
                 <div className="text-Text-Secondary  text-[10px] md:text-[10px] mt-1">
-                  {progress}% • 30 seconds remaining
+                  {progress}% • {timeRemaining}
                 </div>
               </div>
             </div>
