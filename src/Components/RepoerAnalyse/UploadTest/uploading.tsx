@@ -26,7 +26,9 @@ const Uploading: React.FC<UploadingProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [uploadStartTime] = useState(Date.now());
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
-  const [currentPhase, setCurrentPhase] = useState<'azure' | 'backend'>('azure');
+  const [currentPhase, setCurrentPhase] = useState<'azure' | 'backend'>(
+    'azure',
+  );
   const [lastProgressUpdate] = useState(Date.now());
   const [lastProgress] = useState(0);
 
@@ -54,7 +56,9 @@ const Uploading: React.FC<UploadingProps> = ({
 
         if (isCancelled) return;
 
-        console.log('File uploaded to Azure successfully, sending to backend...');
+        console.log(
+          'File uploaded to Azure successfully, sending to backend...',
+        );
         // Send the blob URL to backend
         setCurrentPhase('backend');
         const response = await Application.addLabReport(
@@ -69,7 +73,7 @@ const Uploading: React.FC<UploadingProps> = ({
             if (isCancelled) return;
             // Scale backend progress to 50-100%
             const percentCompleted = Math.floor(
-              (progressEvent.loaded / progressEvent.total) * 50 + 50
+              (progressEvent.loaded / progressEvent.total) * 50 + 50,
             );
             setProgress(percentCompleted);
           },
@@ -109,13 +113,15 @@ const Uploading: React.FC<UploadingProps> = ({
     if (progress > 0 && progress < 100) {
       const progressDiff = progress - lastProgress;
       const timeDiff = (Date.now() - lastProgressUpdate) / 1000;
-      
+
       // Only calculate if we have meaningful progress
       if (progressDiff > 0 && timeDiff > 0) {
         const progressPerSecond = progressDiff / timeDiff;
         const remainingProgress = 100 - progress;
-        const estimatedRemainingSeconds = Math.ceil(remainingProgress / progressPerSecond);
-        
+        const estimatedRemainingSeconds = Math.ceil(
+          remainingProgress / progressPerSecond,
+        );
+
         // Ensure minimum remaining time of 2 seconds
         setRemainingSeconds(Math.max(2, estimatedRemainingSeconds));
       }
@@ -176,10 +182,15 @@ const Uploading: React.FC<UploadingProps> = ({
           <div className="w-full flex justify-between">
             <div>
               <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                {currentPhase === 'azure' ? 'Uploading to cloud...' : 'Processing...'}
+                {currentPhase === 'azure'
+                  ? 'Uploading to cloud...'
+                  : 'Processing...'}
               </div>
               <div className="text-Text-Secondary  text-[10px] md:text-[12px] mt-1">
-                {progress}% • {remainingSeconds > 0 ? `${remainingSeconds} seconds remaining` : 'Calculating...'}
+                {progress}% •{' '}
+                {remainingSeconds > 0
+                  ? `${remainingSeconds} seconds remaining`
+                  : 'Calculating...'}
               </div>
             </div>
 
