@@ -42,12 +42,12 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                data-tooltip-id="system-score"
+                // data-tooltip-id="system-score"
                 className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] select-none bg-[#005F73] rounded-full"></div>
                 {item['System Score'] ? item['System Score'] : '-'}
-                <Tooltip
+                {/* <Tooltip
                   id={'system-score'}
                   place="top"
                   className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
@@ -60,15 +60,15 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                   <div className="text-Text-Secondary">
                     Score based on all data and AI insights.
                   </div>
-                </Tooltip>
+                </Tooltip> */}
               </div>
               <div
-                data-tooltip-id="base-score"
+                // data-tooltip-id="base-score"
                 className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1"
               >
                 <div className="size-[5px] select-none bg-[#6CC24A] rounded-full"></div>
                 {item.Score ? item.Score : '-'}
-                <Tooltip
+                {/* <Tooltip
                   id={'base-score'}
                   place="top"
                   className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
@@ -81,7 +81,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                   <div className="text-Text-Secondary">
                     Initial score from core health metrics.
                   </div>
-                </Tooltip>
+                </Tooltip> */}
               </div>
               <div
                 data-tooltip-id={index + 'score-calc'}

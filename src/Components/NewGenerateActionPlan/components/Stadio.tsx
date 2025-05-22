@@ -39,7 +39,6 @@ const Stadio: FC<StadioProps> = ({
   handleShowConflictsModal,
   isCheckSave,
 }) => {
-  console.log('actions => ', actions);
   const [selectCategory, setSelectedCategory] = useState('Diet');
   const [haveConflic, setHaveConflic] = useState(false);
   const [haveConflicText, setHaveConflicText] = useState([]);
@@ -56,8 +55,6 @@ const Stadio: FC<StadioProps> = ({
   const [isAutoGenerateShow, setIsAutoGenerateShow] = useState(true);
   // const [ setIsDragging] = useState(false);
   const addToActions = (item: any) => {
-    console.log(item);
-
     if (item.Task_Type === 'Checkin') {
       setActions((prevActions: any) => ({
         checkIn: [item, ...prevActions.checkIn],

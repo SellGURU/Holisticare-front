@@ -109,12 +109,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 value.Category == 'Supplement') && (
                 <>
                   <div
-                    data-tooltip-id="system-score"
+                    // data-tooltip-id="system-score"
                     className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
                   >
                     <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
                     {value['System Score'] ? value['System Score'] : '-'}
-                    <Tooltip
+                    {/* <Tooltip
                       id={`system-score-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
@@ -129,15 +129,15 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-Text-Secondary">
                         Score based on all data and AI insights.
                       </div>
-                    </Tooltip>
+                    </Tooltip> */}
                   </div>
                   <div
-                    data-tooltip-id="base-score"
+                    // data-tooltip-id="base-score"
                     className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1"
                   >
                     <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
                     {value.Score ? value.Score : '-'}
-                    <Tooltip
+                    {/* <Tooltip
                       id={`base-score-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
@@ -152,7 +152,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-Text-Secondary">
                         Initial score from core health metrics.
                       </div>
-                    </Tooltip>
+                    </Tooltip> */}
                   </div>
                   <div
                     data-tooltip-id={`score-calc-${index}`}
