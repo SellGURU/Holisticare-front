@@ -285,7 +285,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             behavior: 'smooth',
             block: 'start',
           });
-          
         }, 500);
       } else {
         console.warn(`Element with ID '${section}' not found.`);

@@ -57,8 +57,11 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
     if (progress > 0 && progress < 100) {
       const elapsedTime = (Date.now() - startTime.current) / 1000; // in seconds
       const estimatedTotalTime = elapsedTime / (progress / 100);
-      const remainingTime = Math.max(0, Math.round(estimatedTotalTime - elapsedTime));
-      
+      const remainingTime = Math.max(
+        0,
+        Math.round(estimatedTotalTime - elapsedTime),
+      );
+
       if (remainingTime < 60) {
         setTimeRemaining(`${remainingTime} seconds remaining`);
       } else {
