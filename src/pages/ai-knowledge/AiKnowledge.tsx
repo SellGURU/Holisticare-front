@@ -1101,9 +1101,7 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {
-                      
-                      getCurrentPageData().map((doc, index) => (
+                      {getCurrentPageData().map((doc, index) => (
                         <tr
                           key={doc.id}
                           className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
@@ -1200,9 +1198,12 @@ const AiKnowledge = () => {
                     <tbody>
                       {getCurrentPageData().length < 1 ? (
                         <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
-                          <img className='w-[200px] h-[161px]' src="/icons/search-status.svg" alt="" />
+                          <img
+                            className="w-[200px] h-[161px]"
+                            src="/icons/search-status.svg"
+                            alt=""
+                          />
                           No results found.
-                         
                         </div>
                       ) : (
                         getCurrentPageData().map((doc, index) => (
