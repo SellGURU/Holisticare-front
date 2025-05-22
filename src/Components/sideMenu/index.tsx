@@ -149,12 +149,17 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
           </div>
         </div>
         <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
-          <div className='flex w-full justify-center items-end ml-[-16px]'>
+          <div className="flex w-full justify-center items-end ml-[-16px]">
             Powered by
-            <img className="" src="/images/sidebar-final.svg" alt="Powered by" />
-
+            <img
+              className=""
+              src="/images/sidebar-final.svg"
+              alt="Powered by"
+            />
           </div>
-          <div className='text-center text-[8px] text-[#888888] font-medium'>V{version}</div>
+          <div className="text-center text-[8px] text-[#888888] font-medium">
+            V{version}
+          </div>
         </div>
       </div>
     </div>
