@@ -57,7 +57,7 @@ const ForgetPassword = () => {
             className="mt-8 text-justify text-[12px] text-Text-Secondary "
             style={{ textAlignLast: 'center' }}
           >
-            Enter your email address below, and we’ll send you a link to reset
+            Enter your email address below, and we’ll send you a code to reset
             your password.
           </div>
           <div className="grid gap-8">
@@ -168,7 +168,7 @@ const ForgetPassword = () => {
               Resend Code in{' '}
               <Timer
                 initialMinute={2}
-                initialSeconds={30}
+                initialSeconds={0}
                 oncomplete={() => {
                   setIsCompleteCode(true);
                 }}
