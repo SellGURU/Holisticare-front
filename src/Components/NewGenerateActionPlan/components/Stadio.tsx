@@ -464,7 +464,7 @@ const Stadio: FC<StadioProps> = ({
                     return (
                       <>
                         <ActionCard
-                          data={act}  
+                          data={act}
                           checkValid={isCheckSave}
                           onRemove={() => removeFromActions(act)}
                           setActions={setActions}

@@ -14,7 +14,7 @@ interface BioMarkerRowSuggestionsCheckInProps {
 }
 const BioMarkerRowSuggestionsCheckIn: React.FC<
   BioMarkerRowSuggestionsCheckInProps
-> = ({ value, setValues, index, onRemove,checkValid }) => {
+> = ({ value, setValues, index, onRemove, checkValid }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>(
     value.Frequency_Dates || [],
   );
@@ -44,7 +44,7 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
         <div className="w-full flex justify-center items-start gap-2 lg:gap-4">
           <div
-            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex justify-start text-Text-Primary items-center border ${(!value.Frequency_Type && checkValid)? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
+            className={`w-full bg-backgroundColor-Card px-1 lg:px-4 py-3 flex justify-start text-Text-Primary items-center border ${!value.Frequency_Type && checkValid ? 'border-red-500' : 'border-Gray-50'}  rounded-[16px]`}
           >
             <div className="flex flex-col justify-start w-full">
               <div className="flex items-center justify-between w-full">
@@ -94,7 +94,10 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                     </div>
                   )}
                   {!value.Frequency_Type && (
-                    <div className="flex items-center gap-1 text-xs text-[#FC5474]" style={{color:!checkValid? '#FFAB2C' : '#FC5474'}}>
+                    <div
+                      className="flex items-center gap-1 text-xs text-[#FC5474]"
+                      style={{ color: !checkValid ? '#FFAB2C' : '#FC5474' }}
+                    >
                       <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                       No Scheduled
                     </div>

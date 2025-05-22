@@ -87,7 +87,7 @@ const GenerateActionPlan = () => {
   const [duration, setDuration] = useState(1);
   const [planObjective, setPlanObjective] = useState('');
   const saveChanges = () => {
-    setCheckSave(true)
+    setCheckSave(true);
     const prepareDataForBackend = (data: any) => {
       return [...data.checkIn, ...data.category];
     };
@@ -109,7 +109,8 @@ const GenerateActionPlan = () => {
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);
-  const [checkSave,setCheckSave] = useState(false)
+  const [checkSave, setCheckSave] = useState(false);
+
   // const [showAlert, setshowAlert] = useState(true)
   useEffect(() => {
     if (calendarView) {

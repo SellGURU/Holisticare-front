@@ -14,7 +14,7 @@ interface BioMarkerRowSuggestionsProps {
   setValues: (data: any) => void;
   index: number;
   onRemove: () => void;
-  checkValid:boolean
+  checkValid: boolean;
   // isInvalid?: boolean;
 }
 const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
@@ -86,13 +86,16 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         return '/icons/others.svg';
     }
   };
-  const isinvalid = () =>{
-    if((!value.Frequency_Type || value.Frequency_Type.length === 0 ) && checkValid){
-      return true
-    }else {
-      return false
+  const isinvalid = () => {
+    if (
+      (!value.Frequency_Type || value.Frequency_Type.length === 0) &&
+      checkValid
+    ) {
+      return true;
+    } else {
+      return false;
     }
-  }
+  };
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -149,7 +152,10 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
                 {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
-                  <div className="flex items-center gap-1 text-xs text-[#FC5474]" style={{color:isinvalid() ? '#FC5474' : '#FFAB2C'}}>
+                  <div
+                    className="flex items-center gap-1 text-xs text-[#FC5474]"
+                    style={{ color: isinvalid() ? '#FC5474' : '#FFAB2C' }}
+                  >
                     <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
                     No Scheduled
                   </div>
