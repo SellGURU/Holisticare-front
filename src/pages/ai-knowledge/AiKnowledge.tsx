@@ -588,7 +588,8 @@ const AiKnowledge = () => {
     disabled?: boolean;
   };
   const [filteredSystemDocs, setFilteredSystemDocs] = useState<string[]>([]);
-  const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] = useState(false);
+  const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] =
+    useState(false);
 
   const getCurrentPageData = (): TableItem[] => {
     if (activaTab === 'System Docs') {
@@ -919,7 +920,7 @@ const AiKnowledge = () => {
                 placeHolder="Search documents or knowledge graph nodes..."
                 onSearch={handleSearch}
               ></SearchBox>
-           
+
               <ActivityMenu
                 activeMenu={activeMenu}
                 menus={menus}
@@ -1021,47 +1022,51 @@ const AiKnowledge = () => {
               placeHolder="Search documents or knowledge graph nodes..."
               onSearch={handleSearch}
             ></SearchBox>
-               <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
-                <span>Search by:</span>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    name="searchType"
-                    checked={searchType === 'Docs'}
-                    onChange={() => setSearchType('Docs')}
-                    className="hidden"
-                  />
-                  <span
-                    className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
-                      searchType === 'Docs' ? 'border-Primary-DeepTeal' : 'border-[#383838]'
-                    }`}
-                  >
-                    {searchType === 'Docs' && (
-                      <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
-                    )}
-                  </span>
-                  Docs
-                </label>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    name="searchType"
-                    checked={searchType === 'Nodes'}
-                    onChange={() => setSearchType('Nodes')}
-                    className="hidden"
-                  />
-                  <span
-                    className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
-                      searchType === 'Nodes' ? 'border-Primary-DeepTeal' : 'border-Text-Primary'
-                    }`}
-                  >
-                    {searchType === 'Nodes' && (
-                      <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
-                    )}
-                  </span>
-                  Nodes
-                </label>
-              </div>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
+              <span>Search by:</span>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Docs'}
+                  onChange={() => setSearchType('Docs')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Docs'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-[#383838]'
+                  }`}
+                >
+                  {searchType === 'Docs' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Docs
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Nodes'}
+                  onChange={() => setSearchType('Nodes')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Nodes'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-Text-Primary'
+                  }`}
+                >
+                  {searchType === 'Nodes' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Nodes
+              </label>
+            </div>
             <div className="mt-3 w-full">
               <Toggle
                 active={activaTab}
@@ -1096,7 +1101,9 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getCurrentPageData().map((doc, index) => (
+                      {
+                      
+                      getCurrentPageData().map((doc, index) => (
                         <tr
                           key={doc.id}
                           className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
@@ -1191,45 +1198,42 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {
-                      
-                      getCurrentPageData().length  < 1 ? (
-                        <div className='flex flex-col items-center'>
-                          
-                          <div className="text-center py-4 text-gray-400">
-                            No results found
-                          </div>
-                          </div>
-                      ) :
-                      (
-                      
-                      getCurrentPageData().map((doc, index) => (
-                        <tr
-                          key={doc.id}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
-                        >
-                          <td
-                            className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                      {getCurrentPageData().length < 1 ? (
+                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                          <img className='w-[200px] h-[161px]' src="/icons/search-status.svg" alt="" />
+                          No results found.
+                         
+                        </div>
+                      ) : (
+                        getCurrentPageData().map((doc, index) => (
+                          <tr
+                            key={doc.id}
+                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
                           >
-                            {doc.type}
-                          </td>
-                          <td
-                            className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
-                          >
-                            {doc.date || 'No Date'}
-                          </td>
-                          <td className="py-2 pr-2 w-[40px] text-center">
-                            <button onClick={() => handleButtonClick(doc.type)}>
-                              {activeFilters.includes(doc.type) ? (
-                                <img src="/icons/eye-blue.svg" alt="" />
-                              ) : (
-                                <img src="/icons/eye-slash-blue.svg" alt="" />
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                    ))}
+                            <td
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                            >
+                              {doc.type}
+                            </td>
+                            <td
+                              className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                            >
+                              {doc.date || 'No Date'}
+                            </td>
+                            <td className="py-2 pr-2 w-[40px] text-center">
+                              <button
+                                onClick={() => handleButtonClick(doc.type)}
+                              >
+                                {activeFilters.includes(doc.type) ? (
+                                  <img src="/icons/eye-blue.svg" alt="" />
+                                ) : (
+                                  <img src="/icons/eye-slash-blue.svg" alt="" />
+                                )}
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                   <div className="py-2 flex justify-center absolute bottom-0 w-full">
