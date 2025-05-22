@@ -66,6 +66,7 @@ const ClientList = () => {
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
     [],
   );
+  const [search, setSearch] = useState<string>('');
 
   const navigate = useNavigate();
   const getPatients = () => {
@@ -131,6 +132,31 @@ const ClientList = () => {
     questionnaireForm: null,
     age: [MIN, MAX],
   });
+  const isAnyFilterActive = () => {
+    const {
+      gender,
+      status,
+      enrollDate,
+      driftAnalyzed,
+      checkInForm,
+      questionnaireForm,
+      age,
+    } = filters;
+    return (
+      gender.male ||
+      gender.female ||
+      status.checked ||
+      status['needs check'] ||
+      status['incomplete data'] ||
+      enrollDate.from !== null ||
+      enrollDate.to !== null ||
+      driftAnalyzed !== null ||
+      checkInForm !== null ||
+      questionnaireForm !== null ||
+      age[0] !== MIN ||
+      age[1] !== MAX
+    );
+  };
   const applyFilters = (filters: Filters) => {
     setFilters(filters);
     let filtered = [...clientList];
@@ -379,12 +405,16 @@ const ClientList = () => {
                             style={{ width: '100%' }}
                             id="searchBar"
                             ClassName={`w-full rounded-2xl sm:rounded-md`}
-                            onSearch={handleSearch}
+                            onSearch={(value) => {
+                              setSearch(value);
+                              handleSearch(value);
+                            }}
                             placeHolder="Search for Client ..."
                             onBlur={() => {
                               setshowSearch(false);
                             }}
-                          ></SearchBox>
+                            value={search}
+                          />
                         </div>
                       ) : (
                         <div
@@ -408,13 +438,21 @@ const ClientList = () => {
                         onClick={() => {
                           setshowFilterModal(!showFilterModal);
                         }}
-                        className="rounded-md relative bg-backgroundColor-Secondary shadow-100 py-[6px] sm:py-2 px-[6px] xs:px-4 cursor-pointer "
+                        className={`rounded-md relative ${isAnyFilterActive() ? 'bg-Primary-DeepTeal' : 'bg-backgroundColor-Secondary'} shadow-100 py-[6px] sm:py-2 px-[6px] xs:px-4 cursor-pointer`}
                       >
-                        <img
-                          className="min-h-4 min-w-4"
-                          src="/icons/filter.svg"
-                          alt=""
-                        />
+                        {isAnyFilterActive() ? (
+                          <img
+                            className="min-h-4 min-w-4"
+                            src="/icons/filter-white.svg"
+                            alt=""
+                          />
+                        ) : (
+                          <img
+                            className="min-h-4 min-w-4"
+                            src="/icons/filter.svg"
+                            alt=""
+                          />
+                        )}
                       </div>
                     </div>
 
@@ -431,15 +469,30 @@ const ClientList = () => {
                   </div>
                 </div>
               </div>
-              {filteredClientList.length == 0 ? (
-                <>
-                  <div className="flex justify-center mt-14">
-                    <img src="/icons/rafiki2.svg" alt="" />
-                  </div>
-                  <div className="text-Text-Primary text-base text-center font-medium mt-3">
-                    No results found.
-                  </div>
-                </>
+              {filteredClientList.length == 0 && activeList == 'grid' ? (
+                search.length > 0 ? (
+                  <>
+                    <div className="flex justify-center mt-24">
+                      <img
+                        src="/icons/empty-messages-coach.svg"
+                        alt=""
+                        className="w-[320px]"
+                      />
+                    </div>
+                    <div className="text-Text-Primary text-base text-center font-medium -mt-8">
+                      No results found.
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-center mt-24">
+                      <img src="/icons/rafiki2.svg" alt="" />
+                    </div>
+                    <div className="text-Text-Primary text-base text-center font-medium mt-3">
+                      No results found.
+                    </div>
+                  </>
+                )
               ) : (
                 <>
                   {activeList == 'grid' ? (
@@ -528,7 +581,10 @@ const ClientList = () => {
                       })}
                     </div>
                   ) : (
-                    <Table classData={filteredClientList}></Table>
+                    <Table
+                      classData={filteredClientList}
+                      search={search}
+                    ></Table>
                   )}
                 </>
               )}

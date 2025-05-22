@@ -90,15 +90,15 @@ const LibBox: FC<LibBoxProps> = ({
           >
             <div className={`flex items-center gap-1`}>
               <div
-                className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
-                // data-tooltip-id={`tooltip-system-score-${index}`}
+                className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
+                data-tooltip-id={`tooltip-system-score-${index}`}
               >
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-DeepTeal`}
                 />
                 {data['System Score'] ? data['System Score'] : '-'}
               </div>
-              {/* <Tooltip
+              <Tooltip
                 id={`tooltip-system-score-${index}`}
                 place="top"
                 className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
@@ -109,17 +109,17 @@ const LibBox: FC<LibBoxProps> = ({
                 <div className="text-[10px] text-Text-Quadruple">
                   Initial score from core health metrics.
                 </div>
-              </Tooltip> */}
+              </Tooltip>
               <div
-                className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center"
-                // data-tooltip-id={`tooltip-base-score-${index}`}
+                className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
+                data-tooltip-id={`tooltip-base-score-${index}`}
               >
                 <span
                   className={`w-[5px] h-[5px] rounded-full bg-Primary-EmeraldGreen`}
                 />
                 {data.Base_Score ? data.Base_Score : '-'}
               </div>
-              {/* <Tooltip
+              <Tooltip
                 id={`tooltip-base-score-${index}`}
                 place="top"
                 className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
@@ -130,7 +130,7 @@ const LibBox: FC<LibBoxProps> = ({
                 <div className="text-[10px] text-Text-Quadruple">
                   Score based on all data and AI insights.
                 </div>
-              </Tooltip> */}
+              </Tooltip>
               <div
                 className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                 data-tooltip-id={`tooltip-score-calculation-${index}`}
