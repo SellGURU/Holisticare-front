@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { version } from '../../../package.json';
 
 import { menus } from './menu';
 interface sideMenuProps {
@@ -147,9 +148,18 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <div className="hidden absolute bottom-0 md:bottom-4 text-[8px] text-[#888888] font-medium md:flex pl-5  w-full items-end gap-1">
-          Powered by
-          <img className="" src="/images/sidebar-final.svg" alt="Powered by" />
+        <div className="hidden absolute bottom-0 md:bottom-5 text-[8px] text-[#888888] font-medium  pl-5 md:grid  w-full items-end gap-1">
+          <div className="flex w-full justify-center items-end ml-[-16px]">
+            Powered by
+            <img
+              className=""
+              src="/images/sidebar-final.svg"
+              alt="Powered by"
+            />
+          </div>
+          <div className="text-center text-[8px] text-[#888888] font-medium">
+            V{version}
+          </div>
         </div>
       </div>
     </div>

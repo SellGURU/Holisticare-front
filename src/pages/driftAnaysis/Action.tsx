@@ -408,7 +408,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto pr-1 `}
+                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto  `}
               >
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard
@@ -505,11 +505,22 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
   onDelete,
   buttonText,
 }) => {
+  const formatTitle = (text: string) => {
+    // Add space between word and number, and between number and word
+    const withSpaces = text
+      .replace(/([a-zA-Z])(\d)/g, '$1 $2') // Add space between letter and number
+      .replace(/(\d)([a-zA-Z])/g, '$1 $2'); // Add space between number and letter
+    // Capitalize first letter
+    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+  };
+
   return (
     <div className=" bg-backgroundColor-Card border border-Gray-50 w-full  p-4 rounded-lg flex flex-col md:flex-row justify-between items-center text-Text-Primary">
       <div className="flex flex-col md:flex-row gap-3 md:items-center">
         <div className="flex md:hidden w-full justify-between items-center">
-          <h6 className="text-xs font-medium">{title}</h6>
+          <h6 className="text-xs font-medium whitespace-nowrap">
+            {formatTitle(title)}
+          </h6>
           <div className="flex items-center gap-3">
             <ButtonPrimary size="small" onClick={onClick}>
               {' '}
@@ -524,7 +535,9 @@ const AccordionCard: React.FC<AccordionCardProps> = ({
             />
           </div>
         </div>
-        <h6 className="text-xs font-medium hidden md:block">{title}</h6>
+        <h6 className="text-xs font-medium hidden md:block whitespace-nowrap">
+          {formatTitle(title)}
+        </h6>
         <div className="md:border-l border-Secondary-SelverGray pl-4 pr-4 text-xs font-normal text-justify max-w-[810px] ">
           {description}
         </div>

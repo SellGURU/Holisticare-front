@@ -43,7 +43,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             <div className="flex gap-2 text-[8px]">
               <div
                 data-tooltip-id="system-score"
-                className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
+                className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
               >
                 <div className="size-[5px] select-none bg-[#005F73] rounded-full"></div>
                 {item['System Score'] ? item['System Score'] : '-'}
@@ -64,7 +64,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               </div>
               <div
                 data-tooltip-id="base-score"
-                className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1"
+                className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
               >
                 <div className="size-[5px] select-none bg-[#6CC24A] rounded-full"></div>
                 {item.Score ? item.Score : '-'}

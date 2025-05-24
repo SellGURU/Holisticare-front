@@ -459,62 +459,89 @@ const AiKnowledge = () => {
   // ]);
 
   const [userUploads, setUserUploads] = useState<Document[]>([]);
+  const [filteredUserUploads, setFilteredUserUploads] = useState<Document[]>(
+    [],
+  );
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 13;
+  const itemsPerPage = 12;
   const [AddFilleModal, setAddFilleModal] = useState(false);
   const [FilleType] = useState('Activity');
   const [fileTitle, setFileTitle] = useState('');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadComplete, setUploadComplete] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
+  const [uploadComplete, setUploadComplete] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setUploadComplete(false);
-      simulateUploadProgress();
+    const files = event.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+
+      // Initialize progress and complete state for new files
+      newFiles.forEach((file) => {
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+        setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
+        simulateUploadProgress(file.name);
+      });
     }
   };
 
-  const simulateUploadProgress = () => {
-    setUploadProgress(0);
+  const simulateUploadProgress = (fileName: string) => {
+    setUploadProgress((prev) => ({ ...prev, [fileName]: 0 }));
     const interval = setInterval(() => {
       setUploadProgress((prev) => {
-        if (prev >= 100) {
+        const currentProgress = prev[fileName];
+        if (currentProgress >= 100) {
           clearInterval(interval);
-          setUploadComplete(true);
-          // Add file to user uploads
-          if (selectedFile) {
-            setUserUploads((prevUploads) => [
-              ...prevUploads,
-              {
-                id: prevUploads.length + 1,
-                type: selectedFile.name,
-                date: new Date().toLocaleDateString(),
-                disabled: false,
-              },
-            ]);
-          }
+          setUploadComplete((prev) => ({ ...prev, [fileName]: true }));
           return prev;
         }
-        return prev + 10;
+        return { ...prev, [fileName]: currentProgress + 10 };
       });
     }, 500);
   };
 
-  const handleCancelUpload = () => {
-    setUploadProgress(0);
-    setSelectedFile(null);
-    setUploadComplete(false);
+  const handleCancelUpload = (fileName: string) => {
+    setSelectedFiles((prev) => prev.filter((file) => file.name !== fileName));
+    setUploadProgress((prev) => {
+      const newProgress = { ...prev };
+      delete newProgress[fileName];
+      return newProgress;
+    });
+    setUploadComplete((prev) => {
+      const newComplete = { ...prev };
+      delete newComplete[fileName];
+      return newComplete;
+    });
+  };
+
+  const handleAddFile = () => {
+    if (selectedFiles.length > 0) {
+      const newUploads = selectedFiles.map((file) => ({
+        id: userUploads.length + 1,
+        type: fileTitle || file.name,
+        date: new Date().toLocaleDateString(),
+        disabled: false,
+      }));
+
+      setUserUploads((prev) => [...prev, ...newUploads]);
+      setSelectedFiles([]);
+      setUploadProgress({});
+      setUploadComplete({});
+      closeModal();
+    }
   };
 
   const closeModal = () => {
     setAddFilleModal(false);
-    setUploadProgress(0);
-    setSelectedFile(null);
-    setUploadComplete(false);
+    setSelectedFiles([]);
+    setUploadProgress({});
+    setUploadComplete({});
     setFileTitle('');
   };
 
@@ -554,78 +581,114 @@ const AiKnowledge = () => {
   //   activaTab === 'System Docs'
   //     ? systemDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   //     : userUploads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  type TableItem = {
+    id: number;
+    type: string;
+    date?: string;
+    disabled?: boolean;
+  };
+  const [filteredSystemDocs, setFilteredSystemDocs] = useState<string[]>([]);
+  const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] =
+    useState(false);
+
+  const getCurrentPageData = (): TableItem[] => {
+    if (activaTab === 'System Docs') {
+      let categories: string[];
+      if (isSystemDocsSearchActive) {
+        categories = filteredSystemDocs;
+      } else {
+        categories = [
+          ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+        ] as string[];
+      }
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return categories.slice(startIndex, endIndex).map((category, index) => ({
+        id: index + 1,
+        type: category,
+      }));
+    } else {
+      // For User Uploads tab, use filteredUserUploads
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return filteredUserUploads.slice(startIndex, endIndex);
+    }
+  };
 
   const totalPages =
     activaTab === 'System Docs'
       ? Math.ceil(
-          [...new Set(graphData?.nodes.map((e: any) => e.category2))].length /
-            itemsPerPage,
+          (filteredSystemDocs.length > 0
+            ? filteredSystemDocs.length
+            : [...new Set(graphData?.nodes.map((e: any) => e.category2))]
+                .length) / itemsPerPage,
         )
-      : Math.ceil(userUploads.length / itemsPerPage);
-  const handleAddFile = () => {
-    if (selectedFile) {
-      setUserUploads((prevUploads) => [
-        ...prevUploads,
-        {
-          id: prevUploads.length + 1,
-          type: fileTitle,
-          date: new Date().toLocaleDateString(),
-          disabled: false,
-        },
-      ]);
-      closeModal();
-    }
-  };
+      : Math.ceil(filteredUserUploads.length / itemsPerPage);
+
+  const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
   const handleSearch = (term: string) => {
-    if (!graphData || !term.trim()) {
-      // If search is cleared, show all nodes
-      // @ts-expect-error - Accessing the custom property we added to the window object
-      const sigmaInstance = window.sigmaInstance;
+    const searchTerm = term.toLowerCase();
 
-      if (sigmaInstance) {
-        const graph = sigmaInstance.getGraph();
-
-        // Show all nodes
-        graph.forEachNode((nodeId: string) => {
-          graph.setNodeAttribute(nodeId, 'hidden', false);
-          graph.setNodeAttribute(nodeId, 'highlighted', false);
-          graph.setNodeAttribute(
-            nodeId,
-            'size',
-            graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+    if (searchType === 'Docs') {
+      if (!term.trim()) {
+        setFilteredUserUploads(userUploads);
+        setFilteredSystemDocs([]);
+        setIsSystemDocsSearchActive(false);
+        setCurrentPage(1);
+      } else {
+        if (activaTab === 'User Uploads') {
+          const filteredUserDocs = userUploads.filter((doc) =>
+            doc.type.toLowerCase().includes(searchTerm),
           );
-        });
-
-        // Show all edges
-        graph.forEachEdge((edgeId: string) => {
-          graph.setEdgeAttribute(edgeId, 'hidden', false);
-        });
-
-        sigmaInstance.refresh();
+          setFilteredUserUploads(filteredUserDocs);
+        } else if (activaTab === 'System Docs' && graphData) {
+          const filteredDocs = graphData.nodes
+            .filter((node: any) =>
+              node.category2.toLowerCase().includes(searchTerm),
+            )
+            .map((node: any) => node.category2 as string);
+          const uniqueFilteredDocs = [...new Set(filteredDocs)] as string[];
+          setFilteredSystemDocs(uniqueFilteredDocs);
+          setIsSystemDocsSearchActive(true);
+        }
+        setCurrentPage(1);
       }
       return;
     }
 
-    const matchingNodes = graphData.nodes
-      .filter(
-        (node: any) =>
-          node.label.toLowerCase().includes(term.toLowerCase()) ||
-          (node.category1 &&
-            node.category1.toLowerCase().includes(term.toLowerCase())) ||
-          (node.category2 &&
-            node.category2.toLowerCase().includes(term.toLowerCase())),
-      )
-      .map((node: any) => node.id);
-
-    // Access the sigma instance from the window object
+    // If "Nodes" is selected, only search in the graph
+    if (!graphData) return;
     // @ts-expect-error - Accessing the custom property we added to the window object
     const sigmaInstance = window.sigmaInstance;
+    if (!sigmaInstance) return;
+    const graph = sigmaInstance.getGraph();
 
-    if (sigmaInstance) {
-      const graph = sigmaInstance.getGraph();
+    if (!searchTerm.trim()) {
+      graph.forEachNode((nodeId: string) => {
+        graph.setNodeAttribute(nodeId, 'hidden', false);
+        graph.setNodeAttribute(nodeId, 'highlighted', false);
+        graph.setNodeAttribute(
+          nodeId,
+          'size',
+          graph.getNodeAttribute(nodeId, 'originalSize') || 10,
+        );
+      });
+      graph.forEachEdge((edgeId: string) => {
+        graph.setEdgeAttribute(edgeId, 'hidden', false);
+      });
+    } else {
+      const matchingNodes = graphData.nodes
+        .filter(
+          (node: any) =>
+            node.label.toLowerCase().includes(searchTerm) ||
+            (node.category1 &&
+              node.category1.toLowerCase().includes(searchTerm)) ||
+            (node.category2 &&
+              node.category2.toLowerCase().includes(searchTerm)),
+        )
+        .map((node: any) => node.id);
 
-      // First, hide all nodes and edges
       graph.forEachNode((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', true);
         graph.setNodeAttribute(nodeId, 'highlighted', false);
@@ -640,7 +703,6 @@ const AiKnowledge = () => {
         graph.setEdgeAttribute(edgeId, 'hidden', true);
       });
 
-      // Then show and highlight matching nodes
       matchingNodes.forEach((nodeId: string) => {
         graph.setNodeAttribute(nodeId, 'hidden', false);
         graph.setNodeAttribute(nodeId, 'highlighted', true);
@@ -649,21 +711,41 @@ const AiKnowledge = () => {
           'size',
           (graph.getNodeAttribute(nodeId, 'originalSize') || 10) * 1.5,
         );
-
-        // Show edges connected to matching nodes
         graph.forEachEdge((edgeId: string) => {
           const source = graph.source(edgeId);
           const target = graph.target(edgeId);
-
           if (source === nodeId || target === nodeId) {
             graph.setEdgeAttribute(edgeId, 'hidden', false);
           }
         });
       });
-
-      sigmaInstance.refresh();
     }
+    sigmaInstance.refresh();
   };
+
+  // Initialize filteredUserUploads when userUploads changes
+  useEffect(() => {
+    setFilteredUserUploads(userUploads);
+  }, [userUploads]);
+
+  // Reset filteredUserUploads when switching to User Uploads tab
+  useEffect(() => {
+    if (activaTab === 'User Uploads') {
+      setFilteredUserUploads(userUploads);
+    }
+  }, [activaTab, userUploads]);
+
+  useEffect(() => {
+    getCurrentPageData();
+  }, [filteredUserUploads, filteredSystemDocs, currentPage]);
+
+  useEffect(() => {
+    if (activaTab === 'System Docs') {
+      // do nothing
+    } else {
+      setIsSystemDocsSearchActive(false);
+    }
+  }, [activaTab]);
 
   return (
     <>
@@ -691,66 +773,76 @@ const AiKnowledge = () => {
             />
             <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
               <input
+                multiple
                 type="file"
-                // accept=".rdf,.owl,.csv,.json,.pdf"
+                accept=".png,.svg,.jpg,.jpeg"
                 style={{ display: 'none' }}
                 id="file-upload"
                 onChange={handleFileUpload}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-xs text-[#888888] text-center">
-                Supported formats: RDF, OWL, CSV, JSON, PDF
+                Supported formats: PNG, SVG, JPG, JPEG
               </div>
               <div className="text-Primary-DeepTeal underline text-xs font-medium">
                 Upload File
               </div>
             </label>
             <div className="overflow-auto h-[75px]">
-              {selectedFile && uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]">
-                  <div className="w-full flex justify-between">
-                    <div>
-                      <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                        Uploading {selectedFile.name}...
+              {selectedFiles.map((file) => (
+                <div key={file.name}>
+                  {uploadProgress[file.name] > 0 &&
+                    uploadProgress[file.name] < 100 && (
+                      <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
+                        <div className="w-full flex justify-between">
+                          <div>
+                            <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                              Uploading {file.name}...
+                            </div>
+                            <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                              {uploadProgress[file.name]}% • 30 seconds
+                              remaining
+                            </div>
+                          </div>
+                          <img
+                            onClick={() => handleCancelUpload(file.name)}
+                            className="cursor-pointer"
+                            src="/icons/close.svg"
+                            alt=""
+                          />
+                        </div>
+                        <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                          <div
+                            className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                            style={{ width: uploadProgress[file.name] + '%' }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
-                        {uploadProgress}% • 30 seconds remaining
+                    )}
+                  {uploadComplete[file.name] && (
+                    <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src="/icons/PDF_file_icon.svg 1.svg"
+                          alt="PDF Icon"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-xs">{file.name}</span>
+                          <span className="text-xs text-[#888888]">
+                            {formatFileSize(file.size)}
+                          </span>
+                        </div>
                       </div>
+                      <img
+                        onClick={() => handleCancelUpload(file.name)}
+                        className="cursor-pointer"
+                        src="/icons/trash-blue.svg"
+                        alt="Delete Icon"
+                      />
                     </div>
-                    <img
-                      onClick={handleCancelUpload}
-                      className="cursor-pointer"
-                      src="/icons/close.svg"
-                      alt=""
-                    />
-                  </div>
-                  <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-                    <div
-                      className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                      style={{ width: uploadProgress + '%' }}
-                    ></div>
-                  </div>
+                  )}
                 </div>
-              )}
-              {selectedFile && uploadComplete && (
-                <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50">
-                  <div className="flex items-center gap-4">
-                    <img src="/icons/PDF_file_icon.svg 1.svg" alt="PDF Icon" />
-                    <div className="flex flex-col">
-                      <span className="text-xs">{selectedFile.name}</span>
-                      <span className="text-xs text-[#888888]">
-                        {formatFileSize(selectedFile.size)}
-                      </span>
-                    </div>
-                  </div>
-                  <img
-                    onClick={handleCancelUpload}
-                    className="cursor-pointer"
-                    src="/icons/trash-blue.svg"
-                    alt="Delete Icon"
-                  />
-                </div>
-              )}
+              ))}
             </div>
           </div>
           <div className="w-full flex items-center justify-end gap-2 text-sm font-medium">
@@ -825,9 +917,10 @@ const AiKnowledge = () => {
               <SearchBox
                 isHaveBorder
                 ClassName="rounded-[12px]"
-                placeHolder="Search for document ..."
+                placeHolder="Search documents or knowledge graph nodes..."
                 onSearch={handleSearch}
               ></SearchBox>
+
               <ActivityMenu
                 activeMenu={activeMenu}
                 menus={menus}
@@ -924,10 +1017,56 @@ const AiKnowledge = () => {
         ) : (
           <div className=" hidden fixed right-5 top-[8%] w-[315px] h-[80vh] text-primary-text  md:flex flex-col ">
             <SearchBox
+              isGrayIcon
               ClassName="rounded-[12px]"
-              placeHolder="Search for document ..."
+              placeHolder="Search documents or knowledge graph nodes..."
               onSearch={handleSearch}
             ></SearchBox>
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
+              <span>Search by:</span>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Docs'}
+                  onChange={() => setSearchType('Docs')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Docs'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-[#383838]'
+                  }`}
+                >
+                  {searchType === 'Docs' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Docs
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="searchType"
+                  checked={searchType === 'Nodes'}
+                  onChange={() => setSearchType('Nodes')}
+                  className="hidden"
+                />
+                <span
+                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
+                    searchType === 'Nodes'
+                      ? 'border-Primary-DeepTeal'
+                      : 'border-Text-Primary'
+                  }`}
+                >
+                  {searchType === 'Nodes' && (
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                  )}
+                </span>
+                Nodes
+              </label>
+            </div>
             <div className="mt-3 w-full">
               <Toggle
                 active={activaTab}
@@ -962,10 +1101,10 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {userUploads.map((doc, index) => (
+                      {getCurrentPageData().map((doc, index) => (
                         <tr
                           key={doc.id}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
                         >
                           <td
                             className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
@@ -975,7 +1114,7 @@ const AiKnowledge = () => {
                           <td
                             className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
                           >
-                            {doc.date}
+                            {doc.date || 'No Date'}
                           </td>
                           <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
                             {confirmDeleteId === doc.id ? (
@@ -1029,83 +1168,81 @@ const AiKnowledge = () => {
                     </tbody>
                   </table>
 
-                  <div className="flex justify-center pb-4 absolute bottom-0 w-full">
+                  <div className="flex justify-center py-2 absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
                     />
                   </div>
                 </div>
               </>
             ) : (
               <>
-                <div className=" mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px] ">
-                  <div className="max-h-[510px] overflow-auto">
-                    <table className="min-w-full bg-white ">
-                      <thead>
-                        <tr className="bg-[#E5E5E5]">
-                          <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
-                            Node Type
-                          </th>
-                          <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
-                            Date of Update
-                          </th>
-                          <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          ...new Set(
-                            graphData?.nodes.map((e: any) => e.category2),
-                          ),
-                        ].map((doc: any, index: number) => {
-                          return (
-                            <tr
-                              key={doc.id}
-                              className={`${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888]`}
+                <div className="mx-auto bg-white rounded-2xl pb-4 shadow-100 overflow-hidden mt-2 min-h-[520px] relative w-[315px]">
+                  <table className="min-w-full bg-white ">
+                    <thead>
+                      <tr className="bg-[#E5E5E5]">
+                        <th className="w-[140px] text-left pl-2 py-2 text-xs font-medium text-Text-Primary">
+                          Node Type
+                        </th>
+                        <th className="w-[90px] py-2 text-xs font-medium text-Text-Primary">
+                          Date of Update
+                        </th>
+                        <th className="w-[40px] py-2 pr-2 text-xs font-medium text-Text-Primary">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getCurrentPageData().length < 1 ? (
+                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                          <img
+                            className="w-[200px] h-[161px]"
+                            src="/icons/search-status.svg"
+                            alt=""
+                          />
+                          No results found.
+                        </div>
+                      ) : (
+                        getCurrentPageData().map((doc, index) => (
+                          <tr
+                            key={doc.id}
+                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
+                          >
+                            <td
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
                             >
-                              <td
-                                className={`pl-2 py-2 max-w-[140px] truncate w-[140px] ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
+                              {doc.type}
+                            </td>
+                            <td
+                              className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                            >
+                              {doc.date || 'No Date'}
+                            </td>
+                            <td className="py-2 pr-2 w-[40px] text-center">
+                              <button
+                                onClick={() => handleButtonClick(doc.type)}
                               >
-                                {doc}
-                              </td>
-                              <td
-                                className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc) ? 'opacity-40' : ''}`}
-                              >
-                                {doc.date || 'No Date'}
-                              </td>
-                              <td className="py-2 pr-2 w-[40px] text-center">
-                                <button
-                                  onClick={() =>
-                                    // toggleDisable(doc.id, 'System Uploads')
-                                    handleButtonClick(doc)
-                                  }
-                                >
-                                  {activeFilters.includes(doc) ? (
-                                    <img src="/icons/eye-blue.svg" alt="" />
-                                  ) : (
-                                    // Eye icon for disabled
-                                    <img
-                                      src="/icons/eye-slash-blue.svg"
-                                      alt=""
-                                    />
-                                  )}
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="hidden justify-center pb-4 absolute bottom-0 w-full">
+                                {activeFilters.includes(doc.type) ? (
+                                  <img src="/icons/eye-blue.svg" alt="" />
+                                ) : (
+                                  <img src="/icons/eye-slash-blue.svg" alt="" />
+                                )}
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                  <div className="py-2 flex justify-center absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
+                      isEmpty={getCurrentPageData().length === 0}
                     />
                   </div>
                 </div>

@@ -144,6 +144,8 @@ const AddClient = () => {
   console.log(showValidation);
   console.log(apiError);
 
+  console.log('formik.errors => ', formik.errors);
+
   return (
     <>
       {/* {isLoading && (
@@ -260,32 +262,42 @@ const AddClient = () => {
                       type="text"
                       {...formik.getFieldProps('firstName')}
                       label="First Name"
+                      onBlur={formik.handleBlur}
                       placeholder="Enter client’s first name..."
-                      inValid={
-                        showValidation && Boolean(formik.errors.firstName)
-                      }
+                      inValid={Boolean(
+                        (formik.touched.firstName || showValidation) &&
+                          formik.errors.firstName,
+                      )}
                     />
-                    {showValidation && Boolean(formik.errors.firstName) ? (
+                    {Boolean(
+                      (formik.touched.firstName || showValidation) &&
+                        formik.errors.firstName,
+                    ) && (
                       <div className="text-Red text-[10px] -mt-[2px]">
                         {formik.errors.firstName}
                       </div>
-                    ) : null}
+                    )}
                   </div>
                   <div className="w-full md:w-[220px]">
                     <TextField
                       type="text"
                       {...formik.getFieldProps('lastName')}
+                      onBlur={formik.handleBlur}
                       label="Last Name"
                       placeholder="Enter client’s last name..."
-                      inValid={
-                        showValidation && Boolean(formik.errors.lastName)
-                      }
+                      inValid={Boolean(
+                        (formik.touched.lastName || showValidation) &&
+                          formik.errors.lastName,
+                      )}
                     />
-                    {showValidation && Boolean(formik.errors.lastName) ? (
+                    {Boolean(
+                      (formik.touched.lastName || showValidation) &&
+                        formik.errors.lastName,
+                    ) && (
                       <div className="text-Red text-[10px] -mt-[2px]">
                         {formik.errors.lastName}
                       </div>
-                    ) : null}
+                    )}
                   </div>
                 </div>
                 <div className="w-full mb-3 flex flex-col md:flex-row justify-between items-start md:h-[50px] overflow-visible">
@@ -299,7 +311,12 @@ const AddClient = () => {
                         // formik.setFieldTouched('gender', true);
                         setShowSelect(!showSelect);
                       }}
-                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${showValidation && Boolean(formik.errors.gender) ? 'border-Red' : ''}`}
+                      className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
+                        Boolean(
+                          (formik.touched.gender || showValidation) &&
+                            formik.errors.gender,
+                        ) && 'border-Red'
+                      }`}
                     >
                       {formik.values.gender !== 'unset' ? (
                         <div className="text-[12px] text-Text-Primary">
@@ -343,11 +360,14 @@ const AddClient = () => {
                         </div>
                       </div>
                     )}
-                    {showValidation && Boolean(formik.errors.gender) ? (
+                    {Boolean(
+                      (formik.touched.gender || showValidation) &&
+                        formik.errors.gender,
+                    ) && (
                       <div className="text-Red text-[10px] font-medium mt-[2px]">
                         {formik.errors.gender}
                       </div>
-                    ) : null}
+                    )}
                   </div>
 
                   <div className="w-full  ml-2 ">
@@ -389,9 +409,10 @@ const AddClient = () => {
                       ? formik.errors.email || apiError
                       : ''
                   }
-                  inValid={
-                    showValidation && (!!formik.errors.email || !!apiError)
-                  }
+                  inValid={Boolean(
+                    (formik.touched.email || showValidation) &&
+                      formik.errors.email,
+                  )}
                   placeholder="Enter client’s email address..."
                 />
                 <div>

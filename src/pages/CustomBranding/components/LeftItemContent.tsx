@@ -106,10 +106,10 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   Supported files:{' '}
                   <div className="!text-Text-Primary">PNG, SVG, JPG, JPEG</div>
                 </div>
-                <div className="flex items-center gap-1">
+                {/* <div className="flex items-center gap-1">
                   Maximum file size:{' '}
                   <div className="!text-Text-Primary">5MB</div>
-                </div>
+                </div> */}
               </Tooltip>
             </div>
             <div className="p-[1px] rounded-lg bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A] relative">
@@ -130,7 +130,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 )}
                 <input
                   type="file"
-                  accept="image/*"
+                  accept=".png,.svg,.jpg,.jpeg"
                   className="hidden"
                   ref={fileInputRef}
                   onChange={handleImageUpload}

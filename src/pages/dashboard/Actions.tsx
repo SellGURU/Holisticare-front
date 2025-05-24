@@ -133,7 +133,7 @@ const Actions: React.FC = () => {
                   key={index}
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
-                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary">
+                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
                     <div
                       title={action.patient_name}
                       className="truncate max-w-[160px]"
@@ -163,7 +163,7 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] px-4 text-Text-Secondary flex justify-between items-start gap-4 mt-2 transition-all ${
+                    className={`text-[10px] px-4 text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all ${
                       expandedCards.includes(index)
                         ? 'h-auto'
                         : 'h-[20px] overflow-hidden'
@@ -171,10 +171,10 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={`  ${
+                      className={`max-w-[250px] ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal'
-                          : 'truncate max-w-[277px]'
+                          : 'truncate'
                       }`}
                     >
                       {action.alert}

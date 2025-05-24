@@ -24,6 +24,13 @@ const Uploading: React.FC<UploadingProps> = ({
   const [isFailed, setIsFailed] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [uploadStartTime] = useState(Date.now());
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
+  const [currentPhase, setCurrentPhase] = useState<'azure' | 'backend'>(
+    'azure',
+  );
+  const [lastProgressUpdate] = useState(Date.now());
+  const [lastProgress] = useState(0);
 
   useEffect(() => {
     let isCancelled = false;
@@ -40,9 +47,11 @@ const Uploading: React.FC<UploadingProps> = ({
 
         // Upload to Azure Blob Storage
         console.log('Starting file upload to Azure...');
+        setCurrentPhase('azure');
         const blobUrl = await AzureBlobService.uploadFile(file, (progress) => {
           if (isCancelled) return;
-          setProgress(progress);
+          // Scale Azure progress to 0-50%
+          setProgress(Math.floor(progress * 0.5));
         });
 
         if (isCancelled) return;
@@ -51,6 +60,7 @@ const Uploading: React.FC<UploadingProps> = ({
           'File uploaded to Azure successfully, sending to backend...',
         );
         // Send the blob URL to backend
+        setCurrentPhase('backend');
         const response = await Application.addLabReport(
           {
             member_id: memberId,
@@ -61,8 +71,9 @@ const Uploading: React.FC<UploadingProps> = ({
           },
           (progressEvent: any) => {
             if (isCancelled) return;
-            const percentCompleted = Math.round(
-              Math.sqrt(progressEvent.loaded / progressEvent.total) * 90,
+            // Scale backend progress to 50-100%
+            const percentCompleted = Math.floor(
+              (progressEvent.loaded / progressEvent.total) * 50 + 50,
             );
             setProgress(percentCompleted);
           },
@@ -96,6 +107,26 @@ const Uploading: React.FC<UploadingProps> = ({
       isCancelled = true;
     };
   }, [file, memberId]);
+
+  useEffect(() => {
+    // Calculate remaining time based on progress
+    if (progress > 0 && progress < 100) {
+      const progressDiff = progress - lastProgress;
+      const timeDiff = (Date.now() - lastProgressUpdate) / 1000;
+
+      // Only calculate if we have meaningful progress
+      if (progressDiff > 0 && timeDiff > 0) {
+        const progressPerSecond = progressDiff / timeDiff;
+        const remainingProgress = 100 - progress;
+        const estimatedRemainingSeconds = Math.ceil(
+          remainingProgress / progressPerSecond,
+        );
+
+        // Ensure minimum remaining time of 2 seconds
+        setRemainingSeconds(Math.max(2, estimatedRemainingSeconds));
+      }
+    }
+  }, [progress, uploadStartTime, lastProgress, lastProgressUpdate]);
 
   const handleDeleteFile = async (fileToDelete: any) => {
     try {
@@ -151,10 +182,15 @@ const Uploading: React.FC<UploadingProps> = ({
           <div className="w-full flex justify-between">
             <div>
               <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                Uploading...
+                {currentPhase === 'azure'
+                  ? 'Uploading to cloud...'
+                  : 'Processing...'}
               </div>
               <div className="text-Text-Secondary  text-[10px] md:text-[12px] mt-1">
-                {progress}% • 30 seconds remaining
+                {progress}% •{' '}
+                {remainingSeconds > 0
+                  ? `${remainingSeconds} seconds remaining`
+                  : 'Calculating...'}
               </div>
             </div>
 
