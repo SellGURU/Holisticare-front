@@ -19,7 +19,7 @@ export const columns = (): ColumnDef<any>[] => [
     header: () => {
       return (
         <>
-          <img src="/icons/box.svg" alt="" className="mr-1" />
+          {/* <img src="/icons/box.svg" alt="" className="mr-1" /> */}
           Package Name
         </>
       );
@@ -38,7 +38,7 @@ export const columns = (): ColumnDef<any>[] => [
     header: () => {
       return (
         <>
-          <img src="/icons/wallet-money.svg" alt="" className="mr-1" />
+          {/* <img src="/icons/wallet-money.svg" alt="" className="mr-1" /> */}
           Price
         </>
       );
@@ -57,7 +57,7 @@ export const columns = (): ColumnDef<any>[] => [
     header: () => {
       return (
         <>
-          <img src="/icons/calendar-tick.svg" alt="" className="mr-1" />
+          {/* <img src="/icons/calendar-tick.svg" alt="" className="mr-1" /> */}
           Start Date
         </>
       );
@@ -76,7 +76,7 @@ export const columns = (): ColumnDef<any>[] => [
     header: () => {
       return (
         <>
-          <img src="/icons/calendar-tick.svg" alt="" className="mr-1" />
+          {/* <img src="/icons/calendar-tick.svg" alt="" className="mr-1" /> */}
           Expire Date
         </>
       );
