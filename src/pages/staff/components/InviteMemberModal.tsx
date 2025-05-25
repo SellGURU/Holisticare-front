@@ -94,9 +94,14 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                   >
                     {roles.map((role) => (
-                      <option onClick={() => {
-                        setOpenRoll(false)
-                      }} value={role}>{role}</option>
+                      <option
+                        onClick={() => {
+                          setOpenRoll(false);
+                        }}
+                        value={role}
+                      >
+                        {role}
+                      </option>
                     ))}
                     {/* <option value="staff">Staff</option>
                     <option value="admin">Admin</option> */}
