@@ -61,22 +61,27 @@ const GenerateActionPlan = () => {
     Application.getActionPlanTaskDirectoryNew({
       member_id: id,
       // percents: newPlans,
-    }).then((res) => {
-      const checkInItems = res.data.filter(
-        (item: any) => item.Task_Type === 'Checkin',
-      );
-      const categoryItems = res.data.filter(
-        (item: any) => item.Task_Type !== 'Checkin',
-      );
+    })
+      .then((res) => {
+        const checkInItems = res.data.filter(
+          (item: any) => item.Task_Type === 'Checkin',
+        );
+        const categoryItems = res.data.filter(
+          (item: any) => item.Task_Type !== 'Checkin',
+        );
 
-      setCategories({
-        checkIn: checkInItems,
-        category: categoryItems,
+        setCategories({
+          checkIn: checkInItems,
+          category: categoryItems,
+        });
+
+        setIsWeighted(true);
+        checkSelectedTaskConflict(res.data);
+      })
+      .catch(() => {
+        // alert('Error');
+        navigate(-1);
       });
-
-      setIsWeighted(true);
-      checkSelectedTaskConflict(res.data);
-    });
   };
   useEffect(() => {
     savePlan();
