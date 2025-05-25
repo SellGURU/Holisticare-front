@@ -12,7 +12,7 @@ import { FaSort } from 'react-icons/fa';
 
 interface TableProps {
   classData: Array<any>;
-  isPackage?: boolean;  
+  isPackage?: boolean;
 }
 // Custom filter function to handle nested fields
 const nestedFilter: FilterFn<any> = (row, columnId, filterValue) => {
@@ -48,11 +48,13 @@ const TableNoPaginate: FC<TableProps> = ({ classData, isPackage }) => {
             <table
               className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
             >
-              <thead className={`text-xs text-Text-Primary ${isPackage ? 'bg-[#F4F4F4]' : 'bg-bg-color'} `}>
+              <thead
+                className={`text-xs text-Text-Primary ${isPackage ? 'bg-[#F4F4F4]' : 'bg-bg-color'} `}
+              >
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr
                     key={headerGroup.id}
-                    className={`text-nowrap ${isPackage ? 'text-Text-Primary': 'text-Primary-DeepTeal'}`}
+                    className={`text-nowrap ${isPackage ? 'text-Text-Primary' : 'text-Primary-DeepTeal'}`}
                   >
                     {headerGroup.headers.map((header, index) => (
                       <th
@@ -70,12 +72,17 @@ const TableNoPaginate: FC<TableProps> = ({ classData, isPackage }) => {
                               header.column.columnDef.header,
                               header.getContext(),
                             )}
-                            {!isPackage && header.column.getCanSort() &&
+                            {!isPackage &&
+                              header.column.getCanSort() &&
                               header.column.getIsSorted() === false && (
                                 <FaSort className="cursor-pointer" />
                               )}
-                            {!isPackage && header.column.getIsSorted() === 'asc' && ' 🔼'}
-                            {!isPackage && header.column.getIsSorted() === 'desc' && ' 🔽'}
+                            {!isPackage &&
+                              header.column.getIsSorted() === 'asc' &&
+                              ' 🔼'}
+                            {!isPackage &&
+                              header.column.getIsSorted() === 'desc' &&
+                              ' 🔽'}
                           </div>
                         </div>
                       </th>
@@ -84,7 +91,7 @@ const TableNoPaginate: FC<TableProps> = ({ classData, isPackage }) => {
                 ))}
               </thead>
               <tbody>
-                {table.getRowModel().rows.map((row,index) => (
+                {table.getRowModel().rows.map((row, index) => (
                   <tr
                     className={`text-Text-Primary space-y-7 ${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'}`}
                     key={row.id}
