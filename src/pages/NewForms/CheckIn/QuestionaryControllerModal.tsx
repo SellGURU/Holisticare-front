@@ -136,6 +136,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     // });
   };
   const [loading, setLoading] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
@@ -192,6 +193,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             {resolveBoxRender()}
           </div>
         </div>
+        {showValidation && questions.length == 0 && (
+          <div className="text-[10px] text-Red">Add question to continue.</div>
+        )}
         <div className="w-full flex justify-end items-center p-2">
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
@@ -203,15 +207,18 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           </div>
           <div
             onClick={() => {
+              setShowValidation(true);
               if (!isDisable()) {
                 if (step == 0 && mode != 'Reposition') {
                   setStep(1);
+                  setShowValidation(false);
                 } else {
                   addCheckinForm();
+                  setShowValidation(false);
                 }
               }
             }}
-            className={` ${isDisable() && 'opacity-50'} text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
+            className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
           >
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>
