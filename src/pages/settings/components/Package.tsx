@@ -150,7 +150,7 @@ const PackagePage = () => {
             Explore our packages to support your wellness and achieve goals!
           </div>
           {/* table */}
-          <TableNoPaginate classData={packages} />
+          <TableNoPaginate isPackage classData={packages} />
         </div>
         <MainModal isOpen={showCancel} onClose={() => setshowCancel(false)}>
           <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[212px]">
@@ -213,9 +213,9 @@ const PackagePage = () => {
             setShowManagePackage(false);
           }}
         >
-          <div className="bg-white w-[664px] h-[512px] rounded-[20px] p-4">
+          <div className="bg-white w-[664px] h-[512px] rounded-[16px] p-6">
             <div className="flex justify-between items-center">
-              <div className="text-Text-Primary font-medium">
+              <div className="text-Text-Primary text-sm font-medium">
                 Manage Your Subscription
               </div>
               <img
@@ -242,7 +242,7 @@ const PackagePage = () => {
               {packagesData.map((el) => {
                 return (
                   <>
-                    <div className=" w-[200px] relative rounded-[16px] p-4 h-[384px] overflow-hidden bg-backgroundColor-Card border border-gray-50">
+                    <div className=" w-[200px] relative rounded-[16px] p-4 h-[384px] overflow-hidden bg-backgroundColor-Card border border-Gray-50">
                       <img
                         src="./images/Vector.svg"
                         className="absolute scale-110 top-[-4px] left-[0px]"
