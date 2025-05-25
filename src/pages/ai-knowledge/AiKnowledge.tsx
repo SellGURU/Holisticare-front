@@ -1040,7 +1040,7 @@ const AiKnowledge = () => {
                   }`}
                 >
                   {searchType === 'Docs' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
                   )}
                 </span>
                 Docs
@@ -1061,7 +1061,7 @@ const AiKnowledge = () => {
                   }`}
                 >
                   {searchType === 'Nodes' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
                   )}
                 </span>
                 Nodes

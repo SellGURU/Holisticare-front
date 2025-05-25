@@ -14,6 +14,8 @@ interface CheckInControllerModalProps {
   mode?: 'Edit' | 'Reposition' | 'Add';
   onClose: () => void;
   onSave: (values: any) => void;
+  error?: string;
+  setError: (error: string) => void;
 }
 
 const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
@@ -21,12 +23,19 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   onClose,
   onSave,
   editId,
+  error,
+  setError,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
+  useEffect(() => {
+    if (error && error == 'A form with the same title already exists.') {
+      setStep(0);
+    }
+  }, [error]);
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
@@ -161,7 +170,12 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
                   label="Form Title"
                   placeholder="Enter community name..."
                   value={titleForm}
-                  onChange={(e) => setTitleForm(e.target.value)}
+                  onChange={(e) => {
+                    setTitleForm(e.target.value);
+                    setError('');
+                  }}
+                  inValid={error != ''}
+                  errorMessage="Form title already exists. Please choose another."
                 />
               </div>
               <div className="w-full text-xs text-Text-Primary font-medium mt-6">

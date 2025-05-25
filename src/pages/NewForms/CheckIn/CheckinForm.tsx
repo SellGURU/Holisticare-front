@@ -26,6 +26,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showFeedback, setShowFeedBack] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [error, setError] = useState('');
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList().then((res) => {
@@ -111,10 +112,14 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         setShowFeedBack(false);
       });
     } else {
-      FormsApi.addQuestionary(values).then(() => {
-        getQuestionary();
-        setShowFeedBack(false);
-      });
+      FormsApi.addQuestionary(values)
+        .then(() => {
+          getQuestionary();
+          setShowFeedBack(false);
+        })
+        .catch((err) => {
+          setError(err.detail);
+        });
     }
   };
   return (
@@ -132,7 +137,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             ).length ? (
               <div className="w-full flex items-center justify-between mb-3">
                 <div className="text-Text-Primary font-medium text-sm">
-                  {isQuestionary ? 'Questionary Forms' : 'Check-in Forms'}
+                  {isQuestionary ? 'Questionnaire Forms' : 'Check-in Forms'}
                 </div>
                 <ButtonSecondary
                   ClassName="rounded-[20px] w-[152px]"
@@ -239,6 +244,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           onSave={(values) => {
             onsave(values);
           }}
+          error={error}
+          setError={setError}
           mode={resolveMode()}
         />
       </MainModal>

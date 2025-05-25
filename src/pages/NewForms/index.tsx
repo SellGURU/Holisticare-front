@@ -23,7 +23,7 @@ const NewForms = () => {
           <Toggle
             active={active}
             setActive={setActive}
-            value={['Check-in', 'Questionary']}
+            value={['Check-in', 'Questionnaire']}
           />
         </div>
       </div>

@@ -33,7 +33,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   );
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
-      return 'Create Custom ';
+      return 'Create Personal Form';
     } else if (templateData != null) {
       return templateData.title;
     }
@@ -164,7 +164,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
-              {resolveFormTitle() + ' Form'}
+              {resolveFormTitle()}
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
@@ -178,7 +178,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                     label="Form Title"
                     placeholder="Enter form title..."
                     value={titleForm}
-                    onChange={(e) => setTitleForm(e.target.value)}
+                    onChange={(e) => {
+                      setTitleForm(e.target.value);
+                    }}
                   />
                 </div>
               ) : (
