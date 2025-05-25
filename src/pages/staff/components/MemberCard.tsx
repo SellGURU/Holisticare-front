@@ -121,7 +121,7 @@ const MemberCard: FC<MemberCardProps> = ({ memberInfo, getStaffs }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center text-[10px] text-Text-Quadruple gap-1">
+          <div className="flex invisible justify-center text-[10px] text-Text-Quadruple gap-1">
             <SvgIcon
               src="/icons/star.svg"
               color="#888888"
