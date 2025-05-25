@@ -110,6 +110,8 @@ const SignUp = () => {
             ></TextField>
             <img
               ref={closeBtn}
+              onMouseEnter={() => setshowPasswordModal(true)}
+              onMouseLeave={() => setshowPasswordModal(false)}
               onClick={() => setshowPasswordModal(true)}
               className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
               src="/icons/user-navbar/info-circle.svg"
