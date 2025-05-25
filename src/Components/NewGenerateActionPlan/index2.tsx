@@ -76,6 +76,9 @@ const GenerateActionPlan = () => {
 
       setIsWeighted(true);
       checkSelectedTaskConflict(res.data);
+    }).catch(() => {
+      // alert('Error');
+      navigate(-1);
     });
   };
   useEffect(() => {
