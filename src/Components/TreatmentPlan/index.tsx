@@ -43,12 +43,14 @@ interface TreatmentPlanProps {
   treatmentPlanData: any;
   setPrintActionPlan: (value: any) => void;
   isShare?: boolean;
+  setIsHolisticPlanEmpty: (value: boolean) => void;
 }
 
 export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   treatmentPlanData,
   setPrintActionPlan,
   isShare,
+  setIsHolisticPlanEmpty,
 }) => {
   const resolveStatusColor = (status: string) => {
     switch (status) {
@@ -98,6 +100,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       Application.showHistory({
         member_id: id,
       }).then((res) => {
+        if (res.data.length == 0) {
+          setIsHolisticPlanEmpty(true);
+        } else {
+          setIsHolisticPlanEmpty(false);
+        }
         setCardData(res.data);
         setPrintActionPlan(res.data);
         if (res.data.length > 0) {

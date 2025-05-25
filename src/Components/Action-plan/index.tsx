@@ -21,12 +21,14 @@ interface ActionPlanProps {
   calenderDataUper: any;
   setActionPrintData: (data: any) => void;
   isShare?: boolean;
+  isHolisticPlanEmpty: boolean;
 }
 
 export const ActionPlan: React.FC<ActionPlanProps> = ({
   setActionPrintData,
   isShare,
   calenderDataUper,
+  isHolisticPlanEmpty,
 }) => {
   const { id } = useParams<{ id: string }>();
   // const [calendarData,setCalender] = useState(calenderDataUper);
@@ -68,7 +70,6 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   const [activeAction, setActiveAction] = useState(
     CardData.length > 0 ? CardData[0] : null,
   );
-  console.log('activeAction => ', activeAction);
   // const [showTargeting, setshowTargeting] = useState(false)
   const navigate = useNavigate();
   // useEffect(() => {
@@ -203,6 +204,25 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                         </ButtonSecondary>
                       </div>
                     )}
+                  </div>
+                </>
+              ) : isHolisticPlanEmpty ? (
+                <>
+                  <div className=" h-[440px] flex justify-center items-center w-full flex-col">
+                    <img src="/icons/EmptyState.svg" alt="" />
+                    <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                      No action plan generated yet
+                    </h5>
+                    <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
+                      You need to generate a Holistic Plan before creating an
+                      Action Plan.
+                    </div>
+                    <div className=" mt-6 flex w-full justify-center">
+                      <ButtonSecondary ClassName="py-[6px] px-6" disabled>
+                        <img src="/icons/tick.svg" alt="" />
+                        Generate New
+                      </ButtonSecondary>
+                    </div>
                   </div>
                 </>
               ) : (
