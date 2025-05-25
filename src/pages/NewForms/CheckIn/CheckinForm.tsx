@@ -26,7 +26,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showFeedback, setShowFeedBack] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [error, setError] = useState('');
+  const [errorCheckIn, setErrorCheckIn] = useState('');
+  const [errorQuestionary, setErrorQuestionary] = useState('');
   const getChechins = () => {
     setLoading(true);
     FormsApi.getCheckinList().then((res) => {
@@ -82,10 +83,15 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         setShowAddModal(false);
       });
     } else {
-      FormsApi.addCheckin(values).then(() => {
-        getChechins();
-        setShowAddModal(false);
-      });
+      FormsApi.addCheckin(values)
+        .then(() => {
+          getChechins();
+          setShowAddModal(false);
+          setErrorCheckIn('');
+        })
+        .catch((err) => {
+          setErrorCheckIn(err.detail);
+        });
     }
   };
   const onsaveQuestionary = (values: any) => {
@@ -116,9 +122,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         .then(() => {
           getQuestionary();
           setShowFeedBack(false);
+          setErrorQuestionary('');
         })
         .catch((err) => {
-          setError(err.detail);
+          setErrorQuestionary(err.detail);
         });
     }
   };
@@ -244,8 +251,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           onSave={(values) => {
             onsave(values);
           }}
-          error={error}
-          setError={setError}
+          error={errorCheckIn}
+          setError={setErrorCheckIn}
           mode={resolveMode()}
         />
       </MainModal>
@@ -307,6 +314,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setSelectedTemplate(null);
           }}
           editId={editFormId}
+          error={errorQuestionary}
+          setError={setErrorQuestionary}
           mode={resolveMode()}
         ></QuestionaryControllerModal>
       </MainModal>

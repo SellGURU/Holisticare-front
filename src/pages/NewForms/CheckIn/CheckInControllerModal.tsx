@@ -32,8 +32,13 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
   useEffect(() => {
-    if (error && error == 'A form with the same title already exists.') {
+    console.log('error', error);
+    if (
+      error &&
+      error == 'A Check-in form with the same title already exists.'
+    ) {
       setStep(0);
+      setIsSaveLoading(false);
     }
   }, [error]);
   const resolveFormTitle = () => {

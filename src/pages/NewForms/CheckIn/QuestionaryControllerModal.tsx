@@ -15,6 +15,8 @@ interface QuestionaryControllerModalProps {
   onClose: () => void;
   onSave: (values: any) => void;
   templateData?: any;
+  error?: string;
+  setError: (error: string) => void;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -23,6 +25,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   onSave,
   editId,
   templateData,
+  error,
+  setError,
 }) => {
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
@@ -31,6 +35,16 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [questions, setQuestions] = useState<Array<checkinType>>(
     templateData ? templateData.questions : [],
   );
+  useEffect(() => {
+    if (
+      error &&
+      error == 'A form with the same title already exists.' &&
+      templateData == null
+    ) {
+      setStep(0);
+      setIsSaveLoading(false);
+    }
+  }, [error]);
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
       return 'Create Personal Form';
@@ -180,7 +194,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                     value={titleForm}
                     onChange={(e) => {
                       setTitleForm(e.target.value);
+                      setError('');
                     }}
+                    inValid={error != ''}
+                    errorMessage="Form title already exists. Please choose another."
                   />
                 </div>
               ) : (
