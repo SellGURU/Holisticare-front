@@ -56,7 +56,7 @@ const ForgetPassword = () => {
     refrence: passwordModalRef,
     buttonRefrence: closeBtn,
     close: () => setshowPasswordModal(false),
-  });  
+  });
   const [passwordChanged, setPasswordChanged] = useState(false);
   const resolveStep = () => {
     if (step == 0) {
@@ -273,7 +273,7 @@ const ForgetPassword = () => {
                     <li>Avoid using personal information or patterns.</li>
                   </ul>
                 </div>
-              )}              
+              )}
             </div>
             <div className="">
               <TextField
