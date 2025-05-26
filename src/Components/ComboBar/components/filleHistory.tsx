@@ -14,13 +14,16 @@ export const FilleHistory = () => {
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   const [error, setError] = useState<string>('');
   useEffect(() => {
-    console.log(upLoadingFiles)
-    if(upLoadingFiles.filter((el:any) => !el.isFileExists).length > 0){
-      publish("fileIsUploading",{isUploading:true,files:upLoadingFiles.filter((el:any) => !el.isFileExists)})
-    }else{
-      publish("fileIsUploading",{isUploading:false})
+    console.log(upLoadingFiles);
+    if (upLoadingFiles.filter((el: any) => !el.isFileExists).length > 0) {
+      publish('fileIsUploading', {
+        isUploading: true,
+        files: upLoadingFiles.filter((el: any) => !el.isFileExists),
+      });
+    } else {
+      publish('fileIsUploading', { isUploading: false });
     }
-  }, [upLoadingFiles])
+  }, [upLoadingFiles]);
 
   useEffect(() => {
     // setIsLoading(true);
