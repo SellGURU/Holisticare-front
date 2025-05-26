@@ -143,7 +143,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const handleCloseSlideOutPanel = () => {
     if (isSlideOutPanel && isUploading) {
-      publish('isuploadingBackGround', {});
+      publish('isuploadingBackGround', {
+        isUploading: true,
+      });
     }
     setIsSlideOutPanel(false);
   };
@@ -158,6 +160,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     }
     setActiveItem(name);
     setIsSlideOutPanel(true);
+    publish('isuploadingBackGround', {
+      isUploading: false,
+    });    
   };
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const renderModalContent = () => {
