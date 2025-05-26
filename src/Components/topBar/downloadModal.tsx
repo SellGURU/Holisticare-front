@@ -113,7 +113,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   useEffect(() => {
     if (!allUnselected) {
       setShowValidate(false);
-    } 
+    }
   }, [allUnselected]);
   return (
     <>
