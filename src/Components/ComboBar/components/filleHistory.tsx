@@ -148,7 +148,7 @@ export const FilleHistory = () => {
                       />
                     );
                   })}
-                  {data?.map((el: any) => {
+                  {data?.reverse()?.map((el: any) => {
                     return <FileBox el={el}></FileBox>;
                   })}
                 </div>

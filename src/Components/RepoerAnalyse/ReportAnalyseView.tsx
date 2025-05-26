@@ -29,7 +29,7 @@ import UploadTest from './UploadTest';
 import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
-import { publish } from '../../utils/event';
+import { publish, subscribe } from '../../utils/event';
 import InfoToltip from '../InfoToltip';
 import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
@@ -169,6 +169,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setUserInfoData(res.data);
     });
   };
+  const [callSync,setCallSync] = useState(false);
+  subscribe("syncReport",() => {
+    setCallSync(true);
+  })
   const [accessManager, setAccessManager] = useState<Array<any>>([
     {
       name: 'Client Summary',
@@ -193,13 +197,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   ]);
   useEffect(() => {
     setLoading(true);
-    if (resolvedMemberID != 123 && !isShare) {
+    if ((resolvedMemberID != 123 && !isShare) || callSync) {
       fetchData();
+      setCallSync(false);
     }
     if (isShare && memberID != 123) {
       fetchShareData();
     }
-  }, [resolvedMemberID, memberID]);
+  }, [resolvedMemberID, memberID,callSync]);
   useEffect(() => {
     if (isShare) {
       setAccessManager(decodeAccessUser(name as string));
