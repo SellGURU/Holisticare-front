@@ -68,7 +68,6 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   };
   const isValidSave =
     errorName === '' &&
-
     customTheme.name !== '' &&
     customTheme.selectedImage !== null;
   return (
@@ -113,48 +112,51 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 </div> */}
               </Tooltip>
             </div>
-            <div className='flex items-end gap-2'>
-             {customTheme.selectedImage == null && (
+            <div className="flex items-end gap-2">
+              {customTheme.selectedImage == null && (
                 <div className="text-Red text-[8px] mb-1">
-                        Please upload a logo to proceed.
+                  Please upload a logo to proceed.
                 </div>
               )}
-            <div
-              className={`p-[1px] rounded-lg ${customTheme.selectedImage == null ? 'bg-Red' : 'bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A]'}  relative`}
-            >
               <div
-                className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white`}
-                onClick={() => fileInputRef.current?.click()}
+                className={`p-[1px] rounded-lg ${customTheme.selectedImage == null ? 'bg-Red' : 'bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A]'}  relative`}
               >
-                {customTheme.selectedImage ? (
-                  <img
-                    src={customTheme.selectedImage}
-                    alt="Uploaded"
-                    className="w-full h-full object-cover"
+                <div
+                  className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white`}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {customTheme.selectedImage ? (
+                    <img
+                      src={customTheme.selectedImage}
+                      alt="Uploaded"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-Text-Quadruple text-[11px] text-center">
+                      Clinic Logo
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept=".png,.svg,.jpg,.jpeg"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
                   />
-                ) : (
-                  <div className="text-Text-Quadruple text-[11px] text-center">
-                    Clinic Logo
+                </div>
+                {customTheme?.selectedImage && (
+                  <div
+                    className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
+                    onClick={handleDeleteImage}
+                  >
+                    <img
+                      src="/icons/trash-red.svg"
+                      alt=""
+                      className="w-4 h-4"
+                    />
                   </div>
                 )}
-                <input
-                  type="file"
-                  accept=".png,.svg,.jpg,.jpeg"
-                  className="hidden"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                />
               </div>
-              {customTheme?.selectedImage && (
-                <div
-                  className="bg-white rounded-3xl cursor-pointer p-[2px] absolute bottom-0 -left-[10px]"
-                  onClick={handleDeleteImage}
-                >
-                  <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
-                </div>
-              )}
-             
-            </div>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -291,7 +293,6 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
         <div
           className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
           onClick={isValidSave ? onSave : undefined}
-
         >
           {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
         </div>
