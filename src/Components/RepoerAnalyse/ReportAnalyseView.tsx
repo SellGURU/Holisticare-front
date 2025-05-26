@@ -169,10 +169,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setUserInfoData(res.data);
     });
   };
-  const [callSync,setCallSync] = useState(false);
-  subscribe("syncReport",() => {
+  const [callSync, setCallSync] = useState(false);
+  subscribe('syncReport', () => {
     setCallSync(true);
-  })
+  });
   const [accessManager, setAccessManager] = useState<Array<any>>([
     {
       name: 'Client Summary',
@@ -204,7 +204,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     if (isShare && memberID != 123) {
       fetchShareData();
     }
-  }, [resolvedMemberID, memberID,callSync]);
+  }, [resolvedMemberID, memberID, callSync]);
   useEffect(() => {
     if (isShare) {
       setAccessManager(decodeAccessUser(name as string));

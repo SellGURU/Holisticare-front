@@ -1365,7 +1365,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   </div>
                 </div>
                 <ActionPlanOverview
-                  classData={caldenderData?caldenderData?.slice(0, 4):[]}
+                  classData={caldenderData ? caldenderData?.slice(0, 4) : []}
                 ></ActionPlanOverview>
               </>
             )}
