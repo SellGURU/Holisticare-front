@@ -83,11 +83,11 @@ const ArrangeCard: React.FC<ArrangeCardProps> = ({
               return (
                 <>
                   <div
-                    onClick={() => {
-                      if (startValue + ind >= 0 && startValue + ind <= 200) {
-                        setVal(startValue + ind);
-                      }
-                    }}
+                    // onClick={() => {
+                    //   if (startValue + ind >= 0 && startValue + ind <= 200) {
+                    //     setVal(startValue + ind);
+                    //   }
+                    // }}
                     className={`w-6  h-6 text-[12px] select-none cursor-pointer text-Text-Primary flex justify-center items-center ${startValue + ind == val && 'bg-Primary-EmeraldGreen border text-white border-gray-50 rounded-full'}`}
                     style={{ opacity: resolveTextOpacity(ind) }}
                   >

@@ -79,7 +79,6 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
       onSubmit(active.name);
     }
   }, [active]);
-  console.log(active);
 
   return (
     <>
@@ -108,9 +107,9 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
                         </div>
                       ) : (
                         <img
-                          onClick={() => {
-                            setActive(emojeys[itemIndex]);
-                          }}
+                          // onClick={() => {
+                          //   setActive(emojeys[itemIndex]);
+                          // }}
                           className="w-[28px] cursor-pointer"
                           src={emojeys[itemIndex].icon}
                         />

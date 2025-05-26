@@ -36,7 +36,7 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
-              Ready-made Questionnaire Templates
+              Questionnaire Forms
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>

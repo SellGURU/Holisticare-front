@@ -382,6 +382,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
+
   return (
     <>
       {loading ? (
@@ -665,7 +667,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     setActionPlanPrint(value);
                   }}
                   treatmentPlanData={TreatMentPlanData}
-                ></TreatmentPlan>
+                  setIsHolisticPlanEmpty={setIsHolisticPlanEmpty}
+                />
               </div>
             )}
 
@@ -703,7 +706,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     setHelthPlanPrint(values);
                   }}
                   calenderDataUper={caldenderData}
-                ></ActionPlan>
+                  isHolisticPlanEmpty={isHolisticPlanEmpty}
+                />
               </div>
             )}
             {isHaveReport && (

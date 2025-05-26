@@ -37,17 +37,17 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
             return (
               <>
                 <div
-                  onClick={() => {
-                    if (resolvedValue.includes(el)) {
-                      setResolvedValue((pre) => {
-                        return pre.filter((va) => va != el);
-                      });
-                    } else {
-                      setResolvedValue((pre) => {
-                        return [...pre, el];
-                      });
-                    }
-                  }}
+                  // onClick={() => {
+                  //   if (resolvedValue.includes(el)) {
+                  //     setResolvedValue((pre) => {
+                  //       return pre.filter((va) => va != el);
+                  //     });
+                  //   } else {
+                  //     setResolvedValue((pre) => {
+                  //       return [...pre, el];
+                  //     });
+                  //   }
+                  // }}
                   className="flex gap-1 items-center"
                 >
                   <Checkbox checked={resolvedValue.includes(el)}></Checkbox>

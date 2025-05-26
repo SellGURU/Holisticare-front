@@ -163,7 +163,7 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] px-4 text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all ${
+                    className={`text-[10px] text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all px-4 ${
                       expandedCards.includes(index)
                         ? 'h-auto'
                         : 'h-[20px] overflow-hidden'
@@ -171,16 +171,16 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={`max-w-[250px] ${
+                      className={`${
                         expandedCards.includes(index)
-                          ? 'whitespace-normal'
-                          : 'truncate'
+                          ? 'whitespace-normal max-w-[180px]'
+                          : 'truncate max-w-[150px]'
                       }`}
                     >
                       {action.alert}
                     </div>
 
-                    <div className="flex items-center gap-2 ">
+                    <div className="flex items-center gap-2">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
                           Proceed{' '}

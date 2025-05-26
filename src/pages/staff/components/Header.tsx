@@ -29,8 +29,8 @@ const HeaderStaff: FC<HeaderStaffProps> = ({ getStaffs, roles }) => {
           </div>
         </div>
       </div>
-      <div className="w-full h-[2px] bg-white mt-4"></div>
-      <div className="w-full flex flex-col mt-4">
+      <div className="w-full  bg-none border-t border-gray-50 mt-4"></div>
+      <div className="w-full hidden  flex-col mt-4">
         <div className="text-Text-Quadruple text-xs">
           You can change the role or delete the staff if needed. Assign
           appropriate roles and permissions to each member to control access

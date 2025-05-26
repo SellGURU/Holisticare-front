@@ -52,7 +52,7 @@ const Forms = () => {
           <Toggle
             active={active}
             setActive={setActive}
-            value={['Check-In', 'Questionary']}
+            value={['Check-In', 'Questionnaire']}
           />
           {active === 'Check-In' ? (
             <FormsCheckIn

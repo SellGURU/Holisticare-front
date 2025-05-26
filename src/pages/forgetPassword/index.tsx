@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AuthLayout from '../../layout/AuthLayout';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -11,6 +11,7 @@ import Timer from '../../Components/Timer';
 import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import YoupValidation from '../../validation';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
@@ -48,6 +49,14 @@ const ForgetPassword = () => {
   const [isCompleteCode, setIsCompleteCode] = useState(false);
   const navigate = useNavigate();
   const [codeValue, setCodeValue] = useState('');
+  const [showPasswordModal, setshowPasswordModal] = useState(false);
+  const passwordModalRef = useRef<HTMLDivElement | null>(null);
+  const closeBtn = useRef<HTMLImageElement | null>(null);
+  useModalAutoClose({
+    refrence: passwordModalRef,
+    buttonRefrence: closeBtn,
+    close: () => setshowPasswordModal(false),
+  });
   const [passwordChanged, setPasswordChanged] = useState(false);
   const resolveStep = () => {
     if (step == 0) {
@@ -228,9 +237,9 @@ const ForgetPassword = () => {
               className="mt-8 text-justify text-[12px] text-Text-Secondary "
               style={{ textAlignLast: 'center' }}
             >
-              Set a new password. It must be at least 8 characters long.
+              Set a new password. It must be strong to ensure your security.
             </div>
-            <div className="">
+            <div className="mb-4 relative">
               <TextField
                 errorMessage={formik2.errors?.password}
                 inValid={
@@ -242,6 +251,29 @@ const ForgetPassword = () => {
                 label="Password"
                 type="password"
               ></TextField>
+              <img
+                ref={closeBtn}
+                onMouseEnter={() => setshowPasswordModal(true)}
+                onMouseLeave={() => setshowPasswordModal(false)}
+                onClick={() => setshowPasswordModal(true)}
+                className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
+                src="/icons/user-navbar/info-circle.svg"
+                alt=""
+              />
+              {showPasswordModal && (
+                <div
+                  ref={passwordModalRef}
+                  className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
+                >
+                  <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
+                    <li>
+                      At least 8 characters.(Use Uppercase & Lowercase letters,
+                      Numbers and Special characters)
+                    </li>
+                    <li>Avoid using personal information or patterns.</li>
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="">
               <TextField

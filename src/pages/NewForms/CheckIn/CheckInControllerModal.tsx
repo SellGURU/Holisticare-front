@@ -14,6 +14,8 @@ interface CheckInControllerModalProps {
   mode?: 'Edit' | 'Reposition' | 'Add';
   onClose: () => void;
   onSave: (values: any) => void;
+  error?: string;
+  setError: (error: string) => void;
 }
 
 const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
@@ -21,12 +23,24 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   onClose,
   onSave,
   editId,
+  error,
+  setError,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>([]);
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
+  useEffect(() => {
+    console.log('error', error);
+    if (
+      error &&
+      error == 'A Check-in form with the same title already exists.'
+    ) {
+      setStep(0);
+      setIsSaveLoading(false);
+    }
+  }, [error]);
   const resolveFormTitle = () => {
     switch (mode) {
       case 'Add':
@@ -120,6 +134,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     // });
   };
   const [loading, setLoading] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
@@ -160,7 +175,12 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
                   label="Form Title"
                   placeholder="Enter community name..."
                   value={titleForm}
-                  onChange={(e) => setTitleForm(e.target.value)}
+                  onChange={(e) => {
+                    setTitleForm(e.target.value);
+                    setError('');
+                  }}
+                  inValid={error != ''}
+                  errorMessage="Form title already exists. Please choose another."
                 />
               </div>
               <div className="w-full text-xs text-Text-Primary font-medium mt-6">
@@ -172,6 +192,9 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             {resolveBoxRender()}
           </div>
         </div>
+        {showValidation && questions.length == 0 && (
+          <div className="text-[10px] text-Red">Add question to continue.</div>
+        )}
         <div className="w-full flex justify-end items-center p-2">
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
@@ -183,15 +206,18 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
           </div>
           <div
             onClick={() => {
+              setShowValidation(true);
               if (!isDisable()) {
                 if (step == 0 && mode != 'Reposition') {
                   setStep(1);
+                  setShowValidation(false);
                 } else {
                   addCheckinForm();
+                  setShowValidation(false);
                 }
               }
             }}
-            className={` ${isDisable() && 'opacity-50'} text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
+            className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
           >
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>

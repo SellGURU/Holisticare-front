@@ -57,7 +57,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 </div>
               )}
             </div>
-            <div className="w-full flex items-center gap-2">
+            <div className="w-full flex items-baseline gap-2">
               <div className="flex flex-col">
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   E-mail
@@ -78,7 +78,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 )}
               </div>
               <div
-                className={`flex flex-col w-full ${!email.includes('@') && role.length > 0 ? 'mb-[17px]' : ''}`}
+                className={`flex flex-col w-full ${!email.includes('@') && role.length > 0 ? 'mb-[0px]' : ''}`}
               >
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   Role
@@ -88,13 +88,20 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     onClick={() => setOpenRoll(!openRoll)}
                     onBlur={() => setOpenRoll(false)}
                     onChange={(e) => {
-                      setOpenRoll(false);
+                      // setOpenRoll(false);
                       setRole(e.target.value);
                     }}
                     className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
                   >
                     {roles.map((role) => (
-                      <option value={role}>{role}</option>
+                      <option
+                        onClick={() => {
+                          setOpenRoll(false);
+                        }}
+                        value={role}
+                      >
+                        {role}
+                      </option>
                     ))}
                     {/* <option value="staff">Staff</option>
                     <option value="admin">Admin</option> */}

@@ -15,6 +15,8 @@ interface QuestionaryControllerModalProps {
   onClose: () => void;
   onSave: (values: any) => void;
   templateData?: any;
+  error?: string;
+  setError: (error: string) => void;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -23,6 +25,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   onSave,
   editId,
   templateData,
+  error,
+  setError,
 }) => {
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
@@ -31,9 +35,19 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [questions, setQuestions] = useState<Array<checkinType>>(
     templateData ? templateData.questions : [],
   );
+  useEffect(() => {
+    if (
+      error &&
+      error == 'A form with the same title already exists.' &&
+      templateData == null
+    ) {
+      setStep(0);
+      setIsSaveLoading(false);
+    }
+  }, [error]);
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
-      return 'Create Custom ';
+      return 'Create Personal Form';
     } else if (templateData != null) {
       return templateData.title;
     }
@@ -136,6 +150,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     // });
   };
   const [loading, setLoading] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   useEffect(() => {
     if (editId != '' && editId) {
       setLoading(true);
@@ -163,7 +178,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
-              {resolveFormTitle() + ' Form'}
+              {resolveFormTitle()}
             </div>
           </div>
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
@@ -177,7 +192,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                     label="Form Title"
                     placeholder="Enter form title..."
                     value={titleForm}
-                    onChange={(e) => setTitleForm(e.target.value)}
+                    onChange={(e) => {
+                      setTitleForm(e.target.value);
+                      setError('');
+                    }}
+                    inValid={error != ''}
+                    errorMessage="Form title already exists. Please choose another."
                   />
                 </div>
               ) : (
@@ -192,6 +212,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
             {resolveBoxRender()}
           </div>
         </div>
+        {showValidation && questions.length == 0 && (
+          <div className="text-[10px] text-Red">Add question to continue.</div>
+        )}
         <div className="w-full flex justify-end items-center p-2">
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
@@ -203,15 +226,18 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           </div>
           <div
             onClick={() => {
+              setShowValidation(true);
               if (!isDisable()) {
                 if (step == 0 && mode != 'Reposition') {
                   setStep(1);
+                  setShowValidation(false);
                 } else {
                   addCheckinForm();
+                  setShowValidation(false);
                 }
               }
             }}
-            className={` ${isDisable() && 'opacity-50'} text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
+            className={`text-sm text-Primary-DeepTeal  font-medium cursor-pointer`}
           >
             {isSaveLoding ? (
               <BeatLoader size={6}></BeatLoader>

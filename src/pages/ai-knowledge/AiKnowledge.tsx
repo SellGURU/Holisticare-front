@@ -1040,7 +1040,7 @@ const AiKnowledge = () => {
                   }`}
                 >
                   {searchType === 'Docs' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
                   )}
                 </span>
                 Docs
@@ -1061,7 +1061,7 @@ const AiKnowledge = () => {
                   }`}
                 >
                   {searchType === 'Nodes' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal block"></span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
                   )}
                 </span>
                 Nodes
@@ -1101,70 +1101,72 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getCurrentPageData().map((doc, index) => (
-                        <tr
-                          key={doc.id}
-                          className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
-                        >
-                          <td
-                            className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                      {getCurrentPageData().map((doc, index) => {
+                        return (
+                          <tr
+                            key={index}
+                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
                           >
-                            {doc.type}
-                          </td>
-                          <td
-                            className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
-                          >
-                            {doc.date || 'No Date'}
-                          </td>
-                          <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
-                            {confirmDeleteId === doc.id ? (
-                              <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
-                                Sure?
-                                <img
-                                  className="cursor-pointer size-4"
-                                  onClick={() => deleteDocument(doc.id)}
-                                  src="/icons/confirm-tick-circle.svg"
-                                  alt="Confirm"
-                                />
-                                <img
-                                  className="cursor-pointer size-4 "
-                                  onClick={() => setConfirmDeleteId(null)}
-                                  src="/icons/cansel-close-circle.svg"
-                                  alt="Cancel"
-                                />
-                              </div>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    toggleDisable(doc.id, 'User Uploads')
-                                  }
-                                >
-                                  {doc.disabled ? (
-                                    <img
-                                      src="/icons/eye-slash-blue.svg"
-                                      alt="Disabled"
-                                    />
-                                  ) : (
-                                    <img
-                                      src="/icons/eye-blue.svg"
-                                      alt="Enabled"
-                                    />
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => setConfirmDeleteId(doc.id)}
-                                >
+                            <td
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                            >
+                              {doc.type}
+                            </td>
+                            <td
+                              className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
+                            >
+                              {doc.date || 'No Date'}
+                            </td>
+                            <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
+                              {confirmDeleteId === doc.id ? (
+                                <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
+                                  Sure?
                                   <img
-                                    src="/icons/trash-blue.svg"
-                                    alt="Delete"
+                                    className="cursor-pointer size-4"
+                                    onClick={() => deleteDocument(doc.id)}
+                                    src="/icons/confirm-tick-circle.svg"
+                                    alt="Confirm"
                                   />
-                                </button>
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                                  <img
+                                    className="cursor-pointer size-4 "
+                                    onClick={() => setConfirmDeleteId(null)}
+                                    src="/icons/cansel-close-circle.svg"
+                                    alt="Cancel"
+                                  />
+                                </div>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={() =>
+                                      toggleDisable(doc.id, 'User Uploads')
+                                    }
+                                  >
+                                    {doc.disabled ? (
+                                      <img
+                                        src="/icons/eye-slash-blue.svg"
+                                        alt="Disabled"
+                                      />
+                                    ) : (
+                                      <img
+                                        src="/icons/eye-blue.svg"
+                                        alt="Enabled"
+                                      />
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDeleteId(doc.id)}
+                                  >
+                                    <img
+                                      src="/icons/trash-blue.svg"
+                                      alt="Delete"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
 
