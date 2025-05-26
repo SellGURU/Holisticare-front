@@ -65,6 +65,7 @@ interface TheAppOverviewProps {
 }
 
 const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
+  console.log(customTheme);
   const hexToRgba = (hex: string, opacity: string) => {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
@@ -73,8 +74,28 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
   };
   const gradientWithOpacity = `linear-gradient(89.73deg, ${hexToRgba(customTheme.secondaryColor, '0.6')} -121.63%, ${hexToRgba(customTheme.primaryColor, '0.6')} 133.18%)`;
   return (
-    <div className="w-[202.5px] h-[360px] rounded-[14.61px] shadow-400 pt-4 pl-4 border relative">
-      <div className="flex items-center justify-between pr-4">
+    <div className="w-full flex items-center justify-center gap-8">
+      <div style={{background: gradientWithOpacity}} className='w-[202.5px] h-[360px] rounded-[12.72px] shadow-400 pt-4 pl-4 relative flex flex-col items-center justify-center gap-2 select-none'>
+        {
+          customTheme.selectedImage && (
+            <img className='w-[80px] h-[80px] rounded-[12.72px] object-cover' src={customTheme.selectedImage} alt=""  />
+          )
+        }
+        <div className='text-xs font-medium text-white'>{customTheme.name}</div>
+        {
+          customTheme.headLine && (
+            <>
+              <div className='text-[10px]  text-white max-w-[144.78px] truncate'>{customTheme.headLine}</div>
+            </>
+          
+          )
+        }
+        <div className='absolute bottom-0 left-0 w-[203px] h-[98px]'>
+          <img src="/images/branding-vector.svg" alt="" />
+        </div>
+      </div>
+      <div className="w-[202.5px] h-[360px] rounded-[14.61px] shadow-400 pt-4 pl-4 border relative">
+        <div className="flex items-center justify-between pr-4">
         <div className="text-[7.83px] font-medium text-Text-Primary">9:41</div>
         <img src="/icons/wi-fi-battery-celular-mobile.svg" alt="" />
       </div>
@@ -286,6 +307,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               className="w-[11.74px] h-[11.74px]"
             />
             <div className="text-[5.87px] text-Text-Quadruple">Setting</div>
+          </div>
           </div>
         </div>
       </div>

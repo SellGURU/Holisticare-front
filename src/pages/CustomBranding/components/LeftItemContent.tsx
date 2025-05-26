@@ -68,6 +68,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   };
   const isValidSave =
     errorName === '' &&
+
     customTheme.name !== '' &&
     customTheme.selectedImage !== null;
   return (
@@ -112,9 +113,17 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 </div> */}
               </Tooltip>
             </div>
-            <div className="p-[1px] rounded-lg bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A] relative">
+            <div className='flex items-end gap-2'>
+             {customTheme.selectedImage == null && (
+                <div className="text-Red text-[8px] mb-1">
+                        Please upload a logo to proceed.
+                </div>
+              )}
+            <div
+              className={`p-[1px] rounded-lg ${customTheme.selectedImage == null ? 'bg-Red' : 'bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A]'}  relative`}
+            >
               <div
-                className="w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white"
+                className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white`}
                 onClick={() => fileInputRef.current?.click()}
               >
                 {customTheme.selectedImage ? (
@@ -144,6 +153,8 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   <img src="/icons/trash-red.svg" alt="" className="w-4 h-4" />
                 </div>
               )}
+             
+            </div>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -280,6 +291,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
         <div
           className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
           onClick={isValidSave ? onSave : undefined}
+
         >
           {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
         </div>
