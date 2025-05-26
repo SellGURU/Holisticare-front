@@ -9,6 +9,7 @@ import AppContextProvider from './store/app.tsx';
 import './api/axios.ts';
 import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import UploaderTooltipContainer from './Components/UploaderTooltip/index.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <>
@@ -18,5 +19,6 @@ createRoot(document.getElementById('root')!).render(
       </GoogleOAuthProvider>
     </AppContextProvider>
     <ToastContainer />
+    <UploaderTooltipContainer />
   </>,
 );

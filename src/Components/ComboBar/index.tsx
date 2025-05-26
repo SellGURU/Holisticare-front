@@ -121,7 +121,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   //   onSubmit: () => {},
   // });
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
-
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  subscribe("fileIsUploading",(value:any) => {
+    setIsUploading(value.detail.isUploading)
+  })
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -139,6 +142,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const handleCloseSlideOutPanel = () => {
+    if(isSlideOutPanel && isUploading){
+      publish("isuploadingBackGround",{})
+    }
     setIsSlideOutPanel(false);
   };
   const [updated, setUpdated] = useState(false);
