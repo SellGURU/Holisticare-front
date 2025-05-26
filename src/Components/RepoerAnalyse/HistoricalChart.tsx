@@ -1,8 +1,10 @@
 import { sortKeysWithValues } from './Boxs/Help';
+import { Tooltip } from 'react-tooltip';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface HistoricalChartProps {
   statusBar: any;
+  unit: string;
   dataPoints: number[];
   labels: string[];
   dataStatus: Array<string>;
@@ -13,6 +15,7 @@ const HistoricalChart = ({
   dataPoints,
   dataStatus,
   labels,
+  unit,
 }: HistoricalChartProps) => {
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
@@ -114,6 +117,8 @@ const HistoricalChart = ({
                     className="w-[40px] ml-1 relative"
                   >
                     <div
+                      data-tooltip-id="chart-point"
+                      data-tooltip-content={`Value: ${point} ${unit}`}
                       style={{
                         backgroundColor: resolveColor(el.key),
                         opacity:
@@ -127,12 +132,8 @@ const HistoricalChart = ({
                             ? 'visible'
                             : 'hidden',
                       }}
-                      className="w-2 h-2 border border-gray-50 rounded-full relative"
-                    >
-                      <div className="absolute -top-4 left-1/2  transform text-[8px] text-Text-Primary -translate-x-1/2 px-3 py-1 rounded whitespace-nowrap z-10">
-                        {point}
-                      </div>
-                    </div>
+                      className="w-2 h-2 border border-gray-50 rounded-full relative cursor-pointer"
+                    />
                   </div>
                 ))}
               </div>
@@ -171,6 +172,11 @@ const HistoricalChart = ({
           </div>
         </div>
       </div>
+      <Tooltip
+        id="chart-point"
+        className="!w-fit !rounded !px-3 !bg-[#8ECAE6] !text-[8px] !text-[#005F73]  !text-nowrap"
+        place="top"
+      />
     </>
   );
 };
