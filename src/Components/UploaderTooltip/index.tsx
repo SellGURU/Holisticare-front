@@ -11,7 +11,7 @@ const UploaderTooltipContainer = () => {
   });
   const [files, setFiles] = useState<any[]>([]);
   subscribe('fileIsUploading', (value: any) => {
-    setFiles(value.detail.files?value.detail.files:[]);
+    setFiles(value.detail.files ? value.detail.files : []);
   });
   // console.log(files)
   return (
@@ -42,40 +42,43 @@ const UploaderTooltipContainer = () => {
                 </>
               );
             })}
-            {files?.length == 0 && <>
-            <div className="flex items-center justify-start gap-1 mt-4">
-              <img
-                className="w-5 h-5"
-                src="/icons/tick-circle-upload.svg"
-                alt=""
-              />
-              <div
-                className=" bg-clip-text text-[12px] text-transparent"
-                style={{
-                  backgroundImage: 'linear-gradient(30deg, #005F73, #6CC24A)',
-                }}
-              >
-                Uploading Completed.
-              </div>
-            </div>
-            <div className="text-Text-Secondary text-[10px] mt-2 text-justify">
-              If you would like the data from this file to be applied to the
-              report, please click the "Sync Data" button.
-            </div>
-            <div className="flex justify-end mt-2 items-center">
-              <ButtonSecondary
-                onClick={() => {
-                //   setIsUploded(false);
-                  setIsUploading(false)
-                  publish('syncReport', {});
-                }}
-                ClassName="rounded-[20px]"
-                size="small"
-              >
-                Sync Data
-              </ButtonSecondary>
-            </div>
-            </>}
+            {files?.length == 0 && (
+              <>
+                <div className="flex items-center justify-start gap-1 mt-4">
+                  <img
+                    className="w-5 h-5"
+                    src="/icons/tick-circle-upload.svg"
+                    alt=""
+                  />
+                  <div
+                    className=" bg-clip-text text-[12px] text-transparent"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(30deg, #005F73, #6CC24A)',
+                    }}
+                  >
+                    Uploading Completed.
+                  </div>
+                </div>
+                <div className="text-Text-Secondary text-[10px] mt-2 text-justify">
+                  If you would like the data from this file to be applied to the
+                  report, please click the "Sync Data" button.
+                </div>
+                <div className="flex justify-end mt-2 items-center">
+                  <ButtonSecondary
+                    onClick={() => {
+                      //   setIsUploded(false);
+                      setIsUploading(false);
+                      publish('syncReport', {});
+                    }}
+                    ClassName="rounded-[20px]"
+                    size="small"
+                  >
+                    Sync Data
+                  </ButtonSecondary>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
