@@ -31,8 +31,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
     {
       name: 'Action Plan',
-      checked: true,
-      disabled: false,
+      checked: false,
+      disabled: true,
     },
   ]);
   subscribe('ActionPlanStatus', (data: any) => {
