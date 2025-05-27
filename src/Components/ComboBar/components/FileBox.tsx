@@ -43,7 +43,9 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
 
     return `${day} ${month} ${year}`;
   };
-  const [isUploded, setIsUploded] = useState(el.status =='completed'? true : false);
+  const [isUploded, setIsUploded] = useState(
+    el.status == 'completed' ? true : false,
+  );
   return (
     <>
       <div
