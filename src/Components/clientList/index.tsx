@@ -66,6 +66,7 @@ const ClientList = () => {
   const [filteredClientList, setFilteredClientList] = useState<ClientData[]>(
     [],
   );
+  console.log('filteredClientList', filteredClientList);
   const [search, setSearch] = useState<string>('');
 
   const navigate = useNavigate();
