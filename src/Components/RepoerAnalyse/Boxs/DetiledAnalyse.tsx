@@ -350,7 +350,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className="mt-0 relative">
                           {active && (
                             <HistoricalChart
-                            unit={active?.unit}
+                              unit={active?.unit}
                               statusBar={active?.chart_bounds}
                               dataStatus={active.status}
                               dataPoints={[...active.values]}

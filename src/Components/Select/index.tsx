@@ -22,7 +22,7 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <div className="relative inline-block w-[120px] cursor-pointer font-normal">
+    <div className="relative inline-block  w-[120px] cursor-pointer font-normal">
       <select
         onClick={() => setIsOpen(!isOpen)}
         ref={selectRef}

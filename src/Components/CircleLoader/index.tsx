@@ -1,9 +1,10 @@
 import './index.css';
-
-const Circleloader = () => {
+interface CircleloaderProps {
+  size?: number;
+  dotSize?: number;
+}
+const Circleloader = ({ size = 48, dotSize = 8 }: CircleloaderProps) => {
   const dotCount = 8; // Number of dots
-  const size = 48; // Diameter of the loader
-  const dotSize = 8; // Diameter of each dot
 
   const dots = Array.from({ length: dotCount }); // Generate an array of dots
   return (

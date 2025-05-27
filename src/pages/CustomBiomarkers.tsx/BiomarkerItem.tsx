@@ -5,6 +5,7 @@ import SvgIcon from '../../utils/svgIcon';
 import { sortKeysWithValues } from '../../Components/RepoerAnalyse/Boxs/Help';
 import TooltipText from '../../Components/TooltipText';
 import Select from '../../Components/Select';
+import Circleloader from '../../Components/CircleLoader';
 // import EditModal from '../generateTreatmentPlan/components/EditModal';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -16,6 +17,8 @@ interface BiomarkerItemProps {
 const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   const [activeEdit, setActiveEdit] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: boolean}>({});
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -62,8 +65,25 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
   //     }, 30000);
   //   }
   // }, [showSuccess]);
+  const hasEmptyFields = () => {
+    return Object.values(validationErrors).some(error => error) || 
+           values.some(item => 
+             item.value.some((val: any) => val === '' || val === undefined || val === null)
+           );
+  };
+
+  const validateField = (key: string, index: number, value: any) => {
+    if (value === '' || value === undefined || value === null) {
+      setValidationErrors(prev => ({...prev, [`${key}-${index}`]: true}));
+      return true;
+    }
+    setValidationErrors(prev => ({...prev, [`${key}-${index}`]: false}));
+    return false;
+  };
+
   const changeValue = (key: string, index: number, newValue: any) => {
     setActive('Edited');
+    validateField(key, index, newValue);
     setValues((pre) => {
       const newData = pre.map((el) => {
         if (el.key == key) {
@@ -71,7 +91,7 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
             ...el,
             value: el.value.map((dr: any, inde: number) => {
               if (inde == index) {
-                return newValue;
+                return newValue === '' ? '' : Number(newValue);
               } else {
                 return dr;
               }
@@ -111,13 +131,89 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
     });
     return resolvedValues;
   };
+
+  const handleSave = () => {
+    if (hasEmptyFields()) return;
+    const groupsData = data.age_groups.map(
+      (el: any) => {
+        if (
+          el.gender == gender &&
+          el.min_age + '-' + el.max_age == ageRange
+        ) {
+          return {
+            ...el,
+            chart_bounds: {
+              ...el.chart_bounds,
+              ...(el.chart_bounds.Ok && {
+                Ok: {
+                  label: el.chart_bounds.Ok.label,
+                  range: [
+                    values.filter(
+                      (e) => e.key == 'Ok',
+                    )[0].value,
+                  ],
+                },
+              }),
+              ...(el.chart_bounds['Needs Focus'] && {
+                'Needs Focus': {
+                  label:
+                    el.chart_bounds['Needs Focus']
+                      ?.label,
+                  range: [
+                    values.filter(
+                      (e) => e.key == 'Needs Focus',
+                    )[0].value,
+                  ],
+                },
+              }),
+              ...(el.chart_bounds['Good'] && {
+                Good: {
+                  label:
+                    el.chart_bounds['Good']?.label,
+                  range: [
+                    values.filter(
+                      (e) => e.key == 'Good',
+                    )[0].value,
+                  ],
+                },
+              }),
+              ...(el.chart_bounds['Excellent'] && {
+                Excellent: {
+                  label:
+                    el.chart_bounds['Excellent']
+                      ?.label,
+                  range: [
+                    values.filter(
+                      (e) => e.key == 'Excellent',
+                    )[0].value,
+                  ],
+                },
+              }),
+            },
+          };
+        } else {
+          return el;
+        }
+      },
+    );
+    setIsSaving(true);
+    setShowSuccess(true);
+    setTimeout(() => {
+      OnSave({ ...data, age_groups: groupsData });
+      setActiveEdit(false);
+      setIsSaving(false);
+    }, 3000);
+  };
+console.log(hasEmptyFields());
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
         <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
           <div className="w-[200px]">
-            <div className="text-[12px] font-medium text-Text-Primary">
+            <div className="text-[12px] font-medium text-Text-Primary flex  items-center gap-1 text-nowrap">
+
               {data.Biomarker}
+              <span className='text-[10px] text-Text-Secondary'>({activeBiomarker.unit})</span>
             </div>
             <div className="text-[10px] max-w-[100px] text-nowrap overflow-hidden text-ellipsis mt-1 text-Text-Secondary">
               {/* {data.more_info} */}
@@ -128,175 +224,103 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
               <StatusBarChart justView data={activeBiomarker}></StatusBarChart>
             </div>
           )}
-          <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
-            <div>
-              <Select
-                key="ages"
-                onChange={(val) => {
-                  setAgeRange(val);
-                }}
-                options={avilableAges()}
-              ></Select>
-            </div>
-            <div>
-              <Select
-                isCapital
-                key="gender"
-                onChange={(val) => {
-                  setGender(val);
-                }}
-                options={avilableGenders()}
-              ></Select>
-            </div>
-
-            {activeEdit ? (
+          <div className="absolute right-4 gap-2 flex justify-end items-end top-2">
+            {activeEdit && (
               <>
-                {Editvalues.length > 0 ? (
-                  <>
-                    {showSuccess ? (
-                      <>
-                        <div className=" bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
-                          <img
-                            src="/icons/tick-circle-large.svg"
-                            alt=""
-                            className="w-5 h-5"
-                          />
-                          <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
-                            Changes applied successfully.
-                          </div>
-                        </div>
-                      </>
+                {Editvalues.length > 0 && (
+                  <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
+                    {isSaving ? (
+                      <div className='w-[190px] flex items-center justify-center'>
+                        <Circleloader size={26} dotSize={4}></Circleloader>
+                      </div>
                     ) : (
                       <>
-                        <div className="bg-backgroundColor-Card gap-4 flex justify-center items-center rounded-[6px] p-2 h-8">
+                        <div
+                          onClick={() => {
+                            setActive('Edited');
+                            setValues(Editvalues);
+                          }}
+                          className="flex justify-center cursor-pointer gap-1 items-center"
+                        >
+                          <SvgIcon
+                            width="16px"
+                            height="16px"
+                            color={active == 'Edited' ? '#005F73' : '#888888'}
+                            src="./icons/edit-green.svg"
+                          ></SvgIcon>
                           <div
-                            onClick={() => {
-                              setActive('Edited');
-                              setValues(Editvalues);
-                            }}
-                            className="flex justify-center cursor-pointer gap-1 items-center"
+                            className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
                           >
-                            <SvgIcon
-                              width="16px"
-                              height="16px"
-                              color={active == 'Edited' ? '#005F73' : '#888888'}
-                              src="./icons/edit-green.svg"
-                            ></SvgIcon>
-                            <div
-                              className={`text-[10px] ${active == 'Edited' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                            >
-                              Edited
-                            </div>
+                            Edited
                           </div>
+                        </div>
+                        <div
+                          onClick={() => {
+                            setActive('Original');
+                            setValues(
+                              sortKeysWithValues(
+                                activeBiomarker.chart_bounds,
+                              ),
+                            );
+                          }}
+                          className="flex justify-center cursor-pointer gap-1 items-center"
+                        >
+                          <SvgIcon
+                            width="16px"
+                            height="16px"
+                            color={
+                              active == 'Original' ? '#005F73' : '#888888'
+                            }
+                            src="/icons/task-square.svg"
+                          ></SvgIcon>
                           <div
-                            onClick={() => {
-                              setActive('Original');
-                              setValues(
-                                sortKeysWithValues(
-                                  activeBiomarker.chart_bounds,
-                                ),
-                              );
-                            }}
-                            className="flex justify-center cursor-pointer gap-1 items-center"
+                            className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
                           >
-                            <SvgIcon
-                              width="16px"
-                              height="16px"
-                              color={
-                                active == 'Original' ? '#005F73' : '#888888'
-                              }
-                              src="/icons/task-square.svg"
-                            ></SvgIcon>
-                            <div
-                              className={`text-[10px] ${active == 'Original' ? 'text-[#005F73]' : 'text-[#888888]'} `}
-                            >
-                              Original
-                            </div>
+                            Original
                           </div>
-                          <div
-                            onClick={() => {
-                              // console.log(values);
-                              const groupsData = data.age_groups.map(
-                                (el: any) => {
-                                  if (
-                                    el.gender == gender &&
-                                    el.min_age + '-' + el.max_age == ageRange
-                                  ) {
-                                    return {
-                                      ...el,
-                                      chart_bounds: {
-                                        ...el.chart_bounds,
-                                        ...(el.chart_bounds.Ok && {
-                                          Ok: {
-                                            label: el.chart_bounds.Ok.label,
-                                            range: [
-                                              values.filter(
-                                                (e) => e.key == 'Ok',
-                                              )[0].value,
-                                            ],
-                                          },
-                                        }),
-                                        ...(el.chart_bounds['Needs Focus'] && {
-                                          'Needs Focus': {
-                                            label:
-                                              el.chart_bounds['Needs Focus']
-                                                ?.label,
-                                            range: [
-                                              values.filter(
-                                                (e) => e.key == 'Needs Focus',
-                                              )[0].value,
-                                            ],
-                                          },
-                                        }),
-                                        ...(el.chart_bounds['Good'] && {
-                                          Good: {
-                                            label:
-                                              el.chart_bounds['Good']?.label,
-                                            range: [
-                                              values.filter(
-                                                (e) => e.key == 'Good',
-                                              )[0].value,
-                                            ],
-                                          },
-                                        }),
-                                        ...(el.chart_bounds['Excellent'] && {
-                                          Excellent: {
-                                            label:
-                                              el.chart_bounds['Excellent']
-                                                ?.label,
-                                            range: [
-                                              values.filter(
-                                                (e) => e.key == 'Excellent',
-                                              )[0].value,
-                                            ],
-                                          },
-                                        }),
-                                      },
-                                    };
-                                  } else {
-                                    return el;
-                                  }
-                                },
-                              );
-                              setShowSuccess(true);
-                              setTimeout(() => {
-                                OnSave({ ...data, age_groups: groupsData });
-                                setActiveEdit(false);
-                              }, 3000);
-                            }}
-                          >
-                            <SvgIcon
-                              color="#6CC24A"
-                              src="./icons/tick-circle-background.svg"
-                            ></SvgIcon>
-                            {/* <img src="./icons/tick-circle-background.svg" alt="" /> */}
-                          </div>
+                        </div>
+                        <div
+                          onClick={handleSave}
+                          className={`cursor-pointer ${hasEmptyFields() ? 'opacity-50' : ''}`}
+                        >
+                          <SvgIcon
+                            color="#6CC24A"
+                            src="./icons/tick-circle-background.svg"
+                          ></SvgIcon>
                         </div>
                       </>
                     )}
-                  </>
-                ) : (
+                  </div>
+                )}
+                <div className='flex flex-col gap-1 items-center'>
+                  <div className='text-xs font-medium text-Text-Primary'>Age Range</div>
+                  <Select
+                    key="ages"
+                    onChange={(val) => {
+                      setAgeRange(val);
+                    }}
+                    options={avilableAges()}
+                  ></Select>
+                </div>
+                <div className='flex flex-col gap-1 items-center'>
+                  <div className='text-xs font-medium text-Text-Primary'>Gender</div>
+                  <Select
+                    isCapital
+                    key="gender"
+                    onChange={(val) => {
+                      setGender(val);
+                    }}
+                    options={avilableGenders()}
+                  ></Select>
+                </div>
+              </>
+            )}
+
+            {activeEdit ? (
+              <>
+                
                   <div
+                  className='self-start'
                     onClick={() => {
                       setActiveEdit(false);
                     }}
@@ -308,10 +332,11 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                       src="./icons/close-square-outline.svg"
                     ></SvgIcon>
                   </div>
-                )}
+               
               </>
             ) : (
               <div
+              className='self-start'
                 onClick={() => {
                   setActiveEdit(true);
                 }}
@@ -319,7 +344,6 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                 <SvgIcon color="#005F73" src="./icons/edit-green.svg"></SvgIcon>
               </div>
             )}
-            {/* <img  src="./icons/edit-green.svg" alt="" /> */}
           </div>
         </div>
         {activeEdit && (
@@ -336,14 +360,20 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                         {/* <div className='w-[48px] h-6 rounded-[8px] bg-white overflow-hidden border border-gray-50 mx-1'>
                       </div> */}
                         {index == 0 && (
-                          <input
-                            type="number"
-                            value={values[0].value[0]}
-                            onChange={(e) => {
-                              changeValue(el.key, 0, Number(e.target.value));
-                            }}
-                            className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
-                          />
+                          <div className="flex flex-col">
+                            <input
+                              type="number"
+                              value={values[0].value[0] === '' ? '' : values[0].value[0]}
+                              onChange={(e) => {
+                                changeValue(el.key, 0, e.target.value);
+                              }}
+                              onBlur={(e) => {
+                                validateField(el.key, 0, e.target.value);
+                              }}
+                              required
+                              className={`w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border ${validationErrors[`${el.key}-0`] ? 'border-red-500' : 'border-gray-50'} mx-1 outline-none p-1 text-[8px]`}
+                            />
+                          </div>
                         )}
                         <div
                           className={` relative border-l-2 flex-grow border-white  h-[8px] ${index == sortKeysWithValues(activeBiomarker.chart_bounds).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
@@ -377,30 +407,20 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                             </TooltipText>
                           </div>
                         </div>
-                        <input
-                          type="number"
-                          value={
-                            values.filter((e) => e.key == el.key)[0].value[1]
-                          }
-                          onChange={(e) => {
-                            changeValue(el.key, 1, Number(e.target.value));
-                            if (
-                              sortKeysWithValues(activeBiomarker.chart_bounds)
-                                .length -
-                                1 >
-                              index
-                            ) {
-                              changeValue(
-                                sortKeysWithValues(
-                                  activeBiomarker.chart_bounds,
-                                )[index + 1].key,
-                                0,
-                                Number(e.target.value),
-                              );
-                            }
-                          }}
-                          className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
-                        />
+                        <div className="flex flex-col">
+                          <input
+                            type="number"
+                            value={values.filter((e) => e.key == el.key)[0].value[1] === '' ? '' : values.filter((e) => e.key == el.key)[0].value[1]}
+                            onChange={(e) => {
+                              changeValue(el.key, 1, e.target.value);
+                            }}
+                            onBlur={(e) => {
+                              validateField(el.key, 1, e.target.value);
+                            }}
+                            required
+                            className={`w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border ${validationErrors[`${el.key}-1`] ? 'border-red-500' : 'border-gray-50'} mx-1 outline-none p-1 text-[8px]`}
+                          />
+                        </div>
                       </>
                     );
                   },
@@ -454,22 +474,9 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                               }
                               onChange={(e) => {
                                 changeValue(el.key, 0, e.target.value);
-                                // if (
-                                //   sortKeysWithValues(activeBiomarker.chart_bounds)
-                                //     .length -
-                                //     1 >
-                                //   index
-                                // ) {
-                                //   changeValue(
-                                //     sortKeysWithValues(activeBiomarker.chart_bounds)[
-                                //       index + 1
-                                //     ].key,
-                                //     0,
-                                //     Number(e.target.value),
-                                //   );
-                                // }
                               }}
-                              className="w-[100px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
+                              required
+                              className={`w-[100px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border ${validationErrors[`${el.key}-0`] ? 'border-red-500' : 'border-gray-50'} mx-1 outline-none p-1 text-[8px]`}
                             />
                           </div>
                         </div>
@@ -479,8 +486,15 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                 )}
               </>
             )}
+      
           </div>
+          
         )}
+              {hasEmptyFields() && (
+              <div className="w-full text-start pl-5">
+                <span className="text-[8px] text-[#FC5474]">All fields must be completed before saving.</span>
+              </div>
+            )}
       </div>
     </>
   );

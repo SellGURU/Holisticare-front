@@ -139,7 +139,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
           <>
             <div className="mt-1 relative">
               <HistoricalChart
-              unit={data.unit}
+                unit={data.unit}
                 statusBar={data.chart_bounds}
                 dataPoints={[...data.values].reverse()}
                 dataStatus={[...data.status].reverse()}
