@@ -297,21 +297,26 @@ export const TopBar: React.FC<TopBarProps> = ({
               }}
               className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
             >
-               {customTheme.selectedImage ? (
-                  <img
-                    className="size-6 rounded-full "
-                    src={customTheme.selectedImage}
-                    alt=""
-                  />
-                ) : (
-                  <img src="/icons/topbar-logo2.svg" alt="" />
-                )}
-                {customTheme.headLine
-                  ? customTheme.headLine
-                  : 'Clinic Longevity 1'}{' '}
+              {customTheme.selectedImage ? (
+                <img
+                  className="size-6 rounded-full "
+                  src={customTheme.selectedImage}
+                  alt=""
+                />
+              ) : (
+                <img src="/icons/topbar-logo2.svg" alt="" />
+              )}
+              {customTheme.headLine
+                ? customTheme.headLine
+                : 'Clinic Longevity 1'}{' '}
             </div>
           </div>
-          {visibleClinic && <LogOutModal customTheme={customTheme} refrence={refrence}></LogOutModal>}
+          {visibleClinic && (
+            <LogOutModal
+              customTheme={customTheme}
+              refrence={refrence}
+            ></LogOutModal>
+          )}
         </div>
       </div>
       <SlideOutPanel
