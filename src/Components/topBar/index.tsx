@@ -163,14 +163,14 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [isReportAvailable, setIsReportAvailable] = useState(true);
   const [customTheme, setCustomTheme] = useState({
     selectedImage: null as string | null,
-
+    name: '',
     headLine: '',
   });
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
       setCustomTheme({
         headLine: res.data.brand_elements.headline,
-
+        name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
     });
@@ -306,8 +306,8 @@ export const TopBar: React.FC<TopBarProps> = ({
               ) : (
                 <img src="/icons/topbar-logo2.svg" alt="" />
               )}
-              {customTheme.headLine
-                ? customTheme.headLine
+              {customTheme.name
+                ? customTheme.name
                 : 'Clinic Longevity 1'}{' '}
             </div>
           </div>
