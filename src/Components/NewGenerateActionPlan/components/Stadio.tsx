@@ -13,6 +13,8 @@ import LibBox from './LibBox';
 import Sort from './Sort';
 import { SlideOutPanel } from '../../SlideOutPanel';
 import Circleloader from '../../CircleLoader';
+import { Tooltip } from 'react-tooltip';
+import { splitInstructions } from '../../../help';
 
 interface StadioProps {
   data: {
@@ -34,13 +36,11 @@ interface StadioProps {
 interface HolisticPlanProps {
   category: string;
   data: {
-    Recommendation: string;
-    Instruction: string;
-    Category: string;
-    Score: number;
+    Based: string;
+    Client_Notes: string;
+    Notes: string;
+    title: number;
     'Practitioner Comments': string[];
-    'Based on': string;
-    'Client Notes': string[];
   }[];
 }
 
@@ -305,7 +305,7 @@ const Stadio: FC<StadioProps> = ({
         member_id: id,
       })
         .then((res) => {
-          setHolisticPlan(res.data.interventions);
+          setHolisticPlan(res.data.details);
         })
         .finally(() => {
           setIsLoading(false);
@@ -320,7 +320,7 @@ const Stadio: FC<StadioProps> = ({
         isCombo={true}
         onClose={handleCloseSlideOutPanel}
         headline="Review Holistic Plan"
-        ClassName="!z-[60]"
+        ClassName="!z-[60] !overflow-y-auto"
       >
         {isLoading ? (
           <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
@@ -361,17 +361,48 @@ const Stadio: FC<StadioProps> = ({
                             return (
                               <div
                                 key={index}
-                                className="bg-white border border-Gray-50 rounded-xl p-2"
+                                className="bg-white border border-Gray-50 rounded-xl p-2 flex flex-col"
                               >
                                 <div className="font-medium text-[10px] text-Text-Primary">
-                                  {el.Recommendation}
+                                  {el.title}
+                                </div>
+                                <div
+                                  data-tooltip-id={`analysis-info-${index}`}
+                                  className="text-[10px] text-Primary-DeepTeal mt-1.5 cursor-pointer"
+                                >
+                                  Analysis Info
+                                </div>
+                                <Tooltip
+                                  id={`analysis-info-${index}`}
+                                  place="top"
+                                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                                  style={{
+                                    zIndex: 9999,
+                                    pointerEvents: 'none',
+                                  }}
+                                >
+                                  <div className="text-Text-Secondary">
+                                    {el?.['Practitioner Comments']?.[0]}
+                                  </div>
+                                </Tooltip>
+                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                    Key Benefits:
+                                  </span>
+                                  {splitInstructions(el.Notes).positive}
+                                </div>
+                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                    Key Risks:
+                                  </span>
+                                  {splitInstructions(el.Notes).negative}
                                 </div>
                               </div>
                             );
                           });
                         })}
-                      {holisticPlan.filter((el) => el.category === item.value)
-                        .length === 0 && (
+                      {holisticPlan.find((el) => el.category === item.value)
+                        ?.data.length === 0 && (
                         <div className="flex flex-col items-center gap-4 my-6">
                           <img
                             src="/icons/empty-state-new.svg"
