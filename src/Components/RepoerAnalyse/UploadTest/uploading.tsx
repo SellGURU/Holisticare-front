@@ -152,28 +152,32 @@ const Uploading: React.FC<UploadingProps> = ({
   return (
     <>
       {isCompleted ? (
-        <div
-          className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'} flex justify-between`}
-        >
-          <div className="flex justify-start gap-2">
-            <img className="object-contain" src="/images/Pdf.png" alt="" />
-            <div>
-              <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                {file.name}
+        <>
+          <div
+            className={`w-full px-4 py-2 h-[52px] bg-white shadow-200 rounded-[16px] ${isFailed && 'border border-red-500'} flex justify-between items-center`}
+          >
+            <div className="flex justify-start gap-2">
+              <img className="object-contain" src="/images/Pdf.png" alt="" />
+              <div>
+                <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                  {file.name}
+                </div>
+                <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
+                  {(file.size / 1024).toFixed(2)} KB
+                </div>
               </div>
-              <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
-                {(file.size / 1024).toFixed(2)} KB
-              </div>
-              {error && <div className="text-[10px] text-red-500">{error}</div>}
             </div>
+            <img
+              onClick={() => handleDeleteFile(file)}
+              className="cursor-pointer w-6 h-6"
+              src="/icons/delete.svg"
+              alt=""
+            />
           </div>
-          <img
-            onClick={() => handleDeleteFile(file)}
-            className="cursor-pointer w-6 h-6"
-            src="/icons/delete.svg"
-            alt=""
-          />
-        </div>
+          {error && (
+            <div className="text-[10px] text-red-500 mt-1 ml-4">{error}</div>
+          )}
+        </>
       ) : (
         <div
           className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px]"
