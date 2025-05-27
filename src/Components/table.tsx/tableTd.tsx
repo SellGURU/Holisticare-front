@@ -20,12 +20,12 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       console.log(row.original);
 
       return (
-        <div  className="w-[15vw]">
+        <div className="w-[15vw]">
           <Link
             to={`/report/${row.original.member_id}/${row.original.name}`}
             className={'w-fit'}
           >
-            <div  className="flex items-center justify-start gap-2 ">
+            <div className="flex items-center justify-start gap-2 ">
               <img
                 className="w-10 h-10 border rounded-full"
                 src={
@@ -43,14 +43,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                   {row.original?.name || 'No Data'}
                 </div>
                 <FiExternalLink />
-           
-             
               </div>
-              
-             
             </div>
           </Link>
-          
         </div>
       );
     },
