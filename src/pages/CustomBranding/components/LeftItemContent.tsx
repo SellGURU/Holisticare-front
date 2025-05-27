@@ -57,7 +57,9 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   };
   const handleChangeName = (e: any) => {
     const value = e.target.value;
-    if (value.length < 3 || value.length > 15) {
+    if (value === '') {
+      setErrorName('This field is required.');
+    } else if (value.length < 3 || value.length > 15) {
       setErrorName('Must be between 3 and 15 characters.');
     } else {
       setErrorName('');
@@ -184,7 +186,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               <input
                 type="text"
                 className={`w-[200px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
-                placeholder="Enter chosen name..."
+                placeholder="Enter your brand name"
                 value={customTheme.name}
                 onChange={handleChangeName}
               />
@@ -220,7 +222,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               <input
                 type="text"
                 className={`w-[200px] h-[28px] border ${errorHeadLine ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
-                placeholder="Enter your headline..."
+                placeholder="Enter brand's headline"
                 value={customTheme.headLine}
                 onChange={handleChangeHeadLine}
               />
