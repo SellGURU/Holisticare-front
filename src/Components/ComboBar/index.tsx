@@ -13,10 +13,11 @@ import { ClientInfo } from './components/clientInfo.tsx';
 import { DataSyncing } from './components/dataSyncing.tsx';
 import { Questionary } from './components/Questionary.tsx';
 import { Notes } from './components/notes.tsx';
-import { FilleHistory } from './components/filleHistory.tsx';
+// import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import { Tooltip } from 'react-tooltip';
+import FileHistoryNew from './components/FileHistoryNew.tsx';
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
   isHolisticPlan?: boolean;
@@ -172,7 +173,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Data Syncing':
         return <DataSyncing></DataSyncing>;
       case 'File History':
-        return <FilleHistory></FilleHistory>;
+        return <FileHistoryNew></FileHistoryNew>;
       case 'Questionnaire Tracking':
         return <Questionary></Questionary>;
       case "Expert's Note":
