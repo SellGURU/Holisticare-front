@@ -8,6 +8,7 @@ import {
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
+import { publish } from '../../../utils/event';
 
 interface FileUpload {
   file: File;
@@ -21,7 +22,7 @@ interface FileUpload {
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 KB';
   const k = 1024;
-  const sizes = ['KB', 'KB', 'KB'];
+  const sizes = ['KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 };
@@ -57,6 +58,21 @@ const FileHistoryNew = () => {
       window.removeEventListener('resize', calculateHeight);
     };
   }, []);
+  useEffect(() => {
+    if (
+      uploadedFiles.filter((el: any) => el.status != 'error' && el.status)
+        .length > 0
+    ) {
+      publish('fileIsUploading', {
+        isUploading: true,
+        files: uploadedFiles.filter(
+          (el: any) => el.status != 'error' && el.status,
+        ),
+      });
+    } else {
+      publish('fileIsUploading', { isUploading: false });
+    }
+  }, [uploadedFiles]);
   const uploadToAzure = async (file: File): Promise<string> => {
     try {
       AzureBlobService.initialize(
@@ -211,7 +227,11 @@ const FileHistoryNew = () => {
           id="uploadFileBoxes"
           className="w-full absolute invisible h-full left-0 top-0"
         />
-
+        <div className="w-full text-[12px] px-2 xs:px-3 md:px-5 py-3 h-[48px] border border-Gray-50 bg-backgroundColor-Main text-Primary-DeepTeal font-medium  flex justify-between items-center rounded-[12px]">
+          <div>File Name</div>
+          <div>Upload Date</div>
+          <div>Action</div>
+        </div>
         {/* File Upload Progress List */}
         <div
           className="flex justify-center w-full items-start overflow-auto"

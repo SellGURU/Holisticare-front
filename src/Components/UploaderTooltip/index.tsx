@@ -35,10 +35,10 @@ const UploaderTooltipContainer = () => {
                 alt=""
               />
             </div>
-            {files?.map(() => {
+            {files?.map((file: any) => {
               return (
                 <>
-                  <UploadItem></UploadItem>
+                  <UploadItem file={file}></UploadItem>
                 </>
               );
             })}
