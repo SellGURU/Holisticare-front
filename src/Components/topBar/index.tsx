@@ -306,9 +306,7 @@ export const TopBar: React.FC<TopBarProps> = ({
               ) : (
                 <img src="/icons/topbar-logo2.svg" alt="" />
               )}
-              {customTheme.name
-                ? customTheme.name
-                : 'Clinic Longevity 1'}{' '}
+              {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
             </div>
           </div>
           {visibleClinic && (
