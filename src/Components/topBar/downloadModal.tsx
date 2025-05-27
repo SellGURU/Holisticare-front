@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import { subscribe } from '../../utils/event';
-
+import { useEffect } from 'react';
 interface DownloadModalProps {
   onclose: () => void;
   onconfirm: (data: Array<any>) => void;
@@ -108,7 +108,13 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   const allUnselected = downloadSelect
     .filter((el) => !el.disabled)
     .every((el) => !el.checked);
-
+  const [showValidate, setShowValidate] = useState(false);
+  console.log(showValidate);
+  useEffect(() => {
+    if (!allUnselected) {
+      setShowValidate(false);
+    }
+  }, [allUnselected]);
   return (
     <>
       <div className="flex justify-between items-center">
@@ -175,6 +181,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
               </div>
             );
           })}
+        {showValidate && (
+          <div className="text-[8px] text-[#FC5474] pl-[27px]">
+            Selection required. Choose at least one item to continue.
+          </div>
+        )}
       </div>
 
       <div className="w-full flex justify-between items-center mt-6">
@@ -189,7 +200,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
         </ButtonPrimary>
         <ButtonPrimary
           onClick={() => {
-            onconfirm(downloadSelect);
+            if (allUnselected) {
+              setShowValidate(true);
+            } else {
+              onconfirm(downloadSelect);
+            }
           }}
           size="small"
         >

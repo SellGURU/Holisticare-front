@@ -39,7 +39,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 title={row.original?.name}
                 className="font-meidum text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
-                <div className="truncate max-w-[90px] xl:max-w-[160px]">
+                <div className="truncate max-w-[60px] 2xl:max-w-[160px] ">
                   {row.original?.name || 'No Data'}
                 </div>
                 <FiExternalLink />
