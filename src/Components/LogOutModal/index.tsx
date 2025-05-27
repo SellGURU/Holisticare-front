@@ -5,10 +5,10 @@ import Auth from '../../api/auth';
 
 interface LogOutModalProps {
   refrence: any;
-  customTheme:any
+  customTheme: any;
 }
 
-const LogOutModal: React.FC<LogOutModalProps> = ({ refrence ,customTheme}) => {
+const LogOutModal: React.FC<LogOutModalProps> = ({ refrence, customTheme }) => {
   // const [visibleClinic, setVisibleClinic] = useState(false);
   // const refrence = useRef(null);
   // const buttentRef = useRef(null);
@@ -27,15 +27,19 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence ,customTheme}) => {
       >
         <div className="flex justify-center items-center mt-2">
           <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-full  ">
-          {customTheme.selectedImage && (
-                <img               className="w-full h-full "
-                src={customTheme.selectedImage} alt="" />
-              )}
-            
+            {customTheme.selectedImage ? (
+              <img
+                className="h-full w-full "
+                src={customTheme.selectedImage}
+                alt=""
+              />
+            ) : (
+              <img src="/icons/topbar-logo2.svg" alt="" />
+            )}
           </div>
         </div>
         <div className="text-[10px] mt-1 text-center text-Text-Primary">
-          {customTheme.headLine}
+          {customTheme.headLine ? customTheme.headLine : 'Clinic Longevity 1'}{' '}
         </div>
         <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
           Clinic.Longevity@gmail.com
