@@ -26,6 +26,7 @@ const validationSchema2 = yup.object({
 });
 const ForgetPassword = () => {
   const [step, setStep] = useState(0);
+  const [codeError, setCodeError] = useState('');
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -66,7 +67,7 @@ const ForgetPassword = () => {
             className="mt-8 text-justify text-[12px] text-Text-Secondary "
             style={{ textAlignLast: 'center' }}
           >
-            Enter your email address below, and we’ll send you a code to reset
+            Enter your email address below, and we'll send you a code to reset
             your password.
           </div>
           <div className="grid gap-8">
@@ -149,6 +150,7 @@ const ForgetPassword = () => {
               value={codeValue}
               onChange={(val) => {
                 setCodeValue(val);
+                setCodeError('');
               }}
               classNames={{
                 container: 'vari-container',
@@ -159,6 +161,11 @@ const ForgetPassword = () => {
               }}
               length={4}
             />
+            {codeError && (
+              <div className="text-Red text-[10px] mt-6 text-center">
+                {codeError}
+              </div>
+            )}
           </div>
           {isCompleteCode ? (
             <div
@@ -194,6 +201,11 @@ const ForgetPassword = () => {
                 })
                   .then(() => {
                     setStep(2);
+                  })
+                  .catch((error) => {
+                    if (error.detail) {
+                      setCodeError(error.detail);
+                    }
                   })
                   .finally(() => {
                     setIsLoading(false);

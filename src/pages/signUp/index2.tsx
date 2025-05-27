@@ -43,19 +43,25 @@ const SignUp = () => {
       formik.values.password,
     )
       .then(() => {
-        Auth.login(formik.values.email, formik.values.password)
-          .then((res) => {
-            appContext.login(res.data.access_token, res.data.permission);
-            navigate('/');
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+        return Auth.login(formik.values.email, formik.values.password);
       })
-      .catch(() => {
+      .then((res) => {
+        appContext.login(res.data.access_token, res.data.permission);
+        navigate('/');
+      })
+      .catch((error) => {
+     
+        if (error.detail) {
+          console.log(error.detail);
+          formik.setErrors({ email: error.detail });
+          formik.setFieldTouched('email', true, false);
+        }
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
+  
   const [showPasswordModal, setshowPasswordModal] = useState(false);
   const passwordModalRef = useRef<HTMLDivElement | null>(null);
   const closeBtn = useRef<HTMLImageElement | null>(null);
