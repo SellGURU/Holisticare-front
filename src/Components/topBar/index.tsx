@@ -161,7 +161,23 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [customTheme, setCustomTheme] = useState({
+    selectedImage: null as string | null,
 
+    headLine: '',
+  });
+  const getShowBrandInfo = () => {
+    Application.getShowBrandInfo().then((res) => {
+      setCustomTheme({
+        headLine: res.data.brand_elements.headline,
+
+        selectedImage: res.data.brand_elements.logo,
+      });
+    });
+  };
+  useEffect(() => {
+    getShowBrandInfo();
+  }, []);
   useEffect(() => {
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
@@ -281,11 +297,26 @@ export const TopBar: React.FC<TopBarProps> = ({
               }}
               className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
             >
-              <img src="/icons/topbar-logo2.svg" alt="" />
-              Clinic Longevity 1
+              {customTheme.selectedImage ? (
+                <img
+                  className="size-6 rounded-full "
+                  src={customTheme.selectedImage}
+                  alt=""
+                />
+              ) : (
+                <img src="/icons/topbar-logo2.svg" alt="" />
+              )}
+              {customTheme.headLine
+                ? customTheme.headLine
+                : 'Clinic Longevity 1'}{' '}
             </div>
           </div>
-          {visibleClinic && <LogOutModal refrence={refrence}></LogOutModal>}
+          {visibleClinic && (
+            <LogOutModal
+              customTheme={customTheme}
+              refrence={refrence}
+            ></LogOutModal>
+          )}
         </div>
       </div>
       <SlideOutPanel

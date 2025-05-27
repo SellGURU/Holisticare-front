@@ -5,6 +5,7 @@ import RightItemContent from './RightItemContent';
 import Application from '../../../api/app';
 import { blobToBase64 } from '../../../help';
 import Circleloader from '../../../Components/CircleLoader';
+import { publish } from '../../../utils/event';
 
 const CustomBrandingContent = () => {
   const [pageLoading, setPageLoading] = useState(true);
@@ -133,6 +134,7 @@ const CustomBrandingContent = () => {
       Application.saveBrandInfo(data)
         .then(() => {
           getShowBrandInfo();
+          publish('refreshBrandInfo', {});
           setLoading(false);
         })
         .catch(() => {
