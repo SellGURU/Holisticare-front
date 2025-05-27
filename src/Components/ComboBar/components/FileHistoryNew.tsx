@@ -43,10 +43,10 @@ const FileHistoryNew = () => {
           // Calculate uploaded size based on progress (0-50%)
           const uploadedBytes = Math.floor((progress / 100) * file.size);
           setUploadedFiles((prev) =>
-            prev.map((f) => 
-              f.file === file 
-                ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes } 
-                : f
+            prev.map((f) =>
+              f.file === file
+                ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes }
+                : f,
             ),
           );
         },
@@ -72,12 +72,16 @@ const FileHistoryNew = () => {
             (progressEvent.loaded * 100) / progressEvent.total,
           );
           // Calculate progress from 50-100%
-          const backendProgress = 50 + (percentCompleted / 2);
+          const backendProgress = 50 + percentCompleted / 2;
           setUploadedFiles((prev) =>
-            prev.map((f) => 
-              f.file === file 
-                ? { ...f, progress: backendProgress, uploadedSize: progressEvent.loaded } 
-                : f
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    progress: backendProgress,
+                    uploadedSize: progressEvent.loaded,
+                  }
+                : f,
             ),
           );
         },
@@ -90,14 +94,17 @@ const FileHistoryNew = () => {
       );
     } catch (error: any) {
       setUploadedFiles((prev) =>
-        prev.map((f) => 
-          f.file === file 
-            ? { 
-                ...f, 
+        prev.map((f) =>
+          f.file === file
+            ? {
+                ...f,
                 status: 'error',
-                errorMessage: error?.response?.data?.message || error?.message || 'Failed to upload file to backend. Please try again.'
-              } 
-            : f
+                errorMessage:
+                  error?.response?.data?.message ||
+                  error?.message ||
+                  'Failed to upload file to backend. Please try again.',
+              }
+            : f,
         ),
       );
     }
@@ -125,13 +132,16 @@ const FileHistoryNew = () => {
         } catch (error: any) {
           setUploadedFiles((prev) =>
             prev.map((f) =>
-              f.file === fileUpload.file 
-                ? { 
-                    ...f, 
+              f.file === fileUpload.file
+                ? {
+                    ...f,
                     status: 'error',
-                    errorMessage: error?.response?.data?.message || error?.message || 'Failed to upload file. Please try again.'
-                  } 
-                : f
+                    errorMessage:
+                      error?.response?.data?.message ||
+                      error?.message ||
+                      'Failed to upload file. Please try again.',
+                  }
+                : f,
             ),
           );
         }
@@ -180,12 +190,12 @@ const FileHistoryNew = () => {
         <div className="mt-4 space-y-2">
           {uploadedFiles.map((fileUpload, index) => (
             <div key={index}>
-              <FileBox 
+              <FileBox
                 el={{
                   ...fileUpload,
                   uploadedSize: fileUpload.uploadedSize || 0,
                   totalSize: fileUpload?.file?.size,
-                  formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`
+                  formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                 }}
               />
             </div>

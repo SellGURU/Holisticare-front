@@ -116,12 +116,16 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
             <div className="w-full flex justify-between">
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {el.formattedSize || `${formatFileSize(el.uploadedSize || 0)} / ${formatFileSize(el.totalSize || 0)}`}
+                  {el.formattedSize ||
+                    `${formatFileSize(el.uploadedSize || 0)} / ${formatFileSize(el.totalSize || 0)}`}
                 </div>
               </div>
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {el.progress < 50 ? 'Uploading to Azure...' : 'Sending to backend...'} {Math.round(el.progress)}%
+                  {el.progress < 50
+                    ? 'Uploading to Azure...'
+                    : 'Sending to backend...'}{' '}
+                  {Math.round(el.progress)}%
                 </div>
               </div>
             </div>
