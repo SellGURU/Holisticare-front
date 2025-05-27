@@ -30,7 +30,33 @@ const FileHistoryNew = () => {
   const fileInputRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const { id } = useParams<{ id: string }>();
+  const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
+  useEffect(() => {
+    const calculateHeight = () => {
+      const topSpacing = 80;
+      const addFileButtonHeight = 32;
+      const gapBetweenItems = 12;
+      const tableHeaderHeight = 48;
+      const bottomSpacing = 55;
 
+      const offset =
+        topSpacing +
+        addFileButtonHeight +
+        gapBetweenItems +
+        tableHeaderHeight +
+        bottomSpacing;
+
+      const height = window.innerHeight - offset;
+      setContainerMaxHeight(height);
+    };
+
+    calculateHeight();
+
+    window.addEventListener('resize', calculateHeight);
+    return () => {
+      window.removeEventListener('resize', calculateHeight);
+    };
+  }, []);  
   const uploadToAzure = async (file: File): Promise<string> => {
     try {
       AzureBlobService.initialize(
@@ -101,7 +127,7 @@ const FileHistoryNew = () => {
                 status: 'error',
                 errorMessage:
                   error?.response?.data?.message ||
-                  error?.message ||
+                  error?.detail||
                   'Failed to upload file to backend. Please try again.',
               }
             : f,
@@ -187,19 +213,23 @@ const FileHistoryNew = () => {
         />
 
         {/* File Upload Progress List */}
-        <div className="mt-4 space-y-2">
-          {uploadedFiles.map((fileUpload, index) => (
-            <div key={index}>
-              <FileBox
-                el={{
-                  ...fileUpload,
-                  uploadedSize: fileUpload.uploadedSize || 0,
-                  totalSize: fileUpload?.file?.size,
-                  formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
-                }}
-              />
-            </div>
-          ))}
+        <div className="flex justify-center w-full items-start overflow-auto"
+                style={{ maxHeight: containerMaxHeight }}>
+          <div  className="mt-4 w-full space-y-2 ">
+            {uploadedFiles.map((fileUpload, index) => (
+              <div key={index}>
+                <FileBox
+                  el={{
+                    ...fileUpload,
+                    uploadedSize: fileUpload.uploadedSize || 0,
+                    totalSize: fileUpload?.file?.size,
+                    formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
     </>
