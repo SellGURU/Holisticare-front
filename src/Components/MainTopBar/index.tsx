@@ -22,12 +22,14 @@ const MainTopBar = () => {
   const [customTheme, setCustomTheme] = useState({
     selectedImage: null as string | null,
     headLine: '',
+    name: '',
   });
 
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
       setCustomTheme({
         headLine: res.data.brand_elements.headline,
+        name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
     });
@@ -70,7 +72,7 @@ const MainTopBar = () => {
           ) : (
             <img src="/icons/topbar-logo2.svg" alt="" />
           )}
-          {customTheme.headLine ? customTheme.headLine : 'Clinic Longevity 1'}{' '}
+          {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
         </div>
         {visibleClinic && (
           <>
@@ -104,8 +106,8 @@ const MainTopBar = () => {
                 ) : (
                   <img src="/icons/topbar-logo2.svg" alt="" />
                 )}
-                {customTheme.headLine
-                  ? customTheme.headLine
+                {customTheme.name
+                  ? customTheme.name
                   : 'Clinic Longevity 1'}{' '}
               </div>
             </div>
