@@ -8,17 +8,29 @@ import {
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
+
 interface FileUpload {
   file: File;
   progress: number;
   status: 'uploading' | 'completed' | 'error';
   azureUrl?: string;
+  uploadedSize?: number;
+  errorMessage?: string;
 }
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 KB';
+  const k = 1024;
+  const sizes = ['KB', 'KB', 'KB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+};
 
 const FileHistoryNew = () => {
   const fileInputRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const { id } = useParams<{ id: string }>();
+
   const uploadToAzure = async (file: File): Promise<string> => {
     try {
       AzureBlobService.initialize(
@@ -28,8 +40,14 @@ const FileHistoryNew = () => {
       const blobUrl = await AzureBlobService.uploadFile(
         file,
         (progress: number) => {
+          // Calculate uploaded size based on progress (0-50%)
+          const uploadedBytes = Math.floor((progress / 100) * file.size);
           setUploadedFiles((prev) =>
-            prev.map((f) => (f.file === file ? { ...f, progress } : f)),
+            prev.map((f) => 
+              f.file === file 
+                ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes } 
+                : f
+            ),
           );
         },
       );
@@ -53,8 +71,14 @@ const FileHistoryNew = () => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total,
           );
+          // Calculate progress from 50-100%
+          const backendProgress = 50 + (percentCompleted / 2);
           setUploadedFiles((prev) =>
-            prev.map((f) => (f.file === file ? { ...f, percentCompleted } : f)),
+            prev.map((f) => 
+              f.file === file 
+                ? { ...f, progress: backendProgress, uploadedSize: progressEvent.loaded } 
+                : f
+            ),
           );
         },
       );
@@ -64,9 +88,17 @@ const FileHistoryNew = () => {
           f.file === file ? { ...f, status: 'completed', azureUrl } : f,
         ),
       );
-    } catch {
+    } catch (error: any) {
       setUploadedFiles((prev) =>
-        prev.map((f) => (f.file === file ? { ...f, status: 'error' } : f)),
+        prev.map((f) => 
+          f.file === file 
+            ? { 
+                ...f, 
+                status: 'error',
+                errorMessage: error?.response?.data?.message || error?.message || 'Failed to upload file to backend. Please try again.'
+              } 
+            : f
+        ),
       );
     }
   };
@@ -78,6 +110,7 @@ const FileHistoryNew = () => {
         file,
         progress: 0,
         status: 'uploading' as const,
+        uploadedSize: 0,
       }));
       setUploadedFiles((prev) => [...prev, ...newFiles]);
 
@@ -89,10 +122,16 @@ const FileHistoryNew = () => {
 
           // Step 2: Send to backend
           await sendToBackend(fileUpload.file, azureUrl);
-        } catch {
+        } catch (error: any) {
           setUploadedFiles((prev) =>
             prev.map((f) =>
-              f.file === fileUpload.file ? { ...f, status: 'error' } : f,
+              f.file === fileUpload.file 
+                ? { 
+                    ...f, 
+                    status: 'error',
+                    errorMessage: error?.response?.data?.message || error?.message || 'Failed to upload file. Please try again.'
+                  } 
+                : f
             ),
           );
         }
@@ -100,8 +139,8 @@ const FileHistoryNew = () => {
     }
     fileInputRef.current.value = '';
   };
+
   useEffect(() => {
-    // setIsLoading(true);
     Application.getFilleList({ member_id: id })
       .then((res) => {
         if (res.data) {
@@ -112,12 +151,9 @@ const FileHistoryNew = () => {
       })
       .catch((err) => {
         console.error(err);
-        // setError("Failed to fetch client data");
-      })
-      .finally(() => {
-        // setIsLoading(false);
       });
   }, [id]);
+
   return (
     <>
       <div className="w-full">
@@ -144,7 +180,14 @@ const FileHistoryNew = () => {
         <div className="mt-4 space-y-2">
           {uploadedFiles.map((fileUpload, index) => (
             <div key={index}>
-              <FileBox el={fileUpload}></FileBox>
+              <FileBox 
+                el={{
+                  ...fileUpload,
+                  uploadedSize: fileUpload.uploadedSize || 0,
+                  totalSize: fileUpload?.file?.size,
+                  formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`
+                }}
+              />
             </div>
           ))}
         </div>

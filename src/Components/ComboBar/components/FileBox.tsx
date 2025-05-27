@@ -8,6 +8,15 @@ import { useState } from 'react';
 interface FileBoxProps {
   el: any;
 }
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 KB';
+  const k = 1024;
+  const sizes = ['KB', 'KB', 'KB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+};
+
 const FileBox: React.FC<FileBoxProps> = ({ el }) => {
   console.log(el);
   const { id } = useParams<{ id: string }>();
@@ -106,8 +115,13 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
           <>
             <div className="w-full flex justify-between">
               <div>
-                <div className="text-Text-Secondary  text-[10px] md:text-[10px] mt-1">
-                  {el.progress}% •
+                <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
+                  {el.formattedSize || `${formatFileSize(el.uploadedSize || 0)} / ${formatFileSize(el.totalSize || 0)}`}
+                </div>
+              </div>
+              <div>
+                <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
+                  {el.progress < 50 ? 'Uploading to Azure...' : 'Sending to backend...'} {Math.round(el.progress)}%
                 </div>
               </div>
             </div>
@@ -118,6 +132,14 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
               ></div>
             </div>
           </>
+        )}
+        {el.status === 'error' && (
+          <div className="flex items-center gap-2 mt-2">
+            {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}
+            <div className="text-red-500 text-[10px]">
+              {el.errorMessage || 'Failed to upload file. Please try again.'}
+            </div>
+          </div>
         )}
         {isUploded && (
           <div>
