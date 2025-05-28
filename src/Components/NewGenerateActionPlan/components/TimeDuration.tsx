@@ -3,11 +3,12 @@ import { useState, useRef, useEffect, FC } from 'react';
 
 interface TimeDurationProps {
   setDuration: (value: any) => void;
+  duration: number;
 }
 
-const TimeDuration: FC<TimeDurationProps> = ({ setDuration }) => {
+const TimeDuration: FC<TimeDurationProps> = ({ setDuration, duration }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(duration);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const options = [
