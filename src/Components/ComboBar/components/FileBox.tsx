@@ -62,49 +62,50 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
           >
             {el.file_name || el.file.name}
           </div>
-          
+
           <div className="w-[70px] text-center">
-            {formatDate(el.date_uploaded?el.date_uploaded:new Date().toDateString())}
+            {formatDate(
+              el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
+            )}
           </div>
-          
-          
+
           <div className="flex w-[55px] justify-center gap-1">
             <img
               onClick={() => {
-                if(el.file_id){
-                    Application.downloadFille({
-                      file_id: el.file_id,
-                      member_id: id,
-                    })
-                      .then((res) => {
-                        try {
-                          const blobUrl = res.data;
-    
-                          // Create a direct download link for the blob URL
-                          const link = document.createElement('a');
-                          link.href = blobUrl;
-                          link.download = el.file_name;
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        } catch (error: any) {
-                          console.error('Error downloading file:', error);
-                          console.error('Error details:', {
-                            errorName: error?.name,
-                            errorMessage: error?.message,
-                            errorStack: error?.stack,
-                          });
-                        }
-                      })
-                      .catch((error: any) => {
+                if (el.file_id) {
+                  Application.downloadFille({
+                    file_id: el.file_id,
+                    member_id: id,
+                  })
+                    .then((res) => {
+                      try {
+                        const blobUrl = res.data;
+
+                        // Create a direct download link for the blob URL
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = el.file_name;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      } catch (error: any) {
                         console.error('Error downloading file:', error);
                         console.error('Error details:', {
                           errorName: error?.name,
                           errorMessage: error?.message,
                           errorStack: error?.stack,
                         });
+                      }
+                    })
+                    .catch((error: any) => {
+                      console.error('Error downloading file:', error);
+                      console.error('Error details:', {
+                        errorName: error?.name,
+                        errorMessage: error?.message,
+                        errorStack: error?.stack,
                       });
-                }else {
+                    });
+                } else {
                   // For direct file object, create a blob URL
                   const blobUrl = URL.createObjectURL(el.file);
 
@@ -115,18 +116,16 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
                   document.body.appendChild(link);
                   link.click();
                   document.body.removeChild(link);
-                  
+
                   // Clean up the blob URL
                   URL.revokeObjectURL(blobUrl);
                 }
-              }
-              }
+              }}
               className="cursor-pointer -mt-[3px]"
               src="/icons/import.svg"
               alt=""
             />
           </div>
-          
         </div>
         {el.progress && el.status == 'uploading' && (
           <>
@@ -139,10 +138,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
               </div>
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {el.progress < 50
-                    ? ' '
-                    : ''}{' '}
-                  {Math.round(el.progress)}%
+                  {el.progress < 50 ? ' ' : ''} {Math.round(el.progress)}%
                 </div>
               </div>
             </div>
