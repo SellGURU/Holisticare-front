@@ -4,12 +4,13 @@ const YoupValidation = (type: string) => {
   if (type == 'email') {
     return yup
       .string()
-      .email('Enter a valid email')
-      .required('Email is required');
+      .required('This field is required')
+      .email('Invalid email address. Please try again.');
   }
   if (type == 'password') {
     return yup
       .string()
+      .required('This field is required')
       .min(8, 'Password must be at least 8 characters')
       .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
       .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
@@ -17,8 +18,7 @@ const YoupValidation = (type: string) => {
       .matches(
         /[@$!%*?&#]/,
         'Password must contain at least one special character',
-      )
-      .required('Password is required');
+      );
   }
   return yup.string();
 };

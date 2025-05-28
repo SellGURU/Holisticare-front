@@ -17,8 +17,13 @@ const validationSchema = yup.object({
   password: YoupValidation('password'),
   userName: yup
     .string()
-    .min(4, 'Full name must be at least 4 characters')
-    .required('Full name is required'),
+    .required('This field is required')
+    .matches(/^[A-Za-z\s]+$/, 'Full name must only contain letters and spaces')
+    .test('two-words', 'Full name must contain at least 2 words', value => {
+      if (!value) return false;
+      const words = value.trim().split(/\s+/);
+      return words.length >= 2;
+    }),
 });
 const SignUp = () => {
   const navigate = useNavigate();
@@ -31,37 +36,52 @@ const SignUp = () => {
       userName: '',
     },
     validationSchema,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
-    onSubmit: () => {},
+    onSubmit: () => {
+      submit();
+    },
   });
   const submit = () => {
-    setIsLoading(true);
-    Auth.signup(
-      formik.values.userName,
-      formik.values.email,
-      formik.values.password,
-    )
-      .then(() => {
-        return Auth.login(formik.values.email, formik.values.password);
-      })
-      .then((res) => {
-        appContext.login(res.data.access_token, res.data.permission);
-        navigate('/');
-      })
-      .catch((error) => {
-     
-        if (error.detail) {
-          console.log(error.detail);
-          formik.setErrors({ email: error.detail });
-          formik.setFieldTouched('email', true, false);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    // Mark all fields as touched to trigger validation errors
+    formik.setTouched({
+      email: true,
+      password: true,
+      userName: true
+    });
+    
+    // Validate form and show errors
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        return;
+      }
+      
+      setIsLoading(true);
+      Auth.signup(
+        formik.values.userName,
+        formik.values.email,
+        formik.values.password,
+      )
+        .then(() => {
+          return Auth.login(formik.values.email, formik.values.password);
+        })
+        .then((res) => {
+          appContext.login(res.data.access_token, res.data.permission);
+          navigate('/');
+        })
+        .catch((error) => {
+          if (error.detail.includes('email')) {
+            
+            formik.setErrors({ email: 'This email is already registered in our system.' });
+            formik.setFieldTouched('email', true, false);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    });
   };
-  
+
   const [showPasswordModal, setshowPasswordModal] = useState(false);
   const passwordModalRef = useRef<HTMLDivElement | null>(null);
   const closeBtn = useRef<HTMLImageElement | null>(null);
@@ -87,6 +107,10 @@ const SignUp = () => {
             }
             errorMessage={formik.errors?.userName}
             {...formik.getFieldProps('userName')}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              formik.validateField('userName');
+            }}
             placeholder="Enter your full name..."
             label="Full name"
             type="text"
@@ -98,6 +122,10 @@ const SignUp = () => {
             }
             errorMessage={formik.errors?.email}
             {...formik.getFieldProps('email')}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              formik.validateField('email');
+            }}
             placeholder="Enter your email address..."
             label="Email Address"
             type="email"
@@ -110,6 +138,10 @@ const SignUp = () => {
                 (formik.touched?.password as boolean)
               }
               {...formik.getFieldProps('password')}
+              onBlur={(e) => {
+                formik.handleBlur(e);
+                formik.validateField('password');
+              }}
               placeholder="Enter your password..."
               label="Password"
               type="password"
@@ -140,7 +172,7 @@ const SignUp = () => {
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
-            disabled={!formik.isValid || formik.values.userName.length == 0}
+            // disabled={!formik.isValid || formik.values.userName.length == 0}
             onClick={() => {
               submit();
             }}

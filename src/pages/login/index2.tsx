@@ -23,34 +23,49 @@ const Login = () => {
       password: '',
     },
     validationSchema,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
-    onSubmit: () => {},
+    onSubmit: () => {
+      submit();
+    },
   });
   const navigate = useNavigate();
   const appContext = useApp();
   const [isLoading, setIsLoading] = useState(false);
   const submit = () => {
-    setIsLoading(true);
-    Auth.login(formik.values.email, formik.values.password)
-      .then((res) => {
-        appContext.login(res.data.access_token, res.data.permission);
-        navigate('/');
-      })
-      .catch((res) => {
-        if (res.detail) {
-          if (res.detail.includes('email')) {
-            formik.setFieldError('email', res.detail);
-          } else if (res.detail.includes('password')) {
-            formik.setFieldError('password', res.detail);
-          } else {
-            formik.setFieldError('email', res.detail);
+    // Mark all fields as touched to trigger validation errors
+    formik.setTouched({
+      email: true,
+      password: true
+    });
+    
+    // Validate form and show errors
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        return;
+      }
+      
+      setIsLoading(true);
+      Auth.login(formik.values.email, formik.values.password)
+        .then((res) => {
+          appContext.login(res.data.access_token, res.data.permission);
+          navigate('/');
+        })
+        .catch((res) => {
+          if (res.detail) {
+            if (res.detail.includes('email')) {
+              formik.setFieldError('email', 'This email address is not registered in our system.');
+            } else if (res.detail.includes('password')) {
+              formik.setFieldError('password', ' Incorrect password. Please try again.');
+            } else {
+              formik.setFieldError('email', res.detail);
+            }
           }
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    });
   };
   return (
     <>
@@ -69,6 +84,10 @@ const Login = () => {
             }
             errorMessage={formik.errors?.email}
             {...formik.getFieldProps('email')}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              formik.validateField('email');
+            }}
             placeholder="Enter your email address..."
             label="Email Address"
             type="email"
@@ -81,6 +100,10 @@ const Login = () => {
                 (formik.touched?.password as boolean)
               }
               {...formik.getFieldProps('password')}
+              onBlur={(e) => {
+                formik.handleBlur(e);
+                formik.validateField('password');
+              }}
               placeholder="Enter your password..."
               label="Password"
               type="password"
@@ -98,11 +121,6 @@ const Login = () => {
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
-            disabled={
-              !formik.isValid ||
-              formik.values.email.length == 0 ||
-              Object.values(formik.errors).some((error) => error !== '')
-            }
             onClick={() => {
               submit();
             }}
