@@ -16,13 +16,29 @@ const AddClient = () => {
   const [showValidation, setShowValidation] = useState(false);
   const [apiError, setApiError] = useState('');
   const [dobApiError, setDobApiError] = useState('');
+  const [photoError, setPhotoError] = useState('');
 
   const validationSchema = yup.object({
     age: yup.number().min(12).max(60),
     email: YoupValidation('email'),
-    firstName: yup.string().required('First name is required'),
-    lastName: yup.string().required('Last name is required'),
-    gender: yup.string().notOneOf(['unset'], 'Gender is required').required(),
+    firstName: yup
+      .string()
+      .required('This field is required.')
+      .matches(
+        /^[A-Za-z\u0600-\u06FF\s]+$/,
+        'First name must only contain letters.',
+      ),
+    lastName: yup
+      .string()
+      .required('This field is required.')
+      .matches(
+        /^[A-Za-z\u0600-\u06FF\s]+$/,
+        'Last name must only contain letters.',
+      ),
+    gender: yup
+      .string()
+      .notOneOf(['unset'], 'This field is required.')
+      .required(),
   });
 
   const formik = useFormik({
@@ -111,9 +127,7 @@ const AddClient = () => {
           setDobApiError('Client must be at least 18 years old.');
         }
         if (errorDetail === 'Client already exists.') {
-          setApiError(
-            'Enter a valid email address. This email is already associated with another client.',
-          );
+          setApiError('An account with this email address already exists.');
         }
       })
       .finally(() => {
@@ -141,10 +155,11 @@ const AddClient = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  console.log(showValidation);
-  console.log(apiError);
-
-  console.log('formik.errors => ', formik.errors);
+  useEffect(() => {
+    if (apiError) {
+      setApiError('');
+    }
+  }, [formik.values.email]);
 
   return (
     <>
@@ -392,7 +407,7 @@ const AddClient = () => {
                         }
                         errorMessage={
                           showValidation && dateOfBirth == null
-                            ? 'Date of birth is required'
+                            ? 'This field is required.'
                             : dobApiError
                         }
                       />
@@ -410,8 +425,9 @@ const AddClient = () => {
                       : ''
                   }
                   inValid={Boolean(
-                    (formik.touched.email || showValidation) &&
-                      formik.errors.email,
+                    ((formik.touched.email || showValidation) &&
+                      formik.errors.email) ||
+                      apiError,
                   )}
                   placeholder="Enter client’s email address..."
                 />
@@ -466,6 +482,18 @@ const AddClient = () => {
                       accept=".jpeg, .jpg, .png"
                       onChange={(e: any) => {
                         const file = e.target.files[0];
+                        if (!file) return;
+
+                        const maxSizeInBytes = 4 * 1024 * 1024;
+
+                        if (file.size > maxSizeInBytes) {
+                          setPhotoError(
+                            'File exceeds 4 MB or has an unsupported format.',
+                          );
+                          return;
+                        }
+
+                        setPhotoError('');
                         convertToBase64(file).then((res) => {
                           setPhoto(res.url);
                         });
@@ -474,6 +502,11 @@ const AddClient = () => {
                       className="w-full absolute invisible h-full left-0 top-0"
                     />
                   </div>
+                  {photoError && (
+                    <div className="text-[10px] font-medium mt-1 text-Red">
+                      {photoError}
+                    </div>
+                  )}
                 </div>
                 <div className="w-full h-fit flex justify-center mt-4">
                   <ButtonPrimary
