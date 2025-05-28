@@ -13,7 +13,7 @@ import AuthWithGoogle from '../../Components/AuthWithGoogle';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
-  password: YoupValidation('password'),
+  password: yup.string().required('This field is required'),
 });
 
 const Login = () => {
@@ -36,15 +36,15 @@ const Login = () => {
     // Mark all fields as touched to trigger validation errors
     formik.setTouched({
       email: true,
-      password: true
+      password: true,
     });
-    
+
     // Validate form and show errors
     formik.validateForm().then((errors) => {
       if (Object.keys(errors).length > 0) {
         return;
       }
-      
+
       setIsLoading(true);
       Auth.login(formik.values.email, formik.values.password)
         .then((res) => {
@@ -54,9 +54,15 @@ const Login = () => {
         .catch((res) => {
           if (res.detail) {
             if (res.detail.includes('email')) {
-              formik.setFieldError('email', 'This email address is not registered in our system.');
+              formik.setFieldError(
+                'email',
+                'This email address is not registered in our system.',
+              );
             } else if (res.detail.includes('password')) {
-              formik.setFieldError('password', ' Incorrect password. Please try again.');
+              formik.setFieldError(
+                'password',
+                ' Incorrect password. Please try again.',
+              );
             } else {
               formik.setFieldError('email', res.detail);
             }

@@ -19,7 +19,7 @@ const validationSchema = yup.object({
     .string()
     .required('This field is required')
     .matches(/^[A-Za-z\s]+$/, 'Full name must only contain letters and spaces')
-    .test('two-words', 'Full name must contain at least 2 words', value => {
+    .test('two-words', 'Full name must contain at least 2 words', (value) => {
       if (!value) return false;
       const words = value.trim().split(/\s+/);
       return words.length >= 2;
@@ -47,15 +47,15 @@ const SignUp = () => {
     formik.setTouched({
       email: true,
       password: true,
-      userName: true
+      userName: true,
     });
-    
+
     // Validate form and show errors
     formik.validateForm().then((errors) => {
       if (Object.keys(errors).length > 0) {
         return;
       }
-      
+
       setIsLoading(true);
       Auth.signup(
         formik.values.userName,
@@ -71,8 +71,9 @@ const SignUp = () => {
         })
         .catch((error) => {
           if (error.detail.includes('email')) {
-            
-            formik.setErrors({ email: 'This email is already registered in our system.' });
+            formik.setErrors({
+              email: 'This email is already registered in our system.',
+            });
             formik.setFieldTouched('email', true, false);
           }
         })

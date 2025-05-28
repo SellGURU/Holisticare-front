@@ -14,7 +14,10 @@ import YoupValidation from '../../validation';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 
 const validationSchema = yup.object({
-  email: YoupValidation('email'),
+  email: yup
+    .string()
+    .required('This field is required')
+    .email('Invalid email address. Please try again.'),
 });
 
 const validationSchema2 = yup.object({
@@ -24,6 +27,19 @@ const validationSchema2 = yup.object({
     .oneOf([yup.ref('password'), ''], 'Passwords must match')
     .required('Confirm Password is required'),
 });
+
+const codeValidationSchema = yup.object({
+  code: yup
+    .string()
+    .test('length', 'The code must be 4 digits', value => {
+      if (!value) return false;
+      if (value.length === 4) return true;
+      return false;
+    })
+    .matches(/^\d+$/, 'The code should contain only numbers')
+    .required('Confirmation code is required'),
+});
+
 const ForgetPassword = () => {
   const [step, setStep] = useState(0);
   const [codeError, setCodeError] = useState('');
@@ -32,7 +48,7 @@ const ForgetPassword = () => {
       email: '',
     },
     validationSchema,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {},
   });
@@ -43,7 +59,16 @@ const ForgetPassword = () => {
       confirm: '',
     },
     validationSchema: validationSchema2,
-    validateOnChange: true,
+    validateOnChange: false,
+    validateOnBlur: true,
+    onSubmit: () => {},
+  });
+  const codeFormik = useFormik({
+    initialValues: {
+      code: '',
+    },
+    validationSchema: codeValidationSchema,
+    validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {},
   });
@@ -79,6 +104,10 @@ const ForgetPassword = () => {
                 }
                 errorMessage={formik.errors?.email}
                 {...formik.getFieldProps('email')}
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  formik.validateField('email');
+                }}
                 placeholder="Enter your email address..."
                 label="Email Address"
                 type="email"
@@ -86,23 +115,33 @@ const ForgetPassword = () => {
             </div>
             <ButtonSecondary
               onClick={() => {
-                setIsLoading(true);
-                Application.SendVerification({
-                  email: formik.values.email,
-                })
-                  .then(() => {
-                    setStep(1);
+                formik.setTouched({
+                  email: true
+                });
+                
+                formik.validateForm().then((errors) => {
+                  if (Object.keys(errors).length > 0) {
+                    return;
+                  }
+                  
+                  setIsLoading(true);
+                  Application.SendVerification({
+                    email: formik.values.email,
                   })
-                  .catch((res) => {
-                    if (res.detail) {
-                      formik.setFieldError('email', res.detail);
-                    }
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
-                  });
+                    .then(() => {
+                      setStep(1);
+                    })
+                    .catch((res) => {
+                      if (res.detail) {
+                        formik.setFieldError('email', 'This email address is not registered in our system.');
+                      }
+                    })
+                    .finally(() => {
+                      setIsLoading(false);
+                    });
+                });
               }}
-              disabled={!formik.isValid || formik.values.email.length == 0}
+              // disabled={!formik.isValid || formik.values.email.length == 0}
               ClassName="rounded-[20px]"
             >
               {isLoading ? (
@@ -148,9 +187,16 @@ const ForgetPassword = () => {
             <VerificationInput
               placeholder=""
               value={codeValue}
+              validChars="0-9"
               onChange={(val) => {
                 setCodeValue(val);
                 setCodeError('');
+                codeFormik.setFieldValue('code', val);
+                if (val.length === 4) {
+                  codeFormik.setFieldError('code', '');
+                } else if (val.length > 0) {
+                  codeFormik.validateField('code');
+                }
               }}
               classNames={{
                 container: 'vari-container',
@@ -161,9 +207,9 @@ const ForgetPassword = () => {
               }}
               length={4}
             />
-            {codeError && (
+            {(codeError || codeFormik.errors.code) && (
               <div className="text-Red text-[10px] mt-6 text-center">
-                {codeError}
+                {codeError || codeFormik.errors.code}
               </div>
             )}
           </div>
@@ -194,24 +240,31 @@ const ForgetPassword = () => {
           <div className="mt-8 w-full grid">
             <ButtonSecondary
               onClick={() => {
-                setIsLoading(true);
-                Application.varifyCode({
-                  email: formik.values.email,
-                  reset_code: codeValue,
-                })
-                  .then(() => {
-                    setStep(2);
+                codeFormik.setTouched({ code: true });
+                codeFormik.validateForm().then((errors) => {
+                  if (Object.keys(errors).length > 0) {
+                    return;
+                  }
+                  
+                  setIsLoading(true);
+                  Application.varifyCode({
+                    email: formik.values.email,
+                    reset_code: codeValue,
                   })
-                  .catch((error) => {
-                    if (error.detail) {
-                      setCodeError(error.detail);
-                    }
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
-                  });
+                    .then(() => {
+                      setStep(2);
+                    })
+                    .catch((error) => {
+                      if (error.detail) {
+                        setCodeError('Invalid or expired code. Please try again.');
+                      }
+                    })
+                    .finally(() => {
+                      setIsLoading(false);
+                    });
+                });
               }}
-              disabled={codeValue.length < 4}
+              // disabled={codeValue.length < 4}
               ClassName="rounded-[20px]"
             >
               {isLoading ? (
@@ -259,6 +312,10 @@ const ForgetPassword = () => {
                   (formik2.touched?.password as boolean)
                 }
                 {...formik2.getFieldProps('password')}
+                onBlur={(e) => {
+                  formik2.handleBlur(e);
+                  formik2.validateField('password');
+                }}
                 placeholder="Enter your password..."
                 label="Password"
                 type="password"
@@ -295,25 +352,39 @@ const ForgetPassword = () => {
                   (formik2.touched?.confirm as boolean)
                 }
                 {...formik2.getFieldProps('confirm')}
+                onBlur={(e) => {
+                  formik2.handleBlur(e);
+                  formik2.validateField('confirm');
+                }}
                 placeholder="Confirm password ...."
                 label="Confirm Password"
                 type="password"
               ></TextField>
             </div>
             <ButtonSecondary
-              disabled={!formik2.isValid || formik2.values.password.length == 0}
               onClick={() => {
-                setIsLoading(true);
-                Application.ChangePassword({
-                  email: formik.values.email,
-                  password: formik2.values.password,
-                })
-                  .then(() => {
-                    setPasswordChanged(true);
+                formik2.setTouched({
+                  password: true,
+                  confirm: true
+                });
+                
+                formik2.validateForm().then((errors) => {
+                  if (Object.keys(errors).length > 0) {
+                    return;
+                  }
+                  
+                  setIsLoading(true);
+                  Application.ChangePassword({
+                    email: formik.values.email,
+                    password: formik2.values.password,
                   })
-                  .finally(() => {
-                    setIsLoading(false);
-                  });
+                    .then(() => {
+                      setPasswordChanged(true);
+                    })
+                    .finally(() => {
+                      setIsLoading(false);
+                    });
+                });
               }}
               ClassName="rounded-[20px]"
             >
