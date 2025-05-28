@@ -2,7 +2,10 @@
 import { useState } from 'react';
 import { sortKeysWithValues } from './Components/RepoerAnalyse/Boxs/Help';
 import AzureBlobService from './services/azureBlobService';
-import { AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_CONTAINER_NAME } from './config/azure';
+import {
+  AZURE_STORAGE_CONNECTION_STRING,
+  AZURE_STORAGE_CONTAINER_NAME,
+} from './config/azure';
 
 const useConstructor = (callBack = () => {}) => {
   const [hasBeenCalled, setHasBeenCalled] = useState(false);
@@ -129,7 +132,10 @@ const splitInstructions = (instruction: string) => {
   };
 };
 
-const uploadToAzure = async (file: File,onProgress?: (progress: number) => void): Promise<string> => {
+const uploadToAzure = async (
+  file: File,
+  onProgress?: (progress: number) => void,
+): Promise<string> => {
   try {
     AzureBlobService.initialize(
       AZURE_STORAGE_CONNECTION_STRING,

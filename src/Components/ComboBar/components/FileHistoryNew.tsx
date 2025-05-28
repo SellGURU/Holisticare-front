@@ -161,15 +161,21 @@ const FileHistoryNew = () => {
       for (const fileUpload of newFiles) {
         try {
           // Step 1: Upload to Azure
-          const azureUrl = await uploadToAzure(fileUpload.file,(progress) => {
-              const uploadedBytes = Math.floor((progress / 100) * fileUpload.file.size);
-              setUploadedFiles((prev) =>
-                prev.map((f) =>
-                  f.file === fileUpload.file
-                    ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes }
-                    : f,
-                ),
-              );    
+          const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
+            const uploadedBytes = Math.floor(
+              (progress / 100) * fileUpload.file.size,
+            );
+            setUploadedFiles((prev) =>
+              prev.map((f) =>
+                f.file === fileUpload.file
+                  ? {
+                      ...f,
+                      progress: progress / 2,
+                      uploadedSize: uploadedBytes,
+                    }
+                  : f,
+              ),
+            );
           });
 
           // Step 2: Send to backend
