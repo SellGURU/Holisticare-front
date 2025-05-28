@@ -310,25 +310,29 @@ const Card: React.FC<CardProps> = ({
           <>{title}</>
         )}
 
-        {isEditing ? (
-          <img
-            className="cursor-pointer size-6"
-            src="/icons/tick-square-background-green.svg"
-            alt=""
-            onClick={onSave}
-          />
-        ) : (
-          <div
-            onClick={onEdit}
-            className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
-          >
-            <img
-              className="size-6"
-              src="/icons/edit-2.svg"
-              alt=""
-              style={{ cursor: 'pointer' }}
-            />
-          </div>
+        {!addNew && (
+          <>
+            {isEditing ? (
+              <img
+                className="cursor-pointer size-6"
+                src="/icons/tick-square-background-green.svg"
+                alt=""
+                onClick={onSave}
+              />
+            ) : (
+              <div
+                onClick={onEdit}
+                className="size-8 rounded-md border p-1 border-Gray-50 bg-white flex ite justify-center"
+              >
+                <img
+                  className="size-6"
+                  src="/icons/edit-2.svg"
+                  alt=""
+                  style={{ cursor: 'pointer' }}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
 
