@@ -953,6 +953,9 @@ class Application extends Api {
   static has_unread_message = (data: any) => {
     return this.post('/has_unread_message', data);
   };
+  static getHolisticPlanReview = (data: any) => {
+    return this.post('/action_plan/holistic_plan', data);
+  };
 }
 
 export default Application;
