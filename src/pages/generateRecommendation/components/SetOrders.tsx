@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { MainModal } from '../../../Components';
@@ -159,10 +158,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
     // const nextTabName = visibleCategories[currentIndex + 1];
     setIsLoading(false);
     const backIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
-    console.log(
-      'visibleCategories[backIndex] => ',
-      visibleCategories[backIndex],
-    );
 
     setActiveCategory(visibleCategories[backIndex]);
   };
