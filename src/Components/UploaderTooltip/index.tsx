@@ -35,7 +35,7 @@ const UploaderTooltipContainer = () => {
                 alt=""
               />
             </div>
-            <div className='w-full max-h-[300px] pr-2 overflow-y-auto'>
+            <div className="w-full max-h-[300px] pr-2 overflow-y-auto">
               {files?.map((file: any) => {
                 return (
                   <>
@@ -43,7 +43,6 @@ const UploaderTooltipContainer = () => {
                   </>
                 );
               })}
-
             </div>
             {files?.length == 0 && (
               <>

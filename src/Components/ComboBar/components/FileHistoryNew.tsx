@@ -60,11 +60,15 @@ const FileHistoryNew = () => {
   }, []);
   useEffect(() => {
     if (
-      uploadedFiles.filter((el: any) => el.status == 'uploading' || el.status == 'error').length > 0
+      uploadedFiles.filter(
+        (el: any) => el.status == 'uploading' || el.status == 'error',
+      ).length > 0
     ) {
       publish('fileIsUploading', {
         isUploading: true,
-        files: uploadedFiles.filter((el: any) => el.status == 'uploading' || el.status == 'error'),
+        files: uploadedFiles.filter(
+          (el: any) => el.status == 'uploading' || el.status == 'error',
+        ),
       });
     } else {
       publish('fileIsUploading', { isUploading: false });

@@ -9,7 +9,6 @@ const formatFileSize = (bytes: number): string => {
 };
 
 const UploadItem: React.FC<UploadItemProps> = ({ file }) => {
-
   return (
     <>
       <div
@@ -38,15 +37,13 @@ const UploadItem: React.FC<UploadItemProps> = ({ file }) => {
             <div className="w-full flex justify-between">
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {formatFileSize(file.uploadedSize || 0)} / {formatFileSize(file?.file?.size || 1)}
+                  {formatFileSize(file.uploadedSize || 0)} /{' '}
+                  {formatFileSize(file?.file?.size || 1)}
                 </div>
               </div>
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {file.progress < 50
-                    ? ' '
-                    : ' '}{' '}
-                  {Math.round(file.progress)}%
+                  {file.progress < 50 ? ' ' : ' '} {Math.round(file.progress)}%
                 </div>
               </div>
             </div>
