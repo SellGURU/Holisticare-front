@@ -39,7 +39,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence, customTheme }) => {
           </div>
         </div>
         <div className="text-[10px] mt-1 text-center text-Text-Primary">
-          {customTheme.headLine ? customTheme.headLine : 'Clinic Longevity 1'}{' '}
+          {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
         </div>
         <div className="text-[8px] mt-[2px] text-center text-Text-Triarty">
           Clinic.Longevity@gmail.com
