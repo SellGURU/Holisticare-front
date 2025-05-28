@@ -4,14 +4,12 @@ interface UploadItemProps {
   file: any;
 }
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 KB';
-  const k = 1024;
-  const sizes = ['KB', 'KB', 'KB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  const kb = bytes / 1024;
+  return `${kb.toFixed(1)} KB`;
 };
 
 const UploadItem: React.FC<UploadItemProps> = ({ file }) => {
+
   return (
     <>
       <div
@@ -40,15 +38,14 @@ const UploadItem: React.FC<UploadItemProps> = ({ file }) => {
             <div className="w-full flex justify-between">
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {file.formattedSize ||
-                    `${formatFileSize(file.uploadedSize || 0)} / ${formatFileSize(file.totalSize || 0)}`}
+                  {formatFileSize(file.uploadedSize || 0)} / {formatFileSize(file?.file?.size || 1)}
                 </div>
               </div>
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
                   {file.progress < 50
-                    ? 'Uploading to Azure...'
-                    : 'Sending to backend...'}{' '}
+                    ? ' '
+                    : ' '}{' '}
                   {Math.round(file.progress)}%
                 </div>
               </div>

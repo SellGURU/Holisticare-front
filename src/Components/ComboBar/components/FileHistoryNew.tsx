@@ -60,11 +60,11 @@ const FileHistoryNew = () => {
   }, []);
   useEffect(() => {
     if (
-      uploadedFiles.filter((el: any) => el.status == 'uploading').length > 0
+      uploadedFiles.filter((el: any) => el.status == 'uploading' || el.status == 'error').length > 0
     ) {
       publish('fileIsUploading', {
         isUploading: true,
-        files: uploadedFiles.filter((el: any) => el.status == 'uploading'),
+        files: uploadedFiles.filter((el: any) => el.status == 'uploading' || el.status == 'error'),
       });
     } else {
       publish('fileIsUploading', { isUploading: false });
@@ -154,7 +154,7 @@ const FileHistoryNew = () => {
     if (files) {
       const newFiles = Array.from(files).map((file) => ({
         file,
-        progress: 0,
+        progress: 0.5,
         status: 'uploading' as const,
         uploadedSize: 0,
       }));
@@ -242,6 +242,7 @@ const FileHistoryNew = () => {
                     ...fileUpload,
                     uploadedSize: fileUpload.uploadedSize || 0,
                     totalSize: fileUpload?.file?.size,
+                    progress: fileUpload.progress || 0.5,
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
                 />

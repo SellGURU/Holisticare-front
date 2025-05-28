@@ -9,13 +9,6 @@ interface FileBoxProps {
   el: any;
 }
 
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 KB';
-  const k = 1024;
-  const sizes = ['KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-};
 
 const FileBox: React.FC<FileBoxProps> = ({ el }) => {
   console.log(el);
@@ -127,29 +120,32 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
             />
           </div>
         </div>
-        {el.progress && el.status == 'uploading' && (
-          <>
-            <div className="w-full flex justify-between">
-              <div>
-                <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {el.formattedSize ||
-                    `${formatFileSize(el.uploadedSize || 0)} / ${formatFileSize(el.totalSize || 0)}`}
+        {el.progress &&
+        <>
+          { el.status == 'uploading' && (
+            <>
+              <div className="w-full flex justify-between">
+                <div>
+                  <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
+                    {el.formattedSize }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
+                    {el.progress < 50 ? ' ' : ''} {Math.round(el.progress)}%
+                  </div>
                 </div>
               </div>
-              <div>
-                <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
-                  {el.progress < 50 ? ' ' : ''} {Math.round(el.progress)}%
-                </div>
+              <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                <div
+                  className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                  style={{ width: el.progress + '%' }}
+                ></div>
               </div>
-            </div>
-            <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-              <div
-                className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                style={{ width: el.progress + '%' }}
-              ></div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </>
+        }
         {el.status === 'error' && (
           <div className="flex items-center gap-2 mt-2">
             {/* <img src="/icons/error.svg" alt="Error" className="w-4 h-4" /> */}

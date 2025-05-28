@@ -35,13 +35,16 @@ const UploaderTooltipContainer = () => {
                 alt=""
               />
             </div>
-            {files?.map((file: any) => {
-              return (
-                <>
-                  <UploadItem file={file}></UploadItem>
-                </>
-              );
-            })}
+            <div className='w-full max-h-[300px] pr-2 overflow-y-auto'>
+              {files?.map((file: any) => {
+                return (
+                  <>
+                    <UploadItem file={file}></UploadItem>
+                  </>
+                );
+              })}
+
+            </div>
             {files?.length == 0 && (
               <>
                 <div className="flex items-center justify-start gap-1 mt-4">
