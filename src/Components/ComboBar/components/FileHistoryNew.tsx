@@ -162,7 +162,7 @@ const FileHistoryNew = () => {
         status: 'uploading' as const,
         uploadedSize: 0,
       }));
-      setUploadedFiles((prev) => [...newFiles,...prev]);
+      setUploadedFiles((prev) => [...newFiles, ...prev]);
 
       // Process each file
       for (const fileUpload of newFiles) {
@@ -207,10 +207,9 @@ const FileHistoryNew = () => {
       });
   }, [id]);
   subscribe('syncReport', () => {
-    Application.getFilleList({ member_id: id })
-      .then((res) => {
-        setUploadedFiles(res.data);
-      });
+    Application.getFilleList({ member_id: id }).then((res) => {
+      setUploadedFiles(res.data);
+    });
   });
   return (
     <>
