@@ -8,7 +8,7 @@ import {
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
-import { publish } from '../../../utils/event';
+import { publish, subscribe } from '../../../utils/event';
 
 interface FileUpload {
   file: File;
@@ -162,7 +162,7 @@ const FileHistoryNew = () => {
         status: 'uploading' as const,
         uploadedSize: 0,
       }));
-      setUploadedFiles((prev) => [...prev, ...newFiles]);
+      setUploadedFiles((prev) => [...newFiles,...prev]);
 
       // Process each file
       for (const fileUpload of newFiles) {
@@ -206,7 +206,12 @@ const FileHistoryNew = () => {
         console.error(err);
       });
   }, [id]);
-
+  subscribe('syncReport', () => {
+    Application.getFilleList({ member_id: id })
+      .then((res) => {
+        setUploadedFiles(res.data);
+      });
+  });
   return (
     <>
       <div className="w-full">
