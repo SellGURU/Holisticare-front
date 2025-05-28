@@ -11,6 +11,10 @@ import ActionCard from './ActionCard';
 import ActionEditModal from './ActionEditModal';
 import LibBox from './LibBox';
 import Sort from './Sort';
+import { SlideOutPanel } from '../../SlideOutPanel';
+import Circleloader from '../../CircleLoader';
+import { Tooltip } from 'react-tooltip';
+import { splitInstructions } from '../../../help';
 
 interface StadioProps {
   data: {
@@ -27,6 +31,17 @@ interface StadioProps {
   plans: any;
   isCheckSave: boolean;
   handleShowConflictsModal: () => void;
+}
+
+interface HolisticPlanProps {
+  category: string;
+  data: {
+    Based: string;
+    Client_Notes: string;
+    Notes: string;
+    title: number;
+    'Practitioner Comments': string[];
+  }[];
 }
 
 const Stadio: FC<StadioProps> = ({
@@ -267,9 +282,146 @@ const Stadio: FC<StadioProps> = ({
       console.error('Error parsing dragged item data:', error);
     }
   };
+  const category = [
+    { value: 'Diet', icon: 'diet-shapes.svg' },
+    { value: 'Activity', icon: 'activity-shapes.svg' },
+    { value: 'Supplement', icon: 'supplement-shapes.svg' },
+    { value: 'Lifestyle', icon: 'lifestyle-shapes.svg' },
+    { value: 'Other', icon: 'other-shapes.svg' },
+  ];
+  const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
+  const handleCloseSlideOutPanel = () => {
+    setIsSlideOutPanel(false);
+  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [holisticPlan, setHolisticPlan] = useState<HolisticPlanProps[]>([]);
+  const [holisticPlanIndex, setHolisticPlanIndex] = useState<number | null>(
+    null,
+  );
+  useEffect(() => {
+    if (isSlideOutPanel) {
+      setIsLoading(true);
+      Application.getHolisticPlanReview({
+        member_id: id,
+      })
+        .then((res) => {
+          setHolisticPlan(res.data.details);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [isSlideOutPanel]);
 
   return (
     <>
+      <SlideOutPanel
+        isOpen={isSlideOutPanel}
+        isCombo={true}
+        onClose={handleCloseSlideOutPanel}
+        headline="Review Holistic Plan"
+        ClassName="!z-[60] !overflow-y-auto"
+      >
+        {isLoading ? (
+          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
+            <Circleloader />
+          </div>
+        ) : (
+          <div className="w-full flex flex-col gap-2">
+            {category.map((item, index) => {
+              return (
+                <div className="w-full flex flex-col">
+                  <div
+                    key={index}
+                    className={`bg-bg-color border border-Gray-50 rounded-xl flex items-center justify-between px-4 py-2 h-[40px] cursor-pointer ${holisticPlanIndex === index ? 'rounded-b-none' : ''}`}
+                    onClick={() => {
+                      if (holisticPlanIndex === index) {
+                        setHolisticPlanIndex(null);
+                      } else {
+                        setHolisticPlanIndex(index);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-2 font-medium text-xs text-Text-Quadruple">
+                      <img src={`/icons/${item.icon}`} alt="" />
+                      {item.value}
+                    </div>
+                    <img
+                      src="/icons/arrow-down-blue.svg"
+                      alt=""
+                      className={`${holisticPlanIndex === index ? 'rotate-180' : ''} size-4`}
+                    />
+                  </div>
+                  {holisticPlanIndex === index && (
+                    <div className="bg-backgroundColor-Card border border-Gray-50 rounded-b-xl flex flex-col gap-2 px-4 py-2">
+                      {holisticPlan
+                        .filter((el) => el.category === item.value)
+                        .map((item) => {
+                          return item.data.map((el, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className="bg-white border border-Gray-50 rounded-xl p-2 flex flex-col"
+                              >
+                                <div className="font-medium text-[10px] text-Text-Primary">
+                                  {el.title}
+                                </div>
+                                <div
+                                  data-tooltip-id={`analysis-info-${index}`}
+                                  className="text-[10px] text-Primary-DeepTeal mt-1.5 cursor-pointer"
+                                >
+                                  Analysis Info
+                                </div>
+                                <Tooltip
+                                  id={`analysis-info-${index}`}
+                                  place="top"
+                                  className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                                  style={{
+                                    zIndex: 9999,
+                                    pointerEvents: 'none',
+                                  }}
+                                >
+                                  <div className="text-Text-Secondary">
+                                    {el?.['Practitioner Comments']?.[0]}
+                                  </div>
+                                </Tooltip>
+                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                    Key Benefits:
+                                  </span>
+                                  {splitInstructions(el.Notes).positive}
+                                </div>
+                                <div className="leading-5 mt-1 text-Text-Primary text-[10px]">
+                                  <span className="text-Text-Quadruple text-[10px] text-nowrap mr-1">
+                                    Key Risks:
+                                  </span>
+                                  {splitInstructions(el.Notes).negative}
+                                </div>
+                              </div>
+                            );
+                          });
+                        })}
+                      {holisticPlan.find((el) => el.category === item.value)
+                        ?.data.length === 0 && (
+                        <div className="flex flex-col items-center gap-4 my-6">
+                          <img
+                            src="/icons/empty-state-new.svg"
+                            alt=""
+                            className="w-[100px]"
+                          />
+                          <div className="font-medium text-[10px] text-Text-Primary">
+                            No recommendations found.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </SlideOutPanel>
       <ActionEditModal
         isAdd
         isOpen={showAddModal}
@@ -341,64 +493,80 @@ const Stadio: FC<StadioProps> = ({
               </div>
             )} */}
             <div
-              className={`flex-grow flex justify-end gap-3 ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
+              className={`flex-grow flex justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
-              {actions.checkIn.length !== 0 || actions.category.length !== 0 ? (
-                <div
-                  className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
-                  onClick={() => setCalendarView(true)}
-                >
-                  <img src="/icons/calendar-date.svg" alt="" className="w-5" />
-                  Calendar View
+              <div
+                className="flex items-center gap-1 pl-2 cursor-pointer"
+                onClick={() => setIsSlideOutPanel(true)}
+              >
+                <img src="/icons/eye-blue.svg" alt="" className="size-5" />
+                <div className="text-Primary-DeepTeal font-medium text-xs">
+                  Review Holistic Plan
                 </div>
-              ) : (
-                ''
-              )}
-              {selectCategory != 'Checkin' && (
-                <>
-                  {isAutoGenerateShow ? (
-                    actions.checkIn.length !== 0 ||
-                    actions.category.length !== 0 ? (
-                      !isAutoGenerateComplete ? (
-                        <ButtonSecondary
-                          ClassName="rounded-[30px] w-[141px] text-nowrap"
-                          onClick={() => {
-                            AutoGenerate();
-                          }}
-                        >
-                          {isAutoGenerate ? (
-                            <SpinnerLoader />
-                          ) : (
-                            <>
-                              <img
-                                src="/icons/tree-start-white.svg"
-                                alt=""
-                                className="mr-2"
-                              />
-                              Generate by AI
-                            </>
-                          )}
-                        </ButtonSecondary>
+              </div>
+              <div className="flex items-center gap-3">
+                {actions.checkIn.length !== 0 ||
+                actions.category.length !== 0 ? (
+                  <div
+                    className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                    onClick={() => setCalendarView(true)}
+                  >
+                    <img
+                      src="/icons/calendar-date.svg"
+                      alt=""
+                      className="w-5"
+                    />
+                    Calendar View
+                  </div>
+                ) : (
+                  ''
+                )}
+                {selectCategory != 'Checkin' && (
+                  <>
+                    {isAutoGenerateShow ? (
+                      actions.checkIn.length !== 0 ||
+                      actions.category.length !== 0 ? (
+                        !isAutoGenerateComplete ? (
+                          <ButtonSecondary
+                            ClassName="rounded-[30px] w-[141px] text-nowrap"
+                            onClick={() => {
+                              AutoGenerate();
+                            }}
+                          >
+                            {isAutoGenerate ? (
+                              <SpinnerLoader />
+                            ) : (
+                              <>
+                                <img
+                                  src="/icons/tree-start-white.svg"
+                                  alt=""
+                                  className="mr-2"
+                                />
+                                Generate by AI
+                              </>
+                            )}
+                          </ButtonSecondary>
+                        ) : (
+                          <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
+                            <img src="/icons/tick-circle-bg.svg" alt="" />
+                            Generated
+                          </div>
+                        )
                       ) : (
-                        <div className="flex items-center gap-2 text-Primary-EmeraldGreen font-medium text-xs">
-                          <img src="/icons/tick-circle-bg.svg" alt="" />
-                          Generated
-                        </div>
+                        ''
                       )
                     ) : (
                       ''
-                    )
-                  ) : (
-                    ''
-                  )}
-                  <ButtonPrimary
-                    onClick={() => setshowAddModal(true)}
-                    ClassName="w-[108px]"
-                  >
-                    <img src="/icons/add-square.svg" alt="" /> Add
-                  </ButtonPrimary>
-                </>
-              )}
+                    )}
+                    <ButtonPrimary
+                      onClick={() => setshowAddModal(true)}
+                      ClassName="w-[108px]"
+                    >
+                      <img src="/icons/add-square.svg" alt="" /> Add
+                    </ButtonPrimary>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div
