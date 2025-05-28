@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
-import AzureBlobService from '../../../services/azureBlobService';
-import {
-  AZURE_STORAGE_CONNECTION_STRING,
-  AZURE_STORAGE_CONTAINER_NAME,
-} from '../../../config/azure';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
 import { publish, subscribe } from '../../../utils/event';
+import { uploadToAzure } from '../../../help';
 
 interface FileUpload {
   file: File;
@@ -20,11 +16,8 @@ interface FileUpload {
 }
 
 const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 KB';
-  const k = 1024;
-  const sizes = ['KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  const kb = bytes / 1024;
+  return `${kb.toFixed(1)} KB`;
 };
 
 const FileHistoryNew = () => {
@@ -74,31 +67,31 @@ const FileHistoryNew = () => {
       publish('fileIsUploading', { isUploading: false });
     }
   }, [uploadedFiles]);
-  const uploadToAzure = async (file: File): Promise<string> => {
-    try {
-      AzureBlobService.initialize(
-        AZURE_STORAGE_CONNECTION_STRING,
-        AZURE_STORAGE_CONTAINER_NAME,
-      );
-      const blobUrl = await AzureBlobService.uploadFile(
-        file,
-        (progress: number) => {
-          // Calculate uploaded size based on progress (0-50%)
-          const uploadedBytes = Math.floor((progress / 100) * file.size);
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.file === file
-                ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes }
-                : f,
-            ),
-          );
-        },
-      );
-      return blobUrl;
-    } catch {
-      throw new Error('Azure upload failed');
-    }
-  };
+  // const uploadToAzure = async (file: File): Promise<string> => {
+  //   try {
+  //     AzureBlobService.initialize(
+  //       AZURE_STORAGE_CONNECTION_STRING,
+  //       AZURE_STORAGE_CONTAINER_NAME,
+  //     );
+  //     const blobUrl = await AzureBlobService.uploadFile(
+  //       file,
+  //       (progress: number) => {
+  //         // Calculate uploaded size based on progress (0-50%)
+  //         const uploadedBytes = Math.floor((progress / 100) * file.size);
+  //         setUploadedFiles((prev) =>
+  //           prev.map((f) =>
+  //             f.file === file
+  //               ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes }
+  //               : f,
+  //           ),
+  //         );
+  //       },
+  //     );
+  //     return blobUrl;
+  //   } catch {
+  //     throw new Error('Azure upload failed');
+  //   }
+  // };
 
   const sendToBackend = async (file: File, azureUrl: string) => {
     try {
@@ -168,7 +161,16 @@ const FileHistoryNew = () => {
       for (const fileUpload of newFiles) {
         try {
           // Step 1: Upload to Azure
-          const azureUrl = await uploadToAzure(fileUpload.file);
+          const azureUrl = await uploadToAzure(fileUpload.file,(progress) => {
+              const uploadedBytes = Math.floor((progress / 100) * fileUpload.file.size);
+              setUploadedFiles((prev) =>
+                prev.map((f) =>
+                  f.file === fileUpload.file
+                    ? { ...f, progress: progress / 2, uploadedSize: uploadedBytes }
+                    : f,
+                ),
+              );    
+          });
 
           // Step 2: Send to backend
           await sendToBackend(fileUpload.file, azureUrl);
@@ -246,6 +248,11 @@ const FileHistoryNew = () => {
             {uploadedFiles.map((fileUpload, index) => (
               <div key={index}>
                 <FileBox
+                  onDelete={() => {
+                    setUploadedFiles((prev) =>
+                      prev.filter((f) => f.file !== fileUpload.file),
+                    );
+                  }}
                   el={{
                     ...fileUpload,
                     uploadedSize: fileUpload.uploadedSize || 0,

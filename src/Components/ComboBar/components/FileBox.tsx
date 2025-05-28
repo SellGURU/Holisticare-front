@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
   el: any;
+  onDelete?: () => void;
 }
 
-const FileBox: React.FC<FileBoxProps> = ({ el }) => {
+const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
   console.log(el);
   const { id } = useParams<{ id: string }>();
   const formatDate = (dateString: string) => {
@@ -60,64 +61,73 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
             )}
           </div>
+          {el.status == 'error' ?
+          <>
+             <div className="flex w-[55px] justify-center gap-1">
+              <img onClick={onDelete} src="/icons/close-red.svg" alt="Error" className="w-4 h-4 cursor-pointer" />
+             </div>
+          </>
+          :
+          <>
+            <div className="flex w-[55px] justify-center gap-1">
+              <img
+                onClick={() => {
+                  if (el.file_id) {
+                    Application.downloadFille({
+                      file_id: el.file_id,
+                      member_id: id,
+                    })
+                      .then((res) => {
+                        try {
+                          const blobUrl = res.data;
 
-          <div className="flex w-[55px] justify-center gap-1">
-            <img
-              onClick={() => {
-                if (el.file_id) {
-                  Application.downloadFille({
-                    file_id: el.file_id,
-                    member_id: id,
-                  })
-                    .then((res) => {
-                      try {
-                        const blobUrl = res.data;
-
-                        // Create a direct download link for the blob URL
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = el.file_name;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      } catch (error: any) {
+                          // Create a direct download link for the blob URL
+                          const link = document.createElement('a');
+                          link.href = blobUrl;
+                          link.download = el.file_name;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        } catch (error: any) {
+                          console.error('Error downloading file:', error);
+                          console.error('Error details:', {
+                            errorName: error?.name,
+                            errorMessage: error?.message,
+                            errorStack: error?.stack,
+                          });
+                        }
+                      })
+                      .catch((error: any) => {
                         console.error('Error downloading file:', error);
                         console.error('Error details:', {
                           errorName: error?.name,
                           errorMessage: error?.message,
                           errorStack: error?.stack,
                         });
-                      }
-                    })
-                    .catch((error: any) => {
-                      console.error('Error downloading file:', error);
-                      console.error('Error details:', {
-                        errorName: error?.name,
-                        errorMessage: error?.message,
-                        errorStack: error?.stack,
                       });
-                    });
-                } else {
-                  // For direct file object, create a blob URL
-                  const blobUrl = URL.createObjectURL(el.file);
+                  } else {
+                    // For direct file object, create a blob URL
+                    const blobUrl = URL.createObjectURL(el.file);
 
-                  // Create a direct download link for the blob URL
-                  const link = document.createElement('a');
-                  link.href = blobUrl;
-                  link.download = el.file_name || el.file.name;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
+                    // Create a direct download link for the blob URL
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = el.file_name || el.file.name;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
 
-                  // Clean up the blob URL
-                  URL.revokeObjectURL(blobUrl);
-                }
-              }}
-              className="cursor-pointer -mt-[3px]"
-              src="/icons/import.svg"
-              alt=""
-            />
-          </div>
+                    // Clean up the blob URL
+                    URL.revokeObjectURL(blobUrl);
+                  }
+                }}
+                className="cursor-pointer -mt-[3px]"
+                src="/icons/import.svg"
+                alt=""
+              />
+            </div>
+          </>
+          }
         </div>
         {el.progress && (
           <>
