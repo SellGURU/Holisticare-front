@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import Application from '../../../api/app';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { publish } from '../../../utils/event';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
@@ -46,6 +46,9 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
   const [isUploded, setIsUploded] = useState(
     el.status == 'completed' ? true : false,
   );
+  useEffect(() => {
+    setIsUploded(el.status == 'completed' ? true : false);
+  }, [el.status]);
   return (
     <>
       <div
@@ -59,59 +62,71 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
           >
             {el.file_name || el.file.name}
           </div>
-          {el.date_uploaded && (
-            <div className="w-[70px] text-center">
-              {formatDate(el.date_uploaded)}
-            </div>
-          )}
-          {el.file_id && (
-            <div className="flex w-[55px] justify-center gap-1">
-              {/* <img
-                    className="cursor-pointer"
-                    src="/icons/eye-green.svg"
-                    alt=""
-                    /> */}
-              <img
-                onClick={() => {
-                  Application.downloadFille({
-                    file_id: el.file_id,
-                    member_id: id,
-                  })
-                    .then((res) => {
-                      try {
-                        const blobUrl = res.data;
-
-                        // Create a direct download link for the blob URL
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        link.download = el.file_name;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                      } catch (error: any) {
+          
+          <div className="w-[70px] text-center">
+            {formatDate(el.date_uploaded?el.date_uploaded:new Date().toDateString())}
+          </div>
+          
+          
+          <div className="flex w-[55px] justify-center gap-1">
+            <img
+              onClick={() => {
+                if(el.file_id){
+                    Application.downloadFille({
+                      file_id: el.file_id,
+                      member_id: id,
+                    })
+                      .then((res) => {
+                        try {
+                          const blobUrl = res.data;
+    
+                          // Create a direct download link for the blob URL
+                          const link = document.createElement('a');
+                          link.href = blobUrl;
+                          link.download = el.file_name;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        } catch (error: any) {
+                          console.error('Error downloading file:', error);
+                          console.error('Error details:', {
+                            errorName: error?.name,
+                            errorMessage: error?.message,
+                            errorStack: error?.stack,
+                          });
+                        }
+                      })
+                      .catch((error: any) => {
                         console.error('Error downloading file:', error);
                         console.error('Error details:', {
                           errorName: error?.name,
                           errorMessage: error?.message,
                           errorStack: error?.stack,
                         });
-                      }
-                    })
-                    .catch((error: any) => {
-                      console.error('Error downloading file:', error);
-                      console.error('Error details:', {
-                        errorName: error?.name,
-                        errorMessage: error?.message,
-                        errorStack: error?.stack,
                       });
-                    });
-                }}
-                className="cursor-pointer -mt-[3px]"
-                src="/icons/import.svg"
-                alt=""
-              />
-            </div>
-          )}
+                }else {
+                  // For direct file object, create a blob URL
+                  const blobUrl = URL.createObjectURL(el.file);
+
+                  // Create a direct download link for the blob URL
+                  const link = document.createElement('a');
+                  link.href = blobUrl;
+                  link.download = el.file_name || el.file.name;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  
+                  // Clean up the blob URL
+                  URL.revokeObjectURL(blobUrl);
+                }
+              }
+              }
+              className="cursor-pointer -mt-[3px]"
+              src="/icons/import.svg"
+              alt=""
+            />
+          </div>
+          
         </div>
         {el.progress && el.status == 'uploading' && (
           <>
@@ -125,8 +140,8 @@ const FileBox: React.FC<FileBoxProps> = ({ el }) => {
               <div>
                 <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
                   {el.progress < 50
-                    ? 'Uploading to Azure...'
-                    : 'Sending to backend...'}{' '}
+                    ? ' '
+                    : ''}{' '}
                   {Math.round(el.progress)}%
                 </div>
               </div>

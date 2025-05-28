@@ -60,13 +60,13 @@ const FileHistoryNew = () => {
   }, []);
   useEffect(() => {
     if (
-      uploadedFiles.filter((el: any) => el.status != 'error' && el.status)
+      uploadedFiles.filter((el: any) => el.status == 'uploading')
         .length > 0
     ) {
       publish('fileIsUploading', {
         isUploading: true,
         files: uploadedFiles.filter(
-          (el: any) => el.status != 'error' && el.status,
+          (el: any) => el.status =='uploading',
         ),
       });
     } else {
