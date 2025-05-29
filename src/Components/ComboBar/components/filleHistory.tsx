@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 // import { ButtonPrimary } from '../../Button/ButtonPrimary';
 import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
+import { publish } from '../../../utils/event';
 
 export const FilleHistory = () => {
   const [data, setData] = useState<any>(null);
@@ -12,6 +13,17 @@ export const FilleHistory = () => {
   const fileInputRef = useRef<any>(null);
   const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
   const [error, setError] = useState<string>('');
+  useEffect(() => {
+    console.log(upLoadingFiles);
+    if (upLoadingFiles.filter((el: any) => !el.isFileExists).length > 0) {
+      publish('fileIsUploading', {
+        isUploading: true,
+        files: upLoadingFiles.filter((el: any) => !el.isFileExists),
+      });
+    } else {
+      publish('fileIsUploading', { isUploading: false });
+    }
+  }, [upLoadingFiles]);
 
   useEffect(() => {
     // setIsLoading(true);
@@ -148,7 +160,7 @@ export const FilleHistory = () => {
                       />
                     );
                   })}
-                  {data?.map((el: any) => {
+                  {data?.reverse()?.map((el: any) => {
                     return <FileBox el={el}></FileBox>;
                   })}
                 </div>

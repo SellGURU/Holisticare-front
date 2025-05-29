@@ -13,10 +13,11 @@ import { ClientInfo } from './components/clientInfo.tsx';
 import { DataSyncing } from './components/dataSyncing.tsx';
 import { Questionary } from './components/Questionary.tsx';
 import { Notes } from './components/notes.tsx';
-import { FilleHistory } from './components/filleHistory.tsx';
+// import { FilleHistory } from './components/filleHistory.tsx';
 import { SwitchClient } from './components/switchClient.tsx';
 import SvgIcon from '../../utils/svgIcon.tsx';
 import { Tooltip } from 'react-tooltip';
+import FileHistoryNew from './components/FileHistoryNew.tsx';
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
   isHolisticPlan?: boolean;
@@ -121,7 +122,10 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   //   onSubmit: () => {},
   // });
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
-
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  subscribe('fileIsUploading', (value: any) => {
+    setIsUploading(value.detail.isUploading);
+  });
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -139,6 +143,11 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
   const handleCloseSlideOutPanel = () => {
+    if (isSlideOutPanel && isUploading) {
+      publish('isuploadingBackGround', {
+        isUploading: true,
+      });
+    }
     setIsSlideOutPanel(false);
   };
   const [updated, setUpdated] = useState(false);
@@ -152,6 +161,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     }
     setActiveItem(name);
     setIsSlideOutPanel(true);
+    publish('isuploadingBackGround', {
+      isUploading: false,
+    });
   };
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const renderModalContent = () => {
@@ -161,7 +173,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'Data Syncing':
         return <DataSyncing></DataSyncing>;
       case 'File History':
-        return <FilleHistory></FilleHistory>;
+        return <FileHistoryNew></FileHistoryNew>;
       case 'Questionnaire Tracking':
         return <Questionary></Questionary>;
       case "Expert's Note":
