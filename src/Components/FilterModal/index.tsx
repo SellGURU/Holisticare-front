@@ -94,6 +94,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
   };
 
   const handleApply = () => {
+    if (enrollDateError.length > 0) {
+      return;
+    }
     onApplyFilters({
       gender,
       status,

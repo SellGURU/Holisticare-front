@@ -160,6 +160,7 @@ const AddClient = () => {
       setApiError('');
     }
   }, [formik.values.email]);
+  const [dobTouched, setDobTouched] = useState(false);
 
   return (
     <>
@@ -323,7 +324,7 @@ const AddClient = () => {
                     <div
                       ref={selectButRef}
                       onClick={() => {
-                        // formik.setFieldTouched('gender', true);
+                        formik.setFieldTouched('gender', true);
                         setShowSelect(!showSelect);
                       }}
                       className={` w-full   md:w-[219px] cursor-pointer h-[32px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border ${
@@ -389,7 +390,14 @@ const AddClient = () => {
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Date of Birth
                     </label>
-                    <div className=" rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border border-Gray-50  shadow-100 items-center justify-between text-[10px] text-Text-Secondary">
+                    <div
+                      className={`rounded-[16px] flex-grow h-[32px] w-full px-2 py-1 bg-backgroundColor-Card border ${
+                        (dobTouched || showValidation) &&
+                        (dateOfBirth == null || !!dobApiError)
+                          ? 'border-Red'
+                          : 'border-Gray-50'
+                      }  shadow-100 items-center justify-between text-[10px] text-Text-Secondary`}
+                    >
                       <SimpleDatePicker
                         placeholder="Select your date of birth..."
                         isAddClient
@@ -397,19 +405,23 @@ const AddClient = () => {
                         setDate={(date) => {
                           if (validateDate(date)) {
                             setDateOfBirth(date);
-                            setDobApiError(''); // Reset error on valid date selection
+                            setDobApiError('');
                           }
                         }}
                         inValid={
-                          showValidation && dateOfBirth == null
-                            ? true
-                            : !!dobApiError
+                          ((dobTouched || showValidation) &&
+                            dateOfBirth == null) ||
+                          ((dobTouched || showValidation) && !!dobApiError)
                         }
                         errorMessage={
-                          showValidation && dateOfBirth == null
-                            ? 'This field is required.'
-                            : dobApiError
+                          (dobTouched || showValidation) &&
+                          (dateOfBirth == null || dobApiError)
+                            ? dateOfBirth == null
+                              ? 'This field is required.'
+                              : dobApiError
+                            : ''
                         }
+                        onManualOpen={() => setDobTouched(true)}
                       />
                     </div>
                   </div>
@@ -420,14 +432,15 @@ const AddClient = () => {
                   type="email"
                   label="Email Address"
                   errorMessage={
-                    showValidation && (formik.errors.email || apiError)
+                    (formik.touched.email || showValidation) &&
+                    (formik.errors.email || apiError)
                       ? formik.errors.email || apiError
                       : ''
                   }
                   inValid={Boolean(
                     ((formik.touched.email || showValidation) &&
                       formik.errors.email) ||
-                      apiError,
+                      ((formik.touched.email || showValidation) && apiError),
                   )}
                   placeholder="Enter client’s email address..."
                 />
@@ -485,6 +498,17 @@ const AddClient = () => {
                         if (!file) return;
 
                         const maxSizeInBytes = 4 * 1024 * 1024;
+                        const allowedTypes = [
+                          'image/jpeg',
+                          'image/jpg',
+                          'image/png',
+                        ];
+                        if (!allowedTypes.includes(file.type)) {
+                          setPhotoError(
+                            'File exceeds 4 MB or has an unsupported format.',
+                          );
+                          return;
+                        }
 
                         if (file.size > maxSizeInBytes) {
                           setPhotoError(
