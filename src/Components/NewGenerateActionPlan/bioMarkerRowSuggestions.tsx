@@ -96,6 +96,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       return false;
     }
   };
+  function hasAnyExerciseFiles(data: any[]): boolean {
+    return data.some((section) =>
+      section.Exercises.some(
+        (exercise: any) =>
+          Array.isArray(exercise.Files) && exercise.Files.length > 0,
+      ),
+    );
+  }
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -153,10 +161,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 )}
                 {!value.Frequency_Type || value.Frequency_Type.length === 0 ? (
                   <div
-                    className="flex items-center gap-1 text-xs text-[#FC5474]"
+                    className="flex items-center gap-1 text-xs"
                     style={{ color: isinvalid() ? '#FC5474' : '#FFAB2C' }}
                   >
-                    <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
+                    <SvgIcon
+                      src="/icons/danger-new.svg"
+                      color={isinvalid() ? '#FC5474' : '#FFAB2C'}
+                    />
                     No Scheduled
                   </div>
                 ) : (
@@ -187,10 +198,20 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       </div>
                       {valueData == 'File' && (
                         <div
-                          onClick={() => setShowFilePreviewModal(true)}
-                          className="flex cursor-pointer justify-center items-center text-[12px] text-[#4C88FF] ml-2 mr-2 hover:underline"
+                          onClick={() => {
+                            if (hasAnyExerciseFiles(value.Sections)) {
+                              setShowFilePreviewModal(true);
+                            }
+                          }}
+                          className={`flex cursor-pointer justify-center items-center text-[12px] ml-2 mr-2 ${
+                            !hasAnyExerciseFiles(value.Sections)
+                              ? 'text-Text-Primary'
+                              : 'text-[#4C88FF] hover:underline'
+                          }`}
                         >
-                          Youtube Link / Video
+                          {hasAnyExerciseFiles(value.Sections)
+                            ? 'Youtube Link / Video'
+                            : 'No Link / Video'}
                         </div>
                       )}
                       <div className="text-xs text-Text-Primary text-justify ml-1">
@@ -235,7 +256,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                   <div className={`flex items-center gap-1`}>
                     <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
-                      data-tooltip-id={`tooltip-system-score-${index}`}
+                      data-tooltip-id={`tooltip-system-score-bio-${index}`}
                     >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-DeepTeal`}
@@ -243,7 +264,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       {value['System Score'] ? value['System Score'] : '-'}
                     </div>
                     <Tooltip
-                      id={`tooltip-system-score-${index}`}
+                      id={`tooltip-system-score-bio-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
                     >
@@ -256,7 +277,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </Tooltip>
                     <div
                       className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
-                      data-tooltip-id={`tooltip-base-score-${index}`}
+                      data-tooltip-id={`tooltip-base-score-bio-${index}`}
                     >
                       <span
                         className={`w-[8px] h-[8px] rounded-full bg-Primary-EmeraldGreen`}
@@ -264,7 +285,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       {value.Base_Score ? value.Base_Score : '-'}
                     </div>
                     <Tooltip
-                      id={`tooltip-base-score-${index}`}
+                      id={`tooltip-base-score-bio-${index}`}
                       place="top"
                       className="!bg-white !leading-5 !shadow-100 !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
                     >
@@ -277,13 +298,13 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     </Tooltip>
                     <div
                       className="text-[8px] text-Primary-DeepTeal cursor-pointer"
-                      data-tooltip-id={`tooltip-score-calculation-${index}`}
+                      data-tooltip-id={`tooltip-score-calculation-bio-${index}`}
                     >
                       Analysis Info{' '}
                     </div>
                     {value['Practitioner Comments']?.length > 0 && (
                       <Tooltip
-                        id={`tooltip-score-calculation-${index}`}
+                        id={`tooltip-score-calculation-bio-${index}`}
                         place="top"
                         className="!bg-white !w-[300px] !leading-5 !shadow-100 !text-wrap !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[9999]"
                       >

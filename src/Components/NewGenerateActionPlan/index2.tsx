@@ -208,6 +208,7 @@ const GenerateActionPlan = () => {
                           setDuration={(value) => {
                             setDuration(value);
                           }}
+                          duration={duration}
                         />
                       </div>
                     </div>
