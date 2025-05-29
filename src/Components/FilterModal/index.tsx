@@ -68,8 +68,35 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const MIN = 18;
   const MAX = 100;
   const [age, setAge] = useState(filters.age);
+  const [enrollDateError, setEnrollDateError] = useState('');
+  const handleFromChange = (date: any) => {
+    setEnrollDate((prev) => {
+      const updated = { ...prev, from: date };
+      if (updated.to && new Date(updated.to) < new Date(date)) {
+        setEnrollDateError('End date cannot be earlier than start date.');
+      } else {
+        setEnrollDateError('');
+      }
+      return updated;
+    });
+  };
+
+  const handleToChange = (date: any) => {
+    setEnrollDate((prev) => {
+      const updated = { ...prev, to: date };
+      if (updated.from && new Date(date) < new Date(updated.from)) {
+        setEnrollDateError('End date cannot be earlier than start date.');
+      } else {
+        setEnrollDateError('');
+      }
+      return updated;
+    });
+  };
 
   const handleApply = () => {
+    if (enrollDateError.length > 0) {
+      return;
+    }
     onApplyFilters({
       gender,
       status,
@@ -638,22 +665,29 @@ const FilterModal: React.FC<FilterModalProps> = ({
         </div>
 
         {/* Enroll Date Section */}
-        <div className=" w-full flex flex-col md:flex-row items-start md:items-center gap-[15px] md:gap-[73px]">
-          <h3 className="text-xs font-medium  text-nowrap">Enroll Date</h3>
-          <div className="w-full flex gap-3">
-            <SimpleDatePicker
-              date={enrollDate.from}
-              setDate={(date) => setEnrollDate({ ...enrollDate, from: date })}
-              placeholder="Start date"
-              ClassName="!w-[173px]"
-            />
-            <SimpleDatePicker
-              date={enrollDate.to}
-              setDate={(date) => setEnrollDate({ ...enrollDate, to: date })}
-              placeholder="End date"
-              ClassName="!w-[173px]"
-            />
+        <div className="w-full flex flex-col">
+          <div className=" w-full flex flex-col md:flex-row items-start md:items-center gap-[15px] md:gap-[73px]">
+            <h3 className="text-xs font-medium  text-nowrap">Enroll Date</h3>
+            <div className="w-full flex gap-3">
+              <SimpleDatePicker
+                date={enrollDate.from}
+                setDate={handleFromChange}
+                placeholder="Start date"
+                ClassName="!w-[173px]"
+              />
+              <SimpleDatePicker
+                date={enrollDate.to}
+                setDate={handleToChange}
+                placeholder="End date"
+                ClassName="!w-[173px]"
+              />
+            </div>
           </div>
+          {enrollDateError && (
+            <div className="text-[10px] font-medium text-Red mt-2">
+              {enrollDateError}
+            </div>
+          )}
         </div>
 
         {/* Footer Buttons */}
