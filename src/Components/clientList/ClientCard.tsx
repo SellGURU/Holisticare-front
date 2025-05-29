@@ -125,18 +125,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'normal':
       case 'checked':
         return {
           backgroundColor: '#DEF7EC',
           ellipseColor: '#06C78D',
         };
-      case 'needs checking':
+      case 'needs check':
+        return {
+          backgroundColor: '#FFD8E4',
+          ellipseColor: '#FC5474',
+        };
+      case 'incomplete data':
         return {
           backgroundColor: '#F9DEDC',
           ellipseColor: '#FFAB2C',
         };
-
       default:
         return {
           backgroundColor: '#FFD8E4',
@@ -731,11 +734,11 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
 
                     <div
-                      style={{ backgroundColor }}
-                      className="flex items-center px-2.5 h-[20px] rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary"
+                      style={{ backgroundColor: backgroundColor }}
+                      className="flex items-center px-2.5 text-[9px] h-[20px] rounded-[10px]  justify-center text-nowrap text-Text-Primary"
                     >
                       <div
-                        className="mr-[5px] size-3 rounded-full"
+                        className="mr-[5px] size-2.5 rounded-full"
                         style={{ backgroundColor: ellipseColor }}
                       ></div>
                       {client.status}

@@ -12,6 +12,7 @@ interface DatePickerProps {
   errorMessage?: string;
   ClassName?: string;
   textStyle?: boolean;
+  onManualOpen?: () => void;
 }
 
 export default function SimpleDatePicker({
@@ -24,6 +25,7 @@ export default function SimpleDatePicker({
   errorMessage,
   ClassName,
   textStyle,
+  onManualOpen,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +60,10 @@ export default function SimpleDatePicker({
   return (
     <div className="relative inline-block" ref={calendarRef}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setOpen(!open);
+          onManualOpen?.();
+        }}
         className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ''}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
          px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
            inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
