@@ -128,7 +128,9 @@ const Login = () => {
           <ButtonSecondary
             ClassName="rounded-[20px]"
             onClick={() => {
-              submit();
+              if (!isLoading) {
+                submit();
+              }
             }}
           >
             {isLoading ? (

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import {  useState } from 'react';
 import AuthLayout from '../../layout/AuthLayout';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -11,7 +11,7 @@ import Timer from '../../Components/Timer';
 import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import YoupValidation from '../../validation';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 
 const validationSchema = yup.object({
   email: yup
@@ -24,14 +24,14 @@ const validationSchema2 = yup.object({
   password: YoupValidation('password'),
   confirm: yup
     .string()
-    .oneOf([yup.ref('password'), ''], 'Passwords must match')
-    .required('Confirm Password is required'),
+    .required('Please confirm your password')
+    .oneOf([yup.ref('password'), ''], 'Passwords must match'),
 });
 
 const codeValidationSchema = yup.object({
   code: yup
     .string()
-    .test('length', 'The code must be 4 digits', value => {
+    .test('length', 'The code must be 4 digits', (value) => {
       if (!value) return false;
       if (value.length === 4) return true;
       return false;
@@ -75,14 +75,7 @@ const ForgetPassword = () => {
   const [isCompleteCode, setIsCompleteCode] = useState(false);
   const navigate = useNavigate();
   const [codeValue, setCodeValue] = useState('');
-  const [showPasswordModal, setshowPasswordModal] = useState(false);
-  const passwordModalRef = useRef<HTMLDivElement | null>(null);
-  const closeBtn = useRef<HTMLImageElement | null>(null);
-  useModalAutoClose({
-    refrence: passwordModalRef,
-    buttonRefrence: closeBtn,
-    close: () => setshowPasswordModal(false),
-  });
+
   const [passwordChanged, setPasswordChanged] = useState(false);
   const resolveStep = () => {
     if (step == 0) {
@@ -115,31 +108,36 @@ const ForgetPassword = () => {
             </div>
             <ButtonSecondary
               onClick={() => {
-                formik.setTouched({
-                  email: true
-                });
-                
-                formik.validateForm().then((errors) => {
-                  if (Object.keys(errors).length > 0) {
-                    return;
-                  }
-                  
-                  setIsLoading(true);
-                  Application.SendVerification({
-                    email: formik.values.email,
-                  })
-                    .then(() => {
-                      setStep(1);
+                if (!isLoading) {
+                  formik.setTouched({
+                    email: true,
+                  });
+
+                  formik.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.SendVerification({
+                      email: formik.values.email,
                     })
-                    .catch((res) => {
-                      if (res.detail) {
-                        formik.setFieldError('email', 'This email address is not registered in our system.');
-                      }
-                    })
-                    .finally(() => {
-                      setIsLoading(false);
-                    });
-                });
+                      .then(() => {
+                        setStep(1);
+                      })
+                      .catch((res) => {
+                        if (res.detail) {
+                          formik.setFieldError(
+                            'email',
+                            'This email address is not registered in our system.',
+                          );
+                        }
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  });
+                }
               }}
               // disabled={!formik.isValid || formik.values.email.length == 0}
               ClassName="rounded-[20px]"
@@ -240,29 +238,33 @@ const ForgetPassword = () => {
           <div className="mt-8 w-full grid">
             <ButtonSecondary
               onClick={() => {
-                codeFormik.setTouched({ code: true });
-                codeFormik.validateForm().then((errors) => {
-                  if (Object.keys(errors).length > 0) {
-                    return;
-                  }
-                  
-                  setIsLoading(true);
-                  Application.varifyCode({
-                    email: formik.values.email,
-                    reset_code: codeValue,
-                  })
-                    .then(() => {
-                      setStep(2);
+                if (!isLoading) {
+                  codeFormik.setTouched({ code: true });
+                  codeFormik.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.varifyCode({
+                      email: formik.values.email,
+                      reset_code: codeValue,
                     })
-                    .catch((error) => {
-                      if (error.detail) {
-                        setCodeError('Invalid or expired code. Please try again.');
-                      }
-                    })
-                    .finally(() => {
-                      setIsLoading(false);
-                    });
-                });
+                      .then(() => {
+                        setStep(2);
+                      })
+                      .catch((error) => {
+                        if (error.detail) {
+                          setCodeError(
+                            'Invalid or expired code. Please try again.',
+                          );
+                        }
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  });
+                }
               }}
               // disabled={codeValue.length < 4}
               ClassName="rounded-[20px]"
@@ -297,14 +299,14 @@ const ForgetPassword = () => {
     if (step == 2) {
       return (
         <>
-          <div className="grid gap-8">
+          <div className="grid gap-4">
             <div
               className="mt-8 text-justify text-[12px] text-Text-Secondary "
               style={{ textAlignLast: 'center' }}
             >
               Set a new password. It must be strong to ensure your security.
             </div>
-            <div className="mb-4 relative">
+            <div className=" relative">
               <TextField
                 errorMessage={formik2.errors?.password}
                 inValid={
@@ -321,28 +323,24 @@ const ForgetPassword = () => {
                 type="password"
               ></TextField>
               <img
-                ref={closeBtn}
-                onMouseEnter={() => setshowPasswordModal(true)}
-                onMouseLeave={() => setshowPasswordModal(false)}
-                onClick={() => setshowPasswordModal(true)}
+              data-tooltip-id="password-modal"
+              
                 className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
                 src="/icons/user-navbar/info-circle.svg"
                 alt=""
               />
-              {showPasswordModal && (
-                <div
-                  ref={passwordModalRef}
-                  className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
-                >
-                  <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
+            
+            <Tooltip className='!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200' place='top' id="password-modal">
+
+                  <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
                     <li>
                       At least 8 characters.(Use Uppercase & Lowercase letters,
                       Numbers and Special characters)
                     </li>
                     <li>Avoid using personal information or patterns.</li>
                   </ul>
-                </div>
-              )}
+                </Tooltip>
+          
             </div>
             <div className="">
               <TextField
@@ -363,28 +361,30 @@ const ForgetPassword = () => {
             </div>
             <ButtonSecondary
               onClick={() => {
-                formik2.setTouched({
-                  password: true,
-                  confirm: true
-                });
-                
-                formik2.validateForm().then((errors) => {
-                  if (Object.keys(errors).length > 0) {
-                    return;
-                  }
-                  
-                  setIsLoading(true);
-                  Application.ChangePassword({
-                    email: formik.values.email,
-                    password: formik2.values.password,
-                  })
-                    .then(() => {
-                      setPasswordChanged(true);
+                if (!isLoading) {
+                  formik2.setTouched({
+                    password: true,
+                    confirm: true,
+                  });
+
+                  formik2.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.ChangePassword({
+                      email: formik.values.email,
+                      password: formik2.values.password,
                     })
-                    .finally(() => {
-                      setIsLoading(false);
-                    });
-                });
+                      .then(() => {
+                        setPasswordChanged(true);
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  });
+                }
               }}
               ClassName="rounded-[20px]"
             >

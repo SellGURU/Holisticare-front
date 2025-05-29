@@ -5,12 +5,12 @@ import AuthLayout from '../../layout/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useRef, useState } from 'react';
+import {  useState } from 'react';
 import Auth from '../../api/auth';
 import { useApp } from '../../hooks';
 import YoupValidation from '../../validation';
 import AuthWithGoogle from '../../Components/AuthWithGoogle';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
@@ -83,14 +83,8 @@ const SignUp = () => {
     });
   };
 
-  const [showPasswordModal, setshowPasswordModal] = useState(false);
-  const passwordModalRef = useRef<HTMLDivElement | null>(null);
-  const closeBtn = useRef<HTMLImageElement | null>(null);
-  useModalAutoClose({
-    refrence: passwordModalRef,
-    buttonRefrence: closeBtn,
-    close: () => setshowPasswordModal(false),
-  });
+
+
   return (
     <>
       <AuthLayout>
@@ -148,34 +142,34 @@ const SignUp = () => {
               type="password"
             ></TextField>
             <img
-              ref={closeBtn}
-              onMouseEnter={() => setshowPasswordModal(true)}
-              onMouseLeave={() => setshowPasswordModal(false)}
-              onClick={() => setshowPasswordModal(true)}
+              data-tooltip-id="password-modal"
+              // ref={closeBtn}
+              // onMouseEnter={() => setshowPasswordModal(true)}
+              // onMouseLeave={() => setshowPasswordModal(false)}
+              // onClick={() => setshowPasswordModal(true)}
               className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
               src="/icons/user-navbar/info-circle.svg"
               alt=""
             />
-            {showPasswordModal && (
-              <div
-                ref={passwordModalRef}
-                className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
-              >
-                <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
+
+            <Tooltip className='!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200' place='top' id="password-modal">
+           
+                <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
                   <li>
                     At least 8 characters.(Use Uppercase & Lowercase letters,
                     Numbers and Special characters)
                   </li>
                   <li>Avoid using personal information or patterns.</li>
                 </ul>
-              </div>
-            )}
+              
+            </Tooltip>
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
-            // disabled={!formik.isValid || formik.values.userName.length == 0}
             onClick={() => {
-              submit();
+              if (!isLoading) {
+                submit();
+              }
             }}
           >
             {isLoading ? (
