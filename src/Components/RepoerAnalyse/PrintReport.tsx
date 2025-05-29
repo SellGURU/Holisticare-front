@@ -129,7 +129,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
   };
   const PrintFooter = ({ pageNumber }: { pageNumber: number }) => {
     return (
-      <div className="print-footer absolute bottom-9 w-full  z-50">
+      <div className="print-footer hidden absolute bottom-9 w-full  z-50">
         <div
           className="w-full"
           style={{ height: '1px', backgroundColor: '#005F73', opacity: 0.3 }}
@@ -184,7 +184,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     groups.push(
       <div
         className="relative "
-        style={{ minHeight: index == 0 ? '900px' : '1030px' }}
+        style={{ minHeight: index == 0 ? '900px' : 'auto' }}
       >
         <DetiledAnalyse
           refrences={biomarkers?.slice(0, 3)}
@@ -813,7 +813,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </div>
               </div>
               {transformConceringData()
-                .slice(0, 14)
+                .slice(0, 10)
                 .map((el, index) => {
                   return (
                     <>
@@ -847,7 +847,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {el.Units}
+                          {el.Units!=''?el.Units:'-'}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -896,10 +896,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          {transformConceringData().length > 14 && (
+          {transformConceringData().length > 10 && (
             <>
               {Array.from({
-                length: Math.ceil((transformConceringData().length - 14) / 16),
+                length: Math.ceil((transformConceringData().length - 10) / 12),
               }).map((_e, index1) => {
                 return (
                   <>
@@ -915,7 +915,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     >
                       <div className="px-2 relative" style={{ zIndex: 60 }}>
                         {transformConceringData()
-                          .slice(index1 * 16 + 14, index1 * 16 + 14 + 16)
+                          .slice(index1 * 12 + 10, index1 * 12 + 10 + 12)
                           .map((el, index) => {
                             return (
                               <>
@@ -949,7 +949,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                       color: '#888888',
                                     }}
                                   >
-                                    {el.Units}
+                                    {el.Units!=''?el.Units:'-'}
                                   </div>
                                   <div
                                     className=" text-gray-800 text-center"
