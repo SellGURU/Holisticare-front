@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SigmaContainer } from '@react-sigma/core';
-import { useLoadGraph, useRegisterEvents, useSigma } from '@react-sigma/core';
+import {
+  SigmaContainer,
+  useLoadGraph,
+  useRegisterEvents,
+  useSigma,
+} from '@react-sigma/core';
 import '@react-sigma/core/lib/react-sigma.min.css';
-import { useEffect, useRef, useState } from 'react';
 import Graph from 'graphology';
 import forceAtlas2 from 'graphology-layout-forceatlas2';
+import { FC, useEffect, useRef, useState } from 'react';
 // import  graphDataMock from '../../api/--moch--/data/graph.json';
 import chroma from 'chroma-js';
 // import { ApplicationMock } from "@/api";
 import Application from '../../api/app.ts';
-import SearchBox from '../../Components/SearchBox/index.tsx';
-import Circleloader from '../../Components/CircleLoader/index.tsx';
 import ActivityMenu from '../../Components/ActivityMenu/index.tsx';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary.tsx';
-import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
-import Toggle from '../../Components/Toggle/index.tsx';
-import Pagination from '../../Components/pagination/index.tsx';
+import Circleloader from '../../Components/CircleLoader/index.tsx';
 import { MainModal } from '../../Components/index.ts';
-import CustomSelect from '../../Components/CustomSelect/index.tsx';
-import TextField from '../../Components/TextField/index.tsx';
+import Pagination from '../../Components/pagination/index.tsx';
+import SearchBox from '../../Components/SearchBox/index.tsx';
+import Toggle from '../../Components/Toggle/index.tsx';
+import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 
 interface LoadGraphProps {
   activeFilters: string[];
@@ -28,7 +30,7 @@ interface LoadGraphProps {
 type menuItem = {
   name: string;
 };
-const LoadGraph: React.FC<LoadGraphProps> = ({
+const LoadGraph: FC<LoadGraphProps> = ({
   activeFilters,
   graphData,
   isInitialLoad,
@@ -219,22 +221,21 @@ const AiKnowledge = () => {
   //   "Nutrition",
   //   "Strength"
   // ];
-  useEffect(() => {
-    const fetchGraphData = async () => {
-      try {
-        const response = await Application.getgraphData();
-        if (response.data.nodes) {
-          console.log(response.data);
-          setGraphData(response.data);
+  const fetchGraphData = async () => {
+    try {
+      await Application.getgraphData().then((res) => {
+        if (res.data.nodes) {
+          setGraphData(res.data);
           setActiveFilters([
-            ...new Set(response.data?.nodes.map((e: any) => e.category2)),
+            ...new Set(res.data?.nodes.map((e: any) => e.category2)),
           ] as Array<string>);
         }
-      } catch (error) {
-        console.error('Error fetching graph data:', error);
-      }
-    };
-
+      });
+    } catch (error) {
+      console.error('Error fetching graph data:', error);
+    }
+  };
+  useEffect(() => {
     fetchGraphData();
   }, []);
   const handleButtonClick = (category: string) => {
@@ -466,7 +467,6 @@ const AiKnowledge = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
   const [AddFilleModal, setAddFilleModal] = useState(false);
-  const [FilleType] = useState('Activity');
   const [fileTitle, setFileTitle] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<{
@@ -581,8 +581,18 @@ const AiKnowledge = () => {
   //   activaTab === 'System Docs'
   //     ? systemDocs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   //     : userUploads.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  // type TableItem = {
+  //   id: number;
+  //   type: string;
+  //   date?: string;
+  //   disabled?: boolean;
+  // };
   type TableItem = {
+    category1: string;
+    category2: string;
     id: number;
+    label: string;
+    size: number;
     type: string;
     date?: string;
     disabled?: boolean;
@@ -591,39 +601,71 @@ const AiKnowledge = () => {
   const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] =
     useState(false);
 
+  // const getCurrentPageData = (): TableItem[] => {
+  //   if (activaTab === 'System Docs') {
+  //     let categories: string[];
+  //     if (isSystemDocsSearchActive) {
+  //       categories = filteredSystemDocs;
+  //     } else {
+  //       categories = [
+  //         ...new Set(graphData?.nodes.map((e: any) => e.category2)),
+  //       ] as string[];
+  //     }
+  //     const startIndex = (currentPage - 1) * itemsPerPage;
+  //     const endIndex = startIndex + itemsPerPage;
+  //     return categories.slice(startIndex, endIndex).map((category, index) => ({
+  //       id: index + 1,
+  //       type: category,
+  //     }));
+  //   } else {
+  //     // For User Uploads tab, use filteredUserUploads
+  //     const startIndex = (currentPage - 1) * itemsPerPage;
+  //     const endIndex = startIndex + itemsPerPage;
+  //     return filteredUserUploads.slice(startIndex, endIndex);
+  //   }
+  // };
   const getCurrentPageData = (): TableItem[] => {
     if (activaTab === 'System Docs') {
-      let categories: string[];
-      if (isSystemDocsSearchActive) {
-        categories = filteredSystemDocs;
-      } else {
-        categories = [
-          ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-        ] as string[];
-      }
+      const filtered = isSystemDocsSearchActive
+        ? graphData?.nodes.filter(
+            (e: any) =>
+              e.type === 'system_docs' &&
+              filteredSystemDocs.includes(e.category2),
+          )
+        : graphData?.nodes.filter((e: any) => e.type === 'system_docs');
+
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
-      return categories.slice(startIndex, endIndex).map((category, index) => ({
-        id: index + 1,
-        type: category,
-      }));
+
+      return filtered?.slice(startIndex, endIndex) || [];
     } else {
-      // For User Uploads tab, use filteredUserUploads
+      const filtered = graphData?.nodes.filter(
+        (e: any) => e.type === 'user_docs',
+      );
+
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
-      return filteredUserUploads.slice(startIndex, endIndex);
+
+      return filtered?.slice(startIndex, endIndex) || [];
     }
   };
 
+  console.log('getCurrentPageData => ', getCurrentPageData());
+
+  // const totalPages =
+  //   activaTab === 'System Docs'
+  //     ? Math.ceil(
+  //         (filteredSystemDocs.length > 0
+  //           ? filteredSystemDocs.length
+  //           : [...new Set(graphData?.nodes.map((e: any) => e.category2))]
+  //               .length) / itemsPerPage,
+  //       )
+  //     : Math.ceil(filteredUserUploads.length / itemsPerPage);
+
   const totalPages =
     activaTab === 'System Docs'
-      ? Math.ceil(
-          (filteredSystemDocs.length > 0
-            ? filteredSystemDocs.length
-            : [...new Set(graphData?.nodes.map((e: any) => e.category2))]
-                .length) / itemsPerPage,
-        )
-      : Math.ceil(filteredUserUploads.length / itemsPerPage);
+      ? Math.ceil(getCurrentPageData().length / itemsPerPage)
+      : Math.ceil(getCurrentPageData().length / itemsPerPage);
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
@@ -750,102 +792,88 @@ const AiKnowledge = () => {
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
-        <div className="w-[434px] bg-white h-[500px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary">
+        <div className="w-[500px] bg-white min-h-[316px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary">
           <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
             Add New Document
           </div>
-          <div className="mt-6 w-full flex-col flex gap-6">
-            <CustomSelect
-              wfull
-              selectedOption={FilleType}
-              onOptionSelect={() => {}}
-              options={[]}
-              label="Type"
-              placeHolder="Activity"
+          <div className="text-Text-Primary font-medium text-xs mt-6 mb-2">
+            Upload Document
+          </div>
+          <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
+            <input
+              multiple
+              type="file"
+              accept=".pdf,.docx"
+              style={{ display: 'none' }}
+              id="file-upload"
+              onChange={handleFileUpload}
             />
-            <TextField
-              value={fileTitle}
-              onChange={(e) => setFileTitle(e.target.value)}
-              newStyle
-              type="text"
-              label="Title"
-              placeholder="Enter title name ..."
-            />
-            <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-3 p-6 cursor-pointer">
-              <input
-                multiple
-                type="file"
-                accept=".png,.svg,.jpg,.jpeg"
-                style={{ display: 'none' }}
-                id="file-upload"
-                onChange={handleFileUpload}
-              />
-              <img src="/icons/upload-test.svg" alt="" />
-              <div className="text-xs text-[#888888] text-center">
-                Supported formats: PNG, SVG, JPG, JPEG
-              </div>
-              <div className="text-Primary-DeepTeal underline text-xs font-medium">
-                Upload File
-              </div>
-            </label>
-            <div className="overflow-auto h-[75px]">
-              {selectedFiles.map((file) => (
-                <div key={file.name}>
-                  {uploadProgress[file.name] > 0 &&
-                    uploadProgress[file.name] < 100 && (
-                      <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
-                        <div className="w-full flex justify-between">
-                          <div>
-                            <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                              Uploading {file.name}...
-                            </div>
-                            <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
-                              {uploadProgress[file.name]}% • 30 seconds
-                              remaining
-                            </div>
+            <img src="/icons/upload-test.svg" alt="" />
+            <div className="text-xs text-Text-Primary text-center mt-1">
+              Drag and drop or click to upload.
+            </div>
+            <div className="text-Text-Quadruple text-xs">
+              Accepted formats:{' '}
+              <span className="font-medium">.pdf, .docx.</span>
+            </div>
+          </label>
+          <div className="overflow-auto max-h-[210px] mt-2 mb-4">
+            {selectedFiles.map((file) => (
+              <div key={file.name}>
+                {uploadProgress[file.name] > 0 &&
+                  uploadProgress[file.name] < 100 && (
+                    <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
+                      <div className="w-full flex justify-between">
+                        <div>
+                          <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                            Uploading {file.name}...
                           </div>
-                          <img
-                            onClick={() => handleCancelUpload(file.name)}
-                            className="cursor-pointer"
-                            src="/icons/close.svg"
-                            alt=""
-                          />
+                          <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                            {uploadProgress[file.name]}% • 30 seconds remaining
+                          </div>
                         </div>
-                        <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-                          <div
-                            className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                            style={{ width: uploadProgress[file.name] + '%' }}
-                          ></div>
-                        </div>
-                      </div>
-                    )}
-                  {uploadComplete[file.name] && (
-                    <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
-                      <div className="flex items-center gap-4">
                         <img
-                          src="/icons/PDF_file_icon.svg 1.svg"
-                          alt="PDF Icon"
+                          onClick={() => handleCancelUpload(file.name)}
+                          className="cursor-pointer"
+                          src="/icons/close.svg"
+                          alt=""
                         />
-                        <div className="flex flex-col">
-                          <span className="text-xs">{file.name}</span>
-                          <span className="text-xs text-[#888888]">
-                            {formatFileSize(file.size)}
-                          </span>
-                        </div>
                       </div>
-                      <img
-                        onClick={() => handleCancelUpload(file.name)}
-                        className="cursor-pointer"
-                        src="/icons/trash-blue.svg"
-                        alt="Delete Icon"
-                      />
+                      <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                        <div
+                          className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                          style={{ width: uploadProgress[file.name] + '%' }}
+                        ></div>
+                      </div>
                     </div>
                   )}
-                </div>
-              ))}
-            </div>
+                {uploadComplete[file.name] && (
+                  <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src="/icons/PDF_file_icon.svg 1.svg"
+                        alt="PDF Icon"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs">{file.name}</span>
+                        <span className="text-xs text-[#888888]">
+                          {formatFileSize(file.size)}
+                        </span>
+                      </div>
+                    </div>
+                    <img
+                      onClick={() => handleCancelUpload(file.name)}
+                      className="cursor-pointer"
+                      src="/icons/trash-blue.svg"
+                      alt="Delete Icon"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="w-full flex items-center justify-end gap-2 text-sm font-medium">
+
+          <div className="w-full flex items-center justify-end gap-3 text-sm font-medium">
             <div onClick={closeModal} className="text-[#909090] cursor-pointer">
               Cancel
             </div>
@@ -853,7 +881,7 @@ const AiKnowledge = () => {
               onClick={handleAddFile}
               className="text-Primary-DeepTeal cursor-pointer "
             >
-              Add
+              Next
             </div>
           </div>
         </div>
@@ -1024,48 +1052,26 @@ const AiKnowledge = () => {
             ></SearchBox>
             <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
               <span>Search by:</span>
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="searchType"
-                  checked={searchType === 'Docs'}
-                  onChange={() => setSearchType('Docs')}
-                  className="hidden"
-                />
-                <span
-                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
-                    searchType === 'Docs'
-                      ? 'border-Primary-DeepTeal'
-                      : 'border-[#383838]'
-                  }`}
+              {['Docs', 'Nodes'].map((type) => (
+                <label
+                  key={type}
+                  className="flex items-center gap-1 cursor-pointer"
                 >
-                  {searchType === 'Docs' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
-                  )}
-                </span>
-                Docs
-              </label>
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="searchType"
-                  checked={searchType === 'Nodes'}
-                  onChange={() => setSearchType('Nodes')}
-                  className="hidden"
-                />
-                <span
-                  className={`w-3 h-3 rounded-full border flex items-center justify-center mr-1 ${
-                    searchType === 'Nodes'
-                      ? 'border-Primary-DeepTeal'
-                      : 'border-Text-Primary'
-                  }`}
-                >
-                  {searchType === 'Nodes' && (
-                    <span className="w-[6px] h-[6px] rounded-full bg-Primary-DeepTeal"></span>
-                  )}
-                </span>
-                Nodes
-              </label>
+                  <input
+                    type="radio"
+                    name="searchType"
+                    checked={searchType === type}
+                    onChange={() => setSearchType(type as 'Docs' | 'Nodes')}
+                    className={`w-3 h-3 rounded-full border cursor-default
+          ${
+            searchType === type
+              ? 'border-Primary-DeepTeal bg-Primary-DeepTeal'
+              : 'border-Text-Primary bg-white'
+          }`}
+                  />
+                  {type}
+                </label>
+              ))}
             </div>
             <div className="mt-3 w-full">
               <Toggle
@@ -1110,7 +1116,7 @@ const AiKnowledge = () => {
                             <td
                               className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
                             >
-                              {doc.type}
+                              {doc.category2}
                             </td>
                             <td
                               className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
@@ -1216,7 +1222,7 @@ const AiKnowledge = () => {
                             <td
                               className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
                             >
-                              {doc.type}
+                              {doc.category2}
                             </td>
                             <td
                               className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
