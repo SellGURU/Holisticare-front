@@ -95,10 +95,13 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
                   )}
                   {!value.Frequency_Type && (
                     <div
-                      className="flex items-center gap-1 text-xs text-[#FC5474]"
+                      className="flex items-center gap-1 text-xs"
                       style={{ color: !checkValid ? '#FFAB2C' : '#FC5474' }}
                     >
-                      <SvgIcon src="/icons/danger-new.svg" color="#FC5474" />
+                      <SvgIcon
+                        src="/icons/danger-new.svg"
+                        color={!checkValid ? '#FFAB2C' : '#FC5474'}
+                      />
                       No Scheduled
                     </div>
                   )}
