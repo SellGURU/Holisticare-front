@@ -70,8 +70,25 @@ const EditModal: FC<EditModalProps> = ({
         if (!selectedGroupDose) return true;
         return Boolean(value && value.trim() !== '');
       },
+    ).test(
+      'dose-format',
+      'Dose must follow the described format.',
+      function (value) {
+        if (!selectedGroupDose || !value) return true;
+        // Check if the dose follows the format: number followed by unit (e.g., '50 mg')
+        const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+        return doseRegex.test(value.trim());
+      }
     ),
     Instruction: Yup.string().required('This field is required.'),
+    Notes: Yup.string().test(
+      'notes-length',
+      'You can enter up to 400 characters.',
+      function (value) {
+        if (!value) return true;
+        return value.length <= 400;
+      }
+    ),
   });
   interface FormValues {
     Category: string;
@@ -427,15 +444,17 @@ const EditModal: FC<EditModalProps> = ({
               <textarea
                 value={newNote}
                 onChange={(e) => {
-                  if (e.target.value.length <= 400) {
+                
                     setNewNote(e.target.value);
-                  }
+                  
                 }}
                 onKeyDown={handleNoteKeyDown}
-                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
+                 newNote.length > 400 ? 'border-Red' : 'border-Gray-50'
+                } rounded-2xl outline-none`}
                 rows={4}
                 placeholder="Write notes ..."
-                maxLength={400}
+                // maxLength={400}
               />
               <div className="flex justify-between items-center mt-1">
                 <Tooltip
@@ -446,10 +465,15 @@ const EditModal: FC<EditModalProps> = ({
                   After writing each note, press the Enter key to save it and be
                   able to add another note.
                 </Tooltip>
-                <span className="text-[10px] text-Text-Quadruple">
+                {/* <span className="text-[10px] text-Text-Quadruple">
                   {newNote.length}/400 characters
-                </span>
+                </span> */}
               </div>
+              { newNote.length > 400 && (
+                <div className="text-Red text-[10px] mt-1">
+                  You can enter up to 400 characters.
+                </div>
+              )}
             </div>
 
             {/* Notes List */}
