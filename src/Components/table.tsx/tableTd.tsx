@@ -150,11 +150,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     enableSorting: false,
 
     cell: ({ row }) => {
-      console.log(row);
-
       return (
-        <div className="items-center justify-center text-xs text-Text-Secondary capitalize  flex ">
-          <Badge status={row.original.status || 'at-risk'}>
+        <div className="items-center justify-center text-xs text-Text-Secondary capitalize flex">
+          <Badge status={row.original.status || 'needs check'}>
             {row.original.status || 'No Data'}
           </Badge>
         </div>
