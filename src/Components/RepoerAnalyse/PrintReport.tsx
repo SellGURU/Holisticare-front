@@ -847,7 +847,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {el.Units!=''?el.Units:'-'}
+                          {el.Units != '' ? el.Units : '-'}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -949,7 +949,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                       color: '#888888',
                                     }}
                                   >
-                                    {el.Units!=''?el.Units:'-'}
+                                    {el.Units != '' ? el.Units : '-'}
                                   </div>
                                   <div
                                     className=" text-gray-800 text-center"
