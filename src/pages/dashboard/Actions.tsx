@@ -180,7 +180,7 @@ const Actions: React.FC = () => {
                       {action.alert}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex invisible items-center gap-2">
                       {action.state === 'Pending' && (
                         <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
                           Proceed{' '}
