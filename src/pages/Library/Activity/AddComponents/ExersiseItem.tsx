@@ -8,7 +8,7 @@ interface ExerciseItemProps {
   isSuperSet?: boolean;
   index: number;
   exercise: any;
-  sets: any;
+  sets: string;
   exesiseIndex: number;
   onDelete: (exersiseIndex: number) => void;
   toSuperSet: () => void;
@@ -20,6 +20,7 @@ interface ExerciseItemProps {
     exersiseIndex: number,
   ) => void;
   showValidation?: boolean;
+  errors: {[key: string]: string};
 }
 
 const ExerciseItem = ({
@@ -33,9 +34,10 @@ const ExerciseItem = ({
   isSuperSet,
   sets,
   showValidation = false,
+  errors,
 }: ExerciseItemProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const isSetEmpty = sets === '' || sets == 0;
+  const isSetEmpty = sets === '' || Number(sets) === 0;
   const menuRef = useRef<HTMLDivElement>(null);
   useModalAutoClose({
     close: () => setShowMenu(false),
@@ -52,6 +54,10 @@ const ExerciseItem = ({
     const value = e.target.value;
 
     onChange(index, 'Sets', value, exesiseIndex);
+  };
+
+  const getError = (field: string) => {
+    return errors[`${field}-${exercise.Section}-${exercise.Exercise.Title}`];
   };
 
   return (
@@ -205,6 +211,11 @@ const ExerciseItem = ({
                 This field is required.
               </div>
             )}
+            {getError('sets') && (
+              <span className="text-[10px] text-red-500">
+                {getError('sets')}
+              </span>
+            )}
           </div>
           <div className="mt-2">
             <div className="text-center text-[8px] text-Text-Primary">Reps</div>
@@ -215,8 +226,20 @@ const ExerciseItem = ({
                 onChange(index, 'Reps', e.target.value, exesiseIndex)
               }
               onKeyDown={preventEInput}
-              className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
+              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+                (showValidation && (!exercise.Reps || exercise.Reps === '')) || getError('reps') ? 'border-red-500' : 'border-gray-50'
+              } outline-none text-[10px] text-Text-Primary`}
             />
+            {(showValidation && (!exercise.Reps || exercise.Reps === '')) && (
+              <div className="text-[8px] text-red-500 mt-1 text-center">
+                This field is required.
+              </div>
+            )}
+            {getError('reps') && (
+              <div className="text-[8px] text-red-500 mt-1 text-center">
+                {getError('reps')}
+              </div>
+            )}
           </div>
           <div className="mt-2 relative">
             <div className="text-center text-[8px] text-Text-Primary">
@@ -229,7 +252,9 @@ const ExerciseItem = ({
                 onChange(index, 'Weight', e.target.value, exesiseIndex)
               }
               onKeyDown={preventEInput}
-              className="w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
+              className={`w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border ${
+                getError('weight') ? 'border-red-500' : 'border-gray-50'
+              } outline-none text-[10px] text-Text-Primary`}
             />
             {/* <div className="absolute right-2 top-[18px] text-[10px] text-Text-Secondary">
               kg
@@ -246,8 +271,15 @@ const ExerciseItem = ({
                 onChange(index, 'Rest', e.target.value, exesiseIndex)
               }
               onKeyDown={preventEInput}
-              className="w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border border-gray-50 outline-none text-[10px] text-Text-Primary"
+              className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
+                getError('rest') ? 'border-red-500' : 'border-gray-50'
+              } outline-none text-[10px] text-Text-Primary`}
             />
+            {getError('rest') && (
+              <span className="text-[10px] text-red-500">
+                {getError('rest')}
+              </span>
+            )}
           </div>
         </div>
       </div>
