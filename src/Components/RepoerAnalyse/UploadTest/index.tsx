@@ -31,7 +31,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const fileInputRef = useRef<any>(null);
   // const [files, setFiles] = useState<Array<any>>([]);
   // const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
-  const [errorMessage, ] = useState<string>('');
+  const [errorMessage] = useState<string>('');
 
   const formatFileSize = (bytes: number): string => {
     const kb = bytes / 1024;
