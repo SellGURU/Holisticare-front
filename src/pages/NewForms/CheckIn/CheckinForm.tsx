@@ -108,6 +108,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
         getQuestionary();
         setShowFeedBack(false);
         setShowReposition(false);
+        setEditFormId('');
+        setSelectedTemplate(null);
       });
     } else if (editFormId != '') {
       FormsApi.editQuestionary({
@@ -123,6 +125,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           getQuestionary();
           setShowFeedBack(false);
           setErrorQuestionary('');
+          setEditFormId('');
+          setSelectedTemplate(null);
         })
         .catch((err) => {
           setErrorQuestionary(err.detail);
@@ -310,12 +314,9 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           }}
           onSave={(values) => {
             onsaveQuestionary(values);
-            setEditFormId('');
-            setSelectedTemplate(null);
           }}
           editId={editFormId}
           error={errorQuestionary}
-          setError={setErrorQuestionary}
           mode={resolveMode()}
         ></QuestionaryControllerModal>
       </MainModal>
