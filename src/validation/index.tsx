@@ -4,8 +4,8 @@ const YoupValidation = (type: string) => {
   if (type == 'email') {
     return yup
       .string()
-      .required('This field is required')
-      .email('Invalid email address. Please try again.');
+      .email('Please enter a valid email address.')
+      .required('This field is required.');
   }
   if (type == 'password') {
     return yup

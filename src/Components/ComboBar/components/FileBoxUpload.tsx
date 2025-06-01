@@ -123,6 +123,7 @@ const FileBoxUpload: React.FC<FileBoxUploadProps> = ({
           file_name: file.name,
           date_uploaded: new Date().toString(),
           blob_url: blobUrl,
+          isUploded: true,
         };
 
         onSuccess(fileWithId);
