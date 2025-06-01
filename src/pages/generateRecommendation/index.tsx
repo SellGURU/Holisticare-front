@@ -19,8 +19,8 @@ type CategoryState = {
 };
 
 const initialCategoryState: CategoryState[] = [
-  { name: 'Activity', visible: true },
   { name: 'Diet', visible: true },
+  { name: 'Activity', visible: true },
   { name: 'Supplement', visible: true },
   { name: 'Lifestyle', visible: true },
 ];

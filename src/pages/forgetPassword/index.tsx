@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import AuthLayout from '../../layout/AuthLayout';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -11,27 +11,44 @@ import Timer from '../../Components/Timer';
 import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import YoupValidation from '../../validation';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 
 const validationSchema = yup.object({
-  email: YoupValidation('email'),
+  email: yup
+    .string()
+    .required('This field is required')
+    .email('Invalid email address. Please try again.'),
 });
 
 const validationSchema2 = yup.object({
   password: YoupValidation('password'),
   confirm: yup
     .string()
-    .oneOf([yup.ref('password'), ''], 'Passwords must match')
-    .required('Confirm Password is required'),
+    .required('Please confirm your password')
+    .oneOf([yup.ref('password'), ''], 'Passwords must match'),
 });
+
+const codeValidationSchema = yup.object({
+  code: yup
+    .string()
+    .test('length', 'The code must be 4 digits', (value) => {
+      if (!value) return false;
+      if (value.length === 4) return true;
+      return false;
+    })
+    .matches(/^\d+$/, 'The code should contain only numbers')
+    .required('Confirmation code is required'),
+});
+
 const ForgetPassword = () => {
   const [step, setStep] = useState(0);
+  const [codeError, setCodeError] = useState('');
   const formik = useFormik({
     initialValues: {
       email: '',
     },
     validationSchema,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {},
   });
@@ -42,21 +59,23 @@ const ForgetPassword = () => {
       confirm: '',
     },
     validationSchema: validationSchema2,
-    validateOnChange: true,
+    validateOnChange: false,
+    validateOnBlur: true,
+    onSubmit: () => {},
+  });
+  const codeFormik = useFormik({
+    initialValues: {
+      code: '',
+    },
+    validationSchema: codeValidationSchema,
+    validateOnChange: false,
     validateOnBlur: true,
     onSubmit: () => {},
   });
   const [isCompleteCode, setIsCompleteCode] = useState(false);
   const navigate = useNavigate();
   const [codeValue, setCodeValue] = useState('');
-  const [showPasswordModal, setshowPasswordModal] = useState(false);
-  const passwordModalRef = useRef<HTMLDivElement | null>(null);
-  const closeBtn = useRef<HTMLImageElement | null>(null);
-  useModalAutoClose({
-    refrence: passwordModalRef,
-    buttonRefrence: closeBtn,
-    close: () => setshowPasswordModal(false),
-  });
+
   const [passwordChanged, setPasswordChanged] = useState(false);
   const resolveStep = () => {
     if (step == 0) {
@@ -66,7 +85,7 @@ const ForgetPassword = () => {
             className="mt-8 text-justify text-[12px] text-Text-Secondary "
             style={{ textAlignLast: 'center' }}
           >
-            Enter your email address below, and we’ll send you a code to reset
+            Enter your email address below, and we'll send you a code to reset
             your password.
           </div>
           <div className="grid gap-8">
@@ -78,6 +97,10 @@ const ForgetPassword = () => {
                 }
                 errorMessage={formik.errors?.email}
                 {...formik.getFieldProps('email')}
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  formik.validateField('email');
+                }}
                 placeholder="Enter your email address..."
                 label="Email Address"
                 type="email"
@@ -85,23 +108,38 @@ const ForgetPassword = () => {
             </div>
             <ButtonSecondary
               onClick={() => {
-                setIsLoading(true);
-                Application.SendVerification({
-                  email: formik.values.email,
-                })
-                  .then(() => {
-                    setStep(1);
-                  })
-                  .catch((res) => {
-                    if (res.detail) {
-                      formik.setFieldError('email', res.detail);
-                    }
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
+                if (!isLoading) {
+                  formik.setTouched({
+                    email: true,
                   });
+
+                  formik.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.SendVerification({
+                      email: formik.values.email,
+                    })
+                      .then(() => {
+                        setStep(1);
+                      })
+                      .catch((res) => {
+                        if (res.detail) {
+                          formik.setFieldError(
+                            'email',
+                            'This email address is not registered in our system.',
+                          );
+                        }
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  });
+                }
               }}
-              disabled={!formik.isValid || formik.values.email.length == 0}
+              // disabled={!formik.isValid || formik.values.email.length == 0}
               ClassName="rounded-[20px]"
             >
               {isLoading ? (
@@ -147,8 +185,16 @@ const ForgetPassword = () => {
             <VerificationInput
               placeholder=""
               value={codeValue}
+              validChars="0-9"
               onChange={(val) => {
                 setCodeValue(val);
+                setCodeError('');
+                codeFormik.setFieldValue('code', val);
+                if (val.length === 4) {
+                  codeFormik.setFieldError('code', '');
+                } else if (val.length > 0) {
+                  codeFormik.validateField('code');
+                }
               }}
               classNames={{
                 container: 'vari-container',
@@ -159,6 +205,11 @@ const ForgetPassword = () => {
               }}
               length={4}
             />
+            {(codeError || codeFormik.errors.code) && (
+              <div className="text-Red text-[10px] mt-6 text-center">
+                {codeError || codeFormik.errors.code}
+              </div>
+            )}
           </div>
           {isCompleteCode ? (
             <div
@@ -187,19 +238,35 @@ const ForgetPassword = () => {
           <div className="mt-8 w-full grid">
             <ButtonSecondary
               onClick={() => {
-                setIsLoading(true);
-                Application.varifyCode({
-                  email: formik.values.email,
-                  reset_code: codeValue,
-                })
-                  .then(() => {
-                    setStep(2);
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
+                if (!isLoading) {
+                  codeFormik.setTouched({ code: true });
+                  codeFormik.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.varifyCode({
+                      email: formik.values.email,
+                      reset_code: codeValue,
+                    })
+                      .then(() => {
+                        setStep(2);
+                      })
+                      .catch((error) => {
+                        if (error.detail) {
+                          setCodeError(
+                            'Invalid or expired code. Please try again.',
+                          );
+                        }
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
                   });
+                }
               }}
-              disabled={codeValue.length < 4}
+              // disabled={codeValue.length < 4}
               ClassName="rounded-[20px]"
             >
               {isLoading ? (
@@ -232,14 +299,14 @@ const ForgetPassword = () => {
     if (step == 2) {
       return (
         <>
-          <div className="grid gap-8">
+          <div className="grid gap-4">
             <div
               className="mt-8 text-justify text-[12px] text-Text-Secondary "
               style={{ textAlignLast: 'center' }}
             >
               Set a new password. It must be strong to ensure your security.
             </div>
-            <div className="mb-4 relative">
+            <div className=" relative">
               <TextField
                 errorMessage={formik2.errors?.password}
                 inValid={
@@ -247,33 +314,34 @@ const ForgetPassword = () => {
                   (formik2.touched?.password as boolean)
                 }
                 {...formik2.getFieldProps('password')}
+                onBlur={(e) => {
+                  formik2.handleBlur(e);
+                  formik2.validateField('password');
+                }}
                 placeholder="Enter your password..."
                 label="Password"
                 type="password"
               ></TextField>
               <img
-                ref={closeBtn}
-                onMouseEnter={() => setshowPasswordModal(true)}
-                onMouseLeave={() => setshowPasswordModal(false)}
-                onClick={() => setshowPasswordModal(true)}
+                data-tooltip-id="password-modal"
                 className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
                 src="/icons/user-navbar/info-circle.svg"
                 alt=""
               />
-              {showPasswordModal && (
-                <div
-                  ref={passwordModalRef}
-                  className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
-                >
-                  <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
-                    <li>
-                      At least 8 characters.(Use Uppercase & Lowercase letters,
-                      Numbers and Special characters)
-                    </li>
-                    <li>Avoid using personal information or patterns.</li>
-                  </ul>
-                </div>
-              )}
+
+              <Tooltip
+                className="!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200"
+                place="top"
+                id="password-modal"
+              >
+                <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
+                  <li>
+                    At least 8 characters.(Use Uppercase & Lowercase letters,
+                    Numbers and Special characters)
+                  </li>
+                  <li>Avoid using personal information or patterns.</li>
+                </ul>
+              </Tooltip>
             </div>
             <div className="">
               <TextField
@@ -283,25 +351,41 @@ const ForgetPassword = () => {
                   (formik2.touched?.confirm as boolean)
                 }
                 {...formik2.getFieldProps('confirm')}
+                onBlur={(e) => {
+                  formik2.handleBlur(e);
+                  formik2.validateField('confirm');
+                }}
                 placeholder="Confirm password ...."
                 label="Confirm Password"
                 type="password"
               ></TextField>
             </div>
             <ButtonSecondary
-              disabled={!formik2.isValid || formik2.values.password.length == 0}
               onClick={() => {
-                setIsLoading(true);
-                Application.ChangePassword({
-                  email: formik.values.email,
-                  password: formik2.values.password,
-                })
-                  .then(() => {
-                    setPasswordChanged(true);
-                  })
-                  .finally(() => {
-                    setIsLoading(false);
+                if (!isLoading) {
+                  formik2.setTouched({
+                    password: true,
+                    confirm: true,
                   });
+
+                  formik2.validateForm().then((errors) => {
+                    if (Object.keys(errors).length > 0) {
+                      return;
+                    }
+
+                    setIsLoading(true);
+                    Application.ChangePassword({
+                      email: formik.values.email,
+                      password: formik2.values.password,
+                    })
+                      .then(() => {
+                        setPasswordChanged(true);
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
+                      });
+                  });
+                }
               }}
               ClassName="rounded-[20px]"
             >

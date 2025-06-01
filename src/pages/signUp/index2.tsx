@@ -5,20 +5,25 @@ import AuthLayout from '../../layout/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Auth from '../../api/auth';
 import { useApp } from '../../hooks';
 import YoupValidation from '../../validation';
 import AuthWithGoogle from '../../Components/AuthWithGoogle';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { Tooltip } from 'react-tooltip';
 
 const validationSchema = yup.object({
   email: YoupValidation('email'),
   password: YoupValidation('password'),
   userName: yup
     .string()
-    .min(4, 'Full name must be at least 4 characters')
-    .required('Full name is required'),
+    .required('This field is required')
+    .matches(/^[A-Za-z\s]+$/, 'Full name must only contain letters and spaces')
+    .test('two-words', 'Full name must contain at least 2 words', (value) => {
+      if (!value) return false;
+      const words = value.trim().split(/\s+/);
+      return words.length >= 2;
+    }),
 });
 const SignUp = () => {
   const navigate = useNavigate();
@@ -31,39 +36,53 @@ const SignUp = () => {
       userName: '',
     },
     validationSchema,
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
-    onSubmit: () => {},
+    onSubmit: () => {
+      submit();
+    },
   });
   const submit = () => {
-    setIsLoading(true);
-    Auth.signup(
-      formik.values.userName,
-      formik.values.email,
-      formik.values.password,
-    )
-      .then(() => {
-        Auth.login(formik.values.email, formik.values.password)
-          .then((res) => {
-            appContext.login(res.data.access_token, res.data.permission);
-            navigate('/');
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+    // Mark all fields as touched to trigger validation errors
+    formik.setTouched({
+      email: true,
+      password: true,
+      userName: true,
+    });
+
+    // Validate form and show errors
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        return;
+      }
+
+      setIsLoading(true);
+      Auth.signup(
+        formik.values.userName,
+        formik.values.email,
+        formik.values.password,
+      )
+        .then(() => {
+          return Auth.login(formik.values.email, formik.values.password);
+        })
+        .then((res) => {
+          appContext.login(res.data.access_token, res.data.permission);
+          navigate('/');
+        })
+        .catch((error) => {
+          if (error.detail.includes('email')) {
+            formik.setErrors({
+              email: 'This email is already registered in our system.',
+            });
+            formik.setFieldTouched('email', true, false);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    });
   };
-  const [showPasswordModal, setshowPasswordModal] = useState(false);
-  const passwordModalRef = useRef<HTMLDivElement | null>(null);
-  const closeBtn = useRef<HTMLImageElement | null>(null);
-  useModalAutoClose({
-    refrence: passwordModalRef,
-    buttonRefrence: closeBtn,
-    close: () => setshowPasswordModal(false),
-  });
+
   return (
     <>
       <AuthLayout>
@@ -81,6 +100,10 @@ const SignUp = () => {
             }
             errorMessage={formik.errors?.userName}
             {...formik.getFieldProps('userName')}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              formik.validateField('userName');
+            }}
             placeholder="Enter your full name..."
             label="Full name"
             type="text"
@@ -92,6 +115,10 @@ const SignUp = () => {
             }
             errorMessage={formik.errors?.email}
             {...formik.getFieldProps('email')}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+              formik.validateField('email');
+            }}
             placeholder="Enter your email address..."
             label="Email Address"
             type="email"
@@ -104,39 +131,45 @@ const SignUp = () => {
                 (formik.touched?.password as boolean)
               }
               {...formik.getFieldProps('password')}
+              onBlur={(e) => {
+                formik.handleBlur(e);
+                formik.validateField('password');
+              }}
               placeholder="Enter your password..."
               label="Password"
               type="password"
             ></TextField>
             <img
-              ref={closeBtn}
-              onMouseEnter={() => setshowPasswordModal(true)}
-              onMouseLeave={() => setshowPasswordModal(false)}
-              onClick={() => setshowPasswordModal(true)}
+              data-tooltip-id="password-modal"
+              // ref={closeBtn}
+              // onMouseEnter={() => setshowPasswordModal(true)}
+              // onMouseLeave={() => setshowPasswordModal(false)}
+              // onClick={() => setshowPasswordModal(true)}
               className="w-2 h-2 absolute top-0 left-[60px] cursor-pointer object-contain"
               src="/icons/user-navbar/info-circle.svg"
               alt=""
             />
-            {showPasswordModal && (
-              <div
-                ref={passwordModalRef}
-                className="absolute top-2 left-[70px] bg-white rounded-md border border-Gray-50 p-[10px] shadow-200"
-              >
-                <ul className="space-y-2 list-disc text-Text-Secondary text-[8px] leading-5 text-justify px-[10px] select-none">
-                  <li>
-                    At least 8 characters.(Use Uppercase & Lowercase letters,
-                    Numbers and Special characters)
-                  </li>
-                  <li>Avoid using personal information or patterns.</li>
-                </ul>
-              </div>
-            )}
+
+            <Tooltip
+              className="!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200"
+              place="top"
+              id="password-modal"
+            >
+              <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
+                <li>
+                  At least 8 characters.(Use Uppercase & Lowercase letters,
+                  Numbers and Special characters)
+                </li>
+                <li>Avoid using personal information or patterns.</li>
+              </ul>
+            </Tooltip>
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px]"
-            disabled={!formik.isValid || formik.values.userName.length == 0}
             onClick={() => {
-              submit();
+              if (!isLoading) {
+                submit();
+              }
             }}
           >
             {isLoading ? (
