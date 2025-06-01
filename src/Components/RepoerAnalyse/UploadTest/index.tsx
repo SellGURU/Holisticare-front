@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState, useCallback } from 'react';
-import Uploading from './uploading';
+import { useRef, useState } from 'react';
+// import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
 import { publish } from '../../../utils/event';
 import { uploadToAzure } from '../../../help';
-import FileBox from '../../ComboBar/components/FileBox';
+// import FileBox from '../../ComboBar/components/FileBox';
 import FileBoxUploading from './FileBoxUploading';
 
 interface FileUpload {
@@ -31,7 +31,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
   const fileInputRef = useRef<any>(null);
   // const [files, setFiles] = useState<Array<any>>([]);
   // const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage] = useState<string>('');
 
   const formatFileSize = (bytes: number): string => {
     const kb = bytes / 1024;
