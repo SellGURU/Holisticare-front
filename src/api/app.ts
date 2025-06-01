@@ -959,6 +959,9 @@ class Application extends Api {
   static getDocumentKnowledge = (data: any) => {
     return this.post('/ai_knowledge/get_document_knowledge', data);
   };
+  static deleteUserUploadDocument = (data: any) => {
+    return this.post('/ai_knowledge/remove_nodes_by_file', data);
+  };
 }
 
 export default Application;

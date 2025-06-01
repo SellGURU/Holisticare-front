@@ -19,7 +19,9 @@ import Circleloader from '../../Components/CircleLoader/index.tsx';
 import { MainModal } from '../../Components/index.ts';
 import Pagination from '../../Components/pagination/index.tsx';
 import SearchBox from '../../Components/SearchBox/index.tsx';
+import SpinnerLoader from '../../Components/SpinnerLoader/index.tsx';
 import Toggle from '../../Components/Toggle/index.tsx';
+import { uploadToAzure } from '../../help.ts';
 import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 
 interface LoadGraphProps {
@@ -475,6 +477,41 @@ const AiKnowledge = () => {
   const [uploadComplete, setUploadComplete] = useState<{
     [key: string]: boolean;
   }>({});
+  const [stepAddDocument, setStepAddDocument] = useState(1);
+  const [currentIndexEditSelect, setCurrentIndexEditSelect] = useState<
+    null | number
+  >(null);
+  const [currentIndexDeleteSelect, setCurrentIndexDeleteSelect] = useState<
+    null | number
+  >(null);
+  const [fileTitles, setFileTitles] = useState<{ [fileName: string]: string }>(
+    {},
+  );
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [documentsData, setDocumentsData] = useState<any[]>([]);
+  const [selectedDocument, setSelectedDocument] = useState<number>(0);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState<null | number>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const options = [
+    { label: '1 Month', value: 1 },
+    { label: '2 Month', value: 2 },
+    { label: '3 Month', value: 3 },
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -482,29 +519,56 @@ const AiKnowledge = () => {
       const newFiles = Array.from(files);
       setSelectedFiles((prev) => [...prev, ...newFiles]);
 
-      // Initialize progress and complete state for new files
+      const newTitles: { [key: string]: string } = {};
       newFiles.forEach((file) => {
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
-        setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
-        simulateUploadProgress(file.name);
+        newTitles[file.name] = file.name;
       });
+
+      setFileTitles((prev) => ({ ...prev, ...newTitles }));
+
+      // Initialize progress and complete state for new files
+      // newFiles.forEach((file) => {
+      //   setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+      //   setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
+      //   simulateUploadProgress(file.name);
+      // });
     }
   };
+  const confirmRename = (originalName: string, newName: string) => {
+    setFileTitles((prev) => {
+      const updated = { ...prev };
+      updated[newName] = newName;
+      delete updated[originalName];
+      return updated;
+    });
 
-  const simulateUploadProgress = (fileName: string) => {
-    setUploadProgress((prev) => ({ ...prev, [fileName]: 0 }));
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        const currentProgress = prev[fileName];
-        if (currentProgress >= 100) {
-          clearInterval(interval);
-          setUploadComplete((prev) => ({ ...prev, [fileName]: true }));
-          return prev;
+    setSelectedFiles((prev) =>
+      prev.map((file) => {
+        if (file.name === originalName) {
+          const renamedFile = new File([file], newName, { type: file.type });
+          return renamedFile;
         }
-        return { ...prev, [fileName]: currentProgress + 10 };
-      });
-    }, 500);
+        return file;
+      }),
+    );
+
+    setCurrentIndexEditSelect(null);
   };
+
+  // const simulateUploadProgress = (fileName: string) => {
+  //   setUploadProgress((prev) => ({ ...prev, [fileName]: 0 }));
+  //   const interval = setInterval(() => {
+  //     setUploadProgress((prev) => {
+  //       const currentProgress = prev[fileName];
+  //       if (currentProgress >= 100) {
+  //         clearInterval(interval);
+  //         setUploadComplete((prev) => ({ ...prev, [fileName]: true }));
+  //         return prev;
+  //       }
+  //       return { ...prev, [fileName]: currentProgress + 10 };
+  //     });
+  //   }, 500);
+  // };
 
   const handleCancelUpload = (fileName: string) => {
     setSelectedFiles((prev) => prev.filter((file) => file.name !== fileName));
@@ -520,20 +584,83 @@ const AiKnowledge = () => {
     });
   };
 
-  const handleAddFile = () => {
-    if (selectedFiles.length > 0) {
-      const newUploads = selectedFiles.map((file) => ({
-        id: userUploads.length + 1,
-        type: fileTitle || file.name,
-        date: new Date().toLocaleDateString(),
-        disabled: false,
-      }));
+  // const handleAddFile = () => {
+  //   if (selectedFiles.length > 0) {
+  //     const newUploads = selectedFiles.map((file) => ({
+  //       id: userUploads.length + 1,
+  //       type: fileTitle || file.name,
+  //       date: new Date().toLocaleDateString(),
+  //       disabled: false,
+  //     }));
 
-      setUserUploads((prev) => [...prev, ...newUploads]);
+  //     setUserUploads((prev) => [...prev, ...newUploads]);
+  //     setSelectedFiles([]);
+  //     setUploadProgress({});
+  //     setUploadComplete({});
+  //     closeModal();
+  //   }
+  // };
+
+  const handleDeleteFileUserUpload = (fileName: string) => {
+    Application.deleteUserUploadDocument({
+      filename: fileName,
+    }).then(() => {
+      setUserUploads((prev) => prev.filter((doc) => doc.type !== fileName));
+      setDocumentsData((prev) =>
+        prev.filter((doc) => doc.filename !== fileName),
+      );
+      setConfirmDeleteId(null);
+    });
+  };
+
+  const handleAddFile = async () => {
+    if (selectedFiles.length === 0) return;
+    setLoadingButton(true);
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (const file of selectedFiles) {
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+        setUploadComplete((prev) => ({ ...prev, [file.name]: false }));
+
+        const url = await uploadToAzure(file, (progress) => {
+          setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
+        });
+
+        uploadedUrls.push(url);
+        setUploadComplete((prev) => ({ ...prev, [file.name]: true }));
+      }
+
+      await Application.getDocumentKnowledge({
+        files: uploadedUrls.map((url, index) => ({
+          content: url,
+          filename: fileTitle || selectedFiles[index].name,
+          fast_mode: true,
+        })),
+      }).then((res) => {
+        setDocumentsData(res.data);
+      });
+
+      setUserUploads((prev) => [
+        ...prev,
+        ...uploadedUrls.map((url, index) => ({
+          id: prev.length + index + 1,
+          type: fileTitle || selectedFiles[index].name,
+          date: new Date().toLocaleDateString(),
+          url,
+          disabled: false,
+        })),
+      ]);
+
       setSelectedFiles([]);
       setUploadProgress({});
       setUploadComplete({});
-      closeModal();
+      setStepAddDocument(2);
+      // closeModal();
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -572,10 +699,10 @@ const AiKnowledge = () => {
     }
   };
 
-  const deleteDocument = (id: number) => {
-    setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
-    setConfirmDeleteId(null);
-  };
+  // const deleteDocument = (id: number) => {
+  //   setUserUploads((prevDocs) => prevDocs.filter((doc) => doc.id !== id));
+  //   setConfirmDeleteId(null);
+  // };
 
   // const currentDocuments =
   //   activaTab === 'System Docs'
@@ -624,6 +751,10 @@ const AiKnowledge = () => {
   //     return filteredUserUploads.slice(startIndex, endIndex);
   //   }
   // };
+  // const [totalPageUserDocs, setTotalPageUserDocs] = useState(0);
+  // const [totalPageSystemDocs, setTotalPageSystemDocs] = useState(0);
+  let totalPageSystemDocs = 0;
+  let totalPageUserDocs = 0;
   const getCurrentPageData = (): TableItem[] => {
     if (activaTab === 'System Docs') {
       const filtered = isSystemDocsSearchActive
@@ -634,6 +765,10 @@ const AiKnowledge = () => {
           )
         : graphData?.nodes.filter((e: any) => e.type === 'system_docs');
 
+      if (filtered) {
+        totalPageSystemDocs = filtered.length || 0;
+      }
+
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
 
@@ -642,30 +777,15 @@ const AiKnowledge = () => {
       const filtered = graphData?.nodes.filter(
         (e: any) => e.type === 'user_docs',
       );
-
+      if (filtered) {
+        totalPageUserDocs = filtered.length || 0;
+      }
       const startIndex = (currentPage - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;
 
       return filtered?.slice(startIndex, endIndex) || [];
     }
   };
-
-  console.log('getCurrentPageData => ', getCurrentPageData());
-
-  // const totalPages =
-  //   activaTab === 'System Docs'
-  //     ? Math.ceil(
-  //         (filteredSystemDocs.length > 0
-  //           ? filteredSystemDocs.length
-  //           : [...new Set(graphData?.nodes.map((e: any) => e.category2))]
-  //               .length) / itemsPerPage,
-  //       )
-  //     : Math.ceil(filteredUserUploads.length / itemsPerPage);
-
-  const totalPages =
-    activaTab === 'System Docs'
-      ? Math.ceil(getCurrentPageData().length / itemsPerPage)
-      : Math.ceil(getCurrentPageData().length / itemsPerPage);
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
@@ -792,98 +912,278 @@ const AiKnowledge = () => {
   return (
     <>
       <MainModal isOpen={AddFilleModal} onClose={closeModal}>
-        <div className="w-[500px] bg-white min-h-[316px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary">
+        <div
+          className={`${stepAddDocument === 1 ? 'w-[500px]' : 'w-[932px]'} bg-white min-h-[316px] rounded-2xl shadow-800 p-4 text-xs text-Text-Primary`}
+        >
           <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
-            Add New Document
+            {stepAddDocument === 1
+              ? 'Add New Document'
+              : 'Review Extracted Nodes'}
           </div>
-          <div className="text-Text-Primary font-medium text-xs mt-6 mb-2">
-            Upload Document
-          </div>
-          <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
-            <input
-              multiple
-              type="file"
-              accept=".pdf,.docx"
-              style={{ display: 'none' }}
-              id="file-upload"
-              onChange={handleFileUpload}
-            />
-            <img src="/icons/upload-test.svg" alt="" />
-            <div className="text-xs text-Text-Primary text-center mt-1">
-              Drag and drop or click to upload.
-            </div>
-            <div className="text-Text-Quadruple text-xs">
-              Accepted formats:{' '}
-              <span className="font-medium">.pdf, .docx.</span>
-            </div>
-          </label>
-          <div className="overflow-auto max-h-[210px] mt-2 mb-4">
-            {selectedFiles.map((file) => (
-              <div key={file.name}>
-                {uploadProgress[file.name] > 0 &&
-                  uploadProgress[file.name] < 100 && (
-                    <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
-                      <div className="w-full flex justify-between">
-                        <div>
-                          <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
-                            Uploading {file.name}...
+          {stepAddDocument === 1 ? (
+            <>
+              <div className="text-Text-Primary font-medium text-xs mt-6 mb-2">
+                Upload Document
+              </div>
+              <label className="w-full h-[154px] rounded-2xl border border-Gray-50 bg-white shadow-100 flex flex-col items-center justify-center gap-2 p-6 cursor-pointer">
+                <input
+                  multiple
+                  type="file"
+                  accept=".pdf,.docx"
+                  style={{ display: 'none' }}
+                  id="file-upload"
+                  onChange={handleFileUpload}
+                />
+                <img src="/icons/upload-test.svg" alt="" />
+                <div className="text-xs text-Text-Primary text-center mt-1">
+                  Drag and drop or click to upload.
+                </div>
+                <div className="text-Text-Quadruple text-xs">
+                  Accepted formats:{' '}
+                  <span className="font-medium">.pdf, .docx.</span>
+                </div>
+              </label>
+              <div className="overflow-auto max-h-[210px] mt-2 mb-4">
+                {selectedFiles.map((file, index) => {
+                  return (
+                    <div key={index}>
+                      {uploadProgress[file.name] > 0 &&
+                      uploadProgress[file.name] < 100 ? (
+                        <div className="w-full relative px-4 py-2 h-[68px] bg-white shadow-200 rounded-[16px] mb-2">
+                          <div className="w-full flex justify-between">
+                            <div>
+                              <div className="text-[10px] md:text-[12px] text-Text-Primary font-[600]">
+                                Uploading {file.name}...
+                              </div>
+                              <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
+                                {uploadProgress[file.name]}% • 30 seconds
+                                remaining
+                              </div>
+                            </div>
+                            <img
+                              onClick={() => handleCancelUpload(file.name)}
+                              className="cursor-pointer"
+                              src="/icons/close.svg"
+                              alt=""
+                            />
                           </div>
-                          <div className="text-Text-Secondary text-[10px] md:text-[12px] mt-1">
-                            {uploadProgress[file.name]}% • 30 seconds remaining
+                          <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
+                            <div
+                              className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
+                              style={{ width: uploadProgress[file.name] + '%' }}
+                            ></div>
                           </div>
                         </div>
-                        <img
-                          onClick={() => handleCancelUpload(file.name)}
-                          className="cursor-pointer"
-                          src="/icons/close.svg"
-                          alt=""
-                        />
-                      </div>
-                      <div className="w-full h-[8px] rounded-[12px] bg-gray-200 mt-1 flex justify-start items-center">
-                        <div
-                          className="bg-Primary-DeepTeal h-[5px] rounded-[12px]"
-                          style={{ width: uploadProgress[file.name] + '%' }}
-                        ></div>
-                      </div>
+                      ) : uploadComplete[file.name] ? (
+                        <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                          <div className="flex items-center gap-4">
+                            <img
+                              src="/icons/PDF_file_icon.svg 1.svg"
+                              alt="PDF Icon"
+                            />
+                            <div className="flex flex-col">
+                              <span className="text-xs">{file.name}</span>
+                              <span className="text-xs text-[#888888]">
+                                {formatFileSize(file.size)}
+                              </span>
+                            </div>
+                          </div>
+                          <img
+                            onClick={() => handleCancelUpload(file.name)}
+                            className="cursor-pointer"
+                            src="/icons/trash-blue.svg"
+                            alt="Delete Icon"
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
+                            <div className="flex items-center gap-4">
+                              <img
+                                src="/icons/PDF_file_icon.svg 1.svg"
+                                alt="PDF Icon"
+                              />
+                              <div className="flex flex-col">
+                                {currentIndexEditSelect === index ? (
+                                  <input
+                                    type="text"
+                                    value={fileTitles[file.name] || file.name}
+                                    onChange={(e) => {
+                                      setFileTitles((prev) => ({
+                                        ...prev,
+                                        [file.name]: e.target.value,
+                                      }));
+                                    }}
+                                    className="text-xs"
+                                  />
+                                ) : (
+                                  <span className="text-xs">
+                                    {fileTitles[file.name] || file.name}
+                                  </span>
+                                )}
+                                <span className="text-xs text-[#888888]">
+                                  {formatFileSize(file.size)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {currentIndexEditSelect === index ||
+                              currentIndexDeleteSelect === index ? (
+                                <>
+                                  <img
+                                    onClick={() => {
+                                      setCurrentIndexEditSelect(null);
+                                      setCurrentIndexDeleteSelect(null);
+                                    }}
+                                    className="cursor-pointer w-6 h-6"
+                                    src="/icons/close-square.svg"
+                                  />
+                                  <img
+                                    onClick={() => {
+                                      if (currentIndexEditSelect === index) {
+                                        confirmRename(
+                                          file.name,
+                                          fileTitles[file.name] || file.name,
+                                        );
+                                      }
+                                      if (currentIndexDeleteSelect === index) {
+                                        handleCancelUpload(file.name);
+                                      }
+                                    }}
+                                    className="cursor-pointer w-6 h-6"
+                                    src="/icons/tick-square-background-green.svg"
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <img
+                                    onClick={() => {
+                                      setCurrentIndexEditSelect(index);
+                                    }}
+                                    className="cursor-pointer w-6 h-6"
+                                    src="/icons/edit-blue.svg"
+                                    alt="Edit Icon"
+                                  />
+                                  <img
+                                    onClick={() => {
+                                      setCurrentIndexDeleteSelect(index);
+                                    }}
+                                    className="cursor-pointer w-6 h-6"
+                                    src="/icons/trash-blue.svg"
+                                    alt="Delete Icon"
+                                  />
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
-                  )}
-                {uploadComplete[file.name] && (
-                  <div className="flex items-center justify-between bg-white drop-shadow-sm rounded-[12px] px-4 py-2 border border-Gray-50 mb-2">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src="/icons/PDF_file_icon.svg 1.svg"
-                        alt="PDF Icon"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-xs">{file.name}</span>
-                        <span className="text-xs text-[#888888]">
-                          {formatFileSize(file.size)}
-                        </span>
-                      </div>
-                    </div>
-                    <img
-                      onClick={() => handleCancelUpload(file.name)}
-                      className="cursor-pointer"
-                      src="/icons/trash-blue.svg"
-                      alt="Delete Icon"
-                    />
-                  </div>
+                  );
+                })}
+              </div>
+
+              <div className="w-full flex items-center justify-end gap-3 text-sm font-medium">
+                <div
+                  onClick={closeModal}
+                  className="text-[#909090] cursor-pointer"
+                >
+                  Cancel
+                </div>
+                <div
+                  onClick={handleAddFile}
+                  className="text-Primary-DeepTeal cursor-pointer"
+                >
+                  {loadingButton ? <SpinnerLoader color="#005F73" /> : 'Next'}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mt-4 text-xs text-Text-Primary">
+                Here are the nodes extracted from your documents. You can remove
+                any nodes you don't want to include in your knowledge graph.
+              </div>
+              <div className="text-Text-Primary text-xs font-medium mt-4">
+                Select Document
+              </div>
+              <div
+                className="relative inline-block w-[292px] font-normal mt-2"
+                ref={wrapperRef}
+              >
+                <div
+                  className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[10px] text-Text-Primary flex justify-between items-center"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  {options.find((opt) => opt.value === selected)?.label}
+                  <img
+                    className={`w-3 h-3 object-contain opacity-80 ml-2 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180' : ''
+                    }`}
+                    src="/icons/arow-down-drop.svg"
+                    alt=""
+                  />
+                </div>
+
+                {isOpen && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[10px] text-Text-Primary">
+                    {options.map((opt) => (
+                      <li
+                        key={opt.value}
+                        className={`cursor-pointer px-4 py-2 hover:bg-gray-100 rounded-2xl ${
+                          selected === opt.value
+                            ? 'bg-gray-50 font-semibold'
+                            : ''
+                        }`}
+                        onClick={() => {
+                          setSelected(opt.value);
+                          setSelectedDocument(opt.value);
+                          setIsOpen(false);
+                        }}
+                      >
+                        {opt.label}
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
-            ))}
-          </div>
-
-          <div className="w-full flex items-center justify-end gap-3 text-sm font-medium">
-            <div onClick={closeModal} className="text-[#909090] cursor-pointer">
-              Cancel
-            </div>
-            <div
-              onClick={handleAddFile}
-              className="text-Primary-DeepTeal cursor-pointer "
-            >
-              Next
-            </div>
-          </div>
+              <table className="w-full mt-4 rounded-xl">
+                <thead>
+                  <tr className="text-[10px] text-Text-Primary bg-bg-color rounded-t-xl">
+                    <th className="rounded-tl-xl py-2">No</th>
+                    <th>Node Title</th>
+                    <th>Sentence</th>
+                    <th>File Name</th>
+                    <th>Date of Upload</th>
+                    <th className="rounded-tr-xl">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="border border-bg-color">
+                  {documentsData[selectedDocument]?.modal_data.map(
+                    (item: any, index: number) => (
+                      <tr
+                        key={index}
+                        className={`text-xs text-Text-Primary ${
+                          index % 2 === 0
+                            ? 'bg-white'
+                            : 'bg-backgroundColor-Main'
+                        }`}
+                      >
+                        <td>{index + 1}</td>
+                        <td>{item.entity}</td>
+                        <td>{item.sentence}</td>
+                        <td>{item.filename}</td>
+                        <td>{item.upload_date}</td>
+                        <td>
+                          <img src="/icons/trash-blue.svg" alt="" />
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       </MainModal>
       <div className="relative text-primary-text md:flex justify-center w-full h-[90vh] md:h-[80vh] pt-5 md:pt-0 ">
@@ -1129,7 +1429,9 @@ const AiKnowledge = () => {
                                   Sure?
                                   <img
                                     className="cursor-pointer size-4"
-                                    onClick={() => deleteDocument(doc.id)}
+                                    onClick={() =>
+                                      handleDeleteFileUserUpload(doc.category2)
+                                    }
                                     src="/icons/confirm-tick-circle.svg"
                                     alt="Confirm"
                                   />
@@ -1179,9 +1481,9 @@ const AiKnowledge = () => {
                   <div className="flex justify-center py-2 absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={totalPages}
+                      totalPages={totalPageUserDocs / itemsPerPage}
                       onPageChange={handlePageChange}
-                      isEmpty={getCurrentPageData().length === 0}
+                      isEmpty={totalPageUserDocs === 0}
                     />
                   </div>
                 </div>
@@ -1248,9 +1550,9 @@ const AiKnowledge = () => {
                   <div className="py-2 flex justify-center absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={totalPages}
+                      totalPages={totalPageSystemDocs / itemsPerPage}
                       onPageChange={handlePageChange}
-                      isEmpty={getCurrentPageData().length === 0}
+                      isEmpty={totalPageSystemDocs === 0}
                     />
                   </div>
                 </div>
