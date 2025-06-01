@@ -100,11 +100,15 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                   {
                     <div className="text-center" style={{ color: '#888888' }}>
                       <div
-                        style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
+                        style={{
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          fontSize: '10px',
+                        }}
                       >
                         {data.chart_bounds[el.key].label}
                       </div>
-                      <div>
+                      <div style={{ fontSize: '8px' }}>
                         {'' +
                           '(' +
                           el.value[0] +
@@ -194,7 +198,13 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                           style={{
                             fontSize: '12px',
                             gap: '2px',
-                            marginLeft: '-24px',
+                            marginLeft:
+                              index == 0
+                                ? '0px'
+                                : '-' +
+                                  (data.values[0].length + data.unit.length) *
+                                    5 +
+                                  'px',
                             color: '#005F73',
                           }}
                           className="text-[10px] w-max flex justify-center ml-[-24px] items-center gap-[2px] text-Primary-DeepTeal"
