@@ -242,7 +242,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
               />
             </div>
 
-              <div className='className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto'>
+            <div className='className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto'>
               {uploadedFiles.map((fileUpload, index) => (
                 <div key={index}>
                   <FileBoxUploading
@@ -250,7 +250,9 @@ const UploadTest: React.FC<UploadTestProps> = ({
                       setUploadedFiles((prev) =>
                         prev.filter((f) => f.file !== fileUpload.file),
                       );
-                      handleDeleteFile(uploadedFiles.filter((f) => f.file == fileUpload.file))
+                      handleDeleteFile(
+                        uploadedFiles.filter((f) => f.file == fileUpload.file),
+                      );
                     }}
                     el={{
                       ...fileUpload,
@@ -261,9 +263,8 @@ const UploadTest: React.FC<UploadTestProps> = ({
                     }}
                   />
                 </div>
-              ))}              
-
-              </div>
+              ))}
+            </div>
             {/* <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
               {files.map((el: any) => {
                 return (
@@ -330,7 +331,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
             <div className="flex justify-center mt-5">
               <ButtonSecondary
-                disabled={uploadedFiles.filter((el) =>el.status=='completed').length == 0}
+                disabled={
+                  uploadedFiles.filter((el) => el.status == 'completed')
+                    .length == 0
+                }
                 onClick={() => {
                   onGenderate();
                 }}
