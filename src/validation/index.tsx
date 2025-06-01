@@ -10,15 +10,27 @@ const YoupValidation = (type: string) => {
   if (type == 'password') {
     return yup
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .matches(/[0-9]/, 'Password must contain at least one number')
-      .matches(
-        /[@$!%*?&#]/,
-        'Password must contain at least one special character',
-      )
-      .required('Password is required');
+      .required('This field is required')
+      .test(
+        'password-format',
+        'Password must follow the described format.',
+        function (value) {
+          if (!value) return false;
+          const hasMinLength = value.length >= 8;
+          const hasLowerCase = /[a-z]/.test(value);
+          const hasUpperCase = /[A-Z]/.test(value);
+          const hasNumber = /[0-9]/.test(value);
+          const hasSpecialChar = /[@$!%*?&#]/.test(value);
+
+          return (
+            hasMinLength &&
+            hasLowerCase &&
+            hasUpperCase &&
+            hasNumber &&
+            hasSpecialChar
+          );
+        },
+      );
   }
   return yup.string();
 };
