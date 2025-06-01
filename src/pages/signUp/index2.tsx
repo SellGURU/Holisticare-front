@@ -5,7 +5,7 @@ import AuthLayout from '../../layout/AuthLayout';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import {  useState } from 'react';
+import { useState } from 'react';
 import Auth from '../../api/auth';
 import { useApp } from '../../hooks';
 import YoupValidation from '../../validation';
@@ -83,8 +83,6 @@ const SignUp = () => {
     });
   };
 
-
-
   return (
     <>
       <AuthLayout>
@@ -152,16 +150,18 @@ const SignUp = () => {
               alt=""
             />
 
-            <Tooltip className='!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200' place='top' id="password-modal">
-           
-                <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
-                  <li>
-                    At least 8 characters.(Use Uppercase & Lowercase letters,
-                    Numbers and Special characters)
-                  </li>
-                  <li>Avoid using personal information or patterns.</li>
-                </ul>
-              
+            <Tooltip
+              className="!bg-white !w-[284px] !rounded-md !border !border-Gray-50 !p-[10px] !bg-opacity-100 !opacity-100 !shadow-200"
+              place="top"
+              id="password-modal"
+            >
+              <ul className=" list-disc text-[#888888] text-[10px] leading-5 text-justify px-[10px] select-none">
+                <li>
+                  At least 8 characters.(Use Uppercase & Lowercase letters,
+                  Numbers and Special characters)
+                </li>
+                <li>Avoid using personal information or patterns.</li>
+              </ul>
             </Tooltip>
           </div>
           <ButtonSecondary
