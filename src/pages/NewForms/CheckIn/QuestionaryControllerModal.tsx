@@ -15,8 +15,7 @@ interface QuestionaryControllerModalProps {
   onClose: () => void;
   onSave: (values: any) => void;
   templateData?: any;
-  error?: string;
-  setError: (error: string) => void;
+  error: string;
 }
 
 const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
@@ -26,8 +25,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   editId,
   templateData,
   error,
-  setError,
 }) => {
+  const [isError, setIsError] = useState(false);
   const [step, setStep] = useState(0);
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
@@ -36,11 +35,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
     templateData ? templateData.questions : [],
   );
   useEffect(() => {
-    if (
-      error &&
-      error == 'A form with the same title already exists.' &&
-      templateData == null
-    ) {
+    if (error && error == 'A form with the same title already exists.') {
+      setTitleForm(templateData?.title || '');
+      setIsError(true);
       setStep(0);
       setIsSaveLoading(false);
     }
@@ -139,7 +136,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       return minutes * 60000 + seconds * 1000;
     };
     onSave({
-      title: templateData != null ? templateData.title : titleForm,
+      title: templateData != null && !error ? templateData.title : titleForm,
       questions: questions,
       share_with_client: checked,
       time: getTimeInMilliseconds(),
@@ -184,7 +181,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-              {templateData == null && mode == 'Add' ? (
+              {(templateData == null || error) && mode == 'Add' ? (
                 <div className="w-full mt-6">
                   <TextField
                     type="text"
@@ -194,9 +191,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                     value={titleForm}
                     onChange={(e) => {
                       setTitleForm(e.target.value);
-                      setError('');
+                      setIsError(false);
                     }}
-                    inValid={error != ''}
+                    inValid={isError}
                     errorMessage="Form title already exists. Please choose another."
                   />
                 </div>
