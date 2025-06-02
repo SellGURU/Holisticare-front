@@ -62,17 +62,19 @@ const EditModal: FC<EditModalProps> = ({
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
-    Dose: Yup.string().test(
-      'dose-required',
-      'This field is required.',
-      function (value) {
-        // If selectedGroupDose is true, then Dose is required
-        if (!selectedGroupDose) return true;
-        return Boolean(value && value.trim() !== '');
-      },
-    ),
     Instruction: Yup.string().required('This field is required.'),
+    Dose: Yup.string().when('Category', {
+      is: 'Supplement',
+      then: (schema) =>
+        schema
+          .required('This field is required.')
+          .matches(
+            /^[0-9]+\s*[a-zA-Z]+$/,
+            'Dose must follow the described format.',
+          ),
+    }),
   });
+
   interface FormValues {
     Category: string;
     Recommendation: string;
@@ -95,24 +97,21 @@ const EditModal: FC<EditModalProps> = ({
     },
     validationSchema,
     validateOnMount: true,
-
     onSubmit: (values) => {
-      if (formik.isValid) {
-        onSubmit({
-          Category: values.Category,
-          Recommendation: values.Recommendation,
-          'Based on': defalts ? defalts['Based on'] : '',
-          'Practitioner Comments': practitionerComments,
-          Instruction: values.Instruction,
-          Score: '0',
-          'System Score': '0',
-          // Times: selectedTimes,
-          Dose: values.Dose,
-          'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        });
-        onClose();
-        clearFields();
-      }
+      onSubmit({
+        Category: values.Category,
+        Recommendation: values.Recommendation,
+        'Based on': defalts ? defalts['Based on'] : '',
+        'Practitioner Comments': practitionerComments,
+        Instruction: values.Instruction,
+        Score: '0',
+        'System Score': '0',
+        // Times: selectedTimes,
+        Dose: values.Dose,
+        'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
+      });
+      onClose();
+      clearFields();
     },
   });
   useEffect(() => {
@@ -225,12 +224,16 @@ const EditModal: FC<EditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
+
+    // Validate notes length
+    if (newNote.length > 400) {
+      return;
+    }
+
     formik.validateForm().then((errors) => {
       if (Object.keys(errors).length > 0) {
-        // If there are validation errors, just show them without submitting
         return;
       }
-      // Only submit if there are no validation errors
       formik.handleSubmit();
     });
   };
@@ -347,7 +350,11 @@ const EditModal: FC<EditModalProps> = ({
               <input
                 name="Dose"
                 value={formik.values.Dose}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  // Only allow English characters and numbers
+                  const value = e.target.value.replace(/[^0-9a-zA-Z\s]/g, '');
+                  formik.setFieldValue('Dose', value);
+                }}
                 placeholder="Write Dose"
                 type="text"
                 disabled={!selectedGroupDose}
@@ -427,15 +434,16 @@ const EditModal: FC<EditModalProps> = ({
               <textarea
                 value={newNote}
                 onChange={(e) => {
-                  if (e.target.value.length <= 400) {
-                    setNewNote(e.target.value);
-                  }
+                  setNewNote(e.target.value);
                 }}
                 onKeyDown={handleNoteKeyDown}
-                className="mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border border-Gray-50 rounded-2xl outline-none"
+                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
+                  showValidation && newNote.length > 400
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } rounded-2xl outline-none`}
                 rows={4}
                 placeholder="Write notes ..."
-                maxLength={400}
               />
               <div className="flex justify-between items-center mt-1">
                 <Tooltip
@@ -446,10 +454,15 @@ const EditModal: FC<EditModalProps> = ({
                   After writing each note, press the Enter key to save it and be
                   able to add another note.
                 </Tooltip>
-                <span className="text-[10px] text-Text-Quadruple">
+                {/* <span className="text-[10px] text-Text-Quadruple">
                   {newNote.length}/400 characters
-                </span>
+                </span> */}
               </div>
+              {showValidation && newNote.length > 400 && (
+                <div className="text-Red text-[10px] mt-1">
+                  You can enter up to 400 characters.
+                </div>
+              )}
             </div>
 
             {/* Notes List */}

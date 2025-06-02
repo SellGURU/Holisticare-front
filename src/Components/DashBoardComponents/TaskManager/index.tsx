@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 // import AddFilter from './addFilter';
 import DashboardApi from '../../../api/Dashboard';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
@@ -23,6 +25,14 @@ type Task = {
 //   progress: { inProgress: boolean; toDo: boolean };
 //   date: { from: Date | null; to: Date | null };
 // };
+
+const validationSchema = Yup.object({
+  title: Yup.string().required('This field is required.'),
+  deadline: Yup.date()
+    .required('This field is required.')
+    .min(new Date(), 'Please set a deadline that is after today.'),
+  priority: Yup.string().required('This field is required.'),
+});
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -63,8 +73,50 @@ const TaskManager = () => {
     }
   };
   const [showAddTaskModal, setshowAddTaskModal] = useState(false);
-  const [taskTitle, setTaskTitle] = useState('');
-  const [deadline, setDeadline] = useState<Date | null>(new Date());
+  const [showValidation, setShowValidation] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      deadline: null as Date | null,
+      priority: '',
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      if (!values.deadline) return;
+
+      const newTask: Task = {
+        title: values.title,
+        deadline: values.deadline.toLocaleDateString('en-US', {
+          month: '2-digit',
+          day: '2-digit',
+          year: 'numeric',
+        }),
+        progress: 0,
+        priority: values.priority,
+        checked: false,
+      };
+
+      DashboardApi.AddTask(newTask).then(() => {
+        DashboardApi.getTasksList({}).then((response) => {
+          setTasks(response.data);
+          setshowAddTaskModal(false);
+          formik.resetForm();
+        });
+      });
+    },
+  });
+
+  const handleAddTask = () => {
+    setShowValidation(true);
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        return;
+      }
+      formik.handleSubmit();
+    });
+  };
+
   const selectRef = useRef(null);
   const selectButRef = useRef(null);
   const [showSelect, setShowSelect] = useState(false);
@@ -75,47 +127,18 @@ const TaskManager = () => {
       setShowSelect(false);
     },
   });
-  const [Priority, setPriority] = useState('High');
-  const handleAddTask = () => {
-    if (!taskTitle || !deadline) {
-      alert('Please provide a task title and deadline.');
-      return;
-    }
 
-    const newTask: Task = {
-      title: taskTitle,
-      deadline: deadline.toLocaleDateString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-      }),
-      progress: 0,
-      priority: Priority,
-      checked: false,
-    };
-
-    DashboardApi.AddTask(newTask).then(() => {
-      DashboardApi.getTasksList({}).then((response) => {
-        setTasks(response.data);
-        setshowAddTaskModal(false);
-        setTaskTitle('');
-        setDeadline(null);
-        setPriority('High');
-      });
-    });
-  };
   return (
     <>
       <MainModal
         isOpen={showAddTaskModal}
         onClose={() => {
           setshowAddTaskModal(false);
-          setTaskTitle('');
-          setDeadline(null);
-          setPriority('High');
+          formik.resetForm();
+          setShowValidation(false);
         }}
       >
-        <div className="bg-white rounded-2xl w-[500px] h-[267px] p-6 pb-8 shadow-800 text-Text-Primary relative">
+        <div className="bg-white rounded-2xl w-[500px] h-[286px] p-6 pb-8 shadow-800 text-Text-Primary relative">
           <div className="w-full border-b border-Gray-50 text-sm pb-2 font-medium mb-4">
             Add New Task
           </div>
@@ -123,35 +146,57 @@ const TaskManager = () => {
           <TextField
             className="text-Text-Primary"
             newStyle
-            value={taskTitle}
-            onChange={(e) => {
-              setTaskTitle(e.target.value);
-            }}
-            label=" Task Title"
+            value={formik.values.title}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            name="title"
+            label="Task Title"
             type="text"
             placeholder="Write your task title ..."
+            inValid={showValidation && formik.errors.title !== undefined}
+            errorMessage={showValidation ? formik.errors.title : undefined}
           />
           <div className="w-full flex items-center mt-4 gap-3">
-            <div className="flex flex-col min-w-[222px] text-xs font-medium">
+            <div className="flex flex-col min-w-[222px] min-h-[65px] text-xs font-medium">
               <label className="mb-1">Deadline</label>
               <SimpleDatePicker
                 textStyle
                 ClassName=""
+                placeholder="Select a deadline"
                 isLarge
-                date={deadline}
-                setDate={setDeadline}
+                date={formik.values.deadline}
+                setDate={(date) => formik.setFieldValue('deadline', date)}
               />
+              {showValidation && formik.errors.deadline && (
+                <div className="text-Red text-[10px] mt-1">
+                  {formik.errors.deadline}
+                </div>
+              )}
             </div>
-            <div className="flex flex-col  relative min-w-[222px] text-xs font-medium">
+            <div className="flex flex-col relative min-w-[222px] min-h-[65px] text-xs font-medium">
               <label className="mb-1">Priority</label>
               <div
                 ref={selectButRef}
                 onClick={() => {
                   setShowSelect(!showSelect);
                 }}
-                className={` w-full   md:w-[222px] cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${showSelect && 'rounded-b-none'} rounded-[16px] border border-[#E9EDF5]`}
+                className={`w-full md:w-[222px] cursor-pointer h-[26px] flex justify-between items-center px-3 bg-[#FDFDFD] ${
+                  showSelect && 'rounded-b-none'
+                } rounded-[16px] border ${
+                  showValidation && formik.errors.priority
+                    ? 'border-Red'
+                    : 'border-[#E9EDF5]'
+                }`}
               >
-                <div className="text-[12px] text-[#383838]">{Priority}</div>
+                {formik.values.priority ? (
+                  <div className="text-[12px] text-[#383838]">
+                    {formik.values.priority}
+                  </div>
+                ) : (
+                  <div className="text-[12px] font-light text-[#B0B0B0]">
+                    Select priority
+                  </div>
+                )}
 
                 <div>
                   <img
@@ -161,6 +206,11 @@ const TaskManager = () => {
                   />
                 </div>
               </div>
+              {showValidation && formik.errors.priority && (
+                <div className="text-Red text-[10px] mt-1">
+                  {formik.errors.priority}
+                </div>
+              )}
               {showSelect && (
                 <div
                   ref={selectRef}
@@ -168,17 +218,16 @@ const TaskManager = () => {
                 >
                   <div
                     onClick={() => {
-                      setPriority('High');
+                      formik.setFieldValue('priority', 'High');
                       setShowSelect(false);
                     }}
-                    className="text-[12px] cursor-pointer text-Text-Primary py-1 
-                          "
+                    className="text-[12px] cursor-pointer text-Text-Primary py-1"
                   >
                     High
                   </div>
                   <div
                     onClick={() => {
-                      setPriority('Medium');
+                      formik.setFieldValue('priority', 'Medium');
                       setShowSelect(false);
                     }}
                     className="text-[12px] cursor-pointer text-Text-Primary py-1"
@@ -187,7 +236,7 @@ const TaskManager = () => {
                   </div>
                   <div
                     onClick={() => {
-                      setPriority('Low');
+                      formik.setFieldValue('priority', 'Low');
                       setShowSelect(false);
                     }}
                     className="text-[12px] cursor-pointer text-Text-Primary py-1"
@@ -198,13 +247,12 @@ const TaskManager = () => {
               )}
             </div>
           </div>
-          <div className="w-full flex justify-end absolute right-[24px] bottom-[32px] gap-3 ">
+          <div className="w-full flex justify-end absolute right-[24px] bottom-[32px] gap-3">
             <div
               onClick={() => {
                 setshowAddTaskModal(false);
-                setTaskTitle('');
-                setDeadline(null);
-                setPriority('High');
+                formik.resetForm();
+                setShowValidation(false);
               }}
               className="text-sm font-medium text-[#909090] cursor-pointer"
             >
