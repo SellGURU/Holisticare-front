@@ -54,7 +54,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     macros: '',
     category: '',
     frequency: '',
-    clientNotes: ''
+    clientNotes: '',
   });
   const [touchedFields, setTouchedFields] = useState({
     title: false,
@@ -64,7 +64,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     macros: false,
     category: false,
     frequency: false,
-    clientNotes: false
+    clientNotes: false,
   });
 
   const toggleDaySelection = (day: string) => {
@@ -269,16 +269,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (value.length <= 400) {
       setNewNote(value);
       setNoteError('');
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        clientNotes: ''
+        clientNotes: '',
       }));
     } else {
       setNewNote(value.slice(0, 400));
       setNoteError('You can enter up to 400 characters');
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        clientNotes: 'You can enter up to 400 characters'
+        clientNotes: 'You can enter up to 400 characters',
       }));
     }
   };
@@ -580,9 +580,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   };
 
   const handleDoseBlur = () => {
-    setTouchedFields(prev => ({ ...prev, dose: true }));
+    setTouchedFields((prev) => ({ ...prev, dose: true }));
     const error = validateDose(dose);
-    setErrors(prev => ({ ...prev, dose: error }));
+    setErrors((prev) => ({ ...prev, dose: error }));
   };
 
   const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -590,7 +590,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setDose(value);
     if (touchedFields.dose) {
       const error = validateDose(value);
-      setErrors(prev => ({ ...prev, dose: error }));
+      setErrors((prev) => ({ ...prev, dose: error }));
     }
   };
 
@@ -603,7 +603,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       macros: '',
       category: '',
       frequency: '',
-      clientNotes: ''
+      clientNotes: '',
     };
 
     if (!title) {
@@ -622,7 +622,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       newErrors.value = 'This field is required.';
     }
 
-    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+    if (
+      selectedGroup === 'Diet' &&
+      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+    ) {
       newErrors.macros = 'All macro values are required.';
     }
 
@@ -647,7 +650,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
+    return !Object.values(newErrors).some((error) => error !== '');
   };
 
   const handleApplyClick = () => {
@@ -667,22 +670,25 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const handleSaveClick = () => {
     setShowValidation(true);
     setShowExerciseValidation(true);
-    
+
     // First validate the form
     const isFormValid = validateForm();
-    
+
     // Check if there are any exercises
     const hasExercises = sectionList.length > 0;
-    
+
     // Check if there are any empty reps fields
-    const hasEmptyReps = sectionList.some((section: any) => !section.Exercises[0].Reps || section.Exercises[0].Reps === '');
-    
+    const hasEmptyReps = sectionList.some(
+      (section: any) =>
+        !section.Exercises[0].Reps || section.Exercises[0].Reps === '',
+    );
+
     // Only proceed if form is valid, there are exercises, and no empty reps
     if (isFormValid && hasExercises && !hasEmptyReps) {
       saveActivity();
     }
   };
-console.log(sectionList.length);
+  console.log(sectionList.length);
 
   return (
     <MainModal
@@ -838,7 +844,8 @@ console.log(sectionList.length);
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                          Dose must include a number followed by a unit (e.g., '50 mg')
+                          Dose must include a number followed by a unit (e.g.,
+                          '50 mg')
                         </div>
                       </Tooltip>
                     </div>
@@ -1468,7 +1475,7 @@ console.log(sectionList.length);
                   </div>
                   {(noteError || (showValidation && errors.clientNotes)) && (
                     <span className="text-[10px] mt-1 ml-2 text-red-500">
-                      { errors.clientNotes}
+                      {errors.clientNotes}
                     </span>
                   )}
                 </div>

@@ -4,11 +4,16 @@ import ExerciseItem from './ExersiseItem';
 interface SuperSetExersiseItemProps {
   exercise: any;
   index: number;
-  onChange: (index: number, field: string, value: string, exersiseIndex: number) => void;
+  onChange: (
+    index: number,
+    field: string,
+    value: string,
+    exersiseIndex: number,
+  ) => void;
   toSuperSet: () => void;
   removeFromSuperSet: (exersiseIndex: number) => void;
   onDelete: (exersiseIndex: number) => void;
-  errors: {[key: string]: string};
+  errors: { [key: string]: string };
 }
 
 const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
@@ -31,10 +36,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
           <div className="text-xs text-Text-Primary">Super Set</div>
         </div>
         <div className="flex items-center gap-2">
-          <div
-            onClick={toSuperSet}
-            className="cursor-pointer"
-          >
+          <div onClick={toSuperSet} className="cursor-pointer">
             <img src="/icons/super-set.svg" alt="" className="w-4 h-4" />
           </div>
         </div>
@@ -55,19 +57,22 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
                   className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
                 />
               </div>
-              <div className="text-xs text-Text-Primary">{ex.Exercise.Title}</div>
+              <div className="text-xs text-Text-Primary">
+                {ex.Exercise.Title}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <div
                 onClick={() => removeFromSuperSet(exIndex)}
                 className="cursor-pointer"
               >
-                <img src="/icons/remove-super-set.svg" alt="" className="w-4 h-4" />
+                <img
+                  src="/icons/remove-super-set.svg"
+                  alt=""
+                  className="w-4 h-4"
+                />
               </div>
-              <div
-                onClick={() => onDelete(exIndex)}
-                className="cursor-pointer"
-              >
+              <div onClick={() => onDelete(exIndex)} className="cursor-pointer">
                 <img src="/icons/delete.svg" alt="" className="w-4 h-4" />
               </div>
             </div>
@@ -78,7 +83,9 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={exercise.Sets}
-                onChange={(e) => onChange(index, 'Sets', e.target.value, exIndex)}
+                onChange={(e) =>
+                  onChange(index, 'Sets', e.target.value, exIndex)
+                }
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('sets', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('sets', ex.Exercise.Title) && (
@@ -92,7 +99,9 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Reps}
-                onChange={(e) => onChange(index, 'Reps', e.target.value, exIndex)}
+                onChange={(e) =>
+                  onChange(index, 'Reps', e.target.value, exIndex)
+                }
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('reps', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('reps', ex.Exercise.Title) && (
@@ -106,7 +115,9 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Rest}
-                onChange={(e) => onChange(index, 'Rest', e.target.value, exIndex)}
+                onChange={(e) =>
+                  onChange(index, 'Rest', e.target.value, exIndex)
+                }
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('rest', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('rest', ex.Exercise.Title) && (
@@ -120,7 +131,9 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Weight}
-                onChange={(e) => onChange(index, 'Weight', e.target.value, exIndex)}
+                onChange={(e) =>
+                  onChange(index, 'Weight', e.target.value, exIndex)
+                }
                 className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
               />
             </div>

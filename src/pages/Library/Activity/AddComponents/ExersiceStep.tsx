@@ -57,28 +57,41 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
   const [activeTab, setActiveTab] = useState('Warm-Up');
   const [searchValue, setSearchValue] = useState('');
   const [isDragging, setIsDragging] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validateExercise = (exercise: ExerciseGroup) => {
-    const newErrors: {[key: string]: string} = {};
-    
+    const newErrors: { [key: string]: string } = {};
+
     // Validate Sets
     if (!exercise.Sets) {
-      newErrors[`sets-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`] = 'This field is required.';
+      newErrors[
+        `sets-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`
+      ] = 'This field is required.';
     } else if (!/^\d+$/.test(exercise.Sets)) {
-      newErrors[`sets-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`] = 'Set must follow the described format.';
+      newErrors[
+        `sets-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`
+      ] = 'Set must follow the described format.';
     }
 
     // Validate Reps
     if (!exercise.Exercises[0].Reps || exercise.Exercises[0].Reps === '') {
-      newErrors[`reps-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`] = 'This field is required.';
+      newErrors[
+        `reps-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`
+      ] = 'This field is required.';
     } else if (!/^\d+$/.test(exercise.Exercises[0].Reps)) {
-      newErrors[`reps-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`] = 'Numbers only.';
+      newErrors[
+        `reps-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`
+      ] = 'Numbers only.';
     }
 
     // Validate Rest
-    if (exercise.Exercises[0].Rest && !/^\d+$/.test(exercise.Exercises[0].Rest)) {
-      newErrors[`rest-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`] = 'Numbers only.';
+    if (
+      exercise.Exercises[0].Rest &&
+      !/^\d+$/.test(exercise.Exercises[0].Rest)
+    ) {
+      newErrors[
+        `rest-${exercise.Section}-${exercise.Exercises[0].Exercise.Title}`
+      ] = 'Numbers only.';
     }
 
     return newErrors;
@@ -89,20 +102,24 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
       (section: any) => section.Sets === '',
     );
     const emptyRepsSections = exercises.filter(
-      (section: any) => !section.Exercises[0].Reps || section.Exercises[0].Reps === ''
+      (section: any) =>
+        !section.Exercises[0].Reps || section.Exercises[0].Reps === '',
     );
-    const isValid = exercises.length > 0 && emptySetSections.length === 0 && emptyRepsSections.length === 0;
-    
+    const isValid =
+      exercises.length > 0 &&
+      emptySetSections.length === 0 &&
+      emptyRepsSections.length === 0;
+
     // Validate all exercises
     const allErrors = exercises.reduce((acc, exercise) => {
       return { ...acc, ...validateExercise(exercise) };
     }, {});
-    
+
     setErrors(allErrors);
-    
+
     // Check if there are any validation errors
     const hasErrors = Object.keys(allErrors).length > 0;
-    
+
     if (onValidationChange) {
       onValidationChange(isValid && !hasErrors);
     }
@@ -178,9 +195,9 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
 
       // Validate the updated exercise
       const newErrors = validateExercise(updatedExercises[originalIndex]);
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        ...newErrors
+        ...newErrors,
       }));
 
       return updatedExercises;

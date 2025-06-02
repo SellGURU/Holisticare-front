@@ -20,7 +20,7 @@ interface ExerciseItemProps {
     exersiseIndex: number,
   ) => void;
   showValidation?: boolean;
-  errors: {[key: string]: string};
+  errors: { [key: string]: string };
 }
 
 const ExerciseItem = ({
@@ -227,10 +227,13 @@ const ExerciseItem = ({
               }
               onKeyDown={preventEInput}
               className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
-                (showValidation && (!exercise.Reps || exercise.Reps === '')) || getError('reps') ? 'border-red-500' : 'border-gray-50'
+                (showValidation && (!exercise.Reps || exercise.Reps === '')) ||
+                getError('reps')
+                  ? 'border-red-500'
+                  : 'border-gray-50'
               } outline-none text-[10px] text-Text-Primary`}
             />
-            {(showValidation && (!exercise.Reps || exercise.Reps === '')) && (
+            {showValidation && (!exercise.Reps || exercise.Reps === '') && (
               <div className="text-[8px] text-red-500 mt-1 text-center">
                 This field is required.
               </div>
