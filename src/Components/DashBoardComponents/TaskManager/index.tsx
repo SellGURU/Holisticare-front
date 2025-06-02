@@ -162,7 +162,7 @@ const TaskManager = () => {
               <SimpleDatePicker
                 textStyle
                 ClassName=""
-                placeholder='Select a deadline'
+                placeholder="Select a deadline"
                 isLarge
                 date={formik.values.deadline}
                 setDate={(date) => formik.setFieldValue('deadline', date)}
@@ -183,17 +183,21 @@ const TaskManager = () => {
                 className={`w-full md:w-[222px] cursor-pointer h-[26px] flex justify-between items-center px-3 bg-[#FDFDFD] ${
                   showSelect && 'rounded-b-none'
                 } rounded-[16px] border ${
-                  showValidation && formik.errors.priority ? 'border-Red' : 'border-[#E9EDF5]'
+                  showValidation && formik.errors.priority
+                    ? 'border-Red'
+                    : 'border-[#E9EDF5]'
                 }`}
               >
-                {
-                  formik.values.priority ? (
-                    <div className="text-[12px] text-[#383838]">{formik.values.priority}</div>
-                  ) : (
-                    <div className="text-[12px] font-light text-[#B0B0B0]">Select priority</div>
-                  )
-                }
-                
+                {formik.values.priority ? (
+                  <div className="text-[12px] text-[#383838]">
+                    {formik.values.priority}
+                  </div>
+                ) : (
+                  <div className="text-[12px] font-light text-[#B0B0B0]">
+                    Select priority
+                  </div>
+                )}
+
                 <div>
                   <img
                     className={`${showSelect && 'rotate-180'}`}
