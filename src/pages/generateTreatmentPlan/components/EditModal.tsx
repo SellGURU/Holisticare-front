@@ -63,6 +63,12 @@ const EditModal: FC<EditModalProps> = ({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
     Instruction: Yup.string().required('This field is required.'),
+    Dose: Yup.string().when('Category', {
+      is: 'Supplement',
+      then: (schema) => schema
+        .required('This field is required.')
+        .matches(/^[0-9]+\s*[a-zA-Z]+$/, 'Dose must follow the described format.')
+    })
   });
 
   interface FormValues {
@@ -212,25 +218,9 @@ const EditModal: FC<EditModalProps> = ({
   //       .Dose
   //   : false;
 
-  const validateDoseFormat = (value: string) => {
-    if (!selectedGroupDose || !value) return true;
-    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
-    return doseRegex.test(value.trim());
-  };
-
   const handleSaveClick = () => {
     setShowValidation(true);
-
-    // Validate dose format
-    if (
-      selectedGroupDose &&
-      formik.values.Dose &&
-      !validateDoseFormat(formik.values.Dose)
-    ) {
-      formik.setFieldError('Dose', 'Dose must follow the described format.');
-      return;
-    }
-
+    
     // Validate notes length
     if (newNote.length > 400) {
       return;
@@ -356,7 +346,11 @@ const EditModal: FC<EditModalProps> = ({
               <input
                 name="Dose"
                 value={formik.values.Dose}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  // Only allow English characters and numbers
+                  const value = e.target.value.replace(/[^0-9a-zA-Z\s]/g, '');
+                  formik.setFieldValue('Dose', value);
+                }}
                 placeholder="Write Dose"
                 type="text"
                 disabled={!selectedGroupDose}
