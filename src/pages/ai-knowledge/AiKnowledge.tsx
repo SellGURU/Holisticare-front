@@ -49,12 +49,16 @@ const LoadGraph: FC<LoadGraphProps> = ({
     const centerY = 0.5;
     const radius = 0.3; // Smaller initial radius to start nodes closer to center
 
+    const graphaDataNodesFilters = graphData.nodes.filter(
+      (item: any) => item.status === true,
+    );
+
     // Always add all nodes to the graph with better initial positions
-    graphData.nodes.forEach((node: any, index: number) => {
+    graphaDataNodesFilters.forEach((node: any, index: number) => {
       const randomColor = chroma.random().hex();
       // Calculate initial position in a spiral pattern
       const angle = index * 2.4; // Golden angle in radians
-      const r = radius * Math.sqrt(index / graphData.nodes.length);
+      const r = radius * Math.sqrt(index / graphaDataNodesFilters.length);
       const x = centerX + r * Math.cos(angle);
       const y = centerY + r * Math.sin(angle);
 
@@ -70,8 +74,18 @@ const LoadGraph: FC<LoadGraphProps> = ({
       });
     });
 
+    const inactiveNodeIds = graphData.nodes
+      .filter((node: any) => node.status === false)
+      .map((node: any) => node.id);
+
+    const filteredEdges = graphData.edges.filter(
+      (link: any) =>
+        !inactiveNodeIds.includes(link.source) &&
+        !inactiveNodeIds.includes(link.target),
+    );
+
     // Always add all edges to the graph with full opacity
-    graphData.edges.forEach((edge: any, index: number) => {
+    filteredEdges.forEach((edge: any, index: number) => {
       graph.addEdgeWithKey(`edge-${index}`, edge.source, edge.target, {
         weight: edge.weight,
         color: '#d6d6d6',
@@ -117,7 +131,7 @@ const LoadGraph: FC<LoadGraphProps> = ({
     if (!isInitialLoad && activeFilters.length > 0) {
       const visibleNodes = new Set<string>();
 
-      graphData.nodes.forEach((node: any) => {
+      graphaDataNodesFilters.forEach((node: any) => {
         if (
           activeFilters.includes(node.category1) ||
           activeFilters.includes(node.category2)
@@ -443,28 +457,7 @@ const AiKnowledge = () => {
 
   const [activaTab, setActiveTab] = useState('System Docs');
 
-  type Document = {
-    id: number;
-    type: string;
-    date: string;
-    disabled: boolean;
-  };
-
-  // const [systemDocs, ] = useState<Document[]>([
-  //   {
-  //     id: 1,
-  //     type: 'Diseases and Conditions',
-  //     date: '04/25/2024',
-  //     disabled: false,
-  //   },
-  //   { id: 2, type: 'Symptoms', date: '04/25/2024', disabled: false },
-  //   // Add more mock data as needed
-  // ]);
-
-  const [userUploads, setUserUploads] = useState<Document[]>([]);
-  const [filteredUserUploads, setFilteredUserUploads] = useState<Document[]>(
-    [],
-  );
+  const [filteredUserUploads, setFilteredUserUploads] = useState<string[]>([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 12;
@@ -489,17 +482,11 @@ const AiKnowledge = () => {
   );
   const [loadingButton, setLoadingButton] = useState(false);
   const [documentsData, setDocumentsData] = useState<any[]>([]);
-  const [selectedDocument, setSelectedDocument] = useState<number>(0);
-
+  const [isLoadingCallApi, setIsLoadingCallApi] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<null | number>(null);
+  const [selected, setSelected] = useState<null | string>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const options = [
-    { label: '1 Month', value: 1 },
-    { label: '2 Month', value: 2 },
-    { label: '3 Month', value: 3 },
-  ];
+  const [options, setOptions] = useState<any[]>([]);
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -602,14 +589,24 @@ const AiKnowledge = () => {
   // };
 
   const handleDeleteFileUserUpload = (fileName: string) => {
+    setIsLoadingCallApi(true);
     Application.deleteUserUploadDocument({
       filename: fileName,
     }).then(() => {
-      setUserUploads((prev) => prev.filter((doc) => doc.type !== fileName));
-      setDocumentsData((prev) =>
-        prev.filter((doc) => doc.filename !== fileName),
-      );
+      fetchGraphData();
       setConfirmDeleteId(null);
+      setIsLoadingCallApi(false);
+    });
+  };
+
+  const handleDownloadFileUserUpload = (filename: string) => {
+    Application.downloadUserUploadDocumentKnowledge({
+      filename: filename,
+    });
+  };
+  const handleDownloadFileSystemDocs = (filename: string) => {
+    Application.downloadSystemDocumentKnowledge({
+      filename: filename,
     });
   };
 
@@ -638,25 +635,44 @@ const AiKnowledge = () => {
           fast_mode: true,
         })),
       }).then((res) => {
-        setDocumentsData(res.data);
+        setDocumentsData(res.data.results);
+        setOptions(
+          res.data.results.map((item: any) => ({
+            label: item.filename,
+            value: item.file_id,
+          })),
+        );
+        setSelected(
+          res.data.results.length ? res.data.results[0].file_id : null,
+        );
       });
-
-      setUserUploads((prev) => [
-        ...prev,
-        ...uploadedUrls.map((url, index) => ({
-          id: prev.length + index + 1,
-          type: fileTitle || selectedFiles[index].name,
-          date: new Date().toLocaleDateString(),
-          url,
-          disabled: false,
-        })),
-      ]);
 
       setSelectedFiles([]);
       setUploadProgress({});
       setUploadComplete({});
       setStepAddDocument(2);
-      // closeModal();
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setLoadingButton(false);
+    }
+  };
+
+  const handleAddToDatabase = async () => {
+    if (documentsData.length === 0) return;
+    setLoadingButton(true);
+    try {
+      await Application.addToDatabaseDocumentKnowledge({
+        items: documentsData,
+      }).then((res) => {
+        if (res.data.nodes) {
+          setGraphData(res.data);
+          setActiveFilters([
+            ...new Set(res.data?.nodes.map((e: any) => e.category2)),
+          ] as Array<string>);
+        }
+        closeModal();
+      });
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
@@ -669,6 +685,7 @@ const AiKnowledge = () => {
     setSelectedFiles([]);
     setUploadProgress({});
     setUploadComplete({});
+    setStepAddDocument(1);
     setFileTitle('');
   };
 
@@ -683,19 +700,81 @@ const AiKnowledge = () => {
     setCurrentPage(page);
   };
 
-  const toggleDisable = (id: number, tab: string) => {
+  const toggleDisable = async (
+    filename: string,
+    tab: string,
+    disabled: boolean,
+  ) => {
     if (tab === 'System Docs') {
+      if (disabled) {
+        setIsLoadingCallApi(true);
+        await Application.hideSystemDocumentKnowledge({
+          filename: filename,
+        })
+          .then(() => {
+            fetchGraphData();
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            setIsLoadingCallApi(false);
+          });
+      } else {
+        setIsLoadingCallApi(true);
+        await Application.unhideSystemDocumentKnowledge({
+          filename: filename,
+        })
+          .then(() => {
+            fetchGraphData();
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            setIsLoadingCallApi(false);
+          });
+      }
       // setSystemDocs((prevDocs) =>
       //   prevDocs.map((doc) =>
       //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
       //   ),
       // );
     } else if (tab === 'User Uploads') {
-      setUserUploads((prevDocs) =>
-        prevDocs.map((doc) =>
-          doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
-        ),
-      );
+      if (disabled) {
+        setIsLoadingCallApi(true);
+        await Application.hideUserUploadDocumentKnowledge({
+          filename: filename,
+        })
+          .then(() => {
+            fetchGraphData();
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            setIsLoadingCallApi(false);
+          });
+      } else {
+        setIsLoadingCallApi(true);
+        await Application.unhideUserUploadDocumentKnowledge({
+          filename: filename,
+        })
+          .then(() => {
+            fetchGraphData();
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            setIsLoadingCallApi(false);
+          });
+      }
+      // setUserUploads((prevDocs) =>
+      //   prevDocs.map((doc) =>
+      //     doc.id === id ? { ...doc, disabled: !doc.disabled } : doc,
+      //   ),
+      // );
     }
   };
 
@@ -721,11 +800,13 @@ const AiKnowledge = () => {
     label: string;
     size: number;
     type: string;
-    date?: string;
-    disabled?: boolean;
+    upload_date: number;
+    status: boolean;
   };
   const [filteredSystemDocs, setFilteredSystemDocs] = useState<string[]>([]);
   const [isSystemDocsSearchActive, setIsSystemDocsSearchActive] =
+    useState(false);
+  const [isUserUploadsSearchActive, setIsUserUploadsSearchActive] =
     useState(false);
 
   // const getCurrentPageData = (): TableItem[] => {
@@ -774,9 +855,16 @@ const AiKnowledge = () => {
 
       return filtered?.slice(startIndex, endIndex) || [];
     } else {
-      const filtered = graphData?.nodes.filter(
-        (e: any) => e.type === 'user_docs',
-      );
+      // const filtered = graphData?.nodes.filter(
+      //   (e: any) => e.type === 'user_docs',
+      // );
+      const filtered = isUserUploadsSearchActive
+        ? graphData?.nodes.filter(
+            (e: any) =>
+              e.type === 'user_docs' &&
+              filteredUserUploads.includes(e.category2),
+          )
+        : graphData?.nodes.filter((e: any) => e.type === 'user_docs');
       if (filtered) {
         totalPageUserDocs = filtered.length || 0;
       }
@@ -789,21 +877,28 @@ const AiKnowledge = () => {
 
   const [searchType, setSearchType] = useState<'Docs' | 'Nodes'>('Docs');
 
+  const [search, setSearch] = useState('');
+
   const handleSearch = (term: string) => {
     const searchTerm = term.toLowerCase();
 
     if (searchType === 'Docs') {
       if (!term.trim()) {
-        setFilteredUserUploads(userUploads);
+        setFilteredUserUploads([]);
         setFilteredSystemDocs([]);
         setIsSystemDocsSearchActive(false);
+        setIsUserUploadsSearchActive(false);
         setCurrentPage(1);
       } else {
         if (activaTab === 'User Uploads') {
-          const filteredUserDocs = userUploads.filter((doc) =>
-            doc.type.toLowerCase().includes(searchTerm),
-          );
+          const filteredDocs = graphData.nodes
+            .filter((node: any) =>
+              node.category2.toLowerCase().includes(searchTerm),
+            )
+            .map((node: any) => node.category2 as string);
+          const filteredUserDocs = [...new Set(filteredDocs)] as string[];
           setFilteredUserUploads(filteredUserDocs);
+          setIsUserUploadsSearchActive(true);
         } else if (activaTab === 'System Docs' && graphData) {
           const filteredDocs = graphData.nodes
             .filter((node: any) =>
@@ -886,16 +981,16 @@ const AiKnowledge = () => {
   };
 
   // Initialize filteredUserUploads when userUploads changes
-  useEffect(() => {
-    setFilteredUserUploads(userUploads);
-  }, [userUploads]);
+  // useEffect(() => {
+  //   setFilteredUserUploads(userUploads);
+  // }, [userUploads]);
 
   // Reset filteredUserUploads when switching to User Uploads tab
-  useEffect(() => {
-    if (activaTab === 'User Uploads') {
-      setFilteredUserUploads(userUploads);
-    }
-  }, [activaTab, userUploads]);
+  // useEffect(() => {
+  //   if (activaTab === 'User Uploads') {
+  //     setFilteredUserUploads(userUploads);
+  //   }
+  // }, [activaTab, userUploads]);
 
   useEffect(() => {
     getCurrentPageData();
@@ -1091,7 +1186,7 @@ const AiKnowledge = () => {
                   Cancel
                 </div>
                 <div
-                  onClick={handleAddFile}
+                  onClick={loadingButton ? () => {} : handleAddFile}
                   className="text-Primary-DeepTeal cursor-pointer"
                 >
                   {loadingButton ? <SpinnerLoader color="#005F73" /> : 'Next'}
@@ -1137,7 +1232,6 @@ const AiKnowledge = () => {
                         }`}
                         onClick={() => {
                           setSelected(opt.value);
-                          setSelectedDocument(opt.value);
                           setIsOpen(false);
                         }}
                       >
@@ -1147,41 +1241,76 @@ const AiKnowledge = () => {
                   </ul>
                 )}
               </div>
-              <table className="w-full mt-4 rounded-xl">
-                <thead>
-                  <tr className="text-[10px] text-Text-Primary bg-bg-color rounded-t-xl">
-                    <th className="rounded-tl-xl py-2">No</th>
-                    <th>Node Title</th>
-                    <th>Sentence</th>
-                    <th>File Name</th>
-                    <th>Date of Upload</th>
-                    <th className="rounded-tr-xl">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="border border-bg-color">
-                  {documentsData[selectedDocument]?.modal_data.map(
-                    (item: any, index: number) => (
-                      <tr
-                        key={index}
-                        className={`text-xs text-Text-Primary ${
-                          index % 2 === 0
-                            ? 'bg-white'
-                            : 'bg-backgroundColor-Main'
-                        }`}
-                      >
-                        <td>{index + 1}</td>
-                        <td>{item.entity}</td>
-                        <td>{item.sentence}</td>
-                        <td>{item.filename}</td>
-                        <td>{item.upload_date}</td>
-                        <td>
-                          <img src="/icons/trash-blue.svg" alt="" />
-                        </td>
-                      </tr>
-                    ),
-                  )}
-                </tbody>
-              </table>
+              <div className="max-h-72 overflow-y-auto mt-4">
+                <table className="w-full rounded-xl">
+                  <thead>
+                    <tr className="text-[10px] text-Text-Primary bg-bg-color rounded-t-xl">
+                      <th className="rounded-tl-xl py-2 pl-2 text-nowrap">
+                        No
+                      </th>
+                      <th className="text-nowrap">Node Title</th>
+                      <th className="text-nowrap">Sentence</th>
+                      <th className="text-nowrap">File Name</th>
+                      <th className="text-nowrap">Date of Upload</th>
+                      <th className="rounded-tr-xl py-2 pr-2 text-nowrap">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="border border-bg-color rounded-b-xl">
+                    {documentsData
+                      .find((item) => item.file_id === selected)
+                      ?.modal_data.map((item: any, index: number) => (
+                        <tr
+                          key={index}
+                          className={`leading-5 ${
+                            index % 2 === 0
+                              ? 'bg-white'
+                              : 'bg-backgroundColor-Main'
+                          }`}
+                        >
+                          <td className="py-6 max-w-6 text-center text-[10px] text-Text-Primary">
+                            {index + 1}
+                          </td>
+                          <td className="max-w-8 text-center text-[10px] text-Text-Quadruple">
+                            {item.entity}
+                          </td>
+                          <td className="max-w-48 text-center text-[10px] text-Text-Quadruple">
+                            {item.sentence}
+                          </td>
+                          <td className="max-w-24 text-center text-[10px] text-Text-Quadruple">
+                            {item.filename}
+                          </td>
+                          <td className="max-w-10 text-center text-[10px] text-Text-Quadruple">
+                            {item.upload_date}
+                          </td>
+                          <td className="text-center">
+                            <div className="flex items-center justify-center w-full">
+                              <img src="/icons/trash-blue.svg" alt="" />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="w-full flex items-center justify-end gap-3 text-sm font-medium mt-5 mb-3">
+                <div
+                  onClick={() => {
+                    setStepAddDocument(1);
+                    setDocumentsData([]);
+                  }}
+                  className="text-[#909090] cursor-pointer"
+                >
+                  Back
+                </div>
+                <div
+                  onClick={loadingButton ? () => {} : handleAddToDatabase}
+                  className="text-Primary-DeepTeal cursor-pointer"
+                >
+                  {loadingButton ? <SpinnerLoader color="#005F73" /> : 'Save'}
+                </div>
+              </div>
             </>
           )}
         </div>
@@ -1247,7 +1376,7 @@ const AiKnowledge = () => {
                 ClassName="rounded-[12px]"
                 placeHolder="Search documents or knowledge graph nodes..."
                 onSearch={handleSearch}
-              ></SearchBox>
+              />
 
               <ActivityMenu
                 activeMenu={activeMenu}
@@ -1314,26 +1443,6 @@ const AiKnowledge = () => {
                               {el}
                             </span>
                           </label>
-
-                          {/* <div className="flex mb-2 justify-start items-center">
-                                              <input checked={activeFilters.includes(el)} onChange={() => {
-                                                  handleButtonClick(el)
-                                              }} type="checkbox"
-                                                     className="mr-2 peer shrink-0 w-4 h-4 text-blue-600 bg-white border-2 border-Primary-DeepTeal rounded"/>
-                                              <label
-                                                  onClick={() => {
-                                                      handleButtonClick(el)
-                                                  }}
-                                                  htmlFor="contracts"
-                                                  className="ml-2 text-Text-Primary TextStyle-Headline-6 flex gap-1"
-                                              >
-                                                  <div className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis">
-                                                      {el}
-  
-                                                  </div>
-                                              </label>
-  
-                                          </div> */}
                         </>
                       );
                     })}
@@ -1346,10 +1455,13 @@ const AiKnowledge = () => {
           <div className=" hidden fixed right-5 top-[8%] w-[315px] h-[80vh] text-primary-text  md:flex flex-col ">
             <SearchBox
               isGrayIcon
-              ClassName="rounded-[12px]"
               placeHolder="Search documents or knowledge graph nodes..."
-              onSearch={handleSearch}
-            ></SearchBox>
+              onSearch={(e) => {
+                handleSearch(e);
+                setSearch(e);
+              }}
+              value={search}
+            />
             <div className="flex items-center gap-4 mt-2 text-[10px] text-Text-Primary">
               <span>Search by:</span>
               {['Docs', 'Nodes'].map((type) => (
@@ -1414,14 +1526,18 @@ const AiKnowledge = () => {
                             className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
                           >
                             <td
-                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${doc.disabled ? 'opacity-40' : ''}`}
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
                             >
                               {doc.category2}
                             </td>
                             <td
-                              className={`px-2 py-2 w-[90px] text-center ${doc.disabled ? 'opacity-40' : ''}`}
+                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
                             >
-                              {doc.date || 'No Date'}
+                              {doc.upload_date
+                                ? new Date(doc.upload_date).toLocaleDateString(
+                                    'en-GB',
+                                  )
+                                : 'No Date'}
                             </td>
                             <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
                               {confirmDeleteId === doc.id ? (
@@ -1429,9 +1545,10 @@ const AiKnowledge = () => {
                                   Sure?
                                   <img
                                     className="cursor-pointer size-4"
-                                    onClick={() =>
-                                      handleDeleteFileUserUpload(doc.category2)
-                                    }
+                                    onClick={() => {
+                                      if (isLoadingCallApi) return;
+                                      handleDeleteFileUserUpload(doc.category2);
+                                    }}
                                     src="/icons/confirm-tick-circle.svg"
                                     alt="Confirm"
                                   />
@@ -1445,11 +1562,27 @@ const AiKnowledge = () => {
                               ) : (
                                 <>
                                   <button
-                                    onClick={() =>
-                                      toggleDisable(doc.id, 'User Uploads')
-                                    }
+                                    onClick={() => {
+                                      if (isLoadingCallApi) return;
+                                      handleDownloadFileUserUpload(
+                                        doc.category2,
+                                      );
+                                    }}
                                   >
-                                    {doc.disabled ? (
+                                    <img src="/icons/import-blue.svg" alt="" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (isLoadingCallApi) return;
+                                      // handleButtonClick(doc.category2);
+                                      toggleDisable(
+                                        doc.category2,
+                                        'User Uploads',
+                                        doc.status,
+                                      );
+                                    }}
+                                  >
+                                    {!doc.status ? (
                                       <img
                                         src="/icons/eye-slash-blue.svg"
                                         alt="Disabled"
@@ -1481,7 +1614,7 @@ const AiKnowledge = () => {
                   <div className="flex justify-center py-2 absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={totalPageUserDocs / itemsPerPage}
+                      totalPages={Math.ceil(totalPageUserDocs / itemsPerPage)}
                       onPageChange={handlePageChange}
                       isEmpty={totalPageUserDocs === 0}
                     />
@@ -1522,20 +1655,40 @@ const AiKnowledge = () => {
                             className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border-b border-Gray-50`}
                           >
                             <td
-                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
                             >
                               {doc.category2}
                             </td>
                             <td
-                              className={`px-2 py-2 w-[90px] text-center ${!activeFilters.includes(doc.type) ? 'opacity-40' : ''}`}
+                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
                             >
-                              {doc.date || 'No Date'}
+                              {doc.upload_date
+                                ? new Date(doc.upload_date).toLocaleDateString(
+                                    'en-GB',
+                                  )
+                                : 'No Date'}
                             </td>
-                            <td className="py-2 pr-2 w-[40px] text-center">
+                            <td className="py-2 pr-2 w-[40px] text-center flex items-center justify-center gap-2">
                               <button
-                                onClick={() => handleButtonClick(doc.type)}
+                                onClick={() => {
+                                  if (isLoadingCallApi) return;
+                                  handleDownloadFileSystemDocs(doc.category2);
+                                }}
                               >
-                                {activeFilters.includes(doc.type) ? (
+                                <img src="/icons/import-blue.svg" alt="" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (isLoadingCallApi) return;
+                                  // handleButtonClick(doc.category2);
+                                  toggleDisable(
+                                    doc.category2,
+                                    'System Docs',
+                                    doc.status,
+                                  );
+                                }}
+                              >
+                                {doc.status ? (
                                   <img src="/icons/eye-blue.svg" alt="" />
                                 ) : (
                                   <img src="/icons/eye-slash-blue.svg" alt="" />
@@ -1550,7 +1703,7 @@ const AiKnowledge = () => {
                   <div className="py-2 flex justify-center absolute bottom-0 w-full">
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={totalPageSystemDocs / itemsPerPage}
+                      totalPages={Math.ceil(totalPageSystemDocs / itemsPerPage)}
                       onPageChange={handlePageChange}
                       isEmpty={totalPageSystemDocs === 0}
                     />
@@ -1558,86 +1711,6 @@ const AiKnowledge = () => {
                 </div>
               </>
             )}
-
-            {/*<div className="overflow-y-auto   bg-white p-4 rounded-2xl border-Gray-50 border mt-3">
-            <div className="mb-4">
-              <h3 className="text-lg text-light-secandary-text mb-2">
-                Documents
-              </h3>
-              <div className="ml-4">
-                {[
-                  ...new Set(graphData?.nodes.map((e: any) => e.category2)),
-                ].map((el: any) => {
-                  return (
-                    <>
-                      <label
-                        onClick={() => {
-                          handleButtonClick(el);
-                        }}
-                        htmlFor="contracts"
-                        className="flex items-center space-x-2 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={activeFilters.includes(el)}
-                          onChange={() => {
-                            handleButtonClick(el);
-                          }}
-                          className="hidden"
-                        />
-                        <div
-                          className={`w-4 h-4 flex items-center justify-center rounded border-[0.5px] border-Primary-DeepTeal ${
-                            activeFilters.includes(el)
-                              ? 'bg-Primary-DeepTeal'
-                              : ' bg-white '
-                          }`}
-                        >
-                          {activeFilters.includes(el) && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3 text-white"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </div>
-                        <span className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis ml-2 text-Text-Primary TextStyle-Headline-6">
-                          {el}
-                        </span>
-                      </label>
-
-                       <div className="flex mb-2 justify-start items-center">
-                                            <input checked={activeFilters.includes(el)} onChange={() => {
-                                                handleButtonClick(el)
-                                            }} type="checkbox"
-                                                   className="mr-2 peer shrink-0 w-4 h-4 text-blue-600 bg-white border-2 border-Primary-DeepTeal rounded"/>
-                                            <label
-                                                onClick={() => {
-                                                    handleButtonClick(el)
-                                                }}
-                                                htmlFor="contracts"
-                                                className="ml-2 text-Text-Primary TextStyle-Headline-6 flex gap-1"
-                                            >
-                                                <div className="break-words text-nowrap overflow-hidden w-[300px] text-ellipsis">
-                                                    {el}
-
-                                                </div>
-                                            </label>
-
-                                        </div> 
-                    </>
-                  );
-                })}
-              </div>
-            </div>
-            <div></div>
-          </div> */}
           </div>
         )}
       </div>
