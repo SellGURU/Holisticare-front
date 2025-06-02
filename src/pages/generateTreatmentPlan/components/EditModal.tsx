@@ -62,24 +62,22 @@ const EditModal: FC<EditModalProps> = ({
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
-    Dose: Yup.string().test(
-      'dose-required',
-      'This field is required.',
-      function (value) {
+    Dose: Yup.string()
+      .test('dose-required', 'This field is required.', function (value) {
         // If selectedGroupDose is true, then Dose is required
         if (!selectedGroupDose) return true;
         return Boolean(value && value.trim() !== '');
-      },
-    ).test(
-      'dose-format',
-      'Dose must follow the described format.',
-      function (value) {
-        if (!selectedGroupDose || !value) return true;
-        // Check if the dose follows the format: number followed by unit (e.g., '50 mg')
-        const doseRegex = /^\d+\s*[a-zA-Z]+$/;
-        return doseRegex.test(value.trim());
-      }
-    ),
+      })
+      .test(
+        'dose-format',
+        'Dose must follow the described format.',
+        function (value) {
+          if (!selectedGroupDose || !value) return true;
+          // Check if the dose follows the format: number followed by unit (e.g., '50 mg')
+          const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+          return doseRegex.test(value.trim());
+        },
+      ),
     Instruction: Yup.string().required('This field is required.'),
     Notes: Yup.string().test(
       'notes-length',
@@ -87,7 +85,7 @@ const EditModal: FC<EditModalProps> = ({
       function (value) {
         if (!value) return true;
         return value.length <= 400;
-      }
+      },
     ),
   });
   interface FormValues {
@@ -444,13 +442,11 @@ const EditModal: FC<EditModalProps> = ({
               <textarea
                 value={newNote}
                 onChange={(e) => {
-                
-                    setNewNote(e.target.value);
-                  
+                  setNewNote(e.target.value);
                 }}
                 onKeyDown={handleNoteKeyDown}
                 className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                 newNote.length > 400 ? 'border-Red' : 'border-Gray-50'
+                  newNote.length > 400 ? 'border-Red' : 'border-Gray-50'
                 } rounded-2xl outline-none`}
                 rows={4}
                 placeholder="Write notes ..."
@@ -469,7 +465,7 @@ const EditModal: FC<EditModalProps> = ({
                   {newNote.length}/400 characters
                 </span> */}
               </div>
-              { newNote.length > 400 && (
+              {newNote.length > 400 && (
                 <div className="text-Red text-[10px] mt-1">
                   You can enter up to 400 characters.
                 </div>
