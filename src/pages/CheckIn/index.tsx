@@ -15,9 +15,10 @@ import MultiChoice from './components/MultiChoiceCard';
 interface CheckinProps {
   upData?: Array<checkinType>;
   onChange?: (questions: Array<any>) => void;
+  isPreview?: boolean;
 }
 
-const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
+const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
   const [chekinData, setCheckinData] = useState<Array<checkinType>>([]);
   useEffect(() => {
     if (upData) {
@@ -53,9 +54,10 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
-            // onChange={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            onChange={(value) => {
+              updateResponse(index - 1, value);
+            }}
+            isPreview={isPreview}
           ></YesNoCard>
         );
       case 'Scale':
@@ -67,6 +69,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             onSubmit={(value) => {
               updateResponse(index - 1, value);
             }}
+            isPreview={isPreview}
           ></RangeCard>
         );
 
@@ -74,12 +77,13 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
         return (
           <TextCard
             index={index}
+            isPreview={isPreview}
             placeHolder={item.placeHolder}
             question={item.question}
             value={item.response}
-            // onChange={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            onChange={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></TextCard>
         );
       case 'Star Rating':
@@ -88,9 +92,10 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
-            // onSubmit={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            isPreview={isPreview}
+            onSubmit={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></RateCard>
         );
       case 'arrange':
@@ -106,6 +111,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
           <UploadCard
             index={index}
             question={item.question}
+            isPreview={isPreview}
             value={item.value}
             onSubmit={(values) => {
               updateResponse(index - 1, values);
@@ -118,9 +124,10 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             index={index}
             question={item.question}
             value={item.response}
-            // onSubmit={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            isPreview={isPreview}
+            onSubmit={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></FeelingCard>
         );
 
@@ -131,9 +138,10 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             question={item.question}
             value={item.response}
             options={item.options}
-            // onChange={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            isPreview={isPreview}
+            onChange={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></MultiChoice>
         );
       case 'multiple_choice':
@@ -143,9 +151,9 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange }) => {
             question={item.question}
             value={item.response}
             options={item.options}
-            // onChange={(value) => {
-            //   updateResponse(index - 1, value);
-            // }}
+            onChange={(value) => {
+              updateResponse(index - 1, value);
+            }}
           ></CheckBoxCard>
         );
     }
