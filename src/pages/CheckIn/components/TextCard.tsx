@@ -5,6 +5,7 @@ interface TextCardProps {
   placeHolder?: string;
   index?: number;
   onChange?: (value: string) => void;
+  isPreview?: boolean;
 }
 
 const TextCard: React.FC<TextCardProps> = ({
@@ -13,6 +14,7 @@ const TextCard: React.FC<TextCardProps> = ({
   placeHolder,
   index,
   onChange,
+  isPreview,
 }) => {
   const [val, setVal] = useState(value);
   useEffect(() => {
@@ -35,7 +37,11 @@ const TextCard: React.FC<TextCardProps> = ({
             type="text"
             placeholder={placeHolder}
             value={val}
-            // onChange={(e) => setVal(e.target.value)}
+            onChange={(e) => {
+              if (!isPreview) {
+                setVal(e.target.value);
+              }
+            }}
             className="w-full h-10 text-Text-Primary placeholder:text-[#B0B0B0] outline-none px-3 py-2 text-[12px] rounded-[20px] border border-gray-50"
           />
         </div>
