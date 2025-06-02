@@ -175,8 +175,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
-    const doseRegex =
-      /^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/i;
+    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
     const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
 
     const newErrors = {
@@ -315,14 +314,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 placeholder="Enter the supplement's dose..."
                 value={dose}
                 onChange={(e) => {
-                  setDose(e.target.value);
-                  const doseRegex =
-                    /^\s*\d+(?:.\d+)?\s*(?:-\s*\d+(?:.\d+)?\s*)?[a-zA-Z]+(?:\/[a-zA-Z]+)?\s*$/i;
-                  if (e.target.value) {
+                  const value = e.target.value;
+                  // Only allow English characters, numbers, and spaces
+                  const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+                  setDose(englishOnly);
+                  const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+                  if (englishOnly) {
                     setErrors((prev) => ({
                       ...prev,
                       dose: false,
-                      doseFormat: Boolean(!doseRegex.test(e.target.value)),
+                      doseFormat: Boolean(!doseRegex.test(englishOnly)),
                     }));
                   } else {
                     setErrors((prev) => ({
@@ -345,8 +346,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               )}
               {errors.doseFormat && (
                 <div className="text-Red text-[10px]">
-                  Invalid dose format. Please use format like "50mg",
-                  "50-100mg", "50 mg", "50-100 mg", "50mg/day"
+                  Dose must follow the described format.
                 </div>
               )}
               <Tooltip

@@ -586,9 +586,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setDose(value);
+    // Only allow English characters, numbers, and spaces
+    const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+    setDose(englishOnly);
     if (touchedFields.dose) {
-      const error = validateDose(value);
+      const error = validateDose(englishOnly);
       setErrors((prev) => ({ ...prev, dose: error }));
     }
   };
