@@ -9,6 +9,7 @@ interface RangeCardProps {
   showValidation?: boolean;
   error?: boolean;
   required?: boolean;
+  isPreview?: boolean;
   showTitleRequired?: boolean;
 }
 
@@ -22,6 +23,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
   error,
   required,
   showTitleRequired,
+  isPreview,
 }) => {
   const [val, setVal] = useState(Number(value) || 5);
   useEffect(() => {
@@ -48,9 +50,11 @@ const RangeCard: React.FC<RangeCardProps> = ({
           <input
             type="range"
             value={val}
-            // onChange={(e) => {
-            //   setVal(Number(e.target.value));
-            // }}
+            onChange={(e) => {  
+              if (!isPreview) {
+                setVal(Number(e.target.value));
+              }
+            }}
             min={0}
             max={10}
             className="w-full h-[2px] sliderCheckin border-none"
