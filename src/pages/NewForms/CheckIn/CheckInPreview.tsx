@@ -58,7 +58,7 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
           </div>
         </div>
         <div className="w-full h-[350px] mt-2 overflow-y-auto">
-          <Checkin upData={data?.questions}></Checkin>
+          <Checkin isPreview upData={data?.questions}></Checkin>
         </div>
         <div className="w-full flex justify-end mt-2 items-center">
           <div

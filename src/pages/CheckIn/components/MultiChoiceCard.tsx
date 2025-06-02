@@ -8,6 +8,7 @@ interface MultiChoiceCardProps {
   options: Array<string>;
   onSubmit?: (value: string) => void;
   onChange?: (value: Array<string>) => void;
+  isPreview?: boolean;
 }
 const MultiChoice: React.FC<MultiChoiceCardProps> = ({
   options,
@@ -15,6 +16,7 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
   value,
   index,
   onChange,
+  isPreview,
 }) => {
   const [resolvedValue, setResolvedValue] = useState<Array<string>>([value]);
   useEffect(() => {
@@ -37,17 +39,19 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
             return (
               <>
                 <div
-                  // onClick={() => {
-                  //   if (resolvedValue.includes(el)) {
-                  //     setResolvedValue((pre) => {
-                  //       return pre.filter((va) => va != el);
-                  //     });
-                  //   } else {
-                  //     setResolvedValue((pre) => {
-                  //       return [...pre, el];
-                  //     });
-                  //   }
-                  // }}
+                  onClick={() => {
+                    if (!isPreview) {
+                      if (resolvedValue.includes(el)) {
+                        setResolvedValue((pre) => {
+                          return pre.filter((va) => va != el);
+                        });
+                      } else {
+                        setResolvedValue((pre) => {
+                          return [...pre, el];
+                        });
+                      }
+                    }
+                  }}
                   className="flex gap-1 items-center"
                 >
                   <Checkbox checked={resolvedValue.includes(el)}></Checkbox>
