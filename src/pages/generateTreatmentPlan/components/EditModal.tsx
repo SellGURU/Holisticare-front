@@ -65,10 +65,14 @@ const EditModal: FC<EditModalProps> = ({
     Instruction: Yup.string().required('This field is required.'),
     Dose: Yup.string().when('Category', {
       is: 'Supplement',
-      then: (schema) => schema
-        .required('This field is required.')
-        .matches(/^[0-9]+\s*[a-zA-Z]+$/, 'Dose must follow the described format.')
-    })
+      then: (schema) =>
+        schema
+          .required('This field is required.')
+          .matches(
+            /^[0-9]+\s*[a-zA-Z]+$/,
+            'Dose must follow the described format.',
+          ),
+    }),
   });
 
   interface FormValues {
@@ -220,7 +224,7 @@ const EditModal: FC<EditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
-    
+
     // Validate notes length
     if (newNote.length > 400) {
       return;
