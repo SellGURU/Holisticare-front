@@ -342,46 +342,49 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setShowValidation(false);
   };
 
-  const handleApply = () => {
-    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+  const handleApplyClick = () => {
+    setShowValidation(true);
+    
+    // Basic required field validations
+    if (!selectedGroup || !title || !instructions) {
       return;
     }
-    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
-      return;
-    }
+
+    // Category specific validations
     if (selectedGroup === 'Supplement' && !dose) {
       return;
     }
     if (selectedGroup === 'Lifestyle' && !value) {
       return;
     }
-    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-    //   return;
-    // }
-    if (
-      selectedGroup === 'Diet' &&
-      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
-    ) {
+    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
       return;
     }
 
+    // Frequency validations
+    if (!frequencyType) {
+      return;
+    }
+    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+      return;
+    }
+    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
+      return;
+    }
+
+    // If all validations pass, submit the form
+    handleApply();
+  };
+
+  const handleApply = () => {
     if (selectedGroup === 'Supplement') {
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         Dose: dose,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates:
-          frequencyType == 'weekly'
-            ? selectedDays
-            : frequencyType == 'monthly'
-              ? selectedDaysMonth
-              : null,
-        // Description: description,
-        // Base_Score: baseScore,
+        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -389,19 +392,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         Value: value,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates:
-          frequencyType == 'weekly'
-            ? selectedDays
-            : frequencyType == 'monthly'
-              ? selectedDaysMonth
-              : null,
-        // Description: description,
-        // Base_Score: baseScore,
+        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
         Unit: unit,
@@ -410,19 +404,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         'Total Macros': totalMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates:
-          frequencyType == 'weekly'
-            ? selectedDays
-            : frequencyType == 'monthly'
-              ? selectedDaysMonth
-              : null,
-        // Description: description,
-        // Base_Score: baseScore,
+        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -430,18 +415,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates:
-          frequencyType == 'weekly'
-            ? selectedDays
-            : frequencyType == 'monthly'
-              ? selectedDaysMonth
-              : null,
-        // Description: description,
-        // Base_Score: baseScore,
+        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -653,13 +629,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return !Object.values(newErrors).some((error) => error !== '');
   };
 
-  const handleApplyClick = () => {
-    setShowValidation(true);
-    if (validateForm()) {
-      handleApply();
-    }
-  };
-
   const handleNextClick = () => {
     setShowValidation(true);
     if (validateForm()) {
@@ -854,9 +823,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       value={dose}
                       onChange={handleDoseChange}
                       onBlur={handleDoseBlur}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${ showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
-                    {touchedFields.dose && errors.dose && (
+                    {showValidation && touchedFields.dose && errors.dose && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         {errors.dose}
                       </span>
