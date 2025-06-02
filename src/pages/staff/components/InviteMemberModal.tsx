@@ -65,28 +65,30 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
       role: validateRole(role),
     };
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
+    return !Object.values(newErrors).some((error) => error !== '');
   };
 
   const onSave = (values: any) => {
     setLoading(true);
-    return Application.inviteStaffMember(values).then(() => {
-      setLoading(false);
-      setRole('Staff');
-      setStep(3);
-      getStaffs();
-    }).catch((error: any) => {
-      setLoading(false);
-      console.log(error);
-      if (error?.detail === "a user with this e-mail already exists.") {
-        setErrors(prev => ({
-          ...prev,
-          email: 'This email address is already invited.'
-        }));
+    return Application.inviteStaffMember(values)
+      .then(() => {
+        setLoading(false);
+        setRole('Staff');
+        setStep(3);
+        getStaffs();
+      })
+      .catch((error: any) => {
+        setLoading(false);
+        console.log(error);
+        if (error?.detail === 'a user with this e-mail already exists.') {
+          setErrors((prev) => ({
+            ...prev,
+            email: 'This email address is already invited.',
+          }));
+          return false;
+        }
         return false;
-      }
-      return false;
-    });
+      });
   };
 
   return (
@@ -113,9 +115,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
                   setFullName(lettersOnly);
                   if (showValidation) {
-                    setErrors(prev => ({
+                    setErrors((prev) => ({
                       ...prev,
-                      fullName: validateFullName(lettersOnly)
+                      fullName: validateFullName(lettersOnly),
                     }));
                   }
                 }}
@@ -139,9 +141,9 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   onChange={(e) => {
                     setEmail(e.target.value);
                     if (showValidation) {
-                      setErrors(prev => ({
+                      setErrors((prev) => ({
                         ...prev,
-                        email: validateEmail(e.target.value)
+                        email: validateEmail(e.target.value),
                       }));
                     }
                   }}
@@ -163,17 +165,23 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     onChange={(e) => {
                       setRole(e.target.value);
                       if (showValidation) {
-                        setErrors(prev => ({
+                        setErrors((prev) => ({
                           ...prev,
-                          role: validateRole(e.target.value)
+                          role: validateRole(e.target.value),
                         }));
                       }
                     }}
                     className={`block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] ${!role ? 'text-Text-Fivefold' : 'text-Text-Primary'} ${showValidation && errors.role ? 'border-red-500' : 'border-Gray-50'}`}
                   >
-                    <option value="" disabled selected>Select a role</option>
+                    <option value="" disabled selected>
+                      Select a role
+                    </option>
                     {roles.map((role) => (
-                      <option className='text-Text-Primary' key={role} value={role}>
+                      <option
+                        className="text-Text-Primary"
+                        key={role}
+                        value={role}
+                      >
                         {role}
                       </option>
                     ))}
@@ -207,13 +215,10 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 onClick={async () => {
                   setShowValidation(true);
                   if (validateForm()) {
-                   
-                    
-                      setStep(2);
-                      setShowValidation(false);
-                    }
+                    setStep(2);
+                    setShowValidation(false);
                   }
-                }
+                }}
               >
                 Invite
               </div>
