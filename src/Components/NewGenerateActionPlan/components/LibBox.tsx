@@ -37,7 +37,6 @@ const LibBox: FC<LibBoxProps> = ({
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
-  console.log(data);
 
   return (
     <>
