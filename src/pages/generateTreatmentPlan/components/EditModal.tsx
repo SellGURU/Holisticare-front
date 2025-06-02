@@ -220,9 +220,13 @@ const EditModal: FC<EditModalProps> = ({
 
   const handleSaveClick = () => {
     setShowValidation(true);
-    
+
     // Validate dose format
-    if (selectedGroupDose && formik.values.Dose && !validateDoseFormat(formik.values.Dose)) {
+    if (
+      selectedGroupDose &&
+      formik.values.Dose &&
+      !validateDoseFormat(formik.values.Dose)
+    ) {
       formik.setFieldError('Dose', 'Dose must follow the described format.');
       return;
     }
@@ -436,7 +440,9 @@ const EditModal: FC<EditModalProps> = ({
                 }}
                 onKeyDown={handleNoteKeyDown}
                 className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && newNote.length > 400 ? 'border-Red' : 'border-Gray-50'
+                  showValidation && newNote.length > 400
+                    ? 'border-Red'
+                    : 'border-Gray-50'
                 } rounded-2xl outline-none`}
                 rows={4}
                 placeholder="Write notes ..."
