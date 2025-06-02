@@ -129,16 +129,21 @@ const FileHistoryNew = () => {
         ),
       );
     } catch (error: any) {
+      console.log(error);
+      
+      let errorMessage = 'Failed to upload file to backend. Please try again.';
+      
+      if (error?.detail?.includes('already exists')) {
+        errorMessage = 'This file has already been uploaded.';
+      }
+
       setUploadedFiles((prev) =>
         prev.map((f) =>
           f.file === file
             ? {
                 ...f,
                 status: 'error',
-                errorMessage:
-                  error?.response?.data?.message ||
-                  error?.detail ||
-                  'Failed to upload file to backend. Please try again.',
+                errorMessage
               }
             : f,
         ),
@@ -155,10 +160,27 @@ const FileHistoryNew = () => {
         status: 'uploading' as const,
         uploadedSize: 0,
       }));
-      setUploadedFiles((prev) => [...newFiles, ...prev]);
+
+      // Validate file formats before uploading
+      const validFiles = newFiles.filter(fileUpload => {
+        const fileExtension = fileUpload.file.name.split('.').pop()?.toLowerCase();
+        const allowedExtensions = ['pdf', 'xls', 'xlsx'];
+        
+        if (!allowedExtensions.includes(fileExtension || '')) {
+          setUploadedFiles(prev => [...prev, {
+            ...fileUpload,
+            status: 'error',
+            errorMessage: 'File has an unsupported format.'
+          }]);
+          return false;
+        }
+        return true;
+      });
+
+      setUploadedFiles((prev) => [...validFiles, ...prev]);
 
       // Process each file
-      for (const fileUpload of newFiles) {
+      for (const fileUpload of validFiles) {
         try {
           // Step 1: Upload to Azure
           const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {

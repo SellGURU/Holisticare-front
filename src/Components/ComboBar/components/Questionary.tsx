@@ -451,15 +451,15 @@ export const Questionary = () => {
 
   const isQuestionAnswered = (question: any) => {
     if (!question.required) return true;
-    
+
     if (question.type === 'checkbox') {
       return question.response && question.response.length > 0;
     }
-    
+
     if (question.type === 'File Uploader') {
       return question.response && question.response.length > 0;
     }
-    
+
     return question.response && question.response !== '';
   };
 
@@ -712,13 +712,19 @@ export const Questionary = () => {
                 </div>
                 <img
                   className={`cursor-pointer rotate-180 ${
-                    (activeCard == questionsFormData?.questions?.length || 
-                    !isQuestionAnswered(questionsFormData?.questions[activeCard - 1])) && 'opacity-40'
+                    (activeCard == questionsFormData?.questions?.length ||
+                      !isQuestionAnswered(
+                        questionsFormData?.questions[activeCard - 1],
+                      )) &&
+                    'opacity-40'
                   }`}
                   onClick={() => {
                     if (
-                      activeCard < (questionsFormData?.questions?.length || 0) &&
-                      isQuestionAnswered(questionsFormData?.questions[activeCard - 1])
+                      activeCard <
+                        (questionsFormData?.questions?.length || 0) &&
+                      isQuestionAnswered(
+                        questionsFormData?.questions[activeCard - 1],
+                      )
                     ) {
                       setActiveCard(activeCard + 1);
                     }
