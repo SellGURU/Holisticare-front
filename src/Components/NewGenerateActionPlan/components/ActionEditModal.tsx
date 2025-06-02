@@ -344,7 +344,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
   const handleApplyClick = () => {
     setShowValidation(true);
-    
+
     // Basic required field validations
     if (!selectedGroup || !title || !instructions) {
       return;
@@ -357,7 +357,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (selectedGroup === 'Lifestyle' && !value) {
       return;
     }
-    if (selectedGroup === 'Diet' && (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)) {
+    if (
+      selectedGroup === 'Diet' &&
+      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+    ) {
       return;
     }
 
@@ -384,7 +387,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         Dose: dose,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -395,7 +403,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         Value: value,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
         Unit: unit,
@@ -407,7 +420,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Instruction: instructions,
         'Total Macros': totalMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -417,7 +435,12 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Title: title,
         Instruction: instructions,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
-        frequencyDates: frequencyType === 'weekly' ? selectedDays : frequencyType === 'monthly' ? selectedDaysMonth : null,
+        frequencyDates:
+          frequencyType === 'weekly'
+            ? selectedDays
+            : frequencyType === 'monthly'
+              ? selectedDaysMonth
+              : null,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -823,7 +846,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       value={dose}
                       onChange={handleDoseChange}
                       onBlur={handleDoseBlur}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${ showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                     {showValidation && touchedFields.dose && errors.dose && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
