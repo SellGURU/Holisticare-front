@@ -40,7 +40,7 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
               <>
                 <div
                   onClick={() => {
-                    if(!isPreview){
+                    if (!isPreview) {
                       if (resolvedValue.includes(el)) {
                         setResolvedValue((pre) => {
                           return pre.filter((va) => va != el);
@@ -50,7 +50,6 @@ const MultiChoice: React.FC<MultiChoiceCardProps> = ({
                           return [...pre, el];
                         });
                       }
-
                     }
                   }}
                   className="flex gap-1 items-center"

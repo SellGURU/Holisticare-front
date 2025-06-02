@@ -17,7 +17,7 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
   value,
   index,
   onChange,
-  isPreview
+  isPreview,
 }) => {
   const [resolvedValue, setResolvedValue] = useState(value);
   useEffect(() => {
@@ -41,7 +41,7 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
               <>
                 <div
                   onClick={() => {
-                    if(!isPreview){
+                    if (!isPreview) {
                       setResolvedValue(el);
                     }
                   }}

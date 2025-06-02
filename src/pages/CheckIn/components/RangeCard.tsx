@@ -50,7 +50,7 @@ const RangeCard: React.FC<RangeCardProps> = ({
           <input
             type="range"
             value={val}
-            onChange={(e) => {  
+            onChange={(e) => {
               if (!isPreview) {
                 setVal(Number(e.target.value));
               }
