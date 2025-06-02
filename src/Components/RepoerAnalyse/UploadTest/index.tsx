@@ -1,11 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useRef, useState, useCallback } from 'react';
-import Uploading from './uploading';
+import { useRef, useState } from 'react';
+// import Uploading from './uploading';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
 import { publish } from '../../../utils/event';
+import { uploadToAzure } from '../../../help';
+// import FileBox from '../../ComboBar/components/FileBox';
+import FileBoxUploading from './FileBoxUploading';
 
+interface FileUpload {
+  file: File;
+  progress: number;
+  status: 'uploading' | 'completed' | 'error';
+  azureUrl?: string;
+  uploadedSize?: number;
+  errorMessage?: string;
+}
 interface UploadTestProps {
   memberId: any;
   onGenderate: () => void;
@@ -18,54 +29,163 @@ const UploadTest: React.FC<UploadTestProps> = ({
   isShare,
 }) => {
   const fileInputRef = useRef<any>(null);
-  const [files, setFiles] = useState<Array<any>>([]);
-  const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  // const [files, setFiles] = useState<Array<any>>([]);
+  // const [upLoadingFiles, setUploadingFiles] = useState<Array<any>>([]);
+  const [errorMessage] = useState<string>('');
 
+  const formatFileSize = (bytes: number): string => {
+    const kb = bytes / 1024;
+    return `${kb.toFixed(1)} KB`;
+  };
+  const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const handleDeleteFile = (fileToDelete: any) => {
     console.log(fileToDelete);
 
     Application.deleteLapReport({ file_id: fileToDelete.id })
       .then(() => {
-        setFiles(files.filter((file) => file !== fileToDelete));
+        // setFiles(files.filter((file) => file !== fileToDelete));
       })
       .catch((err) => {
         console.error('Error deleting the file:', err);
       });
   };
-  const handleCancelUpload = (fileToCancel: any) => {
-    setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
+  // const handleCancelUpload = (fileToCancel: any) => {
+  //   setUploadingFiles(upLoadingFiles.filter((file) => file !== fileToCancel));
+  // };
+
+  // const handleSuccessUpload = useCallback((fileWithId: any, el: any) => {
+  //   setFiles((prevFiles) => [...prevFiles, fileWithId]);
+  //   // Commented code left as-is
+  //   setUploadingFiles((prevUploadingFiles) =>
+  //     prevUploadingFiles.filter((file) => file !== el),
+  //   );
+  // }, []);
+
+  // const validateFile = (file: File) => {
+  //   // Check file format based on extension
+  //   const validFormats = ['.pdf', '.docx'];
+  //   const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+  //   if (!validFormats.includes(fileExtension)) {
+  //     return `${file.name} has an invalid format. Supported formats: PDF and DOCX files`;
+  //   }
+
+  //   // Check for duplicate filename
+  //   const isDuplicate = [...files, ...upLoadingFiles].some(
+  //     (existingFile) => existingFile.name === file.name,
+  //   );
+  //   if (isDuplicate) {
+  //     return `${file.name} already exists. Please rename the file or choose another one`;
+  //   }
+
+  //   return null; // No error
+  // };
+  const sendToBackend = async (file: File, azureUrl: string) => {
+    try {
+      await Application.addLabReport(
+        {
+          member_id: memberId,
+          report: {
+            'file name': file.name,
+            blob_url: azureUrl,
+          },
+        },
+        (progressEvent: any) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          // Calculate progress from 50-100%
+          const backendProgress = 50 + percentCompleted / 2;
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    progress: backendProgress,
+                    uploadedSize: progressEvent.loaded,
+                  }
+                : f,
+            ),
+          );
+        },
+      );
+
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.file === file ? { ...f, status: 'completed', azureUrl } : f,
+        ),
+      );
+    } catch (error: any) {
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.file === file
+            ? {
+                ...f,
+                status: 'error',
+                errorMessage:
+                  error?.response?.data?.message ||
+                  error?.detail ||
+                  'Failed to upload file to backend. Please try again.',
+              }
+            : f,
+        ),
+      );
+    }
   };
 
-  const handleSuccessUpload = useCallback((fileWithId: any, el: any) => {
-    setFiles((prevFiles) => [...prevFiles, fileWithId]);
-    // Commented code left as-is
-    setUploadingFiles((prevUploadingFiles) =>
-      prevUploadingFiles.filter((file) => file !== el),
-    );
-  }, []);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files).map((file) => ({
+        file,
+        progress: 0.5,
+        status: 'uploading' as const,
+        uploadedSize: 0,
+      }));
+      setUploadedFiles((prev) => [...newFiles, ...prev]);
 
-  const validateFile = (file: File) => {
-    // Check file format based on extension
-    const validFormats = ['.pdf', '.docx'];
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    if (!validFormats.includes(fileExtension)) {
-      return `${file.name} has an invalid format. Supported formats: PDF and DOCX files`;
+      // Process each file
+      for (const fileUpload of newFiles) {
+        try {
+          // Step 1: Upload to Azure
+          const azureUrl = await uploadToAzure(fileUpload.file, (progress) => {
+            const uploadedBytes = Math.floor(
+              (progress / 100) * fileUpload.file.size,
+            );
+            setUploadedFiles((prev) =>
+              prev.map((f) =>
+                f.file === fileUpload.file
+                  ? {
+                      ...f,
+                      progress: progress / 2,
+                      uploadedSize: uploadedBytes,
+                    }
+                  : f,
+              ),
+            );
+          });
+
+          // Step 2: Send to backend
+          await sendToBackend(fileUpload.file, azureUrl);
+        } catch (error: any) {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === fileUpload.file
+                ? {
+                    ...f,
+                    status: 'error',
+                    errorMessage:
+                      error?.response?.data?.message ||
+                      error?.message ||
+                      'Failed to upload file. Please try again.',
+                  }
+                : f,
+            ),
+          );
+        }
+      }
     }
-
-    // Check for duplicate filename
-    const isDuplicate = [...files, ...upLoadingFiles].some(
-      (existingFile) => existingFile.name === file.name,
-    );
-    if (isDuplicate) {
-      return `${file.name} already exists. Please rename the file or choose another one`;
-    }
-
-    return null; // No error
+    fileInputRef.current.value = '';
   };
-
-  console.log(files);
-
   return (
     <>
       <div className=" w-full  rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center  absolute left-0">
@@ -116,38 +236,36 @@ const UploadTest: React.FC<UploadTestProps> = ({
                 ref={fileInputRef}
                 accept=".pdf, .docx"
                 multiple
-                onChange={(e: any) => {
-                  const fileList = Array.from(e.target.files) as File[];
-                  if (fileList.length === 0) return;
-
-                  setErrorMessage('');
-
-                  // Validate each file
-                  const validFiles = [] as File[];
-                  for (const file of fileList) {
-                    const error = validateFile(file);
-                    if (error) {
-                      setErrorMessage(error);
-                      fileInputRef.current.value = '';
-                      return;
-                    }
-                    validFiles.push(file);
-                  }
-
-                  console.log(upLoadingFiles);
-                  setFiles([...files, ...upLoadingFiles.filter((el) => el.id)]);
-                  setUploadingFiles([]);
-                  setTimeout(() => {
-                    setUploadingFiles(validFiles);
-                  }, 200);
-                  fileInputRef.current.value = '';
-                }}
+                onChange={handleFileChange}
                 id="uploadFile"
                 className="w-full absolute invisible h-full left-0 top-0"
               />
             </div>
 
-            <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
+            <div className='className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto'>
+              {uploadedFiles.map((fileUpload, index) => (
+                <div key={index}>
+                  <FileBoxUploading
+                    onDelete={() => {
+                      setUploadedFiles((prev) =>
+                        prev.filter((f) => f.file !== fileUpload.file),
+                      );
+                      handleDeleteFile(
+                        uploadedFiles.filter((f) => f.file == fileUpload.file),
+                      );
+                    }}
+                    el={{
+                      ...fileUpload,
+                      uploadedSize: fileUpload.uploadedSize || 0,
+                      totalSize: fileUpload?.file?.size,
+                      progress: fileUpload.progress || 0.5,
+                      formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            {/* <div className="mt-1 grid grid-cols-1 max-h-[200px] gap-2 py-2 px-2 overflow-y-auto">
               {files.map((el: any) => {
                 return (
                   <>
@@ -191,7 +309,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
                   </div>
                 );
               })}
-            </div>
+            </div> */}
 
             <div className="flex justify-center items-center w-full">
               <div className="h-[1px] bg-Text-Triarty w-[180px] relative"></div>
@@ -213,7 +331,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
 
             <div className="flex justify-center mt-5">
               <ButtonSecondary
-                disabled={files.length == 0}
+                disabled={
+                  uploadedFiles.filter((el) => el.status == 'completed')
+                    .length == 0
+                }
                 onClick={() => {
                   onGenderate();
                 }}
