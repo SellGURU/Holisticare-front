@@ -1,5 +1,3 @@
-import ExerciseItem from './ExersiseItem';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface SuperSetExersiseItemProps {
   exercise: any;
