@@ -66,7 +66,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
     };
     setErrors(newErrors);
     const isValid = !Object.values(newErrors).some((error) => error !== '');
-    
+
     // Clear errors if validation passes
     if (isValid) {
       setErrors({
@@ -75,7 +75,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
         role: '',
       });
     }
-    
+
     return isValid;
   };
 
@@ -228,7 +228,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   if (!validateForm()) {
                     return;
                   }
-                  
+
                   try {
                     await Application.checkInvation({
                       email: email,
