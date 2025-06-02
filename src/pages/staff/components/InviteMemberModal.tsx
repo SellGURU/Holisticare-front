@@ -65,7 +65,18 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
       role: validateRole(role),
     };
     setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== '');
+    const isValid = !Object.values(newErrors).some((error) => error !== '');
+    
+    // Clear errors if validation passes
+    if (isValid) {
+      setErrors({
+        fullName: '',
+        email: '',
+        role: '',
+      });
+    }
+    
+    return isValid;
   };
 
   const onSave = (values: any) => {
@@ -214,9 +225,31 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 className={`text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
                 onClick={async () => {
                   setShowValidation(true);
-                  if (validateForm()) {
+                  if (!validateForm()) {
+                    return;
+                  }
+                  
+                  try {
+                    await Application.checkInvation({
+                      email: email,
+                      role: role,
+                      full_name: fullName,
+                    });
                     setStep(2);
                     setShowValidation(false);
+                    // Clear errors on success
+                    setErrors({
+                      fullName: '',
+                      email: '',
+                      role: '',
+                    });
+                  } catch (error: any) {
+                    if (error.detail) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        email: 'This email address is already invited.',
+                      }));
+                    }
                   }
                 }}
               >

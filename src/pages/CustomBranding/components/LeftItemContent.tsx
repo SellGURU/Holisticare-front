@@ -58,7 +58,10 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
     }
 
     // Validate Headline
-    if (customTheme.headLine !== '' && (customTheme.headLine.length < 3 || customTheme.headLine.length > 35)) {
+    if (
+      customTheme.headLine !== '' &&
+      (customTheme.headLine.length < 3 || customTheme.headLine.length > 35)
+    ) {
       setErrorHeadLine('Must be between 3 and 35 characters.');
     }
 
@@ -102,7 +105,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
 
     const validFormats = ['.png', '.svg', '.jpg', '.jpeg'];
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    
+
     if (!validFormats.includes(fileExtension)) {
       setErrorLogo('File has an unsupported format.');
       return;
