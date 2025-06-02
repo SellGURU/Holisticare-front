@@ -17,20 +17,78 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [openRoll, setOpenRoll] = useState(false);
-  const [role, setRole] = useState('Staff');
+  const [role, setRole] = useState('');
   const [step, setStep] = useState(1);
   const [registered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
+  const [errors, setErrors] = useState({
+    fullName: '',
+    email: '',
+    role: '',
+  });
+
+  const validateFullName = (name: string) => {
+    if (!name) {
+      return 'This field is required.';
+    }
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+      return 'Full name must only contain letters and spaces.';
+    }
+    if (name.trim().split(/\s+/).length < 2) {
+      return 'Full name must contain at least 2 words.';
+    }
+    return '';
+  };
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      return 'This field is required.';
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return 'Invalid email address. Please try again.';
+    }
+    return '';
+  };
+
+  const validateRole = (role: string) => {
+    if (!role) {
+      return 'This field is required.';
+    }
+    return '';
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      fullName: validateFullName(fullName),
+      email: validateEmail(email),
+      role: validateRole(role),
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error !== '');
+  };
+
   const onSave = (values: any) => {
     setLoading(true);
-    Application.inviteStaffMember(values).then(() => {
+    return Application.inviteStaffMember(values).then(() => {
       setLoading(false);
       setRole('Staff');
       setStep(3);
       getStaffs();
+    }).catch((error: any) => {
+      setLoading(false);
+      console.log(error);
+      if (error?.detail === "a user with this e-mail already exists.") {
+        setErrors(prev => ({
+          ...prev,
+          email: 'This email address is already invited.'
+        }));
+        return false;
+      }
+      return false;
     });
   };
+
   return (
     <>
       {step === 1 ? (
@@ -46,14 +104,25 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               </div>
               <input
                 placeholder="Write the full name ..."
-                className={`w-full h-[28px] border ${showValidation && fullName.length == 0 ? 'border-red-500' : 'border-Gray-50'} border-Gray-50 bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                className={`w-full h-[28px] border ${showValidation && errors.fullName ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                 type="text"
                 value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Only allow letters and spaces
+                  const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+                  setFullName(lettersOnly);
+                  if (showValidation) {
+                    setErrors(prev => ({
+                      ...prev,
+                      fullName: validateFullName(lettersOnly)
+                    }));
+                  }
+                }}
               />
-              {fullName.length == 0 && showValidation && (
+              {showValidation && errors.fullName && (
                 <div className="text-[10px] mt-1 ml-2 text-red-500">
-                  This field is required.
+                  {errors.fullName}
                 </div>
               )}
             </div>
@@ -64,22 +133,26 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 </div>
                 <input
                   placeholder="Write the email ..."
-                  className={`w-[222px] h-[28px] border ${!email.includes('@') && email.length > 0 ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                  className={`w-[222px] h-[28px] border ${showValidation && errors.email ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (showValidation) {
+                      setErrors(prev => ({
+                        ...prev,
+                        email: validateEmail(e.target.value)
+                      }));
+                    }
+                  }}
                 />
-                {!email.includes('@') && email.length > 0 ? (
+                {showValidation && errors.email && (
                   <div className="text-[10px] mt-1 ml-2 text-red-500">
-                    This field is required.
+                    {errors.email}
                   </div>
-                ) : (
-                  ''
                 )}
               </div>
-              <div
-                className={`flex flex-col w-full ${!email.includes('@') && role.length > 0 ? 'mb-[0px]' : ''}`}
-              >
+              <div className="flex flex-col w-full">
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   Role
                 </div>
@@ -88,23 +161,22 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     onClick={() => setOpenRoll(!openRoll)}
                     onBlur={() => setOpenRoll(false)}
                     onChange={(e) => {
-                      // setOpenRoll(false);
                       setRole(e.target.value);
+                      if (showValidation) {
+                        setErrors(prev => ({
+                          ...prev,
+                          role: validateRole(e.target.value)
+                        }));
+                      }
                     }}
-                    className="block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] text-Text-Primary"
+                    className={`block appearance-none w-full bg-backgroundColor-Card border py-2 px-4 pr-8 rounded-2xl leading-tight focus:outline-none text-[10px] ${!role ? 'text-Text-Fivefold' : 'text-Text-Primary'} ${showValidation && errors.role ? 'border-red-500' : 'border-Gray-50'}`}
                   >
+                    <option value="" disabled selected>Select a role</option>
                     {roles.map((role) => (
-                      <option
-                        onClick={() => {
-                          setOpenRoll(false);
-                        }}
-                        value={role}
-                      >
+                      <option className='text-Text-Primary' key={role} value={role}>
                         {role}
                       </option>
                     ))}
-                    {/* <option value="staff">Staff</option>
-                    <option value="admin">Admin</option> */}
                   </select>
                   <img
                     className={`w-3 h-3 object-contain opacity-80 absolute top-2.5 right-2.5 transition-transform duration-200 ${
@@ -114,6 +186,11 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     alt=""
                   />
                 </div>
+                {showValidation && errors.role && (
+                  <div className="text-[10px] mt-1 ml-2 text-red-500">
+                    {errors.role}
+                  </div>
+                )}
               </div>
             </div>
             <div className="w-full flex justify-end items-center p-2 mt-5">
@@ -126,14 +203,17 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 Cancel
               </div>
               <div
-                className={`${email.includes('@') && role && fullName ? 'text-Primary-DeepTeal' : 'text-Text-Fivefold'} text-sm font-medium cursor-pointer`}
-                onClick={() => {
+                className={`text-Primary-DeepTeal text-sm font-medium cursor-pointer`}
+                onClick={async () => {
                   setShowValidation(true);
-                  if (email.includes('@') && role && fullName) {
-                    setStep(2);
-                    setShowValidation(false);
+                  if (validateForm()) {
+                   
+                    
+                      setStep(2);
+                      setShowValidation(false);
+                    }
                   }
-                }}
+                }
               >
                 Invite
               </div>
@@ -209,13 +289,16 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
               </div>
               <div
                 className={`${loading ? 'text-Disable' : 'text-Primary-DeepTeal'} text-sm font-medium cursor-pointer`}
-                onClick={() => {
+                onClick={async () => {
                   if (email && role && fullName) {
-                    onSave({
+                    const success = await onSave({
                       email: email,
                       role: role,
                       full_name: fullName,
                     });
+                    if (success !== false) {
+                      setStep(3);
+                    }
                   }
                 }}
               >
