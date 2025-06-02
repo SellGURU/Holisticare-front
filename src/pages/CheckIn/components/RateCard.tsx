@@ -10,6 +10,7 @@ interface RateCardProps {
   index?: number;
   onSubmit?: (value: any) => void;
   hideQuestions?: boolean;
+  isPreview?: boolean;
 }
 
 const RateCard: React.FC<RateCardProps> = ({
@@ -18,6 +19,7 @@ const RateCard: React.FC<RateCardProps> = ({
   value,
   onSubmit,
   hideQuestions,
+  isPreview,
 }) => {
   const [val, setVal] = useState<number>(value);
   useEffect(() => {
@@ -39,7 +41,9 @@ const RateCard: React.FC<RateCardProps> = ({
             return (
               <img
                 onClick={() => {
-                  setVal(ind + 1);
+                  if (!isPreview) {
+                    setVal(ind + 1);
+                  }
                 }}
                 className="cursor-pointer"
                 src={
