@@ -8,6 +8,7 @@ interface CheckBoxCardProps {
   options: Array<string>;
   onSubmit?: (value: string) => void;
   onChange?: (value: string) => void;
+  isPreview?: boolean;
 }
 
 const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
@@ -16,6 +17,7 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
   value,
   index,
   onChange,
+  isPreview,
 }) => {
   const [resolvedValue, setResolvedValue] = useState(value);
   useEffect(() => {
@@ -38,9 +40,11 @@ const CheckBoxCard: React.FC<CheckBoxCardProps> = ({
             return (
               <>
                 <div
-                  // onClick={() => {
-                  //   setResolvedValue(el);
-                  // }}
+                  onClick={() => {
+                    if (!isPreview) {
+                      setResolvedValue(el);
+                    }
+                  }}
                   className="flex gap-1 items-center"
                 >
                   <div

@@ -7,6 +7,7 @@ interface FeelingCardProps {
   index?: number;
   onSubmit?: (value: string) => void;
   hideQuestions?: boolean;
+  isPreview?: boolean;
 }
 
 const FeelingCard: React.FC<FeelingCardProps> = ({
@@ -15,6 +16,7 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
   onSubmit,
   value,
   hideQuestions,
+  isPreview,
 }) => {
   const touchStartX = useRef(0);
   // const touchEndX = useRef(0);
@@ -107,9 +109,11 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
                         </div>
                       ) : (
                         <img
-                          // onClick={() => {
-                          //   setActive(emojeys[itemIndex]);
-                          // }}
+                          onClick={() => {
+                            if (!isPreview) {
+                              setActive(emojeys[itemIndex]);
+                            }
+                          }}
                           className="w-[28px] cursor-pointer"
                           src={emojeys[itemIndex].icon}
                         />

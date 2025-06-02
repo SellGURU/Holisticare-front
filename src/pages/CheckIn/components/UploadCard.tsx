@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import ItemUpload from './ItemUpload';
 import SvgIcon from '../../../utils/svgIcon';
@@ -8,6 +9,7 @@ interface UploadCardProps {
   index?: number;
   onSubmit?: (values: any) => void;
   hideQuestions?: boolean;
+  isPreview?: boolean;
 }
 
 const UploadCard: React.FC<UploadCardProps> = ({
@@ -16,6 +18,7 @@ const UploadCard: React.FC<UploadCardProps> = ({
   value,
   onSubmit,
   hideQuestions,
+  isPreview,
 }) => {
   useEffect(() => {
     setBack(value?.back || '');
@@ -55,7 +58,11 @@ const UploadCard: React.FC<UploadCardProps> = ({
           </div>
         )}
         <div
-          onClick={() => setISCanUpload(true)}
+          onClick={() => {
+            if (!isPreview) {
+              setISCanUpload(true);
+            }
+          }}
           className="cursor-pointer flex justify-end items-center gap-1"
         >
           <img src="/icons/upload.svg" alt="" />
