@@ -545,7 +545,10 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         const value = e.target.value;
                         // Only allow positive integers
                         if (/^\d*$/.test(value)) {
-                          updateTotalMacros('Protein', value === '' ? '' : value);
+                          updateTotalMacros(
+                            'Protein',
+                            value === '' ? '' : value,
+                          );
                           if (value) {
                             setErrors((prev) => ({
                               ...prev,

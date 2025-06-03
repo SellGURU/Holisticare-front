@@ -70,11 +70,15 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
 
   const hasValidationErrors = () => {
     if (type === 'checkbox') {
-      const nonEmptyOptions = CheckBoxoptions.filter(opt => opt.trim() !== '');
+      const nonEmptyOptions = CheckBoxoptions.filter(
+        (opt) => opt.trim() !== '',
+      );
       return nonEmptyOptions.length < 2;
     }
     if (type === 'multiple_choice') {
-      const nonEmptyOptions = multiChoiceOptions.filter(opt => opt.trim() !== '');
+      const nonEmptyOptions = multiChoiceOptions.filter(
+        (opt) => opt.trim() !== '',
+      );
       return nonEmptyOptions.length < 2;
     }
     return false;
@@ -233,7 +237,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             onChange={(values) => {
               setCheckBoxOptions(values);
             }}
-            showValidation={showValidation}
+            showValidation={showValidation && type === 'checkbox'}
           ></CheckBoxSelection>
 
           <MultiChoceSelection
@@ -249,7 +253,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             onChange={(values) => {
               setMutiChoiceOptions(values);
             }}
-            showValidation={showValidation}
+            showValidation={showValidation && type === 'multiple_choice'}
           ></MultiChoceSelection>
         </div>
       </div>

@@ -27,7 +27,10 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
     return errors[`${field}-${exercise.Section}-${exerciseTitle}`];
   };
 
-  const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+  const handleSetChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    exIndex: number,
+  ) => {
     const value = e.target.value;
     // Only allow positive integers
     if (/^\d*$/.test(value)) {
@@ -35,7 +38,10 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
     }
   };
 
-  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+  const handleRepsChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    exIndex: number,
+  ) => {
     const value = e.target.value;
     // Only allow positive integers
     if (/^\d*$/.test(value)) {
@@ -43,7 +49,10 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
     }
   };
 
-  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+  const handleWeightChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    exIndex: number,
+  ) => {
     const value = e.target.value;
     // Only allow positive integers
     if (/^\d*$/.test(value)) {
@@ -51,7 +60,10 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
     }
   };
 
-  const handleRestChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+  const handleRestChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    exIndex: number,
+  ) => {
     const value = e.target.value;
     // Only allow positive integers
     if (/^\d*$/.test(value)) {

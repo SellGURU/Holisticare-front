@@ -179,7 +179,11 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
                     setError('');
                   }}
                   inValid={error != '' || (showValidation && !titleForm)}
-                  errorMessage={error ? "Form title already exists. Please choose another." : "This field is required."}
+                  errorMessage={
+                    error
+                      ? 'Form title already exists. Please choose another.'
+                      : 'This field is required.'
+                  }
                 />
               </div>
               <div className="w-full text-xs text-Text-Primary font-medium mt-6">

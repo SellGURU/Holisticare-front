@@ -33,7 +33,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
   useEffect(() => {
     onChange(options);
     // Check if there are at least 2 non-empty options
-    const nonEmptyOptions = options.filter(opt => opt.trim() !== '');
+    const nonEmptyOptions = options.filter((opt) => opt.trim() !== '');
     setError(showValidation && nonEmptyOptions.length < 2);
   }, [options, showValidation]);
 
