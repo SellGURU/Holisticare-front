@@ -956,6 +956,9 @@ class Application extends Api {
   static getHolisticPlanReview = (data: any) => {
     return this.post('/action_plan/holistic_plan', data);
   };
+  static checkInvation = (data: any) => {
+    return this.post('/settings/check_invitation', data);
+  };
 }
 
 export default Application;

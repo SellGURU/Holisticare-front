@@ -449,6 +449,20 @@ export const Questionary = () => {
   };
   const [activeCard, setActiveCard] = useState(1);
 
+  const isQuestionAnswered = (question: any) => {
+    if (!question.required) return true;
+
+    if (question.type === 'checkbox') {
+      return question.response && question.response.length > 0;
+    }
+
+    if (question.type === 'File Uploader') {
+      return question.response && question.response.length > 0;
+    }
+
+    return question.response && question.response !== '';
+  };
+
   return (
     <div className=" w-full">
       <div
@@ -693,29 +707,24 @@ export const Questionary = () => {
                   src="/icons/arrow-circle-left.svg"
                   alt=""
                 />
-
-                {/* <div
-                  onClick={() => {
-                    if (activeCard > 1) {
-                      setActiveCard(activeCard - 1);
-                    }
-                  }}
-                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                >
-                  <img
-                    className="rotate-90 w-3"
-                    src="/icons/arrow-down-green.svg"
-                    alt=""
-                  />
-                </div> */}
                 <div className="text-[10px] w-[40px] text-center text-Text-Secondary text-nowrap">
                   {activeCard} /{questionsFormData?.questions?.length || 0}
                 </div>
                 <img
-                  className={`cursor-pointer rotate-180 ${activeCard == questionsFormData?.questions?.length && 'opacity-40'}`}
+                  className={`cursor-pointer rotate-180 ${
+                    (activeCard == questionsFormData?.questions?.length ||
+                      !isQuestionAnswered(
+                        questionsFormData?.questions[activeCard - 1],
+                      )) &&
+                    'opacity-40'
+                  }`}
                   onClick={() => {
                     if (
-                      activeCard < (questionsFormData?.questions?.length || 0)
+                      activeCard <
+                        (questionsFormData?.questions?.length || 0) &&
+                      isQuestionAnswered(
+                        questionsFormData?.questions[activeCard - 1],
+                      )
                     ) {
                       setActiveCard(activeCard + 1);
                     }
@@ -723,20 +732,6 @@ export const Questionary = () => {
                   src="/icons/arrow-circle-left.svg"
                   alt=""
                 />
-                {/* <div
-                  onClick={() => {
-                    if (activeCard < questionsFormData.questions.length) {
-                      setActiveCard(activeCard + 1);
-                    }
-                  }}
-                  className="w-5 h-5 bg-[#E9F0F2] flex justify-center items-center rounded-full cursor-pointer "
-                >
-                  <img
-                    className="rotate-[270deg] w-3"
-                    src="/icons/arrow-down-green.svg"
-                    alt=""
-                  />
-                </div> */}
               </div>
             </div>
           </div>
