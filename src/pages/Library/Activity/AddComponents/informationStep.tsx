@@ -38,14 +38,14 @@ interface InformationStepProps {
     value: any,
   ) => void;
   showValidation: boolean; // Add this prop
-  onValidationChange: (isValid: boolean) => void; // Add this prop
+  // onValidationChange: (isValid: boolean) => void; // Add this prop
 }
 
 const InformationStep: FC<InformationStepProps> = ({
   addData,
   updateAddData,
   showValidation,
-  onValidationChange,
+  // onValidationChange,
 }) => {
   const [ConditionsOptions, setConditionsOptions] = useState([]);
   const [EquipmentOptions, setEquipmentOptions] = useState([]);
@@ -78,9 +78,9 @@ const InformationStep: FC<InformationStepProps> = ({
     onSubmit: () => {}, // Handled by parent
   });
 
-  useEffect(() => {
-    onValidationChange(formik.isValid);
-  }, [formik.isValid, onValidationChange]);
+  // useEffect(() => {
+  //   onValidationChange(formik.isValid);
+  // }, [formik.isValid, onValidationChange]);
   // Update parent component when form values change
   useEffect(() => {
     updateAddData('title', formik.values.title);

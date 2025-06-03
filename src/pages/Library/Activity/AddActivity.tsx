@@ -179,6 +179,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       sectionList.length > 0 && emptySetSections.length == 0,
     );
   }, [sectionList]);
+  console.log(isFormValid, isExerciseStepValid);
 
   return (
     <>
@@ -200,7 +201,6 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           {step === 0 ? (
             <InformationStep
               showValidation={showValidation}
-              onValidationChange={setIsFormValid}
               addData={addData}
               updateAddData={updateAddData}
             />
