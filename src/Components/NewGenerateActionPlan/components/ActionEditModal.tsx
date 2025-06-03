@@ -595,6 +595,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
   };
 
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      setValue(value === '' ? '' : Number(value));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {
       title: '',
@@ -884,14 +892,30 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         <input
                           placeholder="Enter Value..."
                           value={value}
-                          type="number"
-                          onChange={(e) =>
-                            setValue(
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
-                            )
-                          }
+                          type="text"
+                          onChange={handleValueChange}
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                         {!value && showValidation && (

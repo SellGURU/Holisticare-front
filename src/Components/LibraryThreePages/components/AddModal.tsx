@@ -393,13 +393,39 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 <input
                   placeholder="Enter Value..."
                   value={value}
-                  type="number"
+                  type="text"
                   onChange={(e) => {
-                    setValue(e.target.value);
-                    if (e.target.value) {
-                      setErrors((prev) => ({ ...prev, value: false }));
-                    } else {
-                      setErrors((prev) => ({ ...prev, value: true }));
+                    const value = e.target.value;
+                    // Only allow positive integers
+                    if (/^\d*$/.test(value)) {
+                      setValue(value === '' ? '' : value);
+                      if (value) {
+                        setErrors((prev) => ({ ...prev, value: false }));
+                      } else {
+                        setErrors((prev) => ({ ...prev, value: true }));
+                      }
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Allow navigation keys
+                    if (
+                      e.key === 'ArrowUp' ||
+                      e.key === 'ArrowDown' ||
+                      e.key === 'ArrowLeft' ||
+                      e.key === 'ArrowRight' ||
+                      e.key === 'Tab' ||
+                      e.key === 'Enter'
+                    ) {
+                      return;
+                    }
+                    // Allow numbers, backspace, delete
+                    if (
+                      !/[\d\b]/.test(e.key) &&
+                      e.key !== 'Backspace' &&
+                      e.key !== 'Delete' &&
+                      e.key !== 'Tab'
+                    ) {
+                      e.preventDefault();
                     }
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
@@ -448,21 +474,47 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       </div>
                     </div>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Carbohydrates"
                       value={totalMacros.Carbs}
                       onChange={(e) => {
-                        updateTotalMacros('Carbs', Number(e.target.value));
-                        if (e.target.value) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Carbs: false },
-                          }));
-                        } else {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Carbs: true },
-                          }));
+                        const value = e.target.value;
+                        // Only allow positive integers
+                        if (/^\d*$/.test(value)) {
+                          updateTotalMacros('Carbs', value === '' ? '' : value);
+                          if (value) {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Carbs: false },
+                            }));
+                          } else {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Carbs: true },
+                            }));
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        // Allow navigation keys
+                        if (
+                          e.key === 'ArrowUp' ||
+                          e.key === 'ArrowDown' ||
+                          e.key === 'ArrowLeft' ||
+                          e.key === 'ArrowRight' ||
+                          e.key === 'Tab' ||
+                          e.key === 'Enter'
+                        ) {
+                          return;
+                        }
+                        // Allow numbers, backspace, delete
+                        if (
+                          !/[\d\b]/.test(e.key) &&
+                          e.key !== 'Backspace' &&
+                          e.key !== 'Delete' &&
+                          e.key !== 'Tab'
+                        ) {
+                          e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
@@ -486,21 +538,47 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       </div>
                     </div>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Proteins"
                       value={totalMacros.Protein}
                       onChange={(e) => {
-                        updateTotalMacros('Protein', Number(e.target.value));
-                        if (e.target.value) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Protein: false },
-                          }));
-                        } else {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Protein: true },
-                          }));
+                        const value = e.target.value;
+                        // Only allow positive integers
+                        if (/^\d*$/.test(value)) {
+                          updateTotalMacros('Protein', value === '' ? '' : value);
+                          if (value) {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Protein: false },
+                            }));
+                          } else {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Protein: true },
+                            }));
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        // Allow navigation keys
+                        if (
+                          e.key === 'ArrowUp' ||
+                          e.key === 'ArrowDown' ||
+                          e.key === 'ArrowLeft' ||
+                          e.key === 'ArrowRight' ||
+                          e.key === 'Tab' ||
+                          e.key === 'Enter'
+                        ) {
+                          return;
+                        }
+                        // Allow numbers, backspace, delete
+                        if (
+                          !/[\d\b]/.test(e.key) &&
+                          e.key !== 'Backspace' &&
+                          e.key !== 'Delete' &&
+                          e.key !== 'Tab'
+                        ) {
+                          e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
@@ -524,21 +602,47 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       </div>
                     </div>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Fats"
                       value={totalMacros.Fats}
                       onChange={(e) => {
-                        updateTotalMacros('Fats', Number(e.target.value));
-                        if (e.target.value) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Fats: false },
-                          }));
-                        } else {
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Fats: true },
-                          }));
+                        const value = e.target.value;
+                        // Only allow positive integers
+                        if (/^\d*$/.test(value)) {
+                          updateTotalMacros('Fats', value === '' ? '' : value);
+                          if (value) {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Fats: false },
+                            }));
+                          } else {
+                            setErrors((prev) => ({
+                              ...prev,
+                              macros: { ...prev.macros, Fats: true },
+                            }));
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        // Allow navigation keys
+                        if (
+                          e.key === 'ArrowUp' ||
+                          e.key === 'ArrowDown' ||
+                          e.key === 'ArrowLeft' ||
+                          e.key === 'ArrowRight' ||
+                          e.key === 'Tab' ||
+                          e.key === 'Enter'
+                        ) {
+                          return;
+                        }
+                        // Allow numbers, backspace, delete
+                        if (
+                          !/[\d\b]/.test(e.key) &&
+                          e.key !== 'Backspace' &&
+                          e.key !== 'Delete' &&
+                          e.key !== 'Tab'
+                        ) {
+                          e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${

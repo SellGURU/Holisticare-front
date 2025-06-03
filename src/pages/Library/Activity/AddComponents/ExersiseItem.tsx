@@ -52,8 +52,34 @@ const ExerciseItem = ({
 
   const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Sets', value, exesiseIndex);
+    }
+  };
 
-    onChange(index, 'Sets', value, exesiseIndex);
+  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Reps', value, exesiseIndex);
+    }
+  };
+
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Weight', value, exesiseIndex);
+    }
+  };
+
+  const handleRestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Rest', value, exesiseIndex);
+    }
   };
 
   const getError = (field: string) => {
@@ -196,7 +222,7 @@ const ExerciseItem = ({
               </Tooltip>
             </div>
             <input
-              type="number"
+              type="text"
               value={sets}
               onChange={handleSetChange}
               onKeyDown={preventEInput}
@@ -220,11 +246,9 @@ const ExerciseItem = ({
           <div className="mt-2">
             <div className="text-center text-[8px] text-Text-Primary">Reps</div>
             <input
-              type="number"
+              type="text"
               value={exercise.Reps}
-              onChange={(e) =>
-                onChange(index, 'Reps', e.target.value, exesiseIndex)
-              }
+              onChange={handleRepsChange}
               onKeyDown={preventEInput}
               className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
                 (showValidation && (!exercise.Reps || exercise.Reps === '')) ||
@@ -251,9 +275,7 @@ const ExerciseItem = ({
             <input
               type="text"
               value={exercise.Weight}
-              onChange={(e) =>
-                onChange(index, 'Weight', e.target.value, exesiseIndex)
-              }
+              onChange={handleWeightChange}
               onKeyDown={preventEInput}
               className={`w-[112px] px-3 pr-6 text-center h-[24px] rounded-[8px] bg-white border ${
                 getError('weight') ? 'border-red-500' : 'border-gray-50'
@@ -268,11 +290,9 @@ const ExerciseItem = ({
               Rest (min)
             </div>
             <input
-              type="number"
+              type="text"
               value={exercise.Rest}
-              onChange={(e) =>
-                onChange(index, 'Rest', e.target.value, exesiseIndex)
-              }
+              onChange={handleRestChange}
               onKeyDown={preventEInput}
               className={`w-[112px] px-3 text-center h-[24px] rounded-[8px] bg-white border ${
                 getError('rest') ? 'border-red-500' : 'border-gray-50'

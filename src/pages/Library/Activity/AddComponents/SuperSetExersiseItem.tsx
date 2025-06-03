@@ -27,6 +27,38 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
     return errors[`${field}-${exercise.Section}-${exerciseTitle}`];
   };
 
+  const handleSetChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Sets', value, exIndex);
+    }
+  };
+
+  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Reps', value, exIndex);
+    }
+  };
+
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Weight', value, exIndex);
+    }
+  };
+
+  const handleRestChange = (e: React.ChangeEvent<HTMLInputElement>, exIndex: number) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      onChange(index, 'Rest', value, exIndex);
+    }
+  };
+
   return (
     <div className="w-full bg-white rounded-xl p-3">
       <div className="flex items-center justify-between">
@@ -81,9 +113,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={exercise.Sets}
-                onChange={(e) =>
-                  onChange(index, 'Sets', e.target.value, exIndex)
-                }
+                onChange={(e) => handleSetChange(e, exIndex)}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('sets', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('sets', ex.Exercise.Title) && (
@@ -97,9 +127,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Reps}
-                onChange={(e) =>
-                  onChange(index, 'Reps', e.target.value, exIndex)
-                }
+                onChange={(e) => handleRepsChange(e, exIndex)}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('reps', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('reps', ex.Exercise.Title) && (
@@ -113,9 +141,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Rest}
-                onChange={(e) =>
-                  onChange(index, 'Rest', e.target.value, exIndex)
-                }
+                onChange={(e) => handleRestChange(e, exIndex)}
                 className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${getError('rest', ex.Exercise.Title) ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
               />
               {getError('rest', ex.Exercise.Title) && (
@@ -129,9 +155,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <input
                 type="text"
                 value={ex.Weight}
-                onChange={(e) =>
-                  onChange(index, 'Weight', e.target.value, exIndex)
-                }
+                onChange={(e) => handleWeightChange(e, exIndex)}
                 className="w-full h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold"
               />
             </div>

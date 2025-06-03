@@ -130,9 +130,9 @@ const FileHistoryNew = () => {
       );
     } catch (error: any) {
       console.log(error);
-      
+
       let errorMessage = 'Failed to upload file to backend. Please try again.';
-      
+
       if (error?.detail?.includes('already exists')) {
         errorMessage = 'This file has already been uploaded.';
       }
@@ -143,7 +143,7 @@ const FileHistoryNew = () => {
             ? {
                 ...f,
                 status: 'error',
-                errorMessage
+                errorMessage,
               }
             : f,
         ),
@@ -162,16 +162,22 @@ const FileHistoryNew = () => {
       }));
 
       // Validate file formats before uploading
-      const validFiles = newFiles.filter(fileUpload => {
-        const fileExtension = fileUpload.file.name.split('.').pop()?.toLowerCase();
+      const validFiles = newFiles.filter((fileUpload) => {
+        const fileExtension = fileUpload.file.name
+          .split('.')
+          .pop()
+          ?.toLowerCase();
         const allowedExtensions = ['pdf', 'xls', 'xlsx'];
-        
+
         if (!allowedExtensions.includes(fileExtension || '')) {
-          setUploadedFiles(prev => [...prev, {
-            ...fileUpload,
-            status: 'error',
-            errorMessage: 'File has an unsupported format.'
-          }]);
+          setUploadedFiles((prev) => [
+            ...prev,
+            {
+              ...fileUpload,
+              status: 'error',
+              errorMessage: 'File has an unsupported format.',
+            },
+          ]);
           return false;
         }
         return true;

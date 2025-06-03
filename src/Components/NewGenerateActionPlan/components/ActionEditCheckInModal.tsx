@@ -23,6 +23,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   const [selectedDaysMonth, setSelectedDaysMonth] = useState<string[]>(
     defalts?.Frequency_Dates || [],
   );
+  const [frequencyError, setFrequencyError] = useState<string>('');
   // const [estimatedTime, setEstimatedTime] = useState<string>(
   //   defalts?.Estimated_time || '',
   // );
@@ -77,6 +78,11 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
   };
 
   const handleApply = () => {
+    if (!frequencyType) {
+      setFrequencyError('This field is required.');
+      return;
+    }
+    setFrequencyError('');
     onSubmit({
       Times: selectedTimes,
       frequencyDates:
@@ -134,6 +140,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                   setFrequencyType(e.target.value);
                   setSelectedDays([]);
                   setSelectedDaysMonth([]);
+                  setFrequencyError('');
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
@@ -158,6 +165,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                   } else {
                     setSelectedDays([]);
                   }
+                  setFrequencyError('');
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
@@ -182,6 +190,7 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
                   } else {
                     setSelectedDaysMonth([]);
                   }
+                  setFrequencyError('');
                 }}
                 className="w-[13.33px] h-[13.33px] accent-Primary-DeepTeal cursor-pointer"
               />
@@ -193,6 +202,9 @@ const ActionEditCheckInModal: React.FC<ActionEditCheckInModalProps> = ({
               </label>
             </div>
           </div>
+          {frequencyError && (
+            <div className="text-Red text-xs mt-3">{frequencyError}</div>
+          )}
           {frequencyType === 'weekly' && (
             <div className="mt-3">
               <div className="text-xs text-Text-Quadruple">
