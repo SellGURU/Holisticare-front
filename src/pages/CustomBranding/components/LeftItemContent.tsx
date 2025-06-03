@@ -42,6 +42,32 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   const colorPrimaryInputRef = useRef<HTMLInputElement | null>(null);
   const [errorHeadLine, setErrorHeadLine] = useState('');
   const [errorName, setErrorName] = useState('');
+  const [errorLogo, setErrorLogo] = useState('');
+
+  const validateForm = () => {
+    // Validate Name
+    if (customTheme.name === '') {
+      setErrorName('This field is required.');
+    } else if (customTheme.name.length < 3 || customTheme.name.length > 15) {
+      setErrorName('Must be between 3 and 15 characters.');
+    }
+
+    // Validate Logo
+    if (customTheme.selectedImage === null) {
+      setErrorLogo('This field is required.');
+    }
+
+    // Validate Headline
+    if (
+      customTheme.headLine !== '' &&
+      (customTheme.headLine.length < 3 || customTheme.headLine.length > 35)
+    ) {
+      setErrorHeadLine('Must be between 3 and 35 characters.');
+    }
+
+    return !errorName && !errorLogo && !errorHeadLine;
+  };
+
   const handleChangeHeadLine = (e: any) => {
     const value = e.target.value;
     updateCustomTheme('headLine', value);
@@ -49,12 +75,13 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       setErrorHeadLine('');
       return;
     }
-    if (value.length < 3 || value.length > 25) {
-      setErrorHeadLine('Must be between 3 and 25 characters.');
+    if (value.length < 3 || value.length > 35) {
+      setErrorHeadLine('Must be between 3 and 35 characters.');
     } else {
       setErrorHeadLine('');
     }
   };
+
   const handleChangeName = (e: any) => {
     const value = e.target.value;
     if (value === '') {
@@ -68,10 +95,26 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       updateCustomTheme('name', value);
     }
   };
-  const isValidSave =
-    errorName === '' &&
-    customTheme.name !== '' &&
-    customTheme.selectedImage !== null;
+
+  const handleImageUploadWithValidation = (event: any) => {
+    const file = event.target.files[0];
+    if (!file) {
+      setErrorLogo('This field is required.');
+      return;
+    }
+
+    const validFormats = ['.png', '.svg', '.jpg', '.jpeg'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+
+    if (!validFormats.includes(fileExtension)) {
+      setErrorLogo('File has an unsupported format.');
+      return;
+    }
+
+    setErrorLogo('');
+    handleImageUpload(event);
+  };
+
   return (
     <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
       <div>
@@ -117,7 +160,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             <div className="flex items-end gap-2">
               {customTheme.selectedImage == null && (
                 <div className="text-Red text-[8px] mb-1">
-                  Please upload a logo to proceed.
+                  {errorLogo || 'Please upload a logo to proceed.'}
                 </div>
               )}
               <div
@@ -143,7 +186,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                     accept=".png,.svg,.jpg,.jpeg"
                     className="hidden"
                     ref={fileInputRef}
-                    onChange={handleImageUpload}
+                    onChange={handleImageUploadWithValidation}
                   />
                 </div>
                 {customTheme?.selectedImage && (
@@ -294,7 +337,11 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
         </div>
         <div
           className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
-          onClick={isValidSave ? onSave : undefined}
+          onClick={() => {
+            if (validateForm()) {
+              onSave();
+            }
+          }}
         >
           {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
         </div>

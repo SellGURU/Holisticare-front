@@ -46,6 +46,26 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Carbs: defalts?.['Total Macros']?.Carbs || '',
   });
   const [showValidation, setShowValidation] = useState(false);
+  const [errors, setErrors] = useState({
+    title: '',
+    instruction: '',
+    dose: '',
+    value: '',
+    macros: '',
+    category: '',
+    frequency: '',
+    clientNotes: '',
+  });
+  const [touchedFields, setTouchedFields] = useState({
+    title: false,
+    instruction: false,
+    dose: false,
+    value: false,
+    macros: false,
+    category: false,
+    frequency: false,
+    clientNotes: false,
+  });
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -249,8 +269,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     if (value.length <= 400) {
       setNewNote(value);
       setNoteError('');
+      setErrors((prev) => ({
+        ...prev,
+        clientNotes: '',
+      }));
     } else {
-      setNoteError('Note cannot exceed 400 characters');
+      setNewNote(value.slice(0, 400));
+      setNoteError('You can enter up to 400 characters');
+      setErrors((prev) => ({
+        ...prev,
+        clientNotes: 'You can enter up to 400 characters',
+      }));
     }
   };
 
@@ -313,22 +342,21 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setShowValidation(false);
   };
 
-  const handleApply = () => {
-    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+  const handleApplyClick = () => {
+    setShowValidation(true);
+
+    // Basic required field validations
+    if (!selectedGroup || !title || !instructions) {
       return;
     }
-    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
-      return;
-    }
+
+    // Category specific validations
     if (selectedGroup === 'Supplement' && !dose) {
       return;
     }
     if (selectedGroup === 'Lifestyle' && !value) {
       return;
     }
-    // if (selectedGroup === 'Activity' && selectedLocations.length === 0) {
-    //   return;
-    // }
     if (
       selectedGroup === 'Diet' &&
       (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
@@ -336,23 +364,35 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       return;
     }
 
+    // Frequency validations
+    if (!frequencyType) {
+      return;
+    }
+    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+      return;
+    }
+    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
+      return;
+    }
+
+    // If all validations pass, submit the form
+    handleApply();
+  };
+
+  const handleApply = () => {
     if (selectedGroup === 'Supplement') {
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         Dose: dose,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
-          frequencyType == 'weekly'
+          frequencyType === 'weekly'
             ? selectedDays
-            : frequencyType == 'monthly'
+            : frequencyType === 'monthly'
               ? selectedDaysMonth
               : null,
-        // Description: description,
-        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -360,19 +400,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         Value: value,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
-          frequencyType == 'weekly'
+          frequencyType === 'weekly'
             ? selectedDays
-            : frequencyType == 'monthly'
+            : frequencyType === 'monthly'
               ? selectedDaysMonth
               : null,
-        // Description: description,
-        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
         Unit: unit,
@@ -381,19 +417,15 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         'Total Macros': totalMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
-          frequencyType == 'weekly'
+          frequencyType === 'weekly'
             ? selectedDays
-            : frequencyType == 'monthly'
+            : frequencyType === 'monthly'
               ? selectedDaysMonth
               : null,
-        // Description: description,
-        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -401,18 +433,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       onSubmit({
         Category: selectedGroup,
         Title: title,
-        // 'Practitioner Comments': practitionerComments,
         Instruction: instructions,
-        // Times: selectedTimes,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
-          frequencyType == 'weekly'
+          frequencyType === 'weekly'
             ? selectedDays
-            : frequencyType == 'monthly'
+            : frequencyType === 'monthly'
               ? selectedDaysMonth
               : null,
-        // Description: description,
-        // Base_Score: baseScore,
         frequencyType: frequencyType,
         Task_Type: 'Action',
       });
@@ -539,9 +567,104 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return false;
   };
 
+  const validateDose = (value: string) => {
+    if (!value) {
+      return 'This field is required.';
+    }
+    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+    if (!doseRegex.test(value)) {
+      return 'Dose must follow the described format.';
+    }
+    return '';
+  };
+
+  const handleDoseBlur = () => {
+    setTouchedFields((prev) => ({ ...prev, dose: true }));
+    const error = validateDose(dose);
+    setErrors((prev) => ({ ...prev, dose: error }));
+  };
+
+  const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow English characters, numbers, and spaces
+    const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+    setDose(englishOnly);
+    if (touchedFields.dose) {
+      const error = validateDose(englishOnly);
+      setErrors((prev) => ({ ...prev, dose: error }));
+    }
+  };
+
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive integers
+    if (/^\d*$/.test(value)) {
+      setValue(value === '' ? '' : Number(value));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      title: '',
+      instruction: '',
+      dose: '',
+      value: '',
+      macros: '',
+      category: '',
+      frequency: '',
+      clientNotes: '',
+    };
+
+    if (!title) {
+      newErrors.title = 'This field is required.';
+    }
+
+    if (!instructions) {
+      newErrors.instruction = 'This field is required.';
+    }
+
+    if (selectedGroup === 'Supplement') {
+      newErrors.dose = validateDose(dose);
+    }
+
+    if (selectedGroup === 'Lifestyle' && !value) {
+      newErrors.value = 'This field is required.';
+    }
+
+    if (
+      selectedGroup === 'Diet' &&
+      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+    ) {
+      newErrors.macros = 'All macro values are required.';
+    }
+
+    if (!selectedGroup) {
+      newErrors.category = 'This field is required.';
+    }
+
+    if (!frequencyType) {
+      newErrors.frequency = 'This field is required.';
+    }
+
+    if (frequencyType === 'weekly' && selectedDays.length === 0) {
+      newErrors.frequency = 'Please select at least one day of the week.';
+    }
+
+    if (frequencyType === 'monthly' && selectedDaysMonth.length === 0) {
+      newErrors.frequency = 'Please select at least one day of the month.';
+    }
+
+    if (noteError) {
+      newErrors.clientNotes = 'You can enter up to 400 characters';
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error !== '');
+  };
+
   const handleNextClick = () => {
     setShowValidation(true);
-    if (!isNextDisabled()) {
+    if (validateForm()) {
       setStep(step + 1);
     }
   };
@@ -549,17 +672,25 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const handleSaveClick = () => {
     setShowValidation(true);
     setShowExerciseValidation(true);
-    if (!isNextDisabled()) {
+
+    // First validate the form
+    const isFormValid = validateForm();
+
+    // Check if there are any exercises
+    const hasExercises = sectionList.length > 0;
+
+    // Check if there are any empty reps fields
+    const hasEmptyReps = sectionList.some(
+      (section: any) =>
+        !section.Exercises[0].Reps || section.Exercises[0].Reps === '',
+    );
+
+    // Only proceed if form is valid, there are exercises, and no empty reps
+    if (isFormValid && hasExercises && !hasEmptyReps) {
       saveActivity();
     }
   };
-
-  const handleApplyClick = () => {
-    setShowValidation(true);
-    if (selectedGroup && title && frequencyType && instructions) {
-      handleApply();
-    }
-  };
+  console.log(sectionList.length);
 
   return (
     <MainModal
@@ -723,12 +854,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     <input
                       placeholder="Write the supplement's dose..."
                       value={dose}
-                      onChange={(e) => setDose(e.target.value)}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!dose && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      onChange={handleDoseChange}
+                      onBlur={handleDoseBlur}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
-                    {!dose && showValidation && (
+                    {showValidation && touchedFields.dose && errors.dose && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        This field is required.
+                        {errors.dose}
                       </span>
                     )}
                   </div>
@@ -760,14 +892,30 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         <input
                           placeholder="Enter Value..."
                           value={value}
-                          type="number"
-                          onChange={(e) =>
-                            setValue(
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
-                            )
-                          }
+                          type="text"
+                          onChange={handleValueChange}
+                          onKeyDown={(e) => {
+                            // Allow navigation keys
+                            if (
+                              e.key === 'ArrowUp' ||
+                              e.key === 'ArrowDown' ||
+                              e.key === 'ArrowLeft' ||
+                              e.key === 'ArrowRight' ||
+                              e.key === 'Tab' ||
+                              e.key === 'Enter'
+                            ) {
+                              return;
+                            }
+                            // Allow numbers, backspace, delete
+                            if (
+                              !/[\d\b]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab'
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                         />
                         {!value && showValidation && (
@@ -1339,13 +1487,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       rows={4}
                       placeholder="Enter your observations, concerns, or feedback here..."
                     />
-                    <div className="absolute bottom-2 right-3 text-[10px] text-Text-Quadruple">
+                    {/* <div className="absolute bottom-2 right-3 text-[10px] text-Text-Quadruple">
                       {newNote.length}/400
-                    </div>
+                    </div> */}
                   </div>
-                  {noteError && (
+                  {(noteError || (showValidation && errors.clientNotes)) && (
                     <span className="text-[10px] mt-1 ml-2 text-red-500">
-                      {noteError}
+                      {errors.clientNotes}
                     </span>
                   )}
                 </div>
