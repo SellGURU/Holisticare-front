@@ -959,6 +959,33 @@ class Application extends Api {
   static checkInvation = (data: any) => {
     return this.post('/settings/check_invitation', data);
   };
+  static getDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/get_document_knowledge', data);
+  };
+  static deleteUserUploadDocument = (data: any) => {
+    return this.post('/ai_knowledge/remove_nodes_by_file', data);
+  };
+  static addToDatabaseDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/add_to_knowledge', data);
+  };
+  static downloadUserUploadDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/get_document_by_name', data);
+  };
+  static downloadSystemDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/get_system_document_by_name', data);
+  };
+  static hideUserUploadDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/hide_user_docs', data);
+  };
+  static unhideUserUploadDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/unhide_user_docs', data);
+  };
+  static hideSystemDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/hide_system_docs', data);
+  };
+  static unhideSystemDocumentKnowledge = (data: any) => {
+    return this.post('/ai_knowledge/unhide_system_docs', data);
+  };
 }
 
 export default Application;
