@@ -194,7 +194,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
                       setIsError(false);
                     }}
                     inValid={isError || (showValidation && !titleForm)}
-                    errorMessage={isError ? "Form title already exists. Please choose another." : "This field is required."}
+                    errorMessage={
+                      isError
+                        ? 'Form title already exists. Please choose another.'
+                        : 'This field is required.'
+                    }
                   />
                 </div>
               ) : (
