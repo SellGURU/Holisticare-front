@@ -45,6 +45,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     editQUestion ? editQUestion?.required : false,
   );
   const [type, setType] = useState(editQUestion ? editQUestion.type : '');
+  const [showValidation, setShowValidation] = useState(false);
   const [CheckBoxoptions, setCheckBoxOptions] = useState<Array<string>>(
     editQUestion?.type == 'checkbox' && editQUestion.options
       ? editQUestion.options
@@ -61,25 +62,46 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
     setType('');
     setCheckBoxOptions(['', '']);
     setMutiChoiceOptions(['', '']);
+    setShowValidation(false);
   };
   const isDisabled = () => {
     return qustion.length == 0 || type == '';
   };
+
+  const hasValidationErrors = () => {
+    if (type === 'checkbox') {
+      const nonEmptyOptions = CheckBoxoptions.filter(
+        (opt) => opt.trim() !== '',
+      );
+      return nonEmptyOptions.length < 2;
+    }
+    if (type === 'multiple_choice') {
+      const nonEmptyOptions = multiChoiceOptions.filter(
+        (opt) => opt.trim() !== '',
+      );
+      return nonEmptyOptions.length < 2;
+    }
+    return false;
+  };
+
   const submit = () => {
-    const resolvedQuestion: checkinType = {
-      question: qustion,
-      required: required,
-      response: '',
-      type: type,
-      options:
-        type == 'checkbox'
-          ? CheckBoxoptions
-          : type == 'multiple_choice'
-            ? multiChoiceOptions
-            : undefined,
-    };
-    onSubmit(resolvedQuestion);
-    clear();
+    setShowValidation(true);
+    if (!isDisabled() && !hasValidationErrors()) {
+      const resolvedQuestion: checkinType = {
+        question: qustion,
+        required: required,
+        response: '',
+        type: type,
+        options:
+          type == 'checkbox'
+            ? CheckBoxoptions
+            : type == 'multiple_choice'
+              ? multiChoiceOptions
+              : undefined,
+      };
+      onSubmit(resolvedQuestion);
+      clear();
+    }
   };
 
   return (
@@ -215,6 +237,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             onChange={(values) => {
               setCheckBoxOptions(values);
             }}
+            showValidation={showValidation && type === 'checkbox'}
           ></CheckBoxSelection>
 
           <MultiChoceSelection
@@ -230,6 +253,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             onChange={(values) => {
               setMutiChoiceOptions(values);
             }}
+            showValidation={showValidation && type === 'multiple_choice'}
           ></MultiChoceSelection>
         </div>
       </div>
