@@ -101,7 +101,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           src="/icons/wwe.svg"
           alt=""
         />
-        <div className="flex justify-between items-center px-4 relative z-50 py-2">
+        <div className="flex justify-between items-center px-6 relative z-50 py-2">
           <div>
             <div style={{ color: '#383838', fontSize: '12px' }}>
               {usrInfoData?.name}
