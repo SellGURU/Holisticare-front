@@ -129,7 +129,7 @@ const HistoricalChart = ({
                       }}
                       className="w-2 h-2 border border-gray-50 rounded-full relative"
                     >
-                      <div className="absolute -top-4 left-1/2  transform text-[8px] text-Text-Primary -translate-x-1/2 px-3 py-1 rounded whitespace-nowrap z-10">
+                      <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
                         {point}
                       </div>
                     </div>
@@ -142,7 +142,7 @@ const HistoricalChart = ({
                   {el.value[0]}
                 </div>
               ) : (
-                <div className="absolute right-[-18px] w-[25px] text-nowrap overflow-hidden text-[6px] bottom-[10px] rotate-90 text-center">
+                <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
                   {el.value[0]}
                 </div>
               )}
