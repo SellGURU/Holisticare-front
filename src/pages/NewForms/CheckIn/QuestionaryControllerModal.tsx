@@ -44,8 +44,12 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   }, [error]);
   const resolveFormTitle = () => {
     if (templateData == null && mode == 'Add') {
+      if (step === 1 && titleForm.length) {
+        return titleForm + ' Form';
+      }
       return 'Create Personal Form';
     } else if (templateData != null) {
+      if (step === 1 && titleForm.length) return titleForm;
       return templateData.title;
     }
     switch (mode) {
