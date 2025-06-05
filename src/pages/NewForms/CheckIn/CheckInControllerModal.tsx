@@ -161,7 +161,9 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
         <div className="w-full h-full">
           <div className="flex justify-start items-center">
             <div className="text-Text-Primary font-medium">
-              {resolveFormTitle() + ' Form'}
+              {titleForm.length && step === 1
+                ? titleForm + ' Form'
+                : resolveFormTitle() + ' Form'}
             </div>
           </div>
           <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
