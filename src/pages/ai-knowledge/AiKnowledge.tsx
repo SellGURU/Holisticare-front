@@ -1519,106 +1519,123 @@ const AiKnowledge = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getCurrentPageData().map((doc, index) => {
-                        return (
-                          <tr
-                            key={index}
-                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
-                          >
-                            <td
-                              className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
+                      {getCurrentPageData().length < 1 ? (
+                        <div className="flex flex-col items-center justify-center h-full min-h-[480px] w-[315px] text-xs text-Text-Primary">
+                          <img
+                            className="w-[200px] h-[161px]"
+                            src="/icons/search-status.svg"
+                            alt=""
+                          />
+                          No results found.
+                        </div>
+                      ) : (
+                        getCurrentPageData().map((doc, index) => {
+                          return (
+                            <tr
+                              key={index}
+                              className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-[#888888] border border-Gray-50`}
                             >
-                              {doc.category2}
-                            </td>
-                            <td
-                              className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
-                            >
-                              {doc.upload_date
-                                ? new Date(doc.upload_date).toLocaleDateString(
-                                    'en-GB',
-                                  )
-                                : 'No Date'}
-                            </td>
-                            <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
-                              {confirmDeleteId === doc.id ? (
-                                <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
-                                  Sure?
-                                  <img
-                                    className="cursor-pointer size-4"
-                                    onClick={() => {
-                                      if (isLoadingCallApi) return;
-                                      handleDeleteFileUserUpload(doc.category2);
-                                    }}
-                                    src="/icons/confirm-tick-circle.svg"
-                                    alt="Confirm"
-                                  />
-                                  <img
-                                    className="cursor-pointer size-4 "
-                                    onClick={() => setConfirmDeleteId(null)}
-                                    src="/icons/cansel-close-circle.svg"
-                                    alt="Cancel"
-                                  />
-                                </div>
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => {
-                                      if (isLoadingCallApi) return;
-                                      handleDownloadFileUserUpload(
-                                        doc.category2,
-                                      );
-                                    }}
-                                  >
-                                    <img src="/icons/import-blue.svg" alt="" />
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      if (isLoadingCallApi) return;
-                                      // handleButtonClick(doc.category2);
-                                      toggleDisable(
-                                        doc.category2,
-                                        'User Uploads',
-                                        doc.status,
-                                      );
-                                    }}
-                                  >
-                                    {!doc.status ? (
-                                      <img
-                                        src="/icons/eye-slash-blue.svg"
-                                        alt="Disabled"
-                                      />
-                                    ) : (
-                                      <img
-                                        src="/icons/eye-blue.svg"
-                                        alt="Enabled"
-                                      />
-                                    )}
-                                  </button>
-                                  <button
-                                    onClick={() => setConfirmDeleteId(doc.id)}
-                                  >
+                              <td
+                                className={`pl-2 py-2 truncate max-w-[140px] w-[140px] ${!doc.status ? 'opacity-40' : ''}`}
+                              >
+                                {doc.category2}
+                              </td>
+                              <td
+                                className={`px-2 py-2 w-[90px] text-center ${!doc.status ? 'opacity-40' : ''}`}
+                              >
+                                {doc.upload_date
+                                  ? new Date(
+                                      doc.upload_date,
+                                    ).toLocaleDateString('en-GB')
+                                  : 'No Date'}
+                              </td>
+                              <td className="py-2 pr-2 w-[80px] text-right flex items-center justify-end gap-2">
+                                {confirmDeleteId === doc.id ? (
+                                  <div className="flex items-center gap-1 text-[10px] text-Text-Primary ">
+                                    Sure?
                                     <img
-                                      src="/icons/trash-blue.svg"
-                                      alt="Delete"
+                                      className="cursor-pointer size-4"
+                                      onClick={() => {
+                                        if (isLoadingCallApi) return;
+                                        handleDeleteFileUserUpload(
+                                          doc.category2,
+                                        );
+                                      }}
+                                      src="/icons/confirm-tick-circle.svg"
+                                      alt="Confirm"
                                     />
-                                  </button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                                    <img
+                                      className="cursor-pointer size-4 "
+                                      onClick={() => setConfirmDeleteId(null)}
+                                      src="/icons/cansel-close-circle.svg"
+                                      alt="Cancel"
+                                    />
+                                  </div>
+                                ) : (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        if (isLoadingCallApi) return;
+                                        handleDownloadFileUserUpload(
+                                          doc.category2,
+                                        );
+                                      }}
+                                    >
+                                      <img
+                                        src="/icons/import-blue.svg"
+                                        alt=""
+                                      />
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        if (isLoadingCallApi) return;
+                                        // handleButtonClick(doc.category2);
+                                        toggleDisable(
+                                          doc.category2,
+                                          'User Uploads',
+                                          doc.status,
+                                        );
+                                      }}
+                                    >
+                                      {!doc.status ? (
+                                        <img
+                                          src="/icons/eye-slash-blue.svg"
+                                          alt="Disabled"
+                                        />
+                                      ) : (
+                                        <img
+                                          src="/icons/eye-blue.svg"
+                                          alt="Enabled"
+                                        />
+                                      )}
+                                    </button>
+                                    <button
+                                      onClick={() => setConfirmDeleteId(doc.id)}
+                                    >
+                                      <img
+                                        src="/icons/trash-blue.svg"
+                                        alt="Delete"
+                                      />
+                                    </button>
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
                     </tbody>
                   </table>
-
-                  <div className="flex justify-center py-2 absolute bottom-0 w-full">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={Math.ceil(totalPageUserDocs / itemsPerPage)}
-                      onPageChange={handlePageChange}
-                      isEmpty={totalPageUserDocs === 0}
-                    />
-                  </div>
+                  {getCurrentPageData().length > 0 && (
+                    <div className="flex justify-center py-2 absolute bottom-0 w-full">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(totalPageUserDocs / itemsPerPage)}
+                        onPageChange={handlePageChange}
+                        isEmpty={totalPageUserDocs === 0}
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             ) : (
@@ -1668,7 +1685,7 @@ const AiKnowledge = () => {
                                   )
                                 : 'No Date'}
                             </td>
-                            <td className="py-2 pr-2 w-[40px] text-center flex items-center justify-center gap-2">
+                            <td className="py-2 pr-2 w-[80px] text-center flex items-center justify-center gap-2">
                               <button
                                 onClick={() => {
                                   if (isLoadingCallApi) return;
@@ -1700,14 +1717,18 @@ const AiKnowledge = () => {
                       )}
                     </tbody>
                   </table>
-                  <div className="py-2 flex justify-center absolute bottom-0 w-full">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={Math.ceil(totalPageSystemDocs / itemsPerPage)}
-                      onPageChange={handlePageChange}
-                      isEmpty={totalPageSystemDocs === 0}
-                    />
-                  </div>
+                  {getCurrentPageData().length > 0 && (
+                    <div className="py-2 flex justify-center absolute bottom-0 w-full">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(
+                          totalPageSystemDocs / itemsPerPage,
+                        )}
+                        onPageChange={handlePageChange}
+                        isEmpty={totalPageSystemDocs === 0}
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             )}
