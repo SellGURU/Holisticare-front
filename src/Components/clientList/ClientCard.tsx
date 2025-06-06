@@ -12,6 +12,7 @@ import MainModal from '../MainModal/index.tsx';
 import Checkbox from '../checkbox/index.tsx';
 interface ClientCardProps {
   client: any;
+  indexItem: number;
   ondelete: (memberid: any) => void;
   onarchive: (memberid: any) => void;
   onToggleHighPriority: (memberid: any) => void;
@@ -21,6 +22,7 @@ interface ClientCardProps {
 
 const ClientCard: React.FC<ClientCardProps> = ({
   client,
+  indexItem,
   ondelete,
   onarchive,
   onToggleHighPriority,
@@ -31,6 +33,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
+  console.log(indexItem%4);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -319,7 +322,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <div className="flex w-full justify-end mt-12 gap-4 items-center">
                 <div
                   onClick={() => setShowAccessModal(false)}
-                  className="text-sm font-medium text-Text-Secondary cursor-pointer"
+                  className="text-sm font-medium text-Text-Secondary cursor-default"
                 >
                   Cancel
                 </div>
@@ -333,7 +336,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setIsShared(true);
                     });
                   }}
-                  className="text-sm font-medium text-Primary-DeepTeal cursor-pointer"
+                  className="text-sm font-medium text-Primary-DeepTeal cursor-default"
                 >
                   Share With Email
                 </div>
@@ -406,7 +409,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     // onarchive(client.member_id);
                     // ondelete(client.member_id);
                   }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Unarchive
@@ -414,7 +417,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {!client.favorite ? (
                   <div
                     onClick={handleAddToHighPriority}
-                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                   >
                     <img src="/icons/star.svg" alt="" />
                     Add to High-Priorities
@@ -424,7 +427,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   activeTab == 'High-Priority' && (
                     <div
                       onClick={handleRemoveFromHighPriority}
-                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-pointer"
+                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                     >
                       <img src="/icons/star.svg" alt="" />
                       Remove from High-Priorities
@@ -441,7 +444,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1  cursor-pointer"
+                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access
@@ -458,7 +461,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1   cursor-pointer"
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete
@@ -469,7 +472,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="relative">
                   <div
                     onClick={handleAssignClick}
-                    className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer"
+                    className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                   >
                     <div className="flex items-center gap-1">
                       {' '}
@@ -493,7 +496,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   </div>
                   {showAssign && (
-                    <div className="absolute -top-2 -right-[200px] max-h-[300px] overflow-auto rounded-b-2xl w-[188px] rounded-tr-2xl p-3 bg-white flex flex-col gap-3">
+                    <div className={`absolute -top-2 ${((indexItem+1)%4) ==0? 'right-[200px]':' -right-[200px]'} max-h-[300px] overflow-auto ${((indexItem+1)%4) ==0? 'rounded-tl-2xl rounded-b-2xl':' rounded-tr-2xl rounded-b-2xl' }  w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}>
                       {CoachList.map((coach: Coach) => (
                         <div
                           // onClick={() => handleCoachSelection(coach)}
@@ -524,7 +527,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     // onarchive(client.member_id);
                     // ondelete(client.member_id);
                   }}
-                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Send to Archieve
@@ -532,7 +535,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {!client.favorite ? (
                   <div
                     onClick={handleAddToHighPriority}
-                    className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                    className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                   >
                     <img src="/icons/star.svg" alt="" />
                     Add to High-Priority
@@ -542,7 +545,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   activeTab == 'High-Priority' && (
                     <div
                       onClick={handleRemoveFromHighPriority}
-                      className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                      className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                     >
                       <img src="/icons/star.svg" alt="" />
                       Remove from High-Priority
@@ -568,7 +571,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access
@@ -585,7 +588,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className={`flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1  border-Secondary-SelverGray  cursor-pointer ${showAssign && 'opacity-30'}`}
+                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete
@@ -627,18 +630,18 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 navigate(`/report/${client.member_id}/${client.name}`);
               }
             }}
-            className="pl-2 flex flex-col mt-4"
+            className="pl-2 flex flex-col mt-4 cursor-default"
           >
             <div
               title={client.name}
-              className="text-Text-Primary truncate max-w-[160px] text-xs sm:text-[14px] font-medium text-nowrap mb-2"
+              className="text-Text-Primary truncate max-w-[160px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
               {client.name}
             </div>
             {/* <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
               {client.age} years{' '}
             </div> */}
-            <div className="text-Text-Secondary text-[10px] sm:text-[12px] text-nowrap">
+            <div className="text-Text-Secondary text-[10px] sm:text-[12px] text-nowrap cursor-default">
               ID: {client.member_id}
             </div>
           </div>
@@ -679,17 +682,16 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <div className="w-full mt-2 flex justify-between">
                 <div className="flex flex-col justify-between border-r border-Gray-50 pr-3 pl-2 py-1">
                   <div className="flex flex-col gap-1">
-                    {' '}
-                    <div className=" text-[8px] sm:text-[10px] text-Text-Secondary">
+                    <div className="text-[8px] sm:text-[10px] text-Text-Secondary cursor-default">
                       Enroll Date
                     </div>
-                    <div className="text-Text-Primary text-[10px] sm:text-xs mb-6">
+                    <div className="text-Text-Primary text-[10px] sm:text-xs mb-6 cursor-default">
                       {client.enroll_date}
                     </div>
-                    <div className=" text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap">
+                    <div className="text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap cursor-default">
                       Checked on
                     </div>
-                    <div className="text-Text-Primary text-[10px] text-center sm:text-xs">
+                    <div className="text-Text-Primary text-[10px] text-center sm:text-xs cursor-default">
                       {client.last_checkin != 'No Data'
                         ? client.last_checkin
                         : '-'}
@@ -697,45 +699,23 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   </div>
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs ">
-                    <div className="flex w-[85px] items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px]">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
+                    <div className="flex w-[85px] items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
-                    <div className="flex text-nowrap truncate max-w-[110px] ">
+                    <div className="flex text-nowrap truncate max-w-[110px] cursor-default">
                       {client.assigned_to[0]}
                     </div>
-                    {/* <div className="size-[24px] hidden xs:size-[24px] md:size-[24px] border border-Primary-DeepTeal rounded-full relative">
-                      <img
-                        className="w-full h-full rounded-full object-cover"
-                        onError={(e: any) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=${client.name}`; // Set fallback image
-                        }}
-                        src={
-                          client.picture
-                            ? client.picture
-                            : `https://ui-avatars.com/api/?name=${client.name}`
-                        }
-                        alt=""
-                      />
-                      {client.favorite && (
-                        <img
-                          className="absolute bottom-0 right-0"
-                          src="/icons/Icon_star.svg"
-                          alt=""
-                        />
-                      )}
-                    </div> */}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/status.svg" alt="" />
                       Status
                     </div>
-
                     <div
                       style={{ backgroundColor: backgroundColor }}
-                      className="flex items-center px-2.5 text-[9px] h-[20px] rounded-[10px]  justify-center text-nowrap text-Text-Primary"
+                      className="flex items-center px-2.5 text-[9px] h-[20px] rounded-[10px] justify-center text-nowrap text-Text-Primary cursor-default"
                     >
                       <div
                         className="mr-[5px] size-2.5 rounded-full"
@@ -744,40 +724,39 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.status}
                     </div>
                   </div>
-                  <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px]">
+                  <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
                     </div>
                     {client.sex}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] ">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                    <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
                     {client.age ? client.age + ' Years Old' : null}
-                    {/* {client.age}  */}
                   </div>
-                  <div className="flex w-full text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px]">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                    <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
                     </div>
                     <div
-                      className="text-nowrap max-w-[110px]     truncate"
+                      className="text-nowrap max-w-[110px] truncate cursor-default"
                       title={client['Check-in']}
                     >
                       {client['Check-in']}
                     </div>
                   </div>
-                  <div className="flex w-full  text-Text-Primary   text-[10px] sm:text-xs capitalize">
-                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] ">
+                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                    <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
                     </div>
                     <div
-                      className="text-nowrap max-w-[100px] truncate"
+                      className="text-nowrap max-w-[100px] truncate cursor-default"
                       title={client.Questionary}
                     >
                       {client.Questionary}
@@ -792,7 +771,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       `/drift-analysis?activeMemberId=${client.member_id}&showBack=true`,
                     )
                   }
-                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-pointer text-Primary-DeepTeal text-sm gap-1`}
+                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-default text-Primary-DeepTeal text-sm gap-1`}
                 >
                   <SvgIcon
                     src="/icons/tick-square-blue.svg"
