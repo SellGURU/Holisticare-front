@@ -33,7 +33,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
   const [showModal, setshowModal] = useState(false);
   const showModalRefrence = useRef(null);
   const showModalButtonRefrence = useRef(null);
-  console.log(indexItem%4);
+  console.log(indexItem % 4);
   useModalAutoClose({
     refrence: showModalRefrence,
     buttonRefrence: showModalButtonRefrence,
@@ -496,7 +496,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   </div>
                   {showAssign && (
-                    <div className={`absolute -top-2 ${((indexItem+1)%4) ==0? 'right-[200px]':' -right-[200px]'} max-h-[300px] overflow-auto ${((indexItem+1)%4) ==0? 'rounded-tl-2xl rounded-b-2xl':' rounded-tr-2xl rounded-b-2xl' }  w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}>
+                    <div
+                      className={`absolute -top-2 ${(indexItem + 1) % 4 == 0 ? 'right-[200px]' : ' -right-[200px]'} max-h-[300px] overflow-auto ${(indexItem + 1) % 4 == 0 ? 'rounded-tl-2xl rounded-b-2xl' : ' rounded-tr-2xl rounded-b-2xl'}  w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}
+                    >
                       {CoachList.map((coach: Coach) => (
                         <div
                           // onClick={() => handleCoachSelection(coach)}
