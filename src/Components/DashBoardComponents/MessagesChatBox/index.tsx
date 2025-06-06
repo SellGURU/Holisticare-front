@@ -56,6 +56,9 @@ const MessagesChatBox = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  useEffect(() => {
+      setAiMode(false);
+  }, [memberId]);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const usernameParams = searchParams.get('username');
@@ -163,7 +166,9 @@ const MessagesChatBox = () => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
   const scrollToBottom = () => {
     const objDiv: any = document.getElementById('userChat');
-    objDiv.scrollTop = objDiv.scrollHeight;
+    if (objDiv) {
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   };
   useEffect(() => {
     scrollToBottom();

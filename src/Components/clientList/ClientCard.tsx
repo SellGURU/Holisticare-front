@@ -338,7 +338,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   }}
                   className="text-sm font-medium text-Primary-DeepTeal cursor-default"
                 >
-                  Share With Email
+                  Share with Email
                 </div>
               </div>
             </div>

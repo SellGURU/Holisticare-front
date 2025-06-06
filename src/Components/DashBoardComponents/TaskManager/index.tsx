@@ -53,7 +53,7 @@ const TaskManager = () => {
     const taskToUpdate = tasks.find((task) => task.task_id === task_id);
 
     // Proceed only if the task is found and it's not already checked
-    if (taskToUpdate && !taskToUpdate.checked) {
+    if (taskToUpdate ) {
       setLoading(true);
       DashboardApi.checkTask({
         task_id: task_id,
@@ -61,7 +61,7 @@ const TaskManager = () => {
         .then(() => {
           setTasks(
             tasks.map((task) =>
-              task.task_id === task_id ? { ...task, checked: true } : task,
+              task.task_id === task_id ? { ...task, checked: !task.checked } : task,
             ),
           );
           setLoading(false);
@@ -305,6 +305,11 @@ const TaskManager = () => {
                     className="flex items-center mb-2 cursor-pointer gap-2 "
                     htmlFor={task.title}
                   >
+
+                    {loading && task.task_id === itemSelected ? (
+                      <SpinnerLoader color="#005F73" />
+                    ):
+                    <>
                     <input
                       type="checkbox"
                       id={task.title}
@@ -336,10 +341,9 @@ const TaskManager = () => {
                           />
                         </svg>
                       )}
-                    </div>
-                    {loading && task.task_id === itemSelected && (
-                      <SpinnerLoader color="#005F73" />
-                    )}
+                    </div>                    
+                    </>
+                    }
 
                     <div
                       className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
