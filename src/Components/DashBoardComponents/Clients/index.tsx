@@ -44,7 +44,10 @@ const RecentCheckIns: React.FC = () => {
             </span>
           </h2>
         </div>
-        <div className="h-[100px] overflow-y-scroll pb-1 pr-[4px] " style={{height: (window.innerHeight - 200) / 2 - 100 + 'px'}}>
+        <div
+          className="h-[100px] overflow-y-scroll pb-1 pr-[4px] "
+          style={{ height: (window.innerHeight - 200) / 2 - 100 + 'px' }}
+        >
           {Clients.length < 1 ? (
             <div className=" w-full h-full flex flex-col items-center justify-center">
               <img src="/icons/NoClient.svg" alt="" />
@@ -73,7 +76,10 @@ const RecentCheckIns: React.FC = () => {
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
-                      <div className="truncate max-w-[160px]"> {client.name}</div>
+                      <div className="truncate max-w-[160px]">
+                        {' '}
+                        {client.name}
+                      </div>
                     </td>
                     <td className="py-2 pl-[10px] text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
@@ -91,7 +97,6 @@ const RecentCheckIns: React.FC = () => {
               </tbody>
             </table>
           )}
-
         </div>
       </div>
     </div>

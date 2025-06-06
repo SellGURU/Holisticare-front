@@ -57,7 +57,7 @@ const MessagesChatBox = () => {
     };
   }, []);
   useEffect(() => {
-      setAiMode(false);
+    setAiMode(false);
   }, [memberId]);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
