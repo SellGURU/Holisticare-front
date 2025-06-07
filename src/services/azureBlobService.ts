@@ -102,7 +102,7 @@ class AzureBlobService {
         xhr.open('PUT', uploadUrl);
         xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
         xhr.setRequestHeader('Content-Type', file.type);
-
+        xhr.withCredentials = false;
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve(uploadUrl.split('?')[0]); // return clean URL

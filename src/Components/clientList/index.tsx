@@ -499,9 +499,10 @@ const ClientList = () => {
                     <div
                       className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
                     >
-                      {filteredClientList.map((client: any) => {
+                      {filteredClientList.map((client: any, index: number) => {
                         return (
                           <ClientCard
+                            indexItem={index}
                             activeTab={active}
                             ondelete={(memberId: any) => {
                               setFilteredClientList((pre) => {

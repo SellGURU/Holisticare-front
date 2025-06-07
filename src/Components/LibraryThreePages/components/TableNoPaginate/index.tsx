@@ -58,7 +58,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
     onPreview(row);
   };
   return (
-    <div className="w-full mt-6">
+    <div className="w-full mt-6 mb-14">
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
       >
