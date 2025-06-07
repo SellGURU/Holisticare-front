@@ -287,9 +287,9 @@ export const TopBar: React.FC<TopBarProps> = ({
         )}
         <div className="relative">
           <div className="flex gap-10 ">
-            <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
+            {/* <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
               <img src="/icons/notification-2.svg" alt="" />
-            </div>
+            </div> */}
             <div
               ref={buttentRef}
               onClick={() => {

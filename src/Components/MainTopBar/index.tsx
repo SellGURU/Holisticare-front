@@ -87,9 +87,9 @@ const MainTopBar = () => {
         <div className="w-full flex items-center justify-end bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
           <div className="relative">
             <div className="flex gap-10 ">
-              <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
+              {/* <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
                 <img src="/icons/notification-2.svg" alt="" />
-              </div>
+              </div> */}
               <div
                 ref={buttentRef}
                 onClick={() => {
