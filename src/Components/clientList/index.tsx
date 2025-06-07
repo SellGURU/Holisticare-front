@@ -380,7 +380,7 @@ const ClientList = () => {
                         }  w-full flex items-center justify-center rounded-md rounded-r-none cursor-pointer sm:min-w-12`}
                       >
                         <SvgIcon
-                          src="/icons/grid-1.svg" 
+                          src="/icons/grid-1.svg"
                           width="20px"
                           height="20px"
                           color={activeList == 'grid' ? '#FFF' : '#38383899'}
