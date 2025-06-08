@@ -35,7 +35,10 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
   };
 
   const userMessagesList = (member_id: number) => {
-    Application.getListChats({ member_id: member_id }).then((res) => {
+    Application.getListChats({
+      member_id: member_id,
+      chatting_with: 'client',
+    }).then((res) => {
       setMessageData(res.data.messages.reverse());
     });
   };
