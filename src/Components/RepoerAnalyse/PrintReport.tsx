@@ -696,7 +696,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
           >
             {printOptins.filter((el) => el.name === 'Client Summary')[0]
               .checked && (
-                <>
+              <>
                 <div className="flex justify-start gap-4 items-center">
                   <img
                     src="/icons/icon-list-report.svg"
@@ -717,12 +717,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     Client Summary
                   </a>
                 </div>
-                </>
-              )
-            }
+              </>
+            )}
             {printOptins.filter((el) => el.name === 'Needs Focus Biomarker')[0]
               .checked && (
-                <>
+              <>
                 <div className="flex justify-start gap-4 mt-6 items-center">
                   <img
                     src="/icons/icon-list-report.svg"
@@ -743,12 +742,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     Needs Focus Biomarkers
                   </a>
                 </div>
-                </>
-              )
-              }
-             {printOptins.filter((el) => el.name === 'Detailed Analysis')[0]
+              </>
+            )}
+            {printOptins.filter((el) => el.name === 'Detailed Analysis')[0]
               .checked && (
-                <>
+              <>
                 <div className="flex justify-start gap-4 mt-6 items-center">
                   <img
                     src="/icons/icon-list-report.svg"
@@ -769,8 +767,8 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     Detailed Analysis
                   </a>
                 </div>
-                </>
-              ) }
+              </>
+            )}
             {printOptins.filter((el) => el.name === 'Holistic Plan')[0]
               .checked && (
               <div className="flex justify-start gap-4 mt-6 items-center">
