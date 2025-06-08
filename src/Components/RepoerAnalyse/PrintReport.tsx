@@ -90,6 +90,11 @@ const PrintReport: React.FC<PrintReportProps> = ({
     pageNumber++;
     return pageNumber;
   };
+  let sectionCounter = 0;
+  const getNextSectionNumber = () => {
+    sectionCounter++;
+    return sectionCounter.toString().padStart(2, '0');
+  };
   // console.log(resolveCategories());
   //   const resolveCategories= () => {
   //     return [
@@ -276,19 +281,6 @@ const PrintReport: React.FC<PrintReportProps> = ({
   //         ]
   //     },
   //     {
-  //         "subcategory": "Tumor Health",
-  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-  //         "position": "chest",
-  //         "num_of_biomarkers": 1,
-  //         "out_of_ref": 0,
-  //         "status": [
-  //             100,
-  //             0,
-  //             0,
-  //             0
-  //         ]
-  //     },
-  //         {
   //         "subcategory": "Tumor Health",
   //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
   //         "position": "chest",
@@ -702,66 +694,83 @@ const PrintReport: React.FC<PrintReportProps> = ({
               backgroundSize: '100%',
             }}
           >
-            <div className="flex justify-start gap-4 items-center">
-              <img
-                src="/icons/icon-list-report.svg"
-                alt=""
-                style={{ marginRight: '-8px' }}
-              />
-              <div
-                className="text-xl"
-                style={{ color: '#005F73', fontWeight: '500' }}
-              >
-                Section 01
-              </div>
-              <a
-                href="#client-summary"
-                className="text-xl cursor-pointer hover:underline"
-                style={{ color: '#383838', fontWeight: '500' }}
-              >
-                Client Summary
-              </a>
-            </div>
-            <div className="flex justify-start gap-4 mt-6 items-center">
-              <img
-                src="/icons/icon-list-report.svg"
-                alt=""
-                style={{ marginRight: '-8px' }}
-              />
-              <div
-                className="text-xl"
-                style={{ color: '#005F73', fontWeight: '500' }}
-              >
-                Section 02
-              </div>
-              <a
-                href="#needs-focus-biomarkers"
-                className="text-xl cursor-pointer hover:underline"
-                style={{ color: '#383838', fontWeight: '500' }}
-              >
-                Needs Focus Biomarkers
-              </a>
-            </div>
-            <div className="flex justify-start gap-4 mt-6 items-center">
-              <img
-                src="/icons/icon-list-report.svg"
-                alt=""
-                style={{ marginRight: '-8px' }}
-              />
-              <div
-                className="text-xl"
-                style={{ color: '#005F73', fontWeight: '500' }}
-              >
-                Section 03
-              </div>
-              <a
-                href="#detailed-analysis"
-                className="text-xl cursor-pointer hover:underline"
-                style={{ color: '#383838', fontWeight: '500' }}
-              >
-                Detailed Analysis
-              </a>
-            </div>
+            {printOptins.filter((el) => el.name === 'Client Summary')[0]
+              .checked && (
+                <>
+                <div className="flex justify-start gap-4 items-center">
+                  <img
+                    src="/icons/icon-list-report.svg"
+                    alt=""
+                    style={{ marginRight: '-8px' }}
+                  />
+                  <div
+                    className="text-xl"
+                    style={{ color: '#005F73', fontWeight: '500' }}
+                  >
+                    Section {getNextSectionNumber()}
+                  </div>
+                  <a
+                    href="#client-summary"
+                    className="text-xl cursor-pointer hover:underline"
+                    style={{ color: '#383838', fontWeight: '500' }}
+                  >
+                    Client Summary
+                  </a>
+                </div>
+                </>
+              )
+            }
+            {printOptins.filter((el) => el.name === 'Needs Focus Biomarker')[0]
+              .checked && (
+                <>
+                <div className="flex justify-start gap-4 mt-6 items-center">
+                  <img
+                    src="/icons/icon-list-report.svg"
+                    alt=""
+                    style={{ marginRight: '-8px' }}
+                  />
+                  <div
+                    className="text-xl"
+                    style={{ color: '#005F73', fontWeight: '500' }}
+                  >
+                    Section {getNextSectionNumber()}
+                  </div>
+                  <a
+                    href="#needs-focus-biomarkers"
+                    className="text-xl cursor-pointer hover:underline"
+                    style={{ color: '#383838', fontWeight: '500' }}
+                  >
+                    Needs Focus Biomarkers
+                  </a>
+                </div>
+                </>
+              )
+              }
+             {printOptins.filter((el) => el.name === 'Detailed Analysis')[0]
+              .checked && (
+                <>
+                <div className="flex justify-start gap-4 mt-6 items-center">
+                  <img
+                    src="/icons/icon-list-report.svg"
+                    alt=""
+                    style={{ marginRight: '-8px' }}
+                  />
+                  <div
+                    className="text-xl"
+                    style={{ color: '#005F73', fontWeight: '500' }}
+                  >
+                    Section {getNextSectionNumber()}
+                  </div>
+                  <a
+                    href="#detailed-analysis"
+                    className="text-xl cursor-pointer hover:underline"
+                    style={{ color: '#383838', fontWeight: '500' }}
+                  >
+                    Detailed Analysis
+                  </a>
+                </div>
+                </>
+              ) }
             {printOptins.filter((el) => el.name === 'Holistic Plan')[0]
               .checked && (
               <div className="flex justify-start gap-4 mt-6 items-center">
@@ -774,7 +783,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   className="text-xl"
                   style={{ color: '#005F73', fontWeight: '500' }}
                 >
-                  Section 04
+                  Section {getNextSectionNumber()}
                 </div>
                 <a
                   href="#holistic-plan"
@@ -797,7 +806,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   className="text-xl"
                   style={{ color: '#005F73', fontWeight: '500' }}
                 >
-                  Section 05
+                  Section {getNextSectionNumber()}
                 </div>
                 <a
                   href="#action-plan"
@@ -998,7 +1007,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             pageBreakAfter: 'always',
           }}
         >
-          {/* <PrintHeader /> */}
+          <PrintHeader />
           <div
             className="flex relative justify-between items-center mt-4"
             style={{ zIndex: 60 }}
@@ -1344,7 +1353,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             padding: '24px 24px',
           }}
         >
-          {/* <PrintHeader /> */}
+          <PrintHeader />
           <div
             className="flex relative  justify-between items-center"
             style={{ marginTop: '16px', zIndex: 60 }}
@@ -1390,7 +1399,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             position: 'relative',
           }}
         >
-          {/* <PrintHeader /> */}
+          <PrintHeader />
           <div
             className="flex relative justify-between items-center"
             style={{ marginTop: '16px', zIndex: '60' }}
@@ -1472,7 +1481,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         className="no-split relative  mt-14"
                         style={{
                           pageBreakAfter: 'always',
-                          minHeight: index == 0 ? '870px' : '1020px',
+                          // minHeight: index == 0 ? '870px' : '1020px',
                         }}
                       >
                         {index != 0 && <div className="h-8"></div>}
