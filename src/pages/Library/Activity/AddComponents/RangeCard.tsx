@@ -45,17 +45,105 @@ const RangeCardLibraryActivity: React.FC<RangeCardProps> = ({
           }}
         />
         <div className="w-full flex justify-between items-center">
-          <div className="text-[10px] ml-1 text-Text-Secondary">0</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">1</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">2</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">3</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">4</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">5</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">6</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">7</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">8</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">9</div>
-          <div className="text-[10px] ml-1 text-Text-Secondary">10</div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(0));
+              changeValue('score', Number(0));
+            }}
+          >
+            0
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(1));
+              changeValue('score', Number(1));
+            }}
+          >
+            1
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(2));
+              changeValue('score', Number(2));
+            }}
+          >
+            2
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(3));
+              changeValue('score', Number(3));
+            }}
+          >
+            3
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(4));
+              changeValue('score', Number(4));
+            }}
+          >
+            4
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(5));
+              changeValue('score', Number(5));
+            }}
+          >
+            5
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(6));
+              changeValue('score', Number(6));
+            }}
+          >
+            6
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(7));
+              changeValue('score', Number(7));
+            }}
+          >
+            7
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(8));
+              changeValue('score', Number(8));
+            }}
+          >
+            8
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(9));
+              changeValue('score', Number(9));
+            }}
+          >
+            9
+          </div>
+          <div
+            className="text-[10px] ml-1 text-Text-Secondary cursor-pointer"
+            onClick={() => {
+              setVal(Number(10));
+              changeValue('score', Number(10));
+            }}
+          >
+            10
+          </div>
         </div>
       </div>
       {showValidation && error && required && (
