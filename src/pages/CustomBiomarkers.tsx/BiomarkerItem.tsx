@@ -337,10 +337,22 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                       </div> */}
                         {index == 0 && (
                           <input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="\d*"
                             value={values[0].value[0]}
                             onChange={(e) => {
-                              changeValue(el.key, 0, Number(e.target.value));
+                              const raw = e.target.value;
+                              const onlyNumbers = raw.replace(/[^0-9]/g, '');
+                              const cleaned = onlyNumbers.replace(
+                                /^0+(?=\d)/,
+                                '',
+                              );
+                              changeValue(
+                                el.key,
+                                0,
+                                cleaned === '' ? 0 : Number(cleaned),
+                              );
                             }}
                             className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"
                           />
@@ -378,25 +390,34 @@ const BiomarkerItem: React.FC<BiomarkerItemProps> = ({ data, OnSave }) => {
                           </div>
                         </div>
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
                           value={
                             values.filter((e) => e.key == el.key)[0].value[1]
                           }
                           onChange={(e) => {
-                            changeValue(el.key, 1, Number(e.target.value));
-                            if (
-                              sortKeysWithValues(activeBiomarker.chart_bounds)
-                                .length -
-                                1 >
-                              index
-                            ) {
-                              changeValue(
-                                sortKeysWithValues(
-                                  activeBiomarker.chart_bounds,
-                                )[index + 1].key,
-                                0,
-                                Number(e.target.value),
+                            const raw = e.target.value;
+                            const onlyNumbers = raw.replace(/[^0-9]/g, '');
+                            const cleaned = onlyNumbers.replace(
+                              /^0+(?=\d)/,
+                              '',
+                            );
+                            if (cleaned !== '') {
+                              const numberValue = Number(cleaned);
+                              changeValue(el.key, 1, numberValue);
+
+                              const sortedKeys = sortKeysWithValues(
+                                activeBiomarker.chart_bounds,
                               );
+                              if (sortedKeys.length - 1 > index) {
+                                changeValue(
+                                  sortedKeys[index + 1].key,
+                                  0,
+                                  numberValue,
+                                );
+                              }
+                            } else {
+                              changeValue(el.key, 1, 0);
                             }
                           }}
                           className="w-[48px] rounded-[8px] h-6 text-Text-Primary text-center bg-white border border-gray-50 mx-1 outline-none p-1 text-[8px]"

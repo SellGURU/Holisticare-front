@@ -190,6 +190,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
               Weight: val.Weight,
               Exercise: {
                 ...val,
+                Reps: val.Reps,
+                Rest: val.Rest,
+                Weight: val.Weight,
               },
             };
           }),
@@ -690,7 +693,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       saveActivity();
     }
   };
-  console.log(sectionList.length);
 
   return (
     <MainModal
