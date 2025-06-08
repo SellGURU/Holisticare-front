@@ -2,21 +2,14 @@
 import { BotMsg } from './botMsg.tsx';
 import { UserMsg } from './userMsg.tsx';
 import { InputChat } from './inputChat.tsx';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
 
 type Message = {
-  date: string;
-  time: string;
-  conversation_id: number;
-  message_text: string;
-  sender_id: number;
-  isSending?: boolean;
-  replied_message_id: number | null;
-  sender_type: string;
-  images?: string[];
   timestamp: number;
-  name: string;
+  entrytime: string;
+  request: string;
+  response: string;
 };
 
 type SendMessage = {
@@ -39,24 +32,24 @@ export const PopUpChat = ({
   const [MessageData, setMessageData] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [conversationId, setConversationId] = useState<number>(1);
+  const [conversationIdData, setConversationIdData] = useState<number>(0);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    Application.userMessagesList({
+    Application.getListChats({
       member_id: memberId,
-      message_from: 'ai',
+      chatting_with: 'ai',
     }).then((res) => {
-      setMessageData(res.data);
+      setMessageData(res.data.messages);
+      setConversationIdData(res.data.conversation_id);
     });
   }, []);
   const handleSend = async () => {
     if (input.trim() && memberId !== null) {
       const lastConversationId =
-        MessageData.length > 0
-          ? MessageData[MessageData.length - 1].conversation_id
-          : undefined;
+        MessageData.length > 0 ? conversationIdData : undefined;
       const newMessage: SendMessage = {
         message_text: input,
         receiver_id: Number(memberId),
@@ -66,17 +59,10 @@ export const PopUpChat = ({
       setMessageData([
         ...MessageData,
         {
-          conversation_id: Number(lastConversationId),
-          date: new Date().toISOString(),
-          message_text: input,
-          replied_message_id: 0,
-          sender_id: Number(memberId),
-          isSending: true,
-          sender_type: 'patient',
-          time: '',
-          images: [],
+          request: input,
           timestamp: Date.now(),
-          name: '',
+          entrytime: '',
+          response: '',
         },
       ]);
       setInput('');
@@ -92,15 +78,10 @@ export const PopUpChat = ({
         const data = await res.data;
         setConversationId(data.current_conversation_id);
         const aiMessage: Message = {
-          conversation_id: MessageData.length + 2,
-          sender_id: 2,
-          message_text: data.answer,
-          date: new Date().toISOString(),
-          replied_message_id: 0,
-          sender_type: 'ai',
+          response: data.answer,
           timestamp: Date.now(),
-          name: '',
-          time: new Date().toLocaleTimeString(),
+          entrytime: '',
+          request: '',
         };
         setMessageData((prevMessages) => [...prevMessages, aiMessage]);
       } catch (err) {
@@ -125,29 +106,24 @@ export const PopUpChat = ({
           <div
             className={'w-[283px] h-[293px] overflow-y-auto overscroll-y-auto'}
           >
-            {MessageData.map((MessageDatum) => {
-              if (MessageDatum.sender_type == 'patient') {
-                return (
-                  <>
+            {MessageData.map((MessageDatum, index) => {
+              return (
+                <Fragment key={index}>
+                  {MessageDatum.request && (
                     <UserMsg
-                      time={MessageDatum.time}
-                      msg={MessageDatum.message_text}
-                      key={MessageDatum.conversation_id}
+                      time={MessageDatum.timestamp}
+                      msg={MessageDatum.request}
                       info={info}
                     />
-                  </>
-                );
-              } else {
-                return (
-                  <>
+                  )}
+                  {MessageDatum.response && (
                     <BotMsg
-                      time={MessageDatum.time}
-                      msg={MessageDatum.message_text}
-                      key={MessageDatum.conversation_id}
+                      time={MessageDatum.timestamp}
+                      msg={MessageDatum.response}
                     />
-                  </>
-                );
-              }
+                  )}
+                </Fragment>
+              );
             })}
 
             <div ref={messagesEndRef}></div>
