@@ -114,8 +114,12 @@ export const PopUpChat = ({
                       time={MessageDatum.timestamp}
                       msg={MessageDatum.request}
                       info={{
-                        picture:JSON.parse(localStorage.getItem("brandInfoData")as string)?.selectedImage,
-                        name:JSON.parse(localStorage.getItem("brandInfoData")as string)?.name,
+                        picture: JSON.parse(
+                          localStorage.getItem('brandInfoData') as string,
+                        )?.selectedImage,
+                        name: JSON.parse(
+                          localStorage.getItem('brandInfoData') as string,
+                        )?.name,
                       }}
                     />
                   )}
