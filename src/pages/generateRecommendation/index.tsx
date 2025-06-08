@@ -32,7 +32,7 @@ export const GenerateRecommendation = () => {
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
   const [activeCategory, setActiveCategory] = useState<string>(
-    VisibleCategories[0].name || 'Activity',
+    VisibleCategories[0].name || 'Diet',
   );
   const [Conflicts, setConflicts] = useState([]);
   const [isRescore, setIsRescore] = useState(false);
