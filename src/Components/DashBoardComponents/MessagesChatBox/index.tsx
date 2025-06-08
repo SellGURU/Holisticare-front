@@ -241,7 +241,7 @@ const MessagesChatBox = () => {
                       {username}
                     </div>
                     <div className="text-[10px] text-Text-Quadruple">
-                      {statusParams ? 'Online' : 'Offline'}
+                      {statusParams == 'true' ? 'Online' : 'Offline'}
                     </div>
                   </div>
                 </div>
