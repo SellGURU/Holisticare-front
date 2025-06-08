@@ -1036,10 +1036,16 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked &&
-        resolveBioMarkers().filter((val) => val.outofref == true).length > 6 && (
+        resolveBioMarkers().filter((val) => val.outofref == true).length >
+          6 && (
           <>
             {Array.from({
-              length: Math.ceil((resolveBioMarkers().filter((val) => val.outofref == true).length - 6) / 6)
+              length: Math.ceil(
+                (resolveBioMarkers().filter((val) => val.outofref == true)
+                  .length -
+                  6) /
+                  6,
+              ),
             }).map((_, index) => (
               <div
                 key={`biomarker-page-${index}`}
@@ -1058,9 +1064,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 >
                   {resolveBioMarkers()
                     .filter((val) => val.outofref == true)
-                    .slice(6 + (index * 6), 6 + ((index + 1) * 6))
+                    .slice(6 + index * 6, 6 + (index + 1) * 6)
                     .map((el) => {
-                      return <BiomarkersPrint key={el.id || Math.random()} data={el}></BiomarkersPrint>;
+                      return (
+                        <BiomarkersPrint
+                          key={el.id || Math.random()}
+                          data={el}
+                        ></BiomarkersPrint>
+                      );
                     })}
                 </div>
                 <PrintFooter pageNumber={resolvePageNumber()} />
