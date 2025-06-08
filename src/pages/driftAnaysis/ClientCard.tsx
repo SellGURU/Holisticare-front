@@ -117,14 +117,13 @@ export const ClientCard: React.FC<ClientCardProps> = ({
             {email}
           </span>
         </div>
-        <div className={` ${isSwitch && 'hidden'}flex flex-col gap-4`}>
+        <div className={` ${isSwitch && 'hidden'} flex flex-col gap-4`}>
           <div
             onClick={() => navigate(`/report/${memberID}/${name}`)}
             className="cursor-pointer bg-white border border-Gray-50 shadow-100 w-8 h-8   rounded-full p-2"
           >
             {' '}
             <SvgIcon src="/icons/export.svg" color="#005F73" />
-            {/* <img src="/icons/export.svg" alt="" /> */}
           </div>
         </div>
       </div>

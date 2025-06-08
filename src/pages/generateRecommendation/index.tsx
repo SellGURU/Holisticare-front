@@ -32,7 +32,7 @@ export const GenerateRecommendation = () => {
   const [VisibleCategories, setVisibleCategories] =
     useState<CategoryState[]>(initialCategoryState);
   const [activeCategory, setActiveCategory] = useState<string>(
-    VisibleCategories[0].name || 'Activity',
+    VisibleCategories[0].name || 'Diet',
   );
   const [Conflicts, setConflicts] = useState([]);
   const [isRescore, setIsRescore] = useState(false);
@@ -57,11 +57,15 @@ export const GenerateRecommendation = () => {
             biomarker_insight: treatmentPlanData?.biomarker_insight,
             client_insight: treatmentPlanData?.client_insight,
             looking_forward: treatmentPlanData?.looking_forwards,
-          }).then((res) => {
-            setConflicts(res.data.conflicts);
-            setCurrentStepIndex((prevIndex) => prevIndex + 1);
-            setisButtonLoading(false);
-          });
+          })
+            .then((res) => {
+              setConflicts(res.data.conflicts);
+              setCurrentStepIndex((prevIndex) => prevIndex + 1);
+              setisButtonLoading(false);
+            })
+            .catch(() => {
+              setisButtonLoading(false);
+            });
         } else {
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
         }

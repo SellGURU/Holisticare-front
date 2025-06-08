@@ -39,7 +39,7 @@ const LogOutModal: React.FC<LogOutModalProps> = ({ refrence, customTheme }) => {
           </div>
         </div>
         <div className="text-[10px] mt-1 text-center text-Text-Primary">
-          {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
+          {customTheme.name ? customTheme.name : ''}{' '}
         </div>
         <div className="text-[8px] mt-[2px] overflow-hidden text-center text-Text-Triarty">
           {localStorage.getItem('email') ? localStorage.getItem('email') : ''}
