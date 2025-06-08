@@ -701,7 +701,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   </div>
                 </div>
                 <div className="w-full flex flex-col justify-between pl-3 py-1">
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
+                  <div className="hidden w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
                     <div className="flex w-[85px] items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to

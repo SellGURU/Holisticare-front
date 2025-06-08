@@ -159,18 +159,18 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       );
     },
   },
-  {
-    accessorKey: 'Assigned',
-    header: 'Assigned',
-    enableSorting: false,
-    cell: ({ row }) => {
-      return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original.assigned_to[0] || 'No Data'}
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: 'Assigned',
+  //   header: 'Assigned',
+  //   enableSorting: false,
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className="text-xs text-Text-Secondary ">
+  //         {row.original.assigned_to[0] || 'No Data'}
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: 'Check-in',
     header: 'Check-in',
