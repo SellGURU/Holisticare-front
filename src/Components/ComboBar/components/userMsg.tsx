@@ -46,8 +46,8 @@ export const UserMsg = ({
       </div>
       <div className="mr-1 w-[32px] h-[32px]">
         <img
-          className="rounded-full w-[30px] h-[30px]"
-          src={`https://ui-avatars.com/api/?name=${name}`}
+          className="rounded-full w-[30px] min-w-[30px] min-h-[30px] border border-gray-50  h-[30px]"
+          src={JSON.parse(localStorage.getItem("brandInfoData")as string)?.selectedImage||`https://ui-avatars.com/api/?name=${name}`}
           alt=""
         />
       </div>
