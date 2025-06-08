@@ -698,7 +698,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             </div>
             {accessManager.filter((el) => el.name == 'Action Plan')[0]
               .checked == true && (
-              <div id="Action Plan" className="mt-[200px] mb-[50px] min-h-[650px]">
+              <div
+                id="Action Plan"
+                className="mt-[200px] mb-[50px] min-h-[650px]"
+              >
                 <div
                   id="Action Plan"
                   className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
