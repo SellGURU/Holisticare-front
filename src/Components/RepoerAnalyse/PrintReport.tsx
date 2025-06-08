@@ -357,19 +357,6 @@ const PrintReport: React.FC<PrintReportProps> = ({
   //             0,
   //             0
   //         ]
-  //     },
-  //         {
-  //         "subcategory": "Tumor Health",
-  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-  //         "position": "chest",
-  //         "num_of_biomarkers": 1,
-  //         "out_of_ref": 0,
-  //         "status": [
-  //             100,
-  //             0,
-  //             0,
-  //             0
-  //         ]
   //     }
   // ]
   //   }
@@ -1049,31 +1036,37 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked &&
-        resolveBioMarkers().filter((val) => val.outofref == true).length >
-          6 && (
-          <div
-            className=" "
-            style={{
-              backgroundColor: '#E9F0F2',
-              minHeight: '100vh',
-              padding: '24px 24px',
-              position: 'relative',
-              pageBreakAfter: 'always',
-            }}
-          >
-            <div
-              className="w-full relative mt-4 grid gap-8 grid-cols-1"
-              style={{ zIndex: 60 }}
-            >
-              {resolveBioMarkers()
-                .filter((val) => val.outofref == true)
-                .slice(6, 12)
-                .map((el) => {
-                  return <BiomarkersPrint data={el}></BiomarkersPrint>;
-                })}
-            </div>
-            <PrintFooter pageNumber={resolvePageNumber()} />
-          </div>
+        resolveBioMarkers().filter((val) => val.outofref == true).length > 6 && (
+          <>
+            {Array.from({
+              length: Math.ceil((resolveBioMarkers().filter((val) => val.outofref == true).length - 6) / 6)
+            }).map((_, index) => (
+              <div
+                key={`biomarker-page-${index}`}
+                className=""
+                style={{
+                  backgroundColor: '#E9F0F2',
+                  minHeight: '100vh',
+                  padding: '24px 24px',
+                  position: 'relative',
+                  pageBreakAfter: 'always',
+                }}
+              >
+                <div
+                  className="w-full relative mt-4 grid gap-8 grid-cols-1"
+                  style={{ zIndex: 60 }}
+                >
+                  {resolveBioMarkers()
+                    .filter((val) => val.outofref == true)
+                    .slice(6 + (index * 6), 6 + ((index + 1) * 6))
+                    .map((el) => {
+                      return <BiomarkersPrint key={el.id || Math.random()} data={el}></BiomarkersPrint>;
+                    })}
+                </div>
+                <PrintFooter pageNumber={resolvePageNumber()} />
+              </div>
+            ))}
+          </>
         )}
       {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
         .checked && (
