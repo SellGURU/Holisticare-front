@@ -1476,7 +1476,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   {el.data.length > 0 ? (
                     <>
                       <div
-                        className="no-split relative  mt-14"
+                        className=" relative  mt-14"
                         style={{
                           pageBreakAfter: 'always',
                           // minHeight: index == 0 ? '870px' : '1020px',
@@ -1506,7 +1506,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                           style={{ pageBreakAfter: 'always' }}
                         >
-                          {el.data.slice(0, 5).map((el2: any) => {
+                          {el.data.slice(0, 2).map((el2: any) => {
                             return (
                               <TreatmentPlanPrint
                                 data={el2}
@@ -1516,6 +1516,29 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         </div>
                         <PrintFooter pageNumber={resolvePageNumber()} />
                       </div>
+                      {el.data.length > 2 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(2, 5).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                          <PrintFooter pageNumber={resolvePageNumber()} />
+                        </div>
+                      )}
                       {el.data.length > 5 && (
                         <div
                           className="no-split relative mt-14"
@@ -1528,7 +1551,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                             style={{ pageBreakAfter: 'always' }}
                           >
-                            {el.data.slice(5, 11).map((el2: any) => {
+                            {el.data.slice(5, 8).map((el2: any) => {
                               return (
                                 <TreatmentPlanPrint
                                   data={el2}
@@ -1536,10 +1559,9 @@ const PrintReport: React.FC<PrintReportProps> = ({
                               );
                             })}
                           </div>
-                          <PrintFooter pageNumber={resolvePageNumber()} />
                         </div>
                       )}
-                      {el.data.length > 10 && (
+                      {el.data.length > 8 && (
                         <div
                           className="no-split relative mt-14"
                           style={{
@@ -1551,7 +1573,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                             style={{ pageBreakAfter: 'always' }}
                           >
-                            {el.data.slice(11, 16).map((el2: any) => {
+                            {el.data.slice(8, 11).map((el2: any) => {
                               return (
                                 <TreatmentPlanPrint
                                   data={el2}
@@ -1560,7 +1582,29 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             })}
                           </div>
                         </div>
-                      )}
+                      )}    
+                      {el.data.length > 11 && (
+                        <div
+                          className="no-split relative mt-14"
+                          style={{
+                            pageBreakAfter: 'always',
+                            minHeight: '1020px',
+                          }}
+                        >
+                          <div
+                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                            style={{ pageBreakAfter: 'always' }}
+                          >
+                            {el.data.slice(11, 13).map((el2: any) => {
+                              return (
+                                <TreatmentPlanPrint
+                                  data={el2}
+                                ></TreatmentPlanPrint>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}                                         
                     </>
                   ) : (
                     <></>
