@@ -357,7 +357,7 @@ export const TopBar: React.FC<TopBarProps> = ({
                         .share({
                           title: 'Holisticare',
                           url:
-                            `holisticare-clinic.vercel.app` +
+                            `https://holisticare-clinic.vercel.app` +
                             '/share/' +
                             res.data.unique_key +
                             '/' +
