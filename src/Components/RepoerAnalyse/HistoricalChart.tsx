@@ -1,3 +1,4 @@
+// import { useState } from 'react';
 import { sortKeysWithValues } from './Boxs/Help';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -29,7 +30,9 @@ const HistoricalChart = ({
     }
     return '#FBAD37';
   };
-
+  // console.log(dataPoints,dataStatus);
+  // const [dataPoints,] = useState<any[]>(['Moderately compromised outcome','Moderately compromised outcome','Moderately Enhanced Outcome','Enhanced Outcome','Excellent Outcome','Excellent Outcome']);
+  // const [dataStatus,] = useState<any[]>(['ok','ok','good','excellent','good','needs focus']);
   // Calculate the vertical position for each status
   const getStatusVerticalPosition = (status: string) => {
     const sortedStatuses = sortKeysWithValues(statusBar).reverse();

@@ -409,7 +409,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     // onarchive(client.member_id);
                     // ondelete(client.member_id);
                   }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Unarchive
@@ -417,7 +417,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {!client.favorite ? (
                   <div
                     onClick={handleAddToHighPriority}
-                    className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                    className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                   >
                     <img src="/icons/star.svg" alt="" />
                     Add to High-Priorities
@@ -427,7 +427,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   activeTab == 'High-Priority' && (
                     <div
                       onClick={handleRemoveFromHighPriority}
-                      className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                      className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
                     >
                       <img src="/icons/star.svg" alt="" />
                       Remove from High-Priorities
@@ -444,7 +444,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className="flex items-center border-b border-Secondary-SelverGray gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access
@@ -461,7 +461,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete
@@ -472,7 +472,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="relative">
                   <div
                     onClick={handleAssignClick}
-                    className="flex items-center justify-between w-full gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                    className="flex items-center gap-2 cursor-pointer justify-between w-full TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                   >
                     <div className="flex items-center gap-1">
                       {' '}
@@ -529,7 +529,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     // onarchive(client.member_id);
                     // ondelete(client.member_id);
                   }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/directbox-send.svg" alt="" />
                   Send to Archieve
@@ -537,7 +537,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 {!client.favorite ? (
                   <div
                     onClick={handleAddToHighPriority}
-                    className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                    className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                   >
                     <img src="/icons/star.svg" alt="" />
                     Add to High-Priority
@@ -547,7 +547,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   activeTab == 'High-Priority' && (
                     <div
                       onClick={handleRemoveFromHighPriority}
-                      className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                      className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                     >
                       <img src="/icons/star.svg" alt="" />
                       Remove from High-Priority
@@ -573,7 +573,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access
@@ -590,7 +590,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                   //   // onarchive(client.member_id)
                   //   ondelete(client.member_id);
                   // }}
-                  className="flex items-center gap-1 TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 "
                 >
                   <img src="/icons/delete-green.svg" className="w-4" alt="" />
                   Delete
