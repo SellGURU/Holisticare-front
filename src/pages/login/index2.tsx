@@ -48,7 +48,11 @@ const Login = () => {
       setIsLoading(true);
       Auth.login(formik.values.email, formik.values.password)
         .then((res) => {
-          appContext.login(res.data.access_token, res.data.permission);
+          appContext.login(
+            res.data.access_token,
+            res.data.permission,
+            formik.values.email,
+          );
           navigate('/');
         })
         .catch((res) => {
