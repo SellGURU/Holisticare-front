@@ -90,8 +90,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     pageNumber++;
     return pageNumber;
   };
-  console.log(ResolveConceringData());
-  console.log(transformConceringData());
+  console.log(resolveCategories());
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">

@@ -61,6 +61,8 @@ export const GenerateRecommendation = () => {
             setConflicts(res.data.conflicts);
             setCurrentStepIndex((prevIndex) => prevIndex + 1);
             setisButtonLoading(false);
+          }).catch(() => {
+            setisButtonLoading(false);
           });
         } else {
           setCurrentStepIndex((prevIndex) => prevIndex + 1);
