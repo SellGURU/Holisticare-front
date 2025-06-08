@@ -34,8 +34,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({
       {isGrayIcon ? (
         <SvgIcon
           src="/icons/search-normal.svg"
-          width="16px"
-          height="16px"
+          width="18px"
+          height="18px"
           color="#888888"
         />
       ) : (
