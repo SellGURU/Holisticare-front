@@ -23,7 +23,7 @@ type SendMessage = {
 export const PopUpChat = ({
   isOpen,
   memberId,
-  info,
+  // info,
 }: {
   memberId: string;
   isOpen: boolean;
@@ -113,7 +113,14 @@ export const PopUpChat = ({
                     <UserMsg
                       time={MessageDatum.timestamp}
                       msg={MessageDatum.request}
-                      info={info}
+                      info={{
+                        picture: JSON.parse(
+                          localStorage.getItem('brandInfoData') as string,
+                        )?.selectedImage,
+                        name: JSON.parse(
+                          localStorage.getItem('brandInfoData') as string,
+                        )?.name,
+                      }}
                     />
                   )}
                   {MessageDatum.response && (
