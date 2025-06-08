@@ -89,7 +89,10 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
   return (
     <div className="w-full h-full relative">
       {messageData.length < 1 ? (
-        <div className="relative " style={{height:window.innerHeight-120+'px'}}>
+        <div
+          className="relative "
+          style={{ height: window.innerHeight - 120 + 'px' }}
+        >
           {' '}
           <div className="w-full  flex flex-col items-center justify-center h-[533px]  ">
             <img src="/icons/EmptyInbox.svg" alt="" />
@@ -105,7 +108,10 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
           </div>
         </div>
       ) : (
-        <div className={'flex flex-col justify-between'} style={{height:window.innerHeight-120+'px'}}>
+        <div
+          className={'flex flex-col justify-between'}
+          style={{ height: window.innerHeight - 120 + 'px' }}
+        >
           {/* <h1 className={"TextStyle-Headline-6"}>Copilot</h1> */}
           <div className={'w-full h-[90%] overflow-y-auto overscroll-y-auto'}>
             {messageData.map((message) => {
