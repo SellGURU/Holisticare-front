@@ -163,11 +163,15 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   const [isReportAvailable, setIsReportAvailable] = useState(true);
-  const [customTheme, setCustomTheme] = useState(localStorage.getItem("brandInfoData")?JSON.parse(localStorage.getItem("brandInfoData") || '{}'):{
-    selectedImage: null as string | null,
-    name: '',
-    headLine: '',
-  });
+  const [customTheme, setCustomTheme] = useState(
+    localStorage.getItem('brandInfoData')
+      ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
+      : {
+          selectedImage: null as string | null,
+          name: '',
+          headLine: '',
+        },
+  );
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
       setCustomTheme({
@@ -175,11 +179,14 @@ export const TopBar: React.FC<TopBarProps> = ({
         name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
-      localStorage.setItem('brandInfoData', JSON.stringify({
+      localStorage.setItem(
+        'brandInfoData',
+        JSON.stringify({
           headLine: res.data.brand_elements.headline,
           name: res.data.brand_elements.name,
-          selectedImage: res.data.brand_elements.logo,        
-      }));
+          selectedImage: res.data.brand_elements.logo,
+        }),
+      );
     });
   };
   useEffect(() => {
@@ -311,9 +318,8 @@ export const TopBar: React.FC<TopBarProps> = ({
                   alt=""
                 />
               ) : (
-                <div className='w-full h-5 flex justify-center items-center'>
+                <div className="w-full h-5 flex justify-center items-center">
                   <BeatLoader size={6}></BeatLoader>
-
                 </div>
                 // <img src="/icons/topbar-logo2.svg" alt="" />
               )}

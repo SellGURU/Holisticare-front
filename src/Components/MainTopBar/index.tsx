@@ -20,11 +20,15 @@ const MainTopBar = () => {
       setVisibleClinic(false);
     },
   });
-  const [customTheme, setCustomTheme] = useState(localStorage.getItem("brandInfoData")?JSON.parse(localStorage.getItem("brandInfoData") || '{}'):{
-    selectedImage: null as string | null,
-    name: '',
-    headLine: '',
-  });
+  const [customTheme, setCustomTheme] = useState(
+    localStorage.getItem('brandInfoData')
+      ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
+      : {
+          selectedImage: null as string | null,
+          name: '',
+          headLine: '',
+        },
+  );
 
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
@@ -33,11 +37,14 @@ const MainTopBar = () => {
         name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
-      localStorage.setItem('brandInfoData', JSON.stringify({
-        headLine: res.data.brand_elements.headline,
-        name: res.data.brand_elements.name,
-        selectedImage: res.data.brand_elements.logo,        
-      }));
+      localStorage.setItem(
+        'brandInfoData',
+        JSON.stringify({
+          headLine: res.data.brand_elements.headline,
+          name: res.data.brand_elements.name,
+          selectedImage: res.data.brand_elements.logo,
+        }),
+      );
     });
   };
 
@@ -110,9 +117,8 @@ const MainTopBar = () => {
                     alt=""
                   />
                 ) : (
-                  <div className='w-full h-5 flex justify-center items-center'>
+                  <div className="w-full h-5 flex justify-center items-center">
                     <BeatLoader size={6}></BeatLoader>
-
                   </div>
                 )}
                 {customTheme.name ? customTheme.name : ''}{' '}
