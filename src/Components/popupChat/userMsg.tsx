@@ -43,7 +43,7 @@ export const UserMsg = ({
           onError={(e: any) => {
             e.target.src = `https://ui-avatars.com/api/?name=${info.name}`; // Set fallback image
           }}
-          className="rounded-full w-[30px] h-[30px]"
+          className="rounded-full min-w-[30px] min-h-[30px] border border-gray-50 w-[30px] h-[30px]"
           src={info.picture}
         />
       </div>
