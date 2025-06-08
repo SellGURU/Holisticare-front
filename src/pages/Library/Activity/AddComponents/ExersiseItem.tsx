@@ -202,7 +202,7 @@ const ExerciseItem = ({
           <div
             className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
-            <div className="text-center  flex text-[8px] text-Text-Primary justify-center">
+            <div className="text-center  flex text-[8px] text-Text-Primary justify-center mb-[-6px]">
               Set
               <div data-tooltip-id="set-tooltip">
                 <img

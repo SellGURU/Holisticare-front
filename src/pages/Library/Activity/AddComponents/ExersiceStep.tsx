@@ -176,6 +176,25 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
           ...updatedExercises[originalIndex],
           Sets: value,
         };
+      } else if (field === 'Reps' || field === 'Weight' || field === 'Rest') {
+        updatedExercises[originalIndex] = {
+          ...updatedExercises[originalIndex],
+          Exercises: updatedExercises[originalIndex].Exercises.map(
+            (exercise, ind) => {
+              if (ind === exersiseIndex) {
+                return {
+                  ...exercise,
+                  [field]: value,
+                  Exercise: {
+                    ...exercise.Exercise,
+                    [field]: value,
+                  },
+                };
+              }
+              return exercise;
+            },
+          ),
+        };
       } else {
         updatedExercises[originalIndex] = {
           ...updatedExercises[originalIndex],
