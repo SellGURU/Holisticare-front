@@ -472,7 +472,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <div className="relative">
                   <div
                     onClick={handleAssignClick}
-                    className="flex items-center gap-2 cursor-pointer justify-between w-full TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
+                    className=" items-center gap-2 hidden cursor-pointer justify-between w-full TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                   >
                     <div className="flex items-center gap-1">
                       {' '}
