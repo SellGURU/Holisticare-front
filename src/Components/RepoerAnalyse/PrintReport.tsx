@@ -1582,7 +1582,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             })}
                           </div>
                         </div>
-                      )}    
+                      )}
                       {el.data.length > 11 && (
                         <div
                           className="no-split relative mt-14"
@@ -1604,7 +1604,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             })}
                           </div>
                         </div>
-                      )}                                         
+                      )}
                     </>
                   ) : (
                     <></>
