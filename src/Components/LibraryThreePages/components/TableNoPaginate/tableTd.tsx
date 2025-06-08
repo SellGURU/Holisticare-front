@@ -64,21 +64,36 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="text-xs text-Text-Quadruple">
-          {pageType === 'Supplement' ? (
-            row.original?.Dose || '-'
-          ) : pageType === 'Lifestyle' ? (
-            <div className="flex items-center justify-center">
-              {row.original?.Value} {row.original?.Unit}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-4">
-              <div>Carb: {row.original?.['Total Macros'].Carbs} gr</div>
-              <div>Pr: {row.original?.['Total Macros'].Protein} gr</div>
-              <div>Fat: {row.original?.['Total Macros'].Fats} gr</div>
-            </div>
+        <>
+          <div className="text-xs text-Text-Quadruple">
+            {pageType === 'Supplement' ? (
+              <div data-tooltip-id={`tooltip-${row.original?.Dose}`}>
+                {row.original?.Dose.length > 12
+                  ? row.original?.Dose.substring(0, 12) + '...'
+                  : row.original?.Dose || '-'}
+              </div>
+            ) : pageType === 'Lifestyle' ? (
+              <div className="flex items-center justify-center">
+                {row.original?.Value} {row.original?.Unit}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-4">
+                <div>Carb: {row.original?.['Total Macros'].Carbs} gr</div>
+                <div>Pr: {row.original?.['Total Macros'].Protein} gr</div>
+                <div>Fat: {row.original?.['Total Macros'].Fats} gr</div>
+              </div>
+            )}
+          </div>
+          {row.original?.Dose.length > 12 && (
+            <Tooltip
+              id={`tooltip-${row.original?.Dose}`}
+              place="top"
+              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+            >
+              {row.original?.Dose}
+            </Tooltip>
           )}
-        </div>
+        </>
       );
     },
   },
