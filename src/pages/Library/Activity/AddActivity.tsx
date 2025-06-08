@@ -44,7 +44,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
         // Show validation errors
         return;
       }
-      setStep(step + 1);
+      setStep(1);
       setShowValidation(false);
     } else {
       setShowExerciseValidation(true);
@@ -102,7 +102,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   };
   const backStep = () => {
     if (step === 1) {
-      setStep(step - 1);
+      setStep(0);
       setShowExerciseValidation(false);
       setShowValidation(false);
     }
