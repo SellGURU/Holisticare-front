@@ -57,7 +57,7 @@ const InformationStep: FC<InformationStepProps> = ({
   // Formik validation schema
   const validationSchema = Yup.object({
     title: Yup.string().required('This field is required.'),
-    description: Yup.string().required('This field is required.'),
+    // description: Yup.string().required('This field is required.'),
     instruction: Yup.string().required('This field is required.'),
     score: Yup.number()
       .min(1, 'This field is required.')
