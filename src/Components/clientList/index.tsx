@@ -381,6 +381,8 @@ const ClientList = () => {
                       >
                         <SvgIcon
                           src="/icons/grid-1.svg"
+                          width="20px"
+                          height="20px"
                           color={activeList == 'grid' ? '#FFF' : '#38383899'}
                         />
                       </div>
@@ -394,6 +396,8 @@ const ClientList = () => {
                       >
                         <SvgIcon
                           src="/icons/textalign-left.svg"
+                          width="20px"
+                          height="20px"
                           color={activeList == 'list' ? '#FFF' : '#38383899'}
                         />
                       </div>
