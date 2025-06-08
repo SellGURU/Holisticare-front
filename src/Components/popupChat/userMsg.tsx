@@ -8,7 +8,7 @@ export const UserMsg = ({
 }: {
   msg: string;
   info: any;
-  time?: string;
+  time: number;
 }) => {
   // const {name } = useParams<{ name:string }>();
 
@@ -19,7 +19,13 @@ export const UserMsg = ({
           <h1 className={'text-Text-Primary TextStyle-Headline-6 '}>
             {info.name}
           </h1>
-          <p className={'text-xs text-Text-Secondary'}>{time}</p>
+          <p className={'text-xs text-Text-Secondary'}>
+            {new Date(time).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </p>
         </div>
         <div
           style={{
