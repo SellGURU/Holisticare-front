@@ -12,7 +12,7 @@ interface HistoricalChartProps {
 const HistoricalChart = ({
   statusBar,
   dataPoints,
-  dataStatus,  
+  dataStatus,
   labels,
 }: HistoricalChartProps) => {
   const resolveColor = (key: string) => {
