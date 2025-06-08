@@ -91,296 +91,296 @@ const PrintReport: React.FC<PrintReportProps> = ({
     return pageNumber;
   };
   // console.log(resolveCategories());
-//   const resolveCategories= () => {
-//     return [
-//     {
-//         "subcategory": "Total Body Mass",
-//         "description": "The client's BMI indicates a normal body composition, which is consistent with the absence of medical conditions or specific health goals, suitable for her age and gender.",
-//         "position": "torso",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             0,
-//             0,
-//             100,
-//             0
-//         ]
-//     },
-//     {
-//         "subcategory": "Cardiovascular Risk",
-//         "description": "The client's cardiovascular biomarkers indicate that total cholesterol is excellent, while total cholesterol/HDL ratio is also excellent. However, total cholesterol needs focus due to elevated levels, with non-HDL cholesterol requiring attention. The LDL/HDL ratio stands out as excellent, showing good cholesterol profile management. Nonetheless, triglycerides and VLDL cholesterol need focus, indicating potential cardiovascular risk. These findings suggest the client might adapt their dietary habits or physical activity levels, given no medical conditions or medications are reported.",
-//         "position": "heart",
-//         "num_of_biomarkers": 15,
-//         "out_of_ref": 4,
-//         "status": [
-//             47,
-//             0,
-//             27,
-//             27
-//         ]
-//     },
-//     {
-//         "subcategory": "Genetics/DNA",
-//         "description": "The client's biomarkers indicate a generally healthy genetic profile at age 42, with stable parameters in key areas. However, attention to 'Vascular Response to Exercise' is necessary for optimizing cardiovascular health.",
-//         "position": "head",
-//         "num_of_biomarkers": 18,
-//         "out_of_ref": 1,
-//         "status": [
-//             0,
-//             0,
-//             94,
-//             6
-//         ]
-//     },
-//     {
-//         "subcategory": "Gut Health",
-//         "description": "The client's gut health biomarkers indicate a mix of excellent and needs focus results. The predominance of 'needs focus' markers suggests potential dysbiosis or imbalance in gut microbiota, which can be influenced by factors such as age (42) and gender (female). Medical conditions and medications weren't provided; however, addressing the underperforming bacteria through dietary changes, probiotics, or medications may be beneficial to achieve gut health goals.",
-//         "position": "abdomen",
-//         "num_of_biomarkers": 64,
-//         "out_of_ref": 51,
-//         "status": [
-//             20,
-//             0,
-//             0,
-//             80
-//         ]
-//     },
-//     {
-//         "subcategory": "Blood",
-//         "description": "All hematology biomarkers including ESR, Hematocrit, Hemoglobin, MPV, PCT, PDW, Platelets, RDW, Transferrin Saturation, and WBC levels are in excellent status for a 42-year-old female, indicating optimal hematological health.",
-//         "position": "left hand",
-//         "num_of_biomarkers": 10,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//     {
-//         "subcategory": "Thyroid Function",
-//         "description": "The client's TSH level is excellent, indicating optimal thyroid function, which is important for overall hormonal health, especially in a 42-year-old female.",
-//         "position": "neck",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//     {
-//         "subcategory": "Immune Health",
-//         "description": "The client, a 42-year-old female, shows excellent immune health markers for anti-H.Pylori (Ab-IgA, Ab-IgG, Ab-IgM), HCV antibody, HIV P24 Ag, and HIV1,2 Ab. However, the HBs antibody requires attention, suggesting potential immunization or chronic infection considerations. The strong performance in H.Pylori and viral markers indicates effective immune response, but further evaluation on the HBs antibody is advised to prevent future complications.",
-//         "position": "Hand",
-//         "num_of_biomarkers": 8,
-//         "out_of_ref": 1,
-//         "status": [
-//             88,
-//             0,
-//             0,
-//             12
-//         ]
-//     },
-//     {
-//         "subcategory": "Liver Function",
-//         "description": "The client, a 42-year-old female, presents concerning liver biomarkers (Gamma GT, ALT, Total Bilirubin) indicating potential liver dysfunction; close monitoring and lifestyle adjustments are recommended.",
-//         "position": "abdomen",
-//         "num_of_biomarkers": 3,
-//         "out_of_ref": 3,
-//         "status": [
-//             0,
-//             0,
-//             0,
-//             100
-//         ]
-//     },
-//     {
-//         "subcategory": "Diabetes & Glucose",
-//         "description": "The client, a 42-year-old female, shows excellent biomarkers for Fasting Plasma Glucose, Hb A1C, and Insulin, indicating good blood sugar control. However, the HOMA-IR is at a borderline level, suggesting potential insulin resistance, which should be monitored given the absence of medical conditions or specific medications that could impact metabolic health.",
-//         "position": "abdomen",
-//         "num_of_biomarkers": 4,
-//         "out_of_ref": 0,
-//         "status": [
-//             75,
-//             0,
-//             25,
-//             0
-//         ]
-//     },
-//     {
-//         "subcategory": "Major Essential Minerals",
-//         "description": "Client's biomarkers indicate excellent micronutrient levels, particularly in calcium, chloride, copper, and folic acid, but show areas requiring attention including ferritin, manganese, and total body iron storage.",
-//         "position": "abdomen",
-//         "num_of_biomarkers": 9,
-//         "out_of_ref": 3,
-//         "status": [
-//             56,
-//             11,
-//             0,
-//             33
-//         ]
-//     },
-//     {
-//         "subcategory": "Vitamins",
-//         "description": "At 42 years old, the client shows excellent levels of Vitamin B1, B6, and D, which support metabolic health and bone density. However, she needs to focus on Biotin and Vitamin K1, as deficiencies can impact energy metabolism and proper blood clotting. Other vitamins like Beta Carotene and Vitamin E show no status, indicating potential areas for improvement, given their roles in antioxidant function. No current medical conditions or medications were noted, suggesting a baseline of good health; dietary adjustments may be recommended to enhance micronutrient intake.",
-//         "position": "abdomen",
-//         "num_of_biomarkers": 6,
-//         "out_of_ref": 2,
-//         "status": [
-//             50,
-//             17,
-//             0,
-//             33
-//         ]
-//     },
-//     {
-//         "subcategory": "Kidney Function",
-//         "description": "The client, a 42-year-old female, shows excellent renal health with most biomarkers and notable areas needing focus include Creatinine, S.G.O.T, and TG/HDL ratio which may indicate potential stress on kidney function or metabolic syndrome.",
-//         "position": "kidney",
-//         "num_of_biomarkers": 17,
-//         "out_of_ref": 6,
-//         "status": [
-//             53,
-//             12,
-//             0,
-//             35
-//         ]
-//     },
-//     {
-//         "subcategory": "Inflammatory Health",
-//         "description": "The client's CRP level is acceptable for her age and gender, indicating a stable inflammatory response, while the excellent RF status suggests no acute autoimmune concern, aligning with the absence of current medical conditions.",
-//         "position": "chest",
-//         "num_of_biomarkers": 2,
-//         "out_of_ref": 0,
-//         "status": [
-//             50,
-//             0,
-//             50,
-//             0
-//         ]
-//     },
-//     {
-//         "subcategory": "Sleep Health",
-//         "description": "The female client, aged 42, presents a Snoring Index that indicates a need for focus on sleep health, suggesting potential underlying sleep disorders that could affect overall health.",
-//         "position": "head",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 1,
-//         "status": [
-//             0,
-//             0,
-//             0,
-//             100
-//         ]
-//     },
-//     {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     },
-//         {
-//         "subcategory": "Tumor Health",
-//         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
-//         "position": "chest",
-//         "num_of_biomarkers": 1,
-//         "out_of_ref": 0,
-//         "status": [
-//             100,
-//             0,
-//             0,
-//             0
-//         ]
-//     }   
-// ]
-//   }
+  //   const resolveCategories= () => {
+  //     return [
+  //     {
+  //         "subcategory": "Total Body Mass",
+  //         "description": "The client's BMI indicates a normal body composition, which is consistent with the absence of medical conditions or specific health goals, suitable for her age and gender.",
+  //         "position": "torso",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             0,
+  //             0,
+  //             100,
+  //             0
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Cardiovascular Risk",
+  //         "description": "The client's cardiovascular biomarkers indicate that total cholesterol is excellent, while total cholesterol/HDL ratio is also excellent. However, total cholesterol needs focus due to elevated levels, with non-HDL cholesterol requiring attention. The LDL/HDL ratio stands out as excellent, showing good cholesterol profile management. Nonetheless, triglycerides and VLDL cholesterol need focus, indicating potential cardiovascular risk. These findings suggest the client might adapt their dietary habits or physical activity levels, given no medical conditions or medications are reported.",
+  //         "position": "heart",
+  //         "num_of_biomarkers": 15,
+  //         "out_of_ref": 4,
+  //         "status": [
+  //             47,
+  //             0,
+  //             27,
+  //             27
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Genetics/DNA",
+  //         "description": "The client's biomarkers indicate a generally healthy genetic profile at age 42, with stable parameters in key areas. However, attention to 'Vascular Response to Exercise' is necessary for optimizing cardiovascular health.",
+  //         "position": "head",
+  //         "num_of_biomarkers": 18,
+  //         "out_of_ref": 1,
+  //         "status": [
+  //             0,
+  //             0,
+  //             94,
+  //             6
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Gut Health",
+  //         "description": "The client's gut health biomarkers indicate a mix of excellent and needs focus results. The predominance of 'needs focus' markers suggests potential dysbiosis or imbalance in gut microbiota, which can be influenced by factors such as age (42) and gender (female). Medical conditions and medications weren't provided; however, addressing the underperforming bacteria through dietary changes, probiotics, or medications may be beneficial to achieve gut health goals.",
+  //         "position": "abdomen",
+  //         "num_of_biomarkers": 64,
+  //         "out_of_ref": 51,
+  //         "status": [
+  //             20,
+  //             0,
+  //             0,
+  //             80
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Blood",
+  //         "description": "All hematology biomarkers including ESR, Hematocrit, Hemoglobin, MPV, PCT, PDW, Platelets, RDW, Transferrin Saturation, and WBC levels are in excellent status for a 42-year-old female, indicating optimal hematological health.",
+  //         "position": "left hand",
+  //         "num_of_biomarkers": 10,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Thyroid Function",
+  //         "description": "The client's TSH level is excellent, indicating optimal thyroid function, which is important for overall hormonal health, especially in a 42-year-old female.",
+  //         "position": "neck",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Immune Health",
+  //         "description": "The client, a 42-year-old female, shows excellent immune health markers for anti-H.Pylori (Ab-IgA, Ab-IgG, Ab-IgM), HCV antibody, HIV P24 Ag, and HIV1,2 Ab. However, the HBs antibody requires attention, suggesting potential immunization or chronic infection considerations. The strong performance in H.Pylori and viral markers indicates effective immune response, but further evaluation on the HBs antibody is advised to prevent future complications.",
+  //         "position": "Hand",
+  //         "num_of_biomarkers": 8,
+  //         "out_of_ref": 1,
+  //         "status": [
+  //             88,
+  //             0,
+  //             0,
+  //             12
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Liver Function",
+  //         "description": "The client, a 42-year-old female, presents concerning liver biomarkers (Gamma GT, ALT, Total Bilirubin) indicating potential liver dysfunction; close monitoring and lifestyle adjustments are recommended.",
+  //         "position": "abdomen",
+  //         "num_of_biomarkers": 3,
+  //         "out_of_ref": 3,
+  //         "status": [
+  //             0,
+  //             0,
+  //             0,
+  //             100
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Diabetes & Glucose",
+  //         "description": "The client, a 42-year-old female, shows excellent biomarkers for Fasting Plasma Glucose, Hb A1C, and Insulin, indicating good blood sugar control. However, the HOMA-IR is at a borderline level, suggesting potential insulin resistance, which should be monitored given the absence of medical conditions or specific medications that could impact metabolic health.",
+  //         "position": "abdomen",
+  //         "num_of_biomarkers": 4,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             75,
+  //             0,
+  //             25,
+  //             0
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Major Essential Minerals",
+  //         "description": "Client's biomarkers indicate excellent micronutrient levels, particularly in calcium, chloride, copper, and folic acid, but show areas requiring attention including ferritin, manganese, and total body iron storage.",
+  //         "position": "abdomen",
+  //         "num_of_biomarkers": 9,
+  //         "out_of_ref": 3,
+  //         "status": [
+  //             56,
+  //             11,
+  //             0,
+  //             33
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Vitamins",
+  //         "description": "At 42 years old, the client shows excellent levels of Vitamin B1, B6, and D, which support metabolic health and bone density. However, she needs to focus on Biotin and Vitamin K1, as deficiencies can impact energy metabolism and proper blood clotting. Other vitamins like Beta Carotene and Vitamin E show no status, indicating potential areas for improvement, given their roles in antioxidant function. No current medical conditions or medications were noted, suggesting a baseline of good health; dietary adjustments may be recommended to enhance micronutrient intake.",
+  //         "position": "abdomen",
+  //         "num_of_biomarkers": 6,
+  //         "out_of_ref": 2,
+  //         "status": [
+  //             50,
+  //             17,
+  //             0,
+  //             33
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Kidney Function",
+  //         "description": "The client, a 42-year-old female, shows excellent renal health with most biomarkers and notable areas needing focus include Creatinine, S.G.O.T, and TG/HDL ratio which may indicate potential stress on kidney function or metabolic syndrome.",
+  //         "position": "kidney",
+  //         "num_of_biomarkers": 17,
+  //         "out_of_ref": 6,
+  //         "status": [
+  //             53,
+  //             12,
+  //             0,
+  //             35
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Inflammatory Health",
+  //         "description": "The client's CRP level is acceptable for her age and gender, indicating a stable inflammatory response, while the excellent RF status suggests no acute autoimmune concern, aligning with the absence of current medical conditions.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 2,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             50,
+  //             0,
+  //             50,
+  //             0
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Sleep Health",
+  //         "description": "The female client, aged 42, presents a Snoring Index that indicates a need for focus on sleep health, suggesting potential underlying sleep disorders that could affect overall health.",
+  //         "position": "head",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 1,
+  //         "status": [
+  //             0,
+  //             0,
+  //             0,
+  //             100
+  //         ]
+  //     },
+  //     {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     },
+  //         {
+  //         "subcategory": "Tumor Health",
+  //         "description": "The biomarkers indicate an excellent status for CEA, suggesting no current issues with tumor markers for a 42-year-old female; however, the PSAs show no status, which should be monitored.",
+  //         "position": "chest",
+  //         "num_of_biomarkers": 1,
+  //         "out_of_ref": 0,
+  //         "status": [
+  //             100,
+  //             0,
+  //             0,
+  //             0
+  //         ]
+  //     }
+  // ]
+  //   }
   const PrintHeader = () => {
     return (
       <div className="print-header z-50 ">
@@ -859,7 +859,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 {usrInfoData?.name}
               </div>
               <div className="flex justify-center items-center gap-1">
-                <div className="" style={{ fontSize: '14px', color: '#888888' }}>
+                <div
+                  className=""
+                  style={{ fontSize: '14px', color: '#888888' }}
+                >
                   <div>Gender: {usrInfoData?.sex} </div>
                 </div>
                 <div
@@ -870,7 +873,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     backgroundColor: '#B0B0B0',
                   }}
                 ></div>
-                <div className="" style={{ fontSize: '14px', color: '#888888' }}>
+                <div
+                  className=""
+                  style={{ fontSize: '14px', color: '#888888' }}
+                >
                   <div>Age: {usrInfoData?.age}</div>
                 </div>
               </div>
@@ -942,39 +948,40 @@ const PrintReport: React.FC<PrintReportProps> = ({
               className="grid grid-cols-2  relative  gap-4 mt-4"
               style={{ zIndex: 60 }}
             >
-              {resolveCategories().slice(0,16).map((el: any) => {
-                return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
-              })}
+              {resolveCategories()
+                .slice(0, 16)
+                .map((el: any) => {
+                  return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
+                })}
             </div>
             <PrintFooter pageNumber={resolvePageNumber()} />
           </div>
-          {resolveCategories().length>16 &&
-            (
-              <>
+          {resolveCategories().length > 16 && (
+            <>
+              <div
+                id="client-summary"
+                className=""
+                style={{
+                  backgroundColor: '#E9F0F2',
+                  minHeight: '100vh',
+                  position: 'relative',
+                  padding: '24px 24px',
+                }}
+              >
                 <div
-                  id="client-summary"
-                  className=""
-                  style={{
-                    backgroundColor: '#E9F0F2',
-                    minHeight: '100vh',
-                    position: 'relative',
-                    padding: '24px 24px',
-                  }}
+                  className="grid grid-cols-2  relative  gap-4 mt-4"
+                  style={{ zIndex: 60 }}
                 >
-                  <div
-                    className="grid grid-cols-2  relative  gap-4 mt-4"
-                    style={{ zIndex: 60 }}
-                  >
-                    {resolveCategories().slice(16,32).map((el: any) => {
+                  {resolveCategories()
+                    .slice(16, 32)
+                    .map((el: any) => {
                       return <SummaryBoxPrint data={el}></SummaryBoxPrint>;
                     })}
-                  </div>
-                  <PrintFooter pageNumber={resolvePageNumber()} />
-                </div>              
-              </>
-
-            )
-          }
+                </div>
+                <PrintFooter pageNumber={resolvePageNumber()} />
+              </div>
+            </>
+          )}
         </>
       )}
 
