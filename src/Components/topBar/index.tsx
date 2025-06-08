@@ -11,6 +11,8 @@ import { resolveAccesssUser } from '../../help';
 import Application from '../../api/app';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { subscribe, unsubscribe } from '../../utils/event';
+import { BeatLoader } from 'react-spinners';
+// import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
 interface TopBarProps {
@@ -161,11 +163,15 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   const [isReportAvailable, setIsReportAvailable] = useState(true);
-  const [customTheme, setCustomTheme] = useState({
-    selectedImage: null as string | null,
-    name: '',
-    headLine: '',
-  });
+  const [customTheme, setCustomTheme] = useState(
+    localStorage.getItem('brandInfoData')
+      ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
+      : {
+          selectedImage: null as string | null,
+          name: '',
+          headLine: '',
+        },
+  );
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
       setCustomTheme({
@@ -173,6 +179,14 @@ export const TopBar: React.FC<TopBarProps> = ({
         name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
+      localStorage.setItem(
+        'brandInfoData',
+        JSON.stringify({
+          headLine: res.data.brand_elements.headline,
+          name: res.data.brand_elements.name,
+          selectedImage: res.data.brand_elements.logo,
+        }),
+      );
     });
   };
   useEffect(() => {
@@ -304,9 +318,12 @@ export const TopBar: React.FC<TopBarProps> = ({
                   alt=""
                 />
               ) : (
-                <img src="/icons/topbar-logo2.svg" alt="" />
+                <div className="w-full h-5 flex justify-center items-center">
+                  <BeatLoader size={6}></BeatLoader>
+                </div>
+                // <img src="/icons/topbar-logo2.svg" alt="" />
               )}
-              {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
+              {customTheme.name ? customTheme.name : ''}{' '}
             </div>
           </div>
           {visibleClinic && (

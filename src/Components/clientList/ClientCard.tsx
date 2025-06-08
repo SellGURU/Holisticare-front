@@ -444,7 +444,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       setShowAccessModal(true);
                     });
                   }}
-                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 cursor-default"
+                  className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
                   <img src="/icons/keyboard-open.svg" alt="" />
                   Client Access

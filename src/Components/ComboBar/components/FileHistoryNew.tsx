@@ -129,9 +129,9 @@ const FileHistoryNew = () => {
         ),
       );
     } catch (error: any) {
-      console.log(error);
+      // console.log(error);
 
-      let errorMessage = 'Failed to upload file to backend. Please try again.';
+      let errorMessage = 'Failed to upload file. Please try again.';
 
       if (error?.detail?.includes('already exists')) {
         errorMessage = 'This file has already been uploaded.';
