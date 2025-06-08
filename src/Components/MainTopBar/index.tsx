@@ -6,6 +6,7 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import Auth from '../../api/auth';
 import { publish, subscribe } from '../../utils/event';
 import Application from '../../api/app';
+import { BeatLoader } from 'react-spinners';
 
 const MainTopBar = () => {
   // const navigate = useNavigate();
@@ -19,10 +20,10 @@ const MainTopBar = () => {
       setVisibleClinic(false);
     },
   });
-  const [customTheme, setCustomTheme] = useState({
+  const [customTheme, setCustomTheme] = useState(localStorage.getItem("brandInfoData")?JSON.parse(localStorage.getItem("brandInfoData") || '{}'):{
     selectedImage: null as string | null,
-    headLine: '',
     name: '',
+    headLine: '',
   });
 
   const getShowBrandInfo = () => {
@@ -32,6 +33,11 @@ const MainTopBar = () => {
         name: res.data.brand_elements.name,
         selectedImage: res.data.brand_elements.logo,
       });
+      localStorage.setItem('brandInfoData', JSON.stringify({
+        headLine: res.data.brand_elements.headline,
+        name: res.data.brand_elements.name,
+        selectedImage: res.data.brand_elements.logo,        
+      }));
     });
   };
 
@@ -104,9 +110,12 @@ const MainTopBar = () => {
                     alt=""
                   />
                 ) : (
-                  <img src="/icons/topbar-logo2.svg" alt="" />
+                  <div className='w-full h-5 flex justify-center items-center'>
+                    <BeatLoader size={6}></BeatLoader>
+
+                  </div>
                 )}
-                {customTheme.name ? customTheme.name : 'Clinic Longevity 1'}{' '}
+                {customTheme.name ? customTheme.name : ''}{' '}
               </div>
             </div>
             {visibleClinic && (
