@@ -484,7 +484,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
     return groups;
   };
-  const colorsText = ['#06C78D', '#FC5474', '#06C78D', '#F4A261'];
+  // const colorsText = ['#06C78D', '#FC5474', '#06C78D', '#F4A261'];
 
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
@@ -1252,7 +1252,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       <div className="px-2 relative" style={{ zIndex: 60 }}>
                         {transformConceringData()
                           .slice(index1 * 12 + 10, index1 * 12 + 10 + 12)
-                          .map((el, index) => {
+                          .map((el) => {
                             return (
                               <>
                                 <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
@@ -1272,7 +1272,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     style={{
                                       fontSize: '12px',
                                       width: '60px',
-                                      color: colorsText[index % 4],
+                                      // color: colorsText[index % 4],
                                     }}
                                   >
                                     {el.Result}
@@ -1322,7 +1322,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     style={{
                                       fontSize: '12px',
                                       width: '60px',
-                                      color: colorsText[index % 4],
+                                      // color: colorsText[index % 4],
                                     }}
                                   >
                                     {el.Changes}
