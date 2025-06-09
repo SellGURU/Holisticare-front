@@ -1518,97 +1518,38 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             );
                           })}
                         </div>
-                        <PrintFooter pageNumber={resolvePageNumber()} />
+                        {el.data.length > 2 && (
+                          <>
+                            {Array.from({
+                              length: Math.ceil((el.data.length - 2) / 3),
+                            }).map((_, index) => (
+                              <div
+                                key={`treatment-plan-page-${index}`}
+                                className="no-split relative mt-14"
+                                style={{
+                                  pageBreakAfter: 'always',
+                                  minHeight: '1020px',
+                                }}
+                              >
+                                <div
+                                  className="w-full grid gap-6 bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                                  style={{ pageBreakAfter: 'always' }}
+                                >
+                                  {el.data
+                                    .slice(2 + index * 3, 2 + (index + 1) * 3)
+                                    .map((el2: any) => (
+                                      <TreatmentPlanPrint
+                                        key={el2.id || Math.random()}
+                                        data={el2}
+                                      ></TreatmentPlanPrint>
+                                    ))}
+                                </div>
+                                <PrintFooter pageNumber={resolvePageNumber()} />
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </div>
-                      {el.data.length > 2 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(2, 5).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                          <PrintFooter pageNumber={resolvePageNumber()} />
-                        </div>
-                      )}
-                      {el.data.length > 5 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(5, 8).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      {el.data.length > 8 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(8, 11).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      {el.data.length > 11 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(11, 13).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
                     </>
                   ) : (
                     <></>
