@@ -501,7 +501,7 @@ const ClientList = () => {
                 <>
                   {activeList == 'grid' ? (
                     <div
-                      className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center   gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
+                      className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center   gap-[16px] flex-wrap pb-[200px] ${showSearch && 'mt-10'}`}
                     >
                       {filteredClientList.map((client: any, index: number) => {
                         return (

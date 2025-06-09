@@ -9,7 +9,7 @@ const Messages = () => {
   const [search, setSearch] = useState('');
   return (
     <>
-      <div className="w-[97.2%] flex justify-between items-center mt-6 ml-6">
+      <div className="w-full flex justify-between items-center mt-6 px-6">
         <div className="text-Text-Primary font-medium opacity-[87%]">
           Messages
         </div>
