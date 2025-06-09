@@ -6,7 +6,7 @@ import { subscribe } from '../../../utils/event';
 import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
-import UnitPopUp from '../../UnitPopup';
+// import UnitPopUp from '../../UnitPopup';
 import { sortKeysWithValues } from './Help';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
@@ -283,11 +283,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                             )}
                           </div>
                           <div className="flex items-center gap-4">
-                            {active?.unit != '' && (
+                            {/* {active?.unit != '' && (
                               <div className="relative z-50 mr-0">
                                 <UnitPopUp unit={active?.unit}></UnitPopUp>
                               </div>
-                            )}
+                            )} */}
                             <div className="  cursor-pointer ">
                               <div
                                 className={`  flex gap-2 justify-end items-center`}
@@ -318,20 +318,20 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         <div className="TextStyle-Headline-6 flex justify-between text-nowrap items-center gap-2 text-Text-Primary mb-5">
                           Historical Data
                           <div className="flex justify-end w-full items-center  mt-[-8px]  gap-2">
-                            {active?.unit != '' && (
+                            {/* {active?.unit != '' && (
                               <div className="relative z-50 ">
                                 <UnitPopUp unit={active?.unit}></UnitPopUp>
                               </div>
-                            )}
+                            )} */}
 
-                            <div className="w-[94px] opacity-50 cursor-pointer flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
+                            {/* <div className="w-[94px] opacity-50 cursor-pointer flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-gray-50">
                               <div className="text-Primary-DeepTeal text-[10px]">
                                 6 Month
                               </div>
                               <div className="w-[16px]">
                                 <img src="/icons/arrow-down-green.svg" alt="" />
                               </div>
-                            </div>
+                            </div> */}
                             <div className="  cursor-pointer ml-6 ">
                               <div className="flex gap-2 justify-end items-center">
                                 <div className="TextStyle-Headline-6 text-nowrap text-Text-Primary">
