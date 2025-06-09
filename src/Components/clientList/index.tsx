@@ -370,7 +370,7 @@ const ClientList = () => {
                     <div className="w-full hidden text-Text-Primary text-sm text-nowrap font-medium gap-2 items-center">
                       Sort by: <SelectBox onChange={handleFilterChange} />
                     </div>
-                    <div className=" hidden md:flex w-[96px] h-[32px] rounded-md ">
+                    <div className=" hidden md:flex lg:ml-2 xl:ml-0 w-[96px] h-[32px] rounded-md ">
                       <div
                         onClick={() => setActiveList('grid')}
                         className={` ${
@@ -404,7 +404,7 @@ const ClientList = () => {
                     </div>
                     <div className="w-full relative  flex  justify-end gap-[6px] sm:gap-3 items-center">
                       {showSearch ? (
-                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[300px] xs:min-w-[360px] rounded-2xl">
+                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[300px] xs:min-w-[360px] md:min-w-[90px] xl:min-w-[360px] rounded-2xl">
                           <SearchBox
                             style={{ width: '100%' }}
                             id="searchBar"
@@ -501,7 +501,7 @@ const ClientList = () => {
                 <>
                   {activeList == 'grid' ? (
                     <div
-                      className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center pb-[200px]  gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
+                      className={`w-full h-fit flex md:items-start md:justify-start justify-center items-center   gap-[16px] flex-wrap ${showSearch && 'mt-10'}`}
                     >
                       {filteredClientList.map((client: any, index: number) => {
                         return (

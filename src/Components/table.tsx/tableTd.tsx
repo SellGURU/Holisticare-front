@@ -20,14 +20,14 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       console.log(row.original);
 
       return (
-        <div className="w-[15vw]">
+        <div>
           <Link
             to={`/report/${row.original.member_id}/${row.original.name}`}
             className={'w-fit'}
           >
-            <div className="flex items-center justify-start gap-2 ">
+            <div className="flex items-center justify-start gap-1 min-w-[120px]">
               <img
-                className="w-10 h-10 border rounded-full"
+                className="2xl:w-10 2xl:h-10 w-7 h-7  border rounded-full"
                 src={
                   row.original?.picture != ''
                     ? row.original?.picture
@@ -37,9 +37,9 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
               />
               <div
                 title={row.original?.name}
-                className="font-meidum text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
+                className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
-                <div className="truncate max-w-[60px] 2xl:max-w-[160px] ">
+                <div className="truncate  max-w-[80px]">
                   {row.original?.name || 'No Data'}
                 </div>
                 <FiExternalLink />

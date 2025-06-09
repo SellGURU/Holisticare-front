@@ -105,7 +105,7 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
           )}
           {table.getRowModel().rows.length > 0 ? (
             <table
-              className={`border-collapse table-auto text-sm text-left rtl:text-right w-full`}
+              className={`border-collapse table-auto text-sm text-left rtl:text-right w-full min-w-full lg:w-auto`}
             >
               <thead className="text-xs text-Text-Primary ">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -119,7 +119,7 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
                         className={`px-3 pt-5 pb-3 text-xs   font-medium cursor-pointer `}
                       >
                         <div
-                          className={`flex items-center  ${index == 0 ? 'justify-start w-[100px]' : 'justify-center '} `}
+                          className={`flex items-center  ${index == 0 ? 'justify-start' : 'justify-center '} `}
                         >
                           <div
                             className="flex items-center justify-center"
@@ -161,7 +161,7 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
                   <tr className="text-Text-Primary space-y-7  " key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <td
-                        className={`px-3 py-3 text-center text-nowrap text-xs max-w-[80px]  `}
+                        className={`px-3 py-3 text-center text-nowrap text-xs   `}
                         key={cell.id}
                       >
                         {flexRender(

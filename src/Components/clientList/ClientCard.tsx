@@ -700,9 +700,9 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="w-full flex flex-col justify-between pl-3 py-1">
+                <div className="w-full flex flex-col gap-1 justify-between pl-3 py-1">
                   <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
-                    <div className="flex w-[85px] items-center gap-1 text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
+                    <div className="flex gap-2 w-[85px] items-center  text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
@@ -710,7 +710,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.assigned_to[0]}
                     </div>
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/status.svg" alt="" />
                       Status
@@ -726,21 +726,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.status}
                     </div>
                   </div>
-                  <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex gap-2 items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
                     </div>
                     {client.sex}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
                     {client.age ? client.age + ' Years Old' : null}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
@@ -752,7 +752,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client['Check-in']}
                     </div>
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
