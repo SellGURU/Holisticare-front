@@ -95,7 +95,10 @@ export const ClientInfo = () => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <>
+        <div
+          className="w-full  overflow-y-auto pr-1"
+          style={{ height: window.innerHeight - 120 }}
+        >
           <div className="bg-backgroundColor-Card border rounded-md border-[#005F73] text-[8px] xs:text-[10px] md:text-xs text-Text-Primary border-opacity-10 p-2 flex flex-col gap-5 pt-4">
             {/* <div className="w-full flex justify-between items-center">
           <div className="text-Text-Secondary font-medium flex items-center gap-1">
@@ -271,7 +274,7 @@ export const ClientInfo = () => {
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
     </>
   );
