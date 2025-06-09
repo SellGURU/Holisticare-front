@@ -37,12 +37,12 @@ const DashBoard = () => {
       {/* Check-In Comment Modal */}
 
       {/* Check in Modal */}
-      <div className="px-6 pt-4">
+      <div className="px-6 pt-4 pb-[100px]">
         <div className="text-base font-medium text-Text-Primary mb-4">
           Dashboard
         </div>
         <NumberBoxes reports={reports}></NumberBoxes>
-        <div className="w-full  mt-4 grid gap-4 grid-cols-4">
+        <div className="w-full mt-4 grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-4">
           {/* <MessageList /> */}
           <Actions></Actions>
           <div className="col-span-2 grid gap-4">
@@ -51,10 +51,13 @@ const DashBoard = () => {
 
             <TaskManager />
           </div>
-          <div className="  grid gap-4">
-            <Clients></Clients>
-
-            <Employes></Employes>
+          <div className=" xl:grid    col-span-full xl:col-span-1 w-full flex items-start flex-wrap gap-4">
+            <div className="xl:w-full w-[calc(50%-8px)]">
+                <Clients></Clients>
+            </div>
+            <div className="xl:w-full w-[calc(50%-8px)]">
+                <Employes></Employes>
+            </div>
           </div>
         </div>
       </div>

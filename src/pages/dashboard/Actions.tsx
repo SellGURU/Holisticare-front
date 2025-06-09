@@ -74,7 +74,7 @@ const Actions: React.FC = () => {
         </div>
       ) : (
         <div
-          className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4"
+          className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-3 xl:p-4"
           style={{ height: window.innerHeight - 240 + 'px' }}
         >
           <div className="flex w-full justify-between">
@@ -101,7 +101,7 @@ const Actions: React.FC = () => {
                     : type === 'Pending'
                       ? 'rounded-tr-xl rounded-br-xl'
                       : ''
-                } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
+                } w-full text-center px-3 xl:px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
                     ? 'bg-backgroundColor-Main  border-Primary-DeepTeal'
                     : 'border-[#E2F1F8] bg-white'
@@ -114,7 +114,7 @@ const Actions: React.FC = () => {
           {filteredActions.length < 1 ? (
             <>
               <div
-                className=" w-full pr-2 flex flex-col items-center justify-center"
+                className=" w-full pr-1 xl:pr-2 flex flex-col items-center justify-center"
                 style={{ height: window.innerHeight - 370 + 'px' }}
               >
                 <img src="/icons/EmptyState2.svg" alt="" />
@@ -125,7 +125,7 @@ const Actions: React.FC = () => {
             </>
           ) : (
             <ul
-              className="mt-5 w-full overflow-y-scroll pr-2"
+              className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2"
               style={{ height: window.innerHeight - 370 + 'px' }}
             >
               {filteredActions.map((action, index) => (
@@ -133,7 +133,7 @@ const Actions: React.FC = () => {
                   key={index}
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
-                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
+                  <div className="w-full flex justify-between items-center py-1 pb-2 px-[10px] xl:px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
                     <div
                       title={action.patient_name}
                       className="truncate max-w-[160px]"
@@ -163,7 +163,7 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all px-4 ${
+                    className={`text-[10px] text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all xl:px-4 px-[10px] pr-5 ${
                       expandedCards.includes(index)
                         ? 'h-auto'
                         : 'h-[20px] overflow-hidden'
@@ -171,7 +171,7 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={`${
+                      className={` text-justify ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal max-w-[180px]'
                           : 'truncate max-w-[150px]'
