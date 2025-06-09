@@ -60,8 +60,8 @@ const RecentCheckIns: React.FC = () => {
               <thead>
                 <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
                   <th className="py-2 pl-2 rounded-tl-2xl ">Client Name</th>
-                  <th className="py-2 pl-2 text-nowrap">Enroll Date</th>
-                  <th className="py-2 px-3 rounded-tr-2xl">Progress</th>
+                  <th className="py-2  text-nowrap w-[95px] text-center">Enroll Date</th>
+                  <th className="py-2 px-3 rounded-tr-2xl w-[95px] text-center">Progress</th>
                 </tr>
               </thead>
               <tbody className="border border-t-0 border-[#E9F0F2] ">
@@ -81,10 +81,10 @@ const RecentCheckIns: React.FC = () => {
                         {client.name}
                       </div>
                     </td>
-                    <td className="py-2 pl-[10px] text-Text-Secondary text-[10px]">
+                    <td className="py-2  text-Text-Secondary text-[10px] w-[95px] text-center">
                       {formatDate(client['Enroll Date'])}
                     </td>
-                    <td className="py-2 text-Text-Secondary text-[10px]">
+                    <td className="py-2 text-Text-Secondary text-[10px] text-center w-[95px] flex justify-center">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"
