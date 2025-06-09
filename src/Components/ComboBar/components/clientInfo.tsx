@@ -1,11 +1,27 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 export const ClientInfo = () => {
   const { id } = useParams<{ id: string }>();
-  const [data, setData] = useState(null);
+  type ClientInfoType = {
+    [key: string]: any;
+    expert: string;
+    'total workouts': string;
+    'total Cardio Activities': string;
+    first_name: string;
+    last_name: string;
+    Location: string;
+    email: string;
+    'phone number': string;
+    medication: string;
+    conditions: string;
+  };
+
+  const [data, setData] = useState<ClientInfoType | null>(null);
   const [clientGoals, setClientGoals] = useState(null);
   // const [error, setError] = useState<string | null>(null);
 
@@ -100,42 +116,121 @@ export const ClientInfo = () => {
                 <img src="/icons/frame.svg" alt="" />
                 Coach
               </div>
-              {data['expert']}
+              <div data-tooltip-id={`tooltip-${data['expert']}`}>
+                {data['expert'] && data['expert'].length > 30
+                  ? data['expert'].substring(0, 30) + '...'
+                  : data['expert']}
+              </div>
+              {data['expert'] && data['expert'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-${data['expert']}`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['expert']}
+                </Tooltip>
+              )}
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/location.svg" alt="" />
                 Location{' '}
               </div>
-              {data['Location'] || 'No Data'}
+              <div data-tooltip-id={`tooltip-${data['Location']}`}>
+                {data['Location'] && data['Location'].length > 30
+                  ? data['Location'].substring(0, 30) + '...'
+                  : data['Location']}
+              </div>
+              {data['Location'] && data['Location'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-${data['Location']}`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['Location']}
+                </Tooltip>
+              )}
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/sms.svg" alt="" />
                 Email{' '}
               </div>
-              {data['email'] || 'No Data'}
+              <div data-tooltip-id={`tooltip-${data['email']}`}>
+                {data['email'] && data['email'].length > 30
+                  ? data['email'].substring(0, 30) + '...'
+                  : data['email']}
+              </div>
+              {data['email'] && data['email'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-${data['email']}`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['email']}
+                </Tooltip>
+              )}
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/call.svg" alt="" />
                 Phone
               </div>
-              {data['phone number'] || 'No Data'}
+              <div data-tooltip-id={`tooltip-${data['phone number']}`}>
+                {data['phone number'] && data['phone number'].length > 30
+                  ? data['phone number'].substring(0, 30) + '...'
+                  : data['phone number']}
+              </div>
+              {data['phone number'] && data['phone number'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-${data['phone number']}`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['phone number']}
+                </Tooltip>
+              )}
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1">
                 <img src="/icons/pill.svg" alt="" />
                 Medication
               </div>
-              {data['medication'] || 'No Data'}
+              <div data-tooltip-id={`tooltip-${data['medication']}`}>
+                {data['medication'] && data['medication'].length > 30
+                  ? data['medication'].substring(0, 30) + '...'
+                  : data['medication']}
+              </div>
+              {data['medication'] && data['medication'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-${data['medication']}`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['medication']}
+                </Tooltip>
+              )}
             </div>
             <div className="w-full flex justify-between items-center">
               <div className="text-Text-Secondary font-medium flex items-center gap-1 text-nowrap">
                 <img src="/icons/healtcare.svg" alt="" />
                 Medical Condition
               </div>
-              <div className="text-end">{data['conditions'] || 'No Data'}</div>
+              <div
+                className="text-end text-nowrap overflow-hidden text-ellipsis max-w-[150px]"
+                data-tooltip-id={`tooltip-medical-condition`}
+              >
+                {data['conditions']}
+              </div>
+              {data['conditions'] && data['conditions'].length > 30 && (
+                <Tooltip
+                  id={`tooltip-medical-condition`}
+                  place="bottom-end"
+                  className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  {data['conditions']}
+                </Tooltip>
+              )}
             </div>
           </div>
           <div className="flex flex-col mt-5">
