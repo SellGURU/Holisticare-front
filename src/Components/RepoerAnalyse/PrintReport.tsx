@@ -1150,7 +1150,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               </div>
               {transformConceringData()
                 .slice(0, 10)
-                .map((el, index) => {
+                .map((el) => {
                   return (
                     <>
                       <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
@@ -1170,7 +1170,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           style={{
                             fontSize: '12px',
                             width: '60px',
-                            color: colorsText[index % 4],
+                            // color: colorsText[index % 4],
                           }}
                         >
                           {el.Result}
@@ -1220,7 +1220,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           style={{
                             fontSize: '12px',
                             width: '60px',
-                            color: colorsText[index % 4],
+                            // color: colorsText[index % 4],
                           }}
                         >
                           {el.Changes}
