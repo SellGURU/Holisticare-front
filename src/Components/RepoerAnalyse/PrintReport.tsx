@@ -1521,7 +1521,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                         {el.data.length > 2 && (
                           <>
                             {Array.from({
-                              length: Math.ceil((el.data.length - 2) / 3)
+                              length: Math.ceil((el.data.length - 2) / 3),
                             }).map((_, index) => (
                               <div
                                 key={`treatment-plan-page-${index}`}
@@ -1535,12 +1535,14 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                   className="w-full grid gap-6 bg-white p-4 rounded-lg mb-2 rounded-tl-none"
                                   style={{ pageBreakAfter: 'always' }}
                                 >
-                                  {el.data.slice(2 + (index * 3), 2 + ((index + 1) * 3)).map((el2: any) => (
-                                    <TreatmentPlanPrint
-                                      key={el2.id || Math.random()}
-                                      data={el2}
-                                    ></TreatmentPlanPrint>
-                                  ))}
+                                  {el.data
+                                    .slice(2 + index * 3, 2 + (index + 1) * 3)
+                                    .map((el2: any) => (
+                                      <TreatmentPlanPrint
+                                        key={el2.id || Math.random()}
+                                        data={el2}
+                                      ></TreatmentPlanPrint>
+                                    ))}
                                 </div>
                                 <PrintFooter pageNumber={resolvePageNumber()} />
                               </div>
