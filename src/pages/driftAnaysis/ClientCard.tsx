@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Dispatch, SetStateAction } from 'react';
-import SvgIcon from '../../utils/svgIcon';
+import { Dispatch, FC, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SvgIcon from '../../utils/svgIcon';
+import { Tooltip } from 'react-tooltip';
 
 interface ClientCardProps {
   index: number;
@@ -17,7 +18,7 @@ interface ClientCardProps {
   isSwitch?: boolean;
 }
 
-export const ClientCard: React.FC<ClientCardProps> = ({
+export const ClientCard: FC<ClientCardProps> = ({
   name,
   email,
   picture,
@@ -80,7 +81,21 @@ export const ClientCard: React.FC<ClientCardProps> = ({
             }}
             alt=""
           />
-          <div className=" text-xs font-medium flex flex-col ">{name}</div>
+          <div
+            className="text-xs font-medium flex flex-col"
+            data-tooltip-id={`tooltip-${name}`}
+          >
+            {name.length > 15 ? name.substring(0, 15) + '...' : name}
+          </div>
+          {name.length > 15 && (
+            <Tooltip
+              id={`tooltip-${name}`}
+              place="top"
+              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+            >
+              {name}
+            </Tooltip>
+          )}
         </div>
         <div className="flex flex-col gap-1">
           <div
