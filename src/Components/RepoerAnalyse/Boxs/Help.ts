@@ -4,7 +4,7 @@
 // Helper function to find the minimum key
 const sortKeysWithValues = (
   chartBounds: any,
-): { key: string; value: [number, number] }[] => {
+): { key: string; value: [any, any] }[] => {
   // Create an array to store key-value pairs with starting values
   const rangesWithKeys: { key: string; value: [number, number] }[] = [];
 

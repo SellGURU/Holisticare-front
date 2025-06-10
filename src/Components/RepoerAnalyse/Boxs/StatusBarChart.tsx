@@ -75,11 +75,11 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   <TooltipText
                     tooltipValue={
                       data.chart_bounds[el.key].label +
-                      ' ' +
+                      ' ' +el.value[0] !=''?
                       '(' +
                       el.value[0] +
                       (el.value[1] != undefined ? ' - ' + el.value[1] : '') +
-                      ')'
+                      ')':''
                     }
                   >
                     <>
