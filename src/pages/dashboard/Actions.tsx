@@ -140,7 +140,7 @@ const Actions: React.FC = () => {
                       <Tooltip
                         id={action.patient_name}
                         className="!bg-white !w-fit  !text-wrap 
-                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        !text-[#888888] !z-[99]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                       >
                         {action.patient_name}
                       </Tooltip>

@@ -22,24 +22,24 @@
   }
 
   .clients-content {
-    height: calc(100vh - 210px);
+    height: calc(100vh - 260px);
   }
 
   .clients-table {
-    height: calc(100vh - 270px);
+    height: calc(100vh - 300px);
   }
 }
 
 @media screen and (max-width: 480px) {
   .clients-container {
-    height: calc(100vh - 160px);
+    height: calc(100vh - 210px);
   }
 
   .clients-content {
-    height: calc(100vh - 180px);
+    height: calc(100vh - 250px);
   }
 
   .clients-table {
-    height: calc(100vh - 240px);
+    height: calc(100vh - 300px);
   }
 }

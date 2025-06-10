@@ -9,13 +9,13 @@
 @media screen and (max-width: 768px) {
   .actions-empty-state,
   .actions-list {
-    height: calc(100vh - 300px);
+    height: calc(100vh - 360px);
   }
 }
 
 @media screen and (max-width: 480px) {
   .actions-empty-state,
   .actions-list {
-    height: calc(100vh - 250px);
+    height: calc(100vh - 340px);
   }
 }
