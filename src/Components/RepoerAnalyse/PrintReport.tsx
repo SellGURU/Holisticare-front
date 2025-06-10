@@ -1113,40 +1113,40 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '80px', color: '#383838' }}
                 >
                   Result
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '80px', color: '#383838' }}
                 >
                   Units
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '100px', color: '#383838' }}
                 >
                   Lab Ref Range
                 </div>
-                <div
+                {/* <div
                   className="text-gray-700 text-center font-medium "
                   style={{ fontSize: 12, width: '60px', color: '#383838' }}
                 >
                   Baseline
-                </div>
+                </div> */}
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '100px', color: '#383838' }}
                 >
                   Optimal Range
                 </div>
-                <div
+                {/* <div
                   className="text-gray-700 text-center font-medium "
                   style={{ fontSize: 12, width: '60px', color: '#383838' }}
                 >
                   Changes
-                </div>
+                </div> */}
               </div>
               {transformConceringData()
                 .slice(0, 10)
@@ -1169,7 +1169,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '80px',
                             // color: colorsText[index % 4],
                           }}
                         >
@@ -1179,7 +1179,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '80px',
                             color: '#888888',
                           }}
                         >
@@ -1189,13 +1189,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '100px',
                             color: '#888888',
                           }}
                         >
                           {el['Lab Ref Range']}
                         </div>
-                        <div
+                        {/* <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
@@ -1204,18 +1204,18 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           }}
                         >
                           {el.Baseline}
-                        </div>
+                        </div> */}
                         <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '100px',
                             color: '#888888',
                           }}
                         >
                           {el['Optimal Range']}
                         </div>
-                        <div
+                        {/* <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
@@ -1224,7 +1224,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           }}
                         >
                           {el.Changes}
-                        </div>
+                        </div> */}
                       </div>
                     </>
                   );
@@ -1271,7 +1271,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '80px',
                                       // color: colorsText[index % 4],
                                     }}
                                   >
@@ -1281,7 +1281,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '80px',
                                       color: '#888888',
                                     }}
                                   >
@@ -1291,13 +1291,13 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '100px',
                                       color: '#888888',
                                     }}
                                   >
                                     {el['Lab Ref Range']}
                                   </div>
-                                  <div
+                                  {/* <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
@@ -1306,18 +1306,18 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     }}
                                   >
                                     {el.Baseline}
-                                  </div>
+                                  </div> */}
                                   <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '100px',
                                       color: '#888888',
                                     }}
                                   >
                                     {el['Optimal Range']}
                                   </div>
-                                  <div
+                                  {/* <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
@@ -1326,7 +1326,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     }}
                                   >
                                     {el.Changes}
-                                  </div>
+                                  </div> */}
                                 </div>
                               </>
                             );
