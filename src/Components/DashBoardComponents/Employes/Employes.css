@@ -1,12 +1,11 @@
 .employees-container {
   height: calc((100vh - 240px) / 2);
-  display: flex;
-  flex-direction: column;
+
 }
 
 .employees-content {
   height: 80%;
-  flex: 1;
+
 }
 
 @media screen and (max-width: 1280px) {

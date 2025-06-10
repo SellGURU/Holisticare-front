@@ -227,7 +227,7 @@ const EmployeeRow: React.FC<{
                         className="w-8 h-8 rounded-full mr-[6px] border border-Primary-DeepTeal"
                       />
                       {client['Client Name']}
-                      {client['Client Name'].length > 40 && (
+                      {client['Client Name'].length > 15 && (
                         <Tooltip
                           place="top"
                           id={'name'}
@@ -314,15 +314,15 @@ const EmployeeRow: React.FC<{
             className="w-10 h-10 rounded-full mr-3"
           />
           <div>
-            <div className="text-[10px] text-[#383838] truncate max-w-[120px]">
-              {employee.user_name}
+            <div className="text-[10px] text-[#383838] ">
+              {employee.user_name.length > 15 ? employee.user_name.substring(0,15) : employee.user_name}
             </div>
             <p className="text-[8px] text-[#888888]">
               Role: {employee.role} <span className="mx-1">|</span> Clients
               Assigned: {employee['clients assigned']}
             </p>
           </div>
-          {employee.user_name.length > 40 && (
+          {employee.user_name.length > 15 && (
             <Tooltip
               place="top"
               id={employee.user_name}

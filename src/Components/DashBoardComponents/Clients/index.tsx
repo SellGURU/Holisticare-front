@@ -30,7 +30,7 @@ const RecentCheckIns: React.FC = () => {
     }).format(date);
   };
   return (
-    <div className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 clients-container">
+    <div className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 clients-container ">
       <div className="pb-3 pr-[8px] clients-content">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm text-Text-Primary font-medium flex items-center">
@@ -69,18 +69,18 @@ const RecentCheckIns: React.FC = () => {
                   >
                     <td
                       data-tooltip-id={client.name}
-                      className="py-2 pl-2 flex items-center text-[10px] text-Text-Primary"
+                      className="py-2 pl-2 w-[95px] flex items-center text-[10px] text-Text-Primary"
                     >
                       <img
                         src={`https://ui-avatars.com/api/?name=${client.name}`}
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
-                      <div className="truncate max-w-[160px]">
+                      <div className="">
                         {' '}
-                        {client.name}
+                        {client.name.length > 10 ? client.name.substring(0,10) + "..." : client.name}
                       </div>
-                      {client.name.length > 40 && (
+                      {client.name.length > 10 && (
                         <Tooltip
                           place="top"
                           id={client.name}
