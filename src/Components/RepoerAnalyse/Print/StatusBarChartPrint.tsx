@@ -31,9 +31,9 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
     }
     if (
       ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100 >
-      95
+      90
     ) {
-      return 95;
+      return 90;
     }
     return ((data.values[0] - el.value[0]) / (el.value[1] - el.value[0])) * 100;
   };
@@ -108,15 +108,17 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       >
                         {data.chart_bounds[el.key].label}
                       </div>
-                      <div style={{ fontSize: '8px' }}>
-                        {'' +
-                          '(' +
-                          el.value[0] +
-                          (el.value[1] != undefined
-                            ? ' - ' + el.value[1]
-                            : '') +
-                          ')'}
-                      </div>
+                      {el.value[0] != '' && (
+                        <div style={{ fontSize: '8px' }}>
+                          {'' +
+                            '(' +
+                            el.value[0] +
+                            (el.value[1] != undefined
+                              ? ' - ' + el.value[1]
+                              : '') +
+                            ')'}
+                        </div>
+                      )}
                     </div>
                   }
                 </div>
@@ -158,7 +160,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                                     sortKeysWithValues(data.chart_bounds)
                                       .length -
                                       1
-                                  ? '-54px'
+                                  ? '-60px'
                                   : '-24px',
                             color: '#005F73',
                           }}
