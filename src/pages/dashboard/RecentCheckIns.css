@@ -1,0 +1,27 @@
+.recent-checkins-container {
+  height: calc((100vh - 240px) / 2 - 16px);
+}
+
+.recent-checkins-content {
+  height: calc((100vh - 280px) / 2 - 24px);
+}
+
+@media screen and (max-width: 768px) {
+  .recent-checkins-container {
+    height: calc((100vh - 100px) / 2 - 16px);
+  }
+
+  .recent-checkins-content {
+    height: calc((100vh - 100px) / 2 - 24px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .recent-checkins-container {
+    height: calc((100vh - 160px) / 2 - 16px);
+  }
+
+  .recent-checkins-content {
+    height: calc((100vh - 170px) / 2 - 24px);
+  }
+}

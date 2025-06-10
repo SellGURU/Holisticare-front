@@ -1,0 +1,19 @@
+.task-manager-container {
+  height: calc((100vh - 240px) / 2);
+}
+
+.task-manager-content {
+  height: 85%;
+}
+
+@media screen and (max-width: 768px) {
+  .task-manager-container {
+    height: calc((100vh - 200px));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .task-manager-container {
+    height: calc(100vh - 200px);
+  }
+}

@@ -1,0 +1,21 @@
+.actions-empty-state,
+.actions-list {
+  height: calc(100vh - 370px);
+}
+.action-container {
+  height: calc(100vh - 240px);
+}
+
+@media screen and (max-width: 768px) {
+  .actions-empty-state,
+  .actions-list {
+    height: calc(100vh - 360px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .actions-empty-state,
+  .actions-list {
+    height: calc(100vh - 340px);
+  }
+}

@@ -6,7 +6,7 @@ import Legends from '../Legends';
 import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
-import UnitPopUp from '../../UnitPopup';
+// import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -242,11 +242,11 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
                                     Current Value
-                                    <div className=" z-50 mr-0">
+                                    {/* <div className=" z-50 mr-0">
                                       <UnitPopUp
                                         unit={biomarker?.unit}
                                       ></UnitPopUp>
-                                    </div>
+                                    </div> */}
                                   </div>
                                   <div className="mt-10">
                                     {biomarker && (
@@ -328,11 +328,11 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className=" my-1 md:my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
                                     Historical Data
-                                    <div className=" z-50 mr-0">
+                                    {/* <div className=" z-50 mr-0">
                                       <UnitPopUp
                                         unit={biomarker?.unit}
                                       ></UnitPopUp>
-                                    </div>
+                                    </div> */}
                                   </div>
                                   <div className="w-full">
                                     {active && (

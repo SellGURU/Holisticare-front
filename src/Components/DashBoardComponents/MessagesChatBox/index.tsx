@@ -7,6 +7,8 @@ import SvgIcon from '../../../utils/svgIcon';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
 import MainModal from '../../MainModal';
+// import TooltipText from '../../TooltipText';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 type Message = {
   date: string;
   time: string;
@@ -236,9 +238,11 @@ const MessagesChatBox = () => {
                   >
                     {username?.substring(0, 1).toUpperCase()}
                   </div>
-                  <div>
-                    <div className="text-sm font-medium text-Text-Primary">
-                      {username}
+                  <div className="w-[80%]">
+                    <div className="text-sm font-medium w-full text-Text-Primary">
+                      <TooltipTextAuto maxWidth="350px">
+                        {username}
+                      </TooltipTextAuto>
                     </div>
                     <div className="text-[10px] text-Text-Quadruple">
                       {statusParams == 'true' ? 'Online' : 'Offline'}
