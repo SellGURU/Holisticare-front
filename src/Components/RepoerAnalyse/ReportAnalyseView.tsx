@@ -578,15 +578,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
                         Lab Ref Range
                       </div>
-                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                      {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
                         Baseline
-                      </div>
+                      </div> */}
                       <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
                         Optimal Range
                       </div>
-                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                      {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
                         Changes
-                      </div>
+                      </div> */}
                     </div>
                     {ResolveConceringData().map((el: any) => {
                       return (

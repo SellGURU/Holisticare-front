@@ -37,20 +37,20 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
                     {el.Result}
                   </div>
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[120px] text-center">
-                    {el.Units}
+                    {el.Units ? el.Units : '-'}
                   </div>
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[180px] text-center">
                     {el['Lab Ref Range']}
                   </div>
-                  <div className="TextStyle-Body-3 text-Text-Primary  w-[130px] text-center">
+                  {/* <div className="TextStyle-Body-3 text-Text-Primary  w-[130px] text-center">
                     {el.Baseline}
-                  </div>
+                  </div> */}
                   <div className="TextStyle-Body-3 text-Text-Primary pl-4  w-[130px] text-center">
                     {el['Optimal Range']}
                   </div>
-                  <div className="TextStyle-Body-3 text-Text-Primary w-[130px] text-right">
+                  {/* <div className="TextStyle-Body-3 text-Text-Primary w-[130px] text-right">
                     {el.Changes}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             );
