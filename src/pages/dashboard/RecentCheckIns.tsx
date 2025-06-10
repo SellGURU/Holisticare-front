@@ -373,9 +373,7 @@ const RecentCheckIns = () => {
           </div>
         </div>
       </MainModal>
-      <div
-        className="w-full bg-white rounded-2xl shadow-200 p-4 recent-checkins-container"
-      >
+      <div className="w-full bg-white rounded-2xl shadow-200 p-4 recent-checkins-container">
         <div
           className={`${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'} pr-2 recent-checkins-content`}
         >

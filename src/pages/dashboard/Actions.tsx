@@ -115,9 +115,7 @@ const Actions: React.FC = () => {
           </div>
           {filteredActions.length < 1 ? (
             <>
-              <div
-                className="w-full pr-1 xl:pr-2 flex flex-col items-center justify-center actions-empty-state"
-              >
+              <div className="w-full pr-1 xl:pr-2 flex flex-col items-center justify-center actions-empty-state">
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
                   No Data Found
@@ -125,9 +123,7 @@ const Actions: React.FC = () => {
               </div>
             </>
           ) : (
-            <ul
-              className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2 actions-list"
-            >
+            <ul className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2 actions-list">
               {filteredActions.map((action, index) => (
                 <li
                   key={index}

@@ -78,7 +78,9 @@ const RecentCheckIns: React.FC = () => {
                       />
                       <div className="">
                         {' '}
-                        {client.name.length > 10 ? client.name.substring(0,10) + "..." : client.name}
+                        {client.name.length > 10
+                          ? client.name.substring(0, 10) + '...'
+                          : client.name}
                       </div>
                       {client.name.length > 10 && (
                         <Tooltip

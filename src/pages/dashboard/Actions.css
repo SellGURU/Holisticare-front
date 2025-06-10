@@ -2,8 +2,8 @@
 .actions-list {
   height: calc(100vh - 370px);
 }
-.action-container{
-    height: calc(100vh - 240px);
+.action-container {
+  height: calc(100vh - 240px);
 }
 
 @media screen and (max-width: 768px) {
@@ -18,4 +18,4 @@
   .actions-list {
     height: calc(100vh - 250px);
   }
-} 
+}

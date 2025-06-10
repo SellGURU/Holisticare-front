@@ -315,7 +315,9 @@ const EmployeeRow: React.FC<{
           />
           <div>
             <div className="text-[10px] text-[#383838] ">
-              {employee.user_name.length > 15 ? employee.user_name.substring(0,15) : employee.user_name}
+              {employee.user_name.length > 15
+                ? employee.user_name.substring(0, 15)
+                : employee.user_name}
             </div>
             <p className="text-[8px] text-[#888888]">
               Role: {employee.role} <span className="mx-1">|</span> Clients

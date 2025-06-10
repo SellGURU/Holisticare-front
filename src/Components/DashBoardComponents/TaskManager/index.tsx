@@ -271,9 +271,7 @@ const TaskManager = () => {
           </div>
         </div>
       </MainModal>
-      <div
-        className="w-full -mt-4 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container"
-      >
+      <div className="w-full -mt-4 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container">
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
