@@ -173,15 +173,15 @@ const resolvePosition = (name: string) => {
         top: 52,
         left: 170,
       },
-    }, 
+    },
     {
       name: 'head3',
       position: {
         top: 75,
         left: 170,
       },
-    },    
-          
+    },
+
     {
       name: 'head4',
       position: {
@@ -202,42 +202,42 @@ const resolvePosition = (name: string) => {
         top: 70,
         left: 165,
       },
-    }, 
+    },
     {
       name: 'head7',
       position: {
         top: 62,
         left: 140,
       },
-    },  
+    },
     {
       name: 'head8',
       position: {
         top: 62,
         left: 149,
       },
-    },      
+    },
     {
       name: 'head9',
       position: {
         top: 87,
         left: 138,
       },
-    },   
+    },
     {
       name: 'head10',
       position: {
         top: 92,
         left: 169,
       },
-    },    
+    },
     {
       name: 'head11',
       position: {
         top: 90,
         left: 162,
       },
-    },               
+    },
     {
       name: 'chest',
       position: {
