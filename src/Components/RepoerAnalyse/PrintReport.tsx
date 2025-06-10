@@ -1173,7 +1173,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             // color: colorsText[index % 4],
                           }}
                         >
-                          {el.Result}
+                          {el.Result!=''?el.Result:'-'}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
@@ -1193,7 +1193,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {el['Lab Ref Range']}
+                          {el['Lab Ref Range']!=''?el['Lab Ref Range']:'-'}
                         </div>
                         {/* <div
                           className=" text-gray-800 text-center"
@@ -1213,7 +1213,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             color: '#888888',
                           }}
                         >
-                          {el['Optimal Range']}
+                          {el['Optimal Range']!=''?el['Optimal Range']:'-'}
                         </div>
                         {/* <div
                           className=" text-gray-800 text-center"
@@ -1275,7 +1275,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                       // color: colorsText[index % 4],
                                     }}
                                   >
-                                    {el.Result}
+                                    {el.Result!=''?el.Result:'-'}
                                   </div>
                                   <div
                                     className=" text-gray-800 text-center"
@@ -1295,7 +1295,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                       color: '#888888',
                                     }}
                                   >
-                                    {el['Lab Ref Range']}
+                                    {el['Lab Ref Range']!=''?el['Lab Ref Range']:'-'}
                                   </div>
                                   {/* <div
                                     className=" text-gray-800 text-center"
@@ -1315,7 +1315,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                       color: '#888888',
                                     }}
                                   >
-                                    {el['Optimal Range']}
+                                    {el['Optimal Range']?el['Optimal Range']:'-'}
                                   </div>
                                   {/* <div
                                     className=" text-gray-800 text-center"
