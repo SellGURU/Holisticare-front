@@ -484,7 +484,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
 
     return groups;
   };
-  const colorsText = ['#06C78D', '#FC5474', '#06C78D', '#F4A261'];
+  // const colorsText = ['#06C78D', '#FC5474', '#06C78D', '#F4A261'];
 
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
@@ -1113,44 +1113,44 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '80px', color: '#383838' }}
                 >
                   Result
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '80px', color: '#383838' }}
                 >
                   Units
                 </div>
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '100px', color: '#383838' }}
                 >
                   Lab Ref Range
                 </div>
-                <div
+                {/* <div
                   className="text-gray-700 text-center font-medium "
                   style={{ fontSize: 12, width: '60px', color: '#383838' }}
                 >
                   Baseline
-                </div>
+                </div> */}
                 <div
                   className="text-gray-700 text-center font-medium "
-                  style={{ fontSize: 12, width: '60px', color: '#383838' }}
+                  style={{ fontSize: 12, width: '100px', color: '#383838' }}
                 >
                   Optimal Range
                 </div>
-                <div
+                {/* <div
                   className="text-gray-700 text-center font-medium "
                   style={{ fontSize: 12, width: '60px', color: '#383838' }}
                 >
                   Changes
-                </div>
+                </div> */}
               </div>
               {transformConceringData()
                 .slice(0, 10)
-                .map((el, index) => {
+                .map((el) => {
                   return (
                     <>
                       <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
@@ -1169,17 +1169,17 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
-                            color: colorsText[index % 4],
+                            width: '80px',
+                            // color: colorsText[index % 4],
                           }}
                         >
-                          {el.Result}
+                          {el.Result != '' ? el.Result : '-'}
                         </div>
                         <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '80px',
                             color: '#888888',
                           }}
                         >
@@ -1189,13 +1189,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '100px',
                             color: '#888888',
                           }}
                         >
-                          {el['Lab Ref Range']}
+                          {el['Lab Ref Range'] != ''
+                            ? el['Lab Ref Range']
+                            : '-'}
                         </div>
-                        <div
+                        {/* <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
@@ -1204,27 +1206,29 @@ const PrintReport: React.FC<PrintReportProps> = ({
                           }}
                         >
                           {el.Baseline}
-                        </div>
+                        </div> */}
                         <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
-                            width: '60px',
+                            width: '100px',
                             color: '#888888',
                           }}
                         >
-                          {el['Optimal Range']}
+                          {el['Optimal Range'] != ''
+                            ? el['Optimal Range']
+                            : '-'}
                         </div>
-                        <div
+                        {/* <div
                           className=" text-gray-800 text-center"
                           style={{
                             fontSize: '12px',
                             width: '60px',
-                            color: colorsText[index % 4],
+                            // color: colorsText[index % 4],
                           }}
                         >
                           {el.Changes}
-                        </div>
+                        </div> */}
                       </div>
                     </>
                   );
@@ -1252,7 +1256,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                       <div className="px-2 relative" style={{ zIndex: 60 }}>
                         {transformConceringData()
                           .slice(index1 * 12 + 10, index1 * 12 + 10 + 12)
-                          .map((el, index) => {
+                          .map((el) => {
                             return (
                               <>
                                 <div className="w-full  bg-white  py-3 px-3 flex justify-between items-center">
@@ -1271,17 +1275,17 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
-                                      color: colorsText[index % 4],
+                                      width: '80px',
+                                      // color: colorsText[index % 4],
                                     }}
                                   >
-                                    {el.Result}
+                                    {el.Result != '' ? el.Result : '-'}
                                   </div>
                                   <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '80px',
                                       color: '#888888',
                                     }}
                                   >
@@ -1291,13 +1295,15 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '100px',
                                       color: '#888888',
                                     }}
                                   >
-                                    {el['Lab Ref Range']}
+                                    {el['Lab Ref Range'] != ''
+                                      ? el['Lab Ref Range']
+                                      : '-'}
                                   </div>
-                                  <div
+                                  {/* <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
@@ -1306,27 +1312,29 @@ const PrintReport: React.FC<PrintReportProps> = ({
                                     }}
                                   >
                                     {el.Baseline}
-                                  </div>
+                                  </div> */}
                                   <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
-                                      width: '60px',
+                                      width: '100px',
                                       color: '#888888',
                                     }}
                                   >
-                                    {el['Optimal Range']}
+                                    {el['Optimal Range']
+                                      ? el['Optimal Range']
+                                      : '-'}
                                   </div>
-                                  <div
+                                  {/* <div
                                     className=" text-gray-800 text-center"
                                     style={{
                                       fontSize: '12px',
                                       width: '60px',
-                                      color: colorsText[index % 4],
+                                      // color: colorsText[index % 4],
                                     }}
                                   >
                                     {el.Changes}
-                                  </div>
+                                  </div> */}
                                 </div>
                               </>
                             );
@@ -1518,97 +1526,38 @@ const PrintReport: React.FC<PrintReportProps> = ({
                             );
                           })}
                         </div>
-                        <PrintFooter pageNumber={resolvePageNumber()} />
+                        {el.data.length > 2 && (
+                          <>
+                            {Array.from({
+                              length: Math.ceil((el.data.length - 2) / 3),
+                            }).map((_, index) => (
+                              <div
+                                key={`treatment-plan-page-${index}`}
+                                className="no-split relative mt-14"
+                                style={{
+                                  pageBreakAfter: 'always',
+                                  minHeight: '1020px',
+                                }}
+                              >
+                                <div
+                                  className="w-full grid gap-6 bg-white p-4 rounded-lg mb-2 rounded-tl-none"
+                                  style={{ pageBreakAfter: 'always' }}
+                                >
+                                  {el.data
+                                    .slice(2 + index * 3, 2 + (index + 1) * 3)
+                                    .map((el2: any) => (
+                                      <TreatmentPlanPrint
+                                        key={el2.id || Math.random()}
+                                        data={el2}
+                                      ></TreatmentPlanPrint>
+                                    ))}
+                                </div>
+                                <PrintFooter pageNumber={resolvePageNumber()} />
+                              </div>
+                            ))}
+                          </>
+                        )}
                       </div>
-                      {el.data.length > 2 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(2, 5).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                          <PrintFooter pageNumber={resolvePageNumber()} />
-                        </div>
-                      )}
-                      {el.data.length > 5 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(5, 8).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      {el.data.length > 8 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(8, 11).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                      {el.data.length > 11 && (
-                        <div
-                          className="no-split relative mt-14"
-                          style={{
-                            pageBreakAfter: 'always',
-                            minHeight: '1020px',
-                          }}
-                        >
-                          <div
-                            className="w-full grid gap-6  bg-white p-4 rounded-lg mb-2 rounded-tl-none"
-                            style={{ pageBreakAfter: 'always' }}
-                          >
-                            {el.data.slice(11, 13).map((el2: any) => {
-                              return (
-                                <TreatmentPlanPrint
-                                  data={el2}
-                                ></TreatmentPlanPrint>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
                     </>
                   ) : (
                     <></>
