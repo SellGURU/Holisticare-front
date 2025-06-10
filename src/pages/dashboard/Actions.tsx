@@ -3,6 +3,7 @@ import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
 import { Tooltip } from 'react-tooltip';
+import './Actions.css';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
@@ -75,7 +76,7 @@ const Actions: React.FC = () => {
         </div>
       ) : (
         <div
-          className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-3 xl:p-4"
+          className="w-full h-full overflow-hidden bg-white rounded-2xl shadow-200 p-3 xl:p-4 action-container"
           style={{ height: window.innerHeight - 240 + 'px' }}
         >
           <div className="flex w-full justify-between">
@@ -115,8 +116,7 @@ const Actions: React.FC = () => {
           {filteredActions.length < 1 ? (
             <>
               <div
-                className=" w-full pr-1 xl:pr-2 flex flex-col items-center justify-center"
-                style={{ height: window.innerHeight - 370 + 'px' }}
+                className="w-full pr-1 xl:pr-2 flex flex-col items-center justify-center actions-empty-state"
               >
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
@@ -126,8 +126,7 @@ const Actions: React.FC = () => {
             </>
           ) : (
             <ul
-              className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2"
-              style={{ height: window.innerHeight - 370 + 'px' }}
+              className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2 actions-list"
             >
               {filteredActions.map((action, index) => (
                 <li
@@ -141,14 +140,16 @@ const Actions: React.FC = () => {
                     >
                       {action.patient_name}
                     </div>
-                    {
-                      action.patient_name.length > 40 && (
-                        <Tooltip id={action.patient_name}   className="!bg-white !w-fit  !text-wrap 
-                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2">{action.patient_name}</Tooltip>
-        
-                      )
-                    }
-                
+                    {action.patient_name.length > 40 && (
+                      <Tooltip
+                        id={action.patient_name}
+                        className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      >
+                        {action.patient_name}
+                      </Tooltip>
+                    )}
+
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
                         {action.status}

@@ -216,13 +216,13 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         setFileUploaded(true);
         setFileList((prevList) => [
           ...prevList,
-          { 
-            ...fileData, 
-            Content: { 
-              ...fileData.Content, 
+          {
+            ...fileData,
+            Content: {
+              ...fileData.Content,
               file_id,
-              url: base64Data // Add the base64 data as URL for preview
-            } 
+              url: base64Data, // Add the base64 data as URL for preview
+            },
           },
         ]);
         setUploadProgress(100);
@@ -573,8 +573,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                     >
                       <div className="flex gap-2 items-start">
                         {file.Type.startsWith('image/') ? (
-                          <img 
-                            src={file.Content.url} 
+                          <img
+                            src={file.Content.url}
                             alt={file.Title}
                             className="w-6 h-6 object-cover"
                           />
@@ -583,7 +583,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                         )}
                         <div
                           className="text-xs font-semibold select-none"
-                          title={file.Title.length > 20 ? file.Title : undefined}
+                          title={
+                            file.Title.length > 20 ? file.Title : undefined
+                          }
                         >
                           {file.Title.length > 20
                             ? `${file.Title.substring(0, 20)}...`

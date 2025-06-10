@@ -42,21 +42,21 @@ const DashBoard = () => {
           Dashboard
         </div>
         <NumberBoxes reports={reports}></NumberBoxes>
-        <div className="w-full mt-4 grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-4">
+        <div className="w-full mt-4 grid gap-y-4 md:gap-y-0 md:gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-4">
           {/* <MessageList /> */}
           <Actions></Actions>
-          <div className="col-span-2 grid gap-4">
+          <div className="col-span-2 gap-y-10 md:gap-y-4 grid gap-4">
             <RecentCheckIns></RecentCheckIns>
             {/* <Reminder></Reminder> */}
 
             <TaskManager />
           </div>
-          <div className=" xl:grid    col-span-full xl:col-span-1 w-full flex items-start flex-wrap gap-4">
-            <div className="xl:w-full w-[calc(50%-8px)]">
-                <Clients></Clients>
+          <div className=" xl:grid    col-span-full xl:col-span-1 w-full flex items-start flex-wrap gap-4 md:mt-4 xl:mt-0">
+            <div className="w-full ">
+              <Clients></Clients>
             </div>
-            <div className="xl:w-full w-[calc(50%-8px)]">
-                <Employes></Employes>
+            <div className="w-full ">
+              <Employes></Employes>
             </div>
           </div>
         </div>

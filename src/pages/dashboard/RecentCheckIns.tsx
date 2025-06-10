@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { MainModal } from '../../Components';
+import './RecentCheckIns.css';
 
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
@@ -373,12 +374,10 @@ const RecentCheckIns = () => {
         </div>
       </MainModal>
       <div
-        className="w-full  bg-white rounded-2xl shadow-200 p-4"
-        style={{ height: (window.innerHeight - 240) / 2 - 16 + 'px' }}
+        className="w-full bg-white rounded-2xl shadow-200 p-4 recent-checkins-container"
       >
         <div
-          className={` ${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'}   pr-2 `}
-          style={{ height: (window.innerHeight - 280) / 2 - 24 + 'px' }}
+          className={`${CheckIns.length < 1 ? 'overflow-hidden' : 'overflow-auto'} pr-2 recent-checkins-content`}
         >
           <div className="flex  justify-between items-center mb-4">
             <h2 className="text-sm text-Text-Primary font-medium">
