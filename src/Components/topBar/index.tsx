@@ -233,7 +233,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
         <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
-      <div className="flex md:hidden items-center gap-2 xs:gap-4">
+      <div className="flex xl:hidden items-center gap-2 xs:gap-4">
         <img
           onClick={() => {
             setOpenDownload(true);
@@ -254,7 +254,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           alt=""
         />
       </div>
-      <div className=" hidden md:flex gap-10 ">
+      <div className="hidden xl:flex gap-10">
         {canDownload && (
           <div className="flex gap-3">
             <ButtonPrimary

@@ -53,9 +53,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     if (!isShare) {
       return menuItems;
     } else {
-      console.log(
-        accessManager.filter((val) => val.name == 'Action Plan')[0].checked,
-      );
       return menuItems.filter(
         (el) =>
           accessManager.filter((val) => val.name == el)[0]?.checked == true,
@@ -117,8 +114,6 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       unsubscribe('reportStatus', handleReportStatus);
     };
   }, []);
-  console.log(isReportAvailable);
-  console.log(disableClicks);
 
   return (
     <div
@@ -149,7 +144,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       </div>
       <div
         onClick={() => onClose()}
-        className="size-8 rounded-md bg-white shadow-100 py-2 px-4 flex items-center justify-center md:hidden absolute right-3 top-3 cursor-pointer"
+        className="size-8 rounded-md bg-white shadow-100 py-2 px-4 flex items-center justify-center xl:hidden absolute right-3 top-3 cursor-pointer"
       >
         <SvgIcon src="/icons/close.svg" color="#005F73" />
       </div>
