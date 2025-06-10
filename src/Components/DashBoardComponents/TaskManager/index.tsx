@@ -9,6 +9,8 @@ import MainModal from '../../MainModal';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TextField from '../../TextField';
 import SpinnerLoader from '../../SpinnerLoader';
+import { Tooltip } from 'react-tooltip';
+import './TaskManager.css';
 // Define the new Task type
 type Task = {
   task_id?: string;
@@ -269,10 +271,7 @@ const TaskManager = () => {
           </div>
         </div>
       </MainModal>
-      <div
-        className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden"
-        style={{ height: (window.innerHeight - 240) / 2 + 'px' }}
-      >
+      <div className="w-full -mt-4 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container">
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
@@ -289,14 +288,14 @@ const TaskManager = () => {
           </ButtonPrimary>
         </div>
         {tasks.length < 1 ? (
-          <div className=" w-full h-full flex flex-col items-center justify-center">
+          <div className="w-full h-full flex flex-col items-center justify-center">
             <img src="/icons/NoTask.svg" alt="" />
             <div className="text-xs text-Text-Primary -mt-4 text-center">
               No Data Found
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3  overflow-auto h-[80%]">
+          <ul className="grid grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
             {tasks.map((task) => (
               <li
                 key={task.task_id}
@@ -347,11 +346,22 @@ const TaskManager = () => {
                     )}
 
                     <div
-                      className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
+                      data-tooltip-id={task.title}
+                      className={`text-[10px] truncate max-w-[120px] mr-2 ${
                         task.checked ? 'line-through' : ''
                       }`}
                     >
                       {task.title}
+                      {task.title.length > 40 && (
+                        <Tooltip
+                          place="top"
+                          id={task.title}
+                          className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888] !z-[99]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {task.title}
+                        </Tooltip>
+                      )}
                     </div>
                   </label>
 

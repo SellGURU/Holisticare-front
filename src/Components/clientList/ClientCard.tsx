@@ -10,6 +10,7 @@ import { ArchiveModal } from './ArchiveModal.tsx';
 import { DeleteModal } from './deleteModal.tsx';
 import MainModal from '../MainModal/index.tsx';
 import Checkbox from '../checkbox/index.tsx';
+import { Tooltip } from 'react-tooltip';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -635,10 +636,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
             className="pl-2 flex flex-col mt-4 cursor-default"
           >
             <div
-              title={client.name}
+              data-tooltip-id={client.name}
               className="text-Text-Primary truncate max-w-[160px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              {client.name}
+              {client.name.length > 20
+                ? client.name.substring(0, 20) + '...'
+                : client.name}
+              {client.name.length > 20 && (
+                <Tooltip
+                  place="top"
+                  id={client.name}
+                  className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                >
+                  {client.name}
+                </Tooltip>
+              )}
             </div>
             {/* <div className="text-Text-Secondary text-[10px] sm:text-[12px]">
               {client.age} years{' '}
@@ -710,7 +722,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.assigned_to[0]}
                     </div>
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/status.svg" alt="" />
                       Status
@@ -726,21 +738,21 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client.status}
                     </div>
                   </div>
-                  <div className="flex items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex gap-2 items-center w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/client-card/Gender-man.svg" alt="" />
                       Gender
                     </div>
                     {client.sex}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center gap-1 w-[85px] text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/happyemoji.svg" alt="" />
                       Age
                     </div>
                     {client.age ? client.age + ' Years Old' : null}
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-nowrap text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/sms-edit-2.svg" alt="" />
                       Check-in
@@ -752,16 +764,25 @@ const ClientCard: React.FC<ClientCardProps> = ({
                       {client['Check-in']}
                     </div>
                   </div>
-                  <div className="flex w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
+                  <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
                     <div className="flex items-center w-[85px] gap-1 text-Text-Secondary text-[8px] sm:text-[10px] cursor-default">
                       <img src="/icons/note-2.svg" alt="" />
                       Questionnaire
                     </div>
                     <div
                       className="text-nowrap max-w-[100px] truncate cursor-default"
-                      title={client.Questionary}
+                      data-tooltip-id={client.Questionary}
                     >
                       {client.Questionary}
+                      {client.Questionary.length > 15 && (
+                        <Tooltip
+                          place="top"
+                          id={client.Questionary}
+                          className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {client.Questionary}
+                        </Tooltip>
+                      )}
                     </div>
                   </div>
                 </div>

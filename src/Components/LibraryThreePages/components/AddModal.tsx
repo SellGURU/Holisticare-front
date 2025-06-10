@@ -518,11 +518,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs ||
-                        errors.macros.Protein ||
-                        errors.macros.Fats
-                          ? 'border-Red'
-                          : 'border-Gray-50'
+                        errors.macros.Carbs ? 'border-Red' : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
@@ -585,11 +581,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs ||
-                        errors.macros.Protein ||
-                        errors.macros.Fats
-                          ? 'border-Red'
-                          : 'border-Gray-50'
+                        errors.macros.Protein ? 'border-Red' : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
@@ -649,11 +641,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs ||
-                        errors.macros.Protein ||
-                        errors.macros.Fats
-                          ? 'border-Red'
-                          : 'border-Gray-50'
+                        errors.macros.Fats ? 'border-Red' : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>

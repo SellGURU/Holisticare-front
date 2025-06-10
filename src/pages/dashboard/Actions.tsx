@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
+import { Tooltip } from 'react-tooltip';
+import './Actions.css';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
@@ -74,7 +76,7 @@ const Actions: React.FC = () => {
         </div>
       ) : (
         <div
-          className="w-full h-full  overflow-hidden bg-white rounded-2xl shadow-200 p-4"
+          className="w-full h-full overflow-hidden bg-white rounded-2xl shadow-200 p-3 xl:p-4 action-container"
           style={{ height: window.innerHeight - 240 + 'px' }}
         >
           <div className="flex w-full justify-between">
@@ -101,7 +103,7 @@ const Actions: React.FC = () => {
                     : type === 'Pending'
                       ? 'rounded-tr-xl rounded-br-xl'
                       : ''
-                } w-full text-center px-4 py-2 border text-xs cursor-pointer ${
+                } w-full text-center px-3 xl:px-4 py-2 border text-xs cursor-pointer ${
                   filter === type
                     ? 'bg-backgroundColor-Main  border-Primary-DeepTeal'
                     : 'border-[#E2F1F8] bg-white'
@@ -113,10 +115,7 @@ const Actions: React.FC = () => {
           </div>
           {filteredActions.length < 1 ? (
             <>
-              <div
-                className=" w-full pr-2 flex flex-col items-center justify-center"
-                style={{ height: window.innerHeight - 370 + 'px' }}
-              >
+              <div className="w-full pr-1 xl:pr-2 flex flex-col items-center justify-center actions-empty-state">
                 <img src="/icons/EmptyState2.svg" alt="" />
                 <div className="text-xs text-Text-Primary -mt-4 text-center">
                   No Data Found
@@ -124,22 +123,28 @@ const Actions: React.FC = () => {
               </div>
             </>
           ) : (
-            <ul
-              className="mt-5 w-full overflow-y-scroll pr-2"
-              style={{ height: window.innerHeight - 370 + 'px' }}
-            >
+            <ul className="mt-5 w-full overflow-y-scroll pr-1 xl:pr-2 actions-list">
               {filteredActions.map((action, index) => (
                 <li
                   key={index}
                   className="mb-5 rounded-xl pb-2 bg-white border border-Gray-50 shadow-100 w-full "
                 >
-                  <div className="w-full flex justify-between items-center py-1 pb-2 px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
+                  <div className="w-full flex justify-between items-center py-1 pb-2 px-[10px] xl:px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
                     <div
-                      title={action.patient_name}
+                      data-tooltip-id={action.patient_name}
                       className="truncate max-w-[160px]"
                     >
                       {action.patient_name}
                     </div>
+                    {action.patient_name.length > 40 && (
+                      <Tooltip
+                        id={action.patient_name}
+                        className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888] !z-[99]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                      >
+                        {action.patient_name}
+                      </Tooltip>
+                    )}
 
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
@@ -163,7 +168,7 @@ const Actions: React.FC = () => {
                     </div>
                   </div>
                   <div
-                    className={`text-[10px] text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all px-4 ${
+                    className={`text-[10px] text-Text-Secondary flex items-start justify-between gap-4 mt-2 transition-all xl:px-4 px-[10px] pr-5 ${
                       expandedCards.includes(index)
                         ? 'h-auto'
                         : 'h-[20px] overflow-hidden'
@@ -171,7 +176,7 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={`${
+                      className={` text-justify ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal '
                           : 'truncate '
