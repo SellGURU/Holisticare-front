@@ -3,6 +3,7 @@ import Application from '../../../api/app';
 import Circleloader from '../../CircleLoader';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Toggle from '../../Toggle';
+import { Tooltip } from 'react-tooltip';
 
 type Message = {
   name: string;
@@ -162,8 +163,19 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
                     <div className="w-full flex flex-col justify-center">
                       <div className="flex items-center justify-between flex-wrap">
                         <div>
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            {message.name}
+                          <div data-tooltip-id={message.name} className="text-[10px] font-medium text-Text-Primary">
+                            {message.name.length > 25 ? message.name.substring(0,25) + "..." : message.name}
+                            {
+                              message.name.length > 25 && (
+                                <Tooltip
+                                place="top"
+                                id={message.name}
+                                className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !z-[99] !border-Gray-50 !p-2"
+                              >
+                                {message.name}
+                              </Tooltip>
+                              )
+                            }
                           </div>
                           {expandedMessage === message.member_id && (
                             <div className="text-[8px] text-Text-Secondary mt-1">

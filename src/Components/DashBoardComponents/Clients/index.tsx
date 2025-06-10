@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CircularProgressBar from '../../charts/CircularProgressBar';
 import DashboardApi from '../../../api/Dashboard';
+import { Tooltip } from 'react-tooltip';
 
 type client = {
   picture: string;
@@ -60,8 +61,12 @@ const RecentCheckIns: React.FC = () => {
               <thead>
                 <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
                   <th className="py-2 pl-2 rounded-tl-2xl ">Client Name</th>
-                  <th className="py-2  text-nowrap w-[95px] text-center">Enroll Date</th>
-                  <th className="py-2 px-3 rounded-tr-2xl w-[95px] text-center">Progress</th>
+                  <th className="py-2  text-nowrap w-[95px] text-center">
+                    Enroll Date
+                  </th>
+                  <th className="py-2 px-3 rounded-tr-2xl w-[95px] text-center">
+                    Progress
+                  </th>
                 </tr>
               </thead>
               <tbody className="border border-t-0 border-[#E9F0F2] ">
@@ -70,17 +75,32 @@ const RecentCheckIns: React.FC = () => {
                     key={index}
                     className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-Text-Primary border-b`}
                   >
-                    <td className="py-2 pl-2 flex items-center text-[10px] text-Text-Primary">
+                    <td  data-tooltip-id={client.name} className="py-2 pl-2 flex items-center text-[10px] text-Text-Primary">
                       <img
                         src={`https://ui-avatars.com/api/?name=${client.name}`}
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
-                      <div className="truncate max-w-[160px]">
+                      <div
+                       
+                        className="truncate max-w-[160px]"
+                      >
                         {' '}
                         {client.name}
+                     
                       </div>
+                      {client.name.length > 40 && (
+                          <Tooltip
+                            place="top"
+                            id={client.name}
+                            className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          >
+                            {client.name}
+                          </Tooltip>
+                        )}
                     </td>
+                   
                     <td className="py-2  text-Text-Secondary text-[10px] w-[95px] text-center">
                       {formatDate(client['Enroll Date'])}
                     </td>

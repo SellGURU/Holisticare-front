@@ -9,6 +9,7 @@ import MainModal from '../../MainModal';
 import SimpleDatePicker from '../../SimpleDatePicker';
 import TextField from '../../TextField';
 import SpinnerLoader from '../../SpinnerLoader';
+import { Tooltip } from 'react-tooltip';
 // Define the new Task type
 type Task = {
   task_id?: string;
@@ -347,11 +348,22 @@ const TaskManager = () => {
                     )}
 
                     <div
-                      className={`text-[10px] max-w-[120px] overflow-hidden whitespace-nowrap text-ellipsis mr-2 ${
+                      data-tooltip-id={task.title}
+                      className={`text-[10px] truncate max-w-[120px] mr-2 ${
                         task.checked ? 'line-through' : ''
                       }`}
                     >
                       {task.title}
+                      {task.title.length > 40 && (
+                        <Tooltip
+                          place="top"
+                          id={task.title}
+                          className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {task.title}
+                        </Tooltip>
+                      )}
                     </div>
                   </label>
 

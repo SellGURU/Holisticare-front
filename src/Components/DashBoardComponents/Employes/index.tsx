@@ -4,6 +4,7 @@ import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import MainModal from '../../MainModal';
 import DashboardApi from '../../../api/Dashboard';
 import Application from '../../../api/app';
+import { Tooltip } from 'react-tooltip';
 interface Staff {
   picture: string;
   user_name: string;
@@ -65,7 +66,9 @@ const Employes: React.FC = () => {
   return (
     <div
       className="w-full  overflow-hidden bg-white xl:-mt-4 rounded-2xl shadow-200 p-4 "
-      style={{ height: `${((window.innerHeight - 240) / 2) - (window.innerWidth < 1280 ? 16 : 0)}px` }}
+      style={{
+        height: `${(window.innerHeight - 240) / 2 - (window.innerWidth < 1280 ? 16 : 0)}px`,
+      }}
     >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
@@ -217,13 +220,26 @@ const EmployeeRow: React.FC<{
                     key={index}
                     className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b w-full `}
                   >
-                    <td className=" w-[120px] py-1 pl-3 flex items-center text-[10px] text-Text-Primary">
+                    <td
+                      data-tooltip-id={client['Client Name']}
+                      className=" w-[120px] truncate max-w-[120px] py-1 pl-3 flex items-center text-[10px] text-Text-Primary"
+                    >
                       <img
                         src={`https://ui-avatars.com/api/?name=${client['Client Name']}`}
                         alt={client['Client Name']}
                         className="w-8 h-8 rounded-full mr-[6px] border border-Primary-DeepTeal"
                       />
                       {client['Client Name']}
+                      {client['Client Name'].length > 40 && (
+                        <Tooltip
+                          place="top"
+                          id={'name'}
+                          className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {client['Client Name']}
+                        </Tooltip>
+                      )}
                     </td>
                     <td className="py-1  text-center text-[10px] text-[#888888] ">
                       {client.ID}
@@ -288,7 +304,7 @@ const EmployeeRow: React.FC<{
         </div>
       </MainModal>
       <li key={index} className=" relative flex items-center justify-between">
-        <div className="flex items-center ">
+        <div  data-tooltip-id={employee.user_name} className="flex items-center ">
           <img
             src={
               employee.picture ||
@@ -298,12 +314,28 @@ const EmployeeRow: React.FC<{
             className="w-10 h-10 rounded-full mr-3"
           />
           <div>
-            <p className="text-[10px] text-[#383838]">{employee.user_name}</p>
+            <div
+             
+              className="text-[10px] text-[#383838] truncate max-w-[120px]"
+            >
+              {employee.user_name}
+            
+            </div>
             <p className="text-[8px] text-[#888888]">
               Role: {employee.role} <span className="mx-1">|</span> Clients
               Assigned: {employee['clients assigned']}
             </p>
           </div>
+          {employee.user_name.length > 40 && (
+                <Tooltip
+                  place="top"
+                  id={employee.user_name}
+                  className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                >
+                  {employee.user_name}
+                </Tooltip>
+              )}
         </div>
         <img
           ref={moreRef}

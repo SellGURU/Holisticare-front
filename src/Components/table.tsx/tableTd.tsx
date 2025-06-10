@@ -7,6 +7,7 @@ import Badge from '../badge';
 // import { useSelector } from "react-redux";
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
+import { Tooltip } from 'react-tooltip';
 // import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
@@ -20,7 +21,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       console.log(row.original);
 
       return (
-        <div>
+        <div className='w-[150px]'>
           <Link
             to={`/report/${row.original.member_id}/${row.original.name}`}
             className={'w-fit'}
@@ -36,13 +37,23 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 alt={`${row.original?.name} image`}
               />
               <div
-                title={row.original?.name}
+                data-tooltip-id={row.original?.name}
                 className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
-                <div className="truncate  max-w-[80px]">
-                  {row.original?.name || 'No Data'}
+                <div className="truncate  max-w-[120px]">
+                  {row.original?.name.length > 20 ? row.original?.name.substring(0,20) : row.original?.name || 'No Data'}
                 </div>
                 <FiExternalLink />
+                {row.original?.name.length > 20 && (
+                        <Tooltip
+                          place="top"
+                          id={row.original?.name}
+                          className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {row.original?.namee}
+                        </Tooltip>
+                      )}
               </div>
             </div>
           </Link>
@@ -188,12 +199,22 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Questionnaire',
     enableSorting: false,
     cell: ({ row }) => {
+      const questionnaire = row.original['Questionary'] || 'NO Data';
       return (
         <div
-          title={row.original['Questionary']}
-          className="text-xs text-Text-Secondary truncate  "
+          data-tooltip-id={questionnaire}
+          className="text-xs text-Text-Secondary text-center"
         >
-          {row.original['Questionary'] || 'NO Data'}
+          {questionnaire.length > 40 ? questionnaire.substring(0, 40) + "..." : questionnaire}
+          {questionnaire.length > 40 && (
+            <Tooltip
+              place="top"
+              id={questionnaire}
+              className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            >
+              {questionnaire}
+            </Tooltip>
+          )}
         </div>
       );
     },

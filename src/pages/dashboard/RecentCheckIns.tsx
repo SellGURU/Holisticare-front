@@ -7,6 +7,7 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
 import Checkin from '../CheckIn';
 import DashboardApi from '../../api/Dashboard';
+import { Tooltip } from 'react-tooltip';
 
 type CheckIn = {
   name: string;
@@ -419,13 +420,23 @@ const RecentCheckIns = () => {
                     key={index}
                     className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b`}
                   >
-                    <td className="py-2 pl-3 flex items-center text-[10px] text-Text-Primary">
+                    <td className="py-2 pl-3 flex items-center text-[10px] text-Text-Primary max-w-[120px]">
                       <img
                         src={`https://ui-avatars.com/api/?name=${checkIn.name}`}
                         alt={checkIn.name}
                         className="w-8 h-8 rounded-full mr-[6px] border border-Primary-DeepTeal"
                       />
                       {checkIn.name}
+                      {checkIn.name.length > 40 && (
+                        <Tooltip
+                          place="top"
+                          id={'name'}
+                          className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {checkIn.name}
+                        </Tooltip>
+                      )}
                     </td>
                     <td className="py-2 text-Text-Secondary text-[10px]">
                       {checkIn.Type}

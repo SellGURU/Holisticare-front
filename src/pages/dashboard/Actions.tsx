@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
+import { Tooltip } from 'react-tooltip';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
@@ -135,12 +136,19 @@ const Actions: React.FC = () => {
                 >
                   <div className="w-full flex justify-between items-center py-1 pb-2 px-[10px] xl:px-4 bg-backgroundColor-Card border-b border-Gray-50 text-[10px]  font-medium text-Text-Primary rounded-t-xl">
                     <div
-                      title={action.patient_name}
+                      data-tooltip-id={action.patient_name}
                       className="truncate max-w-[160px]"
                     >
                       {action.patient_name}
                     </div>
-
+                    {
+                      action.patient_name.length > 40 && (
+                        <Tooltip id={action.patient_name}   className="!bg-white !w-fit  !text-wrap 
+                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2">{action.patient_name}</Tooltip>
+        
+                      )
+                    }
+                
                     {/* <div className="px-2 rounded-full flex h-[14px] bg-orange-200 items-center text-[8px] text-Text-Primary gap-[2px]">
                         <div className="rounded-full size-2 bg-red-500"></div>
                         {action.status}
