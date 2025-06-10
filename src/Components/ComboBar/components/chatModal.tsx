@@ -97,7 +97,7 @@ export const ChatModal: FC<ChatModalProps> = ({ memberId }) => {
           style={{ height: window.innerHeight - 120 + 'px' }}
         >
           {' '}
-          <div className="w-full  flex flex-col items-center justify-center h-[533px]  ">
+          <div className="w-full  flex flex-col items-center justify-center h-[533px]">
             <img src="/icons/EmptyInbox.svg" alt="" />
             <div className="text-Text-Primary font-medium text-xs">
               No history found.
