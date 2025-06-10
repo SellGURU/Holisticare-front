@@ -238,9 +238,9 @@ const MessagesChatBox = () => {
                   >
                     {username?.substring(0, 1).toUpperCase()}
                   </div>
-                  <div className='w-[80%]'>
+                  <div className="w-[80%]">
                     <div className="text-sm font-medium w-full text-Text-Primary">
-                      <TooltipTextAuto maxWidth='350px'     >
+                      <TooltipTextAuto maxWidth="350px">
                         {username}
                       </TooltipTextAuto>
                     </div>

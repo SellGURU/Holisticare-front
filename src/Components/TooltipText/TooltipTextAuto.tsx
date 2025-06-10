@@ -13,11 +13,13 @@ const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
   children,
   maxWidth = '200px',
   tooltipPlace = 'top',
-  tooltipClassName = '!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]'
+  tooltipClassName = '!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]',
 }) => {
   const textRef = useRef<HTMLDivElement>(null);
   const [isEllipsized, setIsEllipsized] = useState(false);
-  const [tooltipId] = useState(() => `tooltip-${Math.random().toString(36).substr(2, 9)}`);
+  const [tooltipId] = useState(
+    () => `tooltip-${Math.random().toString(36).substr(2, 9)}`,
+  );
 
   useEffect(() => {
     if (textRef.current) {
@@ -36,7 +38,7 @@ const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
           maxWidth,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
         }}
       >
         {children}
