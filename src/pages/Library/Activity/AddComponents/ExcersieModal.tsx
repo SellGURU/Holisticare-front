@@ -194,20 +194,42 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       };
 
       // Start the progress bar
-      setUploadProgress(10); // Start at 10% to indicate the start of the process
+      setUploadProgress(10);
       const incrementProgress = setInterval(() => {
         setUploadProgress((prevProgress) => {
           if (prevProgress >= 90) {
             clearInterval(incrementProgress);
             return prevProgress;
           }
-          return prevProgress + 10; // Increment progress during the wait
+          return prevProgress + 10;
         });
       }, 500);
 
-      // Upload the file and wait for the response
       try {
-        await uploadFile(fileData);
+        const response = await Application.saveExcerciseFille({
+          file_name: fileData.Title,
+          base_64_data: fileData.base64Data,
+          file_type: fileData.Type,
+        });
+
+        const { file_id } = response.data;
+        setFileUploaded(true);
+        setFileList((prevList) => [
+          ...prevList,
+          {
+            ...fileData,
+            Content: {
+              ...fileData.Content,
+              file_id,
+              url: base64Data, // Add the base64 data as URL for preview
+            },
+          },
+        ]);
+        setUploadProgress(100);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        setUploadProgress(0);
+        setFileError('Error uploading file. Please try again.');
       } finally {
         clearInterval(incrementProgress);
       }
@@ -227,27 +249,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     });
   };
 
-  const uploadFile = async (fileData: FileData) => {
-    try {
-      const response = await Application.saveExcerciseFille({
-        file_name: fileData.Title,
-        base_64_data: fileData.base64Data,
-        file_type: fileData.Type,
-      });
-
-      const { file_id } = response.data;
-      // Update file with fileId after uploading
-      setFileUploaded(true);
-      setFileList((prevList) => [
-        ...prevList,
-        { ...fileData, Content: { ...fileData.Content, file_id } },
-      ]);
-      setUploadProgress(100); // Set progress to 100% once complete
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setUploadProgress(0); // Reset progress on error
-    }
-  };
   const removeFile = (Title: string) => {
     setFileList((prevList) => prevList.filter((file) => file.Title !== Title));
     setFileUploaded(false);
@@ -342,7 +343,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               type="text"
               newStyle
               label="Title"
-              placeholder="Write the exercise’s title..."
+              placeholder="Write the exercise's title..."
               value={formik.values.title}
               onChange={(e) => {
                 formik.setFieldValue('title', e.target.value);
@@ -382,7 +383,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               type="text"
               newStyle
               label="Description"
-              placeholder="Write the exercise’s description..."
+              placeholder="Write the exercise's description..."
               value={description}
               largeHeight
               onChange={(e) => setDescription(e.target.value)}
@@ -424,7 +425,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             {/* <TextField
               newStyle
               type="text"
-              placeholder="Write the exercise’s Instruction..."
+              placeholder="Write the exercise's Instruction..."
               label="Instruction"
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
@@ -514,12 +515,10 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             >
               <input
                 type="file"
-                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv"
+                accept="video/mp4,video/mov,video/avi,video/mkv,video/wmv,image/png,image/svg+xml,image/jpeg,image/jpg"
                 style={{ display: 'none' }}
                 id="video-upload"
                 onChange={handleFileUpload}
-
-                // onChange={handleFileChange}
               />
               <img src="/icons/upload-test.svg" alt="" />
               <div className="text-[10px] text-[#B0B0B0] text-center">
@@ -569,21 +568,29 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   .filter((file) => file.Type !== 'link') // Filter out YouTube links
                   .map((file) => (
                     <div
-                      key={file.Type}
+                      key={file.Title}
                       className="rounded-xl border border-Gray-50 py-3 px-4 bg-white drop-shadow-sm w-full flex justify-between"
                     >
                       <div className="flex gap-2 items-start">
-                        <img src="/icons/pngwing.com (4) 2.svg" alt="" />
+                        {file.Type.startsWith('image/') ? (
+                          <img
+                            src={file.Content.url}
+                            alt={file.Title}
+                            className="w-6 h-6 object-cover"
+                          />
+                        ) : (
+                          <img src="/icons/pngwing.com (4) 2.svg" alt="" />
+                        )}
                         <div
                           className="text-xs font-semibold select-none"
                           title={
                             file.Title.length > 20 ? file.Title : undefined
-                          } // Tooltip for long titles
+                          }
                         >
                           {file.Title.length > 20
                             ? `${file.Title.substring(0, 20)}...`
                             : file.Title}
-                        </div>{' '}
+                        </div>
                       </div>
                       <img
                         onClick={() => removeFile(file.Title)}
