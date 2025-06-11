@@ -95,6 +95,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   </TooltipText>
                 </div>
                 {el.value[1] != undefined &&
+                data.status[0] == el.key &&
                 data.chart_bounds[el.key].label.toLowerCase() !=
                   data.values[0].toLowerCase() ? (
                   <>

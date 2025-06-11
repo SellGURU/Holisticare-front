@@ -8,7 +8,7 @@ import ConceringRow from './Boxs/ConceringRow';
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
 // import Point from "./Point"
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
@@ -389,6 +389,23 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
+  const memoizedPoints = useMemo(() => {
+    return resolveCategories().map((el: any, index: number) => (
+      <Point
+        key={`${el.subcategory}-${index}`}
+        name={el.subcategory}
+        status={resolveStatusArray(el.status)}
+        onClick={() => {
+          document.getElementById(el.subcategory)?.scrollIntoView({
+            behavior: 'smooth',
+          });
+        }}
+        top={resolvePosition(el.position).top}
+        left={resolvePosition(el.position).left}
+      />
+    ));
+  }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
+
   return (
     <>
       {loading ? (
@@ -431,29 +448,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="relative hidden xl:block">
                     <img className="" src="/human.png" alt="" />
-                    <div>
-                      {resolveCategories().map((el: any, index: number) => {
-                        return (
-                          <>
-                            <Point
-                              key={index}
-                              name={el.subcategory}
-                              status={resolveStatusArray(el.status)}
-                              onClick={() => {
-                                // setSummaryBOxCategory(el.name)
-                                document
-                                  .getElementById(el.subcategory)
-                                  ?.scrollIntoView({
-                                    behavior: 'smooth',
-                                  });
-                              }}
-                              top={resolvePosition(el.position).top}
-                              left={resolvePosition(el.position).left}
-                            ></Point>
-                          </>
-                        );
-                      })}
-                    </div>
+                    <div>{memoizedPoints}</div>
                   </div>
                 </div>
 
@@ -746,7 +741,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {' '}
                       <Circleloader></Circleloader>
                       <div className="text-Text-Primary TextStyle-Body-1 mt-3 text-center">
-                        We’re analyzing your test results to create a detailed
+                        We're analyzing your test results to create a detailed
                         health plan. This may take a moment.
                       </div>
                     </div>
