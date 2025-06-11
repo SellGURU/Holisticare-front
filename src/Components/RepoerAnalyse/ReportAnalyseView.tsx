@@ -396,17 +396,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         name={el.subcategory}
         status={resolveStatusArray(el.status)}
         onClick={() => {
-          document
-            .getElementById(el.subcategory)
-            ?.scrollIntoView({
-              behavior: 'smooth',
-            });
+          document.getElementById(el.subcategory)?.scrollIntoView({
+            behavior: 'smooth',
+          });
         }}
         top={resolvePosition(el.position).top}
         left={resolvePosition(el.position).left}
       />
     ));
-  }, [resolvedMemberID,ClientSummaryBoxs]); // Only re-render when memberID changes
+  }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
 
   return (
     <>
@@ -450,9 +448,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="relative hidden xl:block">
                     <img className="" src="/human.png" alt="" />
-                    <div>
-                      {memoizedPoints}
-                    </div>
+                    <div>{memoizedPoints}</div>
                   </div>
                 </div>
 
