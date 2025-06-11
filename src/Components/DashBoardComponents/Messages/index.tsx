@@ -19,9 +19,10 @@ type Message = {
 
 interface MessageListProps {
   search: string;
+  onSelectMessage: (messageId: string | null) => void;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ search }) => {
+const MessageList: React.FC<MessageListProps> = ({ search, onSelectMessage }) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
@@ -30,11 +31,14 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
+
   useEffect(() => {
     if (id != undefined) {
       setExpandedMessage(parseInt(id));
+      onSelectMessage(id);
     }
-  }, [id]);
+  }, [id, onSelectMessage]);
+
   const messagesUsersList = () => {
     Application.messagesUsersList()
       .then((res) => {
@@ -86,9 +90,11 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
     status: boolean,
   ) => {
     navigate(`?id=${id}&username=${username}&status=${status}`);
+    onSelectMessage(id);
   };
   const handleClickAgainMessage = () => {
     navigate(``);
+    onSelectMessage(null);
   };
   const hexToRGBA = (hex: string, opacity: number = 1) => {
     hex = hex.replace('#', '');
@@ -104,8 +110,8 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="w-[315px] h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
-          <div className="w-full flex mt-2">
+        <div className=" w-full md:w-[315px] h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+          <div className="w-full flex justify-center mt-2">
             <Toggle
               active={filter}
               setActive={setFilter}
@@ -186,25 +192,6 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
                             </div>
                           )}
                         </div>
-
-                        {/* {expandedMessage === message.member_id ? (
-                          <div className="flex items-center gap-1">
-                            <img
-                              className="w-4 h-4 object-contain"
-                              src="/icons/reply-svgrepo-com (1) 1.svg"
-                              alt=""
-                            />
-                            <img
-                              className="w-4 h-4 object-contain"
-                              src="/icons/delete.svg"
-                              alt=""
-                            />
-                          </div>
-                        ) : (
-                          <div className="text-[8px] text-Text-Secondary">
-                            {message.Date}
-                          </div>
-                        )} */}
                       </div>
                       <div
                         className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${
@@ -213,20 +200,8 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
                       >
                         {message.message}
                       </div>
-
-                      {/* <button
-                className="ml-3 text-blue-500"
-                onClick={() => setExpandedMessage(expandedMessage === message.id ? null : message.id)}
-              >
-                {expandedMessage === message.id ? '-' : '+'}
-              </button> */}
                     </div>
                   </div>
-                  {/* {expandedMessage === message.id && (
-              <div className="mt-2 text-sm text-gray-700">
-                Detailed message content goes here...
-              </div>
-            )} */}
                 </li>
               );
             })}
@@ -238,3 +213,4 @@ const MessageList: React.FC<MessageListProps> = ({ search }) => {
 };
 
 export default MessageList;
+
