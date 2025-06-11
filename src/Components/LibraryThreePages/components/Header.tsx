@@ -23,11 +23,11 @@ const HeaderLibraryTreePages: FC<HeaderLibraryTreePagesProps> = ({
           {pageType}
         </div>
       ) : (
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between flex-wrap gap-5">
           <div className="text-Text-Primary font-medium text-base">
             {pageType}
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 flex-wrap">
             <SearchBox
               ClassName="rounded-xl !h-8 !min-w-[283px] !py-[0px] !px-3 !shadow-[unset]"
               placeHolder={`Search in ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}...`}

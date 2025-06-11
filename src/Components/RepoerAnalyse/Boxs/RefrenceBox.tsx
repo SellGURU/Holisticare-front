@@ -12,10 +12,10 @@ import StatusBarChart from './StatusBarChart';
 import HistoricalChart from '../HistoricalChart';
 interface RefrenceBoxProps {
   data: any;
+  index: number;
 }
 
-const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
-  console.log(data);
+const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   const [isCheced, setIsCheced] = useState(false);
   const isLongName = data.name.length > 23;
   // console.log(data.name);
@@ -23,7 +23,6 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
 
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
-  console.log(data.values);
 
   const isChartDataEmpty = !data.values.some(
     (value: string) => !isNaN(parseFloat(value)),
@@ -38,15 +37,20 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data }) => {
         <div className="flex justify-between items-center">
           <div className="text-Text-Primary text-xs md:text-sm font-medium  md:items-center cursor-default gap-4 md:gap-2 flex flex-col md:flex-row justify-start  ">
             <div
-              {...(isLongName && {
-                'data-tooltip-id': 'name',
-                'data-tooltip-content': data.name,
-              })}
+              data-tooltip-id={`tooltip-refrencebox-${index}`}
               className="max-w-[160px] text-nowrap overflow-hidden text-ellipsis"
             >
-              {data.name}
+              {isLongName ? data.name.substring(0, 23) + '...' : data.name}
             </div>
-            {isLongName && <Tooltip className="z-30" id="name" />}
+            {isLongName && (
+              <Tooltip
+                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                id={`tooltip-refrencebox-${index}`}
+                place="bottom-end"
+              >
+                {data.name}
+              </Tooltip>
+            )}
             <div className="flex  items-center gap-6">
               <div
                 onMouseEnter={() => {

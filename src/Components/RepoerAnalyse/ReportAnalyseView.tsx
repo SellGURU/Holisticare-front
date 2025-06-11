@@ -544,8 +544,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
                       .filter((val) => val.outofref == true)
-                      .map((el) => {
-                        return <RefrenceBox data={el}></RefrenceBox>;
+                      .map((el, index) => {
+                        return (
+                          <RefrenceBox data={el} index={index}></RefrenceBox>
+                        );
                       })}
                   </div>
 
@@ -625,7 +627,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
 
                 <div className="mt-6 hidden xl:block">
-                  {resolveCategories().map((el: any) => {
+                  {resolveCategories().map((el: any, index: number) => {
                     return (
                       <DetiledAnalyse
                         refrences={
@@ -634,6 +636,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           )[0]
                         }
                         data={el}
+                        index={index}
                       ></DetiledAnalyse>
                     );
                   })}
