@@ -71,8 +71,8 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                   backgroundColor: resolveColor(el.key),
                 }}
               >
-                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]">
-                  <TooltipText
+                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]">
+                  {/* <TooltipText
                     tooltipValue={
                       data.chart_bounds[el.key].label != ''
                         ? data.chart_bounds[el.key].label +
@@ -100,7 +100,26 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                         : el.value[0] +
                           (el.value[1] != undefined ? ' - ' + el.value[1] : '')}
                     </>
+                  </TooltipText> */}
+                  <TooltipText tooltipValue={data.chart_bounds[el.key].label}>
+                    {data.chart_bounds[el.key].label}
                   </TooltipText>
+                </div>
+                <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]">
+                  {data.chart_bounds[el.key].label != '' && <>(</>}
+                  <TooltipText
+                    tooltipValue={
+                      el.value[0] +
+                      (el.value[1] != undefined ? ' - ' + el.value[1] : '') +
+                      ')'
+                    }
+                  >
+                    <>
+                      {el.value[0] +
+                        (el.value[1] != undefined ? ' - ' + el.value[1] : '')}
+                    </>
+                  </TooltipText>
+                  {data.chart_bounds[el.key].label != '' && <>)</>}
                 </div>
                 {el.value[1] != undefined &&
                 data.status[0] == el.key &&
