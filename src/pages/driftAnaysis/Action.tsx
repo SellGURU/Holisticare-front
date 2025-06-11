@@ -408,7 +408,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto  `}
+                className={`flex flex-col gap-2 h-[85%] mt-2 overflow-y-auto pr-3`}
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#E5E5E5 transparent',
+                }}
               >
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard
@@ -447,7 +451,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
       alt=""
     /> */}
             </div>
-            <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px]  `}>
+            <div
+              className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] h-[85%] overflow-y-auto`}
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#E5E5E5 transparent',
+              }}
+            >
               {MessagesData.map((option) =>
                 option.isDone ? (
                   <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
@@ -457,7 +467,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-[85%] mt-2 md:overflow-y-auto pr-1 ">
+                  <div className="mt-2 pr-1 ">
                     <AccordionCard
                       key={option.id}
                       title={option.id}
