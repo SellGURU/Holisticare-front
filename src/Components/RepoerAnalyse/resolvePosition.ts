@@ -84,6 +84,13 @@ const resolvePosition = (name: string) => {
       },
     },
     {
+      name: 'right hand3',
+      position: {
+        top: 250,
+        left: 70,
+      },
+    },
+    {
       name: 'right hand1',
       position: {
         top: 190,
@@ -104,13 +111,7 @@ const resolvePosition = (name: string) => {
         left: 80,
       },
     },
-    {
-      name: 'right hand3',
-      position: {
-        top: 250,
-        left: 70,
-      },
-    },
+
     {
       name: 'left hand',
       position: {
@@ -164,14 +165,14 @@ const resolvePosition = (name: string) => {
       name: 'head1',
       position: {
         top: 52,
-        left: 180,
+        left: 155,
       },
     },
     {
       name: 'head2',
       position: {
         top: 52,
-        left: 170,
+        left: 180,
       },
     },
     {
@@ -206,8 +207,8 @@ const resolvePosition = (name: string) => {
     {
       name: 'head7',
       position: {
-        top: 62,
-        left: 140,
+        top: 72,
+        left: 145,
       },
     },
     {
@@ -221,7 +222,7 @@ const resolvePosition = (name: string) => {
       name: 'head9',
       position: {
         top: 87,
-        left: 138,
+        left: 180,
       },
     },
     {
@@ -241,7 +242,7 @@ const resolvePosition = (name: string) => {
     {
       name: 'chest',
       position: {
-        top: 160,
+        top: 150,
         left: 160,
       },
     },

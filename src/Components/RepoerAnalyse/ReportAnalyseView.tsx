@@ -390,7 +390,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
   const memoizedPoints = useMemo(() => {
-    return resolveCategories().map((el: any, index: number) => (
+    return resolveCategories().map((el: any, index: number) => {
+      const curretPositionBox = resolvePosition(el.position)
+      return (
       <Point
         key={`${el.subcategory}-${index}`}
         name={el.subcategory}
@@ -400,10 +402,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             behavior: 'smooth',
           });
         }}
-        top={resolvePosition(el.position).top}
-        left={resolvePosition(el.position).left}
+        top={curretPositionBox.top}
+        left={curretPositionBox.left}
       />
-    ));
+    )});
   }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
 
   return (
