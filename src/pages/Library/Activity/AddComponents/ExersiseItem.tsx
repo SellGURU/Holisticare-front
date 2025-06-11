@@ -130,7 +130,7 @@ const ExerciseItem = ({
                   className="flex justify-start py-2 borer border-b border-gray-50 items-center cursor-pointer gap-2"
                 >
                   <SvgIcon
-                    src="./icons/link.svg"
+                    src="/icons/link.svg"
                     color="#6CC24A"
                     width="16px"
                     height="16px"
@@ -149,7 +149,7 @@ const ExerciseItem = ({
                   className="flex justify-start py-2 borer border-b border-gray-50 items-center cursor-pointer gap-2"
                 >
                   <SvgIcon
-                    src="./icons/link.svg"
+                    src="/icons/link.svg"
                     color="#6CC24A"
                     width="16px"
                     height="16px"
@@ -167,7 +167,7 @@ const ExerciseItem = ({
                 className="flex justify-start py-2 items-center cursor-pointer gap-2"
               >
                 <SvgIcon
-                  src="./icons/delete.svg"
+                  src="/icons/delete.svg"
                   color="#6CC24A"
                   width="16px"
                   height="16px"

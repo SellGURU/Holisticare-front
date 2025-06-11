@@ -1,3 +1,7 @@
+import { useRef, useState } from 'react';
+import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
+import SvgIcon from '../../../../utils/svgIcon';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface SuperSetExersiseItemProps {
   exercise: any;
@@ -23,6 +27,17 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
   onDelete,
   errors,
 }) => {
+  console.log('toSuperSet', toSuperSet);
+  const [showMenu, setShowMenu] = useState(false);
+  const [indexShow, setIndexShow] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useModalAutoClose({
+    close: () => {
+      setShowMenu(false);
+      setIndexShow(null);
+    },
+    refrence: menuRef,
+  });
   const getError = (field: string, exerciseTitle: string) => {
     return errors[`${field}-${exercise.Section}-${exerciseTitle}`];
   };
@@ -77,14 +92,14 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
         <div className="flex items-center gap-2">
           <div className="text-xs text-Text-Primary">Super Set</div>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div onClick={toSuperSet} className="cursor-pointer">
             <img src="/icons/super-set.svg" alt="" className="w-4 h-4" />
           </div>
-        </div>
+        </div> */}
       </div>
       {exercise.Exercises.map((ex: any, exIndex: number) => (
-        <div key={exIndex} className="mt-3">
+        <div key={exIndex} className="mt-3 relative">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -103,7 +118,57 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
                 {ex.Exercise.Title}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <img
+              onClick={() => {
+                setIndexShow(exIndex);
+                setShowMenu(!showMenu);
+              }}
+              src="/icons/more.svg"
+              alt=""
+              className="w-4 h-4 cursor-pointer"
+            />
+            {showMenu && indexShow === exIndex && (
+              <div
+                ref={menuRef}
+                className="absolute w-[188px] px-4 py-2 bg-white shadow-200 rounded-[16px] right-0 top-6 z-20"
+              >
+                {removeFromSuperSet && (
+                  <div
+                    onClick={() => {
+                      removeFromSuperSet(exIndex);
+                      setShowMenu(false);
+                    }}
+                    className="flex justify-start py-2 borer border-b border-gray-50 items-center cursor-pointer gap-2"
+                  >
+                    <SvgIcon
+                      src="/icons/link.svg"
+                      color="#6CC24A"
+                      width="16px"
+                      height="16px"
+                    ></SvgIcon>
+                    <div className="text-[12px] text-Text-Primary">
+                      Make it Normalset
+                    </div>
+                  </div>
+                )}
+                <div
+                  onClick={() => {
+                    onDelete(exIndex);
+                    setShowMenu(false);
+                  }}
+                  className="flex justify-start py-2 items-center cursor-pointer gap-2"
+                >
+                  <SvgIcon
+                    src="/icons/delete.svg"
+                    color="#6CC24A"
+                    width="16px"
+                    height="16px"
+                  ></SvgIcon>
+                  <div className="text-[12px] text-Text-Primary">Delete</div>
+                </div>
+              </div>
+            )}
+            {/* <div className="flex items-center gap-2">
               <div
                 onClick={() => removeFromSuperSet(exIndex)}
                 className="cursor-pointer"
@@ -117,7 +182,7 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
               <div onClick={() => onDelete(exIndex)} className="cursor-pointer">
                 <img src="/icons/delete.svg" alt="" className="w-4 h-4" />
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="grid grid-cols-4 gap-2 mt-3">
             <div className="flex flex-col gap-1">
