@@ -10,13 +10,19 @@ import Toggle from './Toggle';
 import { sortKeysWithValues } from './Help';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
+import { Tooltip } from 'react-tooltip';
 
 interface DetiledAnalyseProps {
   data: any;
   refrences: any;
+  index: number;
 }
 
-const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
+const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
+  data,
+  refrences,
+  index,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
@@ -184,7 +190,23 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                         }  border items-center bg-white  rounded-[6px] flex justify-between px-4`}
                       >
                         <div className="flex justify-start items-center gap-2">
-                          <div className=" text-[12px]">{value.name}</div>
+                          <div
+                            data-tooltip-id={`tooltip-detiledanalyse-${index}`}
+                            className=" text-[12px]"
+                          >
+                            {value.name.length > 40
+                              ? value.name.substring(0, 40) + '...'
+                              : value.name}
+                          </div>
+                          {value.name.length > 40 ? (
+                            <Tooltip
+                              id={`tooltip-detiledanalyse-${index}`}
+                              place="bottom-end"
+                              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                            >
+                              {value.name}
+                            </Tooltip>
+                          ) : null}
                           {resolveKeyStatus(
                             value.values[0],
                             value.chart_bounds,
