@@ -35,6 +35,7 @@ import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -475,9 +476,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       )}
 
-                      <div className=" text-xs md:text-[14px] font-medium text-Text-Primary">
-                        {userInfoData?.name}
+                      <div className="text-xs md:text-[14px] font-medium text-Text-Primary">
+                        <TooltipTextAuto
+                          maxWidth="180px"
+                          tooltipPlace="bottom"
+                          tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
+                        >
+                          {userInfoData?.name}
+                        </TooltipTextAuto>
                       </div>
+
                       {userInfoData && (
                         <>
                           {userInfoData.sex && (
