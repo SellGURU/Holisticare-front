@@ -93,7 +93,8 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                   className="absolute w-full px-1 text-[#005F73] flex justify-center left-[-4px] top-[-20px] text-[10px]"
                   style={{
                     left: '4px',
-                    top: '-40px',
+                    top:
+                      data.chart_bounds[el.key].label == '' ? '-20px' : '-40px',
                     fontSize: '12px',
                   }}
                 >
@@ -110,13 +111,18 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       </div>
                       {el.value[0] != '' && (
                         <div style={{ fontSize: '8px' }}>
-                          {'' +
-                            '(' +
-                            el.value[0] +
-                            (el.value[1] != undefined
-                              ? ' - ' + el.value[1]
-                              : '') +
-                            ')'}
+                          {data.chart_bounds[el.key].label != ''
+                            ? data.chart_bounds[el.key].label +
+                              '(' +
+                              el.value[0] +
+                              (el.value[1] != undefined
+                                ? ' - ' + el.value[1]
+                                : '') +
+                              ')'
+                            : el.value[0] +
+                              (el.value[1] != undefined
+                                ? ' - ' + el.value[1]
+                                : '')}
                         </div>
                       )}
                     </div>
