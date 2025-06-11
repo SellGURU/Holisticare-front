@@ -1,7 +1,7 @@
 {
   "name": "holisticare-clinic",
   "private": true,
-  "version": "1.2.21",
+  "version": "1.2.23",
   "type": "module",
   "scripts": {
     "dev": "vite",
