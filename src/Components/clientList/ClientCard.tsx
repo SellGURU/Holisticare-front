@@ -729,7 +729,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                     </div>
                     <div
                       style={{ backgroundColor: backgroundColor }}
-                      className="flex items-center px-2.5 text-[9px] h-[20px] rounded-[10px] justify-center text-nowrap text-Text-Primary cursor-default"
+                      className="flex items-center px-1.5 text-[9px] h-[20px] rounded-[10px] justify-center text-nowrap text-Text-Primary cursor-default"
                     >
                       <div
                         className="mr-[5px] size-2.5 rounded-full"
