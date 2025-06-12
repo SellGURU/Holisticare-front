@@ -3,6 +3,7 @@ import { useState } from 'react';
 import CoverPage from './Print/CoverPage';
 import TableOfContent from './Print/TableOfContent';
 import { subscribe } from '../../utils/event';
+import PagePrintHandler from './Print/PagePrintHandler';
 
 const PrintReportV2 = () => {
   const [printOptins, setPrintOptions] = useState([
@@ -41,6 +42,7 @@ const PrintReportV2 = () => {
           height: 16,
           content: {
             value: 'Client Summary',
+            moreInfo:'Total of 117 Biomarkers in 8 Categories'
           },
         },
       ],
@@ -110,6 +112,13 @@ const PrintReportV2 = () => {
       />
       <CoverPage />
       <TableOfContent isActiveSection={isActiveSection} />
+      {pageJson.map((page:any) => {
+        return (
+          <>
+            <PagePrintHandler page={page} />
+          </>
+        )
+      })}
     </div>
   );
 };
