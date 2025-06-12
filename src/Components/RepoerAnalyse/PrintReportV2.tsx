@@ -5,7 +5,12 @@ import TableOfContent from './Print/TableOfContent';
 import { subscribe } from '../../utils/event';
 import PagePrintHandler from './Print/PagePrintHandler';
 
-const PrintReportV2 = () => {
+interface PrintReportV2Props {
+  usrInfoData:any
+  ClientSummaryBoxs: any;
+}
+
+const PrintReportV2:React.FC<PrintReportV2Props> = ({usrInfoData,ClientSummaryBoxs}) => {
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -45,6 +50,21 @@ const PrintReportV2 = () => {
             moreInfo: 'Total of 117 Biomarkers in 8 Categories',
           },
         },
+        {
+          type: 'UserInfo',
+          height: 16,
+          content:{...usrInfoData}
+        },
+        {
+          type: 'information',
+          height: 16,
+          content:ClientSummaryBoxs?.client_summary
+        },  
+        {
+          type: 'legend',
+          height: 16,
+          content:null
+        },                 
       ],
     },
   ];
