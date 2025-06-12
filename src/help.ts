@@ -62,7 +62,7 @@ const decodeNameAndKey = (name: string) => {
   }
   if (name == 'Concerning Result') {
     return 'OPIU';
-  }  
+  }
   if (name == 'Detailed Analysis') {
     return 'ASDF';
   }
