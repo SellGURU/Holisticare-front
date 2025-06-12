@@ -6,11 +6,14 @@ import { subscribe } from '../../utils/event';
 import PagePrintHandler from './Print/PagePrintHandler';
 
 interface PrintReportV2Props {
-  usrInfoData:any
+  usrInfoData: any;
   ClientSummaryBoxs: any;
 }
 
-const PrintReportV2:React.FC<PrintReportV2Props> = ({usrInfoData,ClientSummaryBoxs}) => {
+const PrintReportV2: React.FC<PrintReportV2Props> = ({
+  usrInfoData,
+  ClientSummaryBoxs,
+}) => {
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -53,18 +56,18 @@ const PrintReportV2:React.FC<PrintReportV2Props> = ({usrInfoData,ClientSummaryBo
         {
           type: 'UserInfo',
           height: 16,
-          content:{...usrInfoData}
+          content: { ...usrInfoData },
         },
         {
           type: 'information',
           height: 16,
-          content:ClientSummaryBoxs?.client_summary
-        },  
+          content: ClientSummaryBoxs?.client_summary,
+        },
         {
           type: 'legend',
           height: 16,
-          content:null
-        },                 
+          content: null,
+        },
       ],
     },
   ];

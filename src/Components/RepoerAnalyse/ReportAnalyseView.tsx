@@ -745,7 +745,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               //   ></PrintReport>
               // </div>
               <div className="hidden print:block" id="printDiv">
-                <PrintReportV2  ClientSummaryBoxs={ClientSummaryBoxs} usrInfoData={userInfoData}/>
+                <PrintReportV2
+                  ClientSummaryBoxs={ClientSummaryBoxs}
+                  usrInfoData={userInfoData}
+                />
               </div>
             )}
             {!isHaveReport && (

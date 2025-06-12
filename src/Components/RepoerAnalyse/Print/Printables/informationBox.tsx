@@ -1,13 +1,13 @@
 interface InformationBoxProps {
-    text:string
+  text: string;
 }
-const InformationBox:React.FC<InformationBoxProps> = ({text}) => {
+const InformationBox: React.FC<InformationBoxProps> = ({ text }) => {
   return (
     <div
-        style={{ color: '#383838', fontSize: '14px', zIndex: 60 }}
-        className="text-justify relative  mt-4"
+      style={{ color: '#383838', fontSize: '14px', zIndex: 60 }}
+      className="text-justify relative  mt-4"
     >
-        {text}
+      {text}
     </div>
   );
 };
