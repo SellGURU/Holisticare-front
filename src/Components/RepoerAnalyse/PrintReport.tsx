@@ -1379,7 +1379,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </>
       )}
 
-      {printOptins.filter((el) => el.name == 'Concerning Result')[0]
+      {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
         .checked && (
         <div
           id="detailed-analysis"
