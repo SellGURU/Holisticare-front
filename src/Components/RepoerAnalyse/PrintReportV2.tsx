@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
-import CoverPage from "./Print/CoverPage";
-import TableOfContent from "./Print/TableOfContent";
-import { subscribe } from "../../utils/event";
+import { useState } from 'react';
+import CoverPage from './Print/CoverPage';
+import TableOfContent from './Print/TableOfContent';
+import { subscribe } from '../../utils/event';
 
 const PrintReportV2 = () => {
   const [printOptins, setPrintOptions] = useState([
@@ -27,25 +27,25 @@ const PrintReportV2 = () => {
       checked: true,
     },
   ]);
-  const isActiveSection = (section:string) => {
+  const isActiveSection = (section: string) => {
     return printOptins.filter((el) => el.name === section)[0].checked;
-  }
-  subscribe('downloadCalled', (data:any) => {
+  };
+  subscribe('downloadCalled', (data: any) => {
     setPrintOptions(data.detail);
-  });    
+  });
   const pageJson = [
     {
-        renderBoxs :[
-            {
-                type : 'Header',
-                height : 16,
-                content:{
-                    value : 'Client Summary',
-                }
-            }
-        ]
-    }
-  ]
+      renderBoxs: [
+        {
+          type: 'Header',
+          height: 16,
+          content: {
+            value: 'Client Summary',
+          },
+        },
+      ],
+    },
+  ];
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <style
@@ -111,7 +111,7 @@ const PrintReportV2 = () => {
       <CoverPage />
       <TableOfContent isActiveSection={isActiveSection} />
     </div>
-  )
+  );
 };
 
 export default PrintReportV2;
