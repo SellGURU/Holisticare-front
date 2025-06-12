@@ -109,7 +109,7 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                       >
                         {data.chart_bounds[el.key].label}
                       </div>
-                      {el.value[0] != '' && (
+                      {/* {el.value[0] != '' && (
                         <div style={{ fontSize: '8px' }}>
                           {data.chart_bounds[el.key].label != ''
                             ? '(' +
@@ -123,7 +123,26 @@ const StatusBarChartPrint: React.FC<StatusBarChartProps> = ({ data }) => {
                                 ? ' - ' + el.value[1]
                                 : '')}
                         </div>
-                      )}
+                      )} */}
+                      <div style={{ fontSize: '8px' }}>
+                        {data.chart_bounds[el.key].label != '' ? (
+                          <>
+                            {'(' +
+                              el.value[0] +
+                              (el.value[1] != undefined
+                                ? ' - ' + el.value[1]
+                                : '') +
+                              ')'}
+                          </>
+                        ) : (
+                          <>
+                            {el.value[0] +
+                              (el.value[1] != undefined
+                                ? ' - ' + el.value[1]
+                                : '')}
+                          </>
+                        )}
+                      </div>
                     </div>
                   }
                 </div>
