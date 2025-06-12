@@ -16,8 +16,8 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
   const menuItems = [
     'Client Summary',
     'Needs Focus Biomarker',
+    'Concerning Result',
     'Detailed Analysis',
-    // "Concerning Result",
     'Holistic Plan',
     'Action Plan',
   ];
@@ -193,7 +193,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
                 >
                   <img
                     className=" "
-                    src={`/images/report-sidemenu/${index + 1}.png`}
+                    src={`/images/report-sidemenu-c/${index + 1}.png`}
                     alt=""
                   />
                   <div className="absolute bg-white w-4 h-4 border-[0.5px] border-Gray-50 rounded-[3px] shadow-200 text-xs text-center text-Primary-DeepTeal bottom-[6px] left-1">
