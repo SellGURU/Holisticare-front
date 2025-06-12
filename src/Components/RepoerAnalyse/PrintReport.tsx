@@ -1121,6 +1121,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
               pageBreakAfter: 'always',
             }}
           >
+            <PrintHeader />
             <div
               className="w-full relative mb-3 mt-4 flex items-center justify-between"
               style={{ zIndex: 60 }}
@@ -1132,7 +1133,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 Concerning Result
               </div>
             </div>
-            <div className="px-2 relative" style={{ zIndex: 60 }}>
+            <div className="pr-2 relative" style={{ zIndex: 60 }}>
               <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
                 <div
                   className="text-gray-700 font-medium "
