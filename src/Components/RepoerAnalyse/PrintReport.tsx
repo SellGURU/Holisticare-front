@@ -1128,7 +1128,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             >
               <div
                 className="text-lg"
-                id='concerning-result'
+                id="concerning-result"
                 style={{ color: '#005F73', fontWeight: '600' }}
               >
                 Concerning Result
