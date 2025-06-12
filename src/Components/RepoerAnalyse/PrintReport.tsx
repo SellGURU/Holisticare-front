@@ -425,7 +425,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
     {
       name: 'Concerning Result',
       checked: true,
-    },       
+    },
     {
       name: 'Detailed Analysis',
       checked: true,
@@ -759,7 +759,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                   </a>
                 </div>
               </>
-            )}            
+            )}
             {printOptins.filter((el) => el.name === 'Detailed Analysis')[0]
               .checked && (
               <>
