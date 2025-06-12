@@ -42,7 +42,7 @@ const PrintReportV2 = () => {
           height: 16,
           content: {
             value: 'Client Summary',
-            moreInfo:'Total of 117 Biomarkers in 8 Categories'
+            moreInfo: 'Total of 117 Biomarkers in 8 Categories',
           },
         },
       ],
@@ -112,12 +112,12 @@ const PrintReportV2 = () => {
       />
       <CoverPage />
       <TableOfContent isActiveSection={isActiveSection} />
-      {pageJson.map((page:any) => {
+      {pageJson.map((page: any) => {
         return (
           <>
             <PagePrintHandler page={page} />
           </>
-        )
+        );
       })}
     </div>
   );

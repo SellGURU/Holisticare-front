@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface PagePrintHandlerProps {
-    page:any
+  page: any;
 }
 
-const PagePrintHandler:React.FC<PagePrintHandlerProps> = () => {
+const PagePrintHandler: React.FC<PagePrintHandlerProps> = () => {
   return (
     <div>
       <h1>PagePrintHandler</h1>
