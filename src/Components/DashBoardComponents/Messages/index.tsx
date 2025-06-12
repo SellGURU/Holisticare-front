@@ -22,7 +22,10 @@ interface MessageListProps {
   onSelectMessage: (messageId: string | null) => void;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ search, onSelectMessage }) => {
+const MessageList: React.FC<MessageListProps> = ({
+  search,
+  onSelectMessage,
+}) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
@@ -111,7 +114,7 @@ const MessageList: React.FC<MessageListProps> = ({ search, onSelectMessage }) =>
         </div>
       ) : (
         <div className=" w-full md:w-[315px] h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
-          <div className="w-full flex justify-center mt-2">
+          <div className="w-full bg-white  flex justify-center mt-2">
             <Toggle
               active={filter}
               setActive={setFilter}
@@ -213,4 +216,3 @@ const MessageList: React.FC<MessageListProps> = ({ search, onSelectMessage }) =>
 };
 
 export default MessageList;
-

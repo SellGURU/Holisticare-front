@@ -29,13 +29,11 @@ type SendMessage = {
   replied_conv_id?: number;
   images: string[];
 };
-interface MessagesChatBoxProps{
-  onBack:()=>void
+interface MessagesChatBoxProps {
+  onBack: () => void;
 }
 
-const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
-  onBack
-}) => {
+const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
@@ -231,8 +229,15 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             {messages.length !== 0 || username ? (
               <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div onClick={onBack} className='flex cursor-pointer md:hidden'>
-                    <img src="/icons/arrow-left-new.svg" className='size-8' alt="" />
+                  <div
+                    onClick={onBack}
+                    className="flex cursor-pointer md:hidden"
+                  >
+                    <img
+                      src="/icons/arrow-left-new.svg"
+                      className="size-8"
+                      alt=""
+                    />
                   </div>
                   <div
                     className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
@@ -302,7 +307,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
             )}
             <div
               id="userChat"
-              className="p-4 space-y-4 h-[70%] md:h-[80%] overflow-y-scroll"
+              className="p-4 space-y-4 h-[80%] md:h-[80%] overflow-hidden md:overflow-auto "
             >
               {!aiMode && (
                 <>
@@ -349,7 +354,10 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                               </div>
                               <div
                                 className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{ lineHeight: '26px' , overflowWrap: "anywhere"}}
+                                style={{
+                                  lineHeight: '26px',
+                                  overflowWrap: 'anywhere',
+                                }}
                               >
                                 {formatText(message.message_text)}
                               </div>
@@ -398,7 +406,10 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                     />
                                   </span>
                                 )}
-                                <div style={{overflowWrap: "anywhere"}} className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                                <div
+                                  style={{ overflowWrap: 'anywhere' }}
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
@@ -465,7 +476,10 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                               </div>
                               <div
                                 className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{ lineHeight: '26px' , overflowWrap: "anywhere" }}
+                                style={{
+                                  lineHeight: '26px',
+                                  overflowWrap: 'anywhere',
+                                }}
                               >
                                 {formatText(message.message_text)}
                               </div>
@@ -514,7 +528,10 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
                                     />
                                   </span>
                                 )}
-                                <div style={{  overflowWrap: "anywhere"}} className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                                <div
+                                  style={{ overflowWrap: 'anywhere' }}
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
