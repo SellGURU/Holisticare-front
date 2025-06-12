@@ -175,7 +175,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
-    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+    const doseRegex = /^(\d+\s*[a-zA-Z]+)(\s*-\s*\d+\s*[a-zA-Z]+)?$/;
     const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
 
     const newErrors = {
@@ -315,10 +315,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 value={dose}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Only allow English characters, numbers, and spaces
-                  const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+                  const englishOnly = value.replace(/[^a-zA-Z0-9\s-]/g, '');
                   setDose(englishOnly);
-                  const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+
+                  const doseRegex =
+                    /^(\d+\s*[a-zA-Z]+)(\s*-\s*\d+\s*[a-zA-Z]+)?$/;
+
                   if (englishOnly) {
                     setErrors((prev) => ({
                       ...prev,

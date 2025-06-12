@@ -90,8 +90,8 @@ export const ClientCard: FC<ClientCardProps> = ({
           {name.length > 15 && (
             <Tooltip
               id={`tooltip-${name}`}
-              place="top"
-              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20"
+              place="bottom"
+              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20 break-words"
             >
               {name}
             </Tooltip>
@@ -128,9 +128,21 @@ export const ClientCard: FC<ClientCardProps> = ({
           >
             Email-address{' '}
           </span>
-          <span className="text-[10px] text-Text-Primary  font-normal">
-            {email}
+          <span
+            className="text-[10px] text-Text-Primary font-normal"
+            data-tooltip-id={`tooltip-${email}`}
+          >
+            {email.length > 30 ? email.substring(0, 30) + '...' : email}
           </span>
+          {email.length > 30 && (
+            <Tooltip
+              id={`tooltip-${email}`}
+              place="bottom"
+              className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-20 break-words"
+            >
+              {email}
+            </Tooltip>
+          )}
         </div>
         <div className={` ${isSwitch && 'hidden'} flex flex-col gap-4`}>
           <div
