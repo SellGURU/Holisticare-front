@@ -38,6 +38,7 @@ const decodeAccessUser = (key: string) => {
   const data = [
     { name: 'Client Summary', checked: true },
     { name: 'Needs Focus Biomarker', checked: true },
+    { name: 'Concerning Result', checked: true },
     { name: 'Detailed Analysis', checked: true },
     { name: 'Holistic Plan', checked: true },
     { name: 'Action Plan', checked: true },
@@ -59,6 +60,9 @@ const decodeNameAndKey = (name: string) => {
   if (name == 'Needs Focus Biomarker') {
     return 'MNBB';
   }
+  if (name == 'Concerning Result') {
+    return 'OPIU';
+  }  
   if (name == 'Detailed Analysis') {
     return 'ASDF';
   }

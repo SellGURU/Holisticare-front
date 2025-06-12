@@ -37,6 +37,10 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       checked: true,
     },
     {
+      name: 'Concerning Result',
+      checked: true,
+    },    
+    {
       name: 'Detailed Analysis',
       checked: true,
     },
