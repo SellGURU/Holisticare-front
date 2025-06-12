@@ -37,7 +37,11 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
             exercise={el}
             onChange={onChange}
             toSuperSet={toSuperSet}
-            removeFromSuperSet={removeFromSuperSet ? () => removeFromSuperSet(ind) : undefined} errors={{}}          />
+            removeFromSuperSet={
+              removeFromSuperSet ? () => removeFromSuperSet(ind) : undefined
+            }
+            errors={{}}
+          />
         ))}
         <div
           className="absolute z-[1]  top-[25px] left-[-8px]"
