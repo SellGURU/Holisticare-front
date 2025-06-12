@@ -1121,18 +1121,20 @@ const PrintReport: React.FC<PrintReportProps> = ({
               pageBreakAfter: 'always',
             }}
           >
+            <PrintHeader />
             <div
               className="w-full relative mb-3 mt-4 flex items-center justify-between"
               style={{ zIndex: 60 }}
             >
               <div
                 className="text-lg"
+                id="concerning-result"
                 style={{ color: '#005F73', fontWeight: '600' }}
               >
                 Concerning Result
               </div>
             </div>
-            <div className="px-2 relative" style={{ zIndex: 60 }}>
+            <div className="pr-2 relative" style={{ zIndex: 60 }}>
               <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
                 <div
                   className="text-gray-700 font-medium "
@@ -1379,7 +1381,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </>
       )}
 
-      {printOptins.filter((el) => el.name == 'Concerning Result')[0]
+      {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
         .checked && (
         <div
           id="detailed-analysis"
