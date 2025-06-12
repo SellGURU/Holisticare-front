@@ -10,8 +10,8 @@ const Messages = () => {
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
 
   return (
-   <>
-      <div className="w-full  flex justify-between items-center  mt-6 px-6">
+    <div  className="h-screen relative ">
+      <div className="w-full fixed md:static top-[40px] h-[67px] md:h-auto z-20 bg-bg-color left-0 right-0  flex justify-between items-center  mt-6 px-6 ">
         <div className="text-Text-Primary font-medium opacity-[87%]">
           Messages
         </div>
@@ -22,18 +22,19 @@ const Messages = () => {
           value={search}
         />
       </div>
-      <div className="w-full  h-[80%] md:h-[90%] flex justify-between px-6 pb-8 pt-4 gap-5">
-        <div className={`w-full md:w-[315px] h-full  ${selectedMessage ? 'hidden md:block' : 'block'}`}>
-          <MessageList 
-            search={search} 
-            onSelectMessage={setSelectedMessage} 
-          />
+      <div className="w-full mt-[51px] md:mt-0 h-fit md:h-[90%]  flex justify-between px-3  md:px-6 md:pb-8 pt-4  gap-5 ">
+        <div
+          className={`w-full md:w-[315px] h-full  ${selectedMessage ? 'hidden md:block' : 'block'}`}
+        >
+          <MessageList search={search} onSelectMessage={setSelectedMessage} />
         </div>
-        <div className={`w-full  h-  ${selectedMessage ? 'block ]' : 'hidden md:block '}`}>
+        <div
+          className={`w-full   ${selectedMessage ? 'block ' : 'hidden md:block '}`}
+        >
           <MessagesChatBox onBack={() => setSelectedMessage(null)} />
         </div>
       </div>
-      </>
+    </div>
   );
 };
 export default Messages;

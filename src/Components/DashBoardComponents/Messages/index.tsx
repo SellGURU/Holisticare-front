@@ -113,7 +113,7 @@ const MessageList: React.FC<MessageListProps> = ({
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className=" w-full md:w-[315px] h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
+        <div className=" w-full md:w-[315px] h-[75vh] pb-20 md:h-full overflow-hidden  bg-white rounded-2xl shadow-200 p-4">
           <div className="w-full bg-white  flex justify-center mt-2">
             <Toggle
               active={filter}
@@ -123,14 +123,14 @@ const MessageList: React.FC<MessageListProps> = ({
             />
           </div>
           {messagesSearched.length === 0 && (
-            <div className="flex flex-col items-center w-full h-[90%] justify-center">
+            <div className="flex flex-col items-center w-full h-[70vh] md:h-[90%] justify-center">
               <img src="/icons/empty-messages-coach.svg" alt="" />
               <div className="text-base font-medium text-Text-Primary -mt-5">
                 No results found.
               </div>
             </div>
           )}
-          <ul className="mt-5 w-full h-[91%] pr-3 overflow-y-scroll divide-y divide-Boarder">
+          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y divide-Boarder ">
             {messagesSearched.map((message) => {
               return (
                 <li

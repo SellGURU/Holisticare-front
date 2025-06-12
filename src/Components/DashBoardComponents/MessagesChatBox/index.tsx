@@ -217,7 +217,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
 
   return (
     <>
-      <div className="w-full mx-auto bg-white shadow-200 h-full rounded-[16px] relative flex flex-col">
+      <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
         {isLoading ? (
           <>
             <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
@@ -227,7 +227,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
         ) : (
           <>
             {messages.length !== 0 || username ? (
-              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px] flex items-center justify-between">
+              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
                 <div className="flex items-center gap-2">
                   <div
                     onClick={onBack}
@@ -307,7 +307,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
             )}
             <div
               id="userChat"
-              className="p-4 space-y-4 h-[80%] md:h-[80%] overflow-hidden md:overflow-auto "
+              className="p-4 space-y-4 h-[70%] md:h-[80%] overflow-auto "
             >
               {!aiMode && (
                 <>
