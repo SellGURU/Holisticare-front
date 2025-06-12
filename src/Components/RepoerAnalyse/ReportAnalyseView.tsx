@@ -36,6 +36,7 @@ import { decodeAccessUser } from '../../help';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+import PrintReportV2 from './PrintReportV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -728,20 +729,23 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             )}
             {isHaveReport && (
+              // <div className="hidden print:block" id="printDiv">
+              //   <PrintReport
+              //     helthPlan={ActionPlanPrint}
+              //     ActionPlan={HelthPrint}
+              //     usrInfoData={userInfoData}
+              //     ResolveConceringData={ResolveConceringData}
+              //     caldenderData={caldenderData}
+              //     TreatMentPlanData={TreatMentPlanData}
+              //     resolveSubCategories={resolveSubCategories}
+              //     resolveBioMarkers={resolveBioMarkers}
+              //     referenceData={referenceData}
+              //     resolveCategories={resolveCategories}
+              //     ClientSummaryBoxs={ClientSummaryBoxs}
+              //   ></PrintReport>
+              // </div>
               <div className="hidden print:block" id="printDiv">
-                <PrintReport
-                  helthPlan={ActionPlanPrint}
-                  ActionPlan={HelthPrint}
-                  usrInfoData={userInfoData}
-                  ResolveConceringData={ResolveConceringData}
-                  caldenderData={caldenderData}
-                  TreatMentPlanData={TreatMentPlanData}
-                  resolveSubCategories={resolveSubCategories}
-                  resolveBioMarkers={resolveBioMarkers}
-                  referenceData={referenceData}
-                  resolveCategories={resolveCategories}
-                  ClientSummaryBoxs={ClientSummaryBoxs}
-                ></PrintReport>
+                <PrintReportV2 />
               </div>
             )}
             {!isHaveReport && (
