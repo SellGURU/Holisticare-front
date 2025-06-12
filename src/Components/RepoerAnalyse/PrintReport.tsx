@@ -423,6 +423,10 @@ const PrintReport: React.FC<PrintReportProps> = ({
       checked: true,
     },
     {
+      name: 'Concerning Result',
+      checked: true,
+    },
+    {
       name: 'Detailed Analysis',
       checked: true,
     },
@@ -727,6 +731,31 @@ const PrintReport: React.FC<PrintReportProps> = ({
                     style={{ color: '#383838', fontWeight: '500' }}
                   >
                     Needs Focus Biomarkers
+                  </a>
+                </div>
+              </>
+            )}
+            {printOptins.filter((el) => el.name === 'Concerning Result')[0]
+              .checked && (
+              <>
+                <div className="flex justify-start gap-4 mt-6 items-center">
+                  <img
+                    src="/icons/icon-list-report.svg"
+                    alt=""
+                    style={{ marginRight: '-8px' }}
+                  />
+                  <div
+                    className="text-xl"
+                    style={{ color: '#005F73', fontWeight: '500' }}
+                  >
+                    Section {getNextSectionNumber()}
+                  </div>
+                  <a
+                    href="#concerning-result"
+                    className="text-xl cursor-pointer hover:underline"
+                    style={{ color: '#383838', fontWeight: '500' }}
+                  >
+                    Concerning Result
                   </a>
                 </div>
               </>
@@ -1079,7 +1108,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
             ))}
           </>
         )}
-      {printOptins.filter((el) => el.name == 'Needs Focus Biomarker')[0]
+      {printOptins.filter((el) => el.name == 'Concerning Result')[0]
         .checked && (
         <>
           <div
@@ -1100,7 +1129,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
                 className="text-lg"
                 style={{ color: '#005F73', fontWeight: '600' }}
               >
-                Conclusion
+                Concerning Result
               </div>
             </div>
             <div className="px-2 relative" style={{ zIndex: 60 }}>
@@ -1350,7 +1379,7 @@ const PrintReport: React.FC<PrintReportProps> = ({
         </>
       )}
 
-      {printOptins.filter((el) => el.name == 'Detailed Analysis')[0]
+      {printOptins.filter((el) => el.name == 'Concerning Result')[0]
         .checked && (
         <div
           id="detailed-analysis"
