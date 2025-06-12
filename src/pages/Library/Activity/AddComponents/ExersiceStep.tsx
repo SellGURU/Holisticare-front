@@ -455,7 +455,7 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                             removeFromSuperSet={(exersiseIndex: number) =>
                               handleRemoveFromSuperSet(index, exersiseIndex)
                             }
-                            errors={errors}
+                            // errors={errors}
                           />
                         ) : (
                           <ExerciseItem

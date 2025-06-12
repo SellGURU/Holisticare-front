@@ -96,19 +96,18 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
             <>
               {positive && (
                 <>
-                  <div className="text-Text-Primary text-justify">
-                    {' '}
-                    <span className="text-Text-Secondary  ">Key Benefits:</span>
-                    {positive}
+                  <div className="text-Text-Primary">
+                    <span className="text-Text-Secondary">Key Benefits: </span>
+                    <span className="text-justify">{positive}</span>
                   </div>
                 </>
               )}
               {negative && (
                 <>
-                  <div className="text-Text-Primary text-justify mt-3">
-                    <span className="text-Text-Secondary">Key Risks:</span>
-                    {negative}
-                  </div>{' '}
+                  <div className="text-Text-Primary mt-3">
+                    <span className="text-Text-Secondary">Key Risks: </span>
+                    <span className="text-justify">{negative}</span>
+                  </div>
                 </>
               )}
             </>
