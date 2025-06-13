@@ -1,3 +1,4 @@
+import BoxPrint from './BoxPrint';
 import HeaderText from './HeaderText';
 import InformationBox from './informationBox';
 import Legend from './Legend';
@@ -21,6 +22,9 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
         <InformationBox text={component.content} />
       )}
       {component.type === 'legend' && <Legend />}
+      {component.type === 'box' && (
+        <BoxPrint height={component.height}></BoxPrint>
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );

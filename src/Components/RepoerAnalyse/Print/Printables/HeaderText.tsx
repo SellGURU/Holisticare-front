@@ -5,7 +5,7 @@ interface HeaderTextProps {
 const HeaderText: React.FC<HeaderTextProps> = ({ component }) => {
   return (
     <div
-      className="flex relative  justify-between items-center"
+      className="flex relative justify-between items-center"
       style={{ zIndex: 60, position: 'relative' }}
     >
       <div className="text-lg" style={{ color: '#383838', fontWeight: '600' }}>

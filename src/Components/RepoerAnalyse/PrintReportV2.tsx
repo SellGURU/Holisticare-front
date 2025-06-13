@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CoverPage from './Print/CoverPage';
 import TableOfContent from './Print/TableOfContent';
 import { subscribe } from '../../utils/event';
 import PagePrintHandler from './Print/PagePrintHandler';
-
+import resolveJson from './Print/Printables/ResolveJson';
 interface PrintReportV2Props {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -42,35 +42,45 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   subscribe('downloadCalled', (data: any) => {
     setPrintOptions(data.detail);
   });
-  const pageJson = [
-    {
-      renderBoxs: [
-        {
-          type: 'Header',
-          height: 16,
-          content: {
-            value: 'Client Summary',
-            moreInfo: 'Total of 117 Biomarkers in 8 Categories',
-          },
-        },
-        {
-          type: 'UserInfo',
-          height: 16,
-          content: { ...usrInfoData },
-        },
-        {
-          type: 'information',
-          height: 16,
-          content: ClientSummaryBoxs?.client_summary,
-        },
-        {
-          type: 'legend',
-          height: 16,
-          content: null,
-        },
-      ],
-    },
-  ];
+  // const pageJson = [
+  //   {
+  //     renderBoxs: [
+  //       {
+  //         type: 'Header',
+  //         height: 16,
+  //         content: {
+  //           value: 'Client Summary',
+  //           moreInfo: 'Total of 117 Biomarkers in 8 Categories',
+  //         },
+  //       },
+  //       {
+  //         type: 'UserInfo',
+  //         height: 16,
+  //         content: { ...usrInfoData },
+  //       },
+  //       {
+  //         type: 'information',
+  //         height: 16,
+  //         content: ClientSummaryBoxs?.client_summary,
+  //       },
+  //       {
+  //         type: 'legend',
+  //         height: 16,
+  //         content: null,
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  const [pageJson, setPageJson] = useState<Array<any>>([]);
+  useEffect(() => {
+    setPageJson(
+      resolveJson({
+        usrInfoData,
+        ClientSummaryBoxs,
+      }),
+    );
+  }, []);
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <style
