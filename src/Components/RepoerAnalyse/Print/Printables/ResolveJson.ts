@@ -14,7 +14,7 @@ const checkPageCanRender = (sizeReqired: number) => {
 };
 
 const resolveHightText = (text: string) => {
-  return Math.ceil(text.length / 112) * 20;
+  return Math.ceil(text.length / 112) * 30;
 };
 
 const addHeader = (title: string, moreInfo: string) => {
@@ -71,9 +71,40 @@ const addLegend = () => {
   });
 };
 
-const AddSummaryJson = (ClientSummaryBoxs: any, usrInfoData: any) => {
+const addCategoryRow = (data:Array<any>) => {
+  checkPageCanRender(80);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'category',
+    height: 80,
+    content: [...data],
+  });   
+}
+
+function chunkArrayToObjects(arr:Array<any>, size:number) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push({ data: arr.slice(i, i + size) });
+  }
+  return result;
+}
+
+
+
+const addCategoriesHandler = (resolveCategories:() =>any) => {
+  {chunkArrayToObjects(resolveCategories(),2).map((_el)=> {
+    return (
+      addCategoryRow([..._el.data])
+    )
+    
+  })}
+ 
+}
+
+
+const AddSummaryJson = (ClientSummaryBoxs: any, usrInfoData: any,resolveCategories: () => Array<any>) => {
   addEmptyPage();
-  // addBox(30)
+  // addBox(60)
   addHeader(
     'Client Summary',
     `Total of ${ClientSummaryBoxs.total_subcategory} Biomarkers in${' '}${ClientSummaryBoxs.total_category} Categories`,
@@ -81,16 +112,19 @@ const AddSummaryJson = (ClientSummaryBoxs: any, usrInfoData: any) => {
   addUserInfo(usrInfoData);
   addInformation(ClientSummaryBoxs?.client_summary);
   addLegend();
+  addCategoriesHandler(resolveCategories)
 };
 
 const resovleJson = ({
   usrInfoData,
   ClientSummaryBoxs,
+  resolveCategories,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
+  resolveCategories: () => Array<any>;
 }) => {
-  AddSummaryJson(ClientSummaryBoxs, usrInfoData);
+  AddSummaryJson(ClientSummaryBoxs, usrInfoData,resolveCategories);
   return myjson;
 };
 

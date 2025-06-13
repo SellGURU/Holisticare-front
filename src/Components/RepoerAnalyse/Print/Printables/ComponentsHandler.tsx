@@ -1,4 +1,5 @@
 import BoxPrint from './BoxPrint';
+import CategoryRow from './CategoryRow';
 import HeaderText from './HeaderText';
 import InformationBox from './informationBox';
 import Legend from './Legend';
@@ -25,6 +26,9 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       {component.type === 'box' && (
         <BoxPrint height={component.height}></BoxPrint>
       )}
+      {component.type === 'category' && (
+        <CategoryRow contents={component.content}></CategoryRow>
+      )}      
     </>
     //   <div>ComponentsHandler</div>
   );
