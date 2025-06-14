@@ -9,12 +9,16 @@ interface PrintReportV2Props {
   usrInfoData: any;
   ClientSummaryBoxs: any;
   resolveCategories: () => Array<any>;
+  referenceData: any;
+  resolveBioMarkers: () => Array<any>;
 }
 
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
   usrInfoData,
   ClientSummaryBoxs,
   resolveCategories,
+  referenceData,
+  resolveBioMarkers
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -38,6 +42,11 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       checked: true,
     },
   ]);
+  let pageNumber = 0
+  const resolvePageNumber = () => {
+    pageNumber++;
+    return pageNumber;
+  };  
   const isActiveSection = (section: string) => {
     return printOptins.filter((el) => el.name === section)[0].checked;
   };
@@ -81,6 +90,8 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         usrInfoData,
         ClientSummaryBoxs,
         resolveCategories,
+        referenceData,
+        resolveBioMarkers
       }),
     );
   }, []);
@@ -151,7 +162,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       {pageJson.map((page: any) => {
         return (
           <>
-            <PagePrintHandler page={page} />
+            <PagePrintHandler pageNumber={resolvePageNumber()} page={page} />
           </>
         );
       })}

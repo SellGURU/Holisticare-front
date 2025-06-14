@@ -749,6 +749,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   ClientSummaryBoxs={ClientSummaryBoxs}
                   usrInfoData={userInfoData}
                   resolveCategories={resolveCategories}
+                  referenceData={referenceData}
+                  resolveBioMarkers={resolveBioMarkers}
                 />
               </div>
             )}

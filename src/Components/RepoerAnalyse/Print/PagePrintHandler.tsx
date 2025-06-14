@@ -1,12 +1,15 @@
 import ComponentsHandler from './Printables/ComponentsHandler';
+import PrintFooter from './PrintFooter';
 import PrintHeader from './PrintHeader';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface PagePrintHandlerProps {
   page: any;
+  pageNumber:number
 }
 
-const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({ page }) => {
+
+const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({ page,pageNumber }) => {
   return (
     <>
       <div
@@ -29,6 +32,7 @@ const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({ page }) => {
             );
           })}
         </div>
+        <PrintFooter pageNumber={pageNumber} ></PrintFooter>
       </div>
     </>
   );
