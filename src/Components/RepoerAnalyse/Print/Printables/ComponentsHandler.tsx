@@ -28,7 +28,7 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       )}
       {component.type === 'category' && (
         <CategoryRow contents={component.content}></CategoryRow>
-      )}      
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );

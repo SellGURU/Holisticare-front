@@ -71,17 +71,17 @@ const addLegend = () => {
   });
 };
 
-const addCategoryRow = (data:Array<any>) => {
+const addCategoryRow = (data: Array<any>) => {
   checkPageCanRender(80);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'category',
     height: 80,
     content: [...data],
-  });   
-}
+  });
+};
 
-function chunkArrayToObjects(arr:Array<any>, size:number) {
+function chunkArrayToObjects(arr: Array<any>, size: number) {
   const result = [];
   for (let i = 0; i < arr.length; i += size) {
     result.push({ data: arr.slice(i, i + size) });
@@ -89,20 +89,19 @@ function chunkArrayToObjects(arr:Array<any>, size:number) {
   return result;
 }
 
+const addCategoriesHandler = (resolveCategories: () => any) => {
+  {
+    chunkArrayToObjects(resolveCategories(), 2).map((_el) => {
+      return addCategoryRow([..._el.data]);
+    });
+  }
+};
 
-
-const addCategoriesHandler = (resolveCategories:() =>any) => {
-  {chunkArrayToObjects(resolveCategories(),2).map((_el)=> {
-    return (
-      addCategoryRow([..._el.data])
-    )
-    
-  })}
- 
-}
-
-
-const AddSummaryJson = (ClientSummaryBoxs: any, usrInfoData: any,resolveCategories: () => Array<any>) => {
+const AddSummaryJson = (
+  ClientSummaryBoxs: any,
+  usrInfoData: any,
+  resolveCategories: () => Array<any>,
+) => {
   addEmptyPage();
   // addBox(60)
   addHeader(
@@ -112,7 +111,7 @@ const AddSummaryJson = (ClientSummaryBoxs: any, usrInfoData: any,resolveCategori
   addUserInfo(usrInfoData);
   addInformation(ClientSummaryBoxs?.client_summary);
   addLegend();
-  addCategoriesHandler(resolveCategories)
+  addCategoriesHandler(resolveCategories);
 };
 
 const resovleJson = ({
@@ -124,7 +123,7 @@ const resovleJson = ({
   ClientSummaryBoxs: any;
   resolveCategories: () => Array<any>;
 }) => {
-  AddSummaryJson(ClientSummaryBoxs, usrInfoData,resolveCategories);
+  AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   return myjson;
 };
 

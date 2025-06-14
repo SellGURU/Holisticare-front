@@ -14,7 +14,7 @@ interface PrintReportV2Props {
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
   usrInfoData,
   ClientSummaryBoxs,
-  resolveCategories
+  resolveCategories,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -80,7 +80,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       resolveJson({
         usrInfoData,
         ClientSummaryBoxs,
-        resolveCategories
+        resolveCategories,
       }),
     );
   }, []);
