@@ -81,23 +81,24 @@ const addCategoryRow = (data: Array<any>) => {
   });
 };
 
-const addNeedFocusBiomarker = (data:any) => {
+const addNeedFocusBiomarker = (data: any) => {
   checkPageCanRender(120);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'needFocusBiomarker',
     height: 120,
     content: data,
-  },
-);
-}
+  });
+};
 
-const addNeedFocus = (resolveBioMarkers:() =>Array<any>) => {
-  resolveBioMarkers().filter((val) => val.outofref == true).map((el:any) => {
-      addNeedFocusBiomarker(el)
-      addBox(16)
-  })
-}
+const addNeedFocus = (resolveBioMarkers: () => Array<any>) => {
+  resolveBioMarkers()
+    .filter((val) => val.outofref == true)
+    .map((el: any) => {
+      addNeedFocusBiomarker(el);
+      addBox(16);
+    });
+};
 
 function chunkArrayToObjects(arr: Array<any>, size: number) {
   const result = [];
@@ -114,10 +115,6 @@ const addCategoriesHandler = (resolveCategories: () => any) => {
     });
   }
 };
-
-
-
-
 
 // add sections -- summary
 const AddSummaryJson = (
@@ -138,22 +135,22 @@ const AddSummaryJson = (
 };
 
 // add section needsFocus
-const AddNeedsFocusSection = (referenceData:any,resolveBioMarkers: () => Array<any>) => {
-  addBox(16)
-  addHeader(
-    'Needs Focus Biomarkers',
-    referenceData.total_biomarker_note
-  );  
-  addBox(16)
-  addNeedFocus(resolveBioMarkers)
-}
+const AddNeedsFocusSection = (
+  referenceData: any,
+  resolveBioMarkers: () => Array<any>,
+) => {
+  addBox(16);
+  addHeader('Needs Focus Biomarkers', referenceData.total_biomarker_note);
+  addBox(16);
+  addNeedFocus(resolveBioMarkers);
+};
 
 const resovleJson = ({
   usrInfoData,
   ClientSummaryBoxs,
   resolveCategories,
   referenceData,
-  resolveBioMarkers
+  resolveBioMarkers,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -162,7 +159,7 @@ const resovleJson = ({
   resolveBioMarkers: () => Array<any>;
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
-  AddNeedsFocusSection(referenceData,resolveBioMarkers)
+  AddNeedsFocusSection(referenceData, resolveBioMarkers);
   return myjson;
 };
 

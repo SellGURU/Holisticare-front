@@ -18,7 +18,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   ClientSummaryBoxs,
   resolveCategories,
   referenceData,
-  resolveBioMarkers
+  resolveBioMarkers,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -42,11 +42,11 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       checked: true,
     },
   ]);
-  let pageNumber = 0
+  let pageNumber = 0;
   const resolvePageNumber = () => {
     pageNumber++;
     return pageNumber;
-  };  
+  };
   const isActiveSection = (section: string) => {
     return printOptins.filter((el) => el.name === section)[0].checked;
   };
@@ -91,7 +91,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         ClientSummaryBoxs,
         resolveCategories,
         referenceData,
-        resolveBioMarkers
+        resolveBioMarkers,
       }),
     );
   }, []);

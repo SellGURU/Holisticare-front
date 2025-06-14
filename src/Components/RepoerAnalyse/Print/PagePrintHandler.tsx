@@ -5,11 +5,13 @@ import PrintHeader from './PrintHeader';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface PagePrintHandlerProps {
   page: any;
-  pageNumber:number
+  pageNumber: number;
 }
 
-
-const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({ page,pageNumber }) => {
+const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({
+  page,
+  pageNumber,
+}) => {
   return (
     <>
       <div
@@ -32,7 +34,7 @@ const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({ page,pageNumber }) 
             );
           })}
         </div>
-        <PrintFooter pageNumber={pageNumber} ></PrintFooter>
+        <PrintFooter pageNumber={pageNumber}></PrintFooter>
       </div>
     </>
   );
