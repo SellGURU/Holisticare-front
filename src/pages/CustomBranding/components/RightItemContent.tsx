@@ -17,7 +17,7 @@ interface RightItemContentProps {
 const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
   const [activeToggle, setActiveToggle] = useState('The App Overview');
   return (
-    <div className="flex-grow-[1] h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
+    <div className="md:flex-grow-[1] w-full h-fit md:h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
       <div className="w-full h-full">
         <div className="text-sm font-medium text-Text-Primary">Preview</div>
         <div className="text-[10px] text-Text-Quadruple mt-3">
@@ -25,7 +25,7 @@ const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
           allowing you to see a sample before making a full commitment or
           decision.
         </div>
-        <div className="w-full mt-6 flex flex-col items-center gap-7">
+        <div className="w-full mt-6 flex flex-col items-center gap-7 overflow-x-scroll">
           <ToggleCustomBranding
             active={activeToggle}
             setActive={setActiveToggle}
@@ -40,7 +40,7 @@ const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
           ) : activeToggle === 'E-mail Overview' ? (
             <EmailOverview customTheme={customTheme} />
           ) : (
-            <div className="w-[595px] h-full bg-bg-color">
+            <div className=" w-full md:w-[595px] h-full bg-bg-color">
               <div className="mx-4 my-4 bg-white border border-Gray-50 rounded-t-md flex flex-col p-3">
                 <div className="flex items-center gap-2">
                   <img src="/icons/bone-health.svg" alt="" />

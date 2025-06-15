@@ -143,13 +143,13 @@ const CustomBrandingContent = () => {
     }
   };
   return (
-    <>
+   <>
       {pageLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+        <div className="fixed inset-0 flex  flex-col justify-center items-center bg-white bg-opacity-85 z-20">
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="flex items-center justify-between w-full h-[84vh] mt-6 pb-6">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full h-fit  md:h-[84vh] mt-6 pb-6 ">
         <LeftItemContent
           customTheme={customTheme}
           handleImageUpload={handleImageUpload}
@@ -161,7 +161,7 @@ const CustomBrandingContent = () => {
         />
         <RightItemContent customTheme={customTheme} />
       </div>
-    </>
+      </>
   );
 };
 
