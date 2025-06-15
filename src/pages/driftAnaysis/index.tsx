@@ -232,7 +232,6 @@ export const DriftAnaysis = () => {
   //     return null;
   //   });
   // };
-  console.log(searchQuery);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const totalPages = Math.ceil(resolvedFiltersData().length / itemsPerPage);
@@ -264,7 +263,6 @@ export const DriftAnaysis = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const dataToMap = isMobile ? paginatedData : resolvedFiltersData();
-  console.log(activeMemberID);
 
   return (
     <div
@@ -346,8 +344,10 @@ export const DriftAnaysis = () => {
               <div
                 style={{
                   height: !isMobile ? window.innerHeight - 172 + 'px' : '',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#E5E5E5 transparent',
                 }}
-                className={`hidden md:block overflow-hidden md:overflow-y-auto ${activeMenu === 'Copilot' ? '' : 'pt-3'} `}
+                className={`hidden md:block overflow-hidden md:overflow-y-auto md:pr-2 ${activeMenu === 'Copilot' ? '' : 'pt-3'} `}
               >
                 {activeMenu === 'Copilot' ? (
                   <AiChat memberID={activeMemberID} />
