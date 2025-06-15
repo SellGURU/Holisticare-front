@@ -126,7 +126,7 @@ const addConcerningResultHeaderTable = () => {
   });
 };
 
-const addConcerningResultRowTable = (el:any) => {
+const addConcerningResultRowTable = (el: any) => {
   checkPageCanRender(65);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
@@ -166,14 +166,16 @@ const AddNeedsFocusSection = (
 };
 // Add Concerning Result
 
-const AddConcerningResult = (transformConceringData:Array<any>) => {
+const AddConcerningResult = (transformConceringData: Array<any>) => {
   addHeader('Concerning Result', '');
   addBox(16);
   addConcerningResultHeaderTable();
   // addBox(120)
-  {transformConceringData.map((el) => {
-    return addConcerningResultRowTable(el)
-  })}
+  {
+    transformConceringData.map((el) => {
+      return addConcerningResultRowTable(el);
+    });
+  }
   // addConcerningResultRowTable(transformConceringData[0])
 };
 
@@ -183,14 +185,14 @@ const resovleJson = ({
   resolveCategories,
   referenceData,
   resolveBioMarkers,
-  transformConceringData
+  transformConceringData,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
   resolveCategories: () => Array<any>;
   referenceData: any;
   resolveBioMarkers: () => Array<any>;
-  transformConceringData:() =>Array<any>
+  transformConceringData: () => Array<any>;
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   AddNeedsFocusSection(referenceData, resolveBioMarkers);

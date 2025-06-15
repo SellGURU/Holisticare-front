@@ -38,8 +38,10 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       {component.type == 'ConcerningResultHeaderTable' && (
         <ConcerningResultHeaderTable></ConcerningResultHeaderTable>
       )}
-      {component.type =='ConcerningResultRowTable' && (
-        <ConcerningResultRowTable el={component.content}></ConcerningResultRowTable>
+      {component.type == 'ConcerningResultRowTable' && (
+        <ConcerningResultRowTable
+          el={component.content}
+        ></ConcerningResultRowTable>
       )}
     </>
     //   <div>ComponentsHandler</div>

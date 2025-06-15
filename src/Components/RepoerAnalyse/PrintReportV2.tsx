@@ -20,7 +20,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   resolveCategories,
   referenceData,
   resolveBioMarkers,
-  ResolveConceringData
+  ResolveConceringData,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -69,7 +69,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         subcategory: item.subcategory,
       })),
     );
-  };  
+  };
   // const pageJson = [
   //   {
   //     renderBoxs: [
@@ -109,7 +109,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         resolveCategories,
         referenceData,
         resolveBioMarkers,
-        transformConceringData
+        transformConceringData,
       }),
     );
   }, []);
