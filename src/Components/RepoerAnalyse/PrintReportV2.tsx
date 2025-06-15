@@ -12,6 +12,7 @@ interface PrintReportV2Props {
   referenceData: any;
   resolveBioMarkers: () => Array<any>;
   ResolveConceringData: () => Array<any>;
+  resolveSubCategories: () => Array<any>;
 }
 
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
@@ -21,6 +22,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   referenceData,
   resolveBioMarkers,
   ResolveConceringData,
+  resolveSubCategories
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -110,6 +112,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         referenceData,
         resolveBioMarkers,
         transformConceringData,
+        resolveSubCategories
       }),
     );
   }, []);

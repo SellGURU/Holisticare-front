@@ -752,6 +752,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   referenceData={referenceData}
                   resolveBioMarkers={resolveBioMarkers}
                   ResolveConceringData={ResolveConceringData}
+                  resolveSubCategories={resolveSubCategories}
                 />
               </div>
             )}

@@ -3,7 +3,7 @@
 const myjson: Array<any> = [];
 const checkPageCanRender = (sizeReqired: number) => {
   const lastPage = myjson[myjson.length - 1];
-  const pageHeight = 970;
+  const pageHeight = 980;
   const pageSize = lastPage.renderBoxs.reduce(
     (acc: any, box: any) => acc + box.height,
     0,
@@ -13,7 +13,10 @@ const checkPageCanRender = (sizeReqired: number) => {
   }
 };
 
-const resolveHightText = (text: string) => {
+const resolveHightText = (text: string,isSmal?:boolean) => {
+  if(isSmal) {
+    return Math.ceil(text.length / 134) * 23
+  }
   return Math.ceil(text.length / 112) * 30;
 };
 
@@ -136,6 +139,62 @@ const addConcerningResultRowTable = (el: any) => {
   });
 };
 
+const addDetailedAnalyseCategory = (el:any) => {
+  checkPageCanRender(70);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'DetailedAnalyseCategory',
+    height: 70,
+    content: el,
+  });
+}
+
+const addDescriptionDetailedAnalyse = (description:string) => {
+  checkPageCanRender(resolveHightText(description,true)+32);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'addDescriptionDetailedAnalyse',
+    height: resolveHightText(description,true)+32,
+    content: description,
+  });
+}
+
+const addBiomarkerDetailAnalyse = (el:any,isEnd:boolean) => {
+  // console.log(el)
+  checkPageCanRender(140);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'addBiomarkerDetailAnalyse',
+    height: 140,
+    content: el,
+  });  
+  addMoreInfoDetailAnalyse(el.more_info,isEnd)
+}
+
+const addMoreInfoDetailAnalyse = (text:string,isEnd:boolean) => {
+  checkPageCanRender(resolveHightText(text,true)+10);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'addMoreInfoDetailAnalyse',
+    height: resolveHightText(text,true)+10,
+    isEnd:isEnd,
+    content: text,
+  });  
+}
+
+
+const addDetailedAnalyseBox = (categoryData:any,resolveSubCategories:() =>Array<any>) => {
+  const biomarkers = resolveSubCategories().filter(
+    (val) => val.subcategory == categoryData.subcategory,
+  )[0]?.biomarkers;
+  addDetailedAnalyseCategory(categoryData)
+  addDescriptionDetailedAnalyse(categoryData.description)
+  biomarkers.map((ref:any,index:number) => {
+    return addBiomarkerDetailAnalyse(ref,index==biomarkers.length-1)
+  })
+  addBox(8)
+}
+
 // add sections -- summary
 const AddSummaryJson = (
   ClientSummaryBoxs: any,
@@ -176,8 +235,22 @@ const AddConcerningResult = (transformConceringData: Array<any>) => {
       return addConcerningResultRowTable(el);
     });
   }
+  addBox(16);
   // addConcerningResultRowTable(transformConceringData[0])
 };
+
+// add DetiledAnalyse
+const AddDetailedAnalyse = (referenceData:any,resolveCategories:Array<any>,resolveSubCategories:() =>Array<any>) => {
+  addHeader('Detailed Analysis ', referenceData.detailed_analysis_note);
+  addBox(16)
+  {
+    resolveCategories.map((el) => {
+      return addDetailedAnalyseBox(el,resolveSubCategories)
+    })
+  }
+  // addBox()
+  
+}
 
 const resovleJson = ({
   usrInfoData,
@@ -186,6 +259,7 @@ const resovleJson = ({
   referenceData,
   resolveBioMarkers,
   transformConceringData,
+  resolveSubCategories,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -193,10 +267,12 @@ const resovleJson = ({
   referenceData: any;
   resolveBioMarkers: () => Array<any>;
   transformConceringData: () => Array<any>;
+  resolveSubCategories:() => Array<any>
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   AddNeedsFocusSection(referenceData, resolveBioMarkers);
   AddConcerningResult(transformConceringData());
+  AddDetailedAnalyse(referenceData,resolveCategories(),resolveSubCategories)
   return myjson;
 };
 
