@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
@@ -29,8 +29,11 @@ type SendMessage = {
   replied_conv_id?: number;
   images: string[];
 };
+interface MessagesChatBoxProps {
+  onBack: () => void;
+}
 
-const MessagesChatBox = () => {
+const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
@@ -214,7 +217,7 @@ const MessagesChatBox = () => {
 
   return (
     <>
-      <div className="w-full mx-auto bg-white shadow-200 h-full rounded-[16px] relative flex flex-col">
+      <div className="w-full  mx-auto bg-white shadow-200 h-[75vh] md:h-full rounded-[16px] relative  flex flex-col">
         {isLoading ? (
           <>
             <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px]">
@@ -224,8 +227,18 @@ const MessagesChatBox = () => {
         ) : (
           <>
             {messages.length !== 0 || username ? (
-              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px] flex items-center justify-between">
+              <div className="px-4 pt-4 pb-2 border shadow-drop bg-white border-Gray-50 rounded-t-[16px]  flex items-center justify-between ">
                 <div className="flex items-center gap-2">
+                  <div
+                    onClick={onBack}
+                    className="flex cursor-pointer md:hidden"
+                  >
+                    <img
+                      src="/icons/arrow-left-new.svg"
+                      className="size-8"
+                      alt=""
+                    />
+                  </div>
                   <div
                     className="min-w-12 h-12 rounded-full flex items-center justify-center mr-1"
                     style={{
@@ -294,7 +307,7 @@ const MessagesChatBox = () => {
             )}
             <div
               id="userChat"
-              className="p-4 space-y-4 h-[80%] overflow-y-scroll"
+              className="p-4 space-y-4 h-[70%] md:h-[80%] overflow-auto "
             >
               {!aiMode && (
                 <>
@@ -341,7 +354,10 @@ const MessagesChatBox = () => {
                               </div>
                               <div
                                 className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{ lineHeight: '26px' }}
+                                style={{
+                                  lineHeight: '26px',
+                                  overflowWrap: 'anywhere',
+                                }}
                               >
                                 {formatText(message.message_text)}
                               </div>
@@ -390,12 +406,15 @@ const MessagesChatBox = () => {
                                     />
                                   </span>
                                 )}
-                                <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                                <div
+                                  style={{ overflowWrap: 'anywhere' }}
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
                             </div>
-                            <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
+                            <div className="min-w-[40px] min-h-[40px] size-10 overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
                               <img
                                 className="rounded-full"
                                 src={`https://ui-avatars.com/api/?name=${message.name}`}
@@ -457,7 +476,10 @@ const MessagesChatBox = () => {
                               </div>
                               <div
                                 className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] py-2 px-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                                style={{ lineHeight: '26px' }}
+                                style={{
+                                  lineHeight: '26px',
+                                  overflowWrap: 'anywhere',
+                                }}
                               >
                                 {formatText(message.message_text)}
                               </div>
@@ -506,7 +528,10 @@ const MessagesChatBox = () => {
                                     />
                                   </span>
                                 )}
-                                <div className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                                <div
+                                  style={{ overflowWrap: 'anywhere' }}
+                                  className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
+                                >
                                   {formatText(message.message_text)}
                                 </div>
                               </div>
