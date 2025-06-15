@@ -62,7 +62,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [isAssigned, countdown]);
 
   console.log(viewQuestienry);
-console.log(el);
+  console.log(el);
 
   return (
     <>
@@ -176,7 +176,7 @@ console.log(el);
           ) : (
             <>
               <div className="text-[10px]  text-Text-Primary w-[100px]">
-                <TooltipTextAuto maxWidth='100px'>{el.title}</TooltipTextAuto>
+                <TooltipTextAuto maxWidth="100px">{el.title}</TooltipTextAuto>
               </div>
 
               <div className="text-[8px] w-[100px] text-center ">
@@ -293,8 +293,9 @@ console.log(el);
             <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
               <div className="text-[12px]  font-medium">
                 {/* {viewQuestienry.questions[activeCard - 1].question} */}
-                <TooltipTextAuto tooltipPlace='left' maxWidth='200px'>{viewQuestienry.questions[activeCard - 1].question}</TooltipTextAuto>
-              
+                <TooltipTextAuto tooltipPlace="left" maxWidth="200px">
+                  {viewQuestienry.questions[activeCard - 1].question}
+                </TooltipTextAuto>
               </div>
             </div>
             <div

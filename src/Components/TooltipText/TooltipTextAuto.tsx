@@ -3,7 +3,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 
 interface TooltipTextAutoProps {
-  children: ReactElement | string ;
+  children: ReactElement | string;
   maxWidth?: string;
   tooltipPlace?: 'top' | 'bottom' | 'left' | 'right';
   tooltipClassName?: string;
@@ -27,7 +27,7 @@ const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
       setIsEllipsized(scrollWidth > offsetWidth);
     }
   }, [children]);
-console.log(children);
+  console.log(children);
 
   return (
     <>

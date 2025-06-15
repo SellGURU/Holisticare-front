@@ -17,7 +17,7 @@ interface RightItemContentProps {
 const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
   const [activeToggle, setActiveToggle] = useState('The App Overview');
   return (
-    <div className="md:flex-grow-[1] w-full h-fit md:h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
+    <div className="md:flex-grow-[1] md:mr-4 w-full h-fit md:h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
       <div className="w-full h-full">
         <div className="text-sm font-medium text-Text-Primary">Preview</div>
         <div className="text-[10px] text-Text-Quadruple mt-3">

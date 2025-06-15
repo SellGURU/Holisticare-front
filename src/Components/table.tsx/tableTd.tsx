@@ -42,11 +42,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
                 <div className="truncate  max-w-[120px]">
-                  <TooltipTextAuto maxWidth='120px'>{row.original?.name || 'No Data'}</TooltipTextAuto>
-                 
+                  <TooltipTextAuto maxWidth="120px">
+                    {row.original?.name || 'No Data'}
+                  </TooltipTextAuto>
                 </div>
                 <FiExternalLink />
-               
               </div>
             </div>
           </Link>

@@ -34,7 +34,6 @@ export const Questionary = () => {
     // { id: '3', name: 'PAR-Q', questions: 9 },
   ]);
 
-
   // const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
   const [selectedFormIDs, setSelectedFormIDs] = useState<string[]>([]);
   // const toggleSelection = (id: string) => {
@@ -220,10 +219,8 @@ export const Questionary = () => {
                         {!isNumericString(el) && (
                           <span className="mr-1">{optionLabel}.</span>
                         )}
-                      
-                      
-                        <TooltipTextAuto maxWidth='200px'>{el}</TooltipTextAuto>
-                      
+
+                        <TooltipTextAuto maxWidth="200px">{el}</TooltipTextAuto>
                       </div>
                     </div>
                   );
@@ -272,7 +269,7 @@ export const Questionary = () => {
                     <div
                       className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response.includes(el) ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                     >
-                      <TooltipTextAuto maxWidth='200px'>{el}</TooltipTextAuto>
+                      <TooltipTextAuto maxWidth="200px">{el}</TooltipTextAuto>
                     </div>
                   </div>
                 );
@@ -512,7 +509,10 @@ export const Questionary = () => {
                         checked={selectedFormIDs.includes(form.unique_id)}
                       />
                       <div className="text-[10px] text-[#888888]">
-                        {/* {form.title} */}  <TooltipTextAuto tooltipPlace='top' maxWidth='150px'>{form.title}</TooltipTextAuto>
+                        {/* {form.title} */}{' '}
+                        <TooltipTextAuto tooltipPlace="top" maxWidth="150px">
+                          {form.title}
+                        </TooltipTextAuto>
                       </div>
                     </div>
                     <div className="text-[10px] text-[#888888]">
@@ -671,9 +671,11 @@ export const Questionary = () => {
                   style={{ textAlignLast: 'center', textAlign: 'center' }}
                   className="text-[12px]  text-Primary-DeepTeal font-medium text-justify"
                 >
-                  {(questionsFormData?.questions &&
-                   <TooltipTextAuto maxWidth='220px'>{ questionsFormData.questions[activeCard - 1]?.question}</TooltipTextAuto>
-                   ) ||
+                  {(questionsFormData?.questions && (
+                    <TooltipTextAuto maxWidth="220px">
+                      {questionsFormData.questions[activeCard - 1]?.question}
+                    </TooltipTextAuto>
+                  )) ||
                     'Question not available'}
                 </div>
               </div>
@@ -751,7 +753,10 @@ export const Questionary = () => {
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">
-                <div style={{overflowWrap: 'break-word'}} className="w-full mt-2 h-[500px] overflow-auto ">
+                <div
+                  style={{ overflowWrap: 'break-word' }}
+                  className="w-full mt-2 h-[500px] overflow-auto "
+                >
                   {data?.map((el: any, index: number) => {
                     console.log(el);
 
