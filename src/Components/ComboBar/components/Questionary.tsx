@@ -17,6 +17,7 @@ import {
   YesNoCard,
 } from '../../../pages/CheckIn/components';
 import UploadCard from '../../../pages/CheckIn/components/UploadCard';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import DatePicker from '../../DatePicker';
 
 export const Questionary = () => {
@@ -32,6 +33,7 @@ export const Questionary = () => {
     // { id: '2', name: 'Initial Questionnaire', questions: 9 },
     // { id: '3', name: 'PAR-Q', questions: 9 },
   ]);
+
 
   // const [selectedQuestionnaires, setSelectedQuestionnaires] = useState<any>([]);
   const [selectedFormIDs, setSelectedFormIDs] = useState<string[]>([]);
@@ -208,7 +210,7 @@ export const Questionary = () => {
                         )}
                       </div>
                       <div
-                        className={`text-[10px] cursor-pointer ${
+                        className={`text-[10px] cursor-pointer flex ${
                           questionsData.questions[activeCardNumber - 1]
                             ?.response == el
                             ? 'text-Text-Primary'
@@ -218,7 +220,10 @@ export const Questionary = () => {
                         {!isNumericString(el) && (
                           <span className="mr-1">{optionLabel}.</span>
                         )}
-                        {el}
+                      
+                      
+                        <TooltipTextAuto maxWidth='200px'>{el}</TooltipTextAuto>
+                      
                       </div>
                     </div>
                   );
@@ -267,7 +272,7 @@ export const Questionary = () => {
                     <div
                       className={`text-[10px] cursor-pointer ${questionsData.questions[activeCardNumber - 1].response.includes(el) ? 'text-Text-Primary' : 'text-Text-Secondary'} `}
                     >
-                      {el}
+                      <TooltipTextAuto maxWidth='200px'>{el}</TooltipTextAuto>
                     </div>
                   </div>
                 );
@@ -507,7 +512,7 @@ export const Questionary = () => {
                         checked={selectedFormIDs.includes(form.unique_id)}
                       />
                       <div className="text-[10px] text-[#888888]">
-                        {form.title}
+                        {/* {form.title} */}  <TooltipTextAuto tooltipPlace='top' maxWidth='150px'>{form.title}</TooltipTextAuto>
                       </div>
                     </div>
                     <div className="text-[10px] text-[#888888]">
@@ -667,7 +672,8 @@ export const Questionary = () => {
                   className="text-[12px]  text-Primary-DeepTeal font-medium text-justify"
                 >
                   {(questionsFormData?.questions &&
-                    questionsFormData.questions[activeCard - 1]?.question) ||
+                   <TooltipTextAuto maxWidth='220px'>{ questionsFormData.questions[activeCard - 1]?.question}</TooltipTextAuto>
+                   ) ||
                     'Question not available'}
                 </div>
               </div>
@@ -745,7 +751,7 @@ export const Questionary = () => {
                 <div>Action</div>
               </div>
               <div className="flex justify-center w-full items-start  ">
-                <div className="w-full mt-2 h-[500px] overflow-auto ">
+                <div style={{overflowWrap: 'break-word'}} className="w-full mt-2 h-[500px] overflow-auto ">
                   {data?.map((el: any, index: number) => {
                     console.log(el);
 

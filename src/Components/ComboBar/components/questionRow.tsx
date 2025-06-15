@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -61,6 +62,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   }, [isAssigned, countdown]);
 
   console.log(viewQuestienry);
+console.log(el);
 
   return (
     <>
@@ -174,7 +176,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
           ) : (
             <>
               <div className="text-[10px]  text-Text-Primary w-[100px]">
-                {el.title}
+                <TooltipTextAuto maxWidth='100px'>{el.title}</TooltipTextAuto>
               </div>
 
               <div className="text-[8px] w-[100px] text-center ">
@@ -290,7 +292,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
           <div className="mt-2 select-none">
             <div className="bg-[#E9F0F2] w-full py-2 px-8 text-center rounded-t-[6px]">
               <div className="text-[12px]  font-medium">
-                {viewQuestienry.questions[activeCard - 1].question}
+                {/* {viewQuestienry.questions[activeCard - 1].question} */}
+                <TooltipTextAuto tooltipPlace='left' maxWidth='200px'>{viewQuestienry.questions[activeCard - 1].question}</TooltipTextAuto>
+              
               </div>
             </div>
             <div
