@@ -124,7 +124,7 @@ const addConcerningResultHeaderTable = () => {
     height: 60,
     content: null,
   });
-}
+};
 
 // add sections -- summary
 const AddSummaryJson = (
@@ -158,11 +158,9 @@ const AddNeedsFocusSection = (
 
 const AddConcerningResult = () => {
   addHeader('Concerning Result', '');
-  addBox(16)
-  addConcerningResultHeaderTable()
-}
-
-
+  addBox(16);
+  addConcerningResultHeaderTable();
+};
 
 const resovleJson = ({
   usrInfoData,
@@ -179,7 +177,7 @@ const resovleJson = ({
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   AddNeedsFocusSection(referenceData, resolveBioMarkers);
-  AddConcerningResult()
+  AddConcerningResult();
   return myjson;
 };
 

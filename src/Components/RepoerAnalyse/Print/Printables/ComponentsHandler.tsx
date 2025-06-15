@@ -36,7 +36,7 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       )}
       {component.type == 'ConcerningResultHeaderTable' && (
         <ConcerningResultHeaderTable></ConcerningResultHeaderTable>
-      )}      
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );
