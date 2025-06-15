@@ -116,6 +116,16 @@ const addCategoriesHandler = (resolveCategories: () => any) => {
   }
 };
 
+const addConcerningResultHeaderTable = () => {
+  checkPageCanRender(60);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'ConcerningResultHeaderTable',
+    height: 60,
+    content: null,
+  });
+}
+
 // add sections -- summary
 const AddSummaryJson = (
   ClientSummaryBoxs: any,
@@ -144,6 +154,15 @@ const AddNeedsFocusSection = (
   addBox(16);
   addNeedFocus(resolveBioMarkers);
 };
+// Add Concerning Result
+
+const AddConcerningResult = () => {
+  addHeader('Concerning Result', '');
+  addBox(16)
+  addConcerningResultHeaderTable()
+}
+
+
 
 const resovleJson = ({
   usrInfoData,
@@ -160,6 +179,7 @@ const resovleJson = ({
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   AddNeedsFocusSection(referenceData, resolveBioMarkers);
+  AddConcerningResult()
   return myjson;
 };
 

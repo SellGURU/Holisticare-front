@@ -1,6 +1,7 @@
 import BiomarkersPrint from '../BiomarkersPrint';
 import BoxPrint from './BoxPrint';
 import CategoryRow from './CategoryRow';
+import ConcerningResultHeaderTable from './ConcerningResultHeaderTable';
 import HeaderText from './HeaderText';
 import InformationBox from './informationBox';
 import Legend from './Legend';
@@ -33,6 +34,9 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       {component.type == 'needFocusBiomarker' && (
         <BiomarkersPrint data={component.content}></BiomarkersPrint>
       )}
+      {component.type == 'ConcerningResultHeaderTable' && (
+        <ConcerningResultHeaderTable></ConcerningResultHeaderTable>
+      )}      
     </>
     //   <div>ComponentsHandler</div>
   );
