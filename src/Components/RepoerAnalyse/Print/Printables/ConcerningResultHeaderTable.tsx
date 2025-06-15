@@ -1,7 +1,7 @@
 const ConcerningResultHeaderTable = () => {
   return (
     <>
-      <div className="pr-2 relative" style={{ zIndex: 60 }}>
+      <div className="relative" style={{ zIndex: 60 }}>
         <div className="w-full  bg-white rounded-md py-4 px-3 flex justify-between items-center">
           <div
             className="text-gray-700 font-medium "

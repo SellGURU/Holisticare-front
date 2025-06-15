@@ -11,6 +11,7 @@ interface PrintReportV2Props {
   resolveCategories: () => Array<any>;
   referenceData: any;
   resolveBioMarkers: () => Array<any>;
+  ResolveConceringData: () => Array<any>;
 }
 
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
@@ -19,6 +20,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   resolveCategories,
   referenceData,
   resolveBioMarkers,
+  ResolveConceringData
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -53,6 +55,21 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   subscribe('downloadCalled', (data: any) => {
     setPrintOptions(data.detail);
   });
+  const transformConceringData = () => {
+    const originalData = ResolveConceringData();
+    return originalData.flatMap((item) =>
+      item.biomarkers.map((biomarker: any) => ({
+        name: biomarker.name,
+        Result: biomarker.Result,
+        Units: biomarker.Units,
+        'Lab Ref Range': biomarker['Lab Ref Range'],
+        Baseline: biomarker.Baseline,
+        'Optimal Range': biomarker['Optimal Range'],
+        Changes: biomarker.Changes,
+        subcategory: item.subcategory,
+      })),
+    );
+  };  
   // const pageJson = [
   //   {
   //     renderBoxs: [
@@ -92,6 +109,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         resolveCategories,
         referenceData,
         resolveBioMarkers,
+        transformConceringData
       }),
     );
   }, []);

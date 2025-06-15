@@ -2,6 +2,7 @@ import BiomarkersPrint from '../BiomarkersPrint';
 import BoxPrint from './BoxPrint';
 import CategoryRow from './CategoryRow';
 import ConcerningResultHeaderTable from './ConcerningResultHeaderTable';
+import ConcerningResultRowTable from './ConcerningResultRowTable';
 import HeaderText from './HeaderText';
 import InformationBox from './informationBox';
 import Legend from './Legend';
@@ -36,6 +37,9 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       )}
       {component.type == 'ConcerningResultHeaderTable' && (
         <ConcerningResultHeaderTable></ConcerningResultHeaderTable>
+      )}
+      {component.type =='ConcerningResultRowTable' && (
+        <ConcerningResultRowTable el={component.content}></ConcerningResultRowTable>
       )}
     </>
     //   <div>ComponentsHandler</div>
