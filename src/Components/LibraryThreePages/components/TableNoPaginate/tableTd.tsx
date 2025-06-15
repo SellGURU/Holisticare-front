@@ -9,9 +9,23 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     enableSorting: false,
     cell: ({ row }) => {
       return (
-        <div className="flex justify-start text-xs text-Text-Primary">
-          {row.original?.Title || '-'}
-        </div>
+        <>
+          <div
+            className="flex justify-start text-xs text-Text-Primary"
+            data-tooltip-id={`tooltip-${row.original?.Title}`}
+          >
+            {row.original?.Title.length > 15
+              ? row.original?.Title.substring(0, 15) + '...'
+              : row.original?.Title || '-'}
+          </div>
+          <Tooltip
+            id={`tooltip-${row.original?.Title}`}
+            place="top"
+            className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+          >
+            {row.original?.Title}
+          </Tooltip>
+        </>
       );
     },
   },

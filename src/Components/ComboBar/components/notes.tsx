@@ -83,7 +83,7 @@ export const Notes = () => {
         {data?.notes ? data.notes.length : "0"})
       </div> */}
         {loading && (
-          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-full h-full rounded-[16px] absolute">
+          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-[99%] h-full absolute">
             <Circleloader />
           </div>
         )}

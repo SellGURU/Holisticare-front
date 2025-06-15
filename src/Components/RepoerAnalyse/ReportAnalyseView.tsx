@@ -8,7 +8,7 @@ import ConceringRow from './Boxs/ConceringRow';
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
 // import Point from "./Point"
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
@@ -35,6 +35,7 @@ import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -389,6 +390,26 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   const [isHolisticPlanEmpty, setIsHolisticPlanEmpty] = useState(true);
 
+  const memoizedPoints = useMemo(() => {
+    return resolveCategories().map((el: any, index: number) => {
+      const curretPositionBox = resolvePosition(el.position);
+      return (
+        <Point
+          key={`${el.subcategory}-${index}`}
+          name={el.subcategory}
+          status={resolveStatusArray(el.status)}
+          onClick={() => {
+            document.getElementById(el.subcategory)?.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }}
+          top={curretPositionBox.top}
+          left={curretPositionBox.left}
+        />
+      );
+    });
+  }, [resolvedMemberID, ClientSummaryBoxs]); // Only re-render when memberID changes
+
   return (
     <>
       {loading ? (
@@ -431,29 +452,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="relative hidden xl:block">
                     <img className="" src="/human.png" alt="" />
-                    <div>
-                      {resolveCategories().map((el: any, index: number) => {
-                        return (
-                          <>
-                            <Point
-                              key={index}
-                              name={el.subcategory}
-                              status={resolveStatusArray(el.status)}
-                              onClick={() => {
-                                // setSummaryBOxCategory(el.name)
-                                document
-                                  .getElementById(el.subcategory)
-                                  ?.scrollIntoView({
-                                    behavior: 'smooth',
-                                  });
-                              }}
-                              top={resolvePosition(el.position).top}
-                              left={resolvePosition(el.position).left}
-                            ></Point>
-                          </>
-                        );
-                      })}
-                    </div>
+                    <div>{memoizedPoints}</div>
                   </div>
                 </div>
 
@@ -480,9 +479,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         </div>
                       )}
 
-                      <div className=" text-xs md:text-[14px] font-medium text-Text-Primary">
-                        {userInfoData?.name}
+                      <div className="text-xs md:text-[14px] font-medium text-Text-Primary">
+                        <TooltipTextAuto
+                          maxWidth="180px"
+                          tooltipPlace="bottom"
+                          tooltipClassName="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999] !break-words"
+                        >
+                          {userInfoData?.name}
+                        </TooltipTextAuto>
                       </div>
+
                       {userInfoData && (
                         <>
                           {userInfoData.sex && (
@@ -543,8 +549,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
                       .filter((val) => val.outofref == true)
-                      .map((el) => {
-                        return <RefrenceBox data={el}></RefrenceBox>;
+                      .map((el, index) => {
+                        return (
+                          <RefrenceBox data={el} index={index}></RefrenceBox>
+                        );
                       })}
                   </div>
 
@@ -556,7 +564,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       id="Concerning Result"
                       className="  TextStyle-Headline-4 text-Text-Primary"
                     >
-                      Conclusion
+                      Concerning Result
                     </div>
                     <div className="dark:text-[#FFFFFF99] text-light-secandary-text text-[14px]">
                       {/* Total of 30 Treatment in 4 category */}
@@ -624,7 +632,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 </div>
 
                 <div className="mt-6 hidden xl:block">
-                  {resolveCategories().map((el: any) => {
+                  {resolveCategories().map((el: any, index: number) => {
                     return (
                       <DetiledAnalyse
                         refrences={
@@ -633,6 +641,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                           )[0]
                         }
                         data={el}
+                        index={index}
                       ></DetiledAnalyse>
                     );
                   })}
@@ -743,7 +752,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       {' '}
                       <Circleloader></Circleloader>
                       <div className="text-Text-Primary TextStyle-Body-1 mt-3 text-center">
-                        We’re analyzing your test results to create a detailed
+                        We're analyzing your test results to create a detailed
                         health plan. This may take a moment.
                       </div>
                     </div>

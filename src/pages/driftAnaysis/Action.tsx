@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 // import { useNavigate } from "react-router-dom";
-import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
-import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
-import { SlideOutPanel } from '../../Components/SlideOutPanel';
-import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
+import MiniAnallyseButton from '../../Components/MiniAnalyseButton';
+import { SlideOutPanel } from '../../Components/SlideOutPanel';
+import Application from '../../api/app';
 interface ActionProps {
   memberID: number | null;
 }
@@ -25,9 +24,7 @@ interface MessageOption extends RoadMapOption {
 
 // Add this CSS at the top of the file or in your global CSS file
 
-export const Action: React.FC<ActionProps> = ({ memberID }) => {
-  console.log(memberID);
-
+export const Action: FC<ActionProps> = ({ memberID }) => {
   const [RoadMapData, SetRoadMapData] = useState<MessageOption[]>([]);
   const [MessagesData, setMessagesData] = useState<MessageOption[]>([
     // {
@@ -58,8 +55,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
     Application.driftAnalysisApporve({
       member_id: memberID,
       description: Description,
-    }).then((res) => {
-      console.log(res);
+    }).then(() => {
       setMessagesData((prevData) =>
         prevData.map((message) =>
           message.id === id ? { ...message, isDone: true } : message,
@@ -176,7 +172,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
-  console.log(data);
 
   return (
     <>
@@ -319,8 +314,6 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           <div className="w-full flex justify-center mt-5">
             <ButtonPrimary
               onClick={() => {
-                console.log(data);
-
                 setbuttonLoading(true);
                 Application.ActionPlanSaveTask({
                   member_id: memberID,
@@ -345,10 +338,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         </SlideOutPanel>
       )}
-      <div
-        style={{ height: window.innerHeight - 186 + 'px' }}
-        className=" overflow-hidden w-full h-full md:pb-0 flex flex-col gap-2 justify- "
-      >
+      <div className="w-full h-full md:pb-0 flex flex-col gap-2">
         {' '}
         {isLoading && (
           <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
@@ -368,7 +358,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         )}
         {RoadMapData?.length > 0 ? (
-          <div className="w-full  md:min-h-[220px] md:h-[41%] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[186px] md:max-h-[244px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Roadmap
@@ -408,7 +398,11 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[85%] mt-2 md:overflow-y-auto  `}
+                className={`flex flex-col gap-2 h-[75%] mt-2 overflow-y-auto pr-3`}
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#E5E5E5 transparent',
+                }}
               >
                 {RoadMapData?.map((option: any) => (
                   <AccordionCard
@@ -433,7 +427,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
           </div>
         ) : null}
         {MessagesData.length > 0 && (
-          <div className="w-full  md:min-h-[220px] md:h-[41%] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div className="w-full  md:min-h-[120px] md:max-h-[244px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div className="w-full flex justify-between items-center">
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Messages{' '}
@@ -447,7 +441,13 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
       alt=""
     /> */}
             </div>
-            <div className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px]  `}>
+            <div
+              className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] h-[70%] overflow-y-auto`}
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#E5E5E5 transparent',
+              }}
+            >
               {MessagesData.map((option) =>
                 option.isDone ? (
                   <div className="w-[320px] p-4 border border-Gray-50 text-Text-Primary rounded-md flex items-center gap-3">
@@ -457,7 +457,7 @@ export const Action: React.FC<ActionProps> = ({ memberID }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-[85%] mt-2 md:overflow-y-auto pr-1 ">
+                  <div className="mt-2 pr-1 ">
                     <AccordionCard
                       key={option.id}
                       title={option.id}
@@ -498,7 +498,7 @@ interface AccordionCardProps {
   onDelete: () => void;
   buttonText: string;
 }
-const AccordionCard: React.FC<AccordionCardProps> = ({
+const AccordionCard: FC<AccordionCardProps> = ({
   title,
   description,
   onClick,
