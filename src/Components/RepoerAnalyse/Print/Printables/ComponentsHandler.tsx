@@ -46,34 +46,33 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
         ></ConcerningResultRowTable>
       )}
       {component.type == 'DetailedAnalyseCategory' && (
-        <DetailedAnalyseCategory data={component.content}></DetailedAnalyseCategory>
+        <DetailedAnalyseCategory
+          data={component.content}
+        ></DetailedAnalyseCategory>
       )}
       {component.type == 'addDescriptionDetailedAnalyse' && (
-        <DetailedAnalyseDescription description={component.content} ></DetailedAnalyseDescription>
+        <DetailedAnalyseDescription
+          description={component.content}
+        ></DetailedAnalyseDescription>
       )}
-      {
-        component.type == 'addBiomarkerDetailAnalyse' && (
-          <div className='w-full bg-white px-4 pb-4 pt-1'>
-            <BiomarkersPrint data={component.content}></BiomarkersPrint>
-
-          </div>
-        )
-      }
-      {
-        component.type == 'addMoreInfoDetailAnalyse' && (
-            <div
-              className="text-xs text-justify bg-white text-gray-700 pb-2 px-4"
-              style={{
-                color: '#888888',
-                fontSize: '12px',
-                borderBottomLeftRadius:component.isEnd?'16px':'0px',
-                borderBottomRightRadius:component.isEnd?'16px':'0px'
-              }}
-            >
-              {component.content}
-            </div>
-        )
-      }      
+      {component.type == 'addBiomarkerDetailAnalyse' && (
+        <div className="w-full bg-white px-4 pb-4 pt-1">
+          <BiomarkersPrint data={component.content}></BiomarkersPrint>
+        </div>
+      )}
+      {component.type == 'addMoreInfoDetailAnalyse' && (
+        <div
+          className="text-xs text-justify bg-white text-gray-700 pb-2 px-4"
+          style={{
+            color: '#888888',
+            fontSize: '12px',
+            borderBottomLeftRadius: component.isEnd ? '16px' : '0px',
+            borderBottomRightRadius: component.isEnd ? '16px' : '0px',
+          }}
+        >
+          {component.content}
+        </div>
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );

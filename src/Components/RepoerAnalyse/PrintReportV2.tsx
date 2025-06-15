@@ -22,7 +22,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   referenceData,
   resolveBioMarkers,
   ResolveConceringData,
-  resolveSubCategories
+  resolveSubCategories,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -112,7 +112,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         referenceData,
         resolveBioMarkers,
         transformConceringData,
-        resolveSubCategories
+        resolveSubCategories,
       }),
     );
   }, []);
