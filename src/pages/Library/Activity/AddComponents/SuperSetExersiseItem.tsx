@@ -13,6 +13,8 @@ interface SuperSetExersiseItemProps {
     exersiseIndex: number,
   ) => void;
   removeFromSuperSet?: (exersiseIndex: number) => void;
+  errors: { [key: string]: string };
+  showValidation?: boolean;
 }
 
 const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
@@ -22,27 +24,32 @@ const SuperSetExersiseItem: React.FC<SuperSetExersiseItemProps> = ({
   toSuperSet,
   onChange,
   removeFromSuperSet,
+  errors,
+  showValidation,
 }) => {
   return (
     <>
       <div className="flex flex-col ml-2 gap-2 relative">
-        {exercise.Exercises.map((el: any, ind: number) => (
-          <ExerciseItem
-            isSuperSet={true}
-            sets={exercise.Sets}
-            exesiseIndex={ind}
-            onDelete={() => onDelete(ind)}
-            key={index}
-            index={index}
-            exercise={el}
-            onChange={onChange}
-            toSuperSet={toSuperSet}
-            removeFromSuperSet={
-              removeFromSuperSet ? () => removeFromSuperSet(ind) : undefined
-            }
-            errors={{}}
-          />
-        ))}
+        {exercise.Exercises.map((el: any, ind: number) => {
+          return (
+            <ExerciseItem
+              isSuperSet={true}
+              sets={exercise.Sets}
+              exesiseIndex={ind}
+              onDelete={() => onDelete(ind)}
+              key={index}
+              index={index}
+              exercise={el}
+              onChange={onChange}
+              toSuperSet={toSuperSet}
+              removeFromSuperSet={
+                removeFromSuperSet ? () => removeFromSuperSet(ind) : undefined
+              }
+              errors={errors}
+              showValidation={showValidation}
+            />
+          );
+        })}
         <div
           className="absolute z-[1]  top-[25px] left-[-8px]"
           style={{ height: `${exercise.Exercises.length * 190 - 50}px` }}
