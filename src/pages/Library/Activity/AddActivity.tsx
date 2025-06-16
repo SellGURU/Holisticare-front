@@ -166,20 +166,26 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   // Check if form is valid whenever addData changes
   useEffect(() => {
     setIsFormValid(
-      addData.title.trim() !== '' && addData.instruction.trim() !== '',
+      addData.title.trim() !== '' &&
+        addData.instruction.trim() !== '' &&
+        addData.score > 0,
     );
-  }, [addData.title, addData.instruction]);
+  }, [addData.title, addData.instruction, addData.score]);
 
   // Check if exercise step is valid whenever sectionList changes
   useEffect(() => {
     const emptySetSections = sectionList.filter(
-      (section: any) => section.Sets == '',
+      (section: any) => section.Sets === '',
+    );
+    const emptyRepsSections = sectionList.filter((section: any) =>
+      section.Exercises.some((exercise: any) => exercise.Reps === ''),
     );
     setIsExerciseStepValid(
-      sectionList.length > 0 && emptySetSections.length == 0,
+      sectionList.length > 0 &&
+        emptySetSections.length == 0 &&
+        emptyRepsSections.length == 0,
     );
   }, [sectionList]);
-  console.log(isFormValid, isExerciseStepValid);
 
   return (
     <>
