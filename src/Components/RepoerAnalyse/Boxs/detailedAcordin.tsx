@@ -6,6 +6,7 @@ import Legends from '../Legends';
 import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
@@ -99,7 +100,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             </div>
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
-                {data.subcategory}
+                <TooltipTextAuto maxWidth="300px">
+                  {data.subcategory}
+                </TooltipTextAuto>
                 {isOpen && <Legends></Legends>}
               </div>
               <div className="flex justify-start items-center">
