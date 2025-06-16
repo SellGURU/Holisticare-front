@@ -14,8 +14,9 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
     <>
       <div className="w-full flex justify-between px-6 items-center bg-white  border-b border-Gray-50 h-[56px]">
         <div className="TextStyle-Body-2 text-Text-Primary">
-          <TooltipTextAuto tooltipPlace='top' maxWidth='200px'>{data.subcategory}</TooltipTextAuto>
-      
+          <TooltipTextAuto tooltipPlace="top" maxWidth="200px">
+            {data.subcategory}
+          </TooltipTextAuto>
         </div>
         <div
           onClick={() => {
@@ -33,8 +34,9 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
               <div className=" px-6 w-full bg-white">
                 <div className="w-full py-4  flex justify-end items-center">
                   <div className=" TextStyle-Body-3 text-Text-Primary pl-5   w-[800px]">
-                    <TooltipTextAuto maxWidth='200px'>{el.name ? el.name : '-'}</TooltipTextAuto>
-                   
+                    <TooltipTextAuto maxWidth="200px">
+                      {el.name ? el.name : '-'}
+                    </TooltipTextAuto>
                   </div>
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[120px] text-center pr-4">
                     {el.Result ? el.Result : '-'}

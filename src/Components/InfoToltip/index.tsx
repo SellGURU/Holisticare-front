@@ -54,7 +54,7 @@ const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
                 {items.map((el: any) => {
                   return (
                     <>
-                    {/* <TooltipTextAuto maxWidth='100px'>{el.item}</TooltipTextAuto> */}
+                      {/* <TooltipTextAuto maxWidth='100px'>{el.item}</TooltipTextAuto> */}
                       <div>{el.item}</div>
                     </>
                   );

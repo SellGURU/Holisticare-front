@@ -100,7 +100,9 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             </div>
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
-                <TooltipTextAuto maxWidth='300px'>{data.subcategory}</TooltipTextAuto>
+                <TooltipTextAuto maxWidth="300px">
+                  {data.subcategory}
+                </TooltipTextAuto>
                 {isOpen && <Legends></Legends>}
               </div>
               <div className="flex justify-start items-center">

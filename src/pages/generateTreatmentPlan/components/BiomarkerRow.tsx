@@ -93,7 +93,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
-             <TooltipTextAuto maxWidth='300px' tooltipPlace='top'>{value.Category}</TooltipTextAuto> 
+            <TooltipTextAuto maxWidth="300px" tooltipPlace="top">
+              {value.Category}
+            </TooltipTextAuto>
           </div>
         </div>
         <div
@@ -101,8 +103,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         >
           <div className=" flex gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
-              <TooltipTextAuto tooltipPlace='top' maxWidth='300px'>{value.Recommendation}</TooltipTextAuto>
-             
+              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                {value.Recommendation}
+              </TooltipTextAuto>
             </div>
             <div className="flex gap-2 text-[8px]">
               {(value.Category == 'Diet' ||

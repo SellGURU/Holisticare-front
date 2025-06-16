@@ -479,8 +479,9 @@ const NewGenerateHolisticPlan = () => {
                       {activeEl && (
                         <div>
                           <div className="text-[14px] font-medium text-Text-Primary">
-                           <TooltipTextAuto maxWidth='300px'>
-                           {activeEl?.subcategory}</TooltipTextAuto> 
+                            <TooltipTextAuto maxWidth="300px">
+                              {activeEl?.subcategory}
+                            </TooltipTextAuto>
                           </div>
                           <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
                             <span className="text-[8px] lg:text-[12px] text-Text-Primary">
@@ -512,8 +513,9 @@ const NewGenerateHolisticPlan = () => {
                                       >
                                         <div className="flex items-center gap-1">
                                           <div className=" text-[12px] text-Text-Primary">
-                                            <TooltipTextAuto maxWidth='150px'>{resol.name}</TooltipTextAuto>
-                                          
+                                            <TooltipTextAuto maxWidth="150px">
+                                              {resol.name}
+                                            </TooltipTextAuto>
                                           </div>
                                           {resolveKeyStatus(
                                             resol.values[0],
@@ -544,8 +546,9 @@ const NewGenerateHolisticPlan = () => {
                         {activeEl != null && (
                           <div className="hidden lg:block w-full p-6 bg-white border border-Gray-50  rounded-xl h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                             <div className=" text-Text-Primary text-[14px] font-[500]">
-                              <TooltipTextAuto maxWidth='300px'>{activeEl.subcategory}</TooltipTextAuto>
-                             
+                              <TooltipTextAuto maxWidth="300px">
+                                {activeEl.subcategory}
+                              </TooltipTextAuto>
                             </div>
                             <div>
                               <div
