@@ -268,7 +268,7 @@ const AddNeedsFocusSection = (
   referenceData: any,
   resolveBioMarkers: () => Array<any>,
 ) => {
-  if(myjson.length == 0) {
+  if (myjson.length == 0) {
     addEmptyPage();
   }
   addBox(16);
@@ -283,7 +283,7 @@ const AddNeedsFocusSection = (
 // Add Concerning Result
 
 const AddConcerningResult = (transformConceringData: Array<any>) => {
-  if(myjson.length == 0) {
+  if (myjson.length == 0) {
     addEmptyPage();
   }
   addHeader('Concerning Result', '', 'concerning-result');
@@ -305,9 +305,9 @@ const AddDetailedAnalyse = (
   resolveCategories: Array<any>,
   resolveSubCategories: () => Array<any>,
 ) => {
-  if(myjson.length == 0) {
+  if (myjson.length == 0) {
     addEmptyPage();
-  }  
+  }
   addHeader(
     'Detailed Analysis ',
     referenceData.detailed_analysis_note,
@@ -323,9 +323,9 @@ const AddDetailedAnalyse = (
 };
 
 const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
-  if(myjson.length == 0) {
+  if (myjson.length == 0) {
     addEmptyPage();
-  }  
+  }
   addHeader('Holistic Plan', '', 'holistic-plan');
   addBox(16);
   addHolisticPlanHeader(holisticData);
@@ -345,7 +345,7 @@ const resovleJson = ({
   resolveSubCategories,
   helthPlan,
   TreatMentPlanData,
-  isActiveSection
+  isActiveSection,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -356,22 +356,26 @@ const resovleJson = ({
   resolveSubCategories: () => Array<any>;
   helthPlan: any;
   TreatMentPlanData: Array<any>;
-  isActiveSection:(section:string) => boolean
+  isActiveSection: (section: string) => boolean;
 }) => {
-  myjson.splice(0,myjson.length)
-  if(isActiveSection("Client Summary")== true){
+  myjson.splice(0, myjson.length);
+  if (isActiveSection('Client Summary') == true) {
     AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   }
-  if(isActiveSection("Needs Focus Biomarker")== true){
+  if (isActiveSection('Needs Focus Biomarker') == true) {
     AddNeedsFocusSection(referenceData, resolveBioMarkers);
   }
-  if(isActiveSection("Concerning Result")== true){
+  if (isActiveSection('Concerning Result') == true) {
     AddConcerningResult(transformConceringData());
   }
-  if(isActiveSection("Detailed Analysis") == true){
-    AddDetailedAnalyse(referenceData, resolveCategories(), resolveSubCategories);
+  if (isActiveSection('Detailed Analysis') == true) {
+    AddDetailedAnalyse(
+      referenceData,
+      resolveCategories(),
+      resolveSubCategories,
+    );
   }
-  if(isActiveSection("Holistic Plan") == true){
+  if (isActiveSection('Holistic Plan') == true) {
     addHolisticPlan(helthPlan, TreatMentPlanData);
   }
   return myjson;

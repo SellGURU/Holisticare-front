@@ -40,7 +40,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
     {
       name: 'Concerning Result',
       checked: true,
-    },    
+    },
     {
       name: 'Detailed Analysis',
       checked: true,
@@ -123,7 +123,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         resolveSubCategories,
         helthPlan,
         TreatMentPlanData,
-        isActiveSection
+        isActiveSection,
       }),
     );
   }, [printOptins]);

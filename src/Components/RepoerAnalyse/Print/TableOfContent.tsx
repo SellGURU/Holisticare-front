@@ -122,7 +122,7 @@ const TableOfContent = ({ isActiveSection }: TableOfContentProps) => {
                 </a>
               </div>
             </>
-          )}          
+          )}
           {isActiveSection('Detailed Analysis') && (
             <>
               <div className="flex justify-start gap-4 mt-6 items-center">
