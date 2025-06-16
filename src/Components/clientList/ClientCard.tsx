@@ -646,7 +646,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
                 <Tooltip
                   place="top"
                   id={client.name}
-                  className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                 >
                   {client.name}
                 </Tooltip>
