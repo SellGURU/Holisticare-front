@@ -22,7 +22,7 @@ import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
 // import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
-import PrintReport from './PrintReport';
+// import PrintReport from './PrintReport';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
@@ -36,6 +36,7 @@ import { decodeAccessUser } from '../../help';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+import PrintReportV2 from './PrintReportV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
   memberID?: number | null;
@@ -227,7 +228,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
-  const [HelthPrint, setHelthPlanPrint] = useState(null);
+  const [, setHelthPlanPrint] = useState(null);
   useEffect(() => {
     if (ClientSummaryBoxs != null && referenceData != null) {
       setLoading(false);
@@ -728,20 +729,33 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
               </div>
             )}
             {isHaveReport && (
+              // <div className="hidden print:block" id="printDiv">
+              //   <PrintReport
+              //     helthPlan={ActionPlanPrint}
+              //     ActionPlan={HelthPrint}
+              //     usrInfoData={userInfoData}
+              //     ResolveConceringData={ResolveConceringData}
+              //     caldenderData={caldenderData}
+              //     TreatMentPlanData={TreatMentPlanData}
+              //     resolveSubCategories={resolveSubCategories}
+              //     resolveBioMarkers={resolveBioMarkers}
+              //     referenceData={referenceData}
+              //     resolveCategories={resolveCategories}
+              //     ClientSummaryBoxs={ClientSummaryBoxs}
+              //   ></PrintReport>
+              // </div>
               <div className="hidden print:block" id="printDiv">
-                <PrintReport
-                  helthPlan={ActionPlanPrint}
-                  ActionPlan={HelthPrint}
-                  usrInfoData={userInfoData}
-                  ResolveConceringData={ResolveConceringData}
-                  caldenderData={caldenderData}
-                  TreatMentPlanData={TreatMentPlanData}
-                  resolveSubCategories={resolveSubCategories}
-                  resolveBioMarkers={resolveBioMarkers}
-                  referenceData={referenceData}
-                  resolveCategories={resolveCategories}
+                <PrintReportV2
                   ClientSummaryBoxs={ClientSummaryBoxs}
-                ></PrintReport>
+                  usrInfoData={userInfoData}
+                  resolveCategories={resolveCategories}
+                  referenceData={referenceData}
+                  resolveBioMarkers={resolveBioMarkers}
+                  ResolveConceringData={ResolveConceringData}
+                  resolveSubCategories={resolveSubCategories}
+                  helthPlan={ActionPlanPrint}
+                  TreatMentPlanData={TreatMentPlanData}
+                />
               </div>
             )}
             {!isHaveReport && (

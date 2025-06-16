@@ -342,7 +342,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       Equipment: [],
       Level: [],
     });
+    setSectionList([]);
     setShowValidation(false);
+    setShowExerciseValidation(false);
   };
 
   const handleApplyClick = () => {
@@ -683,13 +685,20 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     const hasExercises = sectionList.length > 0;
 
     // Check if there are any empty reps fields
-    const hasEmptyReps = sectionList.some(
-      (section: any) =>
-        !section.Exercises[0].Reps || section.Exercises[0].Reps === '',
+    const emptySetSections = sectionList.filter(
+      (section: any) => section.Sets === '',
+    );
+    const emptyRepsSections = sectionList.filter((section: any) =>
+      section.Exercises.some((exercise: any) => exercise.Reps === ''),
     );
 
     // Only proceed if form is valid, there are exercises, and no empty reps
-    if (isFormValid && hasExercises && !hasEmptyReps) {
+    if (
+      isFormValid &&
+      hasExercises &&
+      emptySetSections.length == 0 &&
+      emptyRepsSections.length == 0
+    ) {
       saveActivity();
     }
   };

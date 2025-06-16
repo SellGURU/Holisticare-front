@@ -14,8 +14,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             className="flex justify-start text-xs text-Text-Primary"
             data-tooltip-id={`tooltip-${row.original?.Title}`}
           >
-            {row.original?.Title.length > 15
-              ? row.original?.Title.substring(0, 15) + '...'
+            {row.original?.Title?.length > 15
+              ? row.original?.Title?.substring(0, 15) + '...'
               : row.original?.Title || '-'}
           </div>
           <Tooltip
@@ -45,11 +45,11 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
               textOverflow: 'ellipsis',
             }}
           >
-            {row.original?.Instruction.length > 47
-              ? row.original?.Instruction.substring(0, 47) + '...'
+            {row.original?.Instruction?.length > 47
+              ? row.original?.Instruction?.substring(0, 47) + '...'
               : row.original?.Instruction}
           </div>
-          {row.original?.Instruction.length > 47 && (
+          {row.original?.Instruction?.length > 47 && (
             <Tooltip
               id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
               place="top"
@@ -82,8 +82,8 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           <div className="text-xs text-Text-Quadruple">
             {pageType === 'Supplement' ? (
               <div data-tooltip-id={`tooltip-${row.original?.Dose}`}>
-                {row.original?.Dose.length > 12
-                  ? row.original?.Dose.substring(0, 12) + '...'
+                {row.original?.Dose?.length > 12
+                  ? row.original?.Dose?.substring(0, 12) + '...'
                   : row.original?.Dose || '-'}
               </div>
             ) : pageType === 'Lifestyle' ? (
@@ -98,7 +98,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
               </div>
             )}
           </div>
-          {row.original?.Dose.length > 12 && (
+          {row.original?.Dose?.length > 12 && (
             <Tooltip
               id={`tooltip-${row.original?.Dose}`}
               place="top"
