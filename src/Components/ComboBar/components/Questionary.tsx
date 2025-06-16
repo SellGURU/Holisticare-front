@@ -498,28 +498,41 @@ export const Questionary = () => {
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
               <div className="flex flex-col gap-2 h-[150px] pr-[6px] custom-scrollbar  overflow-y-auto">
-                {AddForms.map((form: any) => (
-                  <div
-                    onClick={() => toggleSelection(form.unique_id)}
-                    key={form.id}
-                    className={` ${selectedFormIDs.includes(form.unique_id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
-                  >
-                    <div className="flex items-center gap-1">
-                      <Checkbox
-                        checked={selectedFormIDs.includes(form.unique_id)}
-                      />
+                {AddForms.length > 0 ? (
+                  AddForms.map((form: any) => (
+                    <div
+                      onClick={() => toggleSelection(form.unique_id)}
+                      key={form.id}
+                      className={` ${selectedFormIDs.includes(form.unique_id) ? 'border border-Primary-EmeraldGreen' : ''} rounded-xl py-2 px-3 bg-white cursor-pointer flex justify-between`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <Checkbox
+                          checked={selectedFormIDs.includes(form.unique_id)}
+                        />
+                        <div className="text-[10px] text-[#888888]">
+                          <TooltipTextAuto tooltipPlace="top" maxWidth="150px">
+                            {form.title}
+                          </TooltipTextAuto>
+                        </div>
+                      </div>
                       <div className="text-[10px] text-[#888888]">
-                        {/* {form.title} */}{' '}
-                        <TooltipTextAuto tooltipPlace="top" maxWidth="150px">
-                          {form.title}
-                        </TooltipTextAuto>
+                        {form.num_of_questions}
                       </div>
                     </div>
-                    <div className="text-[10px] text-[#888888]">
-                      {form.num_of_questions}
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 h-[250px]">
+                    <img
+                      className="object-contain"
+                      src="/icons/document-text.svg"
+                      alt=""
+                    />
+                    <div className="text-[12px] text-[#383838] mt-1">
+                      No Data Found
                     </div>
+                   
                   </div>
-                ))}
+                )}
               </div>
               <div className="w-full flex items-center gap-2  mt-4">
                 <ButtonPrimary
