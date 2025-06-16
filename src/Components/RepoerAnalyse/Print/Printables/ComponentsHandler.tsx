@@ -86,9 +86,7 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       )}
       {component.type == 'ActionPlanHeader' && (
         <>
-          <ActionPlanHeadBox
-            ActionPlan={component.content}
-          ></ActionPlanHeadBox>
+          <ActionPlanHeadBox ActionPlan={component.content}></ActionPlanHeadBox>
         </>
       )}
       {component.type == 'TreatmentplanCategory' && (

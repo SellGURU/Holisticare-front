@@ -15,7 +15,7 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text.length / 134) * 18+8;
+    return Math.ceil(text.length / 134) * 18 + 8;
   }
   return Math.ceil(text.length / 112) * 30;
 };
@@ -165,11 +165,11 @@ const AddTreatmentplanCategory = (category: any) => {
   });
 };
 const addHolisticPlanItem = (item: any) => {
-  checkPageCanRender(80 + resolveHightText(item.Notes,true));
+  checkPageCanRender(80 + resolveHightText(item.Notes, true));
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanItem',
-    height: 80 + resolveHightText(item.Notes,true),
+    height: 80 + resolveHightText(item.Notes, true),
     content: item,
   });
   addBox(8);
@@ -347,15 +347,14 @@ const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
   // addBox(40)
 };
 
-
-const AddActionPlan = (actionPlanData:any) => {
+const AddActionPlan = (actionPlanData: any) => {
   if (myjson.length == 0) {
     addEmptyPage();
-  }  
+  }
   addHeader('Action Plan', '', 'action-plan');
   addBox(16);
-  addActionPlanHeader(actionPlanData)
-}
+  addActionPlanHeader(actionPlanData);
+};
 
 const resovleJson = ({
   usrInfoData,
@@ -368,7 +367,7 @@ const resovleJson = ({
   helthPlan,
   TreatMentPlanData,
   isActiveSection,
-  ActionPlan
+  ActionPlan,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -380,7 +379,7 @@ const resovleJson = ({
   helthPlan: any;
   TreatMentPlanData: Array<any>;
   isActiveSection: (section: string) => boolean;
-  ActionPlan:any
+  ActionPlan: any;
 }) => {
   myjson.splice(0, myjson.length);
   if (isActiveSection('Client Summary') == true) {
@@ -403,7 +402,7 @@ const resovleJson = ({
     addHolisticPlan(helthPlan, TreatMentPlanData);
   }
   if (isActiveSection('Action Plan') == true) {
-    AddActionPlan(ActionPlan)
+    AddActionPlan(ActionPlan);
   }
   return myjson;
 };

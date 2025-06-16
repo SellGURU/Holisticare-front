@@ -14,7 +14,7 @@ interface PrintReportV2Props {
   ResolveConceringData: () => Array<any>;
   resolveSubCategories: () => Array<any>;
   helthPlan: any;
-  ActionPlan:any;
+  ActionPlan: any;
   TreatMentPlanData: Array<any>;
 }
 
@@ -126,7 +126,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         helthPlan,
         TreatMentPlanData,
         isActiveSection,
-        ActionPlan
+        ActionPlan,
       }),
     );
   }, [printOptins]);
