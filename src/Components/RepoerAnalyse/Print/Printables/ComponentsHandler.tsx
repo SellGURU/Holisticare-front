@@ -1,5 +1,6 @@
 import BiomarkersPrint from '../BiomarkersPrint';
 import TreatmentPlanPrint from '../TreatmentplanPrint';
+import ActionPlanHeadBox from './ActionPlanHeadBox';
 import BoxPrint from './BoxPrint';
 import CategoryRow from './CategoryRow';
 import ConcerningResultHeaderTable from './ConcerningResultHeaderTable';
@@ -81,6 +82,13 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
           <HolisticPlanHeader
             helthPlan={component.content}
           ></HolisticPlanHeader>
+        </>
+      )}
+      {component.type == 'ActionPlanHeader' && (
+        <>
+          <ActionPlanHeadBox
+            ActionPlan={component.content}
+          ></ActionPlanHeadBox>
         </>
       )}
       {component.type == 'TreatmentplanCategory' && (

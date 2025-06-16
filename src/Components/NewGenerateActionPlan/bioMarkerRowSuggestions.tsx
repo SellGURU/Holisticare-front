@@ -97,8 +97,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
     }
   };
   function hasAnyExerciseFiles(data: any[]): boolean {
-    return data.some((section) =>
-      section.Exercises.some(
+    return data?.some((section) =>
+      section?.Exercises?.some(
         (exercise: any) =>
           Array.isArray(exercise.Files) && exercise.Files.length > 0,
       ),
