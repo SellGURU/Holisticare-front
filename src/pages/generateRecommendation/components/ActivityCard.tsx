@@ -32,15 +32,37 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       ></ConflictsModal>
 
       <div className="flex items-center gap-2 mb-3">
-        <Checkbox
-          checked={item.checked}
-          onChange={() => handleCheckboxChange(activeCategory, index)}
-        />
-        <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-          <div className="w-full flex gap-6 items-center mb-4">
-            <div className="text-Text-Primary text-xs font-medium">
-              <TooltipTextAuto tooltipPlace='top' maxWidth='300px'>{item.Recommendation}</TooltipTextAuto>
-             
+        <div className="hidden md:block">
+          <Checkbox
+            checked={item.checked}
+            onChange={() => handleCheckboxChange(activeCategory, index)}
+          />
+        </div>
+
+        <ul className="md:pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
+          <div className="w-full flex flex-wrap gap-3 md:gap-6 items-center mb-4">
+            <div className="text-Text-Primary text-xs font-medium flex items-center">
+              <div className="block md:hidden">
+                <Checkbox
+                  checked={item.checked}
+                  onChange={() => handleCheckboxChange(activeCategory, index)}
+                />
+              </div>
+              <label
+              className='block md:hidden'
+                onClick={() => handleCheckboxChange(activeCategory, index)}
+              >
+                {' '}
+                <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                  {item.Recommendation}
+                </TooltipTextAuto>
+              </label>
+              <div className='hidden md:block'>
+              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                {item.Recommendation}
+              </TooltipTextAuto>
+              </div>
+              
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
