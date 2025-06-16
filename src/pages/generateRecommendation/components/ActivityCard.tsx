@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import { splitInstructions } from '../../../help';
+import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 
 interface ActivityCardProps {
   item: any;
@@ -38,7 +39,9 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
         <ul className="pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
           <div className="w-full flex gap-6 items-center mb-4">
             <div className="text-Text-Primary text-xs font-medium">
-              {item.Recommendation}
+              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                {item.Recommendation}
+              </TooltipTextAuto>
             </div>
             <div className="flex gap-2 text-[8px]">
               <div

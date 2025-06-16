@@ -7,6 +7,7 @@ import { MainModal } from '../../../Components';
 import { Tooltip } from 'react-tooltip';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
 import { splitInstructions } from '../../../help';
+import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -92,7 +93,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
-            {value.Category}
+            <TooltipTextAuto maxWidth="300px" tooltipPlace="top">
+              {value.Category}
+            </TooltipTextAuto>
           </div>
         </div>
         <div
@@ -100,7 +103,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         >
           <div className=" flex gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
-              {value.Recommendation}
+              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                {value.Recommendation}
+              </TooltipTextAuto>
             </div>
             <div className="flex gap-2 text-[8px]">
               {(value.Category == 'Diet' ||
