@@ -1,3 +1,4 @@
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from './resolveAnalyseIcon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -53,7 +54,8 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
         </div>
         <div className="ml-2">
           <div className="TextStyle-Headline-6 text-Text-Primary">
-            {data.subcategory}
+            <TooltipTextAuto maxWidth='350px'>{data.subcategory}</TooltipTextAuto>
+          
           </div>
           <div className="flex justify-start items-center">
             <div className=" text-Text-Secondary text-[10px]">

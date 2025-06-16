@@ -530,7 +530,6 @@ export const Questionary = () => {
                     <div className="text-[12px] text-[#383838] mt-1">
                       No Data Found
                     </div>
-                   
                   </div>
                 )}
               </div>

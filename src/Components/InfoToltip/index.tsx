@@ -50,10 +50,11 @@ const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
           ) : (
             <>
               <div className="text-[9px] text-Primary-DeepTeal">Category:</div>
-              <div className="grid grid-cols-2 text-[9px] gap-2 mt-2 text-Text-Secondary">
+              <div className="grid grid-cols-2 text-[9px] gap-2 mt-2 text-Text-Secondary break-words">
                 {items.map((el: any) => {
                   return (
                     <>
+                    {/* <TooltipTextAuto maxWidth='100px'>{el.item}</TooltipTextAuto> */}
                       <div>{el.item}</div>
                     </>
                   );

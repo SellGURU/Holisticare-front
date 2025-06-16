@@ -31,7 +31,7 @@ const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
 
   return (
     <>
-      <div
+      <div className='select-none'
         ref={textRef}
         data-tooltip-id={isEllipsized ? tooltipId : ''}
         data-tooltip-content={typeof children === 'string' ? children : ''}
