@@ -5,7 +5,7 @@ const BoxPrint: React.FC<BoxPrintProps> = ({ height }) => {
   return (
     <>
       <div
-        className="w-full bg-gray-100 "
+        className="w-full "
         style={{ height: height + 'px' }}
       ></div>
     </>

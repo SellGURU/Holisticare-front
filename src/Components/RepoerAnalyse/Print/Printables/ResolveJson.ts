@@ -20,12 +20,13 @@ const resolveHightText = (text: string, isSmal?: boolean) => {
   return Math.ceil(text.length / 112) * 30;
 };
 
-const addHeader = (title: string, moreInfo: string) => {
+const addHeader = (title: string, moreInfo: string,id:string) => {
   checkPageCanRender(30);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'Header',
     height: 30,
+    id:id,
     content: {
       value: title,
       moreInfo: moreInfo,
@@ -129,6 +130,53 @@ const addConcerningResultHeaderTable = () => {
   });
 };
 
+const addHolisticPlanHeader =(holisticData:any) => {
+  // console.log(holisticData)
+  if(holisticData) {
+    checkPageCanRender(40);
+    const lastPage = myjson[myjson.length - 1];
+    lastPage.renderBoxs.push({
+      type: 'HolisticPlanHeader',
+      height: 40,
+      content: [...holisticData],
+    });  
+
+  }
+}
+
+const AddTreatmentplanCategory =(category:any) => {
+  checkPageCanRender(250);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'TreatmentplanCategory',
+    height: 40,
+    content: category,
+  });    
+}
+const addHolisticPlanItem = (item:any) => {
+  checkPageCanRender(180+resolveHightText(item.title));
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'TreatmentplanItem',
+    height: 180+resolveHightText(item.title),
+    content: item,
+  });   
+  addBox(8)
+}
+
+const addHolisticPlanBox = (category:any) => {
+  AddTreatmentplanCategory(category)
+  category?.data.map((el:any) => {
+    return addHolisticPlanItem(el)
+  })
+}
+
+const addHolisticPlanTreatmentplanData = (TreatMentPlanData:Array<any>) => {
+  TreatMentPlanData.map((el) => {
+    return addHolisticPlanBox(el)
+  })
+}
+
 const addConcerningResultRowTable = (el: any) => {
   checkPageCanRender(65);
   const lastPage = myjson[myjson.length - 1];
@@ -208,6 +256,7 @@ const AddSummaryJson = (
   addHeader(
     'Client Summary',
     `Total of ${ClientSummaryBoxs.total_subcategory} Biomarkers in${' '}${ClientSummaryBoxs.total_category} Categories`,
+    'client-summary'
   );
   addUserInfo(usrInfoData);
   addInformation(ClientSummaryBoxs?.client_summary);
@@ -221,14 +270,14 @@ const AddNeedsFocusSection = (
   resolveBioMarkers: () => Array<any>,
 ) => {
   addBox(16);
-  addHeader('Needs Focus Biomarkers', referenceData.total_biomarker_note);
+  addHeader('Needs Focus Biomarkers', referenceData.total_biomarker_note,'needs-focus-biomarkers');
   addBox(16);
   addNeedFocus(resolveBioMarkers);
 };
 // Add Concerning Result
 
 const AddConcerningResult = (transformConceringData: Array<any>) => {
-  addHeader('Concerning Result', '');
+  addHeader('Concerning Result', '','concerning-result');
   addBox(16);
   addConcerningResultHeaderTable();
   // addBox(120)
@@ -247,7 +296,7 @@ const AddDetailedAnalyse = (
   resolveCategories: Array<any>,
   resolveSubCategories: () => Array<any>,
 ) => {
-  addHeader('Detailed Analysis ', referenceData.detailed_analysis_note);
+  addHeader('Detailed Analysis ', referenceData.detailed_analysis_note,'detailed-analysis');
   addBox(16);
   {
     resolveCategories.map((el) => {
@@ -257,6 +306,16 @@ const AddDetailedAnalyse = (
   // addBox()
 };
 
+
+const addHolisticPlan = (holisticData:any,TreatMentPlanData:Array<any>) => {
+  addHeader('Holistic Plan', "",'holistic-plan');
+  addBox(16)
+  addHolisticPlanHeader(holisticData)
+  addHolisticPlanTreatmentplanData(TreatMentPlanData)
+  // addBox(200)
+  // addBox(40)
+}
+
 const resovleJson = ({
   usrInfoData,
   ClientSummaryBoxs,
@@ -265,6 +324,8 @@ const resovleJson = ({
   resolveBioMarkers,
   transformConceringData,
   resolveSubCategories,
+  helthPlan,
+  TreatMentPlanData
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -273,11 +334,14 @@ const resovleJson = ({
   resolveBioMarkers: () => Array<any>;
   transformConceringData: () => Array<any>;
   resolveSubCategories: () => Array<any>;
+  helthPlan:any
+  TreatMentPlanData:Array<any>
 }) => {
   AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   AddNeedsFocusSection(referenceData, resolveBioMarkers);
   AddConcerningResult(transformConceringData());
   AddDetailedAnalyse(referenceData, resolveCategories(), resolveSubCategories);
+  addHolisticPlan(helthPlan,TreatMentPlanData);
   return myjson;
 };
 

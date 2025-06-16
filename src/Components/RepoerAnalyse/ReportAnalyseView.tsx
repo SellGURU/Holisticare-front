@@ -22,7 +22,7 @@ import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
 // import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
-import PrintReport from './PrintReport';
+// import PrintReport from './PrintReport';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
@@ -228,7 +228,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
-  const [HelthPrint, setHelthPlanPrint] = useState(null);
+  const [, setHelthPlanPrint] = useState(null);
   useEffect(() => {
     if (ClientSummaryBoxs != null && referenceData != null) {
       setLoading(false);
@@ -753,6 +753,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   resolveBioMarkers={resolveBioMarkers}
                   ResolveConceringData={ResolveConceringData}
                   resolveSubCategories={resolveSubCategories}
+                  helthPlan={ActionPlanPrint}
+                  TreatMentPlanData={TreatMentPlanData}
                 />
               </div>
             )}

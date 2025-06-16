@@ -1,4 +1,5 @@
 import BiomarkersPrint from '../BiomarkersPrint';
+import TreatmentPlanPrint from '../TreatmentplanPrint';
 import BoxPrint from './BoxPrint';
 import CategoryRow from './CategoryRow';
 import ConcerningResultHeaderTable from './ConcerningResultHeaderTable';
@@ -6,6 +7,8 @@ import ConcerningResultRowTable from './ConcerningResultRowTable';
 import DetailedAnalyseCategory from './DetailedAnalyseCategory';
 import DetailedAnalyseDescription from './DetailedAnalyseDescription';
 import HeaderText from './HeaderText';
+import HolisticPlanCategory from './HolisticPlanCategory';
+import HolisticPlanHeader from './HolisticPlanHeadBox';
 import InformationBox from './informationBox';
 import Legend from './Legend';
 import UserInfo from './UserInfo';
@@ -19,7 +22,7 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
   return (
     <>
       {component.type === 'Header' && (
-        <HeaderText component={component.content} />
+        <HeaderText id={component.id} component={component.content} />
       )}
       {component.type === 'UserInfo' && (
         <UserInfo usrInfoData={component.content} />
@@ -73,6 +76,25 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
           {component.content}
         </div>
       )}
+      {component.type == 'HolisticPlanHeader' && (
+        <>
+        <HolisticPlanHeader helthPlan={component.content}></HolisticPlanHeader>
+        </>
+      )}
+      {
+        component.type == 'TreatmentplanCategory' && (
+          <>
+            <HolisticPlanCategory el={component.content}></HolisticPlanCategory>
+          </>
+        )
+      }
+      {
+        component.type == 'TreatmentplanItem' && (
+          <>
+            <TreatmentPlanPrint data={component.content}></TreatmentPlanPrint>
+          </>
+        )
+      }      
     </>
     //   <div>ComponentsHandler</div>
   );
