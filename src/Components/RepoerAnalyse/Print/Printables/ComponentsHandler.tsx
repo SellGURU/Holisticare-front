@@ -78,23 +78,21 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
       )}
       {component.type == 'HolisticPlanHeader' && (
         <>
-        <HolisticPlanHeader helthPlan={component.content}></HolisticPlanHeader>
+          <HolisticPlanHeader
+            helthPlan={component.content}
+          ></HolisticPlanHeader>
         </>
       )}
-      {
-        component.type == 'TreatmentplanCategory' && (
-          <>
-            <HolisticPlanCategory el={component.content}></HolisticPlanCategory>
-          </>
-        )
-      }
-      {
-        component.type == 'TreatmentplanItem' && (
-          <>
-            <TreatmentPlanPrint data={component.content}></TreatmentPlanPrint>
-          </>
-        )
-      }      
+      {component.type == 'TreatmentplanCategory' && (
+        <>
+          <HolisticPlanCategory el={component.content}></HolisticPlanCategory>
+        </>
+      )}
+      {component.type == 'TreatmentplanItem' && (
+        <>
+          <TreatmentPlanPrint data={component.content}></TreatmentPlanPrint>
+        </>
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );

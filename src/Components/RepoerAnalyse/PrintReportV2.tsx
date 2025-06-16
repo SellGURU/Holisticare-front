@@ -26,8 +26,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   ResolveConceringData,
   resolveSubCategories,
   helthPlan,
-  TreatMentPlanData
-  
+  TreatMentPlanData,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -119,7 +118,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         transformConceringData,
         resolveSubCategories,
         helthPlan,
-        TreatMentPlanData
+        TreatMentPlanData,
       }),
     );
   }, []);

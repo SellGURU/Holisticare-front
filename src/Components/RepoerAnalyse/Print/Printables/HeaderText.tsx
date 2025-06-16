@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface HeaderTextProps {
   component: any;
-  id:string
+  id: string;
 }
 const HeaderText: React.FC<HeaderTextProps> = ({ component, id }) => {
   return (
