@@ -13,7 +13,7 @@ interface EmailOverviewProps {
 
 const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
   return (
-    <div className="w-[450px] h-[275px] rounded-[20px] bg-white border border-Gray-50 shadow-100 flex flex-col justify-between">
+    <div className=" w-full md:w-[450px] h-fit md:h-[275px] rounded-[20px] bg-white border border-Gray-50 shadow-100 flex flex-col justify-between">
       <div className="flex flex-col">
         <div className="flex w-full pt-3 pl-2 gap-2 items-center">
           <img
@@ -49,7 +49,7 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
         </div>
       </div>
       <div
-        className="w-full h-[39px] rounded-b-[20px]"
+        className="w-full mt-4 md:mt-0 h-[39px] rounded-b-[20px]"
         style={{ backgroundColor: customTheme.secondaryColor }}
       ></div>
     </div>

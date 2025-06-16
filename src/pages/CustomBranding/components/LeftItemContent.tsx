@@ -116,7 +116,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   };
 
   return (
-    <div className="w-[360px] h-full mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
+    <div className=" w-full md:w-[360px] h-fit md:h-full mr-0 md:mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
       <div>
         <div className="flex flex-col w-full">
           <div className="flex items-center justify-between">
@@ -328,7 +328,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end mb-1 mr-1">
+      <div className="flex items-center justify-end mt-3 md:mt-0 md:mb-1 mr-1">
         <div
           className="text-Disable text-sm font-medium cursor-pointer"
           onClick={handleResetTheme}

@@ -22,6 +22,8 @@ import StatusBarChart from '../../Components/RepoerAnalyse/Boxs/StatusBarChart';
 // import StatusChart from '../../Components/RepoerAnalyse/StatusChart';
 import { AppContext } from '../../store/app';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
+import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
+import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -317,7 +319,7 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <div className="text-Text-Secondary text-[10px] md:text-[12px] lg:text-[12px]">
+                                  <div className="text-Text-Secondary text-justify text-[10px] md:text-[12px] lg:text-[12px]">
                                     The Holistic Plan is your personalized
                                     roadmap to optimal well-being. By combining
                                     knowledge-based insights with your unique
@@ -470,14 +472,15 @@ const NewGenerateHolisticPlan = () => {
                       <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
                         <img
                           className=""
-                          src={'/icons/biomarkers/heart.svg'}
+                          src={resolveAnalyseIcon(activeEl?.subcategory)}
                           alt=""
                         />
                       </div>
                       {activeEl && (
                         <div>
                           <div className="text-[14px] font-medium text-Text-Primary">
-                            {activeEl?.subcategory}
+                           <TooltipTextAuto maxWidth='300px'>
+                           {activeEl?.subcategory}</TooltipTextAuto> 
                           </div>
                           <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
                             <span className="text-[8px] lg:text-[12px] text-Text-Primary">
@@ -509,7 +512,8 @@ const NewGenerateHolisticPlan = () => {
                                       >
                                         <div className="flex items-center gap-1">
                                           <div className=" text-[12px] text-Text-Primary">
-                                            {resol.name}
+                                            <TooltipTextAuto maxWidth='150px'>{resol.name}</TooltipTextAuto>
+                                          
                                           </div>
                                           {resolveKeyStatus(
                                             resol.values[0],
@@ -540,7 +544,8 @@ const NewGenerateHolisticPlan = () => {
                         {activeEl != null && (
                           <div className="hidden lg:block w-full p-6 bg-white border border-Gray-50  rounded-xl h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
                             <div className=" text-Text-Primary text-[14px] font-[500]">
-                              {activeEl.subcategory}
+                              <TooltipTextAuto maxWidth='300px'>{activeEl.subcategory}</TooltipTextAuto>
+                             
                             </div>
                             <div>
                               <div
