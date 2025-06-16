@@ -214,7 +214,9 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                     className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50 text-xs resize-none outline-none  mb-2"
                   />
                 ) : (
-                  <li className="list-disc text-xs mt-2 text-justify">{item}</li>
+                  <li className="list-disc text-xs mt-2 text-justify">
+                    {item}
+                  </li>
                 )}
               </React.Fragment>
             ))}

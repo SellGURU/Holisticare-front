@@ -49,7 +49,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 />
               </div>
               <label
-              className='block md:hidden'
+                className="block md:hidden"
                 onClick={() => handleCheckboxChange(activeCategory, index)}
               >
                 {' '}
@@ -57,12 +57,11 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                   {item.Recommendation}
                 </TooltipTextAuto>
               </label>
-              <div className='hidden md:block'>
-              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
-                {item.Recommendation}
-              </TooltipTextAuto>
+              <div className="hidden md:block">
+                <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                  {item.Recommendation}
+                </TooltipTextAuto>
               </div>
-              
             </div>
             <div className="flex gap-2 text-[8px]">
               <div

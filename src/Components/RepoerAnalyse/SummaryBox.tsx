@@ -54,8 +54,9 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
         </div>
         <div className="ml-2">
           <div className="TextStyle-Headline-6 text-Text-Primary">
-            <TooltipTextAuto maxWidth='350px'>{data.subcategory}</TooltipTextAuto>
-          
+            <TooltipTextAuto maxWidth="350px">
+              {data.subcategory}
+            </TooltipTextAuto>
           </div>
           <div className="flex justify-start items-center">
             <div className=" text-Text-Secondary text-[10px]">

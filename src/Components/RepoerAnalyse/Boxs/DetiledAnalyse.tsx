@@ -139,8 +139,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             </div>
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
-                <TooltipTextAuto maxWidth='400px'>{data.subcategory}</TooltipTextAuto>
-                
+                <TooltipTextAuto maxWidth="400px">
+                  {data.subcategory}
+                </TooltipTextAuto>
+
                 {/* {isOpen && <Legends></Legends>} */}
               </div>
               <div className="flex justify-start items-center">

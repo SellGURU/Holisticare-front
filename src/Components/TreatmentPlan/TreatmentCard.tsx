@@ -20,8 +20,8 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
     <div className="w-[354px] no-split print:w-full min-h-[234px] h-full text-justify  print:h-auto flex flex-col gap-4 px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm  text-Text-Primary ">
-          <TooltipTextAuto maxWidth='250px'>{data?.title}</TooltipTextAuto>
-         
+          <TooltipTextAuto maxWidth="250px">{data?.title}</TooltipTextAuto>
+
           <div
             data-tooltip-id={`score-calc-${index}`}
             className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
