@@ -38,6 +38,10 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       checked: true,
     },
     {
+      name: 'Concerning Result',
+      checked: true,
+    },    
+    {
       name: 'Detailed Analysis',
       checked: true,
     },
@@ -119,9 +123,10 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         resolveSubCategories,
         helthPlan,
         TreatMentPlanData,
+        isActiveSection
       }),
     );
-  }, []);
+  }, [printOptins]);
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <style

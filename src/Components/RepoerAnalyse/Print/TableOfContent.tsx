@@ -99,6 +99,30 @@ const TableOfContent = ({ isActiveSection }: TableOfContentProps) => {
               </div>
             </>
           )}
+          {isActiveSection('Concerning Result') && (
+            <>
+              <div className="flex justify-start gap-4 mt-6 items-center">
+                <img
+                  src="/icons/icon-list-report.svg"
+                  alt=""
+                  style={{ marginRight: '-8px' }}
+                />
+                <div
+                  className="text-xl"
+                  style={{ color: '#005F73', fontWeight: '500' }}
+                >
+                  Section {getNextSectionNumber()}
+                </div>
+                <a
+                  href="#concerning-result"
+                  className="text-xl cursor-pointer hover:underline"
+                  style={{ color: '#383838', fontWeight: '500' }}
+                >
+                  Concerning Result
+                </a>
+              </div>
+            </>
+          )}          
           {isActiveSection('Detailed Analysis') && (
             <>
               <div className="flex justify-start gap-4 mt-6 items-center">

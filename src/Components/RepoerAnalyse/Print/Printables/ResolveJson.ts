@@ -86,11 +86,11 @@ const addCategoryRow = (data: Array<any>) => {
 };
 
 const addNeedFocusBiomarker = (data: any) => {
-  checkPageCanRender(110);
+  checkPageCanRender(120);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'needFocusBiomarker',
-    height: 110,
+    height: 120,
     content: data,
   });
 };
@@ -144,7 +144,7 @@ const addHolisticPlanHeader = (holisticData: any) => {
 };
 
 const AddTreatmentplanCategory = (category: any) => {
-  checkPageCanRender(250);
+  checkPageCanRender(260);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanCategory',
@@ -153,11 +153,11 @@ const AddTreatmentplanCategory = (category: any) => {
   });
 };
 const addHolisticPlanItem = (item: any) => {
-  checkPageCanRender(180 + resolveHightText(item.title));
+  checkPageCanRender(200 + resolveHightText(item.title));
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanItem',
-    height: 180 + resolveHightText(item.title),
+    height: 200 + resolveHightText(item.title),
     content: item,
   });
   addBox(8);
@@ -238,7 +238,7 @@ const addDetailedAnalyseBox = (
   )[0]?.biomarkers;
   addDetailedAnalyseCategory(categoryData);
   addDescriptionDetailedAnalyse(categoryData.description);
-  biomarkers.map((ref: any, index: number) => {
+  biomarkers?.map((ref: any, index: number) => {
     return addBiomarkerDetailAnalyse(ref, index == biomarkers.length - 1);
   });
   addBox(8);
@@ -268,6 +268,9 @@ const AddNeedsFocusSection = (
   referenceData: any,
   resolveBioMarkers: () => Array<any>,
 ) => {
+  if(myjson.length == 0) {
+    addEmptyPage();
+  }
   addBox(16);
   addHeader(
     'Needs Focus Biomarkers',
@@ -280,6 +283,9 @@ const AddNeedsFocusSection = (
 // Add Concerning Result
 
 const AddConcerningResult = (transformConceringData: Array<any>) => {
+  if(myjson.length == 0) {
+    addEmptyPage();
+  }
   addHeader('Concerning Result', '', 'concerning-result');
   addBox(16);
   addConcerningResultHeaderTable();
@@ -299,6 +305,9 @@ const AddDetailedAnalyse = (
   resolveCategories: Array<any>,
   resolveSubCategories: () => Array<any>,
 ) => {
+  if(myjson.length == 0) {
+    addEmptyPage();
+  }  
   addHeader(
     'Detailed Analysis ',
     referenceData.detailed_analysis_note,
@@ -314,9 +323,13 @@ const AddDetailedAnalyse = (
 };
 
 const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
+  if(myjson.length == 0) {
+    addEmptyPage();
+  }  
   addHeader('Holistic Plan', '', 'holistic-plan');
   addBox(16);
   addHolisticPlanHeader(holisticData);
+  addBox(16);
   addHolisticPlanTreatmentplanData(TreatMentPlanData);
   // addBox(200)
   // addBox(40)
@@ -332,6 +345,7 @@ const resovleJson = ({
   resolveSubCategories,
   helthPlan,
   TreatMentPlanData,
+  isActiveSection
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -342,12 +356,24 @@ const resovleJson = ({
   resolveSubCategories: () => Array<any>;
   helthPlan: any;
   TreatMentPlanData: Array<any>;
+  isActiveSection:(section:string) => boolean
 }) => {
-  AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
-  AddNeedsFocusSection(referenceData, resolveBioMarkers);
-  AddConcerningResult(transformConceringData());
-  AddDetailedAnalyse(referenceData, resolveCategories(), resolveSubCategories);
-  addHolisticPlan(helthPlan, TreatMentPlanData);
+  myjson.splice(0,myjson.length)
+  if(isActiveSection("Client Summary")== true){
+    AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
+  }
+  if(isActiveSection("Needs Focus Biomarker")== true){
+    AddNeedsFocusSection(referenceData, resolveBioMarkers);
+  }
+  if(isActiveSection("Concerning Result")== true){
+    AddConcerningResult(transformConceringData());
+  }
+  if(isActiveSection("Detailed Analysis") == true){
+    AddDetailedAnalyse(referenceData, resolveCategories(), resolveSubCategories);
+  }
+  if(isActiveSection("Holistic Plan") == true){
+    addHolisticPlan(helthPlan, TreatMentPlanData);
+  }
   return myjson;
 };
 
