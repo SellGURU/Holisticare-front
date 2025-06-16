@@ -8,6 +8,7 @@ import Badge from '../badge';
 // import { Application } from "@/api";
 import { publish } from '../../utils/event';
 import { Tooltip } from 'react-tooltip';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 // import SvgIcon from '../../utils/svgIcon';
 // import CircularProgressBar from '../charts/CircularProgressBar';
 
@@ -41,21 +42,11 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
                 className="font-meidum text-[10px] 2xl:text-xs   text-Text-Primary text-nowrap flex items-center gap-3"
               >
                 <div className="truncate  max-w-[120px]">
-                  {row.original?.name.length > 20
-                    ? row.original?.name.substring(0, 20)
-                    : row.original?.name || 'No Data'}
+                  <TooltipTextAuto maxWidth="120px">
+                    {row.original?.name || 'No Data'}
+                  </TooltipTextAuto>
                 </div>
                 <FiExternalLink />
-                {row.original?.name.length > 20 && (
-                  <Tooltip
-                    place="top"
-                    id={row.original?.name}
-                    className="!bg-white !w-fit  !text-wrap 
-                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                  >
-                    {row.original?.namee}
-                  </Tooltip>
-                )}
               </div>
             </div>
           </Link>

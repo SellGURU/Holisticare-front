@@ -12,7 +12,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
   return (
     <>
       <div
-        className={` bg-backgroundColor-Main h-7 w-[496px]  px-2 flex justify-between items-center rounded-[24px] gap-1`}
+        className={` bg-backgroundColor-Main h-7 w-full md:w-[496px]  px-2 flex justify-between items-center rounded-[24px] gap-1`}
       >
         <div
           onClick={() => {

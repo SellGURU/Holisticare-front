@@ -11,6 +11,7 @@ import { sortKeysWithValues } from './Help';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { Tooltip } from 'react-tooltip';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -138,7 +139,10 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             </div>
             <div className="ml-2">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
-                {data.subcategory}
+                <TooltipTextAuto maxWidth="400px">
+                  {data.subcategory}
+                </TooltipTextAuto>
+
                 {/* {isOpen && <Legends></Legends>} */}
               </div>
               <div className="flex justify-start items-center">
