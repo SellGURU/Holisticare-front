@@ -347,20 +347,19 @@ const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
   // addBox(40)
 };
 
-const AddActionPlanHeaderOverflow =() => {
+const AddActionPlanHeaderOverflow = () => {
   checkPageCanRender(60);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'AddActionPlanHeaderOverflow',
     height: 60,
     content: null,
-  });  
-}
+  });
+};
 
-const AddActionPlanOverView =() => {
-  AddActionPlanHeaderOverflow()
-}
-
+const AddActionPlanOverView = () => {
+  AddActionPlanHeaderOverflow();
+};
 
 const AddActionPlan = (actionPlanData: any) => {
   if (myjson.length == 0) {
@@ -369,7 +368,7 @@ const AddActionPlan = (actionPlanData: any) => {
   addHeader('Action Plan', '', 'action-plan');
   addBox(16);
   addActionPlanHeader(actionPlanData);
-  AddActionPlanOverView()
+  AddActionPlanOverView();
 };
 
 const resovleJson = ({

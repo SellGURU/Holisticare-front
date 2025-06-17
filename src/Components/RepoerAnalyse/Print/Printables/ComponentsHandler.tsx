@@ -100,13 +100,11 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
           <TreatmentPlanPrint data={component.content}></TreatmentPlanPrint>
         </>
       )}
-      {
-        component.type == 'AddActionPlanHeaderOverflow' && (
-          <>
-            <AddActionPlanHeaderOverflow ></AddActionPlanHeaderOverflow>
-          </>
-        )
-      }
+      {component.type == 'AddActionPlanHeaderOverflow' && (
+        <>
+          <AddActionPlanHeaderOverflow></AddActionPlanHeaderOverflow>
+        </>
+      )}
     </>
     //   <div>ComponentsHandler</div>
   );
