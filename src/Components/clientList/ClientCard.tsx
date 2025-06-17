@@ -267,9 +267,22 @@ const ClientCard: React.FC<ClientCardProps> = ({
             </div>
           ) : (
             <div className="bg-white w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
-              <div className="border-b border-Gray-50 pb-2 text-sm font-medium">
-                {' '}
-                {client.name}`s Access
+              <div
+                className="border-b border-Gray-50 pb-2 text-sm font-medium"
+                data-tooltip-id={'tooltip-client-access' + client.name}
+              >
+                {client.name.length > 35
+                  ? client.name.substring(0, 35) + '...`s Access'
+                  : client.name + '`s Access'}
+                {client.name.length > 35 && (
+                  <Tooltip
+                    place="top"
+                    id={'tooltip-client-access' + client.name}
+                    className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                  >
+                    {client.name}`s Access
+                  </Tooltip>
+                )}
               </div>
               <div className="mt-6 text-xs font-medium">
                 Share the email address and password with your client to give
@@ -281,7 +294,23 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <div className="flex flex-col gap-2 mt-6">
                 <div className="text-xs font-medium">Email Address</div>
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
-                  <span className="text-xs select-none">{AccessUserName}</span>
+                  <span
+                    className="text-xs select-none"
+                    data-tooltip-id={'tooltip-client-access' + AccessUserName}
+                  >
+                    {AccessUserName.length > 35
+                      ? AccessUserName.substring(0, 35) + '...'
+                      : AccessUserName}
+                    {AccessUserName.length > 35 && (
+                      <Tooltip
+                        place="top"
+                        id={'tooltip-client-access' + AccessUserName}
+                        className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                      >
+                        {AccessUserName}
+                      </Tooltip>
+                    )}
+                  </span>
                   <img
                     onClick={() => copyToClipboard(AccessUserName, 'Email')}
                     className="cursor-pointer"
@@ -302,7 +331,23 @@ const ClientCard: React.FC<ClientCardProps> = ({
               <div className="flex flex-col gap-2 mt-6">
                 <div className="text-xs font-medium">Password</div>
                 <div className="w-full flex justify-between rounded-2xl border border-Gray-50 px-3 py-1 bg-[#FDFDFD] relative">
-                  <span className="text-xs select-none">{AccessPassword}</span>
+                  <span
+                    className="text-xs select-none"
+                    data-tooltip-id={'tooltip-client-access' + AccessPassword}
+                  >
+                    {AccessPassword.length > 35
+                      ? AccessPassword.substring(0, 35) + '...'
+                      : AccessPassword}
+                    {AccessPassword.length > 35 && (
+                      <Tooltip
+                        place="top"
+                        id={'tooltip-client-access' + AccessPassword}
+                        className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                      >
+                        {AccessPassword}
+                      </Tooltip>
+                    )}
+                  </span>
                   <img
                     onClick={() => copyToClipboard(AccessPassword, 'Password')}
                     className="cursor-pointer"

@@ -118,7 +118,7 @@ const StaffContent = () => {
           Sort by: <SelectBoxStaff onChange={handleFilterChange} />
         </div> */}
       </div>
-      <div className="flex flex-wrap items-center gap-2 mt-4">
+      <div className="flex flex-wrap items-center gap-2 mt-4 mb-20 md:mb-0">
         {filteredMembers.length > 0 && (
           <>
             {filteredMembers.map((member, index) => {

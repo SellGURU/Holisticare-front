@@ -12,7 +12,7 @@ const AssignListModal: FC<AssignListModalProps> = ({
   assignedClients,
 }) => {
   return (
-    <div className="flex flex-col justify-between bg-white w-[706px] rounded-[16px] p-6">
+    <div className="flex flex-col justify-between bg-white w-[92vw] md:w-[706px] rounded-[16px] p-6">
       <div className="w-full h-full">
         <div className="flex justify-start items-center">
           <div className="text-Text-Primary font-medium">Assign List</div>

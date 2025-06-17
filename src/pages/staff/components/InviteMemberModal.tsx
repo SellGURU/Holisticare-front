@@ -105,7 +105,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
   return (
     <>
       {step === 1 ? (
-        <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
+        <div className="flex flex-col justify-between bg-white w-[90vw] md:w-[500px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
               <div className="text-Text-Primary font-medium">Invite Member</div>
@@ -259,7 +259,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
           </div>
         </div>
       ) : step === 2 ? (
-        <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
+        <div className="flex flex-col justify-between bg-white w-[90vw] md:w-[500px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
               <div className="text-Text-Primary font-medium">Manage Member</div>
