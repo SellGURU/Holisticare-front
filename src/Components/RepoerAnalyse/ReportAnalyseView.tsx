@@ -756,6 +756,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   helthPlan={ActionPlanPrint}
                   TreatMentPlanData={TreatMentPlanData}
                   ActionPlan={HelthPrint}
+                  caldenderData={caldenderData}
                 />
               </div>
             )}

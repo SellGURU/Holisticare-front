@@ -2,6 +2,7 @@ import BiomarkersPrint from '../BiomarkersPrint';
 import TreatmentPlanPrint from '../TreatmentplanPrint';
 import ActionPlanHeadBox from './ActionPlanHeadBox';
 import AddActionPlanHeaderOverflow from './ActionPlanHeaderOverflow';
+import ActionPlanRowOverFlow from './ActionPlanRowOverFlow';
 import BoxPrint from './BoxPrint';
 import CategoryRow from './CategoryRow';
 import ConcerningResultHeaderTable from './ConcerningResultHeaderTable';
@@ -104,6 +105,9 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
         <>
           <AddActionPlanHeaderOverflow></AddActionPlanHeaderOverflow>
         </>
+      )}
+      {component.type == 'ActionPlanRowOverFlow' && (
+        <ActionPlanRowOverFlow index={component.index} item={component.content} category={component.key}></ActionPlanRowOverFlow>
       )}
     </>
     //   <div>ComponentsHandler</div>

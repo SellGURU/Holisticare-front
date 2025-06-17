@@ -16,6 +16,7 @@ interface PrintReportV2Props {
   helthPlan: any;
   ActionPlan: any;
   TreatMentPlanData: Array<any>;
+  caldenderData: any;
 }
 
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
@@ -29,6 +30,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   helthPlan,
   ActionPlan,
   TreatMentPlanData,
+  caldenderData
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -127,6 +129,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         TreatMentPlanData,
         isActiveSection,
         ActionPlan,
+        caldenderData
       }),
     );
   }, [printOptins]);
