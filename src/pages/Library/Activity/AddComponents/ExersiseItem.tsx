@@ -200,7 +200,7 @@ const ExerciseItem = ({
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">
           <div
-            className={`mt-2 ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
+            className={`mt-2 relative ${exesiseIndex == 0 ? 'visible' : 'invisible'}`}
           >
             <div className="text-center  flex text-[8px] text-Text-Primary justify-center mb-[-6px]">
               Set
@@ -233,7 +233,7 @@ const ExerciseItem = ({
               } outline-none text-[10px] text-Text-Primary`}
             />
             {showValidation && isSetEmpty && (
-              <div className="text-[8px] text-red-500 mt-1 text-center">
+              <div className="text-[8px] text-red-500 mt-1 text-center absolute bottom-[-12px] left-[15px]">
                 This field is required.
               </div>
             )}
@@ -243,7 +243,7 @@ const ExerciseItem = ({
               </span>
             )}
           </div>
-          <div className="mt-2">
+          <div className="mt-2 relative">
             <div className="text-center text-[8px] text-Text-Primary">Reps</div>
             <input
               type="text"
@@ -258,7 +258,7 @@ const ExerciseItem = ({
               } outline-none text-[10px] text-Text-Primary`}
             />
             {showValidation && (!exercise.Reps || exercise.Reps === '') && (
-              <div className="text-[8px] text-red-500 mt-1 text-center">
+              <div className="text-[8px] text-red-500 mt-1 text-center absolute bottom-[-12px] left-[15px]">
                 This field is required.
               </div>
             )}
