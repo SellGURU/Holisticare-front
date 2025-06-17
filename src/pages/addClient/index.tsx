@@ -145,16 +145,6 @@ const AddClient = () => {
       formik.handleSubmit();
     });
   };
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 640);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   useEffect(() => {
     if (apiError) {
       setApiError('');
@@ -172,7 +162,7 @@ const AddClient = () => {
       <div className="w-full hidden md:block sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
-      <div className="w-full  p-3 xs:p-4 sm:p-6  md:p-8">
+      <div className="w-full p-3 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto">
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
@@ -265,14 +255,9 @@ const AddClient = () => {
               </div>
             </div>
 
-            <div className="flex justify-center w-full overflow-auto">
-              <div
-                style={{
-                  height: isMobile ? window.innerHeight - 100 + 'px' : '',
-                }}
-                className="max-w-[460px]    overflow-x-hidden overflow-y-scroll w-full grid gap-4 pt-3 md:pt-0"
-              >
-                <div className="w-full flex gap-4  md:gap-0 flex-col md:flex-row justify-between items-start   md:overflow-visible md:h-[50px]">
+            <div className="flex justify-center w-full">
+              <div className="max-w-[460px] w-full grid gap-4 pt-3 md:pt-0">
+                <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:overflow-visible md:h-[50px]">
                   <div className="w-full md:w-[220px]">
                     <TextField
                       type="text"

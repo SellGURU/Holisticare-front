@@ -31,7 +31,7 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
   return (
     <>
       {!isSuccess ? (
-        <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
+        <div className="flex flex-col justify-between bg-white w-[90vw] md:w-[500px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
               <div className="text-Text-Primary font-medium flex items-center gap-2">
@@ -67,7 +67,7 @@ const RemoveMemberModal: FC<RemoveMemberModalProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col justify-between bg-white w-[313px] rounded-[16px] p-4">
+        <div className="flex flex-col justify-between bg-white w-[80vw] md:w-[313px] rounded-[16px] p-4">
           <div className="w-full h-full flex flex-col items-center">
             <img src="/icons/tick-circle-background-new.svg" alt="" />
             <div className="text-xs font-medium text-Text-Primary text-center">

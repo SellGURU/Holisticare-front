@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
+import { Tooltip } from 'react-tooltip';
 interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;
@@ -52,10 +53,22 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
                   <img src="/icons/danger.svg" alt="" />
                   {archived ? 'Remove from Archive List' : 'Send to Archive'}
                 </div>
-                <div className="mt-5 text-center text-xs font-medium">
+                <div
+                  className="mt-5 text-center text-xs font-medium"
+                  data-tooltip-id={'tooltip-archive-modal' + name}
+                >
                   {archived
-                    ? `Are you sure you want to remove client ${name} from archive list?`
-                    : `Are you sure you want to send client ${name} to archive list? `}
+                    ? `Are you sure you want to remove client ${name.length > 25 ? name.substring(0, 25) + '...' : name} from archive list?`
+                    : `Are you sure you want to send client ${name.length > 25 ? name.substring(0, 25) + '...' : name} to archive list? `}
+                  {name.length > 25 && (
+                    <Tooltip
+                      place="top"
+                      id={'tooltip-archive-modal' + name}
+                      className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                    >
+                      {name}
+                    </Tooltip>
+                  )}
                 </div>
                 <div className="mt-4 text-xs text-Text-Secondary text-center">
                   {archived

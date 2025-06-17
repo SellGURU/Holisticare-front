@@ -208,10 +208,10 @@ export const GenerateRecommendation = () => {
           </div>
         </div>
       )}
-      <div className="fixed w-full  top-0 hidden lg:flex z-[9] bg-bg-color pb-4">
+      <div className="fixed w-full  top-0  lg:flex z-[9] bg-bg-color pb-4">
         <div className="w-full">
           <TopBar />
-          <div className="w-full flex justify-between  pt-[40px] px-8 ">
+          <div className="w-full flex justify-between pt-[20px]  md:pt-[40px] px-4 md:px-8 ">
             <div className="flex items-center gap-3">
               <div
                 onClick={() => {
@@ -285,8 +285,8 @@ export const GenerateRecommendation = () => {
             </div>
           </div>
 
-          <div className="px-8">
-            <div className="mt-5  flex justify-between py-4 px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
+          <div className=" px-4 md:px-8">
+            <div className="mt-5  flex justify-between py-4  md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
               {steps.map((label, index) => (
                 <React.Fragment key={index}>
                   <div
@@ -296,14 +296,14 @@ export const GenerateRecommendation = () => {
                         setCheckedSuggestion([]);
                       }
                     }}
-                    className={`px-4 py-2 cursor-pointer text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
+                    className={` px-2 md:px-4 py-2 cursor-pointer text-[10px] md:text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
                       index === currentStepIndex
                         ? 'text-Primary-DeepTeal '
                         : 'text-Text-Secondary'
                     }`}
                   >
                     <div
-                      className={`size-5 rounded-full text-xs font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
+                      className={` min-h-5 min-w-5 size-5 rounded-full md:text-xs text-[10px] font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
                     >
                       {index + 1}
                     </div>
@@ -322,8 +322,8 @@ export const GenerateRecommendation = () => {
           </div>
         </div>
       </div>
-      <div className="px-8">
-        <div className="mt-[220px] w-full mb-6">
+      <div className=" px-4 md:px-8">
+        <div className=" mt-[220px] w-full mb-6">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{

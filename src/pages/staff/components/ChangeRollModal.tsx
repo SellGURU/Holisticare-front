@@ -28,12 +28,11 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
   handleCloseModalChangeRoll,
 }) => {
   const [selectRoll, setSelectRoll] = useState('');
-  console.log(memberInfo);
 
   return (
     <>
       {!isSuccess ? (
-        <div className="flex flex-col justify-between bg-white w-[373px] rounded-[16px] p-6">
+        <div className="flex flex-col justify-between bg-white w-[83vw] md:w-[373px] rounded-[16px] p-6">
           <div className="w-full h-full">
             <div className="flex justify-start items-center">
               <div className="text-Text-Primary font-medium">Change Role</div>
@@ -143,7 +142,7 @@ const ChangeRollModal: FC<ChangeRollModalProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col justify-between bg-white w-[345px] rounded-[16px] p-4">
+        <div className="flex flex-col justify-between bg-white w-[80vw] md:w-[345px] rounded-[16px] p-4">
           <div className="w-full h-full flex flex-col items-center">
             <img src="/icons/tick-circle-background-new.svg" alt="" />
             <div className="text-xs font-medium text-Text-Primary text-center">
