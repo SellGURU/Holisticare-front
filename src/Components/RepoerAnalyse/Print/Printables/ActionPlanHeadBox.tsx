@@ -9,7 +9,7 @@ const ActionPlanHeadBox: React.FC<ActionPlanHeadBoxProps> = ({
   return (
     <>
       <div
-        className="w-full relative mb-4 mt-4"
+        className="w-full relative mb-4"
         style={{
           borderRadius: '12px',
           zIndex: 60,
