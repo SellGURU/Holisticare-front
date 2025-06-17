@@ -357,31 +357,31 @@ const AddActionPlanHeaderOverflow = () => {
   });
 };
 
-const AddActionPlanOverView = (grouped:any) => {
+const AddActionPlanOverView = (grouped: any) => {
   AddActionPlanHeaderOverflow();
   (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
-    AddActionPLanRowCategory(key,items)
-  })
+    AddActionPLanRowCategory(key, items);
+  });
 };
-const AddActionPLanRow = (category:string,item:any,index:number) => {
+const AddActionPLanRow = (category: string, item: any, index: number) => {
   checkPageCanRender(90);
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'ActionPlanRowOverFlow',
     height: 90,
     content: item,
-    index:index,
-    key:category
+    index: index,
+    key: category,
   });
-}
-const AddActionPLanRowCategory =(category:string,item:Array<any>) => {
+};
+const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
   // console.log(category,item)
-  item.map((el:any,index:number) => {
-    return AddActionPLanRow(category,el,index)
-  })
-}
-const AddActionPlan = (actionPlanData: any,caldenderData: any) => {
-  const grouped = caldenderData?.reduce((acc: any, item:any) => {
+  item.map((el: any, index: number) => {
+    return AddActionPLanRow(category, el, index);
+  });
+};
+const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
+  const grouped = caldenderData?.reduce((acc: any, item: any) => {
     const key = item.category.toLowerCase();
     if (!acc[key]) acc[key] = [];
     acc[key].push(item);
@@ -408,7 +408,7 @@ const resovleJson = ({
   TreatMentPlanData,
   isActiveSection,
   ActionPlan,
-  caldenderData
+  caldenderData,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -444,7 +444,7 @@ const resovleJson = ({
     addHolisticPlan(helthPlan, TreatMentPlanData);
   }
   if (isActiveSection('Action Plan') == true) {
-    AddActionPlan(ActionPlan,caldenderData);
+    AddActionPlan(ActionPlan, caldenderData);
   }
   return myjson;
 };

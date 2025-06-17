@@ -2,7 +2,10 @@ const AddActionPlanHeaderOverflow = () => {
   return (
     <>
       <div className="relative" style={{ zIndex: 60 }}>
-        <div className="w-full rounded-md py-4 px-3 flex justify-between items-center" style={{backgroundColor:'#F4F4F4'}}>
+        <div
+          className="w-full rounded-md py-4 px-3 flex justify-between items-center"
+          style={{ backgroundColor: '#F4F4F4' }}
+        >
           <div
             className="text-gray-700 font-medium "
             style={{ width: 100, fontSize: 12, color: '#383838' }}

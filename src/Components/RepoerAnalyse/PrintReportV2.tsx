@@ -30,7 +30,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   helthPlan,
   ActionPlan,
   TreatMentPlanData,
-  caldenderData
+  caldenderData,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -129,7 +129,7 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         TreatMentPlanData,
         isActiveSection,
         ActionPlan,
-        caldenderData
+        caldenderData,
       }),
     );
   }, [printOptins]);

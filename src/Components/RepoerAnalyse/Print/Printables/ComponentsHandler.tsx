@@ -107,7 +107,11 @@ const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
         </>
       )}
       {component.type == 'ActionPlanRowOverFlow' && (
-        <ActionPlanRowOverFlow index={component.index} item={component.content} category={component.key}></ActionPlanRowOverFlow>
+        <ActionPlanRowOverFlow
+          index={component.index}
+          item={component.content}
+          category={component.key}
+        ></ActionPlanRowOverFlow>
       )}
     </>
     //   <div>ComponentsHandler</div>
