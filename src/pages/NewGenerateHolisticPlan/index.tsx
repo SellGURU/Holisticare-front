@@ -144,6 +144,7 @@ const NewGenerateHolisticPlan = () => {
       }, 1000);
     }
   }, [isSaving]);
+  const [isToggle, setisToggle] = useState(false)
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -158,7 +159,7 @@ const NewGenerateHolisticPlan = () => {
             {' '}
             <Circleloader></Circleloader>
             <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
-              We’re generating your Holistic Plan based on the selected method.
+              We're generating your Holistic Plan based on the selected method.
               This may take a moment.
             </div>
           </div>
@@ -166,22 +167,48 @@ const NewGenerateHolisticPlan = () => {
         <div className="fixed w-full top-0 hidden lg:flex z-[9]">
           <TopBar></TopBar>
         </div>
-        <div className="fixed flex lg:hidden w-full top-0 shadow-300 items-center py-3 px-6 bg-bg-color z-[9]">
-          <div
-            onClick={() => {
-              navigate(-1);
-            }}
-            className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
-          >
-            <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+        <div className="fixed flex lg:hidden w-full justify-between top-0 shadow-300 items-center py-3 px-4 md:px-6 bg-bg-color z-[9]">
+          <div className="flex items-center gap=2 ">
+            {' '}
+            <div
+              onClick={() => {
+                navigate(-1);
+              }}
+              className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer`}
+            >
+              <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+            </div>
+            <div className="TextStyle-Headline-5 text-Text-Primary">
+              Generate Holistic Plan
+            </div>
           </div>
-          <div className="TextStyle-Headline-5 text-Text-Primary">
-            Generate Holistic Plan
-          </div>
+
+          {treatmentPlanData && (
+            <div className="">
+              <ButtonPrimary
+                disabled={isLoading}
+                onClick={() => {
+                  resolveNextStep();
+                }}
+                ClassName="flex"
+              >
+                {isLoading ? (
+                  <div className="w-full h-full min-h-[21px] flex justify-center items-center">
+                    <BeatLoader size={8} color={'white'}></BeatLoader>
+                  </div>
+                ) : (
+                  <div className=" min-w-[100px] flex items-center justify-center gap-1">
+                    <img className="w-4" src="/icons/tick-square.svg" alt="" />
+                    Save Changes
+                  </div>
+                )}
+              </ButtonPrimary>
+            </div>
+          )}
         </div>
         <div className="w-full flex justify-between px-4 pt-[40px] lg:pt-[30px]">
           <div
-            className={`w-full px-4 ${treatmentPlanData && 'pr-12'}  py-6 relative h-full `}
+            className={`w-full md:px-4 ${treatmentPlanData && 'pr-0 md:pr-12'}  py-6 relative h-full `}
           >
             <div
               className={`lg:fixed lg:top-13 lg:z-[7] flex mb-2 justify-between w-full lg:bg-bg-color lg:py-3 lg:pl-8  ${treatmentPlanData ? 'lg:pr-3' : 'pr-8'} lg:ml-[-32px] lg:mt-[-13px]`}
@@ -200,7 +227,7 @@ const NewGenerateHolisticPlan = () => {
                 </div>
               </div>
               {treatmentPlanData && (
-                <div className="w-full flex gap-2 justify-center lg:justify-end items-center">
+                <div className="w-full md:flex gap-2 justify-center lg:justify-end items-center">
                   <ButtonPrimary
                     disabled={isLoading}
                     onClick={() => {
@@ -226,10 +253,12 @@ const NewGenerateHolisticPlan = () => {
                 </div>
               )}
             </div>
-            <div className="h-full pr-2 lg:pt-10">
-              <div className=" w-full bg-white rounded-[16px] min-h-[500px] p-6 shadow-100">
+            <div className="h-full w-full md:pr-2 lg:pt-10">
+              <div className=" w-full bg-white rounded-[16px] min-h-[500px] md:p-6 p-4 shadow-100">
                 <div className="flex w-full">
-                  <div className={`flex justify-end invisible gap-2`}>
+                  <div
+                    className={`md:flex justify-end hidden md:invisible gap-2`}
+                  >
                     <div
                       onClick={() => setSHowAnalyse(true)}
                       className="w-full items-center flex text-xs font-inter text-Primary-DeepTeal  gap-1 text-nowrap cursor-pointer"
@@ -301,7 +330,7 @@ const NewGenerateHolisticPlan = () => {
                   <div>
                     {active == 'Recommendation' && (
                       <>
-                        <div className="flex justify-between items-center mt-3">
+                        <div className="flex flex-col-reverse md:flex-row justify-between items-center mt-3">
                           <div className="flex justify-start items-center">
                             <div className="w-10 h-10 min-w-10 min-h-10 flex justify-center items-center">
                               <SvgIcon
@@ -468,8 +497,8 @@ const NewGenerateHolisticPlan = () => {
                 )}
                 {active == 'Client Metrics' && activeEl !== undefined ? (
                   <>
-                    <div className="flex justify-start items-center gap-2">
-                      <div className="w-10 h-10 min-w-10 min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
+                    <div className="flex justify-start items-center gap-2 mt-6 md:mt-0 ">
+                      <div className="w-8 h-8 md:w-10 md:h-10 min-w-8 min-h-8 md:min-w-10 md:min-h-10 rounded-full flex justify-center items-center border-2 border-Primary-DeepTeal">
                         <img
                           className=""
                           src={resolveAnalyseIcon(activeEl?.subcategory)}
@@ -477,13 +506,13 @@ const NewGenerateHolisticPlan = () => {
                         />
                       </div>
                       {activeEl && (
-                        <div>
-                          <div className="text-[14px] font-medium text-Text-Primary">
+                        <div className=''>
+                          <div className="text-[12px] md:text-[14px] font-medium text-Text-Primary">
                             <TooltipTextAuto maxWidth="300px">
                               {activeEl?.subcategory}
                             </TooltipTextAuto>
                           </div>
-                          <div className=" text-Text-Secondary text-[8px] lg:text-[10px]">
+                          <div className="text-Text-Secondary text-[8px] lg:text-[10px]">
                             <span className="text-[8px] lg:text-[12px] text-Text-Primary">
                               {activeEl?.num_of_biomarkers}
                             </span>{' '}
@@ -496,9 +525,9 @@ const NewGenerateHolisticPlan = () => {
                         </div>
                       )}
                     </div>
-                    <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-4 mt-4">
-                      <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px] ">
-                        <div className="hidden lg:block w-full md:w-[220px] lg:w-[220px] min-w-full md:min-w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
+                    <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-2 md:p-4 mt-4">
+                      <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px]">
+                        <div className="w-full lg:w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
                           {resoveSubctegoriesSubs().map((value: any) => {
                             return (
                               <>
@@ -507,12 +536,14 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         onClick={() => {
+                                         
                                           setActiveEl(resol);
+                                          setisToggle(!isToggle)
                                         }}
-                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? ' border-Primary-EmeraldGreen text-light-secandary-text ' : 'border-Gray-50 border bg-white'}  border items-center  rounded-[6px] flex justify-between px-4`}
+                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
                                       >
                                         <div className="flex items-center gap-1">
-                                          <div className=" text-[12px] text-Text-Primary">
+                                          <div className="text-[10px] md:text-[12px] text-Text-Primary">
                                             <TooltipTextAuto maxWidth="150px">
                                               {resol.name}
                                             </TooltipTextAuto>
@@ -522,7 +553,7 @@ const NewGenerateHolisticPlan = () => {
                                             resol.chart_bounds,
                                           ) == 'Needs Focus' && (
                                             <div
-                                              className="w-3 h-3 rounded-full "
+                                              className="w-2 h-2 md:w-3 md:h-3 rounded-full"
                                               style={{
                                                 backgroundColor: '#FC5474',
                                               }}
@@ -530,11 +561,59 @@ const NewGenerateHolisticPlan = () => {
                                           )}
                                         </div>
                                         <img
-                                          className="  rotate-0  w-4"
-                                          src="/icons/arrow-right.svg"
+                                          className={` ${window.innerWidth > 768 ? '-rotate-90' : 'rotate-0 '} transition-transform w-3 md:w-4 ${activeEl?.name == resol.name && isToggle && window.innerWidth < 768 ? 'rotate-180' : ''}`}
+                                          src="/icons/arrow-down.svg"
                                           alt=""
                                         />
                                       </div>
+                                      {activeEl?.name == resol.name && isToggle && window.innerWidth < 768 && (
+                                        <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
+                                          <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
+                                            <TooltipTextAuto maxWidth="300px">
+                                              {resol.subcategory}
+                                            </TooltipTextAuto>
+                                          </div>
+                                          <div>
+                                            <div
+                                              style={{ lineHeight: '20px' }}
+                                              className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
+                                            >
+                                              {resol.description}
+                                            </div>
+                                          </div>
+                                          <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
+                                            <div className="w-full lg:w-[50%]">
+                                              <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
+                                                <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
+                                                  Last Value
+                                                </div>
+                                                <StatusBarChart
+                                                  data={resol}
+                                                ></StatusBarChart>
+                                              </div>
+                                            </div>
+                                            <div className="w-full lg:w-[50%]">
+                                              <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
+                                                <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
+                                                  Historical Data
+                                                </div>
+                                                <div className="mt-0 relative">
+                                                  <HistoricalChart
+                                                    statusBar={resol.chart_bounds}
+                                                    dataPoints={[
+                                                      ...resol.values,
+                                                    ].reverse()}
+                                                    dataStatus={[
+                                                      ...resol.status,
+                                                    ].reverse()}
+                                                    labels={[...resol.date].reverse()}
+                                                  ></HistoricalChart>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
                                     </>
                                   );
                                 })}
@@ -544,58 +623,35 @@ const NewGenerateHolisticPlan = () => {
                         </div>
 
                         {activeEl != null && (
-                          <div className="hidden lg:block w-full p-6 bg-white border border-Gray-50  rounded-xl h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
-                            <div className=" text-Text-Primary text-[14px] font-[500]">
+                          <div className="hidden lg:block w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl h-full lg:h-[unset] min-h-full lg:min-h-[312px]">
+                            <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
                               <TooltipTextAuto maxWidth="300px">
                                 {activeEl.subcategory}
                               </TooltipTextAuto>
                             </div>
                             <div>
                               <div
-                                style={{ lineHeight: '24px' }}
-                                className=" text-Text-Secondary text-[12px] mt-3"
+                                style={{ lineHeight: '20px' }}
+                                className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
                               >
                                 {activeEl.description}
                               </div>
                             </div>
-                            <div className="flex flex-col lg:flex-row w-full justify-center gap-4 mt-4">
-                              <div className="lg:w-[50%]">
-                                <div className="w-full lg:w-[100%] p-4 bg-white border border-Gray-50 h-[179px] rounded-xl">
-                                  <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[12px] font-medium mb-[60px]">
+                            <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
+                              <div className="w-full lg:w-[50%]">
+                                <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
+                                  <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
-                                    {/* <div className="relative">
-                                      <UnitPopUp
-                                        unit={activeEl.unit}
-                                      ></UnitPopUp>
-                                    </div> */}
                                   </div>
                                   <StatusBarChart
                                     data={activeEl}
                                   ></StatusBarChart>
                                 </div>
                               </div>
-                              <div className={`lg:w-[50%]`}>
-                                <div className="w-full lg:w-[100%] p-4 h-[179px] bg-white border-Gray-50 border  rounded-xl">
-                                  <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[12px] font-medium mb-5">
+                              <div className="w-full lg:w-[50%]">
+                                <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
+                                  <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
                                     Historical Data
-                                    <div className=" flex justify-end gap-2 items-center">
-                                      {/* <div className="relative">
-                                        <UnitPopUp
-                                          unit={activeEl.unit}
-                                        ></UnitPopUp>
-                                      </div> */}
-                                      {/* <div className="opacity-50 w-[94px] flex justify-between items-center p-2 h-[32px] rounded-[6px] bg-backgroundColor-Main border-Gray-50">
-                                        <div className="text-Primary-DeepTeal text-[10px]">
-                                          6 Month
-                                        </div>
-                                        <div className="w-[16px]">
-                                          <img
-                                            src="/icons/arrow-down-green.svg"
-                                            alt=""
-                                          />
-                                        </div>
-                                      </div> */}
-                                    </div>
                                   </div>
                                   <div className="mt-0 relative">
                                     <HistoricalChart
@@ -666,7 +722,7 @@ const NewGenerateHolisticPlan = () => {
                 onClick={() => {
                   // resolveNextStep();
                 }}
-                ClassName="lg:hidden"
+                ClassName="hidden"
               >
                 {isLoading ? (
                   <div className="w-full h-full flex justify-center items-center">
@@ -682,7 +738,7 @@ const NewGenerateHolisticPlan = () => {
             </div>
           </div>
           <div
-            className={`lg:pt-[30px] h-[600px] pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
+            className={`lg:pt-[30px] h-[600px] hidden md:block pt-[40px] absolute right-3 top-[66px]  ${!treatmentPlanData && 'hidden'}`}
           >
             <ComboBar isHolisticPlan></ComboBar>
           </div>
