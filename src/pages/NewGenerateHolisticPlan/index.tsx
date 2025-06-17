@@ -144,7 +144,7 @@ const NewGenerateHolisticPlan = () => {
       }, 1000);
     }
   }, [isSaving]);
-  const [isToggle, setisToggle] = useState(false)
+  const [isToggle, setisToggle] = useState(false);
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -506,7 +506,7 @@ const NewGenerateHolisticPlan = () => {
                         />
                       </div>
                       {activeEl && (
-                        <div className=''>
+                        <div className="">
                           <div className="text-[12px] md:text-[14px] font-medium text-Text-Primary">
                             <TooltipTextAuto maxWidth="300px">
                               {activeEl?.subcategory}
@@ -536,9 +536,8 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         onClick={() => {
-                                         
                                           setActiveEl(resol);
-                                          setisToggle(!isToggle)
+                                          setisToggle(!isToggle);
                                         }}
                                         className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
                                       >
@@ -566,54 +565,60 @@ const NewGenerateHolisticPlan = () => {
                                           alt=""
                                         />
                                       </div>
-                                      {activeEl?.name == resol.name && isToggle && window.innerWidth < 768 && (
-                                        <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
-                                          <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
-                                            <TooltipTextAuto maxWidth="300px">
-                                              {resol.subcategory}
-                                            </TooltipTextAuto>
-                                          </div>
-                                          <div>
-                                            <div
-                                              style={{ lineHeight: '20px' }}
-                                              className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
-                                            >
-                                              {resol.description}
+                                      {activeEl?.name == resol.name &&
+                                        isToggle &&
+                                        window.innerWidth < 768 && (
+                                          <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
+                                            <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
+                                              <TooltipTextAuto maxWidth="300px">
+                                                {resol.subcategory}
+                                              </TooltipTextAuto>
                                             </div>
-                                          </div>
-                                          <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
-                                            <div className="w-full lg:w-[50%]">
-                                              <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
-                                                <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
-                                                  Last Value
-                                                </div>
-                                                <StatusBarChart
-                                                  data={resol}
-                                                ></StatusBarChart>
+                                            <div>
+                                              <div
+                                                style={{ lineHeight: '20px' }}
+                                                className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
+                                              >
+                                                {resol.description}
                                               </div>
                                             </div>
-                                            <div className="w-full lg:w-[50%]">
-                                              <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
-                                                <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
-                                                  Historical Data
+                                            <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
+                                              <div className="w-full lg:w-[50%]">
+                                                <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
+                                                  <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
+                                                    Last Value
+                                                  </div>
+                                                  <StatusBarChart
+                                                    data={resol}
+                                                  ></StatusBarChart>
                                                 </div>
-                                                <div className="mt-0 relative">
-                                                  <HistoricalChart
-                                                    statusBar={resol.chart_bounds}
-                                                    dataPoints={[
-                                                      ...resol.values,
-                                                    ].reverse()}
-                                                    dataStatus={[
-                                                      ...resol.status,
-                                                    ].reverse()}
-                                                    labels={[...resol.date].reverse()}
-                                                  ></HistoricalChart>
+                                              </div>
+                                              <div className="w-full lg:w-[50%]">
+                                                <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
+                                                  <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
+                                                    Historical Data
+                                                  </div>
+                                                  <div className="mt-0 relative">
+                                                    <HistoricalChart
+                                                      statusBar={
+                                                        resol.chart_bounds
+                                                      }
+                                                      dataPoints={[
+                                                        ...resol.values,
+                                                      ].reverse()}
+                                                      dataStatus={[
+                                                        ...resol.status,
+                                                      ].reverse()}
+                                                      labels={[
+                                                        ...resol.date,
+                                                      ].reverse()}
+                                                    ></HistoricalChart>
+                                                  </div>
                                                 </div>
                                               </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      )}
+                                        )}
                                     </>
                                   );
                                 })}
