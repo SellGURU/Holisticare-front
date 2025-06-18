@@ -144,7 +144,7 @@ const NewGenerateHolisticPlan = () => {
       }, 1000);
     }
   }, [isSaving]);
-  const [isToggle, setisToggle] = useState(false)
+  // const [isToggle, setisToggle] = useState(false)
   return (
     <>
       <div className="h-[100vh] overflow-auto">
@@ -506,7 +506,7 @@ const NewGenerateHolisticPlan = () => {
                         />
                       </div>
                       {activeEl && (
-                        <div className=''>
+                        <div className="">
                           <div className="text-[12px] md:text-[14px] font-medium text-Text-Primary">
                             <TooltipTextAuto maxWidth="300px">
                               {activeEl?.subcategory}
@@ -536,11 +536,9 @@ const NewGenerateHolisticPlan = () => {
                                     <>
                                       <div
                                         onClick={() => {
-                                         
                                           setActiveEl(resol);
-                                          setisToggle(!isToggle)
                                         }}
-                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
+                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
                                       >
                                         <div className="flex items-center gap-1">
                                           <div className="text-[10px] md:text-[12px] text-Text-Primary">
@@ -561,13 +559,13 @@ const NewGenerateHolisticPlan = () => {
                                           )}
                                         </div>
                                         <img
-                                          className={` ${window.innerWidth > 768 ? '-rotate-90' : 'rotate-0 '} transition-transform w-3 md:w-4 ${activeEl?.name == resol.name && isToggle && window.innerWidth < 768 ? 'rotate-180' : ''}`}
+                                          className={`  rotate-0 md:-rotate-90 transition-transform w-3 md:w-4 ${activeEl?.name == resol.name ? 'rotate-180 md:-rotate-90' : ''}`}
                                           src="/icons/arrow-down.svg"
                                           alt=""
                                         />
                                       </div>
-                                      {activeEl?.name == resol.name && isToggle && window.innerWidth < 768 && (
-                                        <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
+                                      {activeEl?.name == resol.name && (
+                                        <div className="w-full block md:hidden p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
                                           <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
                                             <TooltipTextAuto maxWidth="300px">
                                               {resol.subcategory}
@@ -599,14 +597,18 @@ const NewGenerateHolisticPlan = () => {
                                                 </div>
                                                 <div className="mt-0 relative">
                                                   <HistoricalChart
-                                                    statusBar={resol.chart_bounds}
+                                                    statusBar={
+                                                      resol.chart_bounds
+                                                    }
                                                     dataPoints={[
                                                       ...resol.values,
                                                     ].reverse()}
                                                     dataStatus={[
                                                       ...resol.status,
                                                     ].reverse()}
-                                                    labels={[...resol.date].reverse()}
+                                                    labels={[
+                                                      ...resol.date,
+                                                    ].reverse()}
                                                   ></HistoricalChart>
                                                 </div>
                                               </div>
