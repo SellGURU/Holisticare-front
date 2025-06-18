@@ -271,7 +271,7 @@ const TaskManager = () => {
           </div>
         </div>
       </MainModal>
-      <div className="w-full -mt-4 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container">
+      <div className="w-full -mt-4  bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container">
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
@@ -295,7 +295,7 @@ const TaskManager = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 pr-1 gap-3 overflow-auto task-manager-content">
+          <ul className="grid grid-cols-2 pb-2 pr-1 gap-3 overflow-auto task-manager-content">
             {tasks.map((task) => (
               <li
                 key={task.task_id}

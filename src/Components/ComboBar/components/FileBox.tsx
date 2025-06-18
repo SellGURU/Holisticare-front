@@ -45,7 +45,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
   return (
     <>
       <div
-        className=" bg-white border border-Gray-50 mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
+        className=" bg-white border border-Gray-50 mb-1 p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
         <div className="flex justify-between items-center w-full">

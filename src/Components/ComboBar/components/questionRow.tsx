@@ -66,7 +66,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   return (
     <>
-      <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
+      <div className=" bg-white border relative border-Gray-50 mb-1 px-3 md:px-5 py-2 md:py-3 min-h-[40px] md:min-h-[48px]  w-full rounded-[12px]">
         {showModal && (
           <>
             <div
