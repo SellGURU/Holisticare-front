@@ -371,14 +371,14 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
           <Circleloader></Circleloader>
         </div>
       )}
-      <div className="bg-white rounded-2xl shadow-100 p-6 border border-Gray-50">
-        <div className="flex w-full justify-between border-b border-Gray-50 pb-2 px-6">
-          <div className="flex w-[50%] gap-[100px]">
+      <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
+        <div className="flex w-full justify-between border-b border-Gray-50 pb-2 md:px-6">
+          <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[100px]">
             {categories.map(
               ({ name, visible }) =>
                 visible && (
                   <div
-                    className={`flex items-center gap-2 text-Primary-DeepTeal text-xs font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
+                    className={`flex items-center gap-2 text-Primary-DeepTeal text-[10px] md:text-xs font-medium cursor-pointer ${name !== activeCategory ? 'opacity-50' : ''}`}
                     key={name}
                     onClick={() => {
                       setActiveCategory(name);
@@ -424,18 +424,18 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
               onClick={() => setshowchangeOrders(true)}
             >
               <img
-                className="cursor-pointer w-5 h-5"
+                className="cursor-pointer md:w-5 md:h-5 w-4 h-4"
                 src="/icons/setting-4.svg"
                 alt=""
               />
-              <div className="text-Primary-DeepTeal text-xs font-medium">
+              <div className="text-Primary-DeepTeal text-[10px] md:text-xs font-medium">
                 Change Order
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 pb-8 px-6 min-h-[400px] overflow-y-auto">
+        <div className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 min-h-[400px] overflow-y-auto">
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => {
