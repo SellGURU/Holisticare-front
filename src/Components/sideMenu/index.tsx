@@ -33,6 +33,19 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     navigate(menu.url);
     onClose();
   };
+  const [height, setHeight] = useState(window.innerHeight - 125);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setHeight(window.innerHeight - 125);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <div className="w-[180px] xs:w-[250px] md:w-[170px] flex justify-start md:justify-center bg-white h-screen border-Boarder border border-t-0 pt-4 drop-shadow">
@@ -48,8 +61,8 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
         </div>
         <div className="w-full">
           <div
-            className=" h-fit md:h-full overflow-y-auto"
-            style={{ height: window.innerHeight - 100 + 'px' }}
+            className="h-fit md:h-full overflow-y-auto"
+            style={{ height: `${height}px` }}
           >
             {menus.map((menuCategory) => (
               <div className="mt-2" key={menuCategory.category}>
