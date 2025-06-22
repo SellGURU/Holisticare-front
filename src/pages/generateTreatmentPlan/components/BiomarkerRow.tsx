@@ -85,7 +85,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         setShowModal={setShowConflict}
         conflicts={Conflicts}
       ></ConflictsModal>
-      <div className="w-full flex justify-center items-start gap-4">
+      <div className="w-full flex flex-col md:flex-row justify-center items-start gap-2 md:gap-4">
         <div className="w-[60px] mt-3">
           <div className="w-full flex justify-center">
             <div className="w-[32px] flex justify-center items-center h-[32px] bg-backgroundColor-Main border border-gray-50 rounded-[8px]">
@@ -101,7 +101,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         <div
           className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-3 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
-          <div className=" flex gap-6 items-center">
+          <div className=" flex flex-wrap gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
               <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
                 {value.Recommendation}

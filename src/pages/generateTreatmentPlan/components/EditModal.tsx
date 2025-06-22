@@ -242,7 +242,7 @@ const EditModal: FC<EditModalProps> = ({
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
         ref={modalRef}
-        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[500px] text-Text-Primary max-h-[660px]"
+        className="bg-white p-6 pb-8 rounded-2xl shadow-800 w-[400px] md:w-[500px] text-Text-Primary max-h-[660px]"
       >
         <h2 className="w-full border-b border-Gray-50 pb-2 text-sm font-medium text-Text-Primary">
           <div className="flex gap-[6px] items-center">
@@ -527,7 +527,7 @@ const EditModal: FC<EditModalProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="  flex justify-end gap-4 mt-8">
           <button
             onClick={() => {
               setShowValidation(false);
