@@ -93,6 +93,15 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Muscle and Fat') {
     return '/icons/biomarkers/assay.svg';
   }
+  if (name == 'Muscle and Fat') {
+    return '/icons/biomarkers/assay.svg';
+  }
+  if (name == 'Gut Health') {
+    return '/icons/biomarkers/medicine.svg';
+  }
+  if (name == 'Bone Biomarkers') {
+    return '/icons/biomarkers/bones.svg';
+  }
   // "./images/report/vitamine.svg",
   // :"./images/report/bone.svg",
   // ./images/report/heart_rate_02.svg
