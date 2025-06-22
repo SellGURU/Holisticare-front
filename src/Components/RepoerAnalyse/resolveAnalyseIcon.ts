@@ -32,6 +32,9 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Tumor health') {
     return '/icons/biomarkers/dna (1).svg';
   }
+  if (name == 'Genetics/DNA') {
+    return '/icons/biomarkers/dna (1).svg';
+  }
   if (name == 'Arterial Stiffness') {
     return '/icons/biomarkers/inject.svg';
   }
@@ -86,6 +89,9 @@ const resolveAnalyseIcon = (name: string) => {
   }
   if (name == 'Sex Hormones') {
     return '/icons/biomarkers/sex-hormone.svg';
+  }
+  if (name == 'Muscle and Fat') {
+    return '/icons/biomarkers/assay.svg';
   }
   // "./images/report/vitamine.svg",
   // :"./images/report/bone.svg",
