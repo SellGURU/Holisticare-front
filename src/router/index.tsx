@@ -34,6 +34,7 @@ import Activity from '../pages/Library/Activity/index.tsx';
 import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
+import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -165,6 +166,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <SignUp></SignUp>,
+  },
+  {
+    path: '/register-name-logo',
+    element: <SignUpNameLogo></SignUpNameLogo>,
   },
   {
     path: '/forgetPassword',
