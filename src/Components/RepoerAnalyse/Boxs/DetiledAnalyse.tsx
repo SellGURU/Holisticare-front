@@ -7,7 +7,7 @@ import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 // import UnitPopUp from '../../UnitPopup';
-import { sortKeysWithValues } from './Help';
+// import { sortKeysWithValues } from './Help';
 import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { Tooltip } from 'react-tooltip';
@@ -62,39 +62,43 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
   const [showGeneInsights, setShowGeneInsights] = useState(false);
-  const resolveColor = (key: string) => {
-    if (key == 'Needs Focus') {
-      return '#FC5474';
-    }
-    if (key == 'Ok') {
-      return '#FBAD37';
-    }
-    if (key == 'Good') {
-      return '#06C78D';
-    }
-    if (key == 'Excellent') {
-      return '#7F39FB';
-    }
-    return '#FBAD37';
-  };
-  const resolveCurrentStatusColor = (value: any, statusBar: any) => {
-    let resolvedColor = '';
-    sortKeysWithValues(statusBar).forEach((el) => {
-      if (value >= el.value[0] && value < el.value[1]) {
-        resolvedColor = resolveColor(el.key);
-      }
-    });
-    return resolvedColor;
-  };
-  const resolveKeyStatus = (value: any, statusBar: any) => {
-    let key = '';
-    sortKeysWithValues(statusBar).forEach((el) => {
-      if (value >= el.value[0] && value < el.value[1]) {
-        key = el.key;
-      }
-    });
-    return key;
-  };
+  // const resolveColor = (key: string) => {
+  //   if (key == 'Needs Focus') {
+  //     return '#FC5474';
+  //   }
+  //   if (key == 'Ok') {
+  //     return '#FBAD37';
+  //   }
+  //   if (key == 'Good') {
+  //     return '#06C78D';
+  //   }
+  //   if (key == 'Excellent') {
+  //     return '#7F39FB';
+  //   }
+  //   return '#FBAD37';
+  // };
+  // const resolveCurrentStatusColor = (value: any, statusBar: any,status?:string) => {
+  //   let resolvedColor = '';
+  //   console.log(status)
+  //   sortKeysWithValues(statusBar).forEach((el) => {
+  //     if (value >= el.value[0] && value < el.value[1]) {
+  //       resolvedColor = resolveColor(el.key);
+  //     }
+  //   });
+  //   if(status) {
+  //    resolvedColor = resolveColor(status)
+  //   }
+  //   return resolvedColor;
+  // };
+  // const resolveKeyStatus = (value: any, statusBar: any) => {
+  //   let key = '';
+  //   sortKeysWithValues(statusBar).forEach((el) => {
+  //     if (value >= el.value[0] && value < el.value[1]) {
+  //       key = el.key;
+  //     }
+  //   });
+  //   return key;
+  // };
   // const isChartDataEmpty = !active?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
   // );
@@ -211,17 +215,11 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               {value.name}
                             </Tooltip>
                           ) : null}
-                          {resolveKeyStatus(
-                            value.values[0],
-                            value.chart_bounds,
-                          ) == 'Needs Focus' && (
+                          {value.status[0] == 'Needs Focus' && (
                             <div
                               className="w-3 h-3 rounded-full "
                               style={{
-                                backgroundColor: resolveCurrentStatusColor(
-                                  value.values[0],
-                                  value.chart_bounds,
-                                ),
+                                backgroundColor: '#FC5474',
                               }}
                             ></div>
                           )}
