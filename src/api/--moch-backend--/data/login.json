@@ -1,19 +1,19 @@
 {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbGluaWNAZ21haWwuY29tIiwiaWQiOjUwODE1MTM3NjMsImV4cCI6MTc1MTE4NDA0Mn0.8-7Ifi6SsDueQHNt11k0Z-m09prnazo1ZpazkU2fnYI",
-    "token_type": "bearer",
-    "user_type": "standard",
-    "permission": {
-        "analyze": true,
-        "copilot": true,
-        "setting": true,
-        "calendar": true,
-        "messages": true,
-        "overview": true,
-        "ai_studio": true,
-        "add_client": true,
-        "action_plan": true,
-        "ai_knowledge": true,
-        "health_profile": true,
-        "treatment_plan": true
-    }
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbGluaWNAZ21haWwuY29tIiwiaWQiOjUwODE1MTM3NjMsImV4cCI6MTc1MTE4NDA0Mn0.8-7Ifi6SsDueQHNt11k0Z-m09prnazo1ZpazkU2fnYI",
+  "token_type": "bearer",
+  "user_type": "standard",
+  "permission": {
+    "analyze": true,
+    "copilot": true,
+    "setting": true,
+    "calendar": true,
+    "messages": true,
+    "overview": true,
+    "ai_studio": true,
+    "add_client": true,
+    "action_plan": true,
+    "ai_knowledge": true,
+    "health_profile": true,
+    "treatment_plan": true
+  }
 }
