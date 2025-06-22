@@ -169,7 +169,7 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
   return (
     <div>
       {showSuggestions && (
-        <div className="bg-white p-6 pt-4 mt-4 border rounded-2xl border-[#FFAB2C] shadow-200 min-w-[449px] text-Text-Primary">
+        <div className="bg-white p-4 md:p-6 pt-4 mt-4 border rounded-2xl border-[#FFAB2C] shadow-200  min-w-[449px] text-Text-Primary">
           <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
             <div className="flex items-center text-Text-Primary gap-2">
               <SvgIcon src="/icons/danger.svg" color="#FFAB2C"></SvgIcon>
@@ -214,14 +214,16 @@ export const GeneralCondition: React.FC<GeneralConditionProps> = ({
                     className="w-full bg-backgroundColor-Card py-3 px-4 rounded-lg border border-Gray-50 text-xs resize-none outline-none  mb-2"
                   />
                 ) : (
-                  <li className="list-disc text-xs mt-2">{item}</li>
+                  <li className="list-disc text-xs mt-2 text-justify">
+                    {item}
+                  </li>
                 )}
               </React.Fragment>
             ))}
           </ul>
         </div>
       )}
-      <div className="flex justify-between gap-y-3 mt-3 flex-wrap">
+      <div className="flex justify-between gap-y-3 mt-3 flex-wrap ">
         <Card
           title="Biomarkers"
           content={editMode.biomarkers ? tempData.biomarkers : data.biomarkers}
@@ -299,7 +301,7 @@ const Card: React.FC<CardProps> = ({
   const [addNew, setAddNew] = useState<boolean>(false);
   const [newItem, setNewItem] = useState<string>('');
   return (
-    <div className="bg-white p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 min-w-[444px] w-[33%] text-Text-Primary">
+    <div className="bg-white p-4 md:p-6 pt-4 border rounded-2xl border-Gray-50 shadow-100 min-w-[444px] w-full md:w-[33%] text-Text-Primary">
       <div className="flex w-full justify-between items-center text-sm font-medium pb-2 border-b border-Secondary-SelverGray">
         {title == 'Looking Forwards' ? (
           <div className="flex items-center gap-2 text-Primary-DeepTeal">

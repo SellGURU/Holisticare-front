@@ -229,7 +229,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
   const [ActionPlanPrint, setActionPlanPrint] = useState(null);
-  const [, setHelthPlanPrint] = useState(null);
+  const [HelthPrint, setHelthPlanPrint] = useState(null);
   useEffect(() => {
     if (ClientSummaryBoxs != null && referenceData != null) {
       setLoading(false);
@@ -756,6 +756,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   resolveSubCategories={resolveSubCategories}
                   helthPlan={ActionPlanPrint}
                   TreatMentPlanData={TreatMentPlanData}
+                  ActionPlan={HelthPrint}
+                  caldenderData={caldenderData}
                 />
               </div>
             )}

@@ -14,7 +14,9 @@ interface PrintReportV2Props {
   ResolveConceringData: () => Array<any>;
   resolveSubCategories: () => Array<any>;
   helthPlan: any;
+  ActionPlan: any;
   TreatMentPlanData: Array<any>;
+  caldenderData: any;
 }
 
 const PrintReportV2: React.FC<PrintReportV2Props> = ({
@@ -26,7 +28,9 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   ResolveConceringData,
   resolveSubCategories,
   helthPlan,
+  ActionPlan,
   TreatMentPlanData,
+  caldenderData,
 }) => {
   const [printOptins, setPrintOptions] = useState([
     {
@@ -124,6 +128,8 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
         helthPlan,
         TreatMentPlanData,
         isActiveSection,
+        ActionPlan,
+        caldenderData,
       }),
     );
   }, [printOptins]);

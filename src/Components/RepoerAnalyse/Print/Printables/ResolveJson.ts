@@ -15,7 +15,7 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text.length / 134) * 23;
+    return Math.ceil(text.length / 134) * 18 + 8;
   }
   return Math.ceil(text.length / 112) * 30;
 };
@@ -142,6 +142,18 @@ const addHolisticPlanHeader = (holisticData: any) => {
     });
   }
 };
+const addActionPlanHeader = (actionData: any) => {
+  // console.log(holisticData)
+  if (actionData) {
+    checkPageCanRender(100);
+    const lastPage = myjson[myjson.length - 1];
+    lastPage.renderBoxs.push({
+      type: 'ActionPlanHeader',
+      height: 100,
+      content: [...actionData],
+    });
+  }
+};
 
 const AddTreatmentplanCategory = (category: any) => {
   checkPageCanRender(260);
@@ -153,19 +165,19 @@ const AddTreatmentplanCategory = (category: any) => {
   });
 };
 const addHolisticPlanItem = (item: any) => {
-  checkPageCanRender(200 + resolveHightText(item.title));
+  checkPageCanRender(80 + resolveHightText(item.Notes, true));
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanItem',
-    height: 200 + resolveHightText(item.title),
+    height: 80 + resolveHightText(item.Notes, true),
     content: item,
   });
   addBox(8);
 };
 
 const addHolisticPlanBox = (category: any) => {
-  AddTreatmentplanCategory(category);
   category?.data.map((el: any) => {
+    AddTreatmentplanCategory(category);
     return addHolisticPlanItem(el);
   });
 };
@@ -335,6 +347,55 @@ const addHolisticPlan = (holisticData: any, TreatMentPlanData: Array<any>) => {
   // addBox(40)
 };
 
+const AddActionPlanHeaderOverflow = () => {
+  checkPageCanRender(60);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'AddActionPlanHeaderOverflow',
+    height: 60,
+    content: null,
+  });
+};
+
+const AddActionPlanOverView = (grouped: any) => {
+  AddActionPlanHeaderOverflow();
+  (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
+    AddActionPLanRowCategory(key, items);
+  });
+};
+const AddActionPLanRow = (category: string, item: any, index: number) => {
+  checkPageCanRender(90);
+  const lastPage = myjson[myjson.length - 1];
+  lastPage.renderBoxs.push({
+    type: 'ActionPlanRowOverFlow',
+    height: 90,
+    content: item,
+    index: index,
+    key: category,
+  });
+};
+const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
+  // console.log(category,item)
+  item.map((el: any, index: number) => {
+    return AddActionPLanRow(category, el, index);
+  });
+};
+const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
+  const grouped = caldenderData?.reduce((acc: any, item: any) => {
+    const key = item.category.toLowerCase();
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+  if (myjson.length == 0) {
+    addEmptyPage();
+  }
+  addHeader('Action Plan', '', 'action-plan');
+  addBox(16);
+  addActionPlanHeader(actionPlanData);
+  AddActionPlanOverView(grouped);
+};
+
 const resovleJson = ({
   usrInfoData,
   ClientSummaryBoxs,
@@ -346,6 +407,8 @@ const resovleJson = ({
   helthPlan,
   TreatMentPlanData,
   isActiveSection,
+  ActionPlan,
+  caldenderData,
 }: {
   usrInfoData: any;
   ClientSummaryBoxs: any;
@@ -357,6 +420,8 @@ const resovleJson = ({
   helthPlan: any;
   TreatMentPlanData: Array<any>;
   isActiveSection: (section: string) => boolean;
+  ActionPlan: any;
+  caldenderData: any;
 }) => {
   myjson.splice(0, myjson.length);
   if (isActiveSection('Client Summary') == true) {
@@ -377,6 +442,9 @@ const resovleJson = ({
   }
   if (isActiveSection('Holistic Plan') == true) {
     addHolisticPlan(helthPlan, TreatMentPlanData);
+  }
+  if (isActiveSection('Action Plan') == true) {
+    AddActionPlan(ActionPlan, caldenderData);
   }
   return myjson;
 };
