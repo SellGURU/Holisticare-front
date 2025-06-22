@@ -38,7 +38,7 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
           <Circleloader />
         </div>
       )}
-      <div className="w-[500px] bg-white  h-[500px] p-6 rounded-[25px]">
+      <div className="w-[90vw] md:w-[500px] bg-white h-[500px] p-6 rounded-[25px]">
         <div className="text-[14px] text-Text-Primary font-medium w-full border-b border-gray-50 pb-3">
           Preview
         </div>
