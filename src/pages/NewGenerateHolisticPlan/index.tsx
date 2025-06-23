@@ -348,7 +348,7 @@ const NewGenerateHolisticPlan = () => {
                                   </div>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <div className="text-Text-Secondary text-justify text-[10px] md:text-[12px] lg:text-[12px]">
+                                  <div className="text-Text-Secondary mr-4 text-justify text-[10px] md:text-[12px] lg:text-[12px]">
                                     The Holistic Plan is your personalized
                                     roadmap to optimal well-being. By combining
                                     knowledge-based insights with your unique
