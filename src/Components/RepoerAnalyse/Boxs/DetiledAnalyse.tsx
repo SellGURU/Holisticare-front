@@ -215,13 +215,17 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               {value.name}
                             </Tooltip>
                           ) : null}
-                          {value.status[0] == 'Needs Focus' && (
-                            <div
-                              className="w-3 h-3 rounded-full "
-                              style={{
-                                backgroundColor: '#FC5474',
-                              }}
-                            ></div>
+                          {value?.status && (
+                            <>
+                              {value?.status[0] == 'Needs Focus' && (
+                                <div
+                                  className="w-3 h-3 rounded-full "
+                                  style={{
+                                    backgroundColor: '#FC5474',
+                                  }}
+                                ></div>
+                              )}
+                            </>
                           )}
                         </div>
                         <img
