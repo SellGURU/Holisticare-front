@@ -29,6 +29,7 @@ const EditModal: FC<EditModalProps> = ({
   const [groups, setGroups] = useState<any[]>([]);
   // const [selectedGroup] = useState<string | null>(defalts?.Category || null);
   const [newNote, setNewNote] = useState('');
+  const [newInstruction, setNewInstruction] = useState('');
   // const [recommendation] = useState(defalts?.Recommendation);
   // const [dose] = useState(defalts?.Dose);
   // const [instructions] = useState(defalts?.Instruction);
@@ -37,6 +38,9 @@ const EditModal: FC<EditModalProps> = ({
   // );
   const [notes, setNotes] = useState<string[]>(
     defalts ? defalts['Client Notes'] : [],
+  );
+  const [client_versions, setclient_versions] = useState<string[]>(
+    defalts ? defalts['client_version'] : [],
   );
   const [showSelect, setShowSelect] = useState(false);
   // const [group, setGroup] = useState(defalts?.Category);
@@ -62,7 +66,7 @@ const EditModal: FC<EditModalProps> = ({
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
-    Instruction: Yup.string().required('This field is required.'),
+    // Instruction: Yup.string().required('This field is required.'),
     Dose: Yup.string().when('Category', {
       is: 'Supplement',
       then: (schema) =>
@@ -89,7 +93,7 @@ const EditModal: FC<EditModalProps> = ({
       Category: defalts?.Category || '',
       Recommendation: defalts?.Recommendation || '',
       Dose: defalts?.Dose || '',
-      Instruction: defalts?.Instruction || '',
+      Instruction:defalts?.['Instruction'] ,
       // Times: defalts?.Times || [],
       Notes: defalts?.['Client Notes'] || notes,
       PractitionerComments:
@@ -103,7 +107,8 @@ const EditModal: FC<EditModalProps> = ({
         Recommendation: values.Recommendation,
         'Based on': defalts ? defalts['Based on'] : '',
         'Practitioner Comments': practitionerComments,
-        Instruction: values.Instruction,
+        Instruction: defalts?.Instruction?defalts?.Instruction:client_versions.toString(),
+        client_version:newInstruction.trim() !== ''? [...client_versions,newInstruction]:client_versions,
         Score: '0',
         'System Score': '0',
         // Times: selectedTimes,
@@ -168,7 +173,15 @@ const EditModal: FC<EditModalProps> = ({
       }
     }
   };
-
+  const handleInstructionKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (newInstruction.trim()) {
+        setclient_versions([...client_versions, newInstruction]);
+        setNewInstruction('');
+      }
+    }
+  };
   // const handleCommentKeyDown = (
   //   e: React.KeyboardEvent<HTMLTextAreaElement>,
   // ) => {
@@ -184,6 +197,11 @@ const EditModal: FC<EditModalProps> = ({
     const updatedNotes = notes.filter((_, i) => i !== index);
     setNotes(updatedNotes);
   };
+
+  const handleDeleteInstruction = (index: number) => {
+    const updatedNotes = client_versions.filter((_, i) => i !== index);
+    setclient_versions(updatedNotes);
+  };  
 
   // const handleApply = () => {
   //   onSubmit({
@@ -381,7 +399,7 @@ const EditModal: FC<EditModalProps> = ({
             </div>
 
             {/* Instructions Field */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="flex w-full gap-1 items-center text-xs font-medium">
                 Instructions
               </label>
@@ -398,6 +416,70 @@ const EditModal: FC<EditModalProps> = ({
                   {formik.errors.Instruction}
                 </div>
               )}
+            </div> */}
+            <div className="mb-4">
+              <label className="text-xs font-medium flex items-start gap-[2px]">
+                Instructions{' '}
+                <img
+                  className="cursor-pointer w-2 h-2"
+                  data-tooltip-id={'more-info-Instructions'}
+                  src="/icons/info-circle-blue.svg"
+                  alt=""
+                />
+              </label>
+              <textarea
+                name="Instruction"
+                value={newInstruction}
+                onChange={(e) => {
+                  setNewInstruction(e.target.value);
+                }}
+                placeholder="Write the action's instruction..."
+                onKeyDown={handleInstructionKeyDown}
+                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
+                  showValidation && newNote.length > 400
+                    ? 'border-Red'
+                    : 'border-Gray-50'
+                } rounded-2xl outline-none`}
+                rows={4}
+              />
+              <div className="flex justify-between items-center mt-1">
+                <Tooltip
+                  id="more-info-Instructions"
+                  place="right"
+                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                >
+                  After writing each instruction, press the Enter key to save it and be
+                  able to add another instruction.
+                </Tooltip>
+                {/* <span className="text-[10px] text-Text-Quadruple">
+                  {newNote.length}/400 characters
+                </span> */}
+              </div>
+              {showValidation && formik.errors.Instruction && (
+                <div className="text-Red text-[10px] mt-1">
+                  {formik.errors.Instruction}
+                </div>
+              )}
+            </div>
+            <div className="mb-4 flex flex-col gap-2">
+              {client_versions.map((note, index) => (
+                <div key={index} className="w-full flex gap-1 items-start">
+                  <div className="flex w-full justify-between items-center border border-Gray-50 py-1 px-3 text-xs text-Text-Primary bg-backgroundColor-Card rounded-2xl">
+                    <span>{note}</span>
+                  </div>
+                  <div
+                    onClick={() => handleDeleteInstruction(index)}
+                    className="cursor-pointer"
+                  >
+                    <SvgIcon
+                      src="/icons/delete.svg"
+                      color="#FC5474"
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Times Selection */}
