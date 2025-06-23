@@ -119,7 +119,7 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
             </>
           ) : (
             <>
-              <div className="text-Text-Primary bullet-point break-words text-justify mt-3">
+              <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
                 {/* <span className="text-Text-Secondary">Key Risks:</span> */}
                 {data?.Notes}
               </div>{' '}

@@ -173,8 +173,10 @@ const EditModal: FC<EditModalProps> = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (newNote.trim()) {
-        setNotes([...notes, newNote]);
-        setNewNote('');
+        if(newNote.length<=400) {
+          setNotes([...notes, newNote]);
+          setNewNote('');
+        }
       }
     }
   };
