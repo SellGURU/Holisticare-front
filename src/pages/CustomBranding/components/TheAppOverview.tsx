@@ -124,7 +124,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
           </div>
         </div>
         {selectedPage == 'Overview' ? (
-          <div>
+          <div className='w-full'>
             <div className="flex items-center justify-between mt-1.5 pr-4">
               {Categories.map((category, index) => {
                 return (
@@ -172,10 +172,10 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
                 );
               })}
             </div>
-            <div className="flex items-center mt-2.5 pr-4 text-[6.85px] font-medium text-Text-Primary">
+            <div className="flex w-full items-center mt-2.5 pr-4 text-[6.85px] font-medium text-Text-Primary">
               Meals
             </div>
-            <div className="flex items-center gap-3 mt-1 ml-2">
+            <div className="flex w-full items-center gap-3 mt-1 ml-2">
               {Meals.map((meal, index) => {
                 return (
                   <div
@@ -277,8 +277,10 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
               </div>
             </div>
           </div>
-        ) : (
+        ) : selectedPage == 'Result' ? (
           <ResultSection customTheme={customTheme}></ResultSection>
+        ) : (
+          <SettingSection customTheme={customTheme} />
         )}
 
         <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
@@ -452,90 +454,170 @@ const ResultSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
           </div>
         ))}
       </div>
-      <div className='flex flex-col gap-2 mt-3 text-[6.83px]'>
-        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FFAB2C]'>
-          <div className='flex w-full justify-between'>
+      <div className="flex flex-col gap-2 mt-3 text-[6.83px]">
+        <div className="rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FFAB2C]">
+          <div className="flex w-full justify-between">
             <div>
-              <div className='text-Text-Primary text-[7.83px] font-medium'>LDL Cholesterol</div>
-              <div className='text-Text-Secondary text-[6.83px]'>Cholesterol Transporter</div>
-            </div>
-            <div className='flex flex-col justify-center items-center gap-2'>
-              <div className='px-3 rounded-full bg-[#FFAB2C] text-white'>Borderline</div>
-              <div className='text-[#FFAB2C] text-[6px]'>
-              Need to work
+              <div className="text-Text-Primary text-[7.83px] font-medium">
+                LDL Cholesterol
+              </div>
+              <div className="text-Text-Secondary text-[6.83px]">
+                Cholesterol Transporter
               </div>
             </div>
+            <div className="flex flex-col justify-center items-center gap-2">
+              <div className="px-3 rounded-full bg-[#FFAB2C] text-white">
+                Borderline
+              </div>
+              <div className="text-[#FFAB2C] text-[6px]">Need to work</div>
+            </div>
           </div>
-          <div className='flex w-full justify-between'>
-            <div className='flex gap-1'>
-              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
-                <SvgIcon color='#267E95' src='/icons/result-heart.svg'/>
+          <div className="flex w-full justify-between">
+            <div className="flex gap-1">
+              <div className="flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]">
+                <SvgIcon color="#267E95" src="/icons/result-heart.svg" />
                 Heart Health
               </div>
             </div>
-            <div className='flex items-center gap-1'>
-              <div className='text-Text-Primary font-medium text-[7.83px]'>112</div>
-              <span className='text-Text-Secondary text-[6px]'>mg/dL</span>
+            <div className="flex items-center gap-1">
+              <div className="text-Text-Primary font-medium text-[7.83px]">
+                112
+              </div>
+              <span className="text-Text-Secondary text-[6px]">mg/dL</span>
             </div>
           </div>
         </div>
-        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FC5474]'>
-          <div className='flex w-full justify-between'>
+        <div className="rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FC5474]">
+          <div className="flex w-full justify-between">
             <div>
-              <div className='text-Text-Primary text-[7.83px] font-medium'>LDL White Blood Cells</div>
-              <div className='text-Text-Secondary text-[6.83px]'>Inflammation Indicator</div>
-            </div>
-            <div className='flex flex-col justify-center items-center gap-2'>
-              <div className='px-3 rounded-full bg-[#FC5474] text-white'>Critical</div>
-              <div className='text-[#FFAB2C] text-[6px]'>
-              Need to work
+              <div className="text-Text-Primary text-[7.83px] font-medium">
+                LDL White Blood Cells
               </div>
+              <div className="text-Text-Secondary text-[6.83px]">
+                Inflammation Indicator
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center gap-2">
+              <div className="px-3 rounded-full bg-[#FC5474] text-white">
+                Critical
+              </div>
+              <div className="text-[#FFAB2C] text-[6px]">Need to work</div>
             </div>
           </div>
-          <div className='flex w-full justify-between'>
-            <div className='flex gap-1'>
-              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
-                <SvgIcon color='#267E95' src='/icons/result-story.svg'/>
+          <div className="flex w-full justify-between">
+            <div className="flex gap-1">
+              <div className="flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]">
+                <SvgIcon color="#267E95" src="/icons/result-story.svg" />
                 Inflammation
               </div>
-              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
-                <SvgIcon color='#267E95' src='/icons/result-moon.svg'/>
+              <div className="flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]">
+                <SvgIcon color="#267E95" src="/icons/result-moon.svg" />
                 Sleep
               </div>
             </div>
-            <div className='flex items-center gap-1'>
-              <div className='text-Text-Primary font-medium text-[7.83px]'>3.5</div>
-              <span className='text-Text-Secondary text-[6px]'>thousands/uL</span>
+            <div className="flex items-center gap-1">
+              <div className="text-Text-Primary font-medium text-[7.83px]">
+                3.5
+              </div>
+              <span className="text-Text-Secondary text-[6px]">
+                thousands/uL
+              </span>
             </div>
           </div>
         </div>
-        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#06C78D]'>
-          <div className='flex w-full justify-between'>
+        <div className="rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#06C78D]">
+          <div className="flex w-full justify-between">
             <div>
-              <div className='text-Text-Primary text-[7.83px] font-medium'>HbA1c</div>
-              <div className='text-Text-Secondary text-[6.83px]'>Average Blood Sugar</div>
-            </div>
-            <div className='flex flex-col justify-center items-center gap-2'>
-              <div className='px-3 rounded-full bg-[#06C78D] text-white'>Normal</div>
-              <div className='text-[#06C78D] text-[6px]'>
-              Optimized
+              <div className="text-Text-Primary text-[7.83px] font-medium">
+                HbA1c
+              </div>
+              <div className="text-Text-Secondary text-[6.83px]">
+                Average Blood Sugar
               </div>
             </div>
+            <div className="flex flex-col justify-center items-center gap-2">
+              <div className="px-3 rounded-full bg-[#06C78D] text-white">
+                Normal
+              </div>
+              <div className="text-[#06C78D] text-[6px]">Optimized</div>
+            </div>
           </div>
-          <div className='flex w-full justify-between'>
-            <div className='flex gap-1'>
-            <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
-                <SvgIcon color='#267E95' src='/icons/result-story.svg'/>
+          <div className="flex w-full justify-between">
+            <div className="flex gap-1">
+              <div className="flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]">
+                <SvgIcon color="#267E95" src="/icons/result-story.svg" />
                 Inflammation
               </div>
             </div>
-            <div className='flex items-center gap-1'>
-              <div className='text-Text-Primary font-medium text-[7.83px]'>5.1</div>
-              <span className='text-Text-Secondary text-[6px]'>%</span>
+            <div className="flex items-center gap-1">
+              <div className="text-Text-Primary font-medium text-[7.83px]">
+                5.1
+              </div>
+              <span className="text-Text-Secondary text-[6px]">%</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+const SettingSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
+
+  const Options = [
+    {
+      title: 'Wearable Devices',
+      src: '/icons/watch-status.svg',
+    },
+    {
+      title: 'Change Password',
+      src: '/icons/lock.svg',
+    },
+    {
+      title: 'Privacy Policy',
+      src: '/icons/security-safe.svg',
+    },
+    {
+      title: 'Terms of Service',
+      src: '/icons/shield-tick.svg',
+    },
+  ];
+  return (
+    <div>
+
+  
+    <div className="flex flex-col w-full gap-2 mt-3">
+      {Options.map((option: any, index: number) => (
+        <div
+          key={index}
+          className="flex w-full justify-between items-center bg-white rounded-2xl p-2 shadow-drop"
+        >
+          <div className="flex gap-1 items-center text-Text-Primary text-[6.87px]">
+            <SvgIcon
+              width="11.74px"
+              height="11.74px"
+              color={customTheme.secondaryColor}
+              src={option.src}
+            />
+            {option.title}
+          </div>
+          <SvgIcon
+            width="11.74px"
+            height="11.74px"
+            color={customTheme.secondaryColor}
+            src="/icons/arrow-right-new.svg"
+          />
+        </div>
+      ))}
+    </div>
+    <div style={{color: customTheme.secondaryColor}} className='w-full mt-4 flex justify-center gap-1 items-center text-[6.87px] '>
+    <SvgIcon
+            width="11.74px"
+            height="11.74px"
+            color={customTheme.secondaryColor}
+            src="/icons/logout2.svg"
+          />
+          Log Out
+    </div>
     </div>
   );
 };
