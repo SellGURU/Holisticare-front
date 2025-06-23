@@ -427,7 +427,7 @@ const ResultSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
     'Aging',
   ];
   return (
-    <div className='w-[232.5px] '>
+    <div className="w-[232.5px] ">
       <div className="w-full mt-2 flex justify-between items-center  ">
         {Categories.map((category: any, index: number) => (
           <div
@@ -440,21 +440,101 @@ const ResultSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
                   }
                 : {}
             }
-            className={`flex  items-center gap-1 px-3 py-[10px]   rounded-xl text-[6.83px] font-medium ${selectedCategory == category.title ? 'text-white' : 'text-Text-Quadruple'}`}
+            className={`flex  items-center gap-1 px-[10px] py-[8px]   rounded-xl text-[6.83px] font-medium ${selectedCategory == category.title ? 'text-white' : 'text-Text-Quadruple'}`}
           >
             <SvgIcon
-            width='10px'
-            height='10px'
+              width="10px"
+              height="10px"
               src={category.src}
-              color={
-                selectedCategory == category.title
-                  ? 'white'
-                  : '#888888'
-              }
+              color={selectedCategory == category.title ? 'white' : '#888888'}
             />
             {category.title}
           </div>
         ))}
+      </div>
+      <div className='flex flex-col gap-2 mt-3 text-[6.83px]'>
+        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FFAB2C]'>
+          <div className='flex w-full justify-between'>
+            <div>
+              <div className='text-Text-Primary text-[7.83px] font-medium'>LDL Cholesterol</div>
+              <div className='text-Text-Secondary text-[6.83px]'>Cholesterol Transporter</div>
+            </div>
+            <div className='flex flex-col justify-center items-center gap-2'>
+              <div className='px-3 rounded-full bg-[#FFAB2C] text-white'>Borderline</div>
+              <div className='text-[#FFAB2C] text-[6px]'>
+              Need to work
+              </div>
+            </div>
+          </div>
+          <div className='flex w-full justify-between'>
+            <div className='flex gap-1'>
+              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
+                <SvgIcon color='#267E95' src='/icons/result-heart.svg'/>
+                Heart Health
+              </div>
+            </div>
+            <div className='flex items-center gap-1'>
+              <div className='text-Text-Primary font-medium text-[7.83px]'>112</div>
+              <span className='text-Text-Secondary text-[6px]'>mg/dL</span>
+            </div>
+          </div>
+        </div>
+        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#FC5474]'>
+          <div className='flex w-full justify-between'>
+            <div>
+              <div className='text-Text-Primary text-[7.83px] font-medium'>LDL White Blood Cells</div>
+              <div className='text-Text-Secondary text-[6.83px]'>Inflammation Indicator</div>
+            </div>
+            <div className='flex flex-col justify-center items-center gap-2'>
+              <div className='px-3 rounded-full bg-[#FC5474] text-white'>Critical</div>
+              <div className='text-[#FFAB2C] text-[6px]'>
+              Need to work
+              </div>
+            </div>
+          </div>
+          <div className='flex w-full justify-between'>
+            <div className='flex gap-1'>
+              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
+                <SvgIcon color='#267E95' src='/icons/result-story.svg'/>
+                Inflammation
+              </div>
+              <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
+                <SvgIcon color='#267E95' src='/icons/result-moon.svg'/>
+                Sleep
+              </div>
+            </div>
+            <div className='flex items-center gap-1'>
+              <div className='text-Text-Primary font-medium text-[7.83px]'>3.5</div>
+              <span className='text-Text-Secondary text-[6px]'>thousands/uL</span>
+            </div>
+          </div>
+        </div>
+        <div className='rounded-2xl px-3 py-4 bg-white border-l-2 w-[210px] border-[#06C78D]'>
+          <div className='flex w-full justify-between'>
+            <div>
+              <div className='text-Text-Primary text-[7.83px] font-medium'>HbA1c</div>
+              <div className='text-Text-Secondary text-[6.83px]'>Average Blood Sugar</div>
+            </div>
+            <div className='flex flex-col justify-center items-center gap-2'>
+              <div className='px-3 rounded-full bg-[#06C78D] text-white'>Normal</div>
+              <div className='text-[#06C78D] text-[6px]'>
+              Optimized
+              </div>
+            </div>
+          </div>
+          <div className='flex w-full justify-between'>
+            <div className='flex gap-1'>
+            <div  className='flex bg-[#E2F1F8] gap-1  items-center text-[6.83px] rounded-full text-[#267E95] px-[6px] py-[2px]'>
+                <SvgIcon color='#267E95' src='/icons/result-story.svg'/>
+                Inflammation
+              </div>
+            </div>
+            <div className='flex items-center gap-1'>
+              <div className='text-Text-Primary font-medium text-[7.83px]'>5.1</div>
+              <span className='text-Text-Secondary text-[6px]'>%</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
