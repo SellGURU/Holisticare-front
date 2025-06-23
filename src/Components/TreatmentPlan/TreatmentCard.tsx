@@ -100,7 +100,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                 <>
                   <div className="text-Text-Primary">
                     <span className="text-Text-Secondary"></span>
-                    <span className="text-justify bullet-point">{positive}</span>
+                    <span className="text-justify bullet-point">
+                      {positive}
+                    </span>
                   </div>
                 </>
               )}
@@ -108,7 +110,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                 <>
                   <div className="text-Text-Primary mt-3">
                     <span className="text-Text-Secondary"></span>
-                    <span className="text-justify bullet-point">{negative}</span>
+                    <span className="text-justify bullet-point">
+                      {negative}
+                    </span>
                   </div>
                 </>
               )}
