@@ -91,7 +91,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                   marginTop: '5px',
                 }}
               ></div>
-              {data?.Client_Notes.map((el:any) => {
+              {data?.Client_Notes.map((el: any) => {
                 return (
                   <div style={{ color: '#888888', fontSize: '12px' }}>
                     <span
@@ -105,7 +105,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     </span>
                     {el}
                   </div>
-                )
+                );
               })}
             </>
           )}
