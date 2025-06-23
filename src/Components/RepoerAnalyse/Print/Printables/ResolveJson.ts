@@ -359,7 +359,7 @@ const AddActionPlanHeaderOverflow = () => {
 
 const AddActionPlanOverView = (grouped: any) => {
   AddActionPlanHeaderOverflow();
-  if(grouped) {
+  if (grouped) {
     (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
       AddActionPLanRowCategory(key, items);
     });
