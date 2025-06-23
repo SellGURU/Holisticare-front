@@ -359,9 +359,11 @@ const AddActionPlanHeaderOverflow = () => {
 
 const AddActionPlanOverView = (grouped: any) => {
   AddActionPlanHeaderOverflow();
-  (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
-    AddActionPLanRowCategory(key, items);
-  });
+  if(grouped) {
+    (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
+      AddActionPLanRowCategory(key, items);
+    });
+  }
 };
 const AddActionPLanRow = (category: string, item: any, index: number) => {
   checkPageCanRender(90);
