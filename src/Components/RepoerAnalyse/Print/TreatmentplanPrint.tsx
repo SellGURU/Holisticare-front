@@ -91,18 +91,22 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                   marginTop: '5px',
                 }}
               ></div>
-              <div style={{ color: '#888888', fontSize: '12px' }}>
-                <span
-                  style={{
-                    color: '#383838',
-                    fontSize: '12px',
-                    marginRight: '5px',
-                  }}
-                >
-                  Note:
-                </span>
-                {data.Client_Notes[0]}
-              </div>
+              {data?.Client_Notes.map((el: any) => {
+                return (
+                  <div style={{ color: '#888888', fontSize: '12px' }}>
+                    <span
+                      style={{
+                        color: '#383838',
+                        fontSize: '12px',
+                        marginRight: '5px',
+                      }}
+                    >
+                      Note:
+                    </span>
+                    {el}
+                  </div>
+                );
+              })}
             </>
           )}
         </div>
