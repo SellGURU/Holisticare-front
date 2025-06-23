@@ -62,7 +62,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   useEffect(() => {
     setEditAbleValue(value.Instruction);
     const { positive, negative } = splitInstructions(value.Instruction);
-    setclient_version(value.client_version?value.client_version:[positive,negative])
+    setclient_version(
+      value.client_version ? value.client_version : [positive, negative],
+    );
     setNotes(value['Client Notes']);
   }, [value]);
   const handleAddNotes = (newNotes: string[]) => {
@@ -80,7 +82,9 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
-  const [client_version,setclient_version] = useState(value.client_version?value.client_version:[positive,negative])
+  const [client_version, setclient_version] = useState(
+    value.client_version ? value.client_version : [positive, negative],
+  );
   return (
     <>
       <ConflictsModal
@@ -116,56 +120,56 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                 value.Category == 'Lifestyle' ||
                 value.Category == 'Supplement') && (
                 <>
-                  {!editAble &&
-                  <>
-                    <div
-                      data-tooltip-id="system-score"
-                      className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
-                    >
-                      <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
-                      {value['System Score'] ? value['System Score'] : '-'}
-                      <Tooltip
-                        id={`system-score-${index}`}
-                        place="top"
-                        className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        style={{
-                          zIndex: 9999,
-                          pointerEvents: 'none',
-                        }}
+                  {!editAble && (
+                    <>
+                      <div
+                        data-tooltip-id="system-score"
+                        className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
                       >
-                        <div className="text-Text-Primary font-medium">
-                          System Score
-                        </div>
-                        <div className="text-Text-Secondary">
-                          Score based on all data and AI insights.
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <div
-                      data-tooltip-id="base-score"
-                      className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
-                    >
-                      <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
-                      {value.Score ? value.Score : '-'}
-                      <Tooltip
-                        id={`base-score-${index}`}
-                        place="top"
-                        className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        style={{
-                          zIndex: 9999,
-                          pointerEvents: 'none',
-                        }}
+                        <div className="size-[5px]  select-none bg-[#005F73] rounded-full"></div>
+                        {value['System Score'] ? value['System Score'] : '-'}
+                        <Tooltip
+                          id={`system-score-${index}`}
+                          place="top"
+                          className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          style={{
+                            zIndex: 9999,
+                            pointerEvents: 'none',
+                          }}
+                        >
+                          <div className="text-Text-Primary font-medium">
+                            System Score
+                          </div>
+                          <div className="text-Text-Secondary">
+                            Score based on all data and AI insights.
+                          </div>
+                        </Tooltip>
+                      </div>
+                      <div
+                        data-tooltip-id="base-score"
+                        className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
                       >
-                        <div className="text-Text-Primary font-medium">
-                          Base Score
-                        </div>
-                        <div className="text-Text-Secondary">
-                          Initial score from core health metrics.
-                        </div>
-                      </Tooltip>
-                    </div>
-                  </>
-                  }
+                        <div className="size-[5px] select-none  bg-[#6CC24A] rounded-full"></div>
+                        {value.Score ? value.Score : '-'}
+                        <Tooltip
+                          id={`base-score-${index}`}
+                          place="top"
+                          className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          style={{
+                            zIndex: 9999,
+                            pointerEvents: 'none',
+                          }}
+                        >
+                          <div className="text-Text-Primary font-medium">
+                            Base Score
+                          </div>
+                          <div className="text-Text-Secondary">
+                            Initial score from core health metrics.
+                          </div>
+                        </Tooltip>
+                      </div>
+                    </>
+                  )}
                   <div
                     data-tooltip-id={`score-calc-${index}`}
                     className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
@@ -205,41 +209,44 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               className="bg-transparent text-[12px] outline-none w-full resize-none"
               rows={2}
             /> */}
-            {editAble ?
-            <>
-              {client_version.map((el:any) => {
-                return (
-                <div className="bg-transparent mt-2 text-[12px] w-full outline-none  resize-none">
-                  <div className="text-Text-Primary bullet-point"> {el}</div>
-                </div>                
-                )
-              })}
-            </>
-            :
-            <>
-              {positive ? (
-                <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-                  <div className="text-Text-Primary">
-                    {' '}
-                    <span className="text-Text-Secondary bullet-point">
-                      Key Benefits:{' '}
-                    </span>
-                    {positive}
+            {editAble ? (
+              <>
+                {client_version.map((el: any) => {
+                  return (
+                    <div className="bg-transparent mt-2 text-[12px] w-full outline-none  resize-none">
+                      <div className="text-Text-Primary bullet-point">
+                        {' '}
+                        {el}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <>
+                {positive ? (
+                  <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
+                    <div className="text-Text-Primary">
+                      {' '}
+                      <span className="text-Text-Secondary bullet-point">
+                        Key Benefits:{' '}
+                      </span>
+                      {positive}
+                    </div>
+                    <div className="text-Text-Primary mt-2.5">
+                      <span className="text-Text-Secondary bullet-point">
+                        Key Risks:{' '}
+                      </span>
+                      {negative}
+                    </div>{' '}
                   </div>
-                  <div className="text-Text-Primary mt-2.5">
-                    <span className="text-Text-Secondary bullet-point">
-                      Key Risks:{' '}
-                    </span>
-                    {negative}
-                  </div>{' '}
-                </div>
-              ) : (
-                <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-                  <div className="text-Text-Primary"> {editableValue}</div>
-                </div>
-              )}
-            </>
-            }
+                ) : (
+                  <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
+                    <div className="text-Text-Primary"> {editableValue}</div>
+                  </div>
+                )}
+              </>
+            )}
             {/* {editableValue.map((el:any) => {
               return (
                 <>
@@ -376,7 +383,12 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       )}
       {showEditNote && (
         <EditModal
-          defalts={{...value,client_version:value.client_version?value.client_version:[positive,negative]}}
+          defalts={{
+            ...value,
+            client_version: value.client_version
+              ? value.client_version
+              : [positive, negative],
+          }}
           onSubmit={(editData) => {
             onEdit(editData);
           }}

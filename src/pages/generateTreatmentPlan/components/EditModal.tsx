@@ -93,7 +93,7 @@ const EditModal: FC<EditModalProps> = ({
       Category: defalts?.Category || '',
       Recommendation: defalts?.Recommendation || '',
       Dose: defalts?.Dose || '',
-      Instruction:defalts?.['Instruction'] ,
+      Instruction: defalts?.['Instruction'],
       // Times: defalts?.Times || [],
       Notes: defalts?.['Client Notes'] || notes,
       PractitionerComments:
@@ -107,8 +107,13 @@ const EditModal: FC<EditModalProps> = ({
         Recommendation: values.Recommendation,
         'Based on': defalts ? defalts['Based on'] : '',
         'Practitioner Comments': practitionerComments,
-        Instruction: defalts?.Instruction?defalts?.Instruction:client_versions.toString(),
-        client_version:newInstruction.trim() !== ''? [...client_versions,newInstruction]:client_versions,
+        Instruction: defalts?.Instruction
+          ? defalts?.Instruction
+          : client_versions.toString(),
+        client_version:
+          newInstruction.trim() !== ''
+            ? [...client_versions, newInstruction]
+            : client_versions,
         Score: '0',
         'System Score': '0',
         // Times: selectedTimes,
@@ -201,7 +206,7 @@ const EditModal: FC<EditModalProps> = ({
   const handleDeleteInstruction = (index: number) => {
     const updatedNotes = client_versions.filter((_, i) => i !== index);
     setclient_versions(updatedNotes);
-  };  
+  };
 
   // const handleApply = () => {
   //   onSubmit({
@@ -448,8 +453,8 @@ const EditModal: FC<EditModalProps> = ({
                   place="right"
                   className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                 >
-                  After writing each instruction, press the Enter key to save it and be
-                  able to add another instruction.
+                  After writing each instruction, press the Enter key to save it
+                  and be able to add another instruction.
                 </Tooltip>
                 {/* <span className="text-[10px] text-Text-Quadruple">
                   {newNote.length}/400 characters

@@ -52,7 +52,7 @@ const resolveAnalyseIcon = (name: string) => {
   }
   if (name == 'Essential Minerals') {
     return '/icons/biomarkers/minerals.svg';
-  }  
+  }
   if (name == 'Thyroid Function') {
     return '/icons/biomarkers/thyroid.svg';
   }
