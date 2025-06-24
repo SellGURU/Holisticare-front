@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import Application from '../../api/app';
+import { blobToBase64 } from '../../help';
+import SpinnerLoader from '../../Components/SpinnerLoader';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpNameLogo = () => {
+  const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [errorName, setErrorName] = useState(false);
   const [errorLogo, setErrorLogo] = useState('');
   const [clinicName, setClinicName] = useState<string>('');
+  const [imageSelect, setImageSelect] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
     const maxSizeInBytes = 4 * 1024 * 1024;
@@ -28,6 +35,35 @@ const SignUpNameLogo = () => {
 
     setErrorLogo('');
     setSelectedFiles((prev) => [...prev, file]);
+    handleImageUpload(event);
+  };
+  const validateForm = () => {
+    return !errorName && errorLogo.length === 0;
+  };
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      blobToBase64(file).then((resolve: any) => {
+        setImageSelect(resolve);
+      });
+    }
+  };
+  const onSave = () => {
+    if (!validateForm()) {
+      return;
+    }
+    setIsLoading(true);
+    const data: any = {
+      logo: imageSelect,
+      name: clinicName,
+    };
+    Application.saveBrandInfo(data)
+      .then(() => {
+        navigate('/');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   return (
     <div className="w-full h-screen flex justify-center items-center bg-bg-color px-12 py-8">
@@ -122,8 +158,15 @@ const SignUpNameLogo = () => {
             </div>
           )}
         </div>
-        <ButtonSecondary ClassName="w-[300px] rounded-[20px] border border-white mt-4">
-          Continue
+        <ButtonSecondary
+          ClassName="w-[300px] rounded-[20px] border border-white mt-4"
+          onClick={() => {
+            if (validateForm()) {
+              onSave();
+            }
+          }}
+        >
+          {isLoading ? <SpinnerLoader /> : 'Continue'}
         </ButtonSecondary>
       </div>
     </div>
