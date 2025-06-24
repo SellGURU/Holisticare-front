@@ -5,6 +5,8 @@ type SelectProps = {
   options?: Array<string>;
   key?: string;
   isCapital?: boolean;
+  isLarge?: boolean;
+  value?: string;
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -12,6 +14,8 @@ const Select: React.FC<SelectProps> = ({
   options,
   key,
   isCapital,
+  isLarge,
+  value,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -22,8 +26,11 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <div className="relative inline-block w-[120px] cursor-pointer font-normal">
+    <div
+      className={`relative inline-block ${isLarge ? 'w-full' : 'w-[120px]'}  cursor-pointer font-normal`}
+    >
       <select
+        value={value}
         onClick={() => setIsOpen(!isOpen)}
         ref={selectRef}
         onBlur={() => setIsOpen(false)}

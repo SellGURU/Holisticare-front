@@ -8,23 +8,40 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
   const menuItems = useMemo(
     () => ({
+      General: [
+        {
+          title: 'Clinic Preferences',
+          isActive: true,
+        },
+        {
+          title: 'Language & Region',
+          isActive: false,
+        },
+        {
+          title: 'Change Password',
+          isActive: false,
+        },
+      ],
+      'Integrations & AI': [
+        {
+          title: 'Integrations',
+          isActive: false,
+        },
+        {
+          title: 'AI Preferences',
+          isActive: false,
+        },
+      ],
       Account: [
-        'Overview',
-        'Update Your Profile',
-        'Change Password',
-        'Zapier',
-        'Share feedback',
-        'Packages',
+        {
+          title: 'Notifications',
+          isActive: false,
+        },
+        {
+          title: 'Subscription',
+          isActive: false,
+        },
       ],
-      Clinic: [
-        'Staff',
-        'Community',
-        'Plan Priority',
-        'Customize Questionnaire',
-        'Integration',
-        'Biomarkers',
-      ],
-      Archive: ['Surveys', 'Previous Clients'],
     }),
     [],
   );
@@ -38,9 +55,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
     if (section) {
       const menuItem = Object.values(menuItems)
         .flat()
-        .find((item) => item.replace(/\s+/g, '-').toLowerCase() === section);
+        .find(
+          (item) => item.title.replace(/\s+/g, '-').toLowerCase() === section,
+        );
       if (menuItem) {
-        setActiveMenu(menuItem);
+        setActiveMenu(menuItem.title);
       }
     }
   }, [searchParams, setActiveMenu, menuItems]);
@@ -49,22 +68,26 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
       <div className="space-y-8">
         {Object.entries(menuItems).map(([category, subItems]) => (
           <div key={category}>
-            <h3 className="text-Text-Triarty text-xs  my-2">{category}</h3>
+            <h3 className="text-[#B0B0B0] text-[10px]  my-2">{category}</h3>
             <ul className="space-y-3 ">
               {subItems.map((item) => (
                 <li
-                  key={item}
-                  className={`flex items-center cursor-pointer text-nowrap text-base ${
-                    activeMenu === item
-                      ? 'text-Primary-DeepTeal font-medium'
-                      : 'text-Text-Secondary'
+                  key={item.title}
+                  className={` ${item.isActive ? '' : 'opacity-50 cursor-not-allowed'} flex items-center cursor-pointer text-nowrap text-base ${
+                    activeMenu === item.title
+                      ? 'text-Primary-DeepTeal text-sm'
+                      : 'text-[#888888]'
                   }`}
-                  onClick={() => handleMenuClick(item)}
+                  onClick={() => {
+                    if (item.isActive) {
+                      handleMenuClick(item.title);
+                    }
+                  }}
                 >
-                  {activeMenu === item && (
+                  {activeMenu === item.title && (
                     <img alt="" src="/icons/arrow-right-small.svg" />
                   )}
-                  {item}
+                  {item.title}
                 </li>
               ))}
             </ul>
