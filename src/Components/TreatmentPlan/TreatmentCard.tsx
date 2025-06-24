@@ -120,11 +120,19 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
           ) : (
             <>
               <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
-                {/* <span className="text-Text-Secondary">Key Risks:</span> */}
                 {data?.Notes}
               </div>{' '}
             </>
           )}
+          {/* {data?.Notes.map((el:any) => {
+            return (
+              <>
+              <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
+                {el}
+              </div>{' '}              
+              </>
+            )
+          })} */}
         </>
       </div>
       {/* <div className="text-xs font-medium text-Primary-DeepTeal select-none">

@@ -18,7 +18,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
           onClick={() => {
             setActive(value[0]);
           }}
-          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[0] ? 'bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
         >
           {value[0]}
         </div>
@@ -27,7 +27,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
           onClick={() => {
             setActive(value[1]);
           }}
-          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[12px]`}
+          className={` cursor-pointer ${active == value[1] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
         >
           {value[1]}
         </div>
@@ -38,7 +38,7 @@ const ToggleCustomBranding: React.FC<ToggleProps> = ({
               onClick={() => {
                 setActive(value[2]);
               }}
-              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[12px]`}
+              className={` cursor-pointer ${active == value[2] ? ' bg-Primary-DeepTeal text-white' : '  bg-Secondary-SelverGray border text-Text-Primary'} h-[20px] w-[140px] rounded-[16px] flex justify-center items-center text-[10px] md:text-[12px]`}
             >
               {value[2]}
             </div>
