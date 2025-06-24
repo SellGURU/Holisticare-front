@@ -41,7 +41,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     &#8226;
                   </div>
                   <div>
-                    <span style={{ color: '#888888' }}>Key Benefits:</span>{' '}
+                    {/* <span style={{ color: '#888888' }}>Key Benefits:</span>{' '} */}
                     {positive}
                   </div>
                 </div>
@@ -55,7 +55,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                     &#8226;
                   </div>
                   <div>
-                    <span style={{ color: '#888888' }}>Key Risks:</span>{' '}
+                    {/* <span style={{ color: '#888888' }}>Key Risks:</span>{' '} */}
                     {negative}
                   </div>
                 </div>
@@ -91,18 +91,22 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                   marginTop: '5px',
                 }}
               ></div>
-              <div style={{ color: '#888888', fontSize: '12px' }}>
-                <span
-                  style={{
-                    color: '#383838',
-                    fontSize: '12px',
-                    marginRight: '5px',
-                  }}
-                >
-                  Note:
-                </span>
-                {data.Client_Notes[0]}
-              </div>
+              {data?.Client_Notes.map((el: any) => {
+                return (
+                  <div style={{ color: '#888888', fontSize: '12px' }}>
+                    <span
+                      style={{
+                        color: '#383838',
+                        fontSize: '12px',
+                        marginRight: '5px',
+                      }}
+                    >
+                      Note:
+                    </span>
+                    {el}
+                  </div>
+                );
+              })}
             </>
           )}
         </div>
