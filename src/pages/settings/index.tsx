@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import Sidebar from './components/SideBar';
 import SearchBox from '../../Components/SearchBox';
 // import Content from './Content';
-import Overview from './components/overView';
+// import Overview from './components/overView';
 import { Zappier } from './components/Zappier';
 import PackagePage from './components/Package';
+import { ClinicPreferences } from './components/ClinicPreferences';
 const Setting: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState('Overview');
+  const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const renderContent = () => {
     switch (activeMenu) {
-      case 'Overview':
-        return <Overview></Overview>;
+      case 'Clinic Preferences':
+        return <ClinicPreferences/>
       case 'Zapier':
         return <Zappier></Zappier>;
       case 'Update Your Profile':
