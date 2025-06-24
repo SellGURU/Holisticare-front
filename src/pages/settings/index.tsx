@@ -11,7 +11,7 @@ const Setting: React.FC = () => {
   const renderContent = () => {
     switch (activeMenu) {
       case 'Clinic Preferences':
-        return <ClinicPreferences/>
+        return <ClinicPreferences />;
       case 'Zapier':
         return <Zappier></Zappier>;
       case 'Update Your Profile':
