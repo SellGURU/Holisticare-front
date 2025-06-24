@@ -33,11 +33,11 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
     navigate(menu.url);
     onClose();
   };
-  const [height, setHeight] = useState(window.innerHeight - 125);
+  const [height, setHeight] = useState(window.innerHeight - 145);
 
   useEffect(() => {
     const handleResize = () => {
-      setHeight(window.innerHeight - 125);
+      setHeight(window.innerHeight - 145);
     };
 
     window.addEventListener('resize', handleResize);
@@ -72,7 +72,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 {menuCategory.items.map((menu) => (
                   <>
                     {menu.name === 'Knowledge Graph' ? (
-                      <div className="  w-full flex pl-5 mt-2 items-center">
+                      <div className="  w-full flex pl-5  items-center">
                         {' '}
                         <div
                           onClick={() => {
@@ -119,7 +119,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                         </div>
                       </div>
                     ) : (
-                      <div className="mt-1" key={menu.name}>
+                      <div className="" key={menu.name}>
                         <div
                           onClick={() => {
                             if (menu.active) {
