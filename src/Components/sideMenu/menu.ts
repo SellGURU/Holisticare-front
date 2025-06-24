@@ -102,6 +102,12 @@ export const menus = [
         icon: 'sidemenu-menu-icon-Staff',
         active: true,
       },
+      {
+        name: 'Setting',
+        icon: 'sidemenu-menu-icon-setting',
+        url: '/setting',
+        active: true,
+      },
     ],
   },
   // {
@@ -205,12 +211,7 @@ export const menus = [
 //     icon: 'sidemenu-menu-icon-packages',
 //     url: '',
 //   },
-//   {
-//     name: 'Setting',
-//     icon: 'sidemenu-menu-icon-setting',
-//     url: '/setting',
-//     active: true,
-//   },
+
 //   // {
 //   //   name: 'info-circle',
 //   //   icon: 'info-circle',

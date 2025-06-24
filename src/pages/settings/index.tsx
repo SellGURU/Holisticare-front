@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import Sidebar from './components/SideBar';
 import SearchBox from '../../Components/SearchBox';
 // import Content from './Content';
-import Overview from './components/overView';
+// import Overview from './components/overView';
 import { Zappier } from './components/Zappier';
 import PackagePage from './components/Package';
+import { ClinicPreferences } from './components/ClinicPreferences';
 const Setting: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState('Overview');
+  const [activeMenu, setActiveMenu] = useState('Clinic Preferences');
   const renderContent = () => {
     switch (activeMenu) {
-      case 'Overview':
-        return <Overview></Overview>;
+      case 'Clinic Preferences':
+        return <ClinicPreferences/>
       case 'Zapier':
         return <Zappier></Zappier>;
       case 'Update Your Profile':
@@ -29,7 +30,7 @@ const Setting: React.FC = () => {
   };
   return (
     <>
-      <div className="flex fixed z-[48] top-13 w-full px-6 pl-[100px] py-4 left-0  justify-between">
+      <div className="flex fixed z-[48] top-13 w-full pr-6 pl-[194px] py-4 left-0  justify-between">
         <div className="text-2xl text-Text-Primary">Setting</div>
         <SearchBox
           ClassName="rounded-lg"
