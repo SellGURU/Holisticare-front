@@ -34,6 +34,8 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
   const [questions, setQuestions] = useState<Array<checkinType>>(
     templateData ? templateData.questions : [],
   );
+  const [AddquestionStep, setAddquestionStep] = useState(0);
+
   useEffect(() => {
     if (error && error == 'A form with the same title already exists.') {
       setTitleForm(templateData?.title || '');
@@ -66,6 +68,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       case 'Add':
         return (
           <AddCheckIn
+          questionStep={AddquestionStep}
+          setQuestionStep={(value) => {
+            setAddquestionStep(value);
+          }}
             upQuestions={questions}
             onChange={(values) => {
               setQuestions(values);
@@ -100,6 +106,10 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
       case 'Edit':
         return (
           <AddCheckIn
+          questionStep={AddquestionStep}
+          setQuestionStep={(value) => {
+            setAddquestionStep(value);
+          }}
             upQuestions={questions}
             onChange={(values) => {
               setQuestions(values);
@@ -208,9 +218,14 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               ) : (
                 ''
               )}
-              <div className="w-full text-xs text-Text-Primary font-medium mt-6">
+              {
+                AddquestionStep== 0 &&(
+<div className="w-full text-xs text-Text-Primary font-medium mt-6">
                 {templateData == null ? 'Questions' : 'Initial Questionnaire'}
               </div>
+                )
+              }
+              
             </>
           )}
           <div className="flex flex-col w-full mt-3 items-center justify-center">
@@ -275,6 +290,8 @@ interface AddCheckInProps {
   upMinutes: number;
   upSeconds: number;
   mode: string;
+  questionStep:number
+  setQuestionStep: (value:number) => void;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -288,6 +305,8 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   upMinutes,
   upSeconds,
   mode,
+  questionStep,
+  setQuestionStep,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   const [addMore, setAddMore] = useState(false);
@@ -315,7 +334,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
     <>
       {step == 0 || mode == 'Reposition' ? (
         <>
-          {questions.length > 0 && (
+          {questions.length > 0 && !addMore && (
             <>
               <div
                 className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
@@ -357,6 +376,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal mb-4 mt-2"
               onClick={() => {
                 setAddMore(true);
+                setQuestionStep(1);
               }}
             >
               <img
@@ -379,16 +399,20 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               </div>
               <ButtonSecondary
                 ClassName="rounded-[20px] w-[147px] !py-[3px] mt-3 text-nowrap mb-8"
-                onClick={() => setAddMore(true)}
+                onClick={() =>{
+                  setQuestionStep(1);
+                   setAddMore(true)}}
               >
                 <img src="/icons/add.svg" alt="" width="20px" height="20px" />
                 Add Question
               </ButtonSecondary>
             </>
           )}
-          {addMore && (
+          {addMore && questionStep == 1 && (
             <>
               <AddQuestionsModal
+                            setQuestionStep={setQuestionStep}
+
                 editQUestion={questions[editingQuestionIndex]}
                 onSubmit={(value) => {
                   const updatedQuestions =
