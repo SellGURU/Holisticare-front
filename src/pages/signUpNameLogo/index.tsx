@@ -60,7 +60,7 @@ const SignUpNameLogo = () => {
     const data: any = {
       logo: imageSelect,
       name: clinicName,
-      html_email:""
+      html_email: '',
     };
     Application.saveBrandInfo(data)
       .then(() => {
