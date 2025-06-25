@@ -124,14 +124,14 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               </div>{' '}
             </>
           )} */}
-          {data?.Notes.map((el:any) => {
+          {data?.Notes.map((el: any) => {
             return (
               <>
-              <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
-                {el}
-              </div>{' '}              
+                <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
+                  {el}
+                </div>{' '}
               </>
-            )
+            );
           })}
         </>
       </div>

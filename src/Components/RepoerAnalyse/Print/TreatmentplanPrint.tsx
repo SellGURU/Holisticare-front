@@ -30,10 +30,10 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             {data.title}
           </div>
-          {data.Notes? (
-            <> 
-            {data.Notes.map((el:any)=>{
-              return(
+          {data.Notes ? (
+            <>
+              {data.Notes.map((el: any) => {
+                return (
                   <div
                     className="my-2 flex"
                     style={{ fontSize: '12px', color: '#383838' }}
@@ -45,9 +45,9 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
                       {/* <span style={{ color: '#888888' }}>Key Benefits:</span>{' '} */}
                       {el}
                     </div>
-                  </div>      
-              )
-            })}
+                  </div>
+                );
+              })}
             </>
           ) : (
             <>
