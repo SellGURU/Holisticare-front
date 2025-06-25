@@ -40,13 +40,6 @@ const SignUpNameLogo = () => {
   const validateForm = () => {
     if (clinicName.length === 0) {
       setErrorName(true);
-      if (imageSelect === null) {
-        setErrorLogo('Please upload a logo.');
-      }
-      return false;
-    }
-    if (imageSelect === null) {
-      setErrorLogo('Please upload a logo.');
       return false;
     }
     return true;
