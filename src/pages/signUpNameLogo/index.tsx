@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const SignUpNameLogo = () => {
   const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [errorName, setErrorName] = useState(false);
+  const [errorName, setErrorName] = useState('');
   const [errorLogo, setErrorLogo] = useState('');
   const [clinicName, setClinicName] = useState<string>('');
   const [imageSelect, setImageSelect] = useState<string | null>(null);
@@ -24,12 +24,12 @@ const SignUpNameLogo = () => {
       'image/svg+xml',
     ];
     if (!allowedTypes.includes(file.type)) {
-      setErrorLogo('File exceeds 4 MB or has an unsupported format.');
+      setErrorLogo('File has an unsupported format.');
       return;
     }
 
     if (file.size > maxSizeInBytes) {
-      setErrorLogo('File exceeds 4 MB or has an unsupported format.');
+      setErrorLogo('File exceeds 4 MB.');
       return;
     }
 
@@ -38,8 +38,32 @@ const SignUpNameLogo = () => {
     handleImageUpload(event);
   };
   const validateForm = () => {
+    if (
+      clinicName.length < 3 ||
+      clinicName.length > 15 ||
+      /^\d+$/.test(clinicName)
+    ) {
+      setErrorName(
+        /^\d+$/.test(clinicName)
+          ? 'Name cannot be only numbers.'
+          : 'Must be between 3 and 15 characters.',
+      );
+
+      if (selectedFiles.length === 0) {
+        setErrorLogo('This field is required.');
+      }
+
+      return false;
+    }
     if (clinicName.length === 0) {
-      setErrorName(true);
+      setErrorName('This field is required.');
+      if (selectedFiles.length === 0) {
+        setErrorLogo('This field is required.');
+      }
+      return false;
+    }
+    if (selectedFiles.length === 0) {
+      setErrorLogo('This field is required.');
       return false;
     }
     return true;
@@ -94,13 +118,25 @@ const SignUpNameLogo = () => {
               value={clinicName}
               onChange={(e) => {
                 setClinicName(e.target.value);
-                setErrorName(e.target.value.length === 0);
+                if (e.target.value.length === 0) {
+                  setErrorName('This field is required.');
+                } else if (
+                  e.target.value.length < 3 ||
+                  e.target.value.length > 15 ||
+                  /^\d+$/.test(e.target.value)
+                ) {
+                  setErrorName(
+                    /^\d+$/.test(e.target.value)
+                      ? 'Name cannot be only numbers.'
+                      : 'Must be between 3 and 15 characters.',
+                  );
+                } else {
+                  setErrorName('');
+                }
               }}
             />
             {errorName && (
-              <div className="text-Red text-[8px] mt-1 ml-3">
-                This field is required.
-              </div>
+              <div className="text-Red text-[8px] mt-1 ml-3">{errorName}</div>
             )}
           </div>
         </div>
@@ -120,7 +156,7 @@ const SignUpNameLogo = () => {
                 <img
                   src={URL.createObjectURL(selectedFiles[0])}
                   alt=""
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain rounded-3xl"
                 />
               </div>
               <div
