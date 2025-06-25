@@ -1,4 +1,4 @@
-import { splitInstructions } from '../../../help';
+// import { splitInstructions } from '../../../help';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface TreatmentPlanPrintProps {
@@ -12,7 +12,7 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
   //   )?.[1]?.trim(),
   //   negative: data.Notes.match(/Negative:\s*(.*)/s)?.[1]?.trim(),
   // };
-  const { positive, negative } = splitInstructions(data.Notes);
+  // const { positive, negative } = splitInstructions(data.Notes);
   return (
     <>
       <div
@@ -30,36 +30,24 @@ const TreatmentPlanPrint: React.FC<TreatmentPlanPrintProps> = ({ data }) => {
           >
             {data.title}
           </div>
-          {positive && negative ? (
-            <>
-              {positive && (
-                <div
-                  className="my-2 flex"
-                  style={{ fontSize: '12px', color: '#383838' }}
-                >
-                  <div style={{ marginRight: '5px', color: '#888888' }}>
-                    &#8226;
-                  </div>
-                  <div>
-                    {/* <span style={{ color: '#888888' }}>Key Benefits:</span>{' '} */}
-                    {positive}
-                  </div>
-                </div>
-              )}
-              {negative && (
-                <div
-                  className="my-2 flex"
-                  style={{ fontSize: '12px', color: '#383838' }}
-                >
-                  <div style={{ marginRight: '5px', color: '#888888' }}>
-                    &#8226;
-                  </div>
-                  <div>
-                    {/* <span style={{ color: '#888888' }}>Key Risks:</span>{' '} */}
-                    {negative}
-                  </div>
-                </div>
-              )}
+          {data.Notes? (
+            <> 
+            {data.Notes.map((el:any)=>{
+              return(
+                  <div
+                    className="my-2 flex"
+                    style={{ fontSize: '12px', color: '#383838' }}
+                  >
+                    <div style={{ marginRight: '5px', color: '#888888' }}>
+                      &#8226;
+                    </div>
+                    <div>
+                      {/* <span style={{ color: '#888888' }}>Key Benefits:</span>{' '} */}
+                      {el}
+                    </div>
+                  </div>      
+              )
+            })}
             </>
           ) : (
             <>

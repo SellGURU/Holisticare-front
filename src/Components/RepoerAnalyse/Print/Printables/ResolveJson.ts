@@ -174,7 +174,7 @@ const resolveHigthNotes = (notes: Array<string>) => {
 const addHolisticPlanItem = (item: any) => {
   checkPageCanRender(
     80 +
-      resolveHightText(item.Notes, true) +
+      resolveHigthNotes(item.Notes) +
       resolveHigthNotes(item.Client_Notes),
   );
   const lastPage = myjson[myjson.length - 1];
@@ -182,7 +182,7 @@ const addHolisticPlanItem = (item: any) => {
     type: 'TreatmentplanItem',
     height:
       80 +
-      resolveHightText(item.Notes, true) +
+      resolveHigthNotes(item.Notes) +
       resolveHigthNotes(item.Client_Notes),
     content: item,
   });
