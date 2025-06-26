@@ -67,7 +67,7 @@ const SignUp = () => {
         })
         .then((res) => {
           appContext.login(res.data.access_token, res.data.permission);
-          navigate('/register-name-logo');
+          navigate('/register-profile');
         })
         .catch((error) => {
           if (error.detail.includes('email')) {
