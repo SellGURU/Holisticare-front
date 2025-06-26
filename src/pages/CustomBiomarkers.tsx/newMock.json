@@ -1,256 +1,186 @@
 [
-    {
-        "unit": "%",
-        "Category": "Metabolic Health",
-        "Biomarker": "Hb A1C",
-        "Definition": "HbA1c measures the percentage of glycated hemoglobin in the blood, reflecting the average blood glucose levels over the past two to three months. It is a crucial test for managing diabetes, indicating how well blood sugar levels have been controlled. Higher HbA1c levels suggest poorer glucose control and an increased risk of diabetes complications, while lower HbA1c levels indicate better glucose management.",
-        "age_groups": [
-            {
-                "gender": "male",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            4.5,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            2,
-                            4.5
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            359
-                        ]
-                    }
-                },
-                "max_age": 30,
-                "min_age": 13
-            },
-            {
-                "gender": "male",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            5.8,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            0,
-                            5.7
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            220
-                        ]
-                    }
-                },
-                "max_age": 50,
-                "min_age": 31
-            },
-            {
-                "gender": "male",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            5.8,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            0,
-                            5.7
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            20
-                        ]
-                    }
-                },
-                "max_age": 100,
-                "min_age": 51
-            },
-            {
-                "gender": "female",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            5.8,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            0,
-                            5.7
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            20
-                        ]
-                    }
-                },
-                "max_age": 30,
-                "min_age": 13
-            },
-            {
-                "gender": "female",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            5.8,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            0,
-                            5.7
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            20
-                        ]
-                    }
-                },
-                "max_age": 50,
-                "min_age": 31
-            },
-            {
-                "gender": "female",
-                "status": {
-                    "Ok": {
-                        "condition": "between",
-                        "threshold": [
-                            6.5,
-                            6.9
-                        ]
-                    },
-                    "Good": {
-                        "condition": "between",
-                        "threshold": [
-                            5.8,
-                            6.4
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            0,
-                            5.7
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "between",
-                        "threshold": [
-                            7,
-                            20
-                        ]
-                    }
-                },
-                "max_age": 100,
-                "min_age": 51
-            }
-        ],
-        "Benchmark areas": "Diabetes & Glucose",
-        "label_mapping_chart": {
-            "Ok": "Prediabetes",
-            "Good": "Normal",
-            "Excellent": "Normal",
-            "Needs Focus": "Diabetes"
-        }
-    },
-{
-  "Category": "Serology",
-  "Benchmark areas": "Inflammatory Health",
-      "Biomarker": "RF",
-     "Definition":"Rheumatoid Factor (RF) is an antibody associated with autoimmune disorders, particularly rheumatoid arthritis. Elevated levels are often seen in individuals with inflammatory joint diseases or other autoimmune conditions.",
-      "unit": "IU/mL",
-       "label_mapping_chart": {"Excellent": "Negative",
-                                              "Needs Focus": "Positive"},
-      "age_groups": [
-        {
-          "min_age": 18,
-          "max_age": 100,
-          "gender": "male",
-          "status": {
-            "Excellent": { "condition": "equal", "threshold": ["Negative"] },
-            "Needs Focus": { "condition": "equal", "threshold": ["Positive"] }
+  {
+    "unit": "%",
+    "Category": "Metabolic Health",
+    "Biomarker": "Hb A1C",
+    "Definition": "HbA1c measures the percentage of glycated hemoglobin in the blood, reflecting the average blood glucose levels over the past two to three months. It is a crucial test for managing diabetes, indicating how well blood sugar levels have been controlled. Higher HbA1c levels suggest poorer glucose control and an increased risk of diabetes complications, while lower HbA1c levels indicate better glucose management.",
+    "age_groups": [
+      {
+        "gender": "male",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [4.5, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [2, 4.5]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 359]
           }
         },
-        {
-          "min_age": 18,
-          "max_age": 100,
-          "gender": "female",
-          "status": {
-            "Excellent": { "condition": "equal", "threshold": ["Negative"] },
-            "Needs Focus": { "condition": "equal", "threshold": ["Positive"] }
+        "max_age": 30,
+        "min_age": 13
+      },
+      {
+        "gender": "male",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [5.8, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [0, 5.7]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 220]
           }
-        }
-      ]
+        },
+        "max_age": 50,
+        "min_age": 31
+      },
+      {
+        "gender": "male",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [5.8, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [0, 5.7]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 20]
+          }
+        },
+        "max_age": 100,
+        "min_age": 51
+      },
+      {
+        "gender": "female",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [5.8, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [0, 5.7]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 20]
+          }
+        },
+        "max_age": 30,
+        "min_age": 13
+      },
+      {
+        "gender": "female",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [5.8, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [0, 5.7]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 20]
+          }
+        },
+        "max_age": 50,
+        "min_age": 31
+      },
+      {
+        "gender": "female",
+        "status": {
+          "Ok": {
+            "condition": "between",
+            "threshold": [6.5, 6.9]
+          },
+          "Good": {
+            "condition": "between",
+            "threshold": [5.8, 6.4]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [0, 5.7]
+          },
+          "Needs Focus": {
+            "condition": "between",
+            "threshold": [7, 20]
+          }
+        },
+        "max_age": 100,
+        "min_age": 51
+      }
+    ],
+    "Benchmark areas": "Diabetes & Glucose",
+    "label_mapping_chart": {
+      "Ok": "Prediabetes",
+      "Good": "Normal",
+      "Excellent": "Normal",
+      "Needs Focus": "Diabetes"
     }
+  },
+  {
+    "Category": "Serology",
+    "Benchmark areas": "Inflammatory Health",
+    "Biomarker": "RF",
+    "Definition": "Rheumatoid Factor (RF) is an antibody associated with autoimmune disorders, particularly rheumatoid arthritis. Elevated levels are often seen in individuals with inflammatory joint diseases or other autoimmune conditions.",
+    "unit": "IU/mL",
+    "label_mapping_chart": {
+      "Excellent": "Negative",
+      "Needs Focus": "Positive"
+    },
+    "age_groups": [
+      {
+        "min_age": 18,
+        "max_age": 100,
+        "gender": "male",
+        "status": {
+          "Excellent": { "condition": "equal", "threshold": ["Negative"] },
+          "Needs Focus": { "condition": "equal", "threshold": ["Positive"] }
+        }
+      },
+      {
+        "min_age": 18,
+        "max_age": 100,
+        "gender": "female",
+        "status": {
+          "Excellent": { "condition": "equal", "threshold": ["Negative"] },
+          "Needs Focus": { "condition": "equal", "threshold": ["Positive"] }
+        }
+      }
+    ]
+  }
 ]

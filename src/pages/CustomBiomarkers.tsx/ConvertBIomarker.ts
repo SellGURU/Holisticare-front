@@ -22,7 +22,7 @@ interface BiomarkerInput {
   Biomarker: string;
   Definition: string;
   age_groups: AgeGroup[];
-  "Benchmark areas": string;
+  'Benchmark areas': string;
   label_mapping_chart: {
     [key: string]: string;
   };
@@ -53,22 +53,22 @@ interface OutputBiomarker {
 }
 
 interface FinalOutput {
-  "Benchmark areas": string;
+  'Benchmark areas': string;
   biomarkers: OutputBiomarker[];
 }
 
 function transformData(data: BiomarkerInput[]): FinalOutput[] {
-  return data.map(item => {
+  return data.map((item) => {
     const biomarker: OutputBiomarker = {
       Biomarker: item.Biomarker,
-      age_groups: item.age_groups.map(group => {
+      age_groups: item.age_groups.map((group) => {
         const chart_bounds: OutputChartBounds = {};
 
         for (const statusKey in group.status) {
           const threshold = group.status[statusKey].threshold;
           chart_bounds[statusKey] = {
             range: [threshold],
-            label: item.label_mapping_chart[statusKey] || "Unknown"
+            label: item.label_mapping_chart[statusKey] || 'Unknown',
           };
         }
 
@@ -76,17 +76,17 @@ function transformData(data: BiomarkerInput[]): FinalOutput[] {
           min_age: group.min_age,
           max_age: group.max_age,
           gender: group.gender,
-          unit: item.unit || "",
-          values: ["unset"],
-          status: ["unset"],
-          chart_bounds
+          unit: item.unit || '',
+          values: ['unset'],
+          status: ['unset'],
+          chart_bounds,
         };
-      })
+      }),
     };
 
     return {
-      "Benchmark areas": item["Benchmark areas"],
-      biomarkers: [biomarker]
+      'Benchmark areas': item['Benchmark areas'],
+      biomarkers: [biomarker],
     };
   });
 }
