@@ -7,8 +7,10 @@ import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { publish, subscribe } from '../../utils/event';
 import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
+import { useNavigate } from 'react-router-dom';
 
 const MainTopBar = () => {
+  const navigate = useNavigate();
   // const navigate = useNavigate();
   const [visibleClinic, setVisibleClinic] = useState(false);
   const refrence = useRef(null);
@@ -32,6 +34,14 @@ const MainTopBar = () => {
 
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
+      if (
+        res.data.brand_elements.name === null ||
+        res.data.brand_elements.name === '' ||
+        res.data.brand_elements.logo === null
+      ) {
+        navigate('/register-profile');
+        return;
+      }
       setCustomTheme({
         headLine: res.data.brand_elements.headline,
         name: res.data.brand_elements.name,
