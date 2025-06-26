@@ -14,7 +14,7 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
   biomarkers,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(data)
+  console.log(data);
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
   // useEffect(() => {
@@ -93,16 +93,16 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
                 <>
                   <BiomarkerItem
                     // OnSave={(resovle) => {
-                      // onSave({
-                      //   ...data,
-                      //   biomarkers: data.biomarkers.map((el: any) => {
-                      //     if (el.Biomarker == value.Biomarker) {
-                      //       return resovle;
-                      //     } else {
-                      //       return el;
-                      //     }
-                      //   }),
-                      // });
+                    // onSave({
+                    //   ...data,
+                    //   biomarkers: data.biomarkers.map((el: any) => {
+                    //     if (el.Biomarker == value.Biomarker) {
+                    //       return resovle;
+                    //     } else {
+                    //       return el;
+                    //     }
+                    //   }),
+                    // });
                     // }}
                     data={value}
                   ></BiomarkerItem>

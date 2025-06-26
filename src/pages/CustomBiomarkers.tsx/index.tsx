@@ -6,7 +6,7 @@ import BioMarkerBox from './BiomarkerBox';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 
-import mackData from './newMock.json'
+import mackData from './newMock.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -43,7 +43,9 @@ const CustomBiomarkers = () => {
     if (!searchValue.trim()) {
       return biomarkers;
     }
-    const results = biomarkers.filter((item) => item['Benchmark areas'].toLowerCase().includes(searchValue.toLowerCase()))
+    const results = biomarkers.filter((item) =>
+      item['Benchmark areas'].toLowerCase().includes(searchValue.toLowerCase()),
+    );
     // Search for Benchmark Area or Biomarker
     // const results = biomarkers
     //   .map((benchmark) => {
@@ -76,9 +78,9 @@ const CustomBiomarkers = () => {
 
   const resolveAllBenchmarks = () => {
     return filteredBiomarkers().map((el) => {
-      return el['Benchmark areas']
-    })
-  }
+      return el['Benchmark areas'];
+    });
+  };
   return (
     <>
       <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 md:pr-[200px]">
@@ -115,7 +117,9 @@ const CustomBiomarkers = () => {
           {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox
-                biomarkers={biomarkers.filter((item) => item['Benchmark areas'] == benchmark)}
+                biomarkers={biomarkers.filter(
+                  (item) => item['Benchmark areas'] == benchmark,
+                )}
                 onSave={(values) => {
                   // setIsChanged(true);
                   setBiomarkers((pre) => {
@@ -129,7 +133,11 @@ const CustomBiomarkers = () => {
                     return [...resolved];
                   });
                 }}
-                data={biomarkers.filter((item) => item['Benchmark areas'] == benchmark)[0]}
+                data={
+                  biomarkers.filter(
+                    (item) => item['Benchmark areas'] == benchmark,
+                  )[0]
+                }
               ></BioMarkerBox>
             );
           })}
