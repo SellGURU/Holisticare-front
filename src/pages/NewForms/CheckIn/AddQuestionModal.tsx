@@ -102,6 +102,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               : undefined,
       };
       onSubmit(resolvedQuestion);
+      setQuestionStep(2)
       clear();
     }
   };
