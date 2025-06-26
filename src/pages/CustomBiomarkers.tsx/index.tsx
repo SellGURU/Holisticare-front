@@ -22,6 +22,7 @@ const CustomBiomarkers = () => {
         setBiomarkers(mackData);
       })
       .finally(() => {
+        setBiomarkers(mackData);
         setIsLoading(false);
       });
   }, []);
@@ -77,9 +78,9 @@ const CustomBiomarkers = () => {
   };
 
   const resolveAllBenchmarks = () => {
-    return filteredBiomarkers().map((el) => {
+    return [...new Set(filteredBiomarkers().map((el) => {
       return el['Benchmark areas'];
-    });
+    }))];
   };
   return (
     <>
