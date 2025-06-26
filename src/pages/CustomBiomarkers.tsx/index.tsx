@@ -78,9 +78,13 @@ const CustomBiomarkers = () => {
   };
 
   const resolveAllBenchmarks = () => {
-    return [...new Set(filteredBiomarkers().map((el) => {
-      return el['Benchmark areas'];
-    }))];
+    return [
+      ...new Set(
+        filteredBiomarkers().map((el) => {
+          return el['Benchmark areas'];
+        }),
+      ),
+    ];
   };
   return (
     <>
