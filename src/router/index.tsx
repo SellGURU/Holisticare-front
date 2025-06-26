@@ -168,7 +168,7 @@ const router = createBrowserRouter([
     element: <SignUp></SignUp>,
   },
   {
-    path: '/register-name-logo',
+    path: '/register-profile',
     element: <SignUpNameLogo></SignUpNameLogo>,
   },
   {
