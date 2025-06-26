@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
-import BiomarkerItem from './BiomarkerItem';
-import BiomarkersApi from '../../api/Biomarkers';
+import BiomarkerItem from './BiomarkerItemNew';
+// import BiomarkersApi from '../../api/Biomarkers';
 interface BiomarkerBoxProps {
   biomarkers: Array<any>;
   data: any;
@@ -10,41 +10,30 @@ interface BiomarkerBoxProps {
 }
 const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
   data,
-  onSave,
+  // onSave,
   biomarkers,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
+  console.log(data)
+  // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
-  useEffect(() => {
-    if (biomarkers.length > 0 && isChanged) {
-      BiomarkersApi.saveBiomarkersList({
-        new_ranges: biomarkers,
-      }).then(() => {
-        if (isChanged) {
-          // setShowSuccess(true);
-          // setTimeout(() => {
-          //   setShowSuccess(false);
-          // }, 3000);
-        }
-      });
-    }
-  }, [biomarkers]);
+  // useEffect(() => {
+  //   if (biomarkers.length > 0 && isChanged) {
+  //     BiomarkersApi.saveBiomarkersList({
+  //       new_ranges: biomarkers,
+  //     }).then(() => {
+  //       if (isChanged) {
+  //         // setShowSuccess(true);
+  //         // setTimeout(() => {
+  //         //   setShowSuccess(false);
+  //         // }, 3000);
+  //       }
+  //     });
+  //   }
+  // }, [biomarkers]);
   return (
     <>
       <div className="w-full relative mb-4 py-4 px-6 bg-white border border-Gray-50 shadow-100 rounded-[16px]">
-        {/* {showSuccess && (
-          <div className="absolute right-[54px] top-[12px] w-[198px] h-[44px] rounded-xl border border-Gray-50 shadow-100 flex items-center justify-center bg-white gap-2 z-50">
-            <img
-              src="/icons/tick-circle-large.svg"
-              alt=""
-              className="w-5 h-5"
-            />
-            <div className="text-[10px] bg-gradient-to-r from-[#005F73] to-[#6CC24A] bg-clip-text text-transparent">
-              Changes applied successfully.
-            </div>
-          </div>
-        )} */}
         <div className="flex justify-between items-center">
           <div className="flex items-center justify-center ">
             <div
@@ -99,25 +88,22 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
         </div>
         {isOpen && (
           <div className="mt-4 grid gap-2">
-            {data.biomarkers.map((value: any) => {
+            {biomarkers.map((value: any) => {
               return (
                 <>
                   <BiomarkerItem
-                    OnSave={(resovle) => {
-                      setIsChanged(true);
-                      // console.log(resovle)
-                      // const
-                      onSave({
-                        ...data,
-                        biomarkers: data.biomarkers.map((el: any) => {
-                          if (el.Biomarker == value.Biomarker) {
-                            return resovle;
-                          } else {
-                            return el;
-                          }
-                        }),
-                      });
-                    }}
+                    // OnSave={(resovle) => {
+                      // onSave({
+                      //   ...data,
+                      //   biomarkers: data.biomarkers.map((el: any) => {
+                      //     if (el.Biomarker == value.Biomarker) {
+                      //       return resovle;
+                      //     } else {
+                      //       return el;
+                      //     }
+                      //   }),
+                      // });
+                    // }}
                     data={value}
                   ></BiomarkerItem>
                 </>
