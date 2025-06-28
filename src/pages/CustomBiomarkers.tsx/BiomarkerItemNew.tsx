@@ -86,9 +86,12 @@ const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
         </div>
       </div>
 
-      <MainModal isOpen ={activeEdit} onClose={() => {
-        setActiveEdit(false)
-      }}  >
+      <MainModal
+        isOpen={activeEdit}
+        onClose={() => {
+          setActiveEdit(false);
+        }}
+      >
         <>
           <EditModal></EditModal>
         </>
