@@ -15,7 +15,16 @@ const StatusBarChartV2 = ({ data, mapingData }: StatusBarChartV2Prps) => {
       }),
     );
   };
-  console.log(convertToArray(data));
+  // console.log(convertToArray(data));
+  const sortThreshold = () => {
+    return convertToArray(data).sort((a,b) => {
+      if(a.threshold[0] > b.threshold[0]){
+        return 1
+      }else {
+        return -1
+      }
+    })
+  }
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -33,7 +42,7 @@ const StatusBarChartV2 = ({ data, mapingData }: StatusBarChartV2Prps) => {
   };
   return (
     <div className="w-full relative flex select-none">
-      {convertToArray(data).map((el, index) => {
+      {sortThreshold().map((el, index) => {
         return (
           <>
             <div
@@ -53,6 +62,7 @@ const StatusBarChartV2 = ({ data, mapingData }: StatusBarChartV2Prps) => {
                 <TooltipText
                   tooltipValue={
                     el.threshold[0] +
+                    el.condition == 'greater_than'? ' > ' : '' +
                     (el.threshold[1] != undefined
                       ? ' - ' + el.threshold[1]
                       : '') +
@@ -60,10 +70,14 @@ const StatusBarChartV2 = ({ data, mapingData }: StatusBarChartV2Prps) => {
                   }
                 >
                   <>
+                    {el.condition == 'less_than' && ' >  '}   
                     {el.threshold[0] +
                       (el.threshold[1] != undefined
                         ? ' - ' + el.threshold[1]
-                        : '')}
+                        : '')
+                        }
+                    {el.condition == 'greater_than' && ' <  '}    
+                    
                   </>
                 </TooltipText>
                 {mapingData[el.label] != '' && <>)</>}

@@ -1440,12 +1440,12 @@
             "threshold": [1.1, 10.0]
           },
           "Excellent": {
-            "condition": "between",
-            "threshold": [0, 1.0]
+            "condition": "less_than",
+            "threshold": [1.0]
           },
           "Needs Focus": {
-            "condition": "between",
-            "threshold": [10.1, 30]
+            "condition": "greater_than",
+            "threshold": [10.1]
           }
         },
         "max_age": 100,
