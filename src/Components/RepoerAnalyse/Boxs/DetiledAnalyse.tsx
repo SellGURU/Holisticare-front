@@ -338,9 +338,17 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         </div>
                         {active && (
                           <>
-                           <StatusBarChartV2 data={active.chart_bounds} mapingData={Object.fromEntries(
-                              Object.entries(active.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
-                            )} status={active.status} unit={active.unit} values={active.values}></StatusBarChartV2>
+                            <StatusBarChartV2
+                              data={active.chart_bounds}
+                              mapingData={Object.fromEntries(
+                                Object.entries(active.chart_bounds).map(
+                                  ([key, valuess]: any) => [key, valuess.label],
+                                ),
+                              )}
+                              status={active.status}
+                              unit={active.unit}
+                              values={active.values}
+                            ></StatusBarChartV2>
                           </>
                           // <StatusBarChart data={active}></StatusBarChart>
                         )}

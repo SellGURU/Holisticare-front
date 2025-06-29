@@ -166,9 +166,17 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
           <>
             <div className="mt-14">
               {/* <StatusBarChart data={data}></StatusBarChart> */}
-              <StatusBarChartV2 status={data.status} unit={data.unit} values={data.values} data={data.chart_bounds} mapingData={Object.fromEntries(
-                Object.entries(data.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
-              )}></StatusBarChartV2>
+              <StatusBarChartV2
+                status={data.status}
+                unit={data.unit}
+                values={data.values}
+                data={data.chart_bounds}
+                mapingData={Object.fromEntries(
+                  Object.entries(data.chart_bounds).map(
+                    ([key, valuess]: any) => [key, valuess.label],
+                  ),
+                )}
+              ></StatusBarChartV2>
             </div>
           </>
         )}

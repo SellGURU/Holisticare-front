@@ -45,13 +45,11 @@ const HistoricalChart = ({
     return index * rowHeight + rowHeight / 2; // Center in the row
   };
   const convertToArray = (data: any) => {
-    return Object.entries(data).map(
-      ([key, { condition, threshold }]: any) => ({
-        key,
-        condition,
-        threshold,
-      }),
-    );
+    return Object.entries(data).map(([key, { condition, threshold }]: any) => ({
+      key,
+      condition,
+      threshold,
+    }));
   };
   const sortThreshold = () => {
     return convertToArray(statusBar).sort((a, b) => {

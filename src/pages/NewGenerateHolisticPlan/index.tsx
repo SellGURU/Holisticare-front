@@ -586,9 +586,25 @@ const NewGenerateHolisticPlan = () => {
                                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                                     Last Value
                                                   </div>
-                                                  <StatusBarChartV2 data={resol.chart_bounds} mapingData={Object.fromEntries(
-                                                      Object.entries(resol.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
-                                                    )} status={resol.status} unit={resol.unit} values={resol.values}></StatusBarChartV2>                                                  
+                                                  <StatusBarChartV2
+                                                    data={resol.chart_bounds}
+                                                    mapingData={Object.fromEntries(
+                                                      Object.entries(
+                                                        resol.chart_bounds,
+                                                      ).map(
+                                                        ([
+                                                          key,
+                                                          valuess,
+                                                        ]: any) => [
+                                                          key,
+                                                          valuess.label,
+                                                        ],
+                                                      ),
+                                                    )}
+                                                    status={resol.status}
+                                                    unit={resol.unit}
+                                                    values={resol.values}
+                                                  ></StatusBarChartV2>
                                                   {/* <StatusBarChart
                                                     data={resol}
                                                   ></StatusBarChart> */}
@@ -649,9 +665,20 @@ const NewGenerateHolisticPlan = () => {
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
                                   </div>
-                                  <StatusBarChartV2 data={activeEl.chart_bounds} mapingData={Object.fromEntries(
-                                      Object.entries(activeEl.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
-                                    )} status={activeEl.status} unit={activeEl.unit} values={activeEl.values}></StatusBarChartV2>                                      
+                                  <StatusBarChartV2
+                                    data={activeEl.chart_bounds}
+                                    mapingData={Object.fromEntries(
+                                      Object.entries(activeEl.chart_bounds).map(
+                                        ([key, valuess]: any) => [
+                                          key,
+                                          valuess.label,
+                                        ],
+                                      ),
+                                    )}
+                                    status={activeEl.status}
+                                    unit={activeEl.unit}
+                                    values={activeEl.values}
+                                  ></StatusBarChartV2>
                                   {/* <StatusBarChart
                                     data={activeEl}
                                   ></StatusBarChart> */}

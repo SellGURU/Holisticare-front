@@ -4,11 +4,17 @@ import TooltipText from '../../Components/TooltipText';
 interface StatusBarChartV2Prps {
   data: any;
   mapingData: any;
-  values?:Array<any>
-  unit?:string
-  status?:Array<any>
+  values?: Array<any>;
+  unit?: string;
+  status?: Array<any>;
 }
-const StatusBarChartV2 = ({ data, mapingData,values,unit,status }: StatusBarChartV2Prps) => {
+const StatusBarChartV2 = ({
+  data,
+  mapingData,
+  values,
+  unit,
+  status,
+}: StatusBarChartV2Prps) => {
   const convertToArray = (data: any) => {
     return Object.entries(data).map(
       ([label, { condition, threshold }]: any) => ({
@@ -43,24 +49,28 @@ const StatusBarChartV2 = ({ data, mapingData,values,unit,status }: StatusBarChar
     }
     return '#FBAD37';
   };
-  const resolvePercentLeft = ( el: any) => {
-    if(values) {
+  const resolvePercentLeft = (el: any) => {
+    if (values) {
       if (
-        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) * 100 <=
+        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+          100 <=
         5
       ) {
         return 5;
       }
       if (
-        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) * 100 >
+        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+          100 >
         95
       ) {
         return 95;
       }
-      return ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) * 100;
-
+      return (
+        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+        100
+      );
     }
-  };  
+  };
   return (
     <div className="w-full relative flex select-none">
       {sortThreshold().map((el, index) => {
@@ -102,11 +112,11 @@ const StatusBarChartV2 = ({ data, mapingData,values,unit,status }: StatusBarChar
                 </TooltipText>
                 {mapingData[el.label] != '' && <>)</>}
               </div>
-              {status&&status[0] == el.label &&
+              {status && status[0] == el.label && (
                 <div
                   className={`absolute  top-[2px]  z-10`}
                   style={{
-                    left:resolvePercentLeft(el) || '50%',
+                    left: resolvePercentLeft(el) || '50%',
                   }}
                 >
                   <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
@@ -118,17 +128,18 @@ const StatusBarChartV2 = ({ data, mapingData,values,unit,status }: StatusBarChar
                         index == 0
                           ? '0px'
                           : '-' +
-                            (values&&values[0].length +unit&&unit?.length) *
+                            (values &&
+                              values[0].length + unit &&
+                              unit?.length) *
                               5 +
                             'px',
                     }}
                   >
                     <span className="opacity-40">You: </span>
-                    {values&&values[0]} <span>{unit}</span>
+                    {values && values[0]} <span>{unit}</span>
                   </div>
                 </div>
-              }
-              
+              )}
             </div>
           </>
         );
