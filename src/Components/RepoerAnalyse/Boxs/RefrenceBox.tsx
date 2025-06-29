@@ -7,9 +7,10 @@ import { publish } from '../../../utils/event';
 import Legends from '../Legends';
 // import Legends from "../Legends"
 import { Tooltip } from 'react-tooltip';
-import StatusBarChart from './StatusBarChart';
+// import StatusBarChart from './StatusBarChart';
 // import UnitPopUp from '../../UnitPopup';
 import HistoricalChart from '../HistoricalChart';
+import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 interface RefrenceBoxProps {
   data: any;
   index: number;
@@ -164,7 +165,10 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
         ) : (
           <>
             <div className="mt-14">
-              <StatusBarChart data={data}></StatusBarChart>
+              {/* <StatusBarChart data={data}></StatusBarChart> */}
+              <StatusBarChartV2 status={data.status} unit={data.unit} values={data.values} data={data.chart_bounds} mapingData={Object.fromEntries(
+                Object.entries(data.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
+              )}></StatusBarChartV2>
             </div>
           </>
         )}

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // import StatusChart from '../StatusChart';
 import { subscribe } from '../../../utils/event';
 // import Legends from '../Legends';
-import StatusBarChart from './StatusBarChart';
+// import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 // import UnitPopUp from '../../UnitPopup';
@@ -12,6 +12,7 @@ import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { Tooltip } from 'react-tooltip';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
+import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -336,7 +337,12 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                           </div>
                         </div>
                         {active && (
-                          <StatusBarChart data={active}></StatusBarChart>
+                          <>
+                           <StatusBarChartV2 data={active.chart_bounds} mapingData={Object.fromEntries(
+                              Object.entries(active.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
+                            )} status={active.status} unit={active.unit} values={active.values}></StatusBarChartV2>
+                          </>
+                          // <StatusBarChart data={active}></StatusBarChart>
                         )}
                       </div>
                     </div>

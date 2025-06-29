@@ -24,6 +24,7 @@ import { AppContext } from '../../store/app';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
+import StatusBarChartV2 from '../CustomBiomarkers.tsx/StatusBarChartV2';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -547,10 +548,7 @@ const NewGenerateHolisticPlan = () => {
                                               {resol.name}
                                             </TooltipTextAuto>
                                           </div>
-                                          {resolveKeyStatus(
-                                            resol.values[0],
-                                            resol.chart_bounds,
-                                          ) == 'Needs Focus' && (
+                                          {resol.status[0] == 'Needs Focus' && (
                                             <div
                                               className="w-2 h-2 md:w-3 md:h-3 rounded-full"
                                               style={{
@@ -588,9 +586,12 @@ const NewGenerateHolisticPlan = () => {
                                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                                     Last Value
                                                   </div>
-                                                  <StatusBarChart
+                                                  <StatusBarChartV2 data={resol.chart_bounds} mapingData={Object.fromEntries(
+                                                      Object.entries(resol.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
+                                                    )} status={resol.status} unit={resol.unit} values={resol.values}></StatusBarChartV2>                                                  
+                                                  {/* <StatusBarChart
                                                     data={resol}
-                                                  ></StatusBarChart>
+                                                  ></StatusBarChart> */}
                                                 </div>
                                               </div>
                                               <div className="w-full lg:w-[50%]">
@@ -599,7 +600,7 @@ const NewGenerateHolisticPlan = () => {
                                                     Historical Data
                                                   </div>
                                                   <div className="mt-0 relative">
-                                                    <HistoricalChart
+                                                    {/* <HistoricalChart
                                                       statusBar={
                                                         resol.chart_bounds
                                                       }
@@ -612,7 +613,7 @@ const NewGenerateHolisticPlan = () => {
                                                       labels={[
                                                         ...resol.date,
                                                       ].reverse()}
-                                                    ></HistoricalChart>
+                                                    ></HistoricalChart> */}
                                                   </div>
                                                 </div>
                                               </div>
@@ -648,9 +649,12 @@ const NewGenerateHolisticPlan = () => {
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
                                   </div>
-                                  <StatusBarChart
+                                  <StatusBarChartV2 data={activeEl.chart_bounds} mapingData={Object.fromEntries(
+                                      Object.entries(activeEl.chart_bounds).map(([key, valuess]:any) => [key, valuess.label])
+                                    )} status={activeEl.status} unit={activeEl.unit} values={activeEl.values}></StatusBarChartV2>                                      
+                                  {/* <StatusBarChart
                                     data={activeEl}
-                                  ></StatusBarChart>
+                                  ></StatusBarChart> */}
                                 </div>
                               </div>
                               <div className="w-full lg:w-[50%]">
