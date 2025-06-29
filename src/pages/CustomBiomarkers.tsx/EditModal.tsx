@@ -2,12 +2,12 @@
 import ReactJson from 'react-json-view';
 
 interface EditModalProps {
-  data:any
-  onCancel:() => void
-  onSave:() => void
+  data: any;
+  onCancel: () => void;
+  onSave: () => void;
 }
 
-const EditModal:React.FC<EditModalProps> = ({data,onCancel,onSave}) => {
+const EditModal: React.FC<EditModalProps> = ({ data, onCancel, onSave }) => {
   return (
     <>
       <div className=" w-[644px] p-4 max-w-[644px] relative bg-white min-h-[400px] h-[60%] rounded-[16px]">
@@ -30,10 +30,16 @@ const EditModal:React.FC<EditModalProps> = ({data,onCancel,onSave}) => {
         </div>
 
         <div className=" w-full flex justify-end gap-4 items-center absolute bottom-4 right-4 ">
-          <div onClick={onCancel} className="TextStyle-Headline-5 cursor-pointer text-Disable">
+          <div
+            onClick={onCancel}
+            className="TextStyle-Headline-5 cursor-pointer text-Disable"
+          >
             Cancel
           </div>
-          <div onClick={onSave} className="TextStyle-Headline-5 cursor-pointer text-Primary-DeepTeal">
+          <div
+            onClick={onSave}
+            className="TextStyle-Headline-5 cursor-pointer text-Primary-DeepTeal"
+          >
             Save
           </div>
         </div>

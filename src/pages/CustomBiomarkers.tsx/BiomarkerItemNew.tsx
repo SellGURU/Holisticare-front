@@ -93,11 +93,15 @@ const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
         }}
       >
         <>
-          <EditModal onCancel={() => {
-            setActiveEdit(false);
-          }} onSave={() => {
-            setActiveEdit(false);
-          }} data={data}></EditModal>
+          <EditModal
+            onCancel={() => {
+              setActiveEdit(false);
+            }}
+            onSave={() => {
+              setActiveEdit(false);
+            }}
+            data={data}
+          ></EditModal>
         </>
       </MainModal>
     </>
