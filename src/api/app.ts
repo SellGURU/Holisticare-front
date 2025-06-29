@@ -986,6 +986,15 @@ class Application extends Api {
   static unhideSystemDocumentKnowledge = (data: any) => {
     return this.post('/ai_knowledge/unhide_system_docs', data);
   };
+  static getSettingData = (data: any) => {
+    return this.post('/setting/clinic_preferecne', data);
+  };
+  static updateSettingData = (data: any) => {
+    return this.post('/setting/update_clinic_preference', data);
+  };
+  static getToneList = (data: any) => {
+    return this.post('/setting/tone_list', data);
+  };
 }
 
 export default Application;
