@@ -1,20 +1,20 @@
-import TooltipText from '../../Components/TooltipText';
+// import TooltipText from '../../Components/TooltipText';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-interface StatusBarChartV2Prps {
+interface StatusBarChartPrintV2Prps {
   data: any;
   mapingData: any;
   values?: Array<any>;
   unit?: string;
   status?: Array<any>;
 }
-const StatusBarChartV2 = ({
+const StatusBarChartPrintV2 = ({
   data,
   mapingData,
   values,
   unit,
   status,
-}: StatusBarChartV2Prps) => {
+}: StatusBarChartPrintV2Prps) => {
   const convertToArray = (data: any) => {
     return Object.entries(data).map(
       ([label, { condition, threshold }]: any) => ({
@@ -24,7 +24,6 @@ const StatusBarChartV2 = ({
       }),
     );
   };
-  console.log(data);
   const sortThreshold = () => {
     return convertToArray(data).sort((a, b) => {
       if (a.threshold[0] > b.threshold[0]) {
@@ -81,49 +80,76 @@ const StatusBarChartV2 = ({
               style={{
                 width: 100 / convertToArray(data).length + '%',
                 backgroundColor: resolveColor(el.label),
+                height: '8px',
+                borderTopLeftRadius: index == 0 ? '8px' : 'unset',
+                borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
+                borderBottomRightRadius:
+                  index == convertToArray(data).length - 1 ? '8px' : 'unset',
+                borderTopRightRadius:
+                  index == convertToArray(data).length - 1 ? '8px' : 'unset',
               }}
             >
-              <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]">
-                <TooltipText tooltipValue={mapingData[el.label]}>
-                  {mapingData[el.label]}
-                </TooltipText>
+              <div
+                style={{
+                  color: '#005f73 ',
+                  fontSize: '8px',
+                  top: '-32px',
+                  left: '-4px',
+                }}
+                className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]"
+              >
+                {/* <TooltipText tooltipValue={mapingData[el.label]}> */}
+                {mapingData[el.label]}
+                {/* </TooltipText> */}
               </div>
-              <div className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]">
+              <div
+                style={{
+                  fontSize: '10px',
+                  color: '#005f73',
+                  top: '-20px',
+                  left: '-4px',
+                }}
+                className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]"
+              >
                 {mapingData[el.label] != '' && <>(</>}
-                <TooltipText
-                  tooltipValue={
-                    el.threshold[0] + el.condition == 'greater_than'
-                      ? ' > '
-                      : '' +
-                        (el.threshold[1] != undefined
-                          ? ' - ' + el.threshold[1]
-                          : '') +
-                        ')'
-                  }
-                >
-                  <>
-                    {el.condition == 'less_than' && ' >  '}
-                    {el.threshold[0] +
-                      (el.threshold[1] != undefined
-                        ? ' - ' + el.threshold[1]
-                        : '')}
-                    {el.condition == 'greater_than' && ' <  '}
-                  </>
-                </TooltipText>
+
+                <>
+                  {el.condition == 'less_than' && ' >  '}
+                  {el.threshold[0] +
+                    (el.threshold[1] != undefined
+                      ? ' - ' + el.threshold[1]
+                      : '')}
+                  {el.condition == 'greater_than' && ' <  '}
+                </>
                 {mapingData[el.label] != '' && <>)</>}
               </div>
               {status && status[0] == el.label && (
                 <div
                   className={`absolute  top-[2px]  z-10`}
                   style={{
+                    top: '2px',
                     left: resolvePercentLeft(el) || '50%',
                   }}
                 >
-                  <div className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"></div>
-                  <div className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"></div>
                   <div
-                    className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
+                    style={{ backgroundColor: '#005f73', borderRadius: '100%' }}
+                    className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"
+                  ></div>
+                  <div
                     style={{
+                      backgroundColor: '#005f73',
+                      width: '3px',
+                      height: '8px',
+                      marginLeft: '2.5px',
+                    }}
+                    className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                  ></div>
+                  <div
+                    className=" w-max flex justify-center ml-0 items-center gap-[2px] text-Primary-DeepTeal"
+                    style={{
+                      fontSize: '10px',
+                      gap: '2px',
+                      color: '#005f73 ',
                       marginLeft:
                         index == 0
                           ? '0px'
@@ -148,4 +174,4 @@ const StatusBarChartV2 = ({
   );
 };
 
-export default StatusBarChartV2;
+export default StatusBarChartPrintV2;

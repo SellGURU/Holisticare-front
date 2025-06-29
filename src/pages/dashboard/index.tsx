@@ -37,7 +37,7 @@ const DashBoard = () => {
       {/* Check-In Comment Modal */}
 
       {/* Check in Modal */}
-      <div className=" px-3 md:px-4 2xl:px-6 pt-4 pb-[100px]">
+      <div className=" px-3 md:px-4 2xl:px-6 pt-4">
         <div className="text-base font-medium text-Text-Primary mb-4">
           Dashboard
         </div>
@@ -45,7 +45,10 @@ const DashBoard = () => {
         <div className="w-full mt-4 grid gap-y-4 md:gap-y-0 md:gap-2 2xl:gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
           {/* <MessageList /> */}
           <Actions></Actions>
-          <div className="col-span-2 gap-y-10 md:gap-y-4 grid gap-4">
+          <div
+            className="col-span-2 gap-y-10 md:gap-y-4 grid gap-4"
+            style={{ height: window.innerHeight - 250 + 'px' }}
+          >
             <RecentCheckIns></RecentCheckIns>
             {/* <Reminder></Reminder> */}
 
