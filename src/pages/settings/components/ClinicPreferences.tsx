@@ -8,35 +8,33 @@ import Circleloader from '../../../Components/CircleLoader';
 export const ClinicPreferences = () => {
   const [Preferences, setPreferences] = useState('');
   const [textValue, settextValue] = useState('');
-  const [initialPreferences, setInitialPreferences] =
-    useState('');
+  const [initialPreferences, setInitialPreferences] = useState('');
   const [initialTextValue, setInitialTextValue] = useState('');
-  const [Options, setOptions] = useState([ ]);
+  const [Options, setOptions] = useState([]);
 
   const [btnLoading, setBtnLoading] = useState(false);
   const [loading, setloading] = useState(false);
   const [changesSaved, setChangesSaved] = useState(false);
   useEffect(() => {
- 
     Application.getToneList({}).then((res) => {
       setOptions(res.data.options);
     });
-   getSettingData()
+    getSettingData();
   }, []);
- const getSettingData = ()=>{
-  setloading(true);
-  Application.getSettingData({}).then((res) => {
-    setPreferences(res.data.tone);
-    setInitialPreferences(res.data.tone);
+  const getSettingData = () => {
+    setloading(true);
+    Application.getSettingData({}).then((res) => {
+      setPreferences(res.data.tone);
+      setInitialPreferences(res.data.tone);
 
-    settextValue(res.data.focus_area);
-    setInitialTextValue(res.data.focus_area);
-    setloading(false);
-  });
- }
+      settextValue(res.data.focus_area);
+      setInitialTextValue(res.data.focus_area);
+      setloading(false);
+    });
+  };
   console.log(Preferences);
   console.log(initialPreferences);
-  
+
   return (
     <div className="bg-backgroundColor-Card min-h-[348px] w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
       {loading ? (
@@ -57,7 +55,7 @@ export const ClinicPreferences = () => {
             <div className="flex flex-col gap-2 w-[50%] text-xs font-medium  ">
               Text Preferences
               <Select
-                value={Preferences || ""}
+                value={Preferences || ''}
                 isLarge
                 options={Options}
                 onChange={(value) => {
@@ -86,7 +84,7 @@ export const ClinicPreferences = () => {
               </div>
 
               <textarea
-                value={textValue || ""}
+                value={textValue || ''}
                 onChange={(e) => settextValue(e.target.value)}
                 placeholder="Enter any specific requests or areas of focus for your clinic"
                 className="appearance-none resize-none w-full min-h-[116px] rounded-2xl border border-Gray-50 bg-[#FDFDFD] text-xs px-3 py-1 outline-none placeholder:text-[#B0B0B0] placeholder:font-light text-Text-Primary"
@@ -113,7 +111,7 @@ export const ClinicPreferences = () => {
                     focus_area: textValue,
                   }).then(() => {
                     setBtnLoading(false);
-                    getSettingData()
+                    getSettingData();
                     setChangesSaved(true);
                     setTimeout(() => setChangesSaved(false), 2000);
                   });
