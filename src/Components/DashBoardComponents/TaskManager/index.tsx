@@ -288,8 +288,11 @@ const TaskManager = () => {
           </ButtonPrimary>
         </div>
         {tasks.length < 1 ? (
-          <div style={{height:'-webkit-fill-available'}} className="w-full h-full mt-[-30px] flex flex-col items-center justify-center">
-            <img className='w-[110px]' src="/icons/NoTask.svg" alt="" />
+          <div
+            style={{ height: '-webkit-fill-available' }}
+            className="w-full h-full mt-[-30px] flex flex-col items-center justify-center"
+          >
+            <img className="w-[110px]" src="/icons/NoTask.svg" alt="" />
             <div className="text-xs text-Text-Primary -mt-4 text-center">
               No Data Found
             </div>

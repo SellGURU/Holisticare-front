@@ -83,7 +83,10 @@ const Employes: React.FC = () => {
         </ButtonPrimary> */}
       </div>
       {Employees.length < 1 ? (
-        <div style={{height:'-webkit-fill-available'}} className="w-full mt-[-25px] h-full flex flex-col items-center justify-center">
+        <div
+          style={{ height: '-webkit-fill-available' }}
+          className="w-full mt-[-25px] h-full flex flex-col items-center justify-center"
+        >
           <img src="/icons/NoClient.svg" alt="" />
           <div className="text-xs text-Text-Primary -mt-4 text-center">
             No Staff Found
