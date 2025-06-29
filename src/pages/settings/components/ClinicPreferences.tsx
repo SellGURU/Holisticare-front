@@ -6,34 +6,37 @@ import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
 
 export const ClinicPreferences = () => {
-  const [Preferences, setPreferences] = useState('Simple and Clear');
+  const [Preferences, setPreferences] = useState('');
   const [textValue, settextValue] = useState('');
-  const [Options, setOptions] = useState([
-    'Simple and Clear',
-    'Professional and Concise',
-    'Detailed and Informative',
-    'Motivational and Supportive',
-    'Brief Summary',
-    'Brief Summary',
-  ]);
+  const [initialPreferences, setInitialPreferences] =
+    useState('');
+  const [initialTextValue, setInitialTextValue] = useState('');
+  const [Options, setOptions] = useState([ ]);
 
-  console.log(textValue);
-  console.log(Preferences);
   const [btnLoading, setBtnLoading] = useState(false);
   const [loading, setloading] = useState(false);
+  const [changesSaved, setChangesSaved] = useState(false);
   useEffect(() => {
-    setloading(true);
+ 
     Application.getToneList({}).then((res) => {
       setOptions(res.data.options);
     });
-    Application.getSettingData({}).then((res) => {
-      if (res.data.tone) {
-        setPreferences(res.data.tone);
-      }
-      settextValue(res.data.focus_area);
-      setloading(false);
-    });
+   getSettingData()
   }, []);
+ const getSettingData = ()=>{
+  setloading(true);
+  Application.getSettingData({}).then((res) => {
+    setPreferences(res.data.tone);
+    setInitialPreferences(res.data.tone);
+
+    settextValue(res.data.focus_area);
+    setInitialTextValue(res.data.focus_area);
+    setloading(false);
+  });
+ }
+  console.log(Preferences);
+  console.log(initialPreferences);
+  
   return (
     <div className="bg-backgroundColor-Card min-h-[348px] w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
       {loading ? (
@@ -47,14 +50,14 @@ export const ClinicPreferences = () => {
           </div>
           <div className="text-[10px] text-[#888888] my-4">
             Adjust how the system generates and presents content to match your
-            clinic’s preferences. Ensure all outputs align with your operational
+            clinic's preferences. Ensure all outputs align with your operational
             needs.
           </div>
           <div className="w-full flex justify-between gap-4">
             <div className="flex flex-col gap-2 w-[50%] text-xs font-medium  ">
               Text Preferences
               <Select
-                value={Preferences}
+                value={Preferences || ""}
                 isLarge
                 options={Options}
                 onChange={(value) => {
@@ -83,7 +86,7 @@ export const ClinicPreferences = () => {
               </div>
 
               <textarea
-                value={textValue}
+                value={textValue || ""}
                 onChange={(e) => settextValue(e.target.value)}
                 placeholder="Enter any specific requests or areas of focus for your clinic"
                 className="appearance-none resize-none w-full min-h-[116px] rounded-2xl border border-Gray-50 bg-[#FDFDFD] text-xs px-3 py-1 outline-none placeholder:text-[#B0B0B0] placeholder:font-light text-Text-Primary"
@@ -94,14 +97,14 @@ export const ClinicPreferences = () => {
             <div
               className="text-Disable text-sm font-medium cursor-pointer"
               onClick={() => {
-                setPreferences('Simple and Clear');
-                settextValue('');
+                setPreferences(initialPreferences);
+                settextValue(initialTextValue);
               }}
             >
               Back to Default
             </div>
             <div
-              className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
+              className="text-Primary-DeepTeal text-nowrap font-medium text-sm ml-6 cursor-pointer flex items-center justify-center"
               onClick={() => {
                 if (btnLoading == false) {
                   setBtnLoading(true);
@@ -110,11 +113,20 @@ export const ClinicPreferences = () => {
                     focus_area: textValue,
                   }).then(() => {
                     setBtnLoading(false);
+                    getSettingData()
+                    setChangesSaved(true);
+                    setTimeout(() => setChangesSaved(false), 2000);
                   });
                 }
               }}
             >
-              {btnLoading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
+              {changesSaved ? (
+                'Changes Saved'
+              ) : btnLoading ? (
+                <SpinnerLoader color="#005F73" />
+              ) : (
+                'Apply Changes'
+              )}
             </div>
           </div>
         </>

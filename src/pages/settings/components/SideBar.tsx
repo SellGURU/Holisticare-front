@@ -10,37 +10,38 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
     () => ({
       General: [
         {
-          title:"Clinic Preferences",
-          isActive:true,
+          title: 'Clinic Preferences',
+          isActive: true,
         },
         {
-          title:"Language & Region",
-          isActive:false,
+          title: 'Language & Region',
+          isActive: false,
         },
         {
-          title:"Change Password",
-          isActive:false,
-        }
-
-      
+          title: 'Change Password',
+          isActive: false,
+        },
       ],
-      "Integrations & AI" :[
+      'Integrations & AI': [
         {
-          title:"Integrations",
-          isActive:false,
+          title: 'Integrations',
+          isActive: false,
         },
         {
-          title:"AI Preferences",
-          isActive:false,
-        }
+          title: 'AI Preferences',
+          isActive: false,
+        },
       ],
-      Account: [ {
-        title:"Notifications",
-        isActive:false,
-      }, {
-        title:"Subscription",
-        isActive:false,
-      },],
+      Account: [
+        {
+          title: 'Notifications',
+          isActive: false,
+        },
+        {
+          title: 'Subscription',
+          isActive: false,
+        },
+      ],
     }),
     [],
   );
@@ -54,7 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
     if (section) {
       const menuItem = Object.values(menuItems)
         .flat()
-        .find((item) => item.title.replace(/\s+/g, '-').toLowerCase() === section);
+        .find(
+          (item) => item.title.replace(/\s+/g, '-').toLowerCase() === section,
+        );
       if (menuItem) {
         setActiveMenu(menuItem.title);
       }
@@ -70,16 +73,16 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
               {subItems.map((item) => (
                 <li
                   key={item.title}
-                  className={` ${item.isActive ? "" : "opacity-50 cursor-not-allowed"} flex items-center cursor-pointer text-nowrap text-base ${
+                  className={` ${item.isActive ? '' : 'opacity-50 cursor-not-allowed'} flex items-center cursor-pointer text-nowrap text-base ${
                     activeMenu === item.title
                       ? 'text-Primary-DeepTeal text-sm'
                       : 'text-[#888888]'
                   }`}
-                  onClick={() =>{
-                  if(item.isActive){
-                    handleMenuClick(item.title) 
-                  } 
-                  } }
+                  onClick={() => {
+                    if (item.isActive) {
+                      handleMenuClick(item.title);
+                    }
+                  }}
                 >
                   {activeMenu === item.title && (
                     <img alt="" src="/icons/arrow-right-small.svg" />
