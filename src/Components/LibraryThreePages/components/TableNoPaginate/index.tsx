@@ -60,7 +60,12 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   return (
     <div
       className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto overflow-hidden"
-      style={{ height: window.innerWidth > 720 ?  window.innerHeight - 120 + 'px' :  window.innerHeight - 220 + 'px' }}
+      style={{
+        height:
+          window.innerWidth > 720
+            ? window.innerHeight - 120 + 'px'
+            : window.innerHeight - 220 + 'px',
+      }}
     >
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
