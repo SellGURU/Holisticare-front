@@ -393,7 +393,7 @@ const RecentCheckIns = () => {
           {CheckIns.length < 1 ? (
             <div
               style={{ height: '-webkit-fill-available' }}
-              className=" w-full  flex flex-col items-center justify-center"
+              className=" w-full  mt-[-30px] flex flex-col items-center justify-center"
             >
               <img src="/icons/EmptyState2.svg" alt="" />
               <div className="text-xs text-Text-Primary -mt-4 text-center">

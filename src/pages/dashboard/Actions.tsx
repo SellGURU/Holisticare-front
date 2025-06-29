@@ -77,7 +77,7 @@ const Actions: React.FC = () => {
       ) : (
         <div
           className="w-full overflow-hidden bg-white rounded-2xl shadow-200 p-3 xl:p-4 action-container"
-          style={{ height: window.innerHeight - 150 + 'px' }}
+          style={{ height: window.innerHeight - 250 + 'px' }}
         >
           <div className="flex w-full justify-between">
             <h2 className="text-sm text-Text-Primary font-medium">

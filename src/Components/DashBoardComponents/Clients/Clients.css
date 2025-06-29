@@ -1,5 +1,5 @@
 .clients-container {
-  height: calc((100vh - 150px) / 2 - 16px);
+  height: calc((100vh - 250px) / 2 - 16px);
 }
 
 .clients-content {
