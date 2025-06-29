@@ -166,24 +166,21 @@ const AddTreatmentplanCategory = (category: any) => {
 };
 const resolveHigthNotes = (notes: Array<string>) => {
   let size = 4;
-  notes.map((el) => {
+  // console.log(notes);
+  notes?.map((el) => {
     size = size + resolveHightText(el, true);
   });
   return size;
 };
 const addHolisticPlanItem = (item: any) => {
   checkPageCanRender(
-    80 +
-      resolveHightText(item.Notes, true) +
-      resolveHigthNotes(item.Client_Notes),
+    80 + resolveHigthNotes(item.Notes) + resolveHigthNotes(item.Client_Notes),
   );
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanItem',
     height:
-      80 +
-      resolveHightText(item.Notes, true) +
-      resolveHigthNotes(item.Client_Notes),
+      80 + resolveHigthNotes(item.Notes) + resolveHigthNotes(item.Client_Notes),
     content: item,
   });
   addBox(8);

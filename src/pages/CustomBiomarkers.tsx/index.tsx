@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import SearchBox from '../../Components/SearchBox';
@@ -5,7 +6,7 @@ import BioMarkerBox from './BiomarkerBox';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 
-// import mackData from './test.json'
+import mackData from './newMock.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -16,10 +17,12 @@ const CustomBiomarkers = () => {
   useEffect(() => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
-      .then((res) => {
-        setBiomarkers(res.data);
+      .then((_res) => {
+        // setBiomarkers(res.data);
+        setBiomarkers(mackData);
       })
       .finally(() => {
+        setBiomarkers(mackData);
         setIsLoading(false);
       });
   }, []);
@@ -41,35 +44,47 @@ const CustomBiomarkers = () => {
     if (!searchValue.trim()) {
       return biomarkers;
     }
-
+    const results = biomarkers.filter((item) =>
+      item['Benchmark areas'].toLowerCase().includes(searchValue.toLowerCase()),
+    );
     // Search for Benchmark Area or Biomarker
-    const results = biomarkers
-      .map((benchmark) => {
-        const matchingBiomarkers = benchmark.biomarkers.filter(
-          (biomarker: any) =>
-            biomarker.Biomarker.toLowerCase().includes(
-              searchValue.toLowerCase(),
-            ),
-        );
+    // const results = biomarkers
+    //   .map((benchmark) => {
+    //     const matchingBiomarkers = benchmark.biomarkers.filter(
+    //       (biomarker: any) =>
+    //         biomarker.Biomarker.toLowerCase().includes(
+    //           searchValue.toLowerCase(),
+    //         ),
+    //     );
 
-        if (
-          benchmark['Benchmark areas']
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          matchingBiomarkers.length > 0
-        ) {
-          return {
-            ...benchmark,
-            biomarkers:
-              matchingBiomarkers.length > 0
-                ? matchingBiomarkers
-                : benchmark.biomarkers,
-          };
-        }
-        return null;
-      })
-      .filter((item) => item !== null);
+    //     if (
+    //       benchmark['Benchmark areas']
+    //         .toLowerCase()
+    //         .includes(searchValue.toLowerCase()) ||
+    //       matchingBiomarkers.length > 0
+    //     ) {
+    //       return {
+    //         ...benchmark,
+    //         biomarkers:
+    //           matchingBiomarkers.length > 0
+    //             ? matchingBiomarkers
+    //             : benchmark.biomarkers,
+    //       };
+    //     }
+    //     return null;
+    //   })
+    //   .filter((item) => item !== null);
     return results;
+  };
+
+  const resolveAllBenchmarks = () => {
+    return [
+      ...new Set(
+        filteredBiomarkers().map((el) => {
+          return el['Benchmark areas'];
+        }),
+      ),
+    ];
   };
   return (
     <>
@@ -104,10 +119,12 @@ const CustomBiomarkers = () => {
         </>
       ) : (
         <div className="w-full px-6 py-[80px]">
-          {filteredBiomarkers().map((el) => {
+          {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox
-                biomarkers={biomarkers}
+                biomarkers={biomarkers.filter(
+                  (item) => item['Benchmark areas'] == benchmark,
+                )}
                 onSave={(values) => {
                   // setIsChanged(true);
                   setBiomarkers((pre) => {
@@ -121,7 +138,11 @@ const CustomBiomarkers = () => {
                     return [...resolved];
                   });
                 }}
-                data={el}
+                data={
+                  biomarkers.filter(
+                    (item) => item['Benchmark areas'] == benchmark,
+                  )[0]
+                }
               ></BioMarkerBox>
             );
           })}

@@ -174,6 +174,14 @@ export const TopBar: React.FC<TopBarProps> = ({
   );
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
+      if (
+        res.data.brand_elements.name === null ||
+        res.data.brand_elements.name === '' ||
+        res.data.brand_elements.logo === null
+      ) {
+        navigate('/register-profile');
+        return;
+      }
       setCustomTheme({
         headLine: res.data.brand_elements.headline,
         name: res.data.brand_elements.name,
