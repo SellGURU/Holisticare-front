@@ -7,14 +7,15 @@ interface BiomarkerBoxProps {
   biomarkers: Array<any>;
   data: any;
   onSave: (values: any) => void;
+  getBiomarkers: () => void;
 }
 const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
   data,
   // onSave,
   biomarkers,
+  getBiomarkers,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(data);
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
   // useEffect(() => {
@@ -105,7 +106,8 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
                     // });
                     // }}
                     data={value}
-                  ></BiomarkerItem>
+                    getBiomarkers={getBiomarkers}
+                  />
                 </>
               );
             })}

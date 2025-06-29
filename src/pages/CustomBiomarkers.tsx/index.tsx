@@ -7,6 +7,12 @@ import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 
 import mackData from './newMock.json';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import AddModal from './AddModal';
+import { MainModal } from '../../Components';
+
+import DefaultData from './default.json';
+import { toast } from 'react-toastify';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -14,7 +20,11 @@ const CustomBiomarkers = () => {
   const [searchValue, setSearchValue] = useState('');
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
-  useEffect(() => {
+  const [activeAdd, setActiveAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const openModalAdd = () => setActiveAdd(true);
+  const closeModalAdd = () => setActiveAdd(false);
+  const getBiomarkers = () => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
       .then((_res) => {
@@ -25,6 +35,9 @@ const CustomBiomarkers = () => {
         setBiomarkers(mackData);
         setIsLoading(false);
       });
+  };
+  useEffect(() => {
+    getBiomarkers();
   }, []);
   // useEffect(() => {
   //   if (biomarkers.length > 0 && isChanged) {
@@ -86,6 +99,20 @@ const CustomBiomarkers = () => {
       ),
     ];
   };
+  const onsave = (values: any) => {
+    setLoading(true);
+    BiomarkersApi.addBiomarkersList(values)
+      .then(() => {
+        getBiomarkers();
+        closeModalAdd();
+      })
+      .catch((error) => {
+        toast.error(error.detail);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
   return (
     <>
       <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 md:pr-[200px]">
@@ -93,14 +120,23 @@ const CustomBiomarkers = () => {
           <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
             Custom Biomarker
           </div>
-          <SearchBox
-            value={searchValue}
-            ClassName="rounded-xl !h-6 !py-[0px] !px-3 !shadow-[unset]"
-            placeHolder="Search for categories & biomarkers ..."
-            onSearch={(val) => {
-              setSearchValue(val);
-            }}
-          />
+          <div className="flex items-center gap-4">
+            <SearchBox
+              value={searchValue}
+              ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
+              placeHolder="Search for categories & biomarkers ..."
+              onSearch={(val) => {
+                setSearchValue(val);
+              }}
+            />
+            <ButtonSecondary
+              ClassName="rounded-[20px] text-xs"
+              onClick={openModalAdd}
+            >
+              <img src="/icons/add-square.svg" alt="" />
+              Add Biomarker
+            </ButtonSecondary>
+          </div>
         </div>
       </div>
       {/* {showSuccess && (
@@ -143,7 +179,8 @@ const CustomBiomarkers = () => {
                     (item) => item['Benchmark areas'] == benchmark,
                   )[0]
                 }
-              ></BioMarkerBox>
+                getBiomarkers={getBiomarkers}
+              />
             );
           })}
           {filteredBiomarkers().length == 0 && (
@@ -162,6 +199,25 @@ const CustomBiomarkers = () => {
           )}
         </div>
       )}
+      <MainModal
+        isOpen={activeAdd}
+        onClose={() => {
+          closeModalAdd();
+        }}
+      >
+        <>
+          <AddModal
+            onCancel={() => {
+              closeModalAdd();
+            }}
+            onSave={(values: any) => {
+              onsave(values);
+            }}
+            data={DefaultData}
+            loading={loading}
+          />
+        </>
+      </MainModal>
     </>
   );
 };
