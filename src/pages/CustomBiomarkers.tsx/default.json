@@ -1,82 +1,63 @@
 {
-    "new_biomarker": {
-        "unit": "",
-        "Category": "",
-        "Biomarker": "",
-        "Definition": "",
-        "age_groups": [
-            {
-                "gender": "Male",
-                "status": {
-                    "Good": {
-                        "condition": "greater_than",
-                        "threshold": [
-                            1
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            1,
-                            0
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "less_than",
-                        "threshold": [
-                            0
-                        ]
-                    },
-                    "Ok": {
-                        "condition": "equal",
-                        "threshold": [
-                            "Negative"
-                        ]
-                    }
-                    
-                },
-                "max_age": 100,
-                "min_age": 18
-            },
-            {
-                "gender": "Female",
-                "status": {
-                    "Good": {
-                        "condition": "greater_than",
-                        "threshold": [
-                            1
-                        ]
-                    },
-                    "Needs Focus": {
-                        "condition": "less_than",
-                        "threshold": [
-                            0
-                        ]
-                    },
-                    "Excellent": {
-                        "condition": "between",
-                        "threshold": [
-                            1,
-                            0
-                        ]
-                    },
-                    "Ok": {
-                        "condition": "equal",
-                        "threshold": [
-                            "Positive"
-                        ]
-                    }
-                },
-                "max_age": 100,
-                "min_age": 18
-            }
-        ],
-        "Benchmark areas": "",
-        "label_mapping_chart": {
-            "Good": "",
-            "Excellent": "",
-            "Needs Focus": "",
-            "Ok": ""
-        }
+  "new_biomarker": {
+    "unit": "",
+    "Category": "",
+    "Biomarker": "",
+    "Definition": "",
+    "age_groups": [
+      {
+        "gender": "Male",
+        "status": {
+          "Good": {
+            "condition": "greater_than",
+            "threshold": [1]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [1, 0]
+          },
+          "Needs Focus": {
+            "condition": "less_than",
+            "threshold": [0]
+          },
+          "Ok": {
+            "condition": "equal",
+            "threshold": ["Negative"]
+          }
+        },
+        "max_age": 100,
+        "min_age": 18
+      },
+      {
+        "gender": "Female",
+        "status": {
+          "Good": {
+            "condition": "greater_than",
+            "threshold": [1]
+          },
+          "Needs Focus": {
+            "condition": "less_than",
+            "threshold": [0]
+          },
+          "Excellent": {
+            "condition": "between",
+            "threshold": [1, 0]
+          },
+          "Ok": {
+            "condition": "equal",
+            "threshold": ["Positive"]
+          }
+        },
+        "max_age": 100,
+        "min_age": 18
+      }
+    ],
+    "Benchmark areas": "",
+    "label_mapping_chart": {
+      "Good": "",
+      "Excellent": "",
+      "Needs Focus": "",
+      "Ok": ""
     }
+  }
 }
