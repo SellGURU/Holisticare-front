@@ -43,16 +43,16 @@ export const ClinicPreferences = () => {
         </div>
       ) : (
         <>
-          <div className="text-sm font-medium text-Text-Primary">
+          <div className=" text-xs md:text-sm font-medium text-Text-Primary">
             ClinicPreferences
           </div>
-          <div className="text-[10px] text-[#888888] my-4">
+          <div className=" text-[8px] md:text-[10px] text-[#888888] my-4">
             Adjust how the system generates and presents content to match your
             clinic's preferences. Ensure all outputs align with your operational
             needs.
           </div>
           <div className="w-full flex justify-between gap-4">
-            <div className="flex flex-col gap-2 w-[50%] text-xs font-medium  ">
+            <div className="flex flex-col gap-2 w-[50%] text-[10px] md:text-xs font-medium  ">
               Text Preferences
               <Select
                 value={Preferences || ''}
@@ -63,7 +63,7 @@ export const ClinicPreferences = () => {
                 }}
               />
             </div>
-            <div className=" w-[50%] flex flex-col gap-2 text-xs font-medium  ">
+            <div className=" w-[50%] flex flex-col gap-2 text-[10px] md:text-xs font-medium  ">
               <div className="flex items-start">
                 Clinic-Specific Requests or Focus Areas
                 <img
@@ -93,7 +93,7 @@ export const ClinicPreferences = () => {
           </div>
           <div className="flex items-center justify-end mt-3 md:mt-0 md:mb-1 mr-1 absolute bottom-4 right-4">
             <div
-              className="text-Disable text-sm font-medium cursor-pointer"
+              className="text-Disable text-xs md:text-sm font-medium cursor-pointer"
               onClick={() => {
                 setPreferences(initialPreferences);
                 settextValue(initialTextValue);
@@ -102,7 +102,7 @@ export const ClinicPreferences = () => {
               Back to Default
             </div>
             <div
-              className="text-Primary-DeepTeal text-nowrap font-medium text-sm ml-6 cursor-pointer flex items-center justify-center"
+              className="text-Primary-DeepTeal text-nowrap font-medium text-xs md:text-sm ml-6 cursor-pointer flex items-center justify-center"
               onClick={() => {
                 if (btnLoading == false) {
                   setBtnLoading(true);
