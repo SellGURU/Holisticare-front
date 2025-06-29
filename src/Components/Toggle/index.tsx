@@ -12,7 +12,7 @@ const Toggle: React.FC<ToggleProps> = ({
   setActive,
   isClientList,
   isMessages,
-  isNotif
+  isNotif,
 }) => {
   return (
     <>

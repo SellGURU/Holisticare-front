@@ -11,8 +11,8 @@ interface NotificationItem {
   name: string;
   time: string; // e.g., "7 Hours ago", "Yesterday 2:05 AM", "Apr 30, 2025 4:27 PM"
   unread: boolean;
-  action?:string;
-    
+  action?: string;
+
   notifType: 'General Notifications' | 'My Notifications';
 }
 export const Notification: React.FC<NotificationProps> = ({
@@ -21,7 +21,7 @@ export const Notification: React.FC<NotificationProps> = ({
 }) => {
   console.log(setisUnReadNotif);
   const [activeMenu, setactiveMenu] = useState('General Notifications');
-  const [notifications,setNotifications] = useState<NotificationItem[]>([
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
       id: '1',
       picture: 'https://placehold.co/40x40/f0f0f0/333333?text=DL',
@@ -115,13 +115,13 @@ export const Notification: React.FC<NotificationProps> = ({
         {filteredNotifications.length > 0 &&
           filteredNotifications.map((notif) => (
             <div
-            onClick={() => {
-              setNotifications((prev) =>
-                prev.map((item) =>
-                  item.id === notif.id ? { ...item, unread: false } : item
-                )
-              );
-            }}
+              onClick={() => {
+                setNotifications((prev) =>
+                  prev.map((item) =>
+                    item.id === notif.id ? { ...item, unread: false } : item,
+                  ),
+                );
+              }}
               key={notif.id}
               className="flex w-full justify-between bg-[#FCFCFC] py-2 px-3 items-center gap-3 cursor-pointer  border border-Gray-25   rounded-2xl  mt-[6px]"
             >
@@ -135,7 +135,6 @@ export const Notification: React.FC<NotificationProps> = ({
                       e.currentTarget.src = `https://placehold.co/40x40/cccccc/333333?text=${notif.name.charAt(0).toUpperCase()}`;
                     }}
                   />
-                 
                 </div>
                 <div className="flex-grow flex flex-col">
                   <div className="text-[10px] font-medium ">
@@ -145,23 +144,20 @@ export const Notification: React.FC<NotificationProps> = ({
                     <div className="text-[10px] text-[#888888]">
                       {notif.time}
                     </div>
-                   
                   </div>
-                 
                 </div>
               </div>
-              <div className='flex flex-col gap-2 items-end'>
-                 {notif.unread && (
+              <div className="flex flex-col gap-2 items-end">
+                {notif.unread && (
                   <span className="  h-2 w-2 rounded-full  bg-gradient-to-r from-[#005F73] to-[#6CC24A] "></span>
                 )}
-              {notif.action && (
+                {notif.action && (
                   <button className="flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start">
                     Procced
                     <img src="/icons/arrow-right-small 2.svg" alt="" />
                   </button>
-                )} 
+                )}
               </div>
-              
             </div>
           ))}
       </div>
