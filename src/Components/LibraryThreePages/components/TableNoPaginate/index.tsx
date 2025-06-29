@@ -59,8 +59,8 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   };
   return (
     <div
-      className="w-full mt-6 mb-14 overflow-y-auto overflow-hidden"
-      style={{ height: window.innerHeight - 180 + 'px' }}
+      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto overflow-hidden"
+      style={{ height: window.innerWidth > 720 ?  window.innerHeight - 120 + 'px' :  window.innerHeight - 220 + 'px' }}
     >
       <div
         className={`flex flex-col justify-between overflow-x-auto bg-white text-Text-Primary border border-Boarder`}
@@ -156,7 +156,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                         />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-full gap-2">
+                      <div className="flex items-center justify-center w-ful gap-2 w-[80px]">
                         <img
                           onClick={() => handlePreview(row.original)}
                           className="cursor-pointer"
