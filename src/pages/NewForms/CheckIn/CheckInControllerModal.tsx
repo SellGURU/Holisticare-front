@@ -53,7 +53,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   };
   const onAddQuestion = () => {
     if (titleForm.length > 0) {
-      setShowValidation(false)
+      setShowValidation(false);
       return true;
     } else {
       setShowTitleRequired(true);
@@ -132,7 +132,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     }
   };
   const [titleForm, setTitleForm] = useState('');
-  
+
   const isDisable = () => {
     return titleForm.length == 0 || questions.length == 0;
   };
@@ -173,7 +173,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   }, [editId]);
   const [AddquestionStep, setAddquestionStep] = useState(0);
   console.log(AddquestionStep);
-console.log(step);
+  console.log(step);
 
   return (
     <>
@@ -230,7 +230,9 @@ console.log(step);
         {showValidation && questions.length == 0 && (
           <div className="text-[10px] text-Red">Add question to continue.</div>
         )}
-        <div className={`w-full flex justify-end items-center p-2 ${AddquestionStep == 1 && 'hidden'} `}>
+        <div
+          className={`w-full flex justify-end items-center p-2 ${AddquestionStep == 1 && 'hidden'} `}
+        >
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
             onClick={() => {
@@ -307,7 +309,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
   console.log(questions);
-  
+
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   const [checked, setChecked] = useState(false);
@@ -327,7 +329,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
     setSeconds(upSeconds);
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
   console.log(questionStep);
-  
+
   return (
     <>
       {step == 0 || mode == 'Reposition' ? (
@@ -414,8 +416,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
           {addMore && questionStep == 1 && (
             <>
               <AddQuestionsModal
-             
-              setQuestionStep={setQuestionStep}
+                setQuestionStep={setQuestionStep}
                 editQUestion={questions[editingQuestionIndex]}
                 onSubmit={(value) => {
                   if (editingQuestionIndex == -1) {
@@ -438,7 +439,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                 onCancel={() => {
                   setEditingQuestionIndex(-1);
                   setAddMore(false);
-                  setQuestionStep(0)
+                  setQuestionStep(0);
                 }}
               ></AddQuestionsModal>
             </>

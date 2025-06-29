@@ -6,7 +6,7 @@ interface AddQuestionsModalProps {
   onCancel: () => void;
   onSubmit: (value: checkinType) => void;
   editQUestion?: checkinType;
-  setQuestionStep:(value:number) => void;
+  setQuestionStep: (value: number) => void;
 }
 
 const checkInTypes = [
@@ -102,7 +102,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
               : undefined,
       };
       onSubmit(resolvedQuestion);
-      setQuestionStep(2)
+      setQuestionStep(2);
       clear();
     }
   };
@@ -112,19 +112,24 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       <div className="w-full rounded-2xl p-4  mb-3 mt-2">
         <div className="w-full flex items-center justify-between">
           <div className="text-Text-Primary text-xs font-medium flex items-center gap-2">
-            <div onClick={()=> {setQuestionStep(0)
-              onCancel()
-            }} className="size-6 bg-white p-[3px] cursor-pointer rounded-[4.5px] border border-Gray-50 flex items-center">
+            <div
+              onClick={() => {
+                setQuestionStep(0);
+                onCancel();
+              }}
+              className="size-6 bg-white p-[3px] cursor-pointer rounded-[4.5px] border border-Gray-50 flex items-center"
+            >
               <img src="/icons/arrow-back.svg" alt="" />
             </div>
-            {
-              editQUestion ? "Edit Question " : "Add Question"
-            }
-           {' '}
+            {editQUestion ? 'Edit Question ' : 'Add Question'}{' '}
           </div>
-          <div onClick={submit} className='text-xs font-medium text-Primary-DeepTeal cursor-pointer'> {
-              editQUestion ? "Update Question " : "Save Question"
-            } </div>
+          <div
+            onClick={submit}
+            className="text-xs font-medium text-Primary-DeepTeal cursor-pointer"
+          >
+            {' '}
+            {editQUestion ? 'Update Question ' : 'Save Question'}{' '}
+          </div>
           {/* <div className="flex items-center">
             <img
               src="/icons/close-square.svg"
@@ -165,20 +170,22 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
           </div> */}
         </div>
         <div className="flex flex-col items-start w-full mt-4">
-          <div className='text-xs font-medium text-Text-Primary mb-1'>Question</div>
+          <div className="text-xs font-medium text-Text-Primary mb-1">
+            Question
+          </div>
           <input
             placeholder="Write your question (e.g., How are you feeling today?)"
-            className={`w-full h-[28px] border  bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold ${showValidation &&  qustion == '' ? 'border-Red' : 'border-Gray-50'}`}
+            className={`w-full h-[28px] border  bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold ${showValidation && qustion == '' ? 'border-Red' : 'border-Gray-50'}`}
             type="text"
             value={qustion}
             onChange={(e) => setQuestion(e.target.value)}
           />
-          {
-            showValidation &&  qustion == '' && (
-              <div className='text-[8px] text-Red mt-1'>This field is required. </div>
-            )
-          }
-         
+          {showValidation && qustion == '' && (
+            <div className="text-[8px] text-Red mt-1">
+              This field is required.{' '}
+            </div>
+          )}
+
           <label
             htmlFor="required"
             className="flex items-center space-x-1 cursor-pointer mt-1.5"
@@ -217,7 +224,9 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             </div>
           </label>
         </div>
-        <div className={`flex flex-wrap items-start gap-2 mt-2 bg-backgroundColor-Card border rounded-[14px] p-4 ${type == '' && showValidation ? ' border-Red ': 'border-Gray-50'}`}>
+        <div
+          className={`flex flex-wrap items-start gap-2 mt-2 bg-backgroundColor-Card border rounded-[14px] p-4 ${type == '' && showValidation ? ' border-Red ' : 'border-Gray-50'}`}
+        >
           {checkInTypes.map((item, index) => {
             return (
               <>
@@ -279,11 +288,12 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
             showValidation={showValidation && type === 'multiple_choice'}
           ></MultiChoceSelection>
         </div>
-        {
-         type == '' && showValidation && (
-            <div className='text-Red text-[10px] mt-2'>      Please select an answer type.</div>
-          )
-        }
+        {type == '' && showValidation && (
+          <div className="text-Red text-[10px] mt-2">
+            {' '}
+            Please select an answer type.
+          </div>
+        )}
       </div>
     </>
   );

@@ -210,7 +210,9 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-              {(templateData == null || error) && mode == 'Add' && AddquestionStep== 0 ? (
+              {(templateData == null || error) &&
+              mode == 'Add' &&
+              AddquestionStep == 0 ? (
                 <div className="w-full mt-6">
                   <TextField
                     type="text"
@@ -238,14 +240,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               ) : (
                 ''
               )}
-              {
-                AddquestionStep== 0 &&(
-<div className="w-full text-xs text-Text-Primary font-medium mt-6">
-                {templateData == null ? 'Questions' : 'Initial Questionnaire'}
-              </div>
-                )
-              }
-              
+              {AddquestionStep == 0 && (
+                <div className="w-full text-xs text-Text-Primary font-medium mt-6">
+                  {templateData == null ? 'Questions' : 'Initial Questionnaire'}
+                </div>
+              )}
             </>
           )}
           <div className="flex flex-col w-full mt-3 items-center justify-center">
