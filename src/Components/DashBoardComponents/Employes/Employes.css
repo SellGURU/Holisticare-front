@@ -1,5 +1,5 @@
 .employees-container {
-  height: calc((100vh - 240px) / 2);
+  height: calc((100vh - 150px) / 2);
 }
 
 .employees-content {

@@ -1,5 +1,5 @@
 .recent-checkins-container {
-  height: calc((100vh - 240px) / 2 - 16px);
+  height: calc((100vh - 150px) / 2 - 16px);
 }
 
 .recent-checkins-content {

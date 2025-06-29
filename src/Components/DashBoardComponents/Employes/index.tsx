@@ -66,7 +66,7 @@ const Employes: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full overflow-hidden bg-white xl:-mt-4 rounded-2xl shadow-200 p-4 employees-container">
+    <div className="w-full overflow-hidden bg-white  rounded-2xl shadow-200 p-4 employees-container">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-sm text-Text-Primary font-medium">Staffs</h2>
 
@@ -83,7 +83,7 @@ const Employes: React.FC = () => {
         </ButtonPrimary> */}
       </div>
       {Employees.length < 1 ? (
-        <div className="w-full h-full flex flex-col items-center justify-center">
+        <div style={{height:'-webkit-fill-available'}} className="w-full mt-[-25px] h-full flex flex-col items-center justify-center">
           <img src="/icons/NoClient.svg" alt="" />
           <div className="text-xs text-Text-Primary -mt-4 text-center">
             No Staff Found

@@ -37,7 +37,7 @@ const DashBoard = () => {
       {/* Check-In Comment Modal */}
 
       {/* Check in Modal */}
-      <div className=" px-3 md:px-4 2xl:px-6 pt-4 pb-[100px]">
+      <div className=" px-3 md:px-4 2xl:px-6 pt-4">
         <div className="text-base font-medium text-Text-Primary mb-4">
           Dashboard
         </div>
