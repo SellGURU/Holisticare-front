@@ -62,23 +62,23 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
+        <div className="flex gap-6 w-full min-h-[60px] justify-start items-center">
           <div className="w-[200px]">
             <div className="text-[12px] font-medium text-Text-Primary">
               {data.Biomarker}
             </div>
-            <div className="text-[10px] max-w-[100px] text-nowrap overflow-hidden text-ellipsis mt-1 text-Text-Secondary">
-              {/* {data.more_info} */}
+            <div className="text-[10px] text-nowrap mt-1 text-Text-Quadruple">
+              {data.Category}
             </div>
           </div>
-          <div className="w-[70%] mt-20 mb-3">
+          <div className="w-[70%] mt-10 mb-1">
             <StatusBarChartV2
               mapingData={data.label_mapping_chart}
               data={activeBiomarker.status}
             ></StatusBarChartV2>
           </div>
           <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
-            <div>
+            {/* <div>
               <Select
                 key="ages"
                 onChange={(val) => {
@@ -96,7 +96,7 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
                 }}
                 options={avilableGenders()}
               ></Select>
-            </div>
+            </div> */}
             <div onClick={openModalEdit}>
               <SvgIcon color="#005F73" src="./icons/edit-green.svg"></SvgIcon>
             </div>

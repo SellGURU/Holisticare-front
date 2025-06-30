@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
 import BiomarkerItem from './BiomarkerItemNew';
 // import BiomarkersApi from '../../api/Biomarkers';
@@ -9,7 +9,7 @@ interface BiomarkerBoxProps {
   onSave: (values: any) => void;
   getBiomarkers: () => void;
 }
-const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
+const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   data,
   // onSave,
   biomarkers,
@@ -56,14 +56,17 @@ const BiomarkerBox: React.FC<BiomarkerBoxProps> = ({
                 />
               </div>
             </div>
-            <div className="ml-2">
+            <div className="ml-2 flex flex-col items-start justify-center">
               <div className="TextStyle-Headline-5 text-Text-Primary flex items-center gap-2 ">
                 {data['Benchmark areas']}
                 {/* {isOpen && <Legends></Legends>} */}
               </div>
-              <div className="flex justify-start items-center">
-                <div className="TextStyle-Body-3 text-Text-Secondary">
-                  {/* {data.subcategories[0]?.num_of_biomarkers} biomarkers */}
+              <div className="flex justify-start items-center mt-1">
+                <div className="text-Text-Quadruple text-[10px]">
+                  <span className="text-xs text-Text-Primary">
+                    {biomarkers.length}
+                  </span>{' '}
+                  Total Biomarker
                 </div>
                 <div className="TextStyle-Body-3 text-Text-Secondary ml-2">
                   {/* {data.subcategories[0]?.needs_focus_count}{' '}

@@ -130,7 +130,7 @@ const CustomBiomarkers = () => {
               }}
             />
             <ButtonSecondary
-              ClassName="rounded-[20px] text-xs"
+              ClassName="rounded-[20px] text-xs border border-white"
               onClick={openModalAdd}
             >
               <img src="/icons/add-square.svg" alt="" />
