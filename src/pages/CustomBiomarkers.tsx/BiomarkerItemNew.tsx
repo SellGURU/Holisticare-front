@@ -20,9 +20,9 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
   const [loading, setLoading] = useState(false);
   const openModalEdit = () => setActiveEdit(true);
   const closeModalEdit = () => setActiveEdit(false);
-  const [activeBiomarker, setActiveBiomarker] = useState(data.age_groups[0]);
-  const [gender, setGender] = useState(activeBiomarker.gender);
-  const [ageRange, setAgeRange] = useState(
+  const [activeBiomarker, ] = useState(data.age_groups[0]);
+  const [, setGender] = useState(activeBiomarker.gender);
+  const [, setAgeRange] = useState(
     activeBiomarker.min_age + '-' + activeBiomarker.max_age,
   );
   const avilableGenders = () => {
