@@ -30,8 +30,7 @@ const Setting: React.FC = () => {
   };
   return (
     <div
-      style={{ height: window.innerHeight - 87 + 'px' }}
-      className="overflow-auto"
+    
     >
       <div className="flex md:fixed z-[48] top-13 w-full md:pr-6 pr-3 pl-3  md:pl-[194px] py-4 left-0  justify-between ">
         <div className=" text-xl md:text-2xl text-Text-Primary">Setting</div>

@@ -36,23 +36,23 @@ export const ClinicPreferences = () => {
   console.log(initialPreferences);
 
   return (
-    <div className="bg-backgroundColor-Card min-h-[348px]  w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
+    <div className="bg-backgroundColor-Card h-fit min-h-[348px]  w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
       {loading ? (
         <div className="w-full flex flex-col gap-3  justify-center items-center h-[300px]">
           <Circleloader></Circleloader>
         </div>
       ) : (
         <>
-          <div className=" text-xs md:text-sm font-medium text-Text-Primary">
+          <div className=" text-sm font-medium text-Text-Primary">
             ClinicPreferences
           </div>
-          <div className=" text-[8px] md:text-[10px] text-[#888888] my-4">
+          <div className=" text-[10px] text-[#888888] text-justify my-4">
             Adjust how the system generates and presents content to match your
             clinic's preferences. Ensure all outputs align with your operational
             needs.
           </div>
           <div className="w-full flex flex-col md:flex-row justify-between gap-4">
-            <div className="flex flex-col gap-2 w-full md:w-[50%] text-[10px] md:text-xs font-medium  ">
+            <div className="flex flex-col gap-2 w-full md:w-[50%] text-xs font-medium  ">
               Text Preferences
               <Select
                 value={Preferences || ''}
@@ -63,7 +63,7 @@ export const ClinicPreferences = () => {
                 }}
               />
             </div>
-            <div className=" w-full md:w-[50%] flex flex-col gap-2 text-[10px] md:text-xs font-medium  ">
+            <div className=" w-full md:w-[50%] flex flex-col gap-2  text-xs font-medium  ">
               <div className="flex items-start">
                 Clinic-Specific Requests or Focus Areas
                 <img
