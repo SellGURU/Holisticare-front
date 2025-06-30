@@ -995,6 +995,10 @@ class Application extends Api {
   static getToneList = (data: any) => {
     return this.post('/setting/tone_list', data);
   };
+
+  static getNotifications = () => {
+    return this.get('/notifications',{})
+  }
 }
 
 export default Application;

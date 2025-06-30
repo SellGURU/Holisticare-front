@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react';
 import Toggle from '../Toggle';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
+// import Application from '../../api/app';
 interface NotificationProps {
   setisUnReadNotif: (value: boolean) => void;
   refrence: any;
@@ -87,14 +89,18 @@ export const Notification: React.FC<NotificationProps> = ({
   const filteredNotifications = notifications.filter(
     (notif) => notif.notifType === activeMenu,
   );
-
+  // useEffect(() => {
+  //   Application.getNotifications().then((res) => {
+  //     console.log(res)
+  //   })
+  // })
   // Update unread status count whenever notifications change or filter changes
-  useEffect(() => {
-    const unreadCount = notifications.filter(
-      (notif) => notif.unread && notif.notifType === activeMenu,
-    ).length;
-    setisUnReadNotif(unreadCount > 0);
-  }, [notifications, activeMenu, setisUnReadNotif]);
+  // useEffect(() => {
+  //   const unreadCount = notifications.filter(
+  //     (notif) => notif.unread && notif.notifType === activeMenu,
+  //   ).length;
+  //   setisUnReadNotif(unreadCount > 0);
+  // }, [notifications, activeMenu, setisUnReadNotif]);
 
   return (
     <div
