@@ -36,7 +36,7 @@ export const ClinicPreferences = () => {
   console.log(initialPreferences);
 
   return (
-    <div className="bg-backgroundColor-Card min-h-[348px] w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
+    <div className="bg-backgroundColor-Card min-h-[348px]  w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
       {loading ? (
         <div className="w-full flex flex-col gap-3  justify-center items-center h-[300px]">
           <Circleloader></Circleloader>
@@ -51,8 +51,8 @@ export const ClinicPreferences = () => {
             clinic's preferences. Ensure all outputs align with your operational
             needs.
           </div>
-          <div className="w-full flex justify-between gap-4">
-            <div className="flex flex-col gap-2 w-[50%] text-[10px] md:text-xs font-medium  ">
+          <div className="w-full flex flex-col md:flex-row justify-between gap-4">
+            <div className="flex flex-col gap-2 w-full md:w-[50%] text-[10px] md:text-xs font-medium  ">
               Text Preferences
               <Select
                 value={Preferences || ''}
@@ -63,7 +63,7 @@ export const ClinicPreferences = () => {
                 }}
               />
             </div>
-            <div className=" w-[50%] flex flex-col gap-2 text-[10px] md:text-xs font-medium  ">
+            <div className=" w-full md:w-[50%] flex flex-col gap-2 text-[10px] md:text-xs font-medium  ">
               <div className="flex items-start">
                 Clinic-Specific Requests or Focus Areas
                 <img
