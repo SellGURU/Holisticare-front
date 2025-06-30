@@ -16,6 +16,9 @@ import { toast } from 'react-toastify';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
+  const changeBiomarkersValue = (values: any) => {
+    setBiomarkers(values);
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   // const [isChanged, setIsChanged] = useState(false);
@@ -57,36 +60,15 @@ const CustomBiomarkers = () => {
     if (!searchValue.trim()) {
       return biomarkers;
     }
-    const results = biomarkers.filter((item) =>
-      item['Benchmark areas'].toLowerCase().includes(searchValue.toLowerCase()),
-    );
-    // Search for Benchmark Area or Biomarker
-    // const results = biomarkers
-    //   .map((benchmark) => {
-    //     const matchingBiomarkers = benchmark.biomarkers.filter(
-    //       (biomarker: any) =>
-    //         biomarker.Biomarker.toLowerCase().includes(
-    //           searchValue.toLowerCase(),
-    //         ),
-    //     );
 
-    //     if (
-    //       benchmark['Benchmark areas']
-    //         .toLowerCase()
-    //         .includes(searchValue.toLowerCase()) ||
-    //       matchingBiomarkers.length > 0
-    //     ) {
-    //       return {
-    //         ...benchmark,
-    //         biomarkers:
-    //           matchingBiomarkers.length > 0
-    //             ? matchingBiomarkers
-    //             : benchmark.biomarkers,
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter((item) => item !== null);
+    const lowerSearch = searchValue.toLowerCase();
+
+    const results = biomarkers.filter(
+      (item) =>
+        item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
+        item['Biomarker'].toLowerCase().includes(lowerSearch),
+    );
+
     return results;
   };
 
@@ -101,10 +83,12 @@ const CustomBiomarkers = () => {
   };
   const onsave = (values: any) => {
     setLoading(true);
-    BiomarkersApi.addBiomarkersList(values)
+    BiomarkersApi.addBiomarkersList({
+      new_biomarker: values,
+    })
       .then(() => {
-        getBiomarkers();
         closeModalAdd();
+        setBiomarkers((pre) => [...pre, values]);
       })
       .catch((error) => {
         toast.error(error.detail);
@@ -179,7 +163,8 @@ const CustomBiomarkers = () => {
                     (item) => item['Benchmark areas'] == benchmark,
                   )[0]
                 }
-                getBiomarkers={getBiomarkers}
+                biomarkersData={biomarkers}
+                changeBiomarkersValue={changeBiomarkersValue}
               />
             );
           })}

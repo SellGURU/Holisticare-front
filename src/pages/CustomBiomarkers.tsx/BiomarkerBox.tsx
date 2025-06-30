@@ -7,13 +7,15 @@ interface BiomarkerBoxProps {
   biomarkers: Array<any>;
   data: any;
   onSave: (values: any) => void;
-  getBiomarkers: () => void;
+  changeBiomarkersValue: (values: any) => void;
+  biomarkersData: any[];
 }
 const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   data,
   // onSave,
   biomarkers,
-  getBiomarkers,
+  changeBiomarkersValue,
+  biomarkersData,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   // const [isChanged, setIsChanged] = useState(false);
@@ -109,7 +111,8 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
                     // });
                     // }}
                     data={value}
-                    getBiomarkers={getBiomarkers}
+                    biomarkers={biomarkersData}
+                    changeBiomarkersValue={changeBiomarkersValue}
                   />
                 </>
               );
