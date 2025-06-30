@@ -445,14 +445,14 @@ export const Questionary = () => {
   };
   const checkFormComplete = () => {
     const datas = questionsFormData?.questions?.filter(
-      (el: any) => el.required == true && el.response.length == 0,
+      (el: any) => el?.required == true && el.response.length == 0,
     );
     return datas?.length == 0;
   };
   const [activeCard, setActiveCard] = useState(1);
 
   const isQuestionAnswered = (question: any) => {
-    if (!question.required) return true;
+    if (!question?.required) return true;
 
     if (question.type === 'checkbox') {
       return question.response && question.response.length > 0;
