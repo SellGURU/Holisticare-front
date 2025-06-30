@@ -25,9 +25,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
 
-  const isChartDataEmpty = !data.values.some(
-    (value: string) => !isNaN(parseFloat(value)),
-  );
+  const isChartDataEmpty = false;
 
   return (
     <>
