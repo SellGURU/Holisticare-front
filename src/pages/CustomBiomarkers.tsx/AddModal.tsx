@@ -3,14 +3,14 @@ import { FC, useState } from 'react';
 import ReactJson from 'react-json-view';
 import SpinnerLoader from '../../Components/SpinnerLoader';
 
-interface EditModalProps {
+interface AddModalProps {
   data: any;
   onCancel: () => void;
   onSave: (values: any) => void;
   loading: boolean;
 }
 
-const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
+const AddModal: FC<AddModalProps> = ({ data, onCancel, onSave, loading }) => {
   const [jsonData, setJsonData] = useState(data);
   const handleJsonChange = (e: any) => {
     setJsonData(e.updated_src);
@@ -19,7 +19,9 @@ const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
     <>
       <div className=" w-[644px] p-4 max-w-[644px] relative bg-white min-h-[500px] h-[60%] rounded-[16px]">
         <div className="">
-          <div className=" text-Text-Primary TextStyle-Headline-5">Edit</div>
+          <div className=" text-Text-Primary TextStyle-Headline-5">
+            Add Biomarker
+          </div>
           <div className="w-full h-1 border-b-2 mt-2 border-gray-50"></div>
         </div>
 
@@ -57,4 +59,4 @@ const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
   );
 };
 
-export default EditModal;
+export default AddModal;
