@@ -29,12 +29,9 @@ const Setting: React.FC = () => {
     }
   };
   return (
-    <div
-      style={{ height: window.innerHeight - 87 + 'px' }}
-      className="overflow-auto"
-    >
+    <div>
       <div className="flex md:fixed z-[48] top-13 w-full md:pr-6 pr-3 pl-3  md:pl-[194px] py-4 left-0  justify-between ">
-        <div className="text-2xl text-Text-Primary">Setting</div>
+        <div className=" text-xl md:text-2xl text-Text-Primary">Setting</div>
         <SearchBox
           ClassName="rounded-lg"
           placeHolder="Search in Setting ..."
@@ -43,7 +40,7 @@ const Setting: React.FC = () => {
       </div>
       <div className="w-full px-3 md:px-6 md:pt-9  ">
         <div className="flex flex-col md:flex-row w-full gap-8 ">
-          <div className="md:fixed  ">
+          <div className=" hidden md:block   ">
             <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
           </div>
 
