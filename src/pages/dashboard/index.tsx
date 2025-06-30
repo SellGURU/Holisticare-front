@@ -38,7 +38,9 @@ const DashBoard = () => {
 
       {/* Check in Modal */}
       <div
-        style={{ height: window.innerWidth < 720 ? window.innerHeight - 87 + 'px' : ''}}
+        style={{
+          height: window.innerWidth < 720 ? window.innerHeight - 87 + 'px' : '',
+        }}
         className=" px-3 md:px-4 2xl:px-6 pt-4 overflow-auto"
       >
         <div className="text-base font-medium text-Text-Primary mb-4">
