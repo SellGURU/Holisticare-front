@@ -6,14 +6,20 @@ import SvgIcon from '../../utils/svgIcon';
 import StatusBarChartV2 from './StatusBarChartV2';
 import { MainModal } from '../../Components';
 import EditModal from './EditModal';
+import BiomarkersApi from '../../api/Biomarkers';
+import { toast } from 'react-toastify';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BiomarkerItemNewProps {
   data: any;
+  getBiomarkers: () => void;
 }
 
-const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
+const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
   const [activeEdit, setActiveEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const openModalEdit = () => setActiveEdit(true);
+  const closeModalEdit = () => setActiveEdit(false);
   const [activeBiomarker, setActiveBiomarker] = useState(data.age_groups[0]);
   const [gender, setGender] = useState(activeBiomarker.gender);
   const [ageRange, setAgeRange] = useState(
@@ -36,6 +42,22 @@ const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
       }
     });
     return resolvedValues;
+  };
+  const onsave = (values: any) => {
+    setLoading(true);
+    BiomarkersApi.saveBiomarkersList({
+      updated_biomarker: values,
+    })
+      .then(() => {
+        getBiomarkers();
+        closeModalEdit();
+      })
+      .catch((error) => {
+        toast.error(error.detail);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   return (
     <>
@@ -75,11 +97,7 @@ const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
                 options={avilableGenders()}
               ></Select>
             </div>
-            <div
-              onClick={() => {
-                setActiveEdit(true);
-              }}
-            >
+            <div onClick={openModalEdit}>
               <SvgIcon color="#005F73" src="./icons/edit-green.svg"></SvgIcon>
             </div>
           </div>
@@ -89,19 +107,20 @@ const biomarkerItem = ({ data }: BiomarkerItemNewProps) => {
       <MainModal
         isOpen={activeEdit}
         onClose={() => {
-          setActiveEdit(false);
+          closeModalEdit();
         }}
       >
         <>
           <EditModal
             onCancel={() => {
-              setActiveEdit(false);
+              closeModalEdit();
             }}
-            onSave={() => {
-              setActiveEdit(false);
+            onSave={(values: any) => {
+              onsave(values);
             }}
             data={data}
-          ></EditModal>
+            loading={loading}
+          />
         </>
       </MainModal>
     </>
