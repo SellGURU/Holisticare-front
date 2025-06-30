@@ -192,7 +192,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
-          {step == 0 && AddquestionStep == 0 && (
+          {step == 0 && (AddquestionStep == 0 || AddquestionStep == 2) && (
             <>
               <div className="w-full mt-6">
                 <TextField
@@ -352,6 +352,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                           onEdit={() => {
                             setEditingQuestionIndex(index);
                             setAddMore(true);
+                            setQuestionStep(1)
                           }}
                           onRemove={() => {
                             setQuestions((pre) => {
