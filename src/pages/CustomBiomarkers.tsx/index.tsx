@@ -6,7 +6,7 @@ import BioMarkerBox from './BiomarkerBox';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
 
-import mackData from './newMock.json';
+// import mackData from './newMock.json';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 import { MainModal } from '../../Components';
@@ -27,12 +27,12 @@ const CustomBiomarkers = () => {
   const getBiomarkers = () => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
-      .then((_res) => {
-        // setBiomarkers(res.data);
-        setBiomarkers(mackData);
+      .then((res) => {
+        setBiomarkers(res.data);
+        // setBiomarkers(mackData);
       })
       .finally(() => {
-        setBiomarkers(mackData);
+        // setBiomarkers(mackData);
         setIsLoading(false);
       });
   };
