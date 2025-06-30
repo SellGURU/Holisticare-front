@@ -55,9 +55,9 @@ export const ClinicPreferences = () => {
             <div className="flex flex-col gap-2 w-full md:w-[50%] text-xs font-medium  ">
               Text Preferences
               <Select
-              placeholder='Select Content Preference'
-              isSetting
-                value={ Preferences ||''}
+                placeholder="Select Content Preference"
+                isSetting
+                value={Preferences || ''}
                 isLarge
                 options={Options}
                 onChange={(value) => {
