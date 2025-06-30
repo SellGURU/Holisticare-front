@@ -30,7 +30,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ reports }) => {
   return (
     <div
       className={
-        'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 w-full h-full'
+        'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 w-full'
       }
     >
       {reports?.map((report) => (
