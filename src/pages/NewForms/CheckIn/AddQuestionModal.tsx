@@ -12,7 +12,7 @@ interface AddQuestionsModalProps {
 const checkInTypes = [
   {
     icon: '/icons/textalign-justifyleft.svg',
-    title: 'paragraph',
+    title: 'Text',
     desc: 'Small or log text like title or ...',
   },
   { icon: '/icons/ruler.svg', title: 'Scale', desc: 'A Scale from 1-10' },
