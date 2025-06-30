@@ -29,22 +29,28 @@ const Setting: React.FC = () => {
     }
   };
   return (
-    <div>
+    <div
+   
+    
+    >
       <div className="flex md:fixed z-[48] top-13 w-full md:pr-6 pr-3 pl-3  md:pl-[194px] py-4 left-0  justify-between ">
-        <div className=" text-xl md:text-2xl text-Text-Primary">Setting</div>
+        <div className=" text-base font-medium text-Text-Primary">Setting</div>
+        <div className='hidden'>
         <SearchBox
           ClassName="rounded-lg"
           placeHolder="Search in Setting ..."
           onSearch={() => {}}
         ></SearchBox>
+        </div>
+     
       </div>
       <div className="w-full px-3 md:px-6 md:pt-9  ">
-        <div className="flex flex-col md:flex-row w-full gap-8 ">
+        <div className=" w-full flex  ">
           <div className=" hidden md:block   ">
             <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
           </div>
 
-          <div className="md:mt-10 w-full h-full md:pl-[200px] bg-bg-color">
+          <div className="md:mt-10 w-full  h-full  bg-bg-color">
             {renderContent()}
           </div>
         </div>

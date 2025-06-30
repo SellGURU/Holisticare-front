@@ -73,9 +73,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
               {subItems.map((item) => (
                 <li
                   key={item.title}
-                  className={` ${item.isActive ? '' : 'opacity-50 cursor-not-allowed'} flex items-center cursor-pointer text-nowrap text-base ${
+                  className={` ${item.isActive ? 'cursor-pointer' : 'cursor-not-allowed'} text-sm flex items-center  text-nowrap  ${
                     activeMenu === item.title
-                      ? 'text-Primary-DeepTeal text-sm'
+                      ? 'text-Primary-DeepTeal '
                       : 'text-[#888888]'
                   }`}
                   onClick={() => {
