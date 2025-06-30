@@ -997,8 +997,8 @@ class Application extends Api {
   };
 
   static getNotifications = () => {
-    return this.get('/notifications',{})
-  }
+    return this.get('/notifications', {});
+  };
 }
 
 export default Application;
