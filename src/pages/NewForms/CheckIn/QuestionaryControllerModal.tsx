@@ -210,7 +210,6 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
           {step == 0 && (
             <>
-
               {(templateData == null || error) &&
               mode == 'Add' &&
               (AddquestionStep == 0 || AddquestionStep == 2) ? (
@@ -378,8 +377,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                           onEdit={() => {
                             setEditingQuestionIndex(index);
                             setAddMore(true);
-                            setQuestionStep(1)
-
+                            setQuestionStep(1);
                           }}
                           onRemove={() => {
                             setQuestions((pre) => {

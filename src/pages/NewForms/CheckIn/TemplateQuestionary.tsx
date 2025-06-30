@@ -28,6 +28,10 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         return '/images/forms/PAR-Q.png';
       case 'Health and Lifestyle Profile':
         return '/images/forms/initial-Questionnaire.png';
+      case 'Emotional Health and Motivation Assessment':
+        return '/images/forms/emotional-health.png';
+      case 'Fitness Test Results':
+        return '/images/forms/fitness-test.png';
     }
   };
   return (
@@ -82,8 +86,12 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
                   onselect(null);
                 }}
               >
-                <div className="flex justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
+                <div className="flex flex-col justify-center items-center w-[193px] h-[140px] border-dashed border-2 border-[#005F73] rounded-[8px]">
                   <img src={'./icons/EmptyStateForm.svg'} alt="" />
+                  <div className="text-[#005F73] text-xs font-medium">
+                    {' '}
+                    Create Your Form
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 mt-2 text-Text-Primary text-xs font-medium w-full">
                   <img src="/icons/book-green.svg" alt="" className="w-4 h-4" />
