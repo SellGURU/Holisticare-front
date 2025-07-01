@@ -228,7 +228,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             <div className="flex flex-col">
               <input
                 type="text"
-                className={`w-[200px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+                className={`w-[180px] h-[28px] border ${errorName ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
                 placeholder="Enter your brand name"
                 value={customTheme.name}
                 onChange={handleChangeName}
@@ -238,7 +238,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               )}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex w-full items-center justify-between mt-6">
             <div className="flex items-center">
               <div className="text-xs font-medium text-Text-Primary">
                 Headline
@@ -247,7 +247,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                 <img
                   src="/icons/info-circle.svg"
                   alt=""
-                  className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
+                  className="w-2.5 h-2.5 cursor-pointer ml-1  mb-2"
                 />
               </div>
               <Tooltip
@@ -264,7 +264,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
             <div className="flex flex-col">
               <input
                 type="text"
-                className={`w-[200px] h-[28px] border ${errorHeadLine ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
+                className={`w-[180px] h-[28px] border ${errorHeadLine ? 'border-Red' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold focus:outline-none`}
                 placeholder="Enter brand's headline"
                 value={customTheme.headLine}
                 onChange={handleChangeHeadLine}
