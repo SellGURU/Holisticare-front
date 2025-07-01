@@ -68,7 +68,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeMenu, setActiveMenu }) => {
       <div className="space-y-8">
         {Object.entries(menuItems).map(([category, subItems]) => (
           <div key={category}>
-            <h3 className="text-[#B0B0B0] text-[10px] font-normal  my-2">{category}</h3>
+            <h3 className="text-[#B0B0B0] text-[10px] font-normal  my-2">
+              {category}
+            </h3>
             <ul className="space-y-3 ">
               {subItems.map((item) => (
                 <li
