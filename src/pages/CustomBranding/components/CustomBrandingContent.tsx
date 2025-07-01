@@ -17,11 +17,11 @@ const CustomBrandingContent = () => {
     headLine: '',
     lastUpdate: '',
   });
-  const [defaultPrimaryColor,setDefaultPrimaryColor] = useState('#6CC24A');
-  const [defaultSecondaryColor,setDefaultSecondaryColor] = useState('#005F73');
-  const [defaultLogo, setDefaultLogo] = useState('')
-  const [defaultHeadLine, setDefaultHeadLine] = useState('')
-  const [defaultName, setDefaultName] = useState('')
+  const [defaultPrimaryColor, setDefaultPrimaryColor] = useState('#6CC24A');
+  const [defaultSecondaryColor, setDefaultSecondaryColor] = useState('#005F73');
+  const [defaultLogo, setDefaultLogo] = useState('');
+  const [defaultHeadLine, setDefaultHeadLine] = useState('');
+  const [defaultName, setDefaultName] = useState('');
   const updateCustomTheme = (key: keyof typeof customTheme, value: any) => {
     setCustomTheme((prevTheme) => ({
       ...prevTheme,
@@ -61,11 +61,11 @@ const CustomBrandingContent = () => {
         selectedImage: res.data.brand_elements.logo,
         lastUpdate: res.data.brand_elements.last_update,
       });
-      setDefaultLogo(res.data.brand_elements.logo)
-      setDefaultHeadLine(res.data.brand_elements.headline)
-      setDefaultName(res.data.brand_elements.name)
-      setDefaultPrimaryColor(res.data.brand_elements.primary_color)
-      setDefaultSecondaryColor(res.data.brand_elements.secondary_color)
+      setDefaultLogo(res.data.brand_elements.logo);
+      setDefaultHeadLine(res.data.brand_elements.headline);
+      setDefaultName(res.data.brand_elements.name);
+      setDefaultPrimaryColor(res.data.brand_elements.primary_color);
+      setDefaultSecondaryColor(res.data.brand_elements.secondary_color);
       // setDefaultHeadLine()
       setPageLoading(false);
     });
