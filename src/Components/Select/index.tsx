@@ -33,7 +33,10 @@ const Select: React.FC<SelectProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (selectWrapperRef.current && !selectWrapperRef.current.contains(event.target as Node)) {
+      if (
+        selectWrapperRef.current &&
+        !selectWrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -76,7 +79,9 @@ const Select: React.FC<SelectProps> = ({
         aria-expanded={isOpen}
         tabIndex={0} // Make it focusable
       >
-        <span className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} text-xs`}>
+        <span
+          className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} text-xs`}
+        >
           {selectedValue || placeholder}
         </span>
         {isSetting ? (
@@ -114,7 +119,9 @@ const Select: React.FC<SelectProps> = ({
               role="option"
               aria-selected={selectedValue === option}
             >
-              {isCapital ? option.charAt(0).toUpperCase() + option.slice(1) : option}
+              {isCapital
+                ? option.charAt(0).toUpperCase() + option.slice(1)
+                : option}
             </li>
           ))}
         </ul>
