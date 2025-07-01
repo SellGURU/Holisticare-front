@@ -28,8 +28,8 @@ const biomarkerItem = ({
   useEffect(() => {
     setActiveBiomarker(data.age_groups[0]);
   }, [data]);
-  const [, setGender] = useState(activeBiomarker.gender);
-  const [, setAgeRange] = useState(
+  const [gender, setGender] = useState(activeBiomarker.gender);
+  const [ageRange, setAgeRange] = useState(
     activeBiomarker.min_age + '-' + activeBiomarker.max_age,
   );
   const avilableGenders = () => {
@@ -98,6 +98,7 @@ const biomarkerItem = ({
                 onChange={(val) => {
                   setAgeRange(val);
                 }}
+                value={ageRange}
                 options={avilableAges()}
               ></Select>
             </div>
@@ -108,6 +109,7 @@ const biomarkerItem = ({
                 onChange={(val) => {
                   setGender(val);
                 }}
+                value={gender}
                 options={avilableGenders()}
               ></Select>
             </div>
