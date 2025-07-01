@@ -36,7 +36,7 @@ export const ClinicPreferences = () => {
   console.log(initialPreferences);
 
   return (
-    <div className="bg-backgroundColor-Card h-fit min-h-[348px]  w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
+    <div className="bg-backgroundColor-Card h-fit min-h-[348px]   w-full rounded-2xl relative shadow-100 p-4 text-Text-Primary ">
       {loading ? (
         <div className="w-full flex flex-col gap-3  justify-center items-center h-[300px]">
           <Circleloader></Circleloader>
@@ -44,7 +44,7 @@ export const ClinicPreferences = () => {
       ) : (
         <>
           <div className=" text-sm font-medium text-Text-Primary">
-            ClinicPreferences
+            Clinic Preferences
           </div>
           <div className=" text-[10px] text-[#888888] text-justify my-4">
             Adjust how the system generates and presents content to match your
@@ -55,6 +55,8 @@ export const ClinicPreferences = () => {
             <div className="flex flex-col gap-2 w-full md:w-[50%] text-xs font-medium  ">
               Text Preferences
               <Select
+                placeholder="Select Content Preference"
+                isSetting
                 value={Preferences || ''}
                 isLarge
                 options={Options}
@@ -64,7 +66,7 @@ export const ClinicPreferences = () => {
               />
             </div>
             <div className=" w-full md:w-[50%] flex flex-col gap-2  text-xs font-medium  ">
-              <div className="flex items-start">
+              <div className="flex items-start font-medium">
                 Clinic-Specific Requests or Focus Areas
                 <img
                   data-tooltip-id="text-info"
@@ -73,7 +75,7 @@ export const ClinicPreferences = () => {
                 />
                 <Tooltip
                   place="top"
-                  className="!w-[177px] !text-[10px] !bg-white !text-[#888888]
+                  className="!w-[177px] !text-[10px] !font-normal !bg-white !text-[#888888]
             !text-justify !border !border-Gray-50 !shadow-100 !rounded-xl !z-[99] !leading-5"
                   id="text-info"
                 >
@@ -87,7 +89,7 @@ export const ClinicPreferences = () => {
                 value={textValue || ''}
                 onChange={(e) => settextValue(e.target.value)}
                 placeholder="Enter any specific requests or areas of focus for your clinic"
-                className="appearance-none resize-none w-full min-h-[116px] rounded-2xl border border-Gray-50 bg-[#FDFDFD] text-xs px-3 py-1 outline-none placeholder:text-[#B0B0B0] placeholder:font-light text-Text-Primary"
+                className="appearance-none resize-none font-normal w-full font-normal min-h-[116px] rounded-2xl border border-Gray-50 bg-[#FDFDFD] text-xs px-3 py-1 outline-none placeholder:text-[#B0B0B0] placeholder:font-light placeholder:text-xs"
               />
             </div>
           </div>

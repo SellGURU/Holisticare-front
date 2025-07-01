@@ -1,28 +1,35 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState } from 'react';
-import Select from '../../Components/Select';
-import SvgIcon from '../../utils/svgIcon';
-import StatusBarChartV2 from './StatusBarChartV2';
-import { MainModal } from '../../Components';
-import EditModal from './EditModal';
-import BiomarkersApi from '../../api/Biomarkers';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import BiomarkersApi from '../../api/Biomarkers';
+import { MainModal } from '../../Components';
+import SvgIcon from '../../utils/svgIcon';
+import EditModal from './EditModal';
+import StatusBarChartV2 from './StatusBarChartV2';
+import Select from '../../Components/Select';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BiomarkerItemNewProps {
   data: any;
-  getBiomarkers: () => void;
+  biomarkers: any[];
+  changeBiomarkersValue: (values: any) => void;
 }
 
-const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
+const biomarkerItem = ({
+  data,
+  biomarkers,
+  changeBiomarkersValue,
+}: BiomarkerItemNewProps) => {
   const [activeEdit, setActiveEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const openModalEdit = () => setActiveEdit(true);
   const closeModalEdit = () => setActiveEdit(false);
-  const [activeBiomarker] = useState(data.age_groups[0]);
-  const [, setGender] = useState(activeBiomarker.gender);
-  const [, setAgeRange] = useState(
+  const [activeBiomarker, setActiveBiomarker] = useState(data.age_groups[0]);
+  useEffect(() => {
+    setActiveBiomarker(data.age_groups[0]);
+  }, [data]);
+  const [gender, setGender] = useState(activeBiomarker.gender);
+  const [ageRange, setAgeRange] = useState(
     activeBiomarker.min_age + '-' + activeBiomarker.max_age,
   );
   const avilableGenders = () => {
@@ -43,14 +50,21 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
     });
     return resolvedValues;
   };
+
+  const replaceBiomarker = (biomarkers: any[], updatedItem: any): any[] => {
+    return biomarkers.map((item) =>
+      item.Biomarker === updatedItem.Biomarker ? updatedItem : item,
+    );
+  };
+
   const onsave = (values: any) => {
     setLoading(true);
     BiomarkersApi.saveBiomarkersList({
       updated_biomarker: values,
     })
       .then(() => {
-        getBiomarkers();
         closeModalEdit();
+        changeBiomarkersValue(replaceBiomarker(biomarkers, values));
       })
       .catch((error) => {
         toast.error(error.detail);
@@ -67,8 +81,8 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
             <div className="text-[12px] font-medium text-Text-Primary">
               {data.Biomarker}
             </div>
-            <div className="text-[10px] max-w-[100px] text-nowrap overflow-hidden text-ellipsis mt-1 text-Text-Secondary">
-              {/* {data.more_info} */}
+            <div className="text-[10px] text-nowrap mt-1 text-Text-Quadruple">
+              {data.Category}
             </div>
           </div>
           <div className="w-[70%] mt-20 mb-3">
@@ -84,6 +98,7 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
                 onChange={(val) => {
                   setAgeRange(val);
                 }}
+                value={ageRange}
                 options={avilableAges()}
               ></Select>
             </div>
@@ -94,6 +109,7 @@ const biomarkerItem = ({ data, getBiomarkers }: BiomarkerItemNewProps) => {
                 onChange={(val) => {
                   setGender(val);
                 }}
+                value={gender}
                 options={avilableGenders()}
               ></Select>
             </div>
