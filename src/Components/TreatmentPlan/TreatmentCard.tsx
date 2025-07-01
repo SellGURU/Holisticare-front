@@ -99,28 +99,40 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
               {positive && (
                 <>
                   <div className="text-Text-Primary">
-                    <span className="text-Text-Secondary">Key Benefits: </span>
-                    <span className="text-justify">{positive}</span>
+                    <span className="text-Text-Secondary"></span>
+                    <span className="text-justify bullet-point">
+                      {positive}
+                    </span>
                   </div>
                 </>
               )}
               {negative && (
                 <>
                   <div className="text-Text-Primary mt-3">
-                    <span className="text-Text-Secondary">Key Risks: </span>
-                    <span className="text-justify">{negative}</span>
+                    <span className="text-Text-Secondary"></span>
+                    <span className="text-justify bullet-point">
+                      {negative}
+                    </span>
                   </div>
                 </>
               )}
             </>
           ) : (
             <>
-              <div className="text-Text-Primary break-words text-justify mt-3">
-                {/* <span className="text-Text-Secondary">Key Risks:</span> */}
+              <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
                 {data?.Notes}
               </div>{' '}
             </>
           )}
+          {/* {data?.Notes.map((el:any) => {
+            return (
+              <>
+              <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
+                {el}
+              </div>{' '}              
+              </>
+            )
+          })} */}
         </>
       </div>
       {/* <div className="text-xs font-medium text-Primary-DeepTeal select-none">

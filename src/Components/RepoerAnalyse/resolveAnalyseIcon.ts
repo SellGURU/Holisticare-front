@@ -32,6 +32,9 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Tumor health') {
     return '/icons/biomarkers/dna (1).svg';
   }
+  if (name == 'Genetics/DNA') {
+    return '/icons/biomarkers/DNA.svg';
+  }
   if (name == 'Arterial Stiffness') {
     return '/icons/biomarkers/inject.svg';
   }
@@ -46,6 +49,9 @@ const resolveAnalyseIcon = (name: string) => {
   }
   if (name == 'Trace Essential Minerals') {
     return '/icons/biomarkers/result.svg';
+  }
+  if (name == 'Essential Minerals') {
+    return '/icons/biomarkers/minerals.svg';
   }
   if (name == 'Thyroid Function') {
     return '/icons/biomarkers/thyroid.svg';
@@ -86,6 +92,15 @@ const resolveAnalyseIcon = (name: string) => {
   }
   if (name == 'Sex Hormones') {
     return '/icons/biomarkers/sex-hormone.svg';
+  }
+  if (name == 'Muscle and Fat') {
+    return '/icons/biomarkers/muscle.svg';
+  }
+  if (name == 'Gut Health') {
+    return '/icons/biomarkers/Gut.svg';
+  }
+  if (name == 'Bone Biomarkers') {
+    return '/icons/biomarkers/bones.svg';
   }
   // "./images/report/vitamine.svg",
   // :"./images/report/bone.svg",

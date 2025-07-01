@@ -124,7 +124,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
           </div>
         </div>
         {selectedPage == 'Overview' ? (
-          <div className='w-full'>
+          <div className="w-full">
             <div className="flex items-center justify-between mt-1.5">
               {Categories.map((category, index) => {
                 return (
@@ -279,11 +279,10 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
           </div>
         ) : selectedPage == 'Result' ? (
           <ResultSection customTheme={customTheme}></ResultSection>
-        ) : selectedPage == 'Setting' ?
-        (
+        ) : selectedPage == 'Setting' ? (
           <SettingSection customTheme={customTheme} />
-        ):(
-<ProgressSection customTheme={customTheme}/>
+        ) : (
+          <ProgressSection customTheme={customTheme} />
         )}
 
         <div className="w-full h-[36.68px] absolute bottom-0 left-0 bg-white rounded-t-[2.93px] rounded-b-[12.72px] flex items-center justify-between px-4">
@@ -565,7 +564,6 @@ const ResultSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   );
 };
 const SettingSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
-
   const Options = [
     {
       title: 'Wearable Devices',
@@ -585,67 +583,67 @@ const SettingSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
     },
   ];
   return (
-    <div className='w-[202.5px] '>
-
-  
-    <div className="flex flex-col w-[188px] gap-2 mt-3">
-      {Options.map((option: any, index: number) => (
-        <div
-          key={index}
-          className="flex w-full justify-between items-center bg-white rounded-2xl p-2 shadow-drop"
-        >
-          <div className="flex gap-1 items-center text-Text-Primary text-[6.87px]">
+    <div className="w-[202.5px] ">
+      <div className="flex flex-col w-[188px] gap-2 mt-3">
+        {Options.map((option: any, index: number) => (
+          <div
+            key={index}
+            className="flex w-full justify-between items-center bg-white rounded-2xl p-2 shadow-drop"
+          >
+            <div className="flex gap-1 items-center text-Text-Primary text-[6.87px]">
+              <SvgIcon
+                width="11.74px"
+                height="11.74px"
+                color={customTheme.secondaryColor}
+                src={option.src}
+              />
+              {option.title}
+            </div>
             <SvgIcon
               width="11.74px"
               height="11.74px"
               color={customTheme.secondaryColor}
-              src={option.src}
+              src="/icons/arrow-right-new.svg"
             />
-            {option.title}
           </div>
-          <SvgIcon
-            width="11.74px"
-            height="11.74px"
-            color={customTheme.secondaryColor}
-            src="/icons/arrow-right-new.svg"
-          />
-        </div>
-      ))}
-    </div>
-    <div style={{color: customTheme.secondaryColor}} className='w-[188px] mt-4 flex justify-center gap-1 items-center text-[6.87px] '>
-    <SvgIcon
-            width="11.74px"
-            height="11.74px"
-            color={customTheme.secondaryColor}
-            src="/icons/logout2.svg"
-          />
-          Log Out
-    </div>
+        ))}
+      </div>
+      <div
+        style={{ color: customTheme.secondaryColor }}
+        className="w-[188px] mt-4 flex justify-center gap-1 items-center text-[6.87px] "
+      >
+        <SvgIcon
+          width="11.74px"
+          height="11.74px"
+          color={customTheme.secondaryColor}
+          src="/icons/logout2.svg"
+        />
+        Log Out
+      </div>
     </div>
   );
 };
-
 
 const ProgressSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   const Days = [
     {
       num: 19,
-      day: "Fri"
+      day: 'Fri',
     },
     {
       num: 20,
-      day: "Sat"
+      day: 'Sat',
     },
     {
       num: 21,
-      day: "Sun"
+      day: 'Sun',
     },
     {
       num: 22,
-      day: "Mon"
-    }
+      day: 'Mon',
+    },
   ];
-  const [selectedDay, setselectedDay] = useState("Fri");
+  const [selectedDay, setselectedDay] = useState('Fri');
   const hexToRgba = (hex: string, opacity: string) => {
     const r = parseInt(hex.substring(1, 3), 16);
     const g = parseInt(hex.substring(3, 5), 16);
@@ -656,24 +654,25 @@ const ProgressSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
   const progress = 25; // Example progress value
 
   return (
-    <div className='w-[202.5px] '>
-      <div className='mt-4 flex w-[188px] justify-between'>
-        {
-          Days.map((day, index) => (
-            <div
-              key={index}
-              onClick={() => setselectedDay(day.day)}
-              className={`bg-white rounded-2xl border gap-1 ${selectedDay === day.day ? `border-[${customTheme.secondaryColor}]` : ''} text-[${customTheme.secondaryColor}] flex flex-col items-center justify-center w-[40px] h-[55px]`}
-            >
-              <div className='text-[10px] font-medium'>{day.num}</div>
-              <div className='text-[7px]'>{day.day}</div>
-            </div>
-          ))
-        }
+    <div className="w-[202.5px] ">
+      <div className="mt-4 flex w-[188px] justify-between">
+        {Days.map((day, index) => (
+          <div
+            key={index}
+            onClick={() => setselectedDay(day.day)}
+            className={`bg-white rounded-2xl border gap-1 ${selectedDay === day.day ? `border-[${customTheme.secondaryColor}]` : ''} text-[${customTheme.secondaryColor}] flex flex-col items-center justify-center w-[40px] h-[55px]`}
+          >
+            <div className="text-[10px] font-medium">{day.num}</div>
+            <div className="text-[7px]">{day.day}</div>
+          </div>
+        ))}
       </div>
-      <div style={{ background: gradientWithOpacity }} className='mt-3 rounded-2xl w-[188px] px-4 py-3 flex gap-2 items-center'>
+      <div
+        style={{ background: gradientWithOpacity }}
+        className="mt-3 rounded-2xl w-[188px] px-4 py-3 flex gap-2 items-center"
+      >
         {/* Placeholder for the 25% circle, you'd likely use an SVG or a more complex component here */}
-        <div className='relative w-[28px] h-[28px]'>
+        <div className="relative w-[28px] h-[28px]">
           <svg className="w-full h-full" viewBox="0 0 36 36">
             {/* Background circle (white track) */}
             <circle
@@ -699,51 +698,75 @@ const ProgressSection: FC<TheAppOverviewProps> = ({ customTheme }) => {
             ></circle>
           </svg>
           <div
-            className='absolute top-0 left-0 w-full h-full flex items-center justify-center'
+            className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
             style={{ color: '#383838', fontSize: '7px' }} // Dark gray for text
           >
             %{progress}
           </div>
         </div>
 
-        <div className='flex flex-col gap-1 text-[6.87px] text-Text-Primary'>
+        <div className="flex flex-col gap-1 text-[6.87px] text-Text-Primary">
           Your daily goals almost done! 🔥
-          <span className='text-[5.87px] text-Text-Secondary'>1 of 4 completed</span>
+          <span className="text-[5.87px] text-Text-Secondary">
+            1 of 4 completed
+          </span>
         </div>
       </div>
 
       {/* Tasks Section */}
-      <div className='mt-5 w-[188px]'>
-        <div className='flex justify-between items-center mb-3'>
-          <h3 className='text-[8px] font-medium text-Text-Primary' >Tasks</h3>
-          <span className='text-[7px] ' >2/6 Completed</span>
+      <div className="mt-5 w-[188px]">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-[8px] font-medium text-Text-Primary">Tasks</h3>
+          <span className="text-[7px] ">2/6 Completed</span>
         </div>
 
         {/* Check-In Section */}
-        <div className='mb-4'>
-          <div className='flex items-center gap-1 mb-2'>
-           <SvgIcon  width="11.74px"
-            height="11.74px" color={customTheme.secondaryColor} src='/icons/check-in.svg'/>
-            <span className='text-[8px] font-medium' style={{ color: customTheme.secondaryColor }}>Check-In</span>
+        <div className="mb-4">
+          <div className="flex items-center gap-1 mb-2">
+            <SvgIcon
+              width="11.74px"
+              height="11.74px"
+              color={customTheme.secondaryColor}
+              src="/icons/check-in.svg"
+            />
+            <span
+              className="text-[8px] font-medium"
+              style={{ color: customTheme.secondaryColor }}
+            >
+              Check-In
+            </span>
           </div>
-          <div className='flex items-center justify-between bg-white rounded-lg p-2 shadow-sm mb-2'>
-            <div className='flex items-center gap-1'>
-              <div style={{borderColor:customTheme.primaryColor}} className={`rounded-full border-2 border-[${customTheme.primaryColor}] flex items-center justify-center size-6 `}>
-              <SvgIcon  width="11.74px"
-            height="11.74px" color={customTheme.primaryColor} src='/icons/check-in.svg'/>
+          <div className="flex items-center justify-between bg-white rounded-lg p-2 shadow-sm mb-2">
+            <div className="flex items-center gap-1">
+              <div
+                style={{ borderColor: customTheme.primaryColor }}
+                className={`rounded-full border-2 border-[${customTheme.primaryColor}] flex items-center justify-center size-6 `}
+              >
+                <SvgIcon
+                  width="11.74px"
+                  height="11.74px"
+                  color={customTheme.primaryColor}
+                  src="/icons/check-in.svg"
+                />
               </div>
-              <span className='text-[8px] font-medium text-Text-Primary'>Daily Check-in</span>
+              <span className="text-[8px] font-medium text-Text-Primary">
+                Daily Check-in
+              </span>
             </div>
-            <div style={{borderColor:customTheme.primaryColor}} className='border rounded-md size-4 flex items-center justify-center'>
-              <SvgIcon width='11px' height='11px' src='/icons/Tick Square.svg' color={customTheme.primaryColor} />
+            <div
+              style={{ borderColor: customTheme.primaryColor }}
+              className="border rounded-md size-4 flex items-center justify-center"
+            >
+              <SvgIcon
+                width="11px"
+                height="11px"
+                src="/icons/Tick Square.svg"
+                color={customTheme.primaryColor}
+              />
             </div>
           </div>
         </div>
-
- 
-
       </div>
     </div>
   );
 };
-

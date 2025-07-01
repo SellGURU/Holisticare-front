@@ -164,12 +164,26 @@ const AddTreatmentplanCategory = (category: any) => {
     content: category,
   });
 };
+const resolveHigthNotes = (notes: Array<string>) => {
+  let size = 4;
+  notes.map((el) => {
+    size = size + resolveHightText(el, true);
+  });
+  return size;
+};
 const addHolisticPlanItem = (item: any) => {
-  checkPageCanRender(80 + resolveHightText(item.Notes, true));
+  checkPageCanRender(
+    80 +
+      resolveHightText(item.Notes, true) +
+      resolveHigthNotes(item.Client_Notes),
+  );
   const lastPage = myjson[myjson.length - 1];
   lastPage.renderBoxs.push({
     type: 'TreatmentplanItem',
-    height: 80 + resolveHightText(item.Notes, true),
+    height:
+      80 +
+      resolveHightText(item.Notes, true) +
+      resolveHigthNotes(item.Client_Notes),
     content: item,
   });
   addBox(8);
@@ -359,9 +373,11 @@ const AddActionPlanHeaderOverflow = () => {
 
 const AddActionPlanOverView = (grouped: any) => {
   AddActionPlanHeaderOverflow();
-  (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
-    AddActionPLanRowCategory(key, items);
-  });
+  if (grouped) {
+    (Object.entries(grouped) as [string, any[]][]).map(([key, items]) => {
+      AddActionPLanRowCategory(key, items);
+    });
+  }
 };
 const AddActionPLanRow = (category: string, item: any, index: number) => {
   checkPageCanRender(90);
