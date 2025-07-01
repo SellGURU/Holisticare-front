@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 const mode = [
   {
     icon: '/icons/textalign-justifyleft.svg',
-    title: 'Text',
+    title: 'Paragraph',
     desc: 'Small or log text like title or ...',
   },
   { icon: '/icons/ruler.svg', title: 'Scale', desc: 'A Scale from 1-10' },

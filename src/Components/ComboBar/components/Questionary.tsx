@@ -155,7 +155,7 @@ export const Questionary = () => {
     disabled?: boolean,
   ) => {
     const isNumericString = (str: string) => !isNaN(Number(str));
-    if (type == 'short_answer' || type == 'paragraph') {
+    if (type == 'short_answer' || type == 'Paragraph') {
       return (
         <>
           <textarea
