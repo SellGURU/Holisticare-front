@@ -80,7 +80,7 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
     <div className="w-full flex items-center justify-center gap-8">
       <div
         style={{ background: gradientWithOpacity }}
-        className="w-[232.5px] h-[360px] rounded-[12.72px] shadow-400 pt-4 relative flex flex-col items-center justify-center gap-2 select-none"
+        className="w-[203px] h-[360px] rounded-[12.72px] shadow-400 pt-4 relative flex flex-col items-center justify-center gap-2 select-none"
       >
         {customTheme.selectedImage && (
           <img
@@ -97,11 +97,11 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
             </div>
           </>
         )}
-        <div className="absolute bottom-0 left-0 w-[203px] h-[98px]">
+        <div className="absolute bottom-0 left-0 right-0   w-[203.5px]  h-[98px]">
           <img src="/images/branding-vector.svg" alt="" />
         </div>
       </div>
-      <div className="w-[202.5px] h-[360px] rounded-[14.61px] shadow-400 pt-4 px-2 border relative">
+      <div className="w-[203px] h-[360px] rounded-[14.61px] shadow-400 pt-4 px-2 border relative">
         <div className="flex items-center justify-between ">
           <div className="text-[7.83px] font-medium text-Text-Primary">
             9:41
