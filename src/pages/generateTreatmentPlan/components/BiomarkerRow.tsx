@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 // import RefrenceModal from './RefrenceData';
+import { Tooltip } from 'react-tooltip';
+import { MainModal } from '../../../Components';
+import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
+import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
+import { splitInstructions } from '../../../help';
 import SvgIcon from '../../../utils/svgIcon';
 import EditModal from './EditModal';
-import { MainModal } from '../../../Components';
-import { Tooltip } from 'react-tooltip';
-import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
-import { splitInstructions } from '../../../help';
-import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
 
 interface BioMarkerRowSuggestionsProps {
   value: any;
@@ -20,7 +20,7 @@ interface BioMarkerRowSuggestionsProps {
   index?: number;
 }
 
-const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
+const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   value,
   onchange,
   onDelete,
@@ -170,25 +170,27 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       </div>
                     </>
                   )}
-                  <div
-                    data-tooltip-id={`score-calc-${index}`}
-                    className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
-                  >
-                    Analysis Info
-                    <Tooltip
-                      id={`score-calc-${index}`}
-                      place="top"
-                      className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
-                      style={{
-                        zIndex: 9999,
-                        pointerEvents: 'none',
-                      }}
+                  {value['Practitioner Comments'][0]?.length > 0 && (
+                    <div
+                      data-tooltip-id={`score-calc-${index}`}
+                      className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
                     >
-                      <div className="text-Text-Primary text-[10px]">
-                        {value['Practitioner Comments'][0]}
-                      </div>
-                    </Tooltip>
-                  </div>
+                      Analysis Info
+                      <Tooltip
+                        id={`score-calc-${index}`}
+                        place="top"
+                        className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                        style={{
+                          zIndex: 9999,
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        <div className="text-Text-Primary text-[10px]">
+                          {value['Practitioner Comments'][0]}
+                        </div>
+                      </Tooltip>
+                    </div>
+                  )}
                 </>
               )}
               {Conflicts?.length > 0 && (
@@ -202,7 +204,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
               )}
             </div>
           </div>
-          <div className="text-[12px] gap-2 w-full mt-2.5">
+          <div className="text-[12px] gap-2 w-full">
             {/* <textarea
               value={editableValue}
               onChange={(e) => setEditableValue(e.target.value)}
@@ -233,7 +235,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       </span>
                       {positive}
                     </div>
-                    <div className="text-Text-Primary mt-2.5">
+                    <div className="text-Text-Primary mt-1.5">
                       <span className="text-Text-Secondary bullet-point">
                         Key Risks:{' '}
                       </span>

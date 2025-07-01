@@ -1,5 +1,6 @@
 import { Tooltip } from 'react-tooltip';
 // import { splitInstructions } from '../../help';
+import { FC } from 'react';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,20 +9,14 @@ interface TreatmentCardProps {
   isOther?: boolean;
   index: number;
 }
-const TreatmentCard: React.FC<TreatmentCardProps> = ({
-  data,
-  isOther,
-  index,
-}) => {
-  console.log(data);
-
+const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
+  console.log(isOther);
   // const { positive, negative } = splitInstructions(data.Notes);
   return (
-    <div className="w-[354px] no-split print:w-full min-h-[234px] h-full text-justify  print:h-auto flex flex-col gap-4 px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
+    <div className="w-[354px] no-split print:w-full min-h-[234px] text-justify  print:h-auto flex flex-col px-4 py-2 bg-backgroundColor-Card border border-Gray-50 rounded-2xl relative text-Text-Primary ">
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm  text-Text-Primary ">
-          <TooltipTextAuto maxWidth="250px">{data?.title}</TooltipTextAuto>
-
+          <TooltipTextAuto maxWidth="280px">{data?.title}</TooltipTextAuto>
           <div
             data-tooltip-id={`score-calc-${index}`}
             className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
@@ -42,9 +37,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
             </Tooltip>
           </div>
         </div>
-        {!isOther && (
+        {/* {!isOther && (
           <div className="flex gap-2 text-[8px]">
-            {/* <div
+            <div
               data-tooltip-id="system-score"
               className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1"
             >
@@ -66,8 +61,8 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                   Score based on all data and AI insights.
                 </div>
               </Tooltip>
-            </div> */}
-            {/* <div
+            </div>
+            <div
               data-tooltip-id="base-score"
               className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1"
             >
@@ -87,9 +82,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
                   Initial score from core health metrics.
                 </div>
               </Tooltip>
-            </div> */}
+            </div>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
@@ -127,7 +122,9 @@ const TreatmentCard: React.FC<TreatmentCardProps> = ({
           {data?.Notes.map((el: any) => {
             return (
               <>
-                <div className="text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3">
+                <div
+                  className={`text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3 first:mt-1.5`}
+                >
                   {el}
                 </div>{' '}
               </>
