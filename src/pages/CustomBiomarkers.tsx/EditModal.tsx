@@ -13,6 +13,9 @@ interface EditModalProps {
 const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
   const [jsonData, setJsonData] = useState(data);
   const handleJsonChange = (e: any) => {
+    if (e.name === 'Biomarker') {
+      return false;
+    }
     setJsonData(e.updated_src);
   };
   return (
