@@ -560,7 +560,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
-                <div className="my-10 min-h-[400px]">
+                <div className="my-10 min-h-[500px]">
                   <div className="w-full mb-3 flex items-center justify-between">
                     <div
                       id="Concerning Result"
