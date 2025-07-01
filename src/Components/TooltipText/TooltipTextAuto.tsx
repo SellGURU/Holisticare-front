@@ -1,6 +1,6 @@
+import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
-import { ReactElement, useEffect, useRef, useState } from 'react';
 
 interface TooltipTextAutoProps {
   children: ReactElement | string;
@@ -9,7 +9,7 @@ interface TooltipTextAutoProps {
   tooltipClassName?: string;
 }
 
-const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
+const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
   children,
   maxWidth = '200px',
   tooltipPlace = 'top',
@@ -27,17 +27,15 @@ const TooltipTextAuto: React.FC<TooltipTextAutoProps> = ({
       setIsEllipsized(scrollWidth > offsetWidth);
     }
   }, [children]);
-  console.log(children);
 
   return (
     <>
       <div
-        className="select-none"
+        className={`select-none max-w-[150px] sm:max-w-[180px] ${maxWidth && `md:max-w-[${maxWidth}]`}`}
         ref={textRef}
         data-tooltip-id={isEllipsized ? tooltipId : ''}
         data-tooltip-content={typeof children === 'string' ? children : ''}
         style={{
-          maxWidth,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
