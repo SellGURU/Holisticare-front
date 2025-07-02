@@ -155,7 +155,7 @@ export const Questionary = () => {
     disabled?: boolean,
   ) => {
     const isNumericString = (str: string) => !isNaN(Number(str));
-    if (type == 'short_answer' || type == 'Paragraph') {
+    if (type == 'short_answer' || type == 'Paragraph' || type == 'paragraph') {
       return (
         <>
           <textarea
@@ -168,7 +168,7 @@ export const Questionary = () => {
               );
             }}
             placeholder="Enter value"
-            className="w-full text-[10px] h-[80px] text-Text-Primary outline-none border-none bg-backgroundColor-Card"
+            className="w-full text-[10px] h-[80px] text-Text-Primary outline-none border-none bg-backgroundColor-Card resize-none"
           />
         </>
       );
@@ -445,14 +445,14 @@ export const Questionary = () => {
   };
   const checkFormComplete = () => {
     const datas = questionsFormData?.questions?.filter(
-      (el: any) => el.required == true && el.response.length == 0,
+      (el: any) => el?.required == true && el.response.length == 0,
     );
     return datas?.length == 0;
   };
   const [activeCard, setActiveCard] = useState(1);
 
   const isQuestionAnswered = (question: any) => {
-    if (!question.required) return true;
+    if (!question?.required) return true;
 
     if (question.type === 'checkbox') {
       return question.response && question.response.length > 0;
@@ -497,7 +497,13 @@ export const Questionary = () => {
         {tryAdd && (
           <>
             <div className="bg-bg-color rounded-xl p-3 border border-Gray-50">
-              <div className="flex flex-col gap-2 h-[150px] pr-[6px] custom-scrollbar  overflow-y-auto">
+              <div
+                className="flex flex-col gap-2 h-[150px] pr-[6px] overflow-y-auto"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#E9F0F2',
+                }}
+              >
                 {AddForms.length > 0 ? (
                   AddForms.map((form: any) => (
                     <div
@@ -767,11 +773,9 @@ export const Questionary = () => {
               <div className="flex justify-center w-full items-start  ">
                 <div
                   style={{ overflowWrap: 'break-word' }}
-                  className="w-full mt-2 h-[500px] overflow-auto "
+                  className="w-full mt-2 h-[70vh] overflow-auto"
                 >
                   {data?.map((el: any, index: number) => {
-                    console.log(el);
-
                     return (
                       <QuestionRow
                         onTryComplete={() => {
