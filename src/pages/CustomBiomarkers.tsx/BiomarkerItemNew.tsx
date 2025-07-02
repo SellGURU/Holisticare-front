@@ -92,7 +92,7 @@ const biomarkerItem = ({
             ></StatusBarChartV2>
           </div>
           <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
-            <div>
+            <div className="invisible">
               <Select
                 key="ages"
                 onChange={(val) => {
@@ -102,7 +102,7 @@ const biomarkerItem = ({
                 options={avilableAges()}
               ></Select>
             </div>
-            <div>
+            <div className="invisible">
               <Select
                 isCapital
                 key="gender"
