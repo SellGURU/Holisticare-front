@@ -5,26 +5,31 @@ import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import NotificationApi from '../../api/Notification';
 import { AppContext } from '../../store/app';
 import Circleloader from '../CircleLoader';
+import { useNavigate } from 'react-router-dom';
 interface NotificationProps {
   setisUnReadNotif: (value: boolean) => void;
   refrence: any;
-  refetchTrigger: boolean;
+}
+
+interface ProceedType {
+  type: 'read_only' | 'redirect';
+  destination?: string; // Only present if type is 'redirect'
 }
 
 interface NotificationItem {
   notification_id: string;
   title: string;
-  type: 'General' | 'Coach'; 
+  type: 'General' | 'Coach';
   content: string;
   read_status: boolean;
   created_at: string;
   read_at: null | string;
-  member_id: number; 
+  member_id?: number; // Made optional as not all notifications may have it
+  proceed_type?: ProceedType; // Add the new field, it's optional in case not all notifications have it
 }
 
 export const Notification: React.FC<NotificationProps> = ({
   refrence,
-  refetchTrigger,
   setisUnReadNotif,
 }) => {
   const [activeMenu, setactiveMenu] = useState<string>('General Notifications');
@@ -79,16 +84,14 @@ export const Notification: React.FC<NotificationProps> = ({
           });
         });
       }
-      const initialUnreadCount = allNotifications.filter((notif) => !notif.read_status).length;
+      const initialUnreadCount = allNotifications.filter(
+        (notif) => !notif.read_status,
+      ).length;
       setisUnReadNotif(initialUnreadCount > 0);
       setNotifications(allNotifications);
       setLoading(false);
     });
-  }, [setisUnReadNotif]);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications, refetchTrigger]);
+  }, []);
 
   // Update unread status count whenever notifications change or filter changes
   useEffect(() => {
@@ -122,18 +125,34 @@ export const Notification: React.FC<NotificationProps> = ({
   );
   const { patientsList } = useContext(AppContext);
 
-
-
-  const getPatientPicture = (memberId: number | undefined): string => { 
-
-    const patient = patientsList.find(p => p.member_id === memberId);
-    return patient?.profile_picture || `https://ui-avatars.com/api/?name=${patient.name}`;
+  const getPatientPicture = (memberId: number | undefined): string => {
+    const patient = patientsList.find((p) => p.member_id === memberId);
+    
+    return (
+      patient?.profile_picture ||
+      `https://ui-avatars.com/api/?name=${patient?.name}`
+    );
   };
-console.log(patientsList);
+  console.log(patientsList);
+  
 
+  const navigate = useNavigate();
   useEffect(() => {
     fetchNotifications();
-  }, [fetchNotifications, refetchTrigger]);
+  }, [fetchNotifications]);
+  const handleProceedClick = (notif: NotificationItem) => {
+    // Mark as read when proceeding
+    handleNotificationClick(notif.notification_id);
+
+    if (
+      notif.proceed_type?.type === 'redirect' &&
+      notif.proceed_type.destination
+    ) {
+      // Use navigate to redirect
+      navigate(`/${notif.proceed_type.destination}`);
+    }
+    // If type is 'read_only' or destination is missing, do nothing (just mark as read)
+  };
   return (
     <div
       ref={refrence}
@@ -151,24 +170,25 @@ console.log(patientsList);
       <div className="flex-1 overflow-y-auto max-h-[500px] pr-1">
         {loading ? (
           <div className="w-full flex flex-col gap-3  justify-center items-center h-full">
-          <Circleloader></Circleloader>
-        </div>
+            <Circleloader></Circleloader>
+          </div>
         ) : filteredNotifications.length > 0 ? (
           filteredNotifications.map((notif) => (
             <div
-              onClick={() =>{ 
-                if(!notif.read_status){
-                  handleNotificationClick(notif.notification_id)}}
+              onClick={() => {
+                if (!notif.read_status) {
+                  handleNotificationClick(notif.notification_id);
                 }
-              
+              }}
               key={notif.notification_id}
               className="flex w-full justify-between bg-[#FCFCFC] py-2 px-3 items-center gap-3 cursor-pointer border border-Gray-25 rounded-2xl mt-[6px]"
             >
               <div className="flex items-center gap-2">
                 <div className="relative flex-shrink-0">
-                 
-                  <img src={getPatientPicture(notif.member_id)} className="size-8 rounded-full object-cover flex items-center justify-center bg-gray-200 text-gray-700 text-xs font-semibold"/>
-                  
+                  <img
+                    src={getPatientPicture(notif.member_id)}
+                    className="size-8 rounded-full object-cover flex items-center justify-center bg-gray-200 text-gray-700 text-xs font-semibold"
+                  />
                 </div>
                 <div className="flex-grow flex flex-col">
                   <div className="text-[10px] font-medium ">
@@ -186,12 +206,18 @@ console.log(patientsList);
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#005F73] to-[#6CC24A]"></span>
                 )}
                 {/* Removed 'action' as it's not in the provided API response, add back if needed */}
-                {/* {notif.action && (
-                  <button className="flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start">
+                {notif.proceed_type?.type !== 'read_only' && ( // Only show if type is 'redirect'
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent the parent div's onClick from firing
+                      handleProceedClick(notif);
+                    }}
+                    className="flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start"
+                  >
                     Proceed
                     <img src="/icons/arrow-right-small 2.svg" alt="" />
                   </button>
-                )} */}
+                )}
               </div>
             </div>
           ))

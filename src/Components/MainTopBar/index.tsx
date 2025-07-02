@@ -32,6 +32,8 @@ const MainTopBar = () => {
     buttonRefrence: notifButtentRef,
     close: () => {
       setshowNotification(false);
+      NotificationApi.lastUsed = new Date();
+      localStorage.setItem('lastNotif', JSON.stringify(new Date()));
     },
   });
   const [customTheme, setCustomTheme] = useState(
@@ -80,15 +82,12 @@ const MainTopBar = () => {
   }, []);
 
   console.log(showNotification);
-  const [notificationRefetchTrigger, setNotificationRefetchTrigger] =
-    useState(false);
 
   useEffect(() => {
     const checkNewNotifications = async () => {
       try {
         const response = await NotificationApi.checkNotification();
         if (response && response.data && response.data.new_notifications) {
-          setNotificationRefetchTrigger((prev) => !prev);
           setisUnReadNotif(true);
         }
       } catch (error) {
@@ -187,7 +186,6 @@ const MainTopBar = () => {
             )}
             {showNotification && (
               <Notification
-                refetchTrigger={notificationRefetchTrigger}
                 refrence={notifRefrence}
                 setisUnReadNotif={(value) => {
                   setisUnReadNotif(value);
