@@ -299,7 +299,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
               </div>
             </div>
             <div
-              className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] h-[100px] min-h-[100px]   max-h-[100px]  ${viewQuestienry.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
+              className={`bg-backgroundColor-Card border border-gray-50 pt-2 px-4 rounded-b-[6px] min-h-[100px] max-h-[200px]  ${viewQuestienry.questions[activeCard - 1].type == 'date' ? 'overflow-visible' : 'overflow-y-auto'}`}
             >
               {resolveForm(
                 viewQuestienry.questions[activeCard - 1].type,
