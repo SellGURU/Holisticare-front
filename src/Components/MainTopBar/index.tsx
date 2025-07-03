@@ -9,6 +9,7 @@ import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 import { Notification } from '../Notification';
+import NotificationApi from '../../api/Notification';
 const MainTopBar = () => {
   const navigate = useNavigate();
   // const navigate = useNavigate();
@@ -31,6 +32,8 @@ const MainTopBar = () => {
     buttonRefrence: notifButtentRef,
     close: () => {
       setshowNotification(false);
+      NotificationApi.lastUsed = new Date();
+      localStorage.setItem('lastNotif', JSON.stringify(new Date()));
     },
   });
   const [customTheme, setCustomTheme] = useState(
@@ -80,6 +83,24 @@ const MainTopBar = () => {
 
   console.log(showNotification);
 
+  useEffect(() => {
+    const checkNewNotifications = async () => {
+      try {
+        const response = await NotificationApi.checkNotification();
+        if (response && response.data && response.data.new_notifications) {
+          setisUnReadNotif(true);
+        }
+      } catch (error) {
+        console.error('Error checking for new notifications:', error);
+      }
+    };
+
+    checkNewNotifications();
+
+    const intervalId = setInterval(checkNewNotifications, 15000);
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <>
       <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2">
