@@ -43,7 +43,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             </div>
             {isLongName && (
               <Tooltip
-                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                className="!bg-white !w-[200px] !opacity-100 !bg-opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                 id={`tooltip-refrencebox-${index}`}
                 place="bottom-end"
               >
