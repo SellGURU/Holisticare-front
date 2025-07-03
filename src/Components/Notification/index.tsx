@@ -127,14 +127,13 @@ export const Notification: React.FC<NotificationProps> = ({
 
   const getPatientPicture = (memberId: number | undefined): string => {
     const patient = patientsList.find((p) => p.member_id === memberId);
-    
+
     return (
       patient?.profile_picture ||
       `https://ui-avatars.com/api/?name=${patient?.name}`
     );
   };
   console.log(patientsList);
-  
 
   const navigate = useNavigate();
   useEffect(() => {

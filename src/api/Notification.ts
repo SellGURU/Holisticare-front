@@ -59,7 +59,7 @@ class NotificationApi extends Api {
       ? this.lastUsed.toISOString()
       : new Date(0).toISOString();
 
-    this.isChecking = true; 
+    this.isChecking = true;
 
     return this.post(
       '/notifications/check_new',

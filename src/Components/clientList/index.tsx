@@ -75,12 +75,14 @@ const ClientList = () => {
       .then((res) => {
         setClientList(res.data.patients_list_data);
         setFilteredClientList(res.data.patients_list_data);
-        const patientsForContext = res.data.patients_list_data.map((patient: ClientData) => ({
-          member_id: patient.member_id,
-          profile_picture: patient.picture,
-          name: patient.name
-      }));
-      setPatientsList(patientsForContext);
+        const patientsForContext = res.data.patients_list_data.map(
+          (patient: ClientData) => ({
+            member_id: patient.member_id,
+            profile_picture: patient.picture,
+            name: patient.name,
+          }),
+        );
+        setPatientsList(patientsForContext);
       })
       .finally(() => {
         setIsLoading(false);
@@ -91,7 +93,6 @@ const ClientList = () => {
     getPatients();
   }, []);
   const { setPatientsList } = useContext(AppContext);
-
 
   const handleFilterChange = (filter: string) => {
     let sortedList = [...clientList];
