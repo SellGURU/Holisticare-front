@@ -88,7 +88,7 @@ export const Notification: React.FC<NotificationProps> = ({
         (notif) => !notif.read_status,
       ).length;
       setisUnReadNotif(initialUnreadCount > 0);
-      setNotifications(allNotifications);
+      // setNotifications(allNotifications);
       setLoading(false);
     });
   }, []);
@@ -190,11 +190,11 @@ export const Notification: React.FC<NotificationProps> = ({
                   />
                 </div>
                 <div className="flex-grow flex flex-col">
-                  <div className="text-[10px] font-medium ">
+                  <div className="text-[10px] font-[500] ">
                     <TooltipTextAuto maxWidth="228px">
                       {notif.content || notif.title}
                     </TooltipTextAuto>
-                    <div className="text-[10px] text-[#888888]">
+                    <div className="text-[10px] font-normal text-[#888888]">
                       {notif.created_at ? formatTime(notif.created_at) : ''}
                     </div>
                   </div>
