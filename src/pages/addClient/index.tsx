@@ -529,9 +529,7 @@ const AddClient = () => {
                       if (!isLoading) {
                         handleSaveClick();
                         setShowValidation(true);
-
                       }
-
                     }}
                   >
                     {isLoading ? (
