@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 interface NotificationProps {
   setisUnReadNotif: (value: boolean) => void;
   refrence: any;
+  onUnreadNotificationsChange?: (unreadIds: string[]) => void; 
+
 }
 
 interface ProceedType {
@@ -22,8 +24,8 @@ interface NotificationItem {
   type: 'General' | 'Coach';
   content: string;
   read_status: boolean;
-  created_at: string;
-  read_at: null | string;
+  created_at: number;
+  read_at: null | number;
   member_id?: number; // Made optional as not all notifications may have it
   proceed_type?: ProceedType; // Add the new field, it's optional in case not all notifications have it
 }
@@ -31,26 +33,50 @@ interface NotificationItem {
 export const Notification: React.FC<NotificationProps> = ({
   refrence,
   setisUnReadNotif,
+  onUnreadNotificationsChange
 }) => {
   const [activeMenu, setactiveMenu] = useState<string>('General Notifications');
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Helper to format the time string
-  const formatTime = (isoString: string): string => {
-    const date = new Date(isoString);
-    const now = new Date();
-    const diffHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60),
-    );
-
-    if (diffHours < 24) {
-      return `${diffHours} Hours ago`;
-    } else if (diffHours < 48 && now.getDate() - date.getDate() === 1) {
-      // Check if it's truly yesterday and not just 24-48 hours ago within the same day
-      return `Yesterday ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  const formatTime = (timestamp: number): string => {
+    const notificationDate = new Date(timestamp); // Create Date object directly from timestamp
+    const now = new Date(); // Current date/time in user's local timezone
+  
+    const diffMilliseconds = now.getTime() - notificationDate.getTime();
+  
+    // Convert to minutes, hours, days
+    const diffMinutes = Math.floor(diffMilliseconds / (1000 * 60));
+    const diffHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
+    // diffDays is used for the "X days ago" calculation, based on exact 24-hour periods
+    // We'll use diffDaysFromMidnight for the "calendar day" comparisons.
+  
+    // Get start of today and start of notificationDate's day (in local time)
+    // This helps accurately determine "yesterday" and "X days ago" across timezone boundaries
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startOfNotificationDay = new Date(notificationDate.getFullYear(), notificationDate.getMonth(), notificationDate.getDate()).getTime();
+    
+    // Calculate difference in calendar days (midnight to midnight)
+    const diffDaysFromMidnight = Math.floor((startOfToday - startOfNotificationDay) / (1000 * 60 * 60 * 24));
+  
+  
+    if (diffMinutes < 1) {
+      return "Just now";
+    } else if (diffMinutes < 60) {
+      // Singular 'minute' if 1
+      return `${diffMinutes} Minute${diffMinutes === 1 ? '' : 's'} ago`;
+    } else if (diffHours < 24 && diffDaysFromMidnight === 0) { // Still today, but more than an hour ago
+      // Singular 'hour' if 1
+      return `${diffHours} Hour${diffHours === 1 ? '' : 's'} ago`;
+    } else if (diffDaysFromMidnight === 1) { // Exactly yesterday
+      return `Yesterday ${notificationDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (diffDaysFromMidnight > 1 && diffDaysFromMidnight <= 7) { // Between 2 and 7 calendar days ago
+      // Singular 'day' if 1 (though this condition starts from >1)
+      return `${diffDaysFromMidnight} day${diffDaysFromMidnight === 1 ? '' : 's'} ago`;
     } else {
-      return date.toLocaleString([], {
+      // For older dates (more than 7 days ago), show full local date and time
+      return notificationDate.toLocaleString([], {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -65,52 +91,57 @@ export const Notification: React.FC<NotificationProps> = ({
     NotificationApi.getAll((data: any) => {
       const allNotifications: NotificationItem[] = [];
 
-      // Process "general" notifications
       if (data.general) {
         data.general.forEach((notif: NotificationItem) => {
-          allNotifications.push({
-            ...notif,
-            type: 'General', // Ensure type consistency
-          });
+          allNotifications.push({ ...notif, type: 'General' });
         });
       }
 
-      // Process "coach" notifications
       if (data.coach) {
         data.coach.forEach((notif: NotificationItem) => {
-          allNotifications.push({
-            ...notif,
-            type: 'Coach', // Ensure type consistency
-          });
+          allNotifications.push({ ...notif, type: 'Coach' });
         });
       }
-      const initialUnreadCount = allNotifications.filter(
-        (notif) => !notif.read_status,
-      ).length;
-      setisUnReadNotif(initialUnreadCount > 0);
-      // setNotifications(allNotifications);
+      setNotifications(allNotifications);
       setLoading(false);
+
+      // After fetching, update the parent's unread dot status
+      const unreadCount = allNotifications.filter((notif) => !notif.read_status).length;
+      setisUnReadNotif(unreadCount > 0);
+      
+      // NEW: Report all unread IDs to the parent component
+      if (onUnreadNotificationsChange) {
+        const currentUnreadIds = allNotifications
+          .filter(notif => !notif.read_status)
+          .map(notif => notif.notification_id);
+        onUnreadNotificationsChange(currentUnreadIds);
+      }
     });
   }, []);
 
   // Update unread status count whenever notifications change or filter changes
   useEffect(() => {
     const unreadCount = notifications.filter(
-      (notif) =>
-        !notif.read_status &&
-        (activeMenu === 'General Notifications'
-          ? notif.type === 'General'
-          : notif.type === 'Coach'),
+      (notif) => !notif.read_status &&
+        (activeMenu === 'General Notifications' ? notif.type === 'General' : notif.type === 'Coach'),
     ).length;
     setisUnReadNotif(unreadCount > 0);
-  }, [notifications, activeMenu, setisUnReadNotif]);
+
+    // NEW: Also report unread IDs when local state changes (e.g., user clicks to read)
+    if (onUnreadNotificationsChange) {
+      const currentUnreadIds = notifications
+        .filter(notif => !notif.read_status)
+        .map(notif => notif.notification_id);
+      onUnreadNotificationsChange(currentUnreadIds);
+    }
+  }, [notifications, activeMenu, onUnreadNotificationsChange]);
 
   const handleNotificationClick = (clickedNotifId: string) => {
     // Mark notification as read in the UI
     setNotifications((prev) =>
       prev.map((item) =>
         item.notification_id === clickedNotifId
-          ? { ...item, read_status: true, read_at: new Date().toISOString() }
+          ? { ...item, read_status: true, read_at: new Date().getTime() } // Use getTime() for timestamp
           : item,
       ),
     );
@@ -221,8 +252,9 @@ export const Notification: React.FC<NotificationProps> = ({
             </div>
           ))
         ) : (
-          <div className="text-center text-xs text-Text-Secondary">
-            No notifications in this category.
+          <div className="flex flex-col justify-center items-center w-full  h-[450px] text-xs font-medium">
+            <img className='-mb-4' src="/icons/noNotif.svg" alt="" />
+            No notification found.
           </div>
         )}
       </div>

@@ -16,6 +16,8 @@ const MainTopBar = () => {
   const [visibleClinic, setVisibleClinic] = useState(false);
   const [isUnReadNotif, setisUnReadNotif] = useState(false);
   const [showNotification, setshowNotification] = useState(false);
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>([]);
+
   const refrence = useRef(null);
   const buttentRef = useRef(null);
   const notifRefrence = useRef(null);
@@ -32,8 +34,21 @@ const MainTopBar = () => {
     buttonRefrence: notifButtentRef,
     close: () => {
       setshowNotification(false);
+      
+      // Mark all unread notifications as read when the modal closes (Boss's requirement)
+      if (unreadNotificationIds.length > 0) {
+        console.log(`Marking ${unreadNotificationIds.length} notifications as read on modal close.`);
+        unreadNotificationIds.forEach(id => {
+          NotificationApi.readNotification(id); // Send API call for each
+        });
+        setisUnReadNotif(false); // Immediately hide the dot in MainTopBar
+        setUnreadNotificationIds([]); // Clear the list
+      }
+
+      // Update lastUsed timestamp after processing all unreads
+      // This is crucial: the user has acknowledged everything up to this moment.
       NotificationApi.lastUsed = new Date();
-      localStorage.setItem('lastNotif', JSON.stringify(new Date()));
+      localStorage.setItem('lastNotif', JSON.stringify(new Date().getTime()));
     },
   });
   const [customTheme, setCustomTheme] = useState(
@@ -186,10 +201,13 @@ const MainTopBar = () => {
             )}
             {showNotification && (
               <Notification
+              onUnreadNotificationsChange={setUnreadNotificationIds} 
+
                 refrence={notifRefrence}
                 setisUnReadNotif={(value) => {
                   setisUnReadNotif(value);
                 }}
+                
               />
             )}
           </div>
