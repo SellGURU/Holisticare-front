@@ -62,7 +62,7 @@ class NotificationApi extends Api {
             this.lastUsed = new Date(0); // Attempt to parse as ISO string from storage directly
           }
         } catch (e) {
-          console.error("Failed to parse lastNotif from localStorage:", e);
+          console.error('Failed to parse lastNotif from localStorage:', e);
           this.lastUsed = new Date(0); // Default to epoch if parsing fails
         }
       }

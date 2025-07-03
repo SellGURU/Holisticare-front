@@ -9,8 +9,7 @@ import { useNavigate } from 'react-router-dom';
 interface NotificationProps {
   setisUnReadNotif: (value: boolean) => void;
   refrence: any;
-  onUnreadNotificationsChange?: (unreadIds: string[]) => void; 
-
+  onUnreadNotificationsChange?: (unreadIds: string[]) => void;
 }
 
 interface ProceedType {
@@ -33,7 +32,7 @@ interface NotificationItem {
 export const Notification: React.FC<NotificationProps> = ({
   refrence,
   setisUnReadNotif,
-  onUnreadNotificationsChange
+  onUnreadNotificationsChange,
 }) => {
   const [activeMenu, setactiveMenu] = useState<string>('General Notifications');
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -43,35 +42,47 @@ export const Notification: React.FC<NotificationProps> = ({
   const formatTime = (timestamp: number): string => {
     const notificationDate = new Date(timestamp); // Create Date object directly from timestamp
     const now = new Date(); // Current date/time in user's local timezone
-  
+
     const diffMilliseconds = now.getTime() - notificationDate.getTime();
-  
+
     // Convert to minutes, hours, days
     const diffMinutes = Math.floor(diffMilliseconds / (1000 * 60));
     const diffHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
     // diffDays is used for the "X days ago" calculation, based on exact 24-hour periods
     // We'll use diffDaysFromMidnight for the "calendar day" comparisons.
-  
+
     // Get start of today and start of notificationDate's day (in local time)
     // This helps accurately determine "yesterday" and "X days ago" across timezone boundaries
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const startOfNotificationDay = new Date(notificationDate.getFullYear(), notificationDate.getMonth(), notificationDate.getDate()).getTime();
-    
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    ).getTime();
+    const startOfNotificationDay = new Date(
+      notificationDate.getFullYear(),
+      notificationDate.getMonth(),
+      notificationDate.getDate(),
+    ).getTime();
+
     // Calculate difference in calendar days (midnight to midnight)
-    const diffDaysFromMidnight = Math.floor((startOfToday - startOfNotificationDay) / (1000 * 60 * 60 * 24));
-  
-  
+    const diffDaysFromMidnight = Math.floor(
+      (startOfToday - startOfNotificationDay) / (1000 * 60 * 60 * 24),
+    );
+
     if (diffMinutes < 1) {
-      return "Just now";
+      return 'Just now';
     } else if (diffMinutes < 60) {
       // Singular 'minute' if 1
       return `${diffMinutes} Minute${diffMinutes === 1 ? '' : 's'} ago`;
-    } else if (diffHours < 24 && diffDaysFromMidnight === 0) { // Still today, but more than an hour ago
+    } else if (diffHours < 24 && diffDaysFromMidnight === 0) {
+      // Still today, but more than an hour ago
       // Singular 'hour' if 1
       return `${diffHours} Hour${diffHours === 1 ? '' : 's'} ago`;
-    } else if (diffDaysFromMidnight === 1) { // Exactly yesterday
+    } else if (diffDaysFromMidnight === 1) {
+      // Exactly yesterday
       return `Yesterday ${notificationDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    } else if (diffDaysFromMidnight > 1 && diffDaysFromMidnight <= 7) { // Between 2 and 7 calendar days ago
+    } else if (diffDaysFromMidnight > 1 && diffDaysFromMidnight <= 7) {
+      // Between 2 and 7 calendar days ago
       // Singular 'day' if 1 (though this condition starts from >1)
       return `${diffDaysFromMidnight} day${diffDaysFromMidnight === 1 ? '' : 's'} ago`;
     } else {
@@ -106,14 +117,16 @@ export const Notification: React.FC<NotificationProps> = ({
       setLoading(false);
 
       // After fetching, update the parent's unread dot status
-      const unreadCount = allNotifications.filter((notif) => !notif.read_status).length;
+      const unreadCount = allNotifications.filter(
+        (notif) => !notif.read_status,
+      ).length;
       setisUnReadNotif(unreadCount > 0);
-      
+
       // NEW: Report all unread IDs to the parent component
       if (onUnreadNotificationsChange) {
         const currentUnreadIds = allNotifications
-          .filter(notif => !notif.read_status)
-          .map(notif => notif.notification_id);
+          .filter((notif) => !notif.read_status)
+          .map((notif) => notif.notification_id);
         onUnreadNotificationsChange(currentUnreadIds);
       }
     });
@@ -122,16 +135,19 @@ export const Notification: React.FC<NotificationProps> = ({
   // Update unread status count whenever notifications change or filter changes
   useEffect(() => {
     const unreadCount = notifications.filter(
-      (notif) => !notif.read_status &&
-        (activeMenu === 'General Notifications' ? notif.type === 'General' : notif.type === 'Coach'),
+      (notif) =>
+        !notif.read_status &&
+        (activeMenu === 'General Notifications'
+          ? notif.type === 'General'
+          : notif.type === 'Coach'),
     ).length;
     setisUnReadNotif(unreadCount > 0);
 
     // NEW: Also report unread IDs when local state changes (e.g., user clicks to read)
     if (onUnreadNotificationsChange) {
       const currentUnreadIds = notifications
-        .filter(notif => !notif.read_status)
-        .map(notif => notif.notification_id);
+        .filter((notif) => !notif.read_status)
+        .map((notif) => notif.notification_id);
       onUnreadNotificationsChange(currentUnreadIds);
     }
   }, [notifications, activeMenu, onUnreadNotificationsChange]);
@@ -253,7 +269,7 @@ export const Notification: React.FC<NotificationProps> = ({
           ))
         ) : (
           <div className="flex flex-col justify-center items-center w-full  h-[450px] text-xs font-medium">
-            <img className='-mb-4' src="/icons/noNotif.svg" alt="" />
+            <img className="-mb-4" src="/icons/noNotif.svg" alt="" />
             No notification found.
           </div>
         )}

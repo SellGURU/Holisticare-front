@@ -526,7 +526,10 @@ const AddClient = () => {
                     //   Object.values(formik.errors).some((error) => error !== '')
                     // }
                     onClick={() => {
-                      handleSaveClick();
+                      if (!isLoading) {
+                        handleSaveClick();
+                      }
+
                       setShowValidation(true);
                     }}
                   >

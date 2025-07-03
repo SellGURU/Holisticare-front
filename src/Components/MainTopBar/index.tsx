@@ -16,7 +16,9 @@ const MainTopBar = () => {
   const [visibleClinic, setVisibleClinic] = useState(false);
   const [isUnReadNotif, setisUnReadNotif] = useState(false);
   const [showNotification, setshowNotification] = useState(false);
-  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>([]);
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>(
+    [],
+  );
 
   const refrence = useRef(null);
   const buttentRef = useRef(null);
@@ -34,11 +36,13 @@ const MainTopBar = () => {
     buttonRefrence: notifButtentRef,
     close: () => {
       setshowNotification(false);
-      
+
       // Mark all unread notifications as read when the modal closes (Boss's requirement)
       if (unreadNotificationIds.length > 0) {
-        console.log(`Marking ${unreadNotificationIds.length} notifications as read on modal close.`);
-        unreadNotificationIds.forEach(id => {
+        console.log(
+          `Marking ${unreadNotificationIds.length} notifications as read on modal close.`,
+        );
+        unreadNotificationIds.forEach((id) => {
           NotificationApi.readNotification(id); // Send API call for each
         });
         setisUnReadNotif(false); // Immediately hide the dot in MainTopBar
@@ -201,13 +205,11 @@ const MainTopBar = () => {
             )}
             {showNotification && (
               <Notification
-              onUnreadNotificationsChange={setUnreadNotificationIds} 
-
+                onUnreadNotificationsChange={setUnreadNotificationIds}
                 refrence={notifRefrence}
                 setisUnReadNotif={(value) => {
                   setisUnReadNotif(value);
                 }}
-                
               />
             )}
           </div>
