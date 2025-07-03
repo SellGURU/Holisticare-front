@@ -34,7 +34,12 @@ const TooltipText: React.FC<TooltipTextProps> = ({
       >
         {children}
       </span>
-      {isEllipsized && <Tooltip className='!opacity-100 !bg-opacity-100' id="tooltip"></Tooltip>}
+      {isEllipsized && (
+        <Tooltip
+          className="!opacity-100 !bg-opacity-100"
+          id="tooltip"
+        ></Tooltip>
+      )}
     </>
   );
 };

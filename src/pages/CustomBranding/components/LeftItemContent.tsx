@@ -331,11 +331,11 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       <div className="flex items-center justify-end mt-3 md:mt-0 md:mb-1 mr-1">
         <div
           className="text-Disable text-sm font-medium cursor-pointer"
-          onClick={()=>{
-            handleResetTheme()
-            setErrorName('')
-            setErrorHeadLine('')
-            setErrorLogo('')
+          onClick={() => {
+            handleResetTheme();
+            setErrorName('');
+            setErrorHeadLine('');
+            setErrorLogo('');
           }}
         >
           Back to Default
