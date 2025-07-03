@@ -221,7 +221,7 @@ export const Notification: React.FC<NotificationProps> = ({
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-500">
+          <div className="text-center text-xs text-Text-Secondary">
             No notifications in this category.
           </div>
         )}
