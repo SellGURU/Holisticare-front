@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
-import { Tooltip } from 'react-tooltip';
 interface ArchiveModalProps {
   isOpen?: boolean;
   onClose: () => void;
@@ -9,7 +9,7 @@ interface ArchiveModalProps {
   onConfirm: () => void;
   archived: boolean;
 }
-export const ArchiveModal: React.FC<ArchiveModalProps> = ({
+export const ArchiveModal: FC<ArchiveModalProps> = ({
   isOpen,
   onClose,
   name,
@@ -29,9 +29,9 @@ export const ArchiveModal: React.FC<ArchiveModalProps> = ({
       <div className="w-full h-screen flex justify-center fixed z-[120] top-0 left-0 items-center">
         <div
           ref={modalRefrence}
-          className="bg-[#FFFFFF66] min-w-[450px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
+          className="bg-[#FFFFFF66] min-w-[90vw] md:min-w-[450px] min-h-[200px] rounded-[20px]  p-2 shadow-800"
         >
-          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[500px] h-[196px]">
+          <div className="rounded-2xl p-6 pb-8 bg-white shadow-800 w-[90vw] md:w-[500px] md:h-[196px]">
             {isComplete ? (
               <div className="flex flex-col items-center">
                 <img src="/icons/done.svg" alt="" />

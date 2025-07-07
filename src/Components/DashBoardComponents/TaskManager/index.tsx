@@ -271,7 +271,7 @@ const TaskManager = () => {
           </div>
         </div>
       </MainModal>
-      <div className="w-full -mt-4 bg-white rounded-2xl shadow-200 p-4 text-Text-Primary overflow-hidden task-manager-container">
+      <div className="w-full  bg-white rounded-2xl shadow-200 p-3 text-Text-Primary overflow-hidden task-manager-container">
         <div className="flex justify-between items-center mb-4 relative">
           <div className="flex items-center gap-1">
             <h2 className="text-sm font-medium"> Tasks & Reminders</h2>
@@ -288,8 +288,11 @@ const TaskManager = () => {
           </ButtonPrimary>
         </div>
         {tasks.length < 1 ? (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <img src="/icons/NoTask.svg" alt="" />
+          <div
+            style={{ height: '-webkit-fill-available' }}
+            className="w-full h-full mt-[-30px] flex flex-col items-center justify-center"
+          >
+            <img className="w-[110px]" src="/icons/NoTask.svg" alt="" />
             <div className="text-xs text-Text-Primary -mt-4 text-center">
               No Data Found
             </div>

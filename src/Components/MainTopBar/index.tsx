@@ -8,18 +8,51 @@ import { publish, subscribe } from '../../utils/event';
 import Application from '../../api/app';
 import { BeatLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
-
+import { Notification } from '../Notification';
+import NotificationApi from '../../api/Notification';
 const MainTopBar = () => {
   const navigate = useNavigate();
   // const navigate = useNavigate();
   const [visibleClinic, setVisibleClinic] = useState(false);
+  const [isUnReadNotif, setisUnReadNotif] = useState(false);
+  const [showNotification, setshowNotification] = useState(false);
+  const [unreadNotificationIds, setUnreadNotificationIds] = useState<string[]>(
+    [],
+  );
+
   const refrence = useRef(null);
   const buttentRef = useRef(null);
+  const notifRefrence = useRef(null);
+  const notifButtentRef = useRef(null);
   useModalAutoClose({
     refrence: refrence,
     buttonRefrence: buttentRef,
     close: () => {
       setVisibleClinic(false);
+    },
+  });
+  useModalAutoClose({
+    refrence: notifRefrence,
+    buttonRefrence: notifButtentRef,
+    close: () => {
+      setshowNotification(false);
+
+      // Mark all unread notifications as read when the modal closes (Boss's requirement)
+      if (unreadNotificationIds.length > 0) {
+        console.log(
+          `Marking ${unreadNotificationIds.length} notifications as read on modal close.`,
+        );
+        unreadNotificationIds.forEach((id) => {
+          NotificationApi.readNotification(id); // Send API call for each
+        });
+        setisUnReadNotif(false); // Immediately hide the dot in MainTopBar
+        setUnreadNotificationIds([]); // Clear the list
+      }
+
+      // Update lastUsed timestamp after processing all unreads
+      // This is crucial: the user has acknowledged everything up to this moment.
+      NotificationApi.lastUsed = new Date();
+      localStorage.setItem('lastNotif', JSON.stringify(new Date().getTime()));
     },
   });
   const [customTheme, setCustomTheme] = useState(
@@ -67,9 +100,29 @@ const MainTopBar = () => {
     });
   }, []);
 
+  console.log(showNotification);
+
+  useEffect(() => {
+    const checkNewNotifications = async () => {
+      try {
+        const response = await NotificationApi.checkNotification();
+        if (response && response.data && response.data.new_notifications) {
+          setisUnReadNotif(true);
+        }
+      } catch (error) {
+        console.error('Error checking for new notifications:', error);
+      }
+    };
+
+    checkNewNotifications();
+
+    const intervalId = setInterval(checkNewNotifications, 15000);
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <>
-      <div className="w-full flex md:hidden justify-between items-center border-b border-white  py-2">
+      <div className="w-full  flex md:hidden justify-between items-center border-b border-white  py-2">
         <button
           onClick={() => {
             publish('mobileMenuOpen', {});
@@ -110,9 +163,19 @@ const MainTopBar = () => {
         <div className="w-full flex items-center justify-end bg-white border-b  border-gray-50 pl-4 pr-6 py-2 shadow-100">
           <div className="relative">
             <div className="flex gap-10 ">
-              {/* <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
-                <img src="/icons/notification-2.svg" alt="" />
-              </div> */}
+              <div className="relative">
+                <div
+                  ref={notifButtentRef}
+                  onClick={() => setshowNotification(!showNotification)}
+                  className="size-6 relative rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 "
+                >
+                  <img src="/icons/notification-2.svg" alt="" />
+                  {isUnReadNotif && (
+                    <div className="bg-[#F4A261] size-[3.33px] rounded-full absolute top-[6px] right-[6px]"></div>
+                  )}
+                </div>
+              </div>
+
               <div
                 ref={buttentRef}
                 onClick={() => {
@@ -139,6 +202,15 @@ const MainTopBar = () => {
                 customTheme={customTheme}
                 refrence={refrence}
               ></LogOutModal>
+            )}
+            {showNotification && (
+              <Notification
+                onUnreadNotificationsChange={setUnreadNotificationIds}
+                refrence={notifRefrence}
+                setisUnReadNotif={(value) => {
+                  setisUnReadNotif(value);
+                }}
+              />
             )}
           </div>
         </div>

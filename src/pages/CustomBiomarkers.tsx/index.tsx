@@ -1,27 +1,46 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import SearchBox from '../../Components/SearchBox';
-import BioMarkerBox from './BiomarkerBox';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
+import SearchBox from '../../Components/SearchBox';
+import BioMarkerBox from './BiomarkerBox';
 
-// import mackData from './test.json'
+// import mackData from './newMock.json';
+import { MainModal } from '../../Components';
+import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
+import AddModal from './AddModal';
+
+import DefaultData from './default.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
+  const changeBiomarkersValue = (values: any) => {
+    setBiomarkers(values);
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
-  useEffect(() => {
+  const [activeAdd, setActiveAdd] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const openModalAdd = () => setActiveAdd(true);
+  const closeModalAdd = () => setActiveAdd(false);
+  const [errorDetails, setErrorDetails] = useState<string>('');
+  const getBiomarkers = () => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
         setBiomarkers(res.data);
+        // setBiomarkers(mackData);
       })
       .finally(() => {
+        // setBiomarkers(mackData);
         setIsLoading(false);
       });
+  };
+  useEffect(() => {
+    getBiomarkers();
   }, []);
   // useEffect(() => {
   //   if (biomarkers.length > 0 && isChanged) {
@@ -42,34 +61,41 @@ const CustomBiomarkers = () => {
       return biomarkers;
     }
 
-    // Search for Benchmark Area or Biomarker
-    const results = biomarkers
-      .map((benchmark) => {
-        const matchingBiomarkers = benchmark.biomarkers.filter(
-          (biomarker: any) =>
-            biomarker.Biomarker.toLowerCase().includes(
-              searchValue.toLowerCase(),
-            ),
-        );
+    const lowerSearch = searchValue.toLowerCase();
 
-        if (
-          benchmark['Benchmark areas']
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          matchingBiomarkers.length > 0
-        ) {
-          return {
-            ...benchmark,
-            biomarkers:
-              matchingBiomarkers.length > 0
-                ? matchingBiomarkers
-                : benchmark.biomarkers,
-          };
-        }
-        return null;
-      })
-      .filter((item) => item !== null);
+    const results = biomarkers.filter(
+      (item) =>
+        item['Benchmark areas'].toLowerCase().includes(lowerSearch) ||
+        item['Biomarker'].toLowerCase().includes(lowerSearch),
+    );
+
     return results;
+  };
+
+  const resolveAllBenchmarks = () => {
+    return [
+      ...new Set(
+        filteredBiomarkers().map((el) => {
+          return el['Benchmark areas'];
+        }),
+      ),
+    ];
+  };
+  const onsave = (values: any) => {
+    setLoading(true);
+    BiomarkersApi.addBiomarkersList({
+      new_biomarker: values,
+    })
+      .then(() => {
+        closeModalAdd();
+        setBiomarkers((pre) => [...pre, values]);
+      })
+      .catch((error) => {
+        setErrorDetails(error.detail);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
   return (
     <>
@@ -78,14 +104,23 @@ const CustomBiomarkers = () => {
           <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
             Custom Biomarker
           </div>
-          <SearchBox
-            value={searchValue}
-            ClassName="rounded-xl !h-6 !py-[0px] !px-3 !shadow-[unset]"
-            placeHolder="Search for categories & biomarkers ..."
-            onSearch={(val) => {
-              setSearchValue(val);
-            }}
-          />
+          <div className="flex items-center gap-4">
+            <SearchBox
+              value={searchValue}
+              ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
+              placeHolder="Search for categories & biomarkers ..."
+              onSearch={(val) => {
+                setSearchValue(val);
+              }}
+            />
+            <ButtonSecondary
+              ClassName="rounded-[20px] text-xs border border-white"
+              onClick={openModalAdd}
+            >
+              <img src="/icons/add-square.svg" alt="" />
+              Add Biomarker
+            </ButtonSecondary>
+          </div>
         </div>
       </div>
       {/* {showSuccess && (
@@ -104,10 +139,12 @@ const CustomBiomarkers = () => {
         </>
       ) : (
         <div className="w-full px-6 py-[80px]">
-          {filteredBiomarkers().map((el) => {
+          {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox
-                biomarkers={biomarkers}
+                biomarkers={biomarkers.filter(
+                  (item) => item['Benchmark areas'] == benchmark,
+                )}
                 onSave={(values) => {
                   // setIsChanged(true);
                   setBiomarkers((pre) => {
@@ -121,8 +158,14 @@ const CustomBiomarkers = () => {
                     return [...resolved];
                   });
                 }}
-                data={el}
-              ></BioMarkerBox>
+                data={
+                  biomarkers.filter(
+                    (item) => item['Benchmark areas'] == benchmark,
+                  )[0]
+                }
+                biomarkersData={biomarkers}
+                changeBiomarkersValue={changeBiomarkersValue}
+              />
             );
           })}
           {filteredBiomarkers().length == 0 && (
@@ -141,6 +184,27 @@ const CustomBiomarkers = () => {
           )}
         </div>
       )}
+      <MainModal
+        isOpen={activeAdd}
+        onClose={() => {
+          closeModalAdd();
+        }}
+      >
+        <>
+          <AddModal
+            onCancel={() => {
+              closeModalAdd();
+            }}
+            onSave={(values: any) => {
+              onsave(values);
+            }}
+            data={DefaultData}
+            loading={loading}
+            errorDetails={errorDetails}
+            setErrorDetails={setErrorDetails}
+          />
+        </>
+      </MainModal>
     </>
   );
 };

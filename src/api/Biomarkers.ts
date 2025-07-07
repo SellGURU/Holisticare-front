@@ -9,6 +9,10 @@ class BiomarkersApi extends Api {
   static saveBiomarkersList = (data: any) => {
     return this.post('/custom_biomarker/update_chart_bounds', data);
   };
+
+  static addBiomarkersList = (data: any) => {
+    return this.post('/custom_biomarker/add_biomarker', data);
+  };
 }
 
 export default BiomarkersApi;

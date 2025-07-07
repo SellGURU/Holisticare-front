@@ -1,4 +1,5 @@
-import StatusBarChartPrint from './StatusBarChartPrint';
+// import StatusBarChartPrint from './StatusBarChartPrint';
+import StatusBarChartPrintV2 from './StatusBarChartPrintV2';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface BiomarkersPrintProps {
@@ -52,7 +53,18 @@ const BiomarkersPrint: React.FC<BiomarkersPrintProps> = ({ data }) => {
           </div>
         </div>
         <div className="w-full  mt-10">
-          <StatusBarChartPrint data={data}></StatusBarChartPrint>
+          <StatusBarChartPrintV2
+            data={data.chart_bounds}
+            mapingData={Object.fromEntries(
+              Object.entries(data.chart_bounds).map(([key, valuess]: any) => [
+                key,
+                valuess.label,
+              ]),
+            )}
+            status={data.status}
+            unit={data.unit}
+            values={data.values}
+          ></StatusBarChartPrintV2>
         </div>
       </div>
     </>

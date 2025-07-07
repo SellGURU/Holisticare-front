@@ -70,7 +70,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
     <>
       <MainModal isOpen={previewShowModal} onClose={handlePreviewCloseModal}>
         <div
-          className={`flex flex-col justify-between bg-white ${selectedRow?.Instruction?.length > 500 || selectedRow?.Description?.length > 500 ? 'max-w-[1000px]' : 'w-[500px]'} rounded-[16px] p-4`}
+          className={`flex flex-col justify-between bg-white ${selectedRow?.Instruction?.length > 500 || selectedRow?.Description?.length > 500 ? 'max-w-[1000px]' : 'w-[350px] xs:w-[400px]   sm:w-[500px]'} rounded-[16px] p-4`}
         >
           <div className="w-full h-full">
             <div className="flex items-center justify-between">

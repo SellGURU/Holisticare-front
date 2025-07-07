@@ -44,8 +44,23 @@ const HistoricalChart = ({
     const rowHeight = 70 / sortedStatuses.length;
     return index * rowHeight + rowHeight / 2; // Center in the row
   };
-
-  const sortedStatusBars = sortKeysWithValues(statusBar).reverse();
+  const convertToArray = (data: any) => {
+    return Object.entries(data).map(([key, { condition, threshold }]: any) => ({
+      key,
+      condition,
+      threshold,
+    }));
+  };
+  const sortThreshold = () => {
+    return convertToArray(statusBar).sort((a, b) => {
+      if (a.threshold[0] > b.threshold[0]) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+  };
+  const sortedStatusBars = sortThreshold().reverse();
 
   return (
     <>
@@ -140,18 +155,18 @@ const HistoricalChart = ({
                 ))}
               </div>
 
-              {el.value[1] ? (
+              {el.threshold[1] ? (
                 <div className="absolute min-w-[16px] right-[-20px]  text-[6px] bottom-[-4px] text-left">
-                  {el.value[0]}
+                  {el.threshold[1]}
                 </div>
               ) : (
                 <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                  {el.value[0]}
+                  {el.threshold[0]}
                 </div>
               )}
               {inde == 0 && (
                 <div className="absolute min-w-[16px] right-[-20px] text-[6px] top-[-4px] text-left">
-                  {el.value[1]}
+                  {el.threshold[1]}
                 </div>
               )}
             </div>

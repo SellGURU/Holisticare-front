@@ -7,9 +7,10 @@ import { publish } from '../../../utils/event';
 import Legends from '../Legends';
 // import Legends from "../Legends"
 import { Tooltip } from 'react-tooltip';
-import StatusBarChart from './StatusBarChart';
+// import StatusBarChart from './StatusBarChart';
 // import UnitPopUp from '../../UnitPopup';
 import HistoricalChart from '../HistoricalChart';
+import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 interface RefrenceBoxProps {
   data: any;
   index: number;
@@ -24,9 +25,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
   // const labels:Array<string> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = [50, 75, 60, 90, 80, 100, 95];
 
-  const isChartDataEmpty = !data.values.some(
-    (value: string) => !isNaN(parseFloat(value)),
-  );
+  const isChartDataEmpty = false;
 
   return (
     <>
@@ -44,7 +43,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
             </div>
             {isLongName && (
               <Tooltip
-                className="!bg-white !w-[200px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                className="!bg-white !w-[200px] !opacity-100 !bg-opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                 id={`tooltip-refrencebox-${index}`}
                 place="bottom-end"
               >
@@ -164,7 +163,18 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
         ) : (
           <>
             <div className="mt-14">
-              <StatusBarChart data={data}></StatusBarChart>
+              {/* <StatusBarChart data={data}></StatusBarChart> */}
+              <StatusBarChartV2
+                status={data.status}
+                unit={data.unit}
+                values={data.values}
+                data={data.chart_bounds}
+                mapingData={Object.fromEntries(
+                  Object.entries(data.chart_bounds).map(
+                    ([key, valuess]: any) => [key, valuess.label],
+                  ),
+                )}
+              ></StatusBarChartV2>
             </div>
           </>
         )}

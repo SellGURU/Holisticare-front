@@ -17,7 +17,7 @@ const FakeData = [
   },
   {
     title: 'test 9',
-    type: 'Text',
+    type: 'Paragraph',
     required: false,
   },
   {
@@ -59,7 +59,7 @@ const FakeData = [
   },
   {
     title: 'test 1',
-    type: 'Text',
+    type: 'Paragraph',
     required: true,
   },
 ];
@@ -104,7 +104,7 @@ const FakeData2 = [
   },
   {
     title: 'test 1',
-    type: 'Text',
+    type: 'Paragraph',
     required: true,
   },
 ];

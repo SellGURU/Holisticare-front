@@ -72,7 +72,7 @@ const SideMenu: React.FC<sideMenuProps> = ({ onClose }) => {
                 {menuCategory.items.map((menu) => (
                   <>
                     {menu.name === 'Knowledge Graph' ? (
-                      <div className="  w-full flex pl-5  items-center">
+                      <div className=" mt-2  w-full flex pl-5  items-center">
                         {' '}
                         <div
                           onClick={() => {

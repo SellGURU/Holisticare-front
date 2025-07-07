@@ -18,7 +18,7 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
   //         return '#FC5474'
   //     }
   // }
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <div

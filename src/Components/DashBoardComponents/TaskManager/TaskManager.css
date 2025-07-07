@@ -1,9 +1,9 @@
 .task-manager-container {
-  height: calc((100vh - 240px) / 2);
+  height: calc((100vh - 250px) / 2);
 }
 
 .task-manager-content {
-  height: 85%;
+  height: 75%;
 }
 
 @media screen and (max-width: 768px) {

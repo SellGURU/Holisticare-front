@@ -73,7 +73,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
           ></RangeCard>
         );
 
-      case 'paragraph':
+      case 'Paragraph':
         return (
           <TextCard
             index={index}
