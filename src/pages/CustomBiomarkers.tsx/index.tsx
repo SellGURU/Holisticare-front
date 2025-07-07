@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import SearchBox from '../../Components/SearchBox';
-import BioMarkerBox from './BiomarkerBox';
 import BiomarkersApi from '../../api/Biomarkers';
 import Circleloader from '../../Components/CircleLoader';
+import SearchBox from '../../Components/SearchBox';
+import BioMarkerBox from './BiomarkerBox';
 
 // import mackData from './newMock.json';
+import { MainModal } from '../../Components';
 import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
-import { MainModal } from '../../Components';
 
 import DefaultData from './default.json';
-import { toast } from 'react-toastify';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -27,6 +26,7 @@ const CustomBiomarkers = () => {
   const [loading, setLoading] = useState(false);
   const openModalAdd = () => setActiveAdd(true);
   const closeModalAdd = () => setActiveAdd(false);
+  const [errorDetails, setErrorDetails] = useState<string>('');
   const getBiomarkers = () => {
     setIsLoading(true);
     BiomarkersApi.getBiomarkersList()
@@ -91,7 +91,7 @@ const CustomBiomarkers = () => {
         setBiomarkers((pre) => [...pre, values]);
       })
       .catch((error) => {
-        toast.error(error.detail);
+        setErrorDetails(error.detail);
       })
       .finally(() => {
         setLoading(false);
@@ -200,6 +200,8 @@ const CustomBiomarkers = () => {
             }}
             data={DefaultData}
             loading={loading}
+            errorDetails={errorDetails}
+            setErrorDetails={setErrorDetails}
           />
         </>
       </MainModal>

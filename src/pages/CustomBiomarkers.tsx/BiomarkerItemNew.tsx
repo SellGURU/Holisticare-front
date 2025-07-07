@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import BiomarkersApi from '../../api/Biomarkers';
 import { MainModal } from '../../Components';
 import SvgIcon from '../../utils/svgIcon';
@@ -25,6 +24,7 @@ const biomarkerItem = ({
   const openModalEdit = () => setActiveEdit(true);
   const closeModalEdit = () => setActiveEdit(false);
   const [activeBiomarker, setActiveBiomarker] = useState(data.age_groups[0]);
+  const [errorDetails, setErrorDetails] = useState('');
   useEffect(() => {
     setActiveBiomarker(data.age_groups[0]);
   }, [data]);
@@ -67,7 +67,7 @@ const biomarkerItem = ({
         changeBiomarkersValue(replaceBiomarker(biomarkers, values));
       })
       .catch((error) => {
-        toast.error(error.detail);
+        setErrorDetails(error.detail);
       })
       .finally(() => {
         setLoading(false);
@@ -136,6 +136,8 @@ const biomarkerItem = ({
             }}
             data={data}
             loading={loading}
+            errorDetails={errorDetails}
+            setErrorDetails={setErrorDetails}
           />
         </>
       </MainModal>
