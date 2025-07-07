@@ -20,13 +20,16 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   isActivty,
 }) => {
   const getYouTubeEmbedUrl = (url: string) => {
-    // Handle different YouTube URL formats
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11
-      ? `https://www.youtube.com/embed/${match[2]}`
-      : url;
+    const standardOrShortsRegExp =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/;
+  
+    const match = url.match(standardOrShortsRegExp);
+  
+    if (match && match[1]) {
+      // For standard videos and shorts, use the /embed/ path
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    return url;
   };
 
   const isYouTubeShorts = (url: string) => {

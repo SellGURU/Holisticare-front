@@ -320,11 +320,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   }, [formik.values]);
 
   const isValidYouTubeUrl = (url: string) => {
+
     const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?[a-zA-Z0-9_-]{11}/;
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)[a-zA-Z0-9_-]{11}(&.*)?$/;
     return youtubeRegex.test(url);
   };
-
   return (
     <MainModal
       isOpen={isOpen}
