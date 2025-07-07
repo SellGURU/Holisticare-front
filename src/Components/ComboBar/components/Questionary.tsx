@@ -154,7 +154,7 @@ export const Questionary = () => {
     activeCardNumber: number,
     disabled?: boolean,
   ) => {
-    const isNumericString = (str: string) => !isNaN(Number(str));
+    // const isNumericString = (str: string) => !isNaN(Number(str));
     if (type == 'short_answer' || type == 'Paragraph' || type == 'paragraph') {
       return (
         <>
@@ -179,8 +179,8 @@ export const Questionary = () => {
           <div>
             <div>
               {questionsData.questions[activeCardNumber - 1]?.options?.map(
-                (el: any, index: number) => {
-                  const optionLabel = String.fromCharCode(65 + index);
+                (el: any) => {
+                  // const optionLabel = String.fromCharCode(65 + index);
 
                   return (
                     <div
@@ -216,9 +216,9 @@ export const Questionary = () => {
                             : 'text-Text-Secondary'
                         } `}
                       >
-                        {!isNumericString(el) && (
+                        {/* {!isNumericString(el) && (
                           <span className="mr-1">{optionLabel}.</span>
-                        )}
+                        )} */}
 
                         <TooltipTextAuto maxWidth="200px">{el}</TooltipTextAuto>
                       </div>
@@ -584,6 +584,7 @@ export const Questionary = () => {
                   className=" w-5 h-5 cursor-pointer"
                   onClick={() => {
                     setTryComplete(false);
+                    setActiveCard(1);
                   }}
                 >
                   <img src="/icons/close-red.svg" alt="" />
