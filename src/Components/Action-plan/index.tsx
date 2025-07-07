@@ -114,7 +114,11 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                 <>
                   {' '}
                   {calenderDataUper.length > 0 && (
-                    <CalenderComponent data={calenderDataUper} />
+                    <CalenderComponent
+                      data={calenderDataUper}
+                      isTwoView={false}
+                      isActionPlan={true}
+                    />
                   )}
                 </>
               )}
