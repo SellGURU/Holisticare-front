@@ -8,9 +8,18 @@ interface EditModalProps {
   onCancel: () => void;
   onSave: (values: any) => void;
   loading: boolean;
+  errorDetails: string;
+  setErrorDetails: (errorDetails: string) => void;
 }
 
-const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
+const EditModal: FC<EditModalProps> = ({
+  data,
+  onCancel,
+  onSave,
+  loading,
+  errorDetails,
+  setErrorDetails,
+}) => {
   const [jsonData, setJsonData] = useState(data);
   const handleJsonChange = (e: any) => {
     if (e.name === 'Biomarker') {
@@ -21,6 +30,24 @@ const EditModal: FC<EditModalProps> = ({ data, onCancel, onSave, loading }) => {
   return (
     <>
       <div className=" w-[644px] p-4 max-w-[644px] relative bg-white min-h-[500px] h-[60%] rounded-[16px]">
+        {errorDetails && (
+          <div className="absolute top-2 right-2 z-10 flex max-w-[493px] items-start rounded-2xl bg-[#F9DEDC] pb-3 pt-2 px-4">
+            <img
+              src="/icons/info-circle-orange.svg"
+              alt=""
+              className="w-4 h-4 mt-[3px]"
+            />
+            <div className="text-Text-Primary text-[10px] leading-5 px-2 text-wrap">
+              {errorDetails}
+            </div>
+            <img
+              src="/icons/close-black.svg"
+              alt=""
+              className="cursor-pointer w-5 h-5"
+              onClick={() => setErrorDetails('')}
+            />
+          </div>
+        )}
         <div className="">
           <div className=" text-Text-Primary TextStyle-Headline-5">Edit</div>
           <div className="w-full h-1 border-b-2 mt-2 border-gray-50"></div>
