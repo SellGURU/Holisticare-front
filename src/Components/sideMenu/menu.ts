@@ -85,12 +85,12 @@ export const menus = [
       //   icon: 'sidemenu-menu-icon-Lifestyle',
       //   active: true,
       // },
-        {
-          name: 'Setting',
-          icon: 'sidemenu-menu-icon-setting',
-          url: '/setting',
-          active: true,
-        },
+      {
+        name: 'Setting',
+        icon: 'sidemenu-menu-icon-setting',
+        url: '/setting',
+        active: true,
+      },
     ],
   },
 
