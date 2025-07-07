@@ -11,6 +11,8 @@ interface AppContextProp {
   PackageManager: PackageManager;
   treatmentId: string | null;
   setTreatmentId: (id: string) => void;
+  patientsList: any[];
+  setPatientsList: (patients: any[]) => void;
 }
 
 export const AppContext = createContext<AppContextProp>({
@@ -22,6 +24,8 @@ export const AppContext = createContext<AppContextProp>({
   PackageManager: new PackageManager(),
   treatmentId: null,
   setTreatmentId: () => {},
+  patientsList: [],
+  setPatientsList: () => {},
 });
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
@@ -33,6 +37,8 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [permisions, setPermisions] = useState(
     JSON.parse(localStorage.getItem('permisins') || '{}'),
   );
+  const [patientsList, setPatientsList] = useState<any[]>([]);
+
   const logOut = () => {
     setToken('');
     setPermisions({});
@@ -54,6 +60,8 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     PackageManager: new PackageManager(),
     treatmentId: treatmentId,
     setTreatmentId: setTreatmentId,
+    patientsList: patientsList,
+    setPatientsList: setPatientsList,
   };
   return (
     <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>

@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { useState, useRef, useEffect } from 'react';
-import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
+import { FC, useEffect, useRef, useState } from 'react';
 import Application from '../../api/app.ts';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import SvgIcon from '../../utils/svgIcon.tsx';
+import { ButtonPrimary } from '../Button/ButtonPrimary.tsx';
 import { ArchiveModal } from './ArchiveModal.tsx';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DeleteModal } from './deleteModal.tsx';
+import { Tooltip } from 'react-tooltip';
 import MainModal from '../MainModal/index.tsx';
 import Checkbox from '../checkbox/index.tsx';
-import { Tooltip } from 'react-tooltip';
+import { DeleteModal } from './deleteModal.tsx';
 interface ClientCardProps {
   client: any;
   indexItem: number;
@@ -21,7 +21,7 @@ interface ClientCardProps {
   onAssign: (memberId: number, coachUsername: string) => void;
 }
 
-const ClientCard: React.FC<ClientCardProps> = ({
+const ClientCard: FC<ClientCardProps> = ({
   client,
   indexItem,
   ondelete,
@@ -651,7 +651,7 @@ const ClientCard: React.FC<ClientCardProps> = ({
           }}
           className="flex"
         >
-          <div className="size-[48px] xs:size-[64px] md:size-[72px] border border-Primary-DeepTeal rounded-full relative">
+          <div className="size-[48px] xs:size-[64px] md:size-[72px] min-w-[48px] xs:min-w-[64px] md:min-w-[72px] border border-Primary-DeepTeal rounded-full relative">
             <img
               className="w-full h-full rounded-full object-cover"
               onError={(e: any) => {
@@ -682,16 +682,14 @@ const ClientCard: React.FC<ClientCardProps> = ({
           >
             <div
               data-tooltip-id={client.name}
-              className="text-Text-Primary truncate max-w-[160px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
+              className="text-Text-Primary truncate max-w-[90px] sm:max-w-[100px] md:max-w-[150px] text-xs sm:text-[14px] font-medium text-nowrap mb-2 cursor-default"
             >
-              {client.name.length > 20
-                ? client.name.substring(0, 20) + '...'
-                : client.name}
-              {client.name.length > 20 && (
+              {client.name}
+              {client.name.length > 15 && (
                 <Tooltip
                   place="top"
                   id={client.name}
-                  className="!bg-white !w-fit !z-[999] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[230px] !z-[999] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                 >
                   {client.name}
                 </Tooltip>

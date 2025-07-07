@@ -166,7 +166,8 @@ const AddTreatmentplanCategory = (category: any) => {
 };
 const resolveHigthNotes = (notes: Array<string>) => {
   let size = 4;
-  notes.map((el) => {
+  // console.log(notes);
+  notes?.map((el) => {
     size = size + resolveHightText(el, true);
   });
   return size;

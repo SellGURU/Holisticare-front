@@ -31,6 +31,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
   const [checked, setChecked] = useState(false);
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(15);
+  const [showTitleRequired, setShowTitleRequired] = useState(false);
   useEffect(() => {
     if (
       error &&
@@ -50,11 +51,25 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
         return 'Edit';
     }
   };
+  const onAddQuestion = () => {
+    if (titleForm.length > 0) {
+      setShowValidation(false);
+      return true;
+    } else {
+      setShowTitleRequired(true);
+      return false;
+    }
+  };
   const resolveBoxRender = () => {
     switch (mode) {
       case 'Add':
         return (
           <AddCheckIn
+            onAddQuestion={onAddQuestion}
+            questionStep={AddquestionStep}
+            setQuestionStep={(value) => {
+              setAddquestionStep(value);
+            }}
             upQuestions={questions}
             onChange={(values) => {
               setQuestions(values);
@@ -89,6 +104,11 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
       case 'Edit':
         return (
           <AddCheckIn
+            onAddQuestion={onAddQuestion}
+            questionStep={AddquestionStep}
+            setQuestionStep={(value) => {
+              setAddquestionStep(value);
+            }}
             upQuestions={questions}
             onChange={(values) => {
               setQuestions(values);
@@ -112,6 +132,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
     }
   };
   const [titleForm, setTitleForm] = useState('');
+
   const isDisable = () => {
     return titleForm.length == 0 || questions.length == 0;
   };
@@ -150,6 +171,10 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
       });
     }
   }, [editId]);
+  const [AddquestionStep, setAddquestionStep] = useState(0);
+  console.log(AddquestionStep);
+  console.log(step);
+
   return (
     <>
       {loading && (
@@ -167,7 +192,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             </div>
           </div>
           <div className="w-full h-[1px] bg-Gray-50 my-3"></div>
-          {step == 0 && (
+          {step == 0 && (AddquestionStep == 0 || AddquestionStep == 2) && (
             <>
               <div className="w-full mt-6">
                 <TextField
@@ -179,8 +204,13 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
                   onChange={(e) => {
                     setTitleForm(e.target.value);
                     setError('');
+                    setShowTitleRequired(false);
                   }}
-                  inValid={error != '' || (showValidation && !titleForm)}
+                  inValid={
+                    error != '' ||
+                    (showValidation && !titleForm) ||
+                    (showTitleRequired && !titleForm)
+                  }
                   errorMessage={
                     error
                       ? 'Form title already exists. Please choose another.'
@@ -200,7 +230,9 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
         {showValidation && questions.length == 0 && (
           <div className="text-[10px] text-Red">Add question to continue.</div>
         )}
-        <div className="w-full flex justify-end items-center p-2">
+        <div
+          className={`w-full flex justify-end items-center p-2 ${AddquestionStep == 1 && 'hidden'} `}
+        >
           <div
             className="text-Disable text-sm font-medium mr-4 cursor-pointer"
             onClick={() => {
@@ -255,6 +287,9 @@ interface AddCheckInProps {
   upMinutes: number;
   upSeconds: number;
   mode: string;
+  questionStep: number;
+  setQuestionStep: (value: number) => void;
+  onAddQuestion: () => boolean;
 }
 
 const AddCheckIn: FC<AddCheckInProps> = ({
@@ -268,8 +303,13 @@ const AddCheckIn: FC<AddCheckInProps> = ({
   upMinutes,
   upSeconds,
   mode,
+  questionStep,
+  setQuestionStep,
+  onAddQuestion,
 }) => {
   const [questions, setQuestions] = useState<Array<checkinType>>(upQuestions);
+  console.log(questions);
+
   const [addMore, setAddMore] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(-1);
   const [checked, setChecked] = useState(false);
@@ -288,11 +328,13 @@ const AddCheckIn: FC<AddCheckInProps> = ({
     setMintues(upMinutes);
     setSeconds(upSeconds);
   }, [upQuestions, upChecked, upMinutes, upSeconds]);
+  console.log(questionStep);
+
   return (
     <>
       {step == 0 || mode == 'Reposition' ? (
         <>
-          {questions.length > 0 && (
+          {questions.length > 0 && !addMore && (
             <>
               <div
                 className={`${addMore ? 'max-h-[45px]' : 'max-h-[200px] min-h-[60px]'} overflow-y-auto w-full`}
@@ -310,6 +352,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                           onEdit={() => {
                             setEditingQuestionIndex(index);
                             setAddMore(true);
+                            setQuestionStep(1);
                           }}
                           onRemove={() => {
                             setQuestions((pre) => {
@@ -333,7 +376,10 @@ const AddCheckIn: FC<AddCheckInProps> = ({
             <div
               className="flex items-center justify-center text-xs cursor-pointer text-Primary-DeepTeal font-medium border-2 border-dashed rounded-xl w-full h-[36px] bg-backgroundColor-Card border-Primary-DeepTeal mb-4 mt-2"
               onClick={() => {
-                setAddMore(true);
+                if (onAddQuestion()) {
+                  setAddMore(true);
+                  setQuestionStep(1);
+                }
               }}
             >
               <img
@@ -356,16 +402,22 @@ const AddCheckIn: FC<AddCheckInProps> = ({
               </div>
               <ButtonSecondary
                 ClassName="rounded-[20px] w-[147px] !py-[3px] mt-3 text-nowrap mb-8"
-                onClick={() => setAddMore(true)}
+                onClick={() => {
+                  if (onAddQuestion()) {
+                    setQuestionStep(1);
+                    setAddMore(true);
+                  }
+                }}
               >
                 <img src="/icons/add.svg" alt="" width="20px" height="20px" />
                 Add Question
               </ButtonSecondary>
             </>
           )}
-          {addMore && (
+          {addMore && questionStep == 1 && (
             <>
               <AddQuestionsModal
+                setQuestionStep={setQuestionStep}
                 editQUestion={questions[editingQuestionIndex]}
                 onSubmit={(value) => {
                   if (editingQuestionIndex == -1) {
@@ -388,6 +440,7 @@ const AddCheckIn: FC<AddCheckInProps> = ({
                 onCancel={() => {
                   setEditingQuestionIndex(-1);
                   setAddMore(false);
+                  setQuestionStep(0);
                 }}
               ></AddQuestionsModal>
             </>

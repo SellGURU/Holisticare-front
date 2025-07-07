@@ -38,14 +38,14 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   }, [options, showValidation]);
 
   return (
-    <>
+    <div className="flex flex-col gap-2 w-[49%] min-h-[40px]">
       <div
-        className={`flex w-[99.5%] rounded-xl px-3 py-1.5 border ${
+        className={`flex flex-col items-center justify-start w-full min-h-[40px] h-fit rounded-xl px-3 py-1 border ${
           isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'
         } ${error ? 'border-red-500' : ''}`}
       >
         <div
-          className="cursor-pointer flex items-start w-[35%]"
+          className="cursor-pointer flex items-start w-full"
           onClick={() => {
             toggle();
           }}
@@ -62,48 +62,50 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
             </div>
           </div>
         </div>
-        <div className="flex items-start w-[65%]">
-          <div className="flex flex-wrap gap-1 w-full">
-            {options.map((option, index) => {
-              return (
-                <div
-                  className="flex items-center justify-center gap-1"
-                  key={index}
-                >
-                  <div className="w-3 h-3 rounded-[8px] border border-Primary-DeepTeal"></div>
-                  <input
-                    placeholder={`Option ${index + 1}`}
-                    value={option}
-                    onChange={(e) =>
-                      handleChoiceOptionChange(index, e.target.value)
-                    }
-                    className={`bg-backgroundColor-Card border  rounded-2xl py-1 px-2 text-[8px] w-[130px]`}
-                  />
-                </div>
-              );
-            })}
+        {isActive && (
+          <div className="flex items-start w-full mt-2">
+            <div className="grid grid-cols-2 gap-1 w-full">
+              {options.map((option, index) => {
+                return (
+                  <div
+                    className="flex items-center justify-center gap-1"
+                    key={index}
+                  >
+                    {/* <div className="w-3 h-3 rounded-[8px] border border-Primary-DeepTeal"></div> */}
+                    <input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        handleChoiceOptionChange(index, e.target.value)
+                      }
+                      className={`bg-backgroundColor-Card border  rounded-2xl py-1 px-2 text-[8px] w-[130px]`}
+                    />
+                  </div>
+                );
+              })}
+              <div
+                className={`cursor-pointer ${
+                  options.length == 4 && 'hidden'
+                } text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap  ml-1 mt-1`}
+                onClick={addChoiceOption}
+              >
+                <img
+                  src="/icons/add-blue.svg"
+                  alt=""
+                  className="w-4 h-4 mr-[1px]"
+                />{' '}
+                Add New
+              </div>
+            </div>
           </div>
-          <div
-            className={`cursor-pointer ${
-              options.length == 4 && 'opacity-50 cursor-not-allowed'
-            } text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-center text-nowrap  ml-1 mt-1`}
-            onClick={addChoiceOption}
-          >
-            <img
-              src="/icons/add-blue.svg"
-              alt=""
-              className="w-4 h-4 mr-[1px]"
-            />{' '}
-            Add New
-          </div>
-        </div>
+        )}
       </div>
       {error && (
         <div className="text-[10px] text-Red">
           This field must have at least 2 options.
         </div>
       )}
-    </>
+    </div>
   );
 };
 

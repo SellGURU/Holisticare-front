@@ -104,7 +104,7 @@ const FeelingCard: React.FC<FeelingCardProps> = ({
                   {itemIndex >= 0 && itemIndex <= 4 ? (
                     <>
                       {active.order == emojeys[itemIndex].order ? (
-                        <div className="w-[40px] h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                        <div className="w-[40px] h-[40px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
                           <img className="w-[32px]" src={active.icon} />
                         </div>
                       ) : (

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { useNavigate } from 'react-router-dom';
 import Application from '../../api/app';
@@ -15,6 +15,7 @@ import { ButtonSecondary } from '../Button/ButtosSecondary.tsx';
 import Circleloader from '../CircleLoader/index.tsx';
 import Toggle from '../Toggle/index.tsx';
 import { DeleteModal } from './deleteModal.tsx';
+import { AppContext } from '../../store/app.tsx';
 type ClientData = {
   member_id: number;
   enroll_date: string;
@@ -74,6 +75,14 @@ const ClientList = () => {
       .then((res) => {
         setClientList(res.data.patients_list_data);
         setFilteredClientList(res.data.patients_list_data);
+        const patientsForContext = res.data.patients_list_data.map(
+          (patient: ClientData) => ({
+            member_id: patient.member_id,
+            profile_picture: patient.picture,
+            name: patient.name,
+          }),
+        );
+        setPatientsList(patientsForContext);
       })
       .finally(() => {
         setIsLoading(false);
@@ -83,6 +92,7 @@ const ClientList = () => {
     setIsLoading(true);
     getPatients();
   }, []);
+  const { setPatientsList } = useContext(AppContext);
 
   const handleFilterChange = (filter: string) => {
     let sortedList = [...clientList];

@@ -211,7 +211,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         setSelectedRow();
       }}
     >
-      <div className="flex flex-col justify-between bg-white w-[500px] rounded-[16px] p-6">
+      <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px]   sm:w-[500px] rounded-[16px] p-6">
         <div className="w-full h-full">
           <div className="flex justify-start items-center font-medium text-sm text-Text-Primary">
             {selectedRow ? 'Edit' : 'Add'} {pageType}
