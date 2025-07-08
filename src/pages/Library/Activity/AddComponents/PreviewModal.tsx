@@ -20,18 +20,21 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   isActivty,
 }) => {
   const getYouTubeEmbedUrl = (url: string) => {
-    // Handle different YouTube URL formats
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11
-      ? `https://www.youtube.com/embed/${match[2]}`
-      : url;
+    const standardOrShortsRegExp =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/;
+
+    const match = url.match(standardOrShortsRegExp);
+
+    if (match && match[1]) {
+      // For standard videos and shorts, use the /embed/ path
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    return url;
   };
 
-  const isYouTubeShorts = (url: string) => {
-    return url.includes('/shorts/');
-  };
+  // const isYouTubeShorts = (url: string) => {
+  //   return url.includes('/shorts/');
+  // };
 
   const [videoData, setVideoData] = useState<
     { file_id: string; base64: string; url?: string }[]
@@ -241,23 +244,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 ) : (
                   videoData.map((video) =>
                     video.url ? (
-                      isYouTubeShorts(video.url) ? (
-                        <div className="rounded-xl h-[200px] w-[370px] border border-Gray-50 flex flex-col items-center justify-center p-4">
-                          <img
-                            src="/icons/video-preview.svg"
-                            className="size-12 mb-4"
-                            alt="Video"
-                          />
-                          <a
-                            href={video.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline text-sm font-medium"
-                          >
-                            Watch on YouTube
-                          </a>
-                        </div>
-                      ) : (
+                 
                         <iframe
                           key={video.file_id}
                           className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
@@ -268,7 +255,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                           allowFullScreen
                         />
                       )
-                    ) : (
+                     : (
                       <video
                         key={video.file_id}
                         className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
