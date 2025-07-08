@@ -100,7 +100,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
-            <TooltipTextAuto maxWidth="300px" tooltipPlace="top">
+            <TooltipTextAuto maxWidth="600px" tooltipPlace="top">
               {value.Category}
             </TooltipTextAuto>
           </div>
@@ -110,7 +110,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         >
           <div className=" flex flex-wrap gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
-              <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+              <TooltipTextAuto tooltipPlace="top" maxWidth="600px">
                 {value.Recommendation}
               </TooltipTextAuto>
             </div>
