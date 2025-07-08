@@ -5,7 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "module": "ESNext",  // Or "CommonJS" if using CommonJS
+    "module": "ESNext", // Or "CommonJS" if using CommonJS
     "target": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,

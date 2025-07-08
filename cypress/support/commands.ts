@@ -8,7 +8,8 @@ import { Chainable, AUTWindow } from 'cypress';
 // and correctly use AUTWindow.
 declare global {
   namespace Cypress {
-    interface Chainable<Subject = any> { // Subject = any makes it generic
+    interface Chainable<Subject = any> {
+      // Subject = any makes it generic
       /**
        * Custom command to log in a user through the UI.
        * @example cy.login('testuser', 'password123')
@@ -25,24 +26,30 @@ declare global {
 }
 
 Cypress.Commands.add('login', (username: string, password: string) => {
-  cy.session([username, password], () => {
-    cy.visit('/login'); // Assuming your login page is at /login
+  cy.session(
+    [username, password],
+    () => {
+      cy.visit('/login'); // Assuming your login page is at /login
 
-    cy.get('input[name="email"]').type(username); // Adjust selectors
-    cy.get('input[name="password"]').type(password);
-    cy.get('button[id="login-submit"]').click(); // Adjust selector
+      cy.get('input[name="email"]').type(username); // Adjust selectors
+      cy.get('input[name="password"]').type(password);
+      cy.get('button[id="login-submit"]').click(); // Adjust selector
 
-    cy.url().should('not.include', '/login');
-  }, {
-    validate() {
-      // Ensure the session cookie or token still exists
-      cy.getCookie('your-session-cookie-name').should('exist');
+      cy.url().should('not.include', '/login');
     },
-  });
+    {
+      validate() {
+        // Ensure the session cookie or token still exists
+        cy.getCookie('your-session-cookie-name').should('exist');
+      },
+    },
+  );
 });
 
 Cypress.Commands.add('apiLogin', (username: string, password: string) => {
-    cy.session([username, password], () => {
+  cy.session(
+    [username, password],
+    () => {
       // Corrected cy.request to send form-urlencoded data
       cy.request({
         method: 'POST',
@@ -61,16 +68,24 @@ Cypress.Commands.add('apiLogin', (username: string, password: string) => {
         // Inspect the successful API response in your browser's network tab
         // to confirm the field name for the auth token.
         const authToken = response.body.access_token; // Adjust this if your token field is named differently
+        const userPermissions = response.body.permissions;
         if (!authToken) {
           throw new Error('Authentication token not found in API response.');
         }
         cy.window().then((win) => {
           win.localStorage.setItem('token', authToken); // Adjust 'authToken' if your app uses a different key
+          win.localStorage.setItem('userPermissions', JSON.stringify(userPermissions));
+
         });
       });
-    }, {
-    validate() {
-      cy.window().its('localStorage').invoke('getItem', 'token').should('exist');
     },
-  });
+    {
+      validate() {
+        cy.window()
+          .its('localStorage')
+          .invoke('getItem', 'token')
+          .should('exist');
+      },
+    },
+  );
 });
