@@ -74,8 +74,10 @@ Cypress.Commands.add('apiLogin', (username: string, password: string) => {
         }
         cy.window().then((win) => {
           win.localStorage.setItem('token', authToken); // Adjust 'authToken' if your app uses a different key
-          win.localStorage.setItem('userPermissions', JSON.stringify(userPermissions));
-
+          win.localStorage.setItem(
+            'userPermissions',
+            JSON.stringify(userPermissions),
+          );
         });
       });
     },
