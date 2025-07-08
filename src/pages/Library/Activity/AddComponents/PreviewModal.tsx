@@ -244,18 +244,16 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 ) : (
                   videoData.map((video) =>
                     video.url ? (
-                 
-                        <iframe
-                          key={video.file_id}
-                          className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
-                          src={getYouTubeEmbedUrl(video.url)}
-                          title="YouTube video player"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      )
-                     : (
+                      <iframe
+                        key={video.file_id}
+                        className="rounded-xl h-[200px] w-[370px] border border-Gray-50"
+                        src={getYouTubeEmbedUrl(video.url)}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
                       <video
                         key={video.file_id}
                         className="rounded-xl h-[200px] w-[370px] border border-Gray-50 object-contain"
