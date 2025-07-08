@@ -394,19 +394,21 @@ const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
   });
 };
 const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
-  const grouped = caldenderData?.reduce((acc: any, item: any) => {
-    const key = item.category.toLowerCase();
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item);
-    return acc;
-  }, {});
-  if (myjson.length == 0) {
-    addEmptyPage();
+  if (Array.isArray(caldenderData)) {
+    const grouped = caldenderData?.reduce((acc: any, item: any) => {
+      const key = item.category.toLowerCase();
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+    if (myjson.length == 0) {
+      addEmptyPage();
+    }
+    addHeader('Action Plan', '', 'action-plan');
+    addBox(16);
+    addActionPlanHeader(actionPlanData);
+    AddActionPlanOverView(grouped);
   }
-  addHeader('Action Plan', '', 'action-plan');
-  addBox(16);
-  addActionPlanHeader(actionPlanData);
-  AddActionPlanOverView(grouped);
 };
 
 const resovleJson = ({
