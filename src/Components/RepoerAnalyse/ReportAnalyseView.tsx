@@ -152,7 +152,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setTreatmentPlanData(res.data);
+      setTreatmentPlanData(res.data.details);
     });
     Application.getCaldenderdataShare(
       {
