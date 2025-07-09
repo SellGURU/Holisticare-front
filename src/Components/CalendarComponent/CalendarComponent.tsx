@@ -331,7 +331,7 @@ const CalenderComponent: React.FC<CalenderComponentProps> = ({
               <div className="flex items-center gap-2">
                 Time frame:
                 <Select
-                value={getNextThreeMonths()[0]}
+                  value={getNextThreeMonths()[0]}
                   onChange={(value) => setSelectedMonth(value)}
                   options={getNextThreeMonths()}
                 />

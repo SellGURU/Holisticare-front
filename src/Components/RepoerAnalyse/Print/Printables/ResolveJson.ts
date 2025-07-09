@@ -396,8 +396,7 @@ const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
 const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
   console.log(actionPlanData);
   console.log(caldenderData);
-  
-  
+
   if (Array.isArray(caldenderData)) {
     const grouped = caldenderData?.reduce((acc: any, item: any) => {
       const key = item.category.toLowerCase();
@@ -444,10 +443,9 @@ const resovleJson = ({
 }) => {
   console.log(ActionPlan);
   console.log(caldenderData);
-  
-  
+
   myjson.splice(0, myjson.length);
-  
+
   if (isActiveSection('Client Summary') == true) {
     AddSummaryJson(ClientSummaryBoxs, usrInfoData, resolveCategories);
   }
@@ -472,6 +470,5 @@ const resovleJson = ({
   }
   return myjson;
 };
-
 
 export default resovleJson;

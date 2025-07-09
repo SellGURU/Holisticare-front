@@ -13,7 +13,7 @@ const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({
   pageNumber,
 }) => {
   console.log(page);
-  
+
   return (
     <>
       <div

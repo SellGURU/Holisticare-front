@@ -187,7 +187,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
 
           {/* Frequency */}
           <div
-            className="px-3 py-3 whitespace-nowrap flex flex-col justify-center text-center items-center"
+            className=" py-3 whitespace-nowrap flex flex-col justify-center text-center items-center"
             style={{ width: '280px' }}
           >
             {item.frequency_type === 'weekly' && (
