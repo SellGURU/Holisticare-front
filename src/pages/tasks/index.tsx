@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import Circleloader from '../../Components/CircleLoader';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import BoxTitleText from './components/BoxTitleText';
+import Frequency from './components/Frequency';
+import Times from './components/Times';
+import RenderNutrient from './components/RenderNutrient';
 
 const Tasks = () => {
   const [isLoading, setIsLaoding] = useState(false);
@@ -26,7 +30,22 @@ const Tasks = () => {
             </div>
           </>
         ) : (
-          <>
+          <div className="flex flex-col w-full h-full gap-2">
+            <BoxTitleText title="Description" text="test amir" />
+            <BoxTitleText title="Instruction" text="test amir 2" />
+            <Frequency type="weekly" data={['sun']} />
+            <Times times={['Morning']} />
+            <div className="w-full p-3 rounded-xl border border-Gray-15 bg-backgroundColor-Secondary flex flex-col gap-2">
+              <div className="text-xs font-medium text-Text-Primary">
+                Macros Goal
+              </div>
+              <div className="flex items-center flex-grow-[1] justify-between">
+                {RenderNutrient('Carbs', 21, '/icons/carbs-preview.svg')}
+                {RenderNutrient('Proteins', 9, '/icons/proteins-preview.svg')}
+                {RenderNutrient('Fats', 5, '/icons/fats-preview.svg')}
+              </div>
+            </div>
+            <BoxTitleText title="Dose" text="500mg" />
             <div className="w-full flex flex-col gap-2 justify-center fixed bottom-0 bg-white left-0 mt-2 border-t border-Gray-50 shadow-Btn px-6 py-4">
               <div className="bg-backgroundColor-Main rounded-xl p-3 w-full flex items-center justify-between">
                 <div className="text-Text-Primary text-xs font-medium">
@@ -73,7 +92,7 @@ const Tasks = () => {
                 </ButtonPrimary>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </>
