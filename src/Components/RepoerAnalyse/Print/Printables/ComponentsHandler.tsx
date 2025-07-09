@@ -22,6 +22,7 @@ interface ComponentsHandlerProps {
 }
 
 const ComponentsHandler: React.FC<ComponentsHandlerProps> = ({ component }) => {
+  
   return (
     <>
       {component.type === 'Header' && (

@@ -33,7 +33,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
           {/* Title */}
           <div
             style={{ width: '230px' }}
-            className={`py-3 text-xs text-left flex-wrap ${index == 0 && 'align-top'}`}
+            className={`py-3 text-xs text-center flex-wrap ${index == 0 && 'align-top'}`}
           >
             <div
               style={{
@@ -153,10 +153,10 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center mt-3">
+              <div className="flex justify-center items-center mt-3">
                 {item.sections
                   ?.slice(0, 2)
-                  ?.map((section: string, index: number) => {
+                  ?.map((section: any, index: number) => {
                     return (
                       <div
                         key={index}
@@ -166,7 +166,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
                           color: '#005F73',
                         }}
                       >
-                        {section}
+                        {section.Section}
                       </div>
                     );
                   })}
@@ -187,7 +187,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
 
           {/* Frequency */}
           <div
-            className="px-3 py-3 whitespace-nowrap flex flex-col items-center"
+            className="px-3 py-3 whitespace-nowrap flex flex-col justify-center text-center items-center"
             style={{ width: '280px' }}
           >
             {item.frequency_type === 'weekly' && (

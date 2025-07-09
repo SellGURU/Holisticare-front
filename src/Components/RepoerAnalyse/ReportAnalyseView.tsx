@@ -201,6 +201,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setLoading(true);
     if ((resolvedMemberID != 123 && !isShare) || callSync) {
       fetchData();
+      console.log('aa');
+      
       setCallSync(false);
     }
     if (isShare && memberID != 123) {
@@ -716,7 +718,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   isShare={isShare}
                   setActionPrintData={(values: any) => {
                     setHelthPlanPrint(values);
+                    setCalenderData(values)
                   }}
+                  setCalendarPrintData={((values:any)=>{
+                    setCalenderData(values)
+                  })}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
                 />

@@ -32,6 +32,10 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   TreatMentPlanData,
   caldenderData,
 }) => {
+  console.log(ActionPlan);
+  console.log(caldenderData);
+  
+  
   const [printOptins, setPrintOptions] = useState([
     {
       name: 'Client Summary',
@@ -66,6 +70,8 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
   const isActiveSection = (section: string) => {
     return printOptins.filter((el) => el.name === section)[0].checked;
   };
+
+  
   subscribe('downloadCalled', (data: any) => {
     setPrintOptions(data.detail);
   });
@@ -133,6 +139,10 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       }),
     );
   }, [printOptins]);
+  console.log(printOptins);
+  console.log(pageJson);
+  
+  
   return (
     <div style={{ backgroundColor: '#E9F0F2' }}>
       <style

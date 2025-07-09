@@ -99,7 +99,7 @@ const StatusBarChartPrintV2 = ({
                 className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]"
               >
                 {/* <TooltipText tooltipValue={mapingData[el.label]}> */}
-                {mapingData[el.label]}
+                {mapingData[el.label]} 
                 {/* </TooltipText> */}
               </div>
               <div
@@ -111,7 +111,7 @@ const StatusBarChartPrintV2 = ({
                 }}
                 className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]"
               >
-                {mapingData[el.label] != '' && <>(</>}
+                {mapingData[el.label]  != '' && <>(</>}
 
                 <>
                   {el.condition == 'less_than' && ' >  '}
