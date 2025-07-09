@@ -99,16 +99,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
       },
     );
-    Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
-      (res) => {
-        setCalenderData(res.data);
-        if (res.data.length == 0) {
-          publish('ActionPlanStatus', { isempty: true });
-        } else {
-          publish('ActionPlanStatus', { isempty: false });
-        }
-      },
-    );
+    // Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
+    //   (res) => {
+    //     setCalenderData(res.data);
+    //     if (res.data.length == 0) {
+    //       publish('ActionPlanStatus', { isempty: true });
+    //     } else {
+    //       publish('ActionPlanStatus', { isempty: false });
+    //     }
+    //   },
+    // );
     Application.getPatientsInfo({
       member_id: resolvedMemberID,
     }).then((res) => {
@@ -152,7 +152,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setTreatmentPlanData(res.data);
+      setTreatmentPlanData(res.data.details);
     });
     Application.getCaldenderdataShare(
       {
@@ -247,7 +247,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         refData.push(...val.biomarkers);
       });
     });
-    console.log(refData);
     return refData;
   };
   // useEffect(() => {
@@ -323,7 +322,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const element = section as HTMLElement;
       if (isInViewport(element)) {
         const sectionId = element.id;
-        //   console.log(sectionId)
         publish('scrolledSection', { section: sectionId });
         //   if (sectionId !== currentSection) {
         //     // Update the state and query parameter only if the section changes
@@ -351,13 +349,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const container = scrollContainerRef.current;
       const isMobile = window.innerWidth < 768;
 
-      console.log(`Scroll Position: ${container.scrollTop}`);
-
       if (isMobile && container.scrollTop > 100) {
-        console.log('Sticky: true');
         setIsSticky(true);
       } else {
-        console.log('Sticky: false');
         setIsSticky(false);
       }
     };
@@ -512,7 +506,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="hidden md:block">
                       {' '}
-                      <InfoToltip isShare={isShare}></InfoToltip>
+                      <InfoToltip />
                     </div>
                   </div>
                   <div

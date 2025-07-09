@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import BioMarkerRowSuggestions from '../../generateTreatmentPlan/components/BiomarkerRow';
 type CategoryState = {
   name: string;
@@ -13,14 +13,12 @@ interface OverviewProps {
   visibleCategoriy: CategoryState[];
   Conflicts: Array<any>;
 }
-export const Overview: React.FC<OverviewProps> = ({
+export const Overview: FC<OverviewProps> = ({
   visibleCategoriy,
   treatmentPlanData,
   suggestionsChecked,
   Conflicts,
 }) => {
-  console.log(Conflicts);
-
   const getAllCheckedCategories = () => {
     const checkedCategories: string[] = [];
     suggestionsChecked.forEach((el: any) => {
