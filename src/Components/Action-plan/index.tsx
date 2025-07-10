@@ -110,17 +110,24 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
             <>
-              {calenderDataUper && (
+              {calenderDataUper && calenderDataUper?.length > 0 ? (
                 <>
-                  {' '}
-                  {calenderDataUper?.calendar?.length > 0 && (
+                  {calenderDataUper[0]?.calendar?.length > 0 && (
                     <CalenderComponent
-                      data={calenderDataUper?.calendar}
+                      data={calenderDataUper[0]?.calendar}
                       isTwoView={false}
-                      isActionPlan={true}
                     />
                   )}
                 </>
+              ) : (
+                <div className=" h-[440px] flex justify-center items-center w-[242px]">
+                  <div>
+                    <img src="/icons/EmptyState.svg" alt="" />
+                    <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                      No Action Plan Generated Yet
+                    </h5>
+                  </div>
+                </div>
               )}
             </>
           ) : (
