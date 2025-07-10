@@ -282,7 +282,7 @@ const AddSummaryJson = (
   );
   addUserInfo(usrInfoData);
   // console.log(ClientSummaryBoxs)
-  addInformation(ClientSummaryBoxs?.client_summary??"");
+  addInformation(ClientSummaryBoxs?.client_summary ?? '');
   addLegend();
   addCategoriesHandler(resolveCategories);
 };

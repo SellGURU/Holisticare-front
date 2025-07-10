@@ -1,21 +1,21 @@
 [
   {
-      "category": "Micronutrient Levels",
-      "subcategories": [
+    "category": "Micronutrient Levels",
+    "subcategories": [
+      {
+        "subcategory": "Essential Minerals",
+        "biomarkers": [
           {
-              "subcategory": "Essential Minerals",
-              "biomarkers": [
-                  {
-                      "name": "Zinc",
-                      "Result": "121",
-                      "Units": "ug/dL",
-                      "Lab Ref Range": "50.0-500.0",
-                      "Baseline": "121",
-                      "Optimal Range": "70.0-114.9",
-                      "Changes": "0%"
-                  }
-              ]
+            "name": "Zinc",
+            "Result": "121",
+            "Units": "ug/dL",
+            "Lab Ref Range": "50.0-500.0",
+            "Baseline": "121",
+            "Optimal Range": "70.0-114.9",
+            "Changes": "0%"
           }
-      ]
-  }  
+        ]
+      }
+    ]
+  }
 ]

@@ -1,70 +1,66 @@
 [
-    {
-        "category": "Lifestyle",
-        "title": "Daily meditation",
-        "frequency_type": "monthly",
-        "frequency_dates": [
-            "2025-07-08",
-            "2025-07-11",
-            "2025-07-19",
-            "2025-07-25",
-            "2025-07-30",
-            "2025-07-04",
-            "2025-07-02",
-            "2025-07-07",
-            "2025-07-22"
-        ],
-        "client_notes": [],
-        "dose": null,
-        "total_macro": null,
-        "value": 10,
-        "sections": null,
-        "unit": null
+  {
+    "category": "Lifestyle",
+    "title": "Daily meditation",
+    "frequency_type": "monthly",
+    "frequency_dates": [
+      "2025-07-08",
+      "2025-07-11",
+      "2025-07-19",
+      "2025-07-25",
+      "2025-07-30",
+      "2025-07-04",
+      "2025-07-02",
+      "2025-07-07",
+      "2025-07-22"
+    ],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": null,
+    "value": 10,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Lifestyle",
+    "title": "Sleep Hygiene Routine",
+    "frequency_type": "daily",
+    "frequency_dates": [],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": null,
+    "value": 8,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Supplement",
+    "title": "Curcumin",
+    "frequency_type": "weekly",
+    "frequency_dates": ["tue", "sun", "thu"],
+    "client_notes": [
+      "Consider for asthma patients or those with inflammation-related conditions."
+    ],
+    "dose": "50 mg",
+    "total_macro": null,
+    "value": null,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Diet",
+    "title": "Mediterranean Diet for Diabetes and Heart Health",
+    "frequency_type": "daily",
+    "frequency_dates": [],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": {
+      "Fats": 35,
+      "Carbs": 45,
+      "Protein": 20
     },
-    {
-        "category": "Lifestyle",
-        "title": "Sleep Hygiene Routine",
-        "frequency_type": "daily",
-        "frequency_dates": [],
-        "client_notes": [],
-        "dose": null,
-        "total_macro": null,
-        "value": 8,
-        "sections": null,
-        "unit": null
-    },
-    {
-        "category": "Supplement",
-        "title": "Curcumin",
-        "frequency_type": "weekly",
-        "frequency_dates": [
-            "tue",
-            "sun",
-            "thu"
-        ],
-        "client_notes": [
-            "Consider for asthma patients or those with inflammation-related conditions."
-        ],
-        "dose": "50 mg",
-        "total_macro": null,
-        "value": null,
-        "sections": null,
-        "unit": null
-    },
-    {
-        "category": "Diet",
-        "title": "Mediterranean Diet for Diabetes and Heart Health",
-        "frequency_type": "daily",
-        "frequency_dates": [],
-        "client_notes": [],
-        "dose": null,
-        "total_macro": {
-            "Fats": 35,
-            "Carbs": 45,
-            "Protein": 20
-        },
-        "value": null,
-        "sections": null,
-        "unit": null
-    }
+    "value": null,
+    "sections": null,
+    "unit": null
+  }
 ]
