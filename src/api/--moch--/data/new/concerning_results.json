@@ -1,40 +1,21 @@
 [
   {
-    "category": "Micronutrient Levels",
-    "subcategories": [
-      {
-        "subcategory": "Major Essential Minerals",
-        "biomarkers": [
+      "category": "Micronutrient Levels",
+      "subcategories": [
           {
-            "name": "Calcium",
-            "Result": "8.1",
-            "Units": "mg/dL",
-            "Lab Ref Range": "9.1 - 10.2",
-            "Baseline": "8.8",
-            "Optimal Range": "9.1 - 10.2",
-            "Changes": "-7.95%"
+              "subcategory": "Essential Minerals",
+              "biomarkers": [
+                  {
+                      "name": "Zinc",
+                      "Result": "121",
+                      "Units": "ug/dL",
+                      "Lab Ref Range": "50.0-500.0",
+                      "Baseline": "121",
+                      "Optimal Range": "70.0-114.9",
+                      "Changes": "0%"
+                  }
+              ]
           }
-        ]
-      }
-    ]
-  },
-  {
-    "category": "Renal Health",
-    "subcategories": [
-      {
-        "subcategory": "Kidney Function",
-        "biomarkers": [
-          {
-            "name": "Urea Nitrogen in Blood",
-            "Result": "29",
-            "Units": "mg/dL",
-            "Lab Ref Range": "10 - 25",
-            "Baseline": "28",
-            "Optimal Range": "10 - 25",
-            "Changes": "+3.57%"
-          }
-        ]
-      }
-    ]
-  }
+      ]
+  }  
 ]

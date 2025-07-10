@@ -224,7 +224,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [isHaveReport]);
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
   const [ClientSummaryBoxs, setClientSummaryBoxs] = useState<any>(null);
-  const [ConcerningResult, setConcerningResult] = useState<any[]>([]);
+  const [ConcerningResult, setConcerningResult] = useState<any>();
   const [referenceData, setReferenceData] = useState<any>(null);
   const [TreatMentPlanData, setTreatmentPlanData] = useState<any>([]);
 
