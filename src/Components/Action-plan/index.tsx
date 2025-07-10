@@ -82,9 +82,12 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
     if (!isShare) {
       Application.ActionPlanBlockList({ member_id: id }).then((res) => {
         console.log(res.data);
-
         setCardData(res.data);
         setActionPrintData(res.data);
+        setActiveAction(
+          res.data.length > 0 ? res.data[res.data.length - 1] : null,
+        );
+        
         setCalendarPrintData(res.data[0].overview);
         setActiveAction(
           res.data.length > 0 ? res.data[res.data.length - 1] : null,

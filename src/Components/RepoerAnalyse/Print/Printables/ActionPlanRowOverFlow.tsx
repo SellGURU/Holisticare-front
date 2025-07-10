@@ -43,7 +43,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
               {item.title}
             </div>
             {item.dose ? (
-              <div className="flex flex-wrap mt-3">
+              <div className="flex flex-wrap justify-center mt-3">
                 <div className="text-[10px]" style={{ color: '#B0B0B0' }}>
                   Dose:
                 </div>
@@ -60,7 +60,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
                 </div>
               </div>
             ) : item.value ? (
-              <div className="flex items-center flex-wrap mt-3">
+              <div className="flex items-center justify-center flex-wrap mt-3">
                 <div className="text-[10px]" style={{ color: '#B0B0B0' }}>
                   Value:
                 </div>
@@ -75,7 +75,7 @@ const ActionPlanRowOverFlow: React.FC<ActionPlanRowOverFlowProps> = ({
                 </div>
               </div>
             ) : item.total_macro ? (
-              <div className="flex items-center flex-wrap mt-3">
+              <div className="flex items-center justify-center flex-wrap mt-3">
                 <div className="text-[10px]" style={{ color: '#B0B0B0' }}>
                   Carb:
                 </div>

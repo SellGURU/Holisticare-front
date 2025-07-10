@@ -160,7 +160,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setCalenderData(res.data);
+      setCalenderData(res.data[0]);
     });
     Application.getPatientsInfoShare(
       {
@@ -718,7 +718,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   isShare={isShare}
                   setActionPrintData={(values: any) => {
                     setHelthPlanPrint(values);
-                    setCalenderData(values);
                   }}
                   setCalendarPrintData={(values: any) => {
                     setCalenderData(values);
@@ -728,7 +727,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {isHaveReport && (
+            {(isHaveReport && !isShare) && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}
