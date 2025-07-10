@@ -17,7 +17,7 @@ export function initGlobalErrorHandler() {
     showGlobalError();
   };
 
-//   <img src="/icons/server-down.svg" alt="Error Illustration" class="w-40 h-40 mb-6 animate-bounce-slow" />
+  //   <img src="/icons/server-down.svg" alt="Error Illustration" class="w-40 h-40 mb-6 animate-bounce-slow" />
   function showGlobalError() {
     document.body.innerHTML = `
         <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 text-center px-4 animate-fade-in">
