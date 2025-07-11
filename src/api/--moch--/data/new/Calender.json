@@ -1,26 +1,66 @@
-{
-  "Friday": [
-    "Snack on calcium-rich foods for bone health (Diet).",
-    "Journal or practice gratitude for stress relief (Mind)."
-  ],
-  "Monday": [
-    "Eat calcium-rich foods for bone health (Diet).",
-    "Practice deep breathing or yoga for heart health (Mind)."
-  ],
-  "Sunday": [
-    "Plan meals with omega-3 foods for heart health (Diet).",
-    "Do light cardio (swimming/cycling) for vascular health (Activity)."
-  ],
-  "Tuesday": [
-    "Take magnesium/chromium supplements for blood sugar regulation (Supplement)."
-  ],
-  "Saturday": [
-    "Prepare meals with cruciferous vegetables and green tea for liver health (Diet).",
-    "Practice mindfulness meditation for stress reduction (Mind)."
-  ],
-  "Thursday": ["Take CoQ10 supplements (Supplement)."],
-  "Wednesday": [
-    "Eat healthy fats and fiber to maintain HDL cholesterol (Diet).",
-    "Do jogging or aerobics for HDL cholesterol (Activity)."
-  ]
-}
+[
+  {
+    "category": "Lifestyle",
+    "title": "Daily meditation",
+    "frequency_type": "monthly",
+    "frequency_dates": [
+      "2025-07-08",
+      "2025-07-11",
+      "2025-07-19",
+      "2025-07-25",
+      "2025-07-30",
+      "2025-07-04",
+      "2025-07-02",
+      "2025-07-07",
+      "2025-07-22"
+    ],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": null,
+    "value": 10,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Lifestyle",
+    "title": "Sleep Hygiene Routine",
+    "frequency_type": "daily",
+    "frequency_dates": [],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": null,
+    "value": 8,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Supplement",
+    "title": "Curcumin",
+    "frequency_type": "weekly",
+    "frequency_dates": ["tue", "sun", "thu"],
+    "client_notes": [
+      "Consider for asthma patients or those with inflammation-related conditions."
+    ],
+    "dose": "50 mg",
+    "total_macro": null,
+    "value": null,
+    "sections": null,
+    "unit": null
+  },
+  {
+    "category": "Diet",
+    "title": "Mediterranean Diet for Diabetes and Heart Health",
+    "frequency_type": "daily",
+    "frequency_dates": [],
+    "client_notes": [],
+    "dose": null,
+    "total_macro": {
+      "Fats": 35,
+      "Carbs": 45,
+      "Protein": 20
+    },
+    "value": null,
+    "sections": null,
+    "unit": null
+  }
+]

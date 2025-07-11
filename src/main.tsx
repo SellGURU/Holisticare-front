@@ -10,6 +10,9 @@ import './api/axios.ts';
 import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import UploaderTooltipContainer from './Components/UploaderTooltip/index.tsx';
+import { initGlobalErrorHandler } from '../globalErrorHandler.ts';
+
+initGlobalErrorHandler();
 
 createRoot(document.getElementById('root')!).render(
   <>
