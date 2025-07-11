@@ -37,7 +37,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   //         return '#FC5474'
   //     }
   // }
-  const [active, setActive] = useState<any>(refrences?.biomarkers[0]??null);
+  const [active, setActive] = useState<any>(refrences?.biomarkers[0] ?? null);
   subscribe('openDetiledCard', (ev) => {
     // console.log(ev)
     if (ev.detail.id == data.name) {
@@ -256,15 +256,18 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   <div className="mt-10">
                                     {biomarker && (
                                       <StatusBarChartV2
-                                  // data={active.chart_bounds}
+                                        // data={active.chart_bounds}
                                         mapingData={Object.fromEntries(
-                                          Object.entries(active.chart_bounds).map(
-                                            ([key, valuess]: any) => [key, valuess.label],
-                                          ),
+                                          Object.entries(
+                                            active.chart_bounds,
+                                          ).map(([key, valuess]: any) => [
+                                            key,
+                                            valuess.label,
+                                          ]),
                                         )}
                                         status={active.status}
                                         unit={active.unit}
-                                        values={active.values}                                  
+                                        values={active.values}
                                         data={biomarker.chart_bounds}
                                       ></StatusBarChartV2>
                                     )}
