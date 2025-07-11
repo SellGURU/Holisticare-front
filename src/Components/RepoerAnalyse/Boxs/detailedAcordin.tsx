@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import StatusChart from '../StatusChart';
+// import StatusChart from '../StatusChart';
 import { subscribe } from '../../../utils/event';
 import Legends from '../Legends';
-import StatusBarChart from './StatusBarChart';
+// import StatusBarChart from './StatusBarChart';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
+import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
+import HistoricalChart from '../HistoricalChart';
 // import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
@@ -35,7 +37,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   //         return '#FC5474'
   //     }
   // }
-  const [active, setActive] = useState<any>(refrences?.biomarkers[0]);
+  const [active, setActive] = useState<any>(refrences?.biomarkers[0] ?? null);
   subscribe('openDetiledCard', (ev) => {
     // console.log(ev)
     if (ev.detail.id == data.name) {
@@ -253,9 +255,21 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="mt-10">
                                     {biomarker && (
-                                      <StatusBarChart
-                                        data={biomarker}
-                                      ></StatusBarChart>
+                                      <StatusBarChartV2
+                                        // data={active.chart_bounds}
+                                        mapingData={Object.fromEntries(
+                                          Object.entries(
+                                            active.chart_bounds,
+                                          ).map(([key, valuess]: any) => [
+                                            key,
+                                            valuess.label,
+                                          ]),
+                                        )}
+                                        status={active.status}
+                                        unit={active.unit}
+                                        values={active.values}
+                                        data={biomarker.chart_bounds}
+                                      ></StatusBarChartV2>
                                     )}
                                   </div>
                                 </div>
@@ -339,20 +353,12 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="w-full">
                                     {active && (
-                                      <StatusChart
-                                        mode={
-                                          active.chart_bounds['Needs Focus']
-                                            .length > 1 &&
-                                          active.chart_bounds['Ok'].length > 1
-                                            ? 'multi'
-                                            : 'line'
-                                        }
+                                      <HistoricalChart
                                         statusBar={active?.chart_bounds}
-                                        labels={[...active.date].reverse()}
-                                        dataPoints={[
-                                          ...active.values,
-                                        ].reverse()}
-                                      ></StatusChart>
+                                        dataStatus={active.status}
+                                        dataPoints={[...active.values]}
+                                        labels={[...active.date]}
+                                      ></HistoricalChart>
                                     )}
                                   </div>
                                 </div>
