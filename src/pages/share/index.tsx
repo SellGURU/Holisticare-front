@@ -45,7 +45,7 @@ const Share = () => {
     if (!isDragging) {
       setIsMobileMenuOpen(!isMobileMenuOpen);
     }
-  };  
+  };
   useEffect(() => {
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
@@ -57,32 +57,36 @@ const Share = () => {
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
     };
-  }, []);  
+  }, []);
   return (
     <>
       <div className="bg-bg-color min-h-screen w-full h-full">
-      <Draggable onStart={handleStart} onDrag={handleDrag} onStop={handleStop}>
-        <div
-          // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`fixed z-[40] top-[50%] left-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
+        <Draggable
+          onStart={handleStart}
+          onDrag={handleDrag}
+          onStop={handleStop}
         >
-          <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
-        </div>
-      </Draggable>
-      <div
-        ref={sideMenuRef}
-        className={`
+          <div
+            // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`fixed z-[40] top-[50%] left-6 bg-white rounded-md size-9 flex items-center justify-center py-0.5 px-2 cursor-pointer ${!isReportAvailable && 'opacity-40'}`}
+          >
+            <div className="report-sidemenu-layer-icon text-Primary-EmeraldGreen" />
+          </div>
+        </Draggable>
+        <div
+          ref={sideMenuRef}
+          className={`
         
           ${isMobileView && !isMobileMenuOpen ? '-left-[178px]' : 'left-0'}
           
           transition-all z-[80] fixed top-20 xl:top-16  duration-300 ease-in-out
           xl:left-4
         `}
-      >
-        <ReportSideMenu
-          onClose={() => isMobileView && setIsMobileMenuOpen(false)}
-        ></ReportSideMenu>
-      </div>
+        >
+          <ReportSideMenu
+            onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+          ></ReportSideMenu>
+        </div>
 
         <div className="w-full xl:pl-[200px] fixed">
           <ReportAnalyseView
