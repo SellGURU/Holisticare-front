@@ -81,23 +81,25 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   useEffect(() => {
     if (!isShare) {
       Application.ActionPlanBlockList({ member_id: id }).then((res) => {
-        console.log(res.data);
-        setCardData(res.data);
-        setActionPrintData(res.data);
-        setActiveAction(
-          res.data.length > 0 ? res.data[res.data.length - 1] : null,
-        );
+        // console.log(res.data);
+        if (res.data.length > 0) {
+          setCardData(res.data);
+          setActionPrintData(res.data);
+          setActiveAction(
+            res.data.length > 0 ? res.data[res.data.length - 1] : null,
+          );
 
-        setCalendarPrintData(res.data[0].overview);
-        setActiveAction(
-          res.data.length > 0 ? res.data[res.data.length - 1] : null,
-        );
-        setTimeout(() => {
-          const container: any = document.getElementById('actionList');
-          if (container) {
-            container.scrollLeft = container.scrollWidth; // Set scroll to the very end
-          }
-        }, 500);
+          setCalendarPrintData(res.data[0].overview);
+          setActiveAction(
+            res.data.length > 0 ? res.data[res.data.length - 1] : null,
+          );
+          setTimeout(() => {
+            const container: any = document.getElementById('actionList');
+            if (container) {
+              container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+            }
+          }, 500);
+        }
       });
     }
   }, []);
