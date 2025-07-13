@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Checkin from '.';
-import { useEffect, useState } from 'react';
 import Mobile from '../../api/mobile';
 // import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import Circleloader from '../../Components/CircleLoader';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+import Circleloader from '../../Components/CircleLoader';
 
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
@@ -120,9 +120,21 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       });
     }
   };
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollUp = () => {
+    scrollRef.current?.scrollBy({ top: -200, behavior: 'smooth' });
+  };
+
+  const scrollDown = () => {
+    scrollRef.current?.scrollBy({ top: 200, behavior: 'smooth' });
+  };
   return (
     <>
-      <div className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll">
+      <div
+        className="w-full py-3 px-4 h-svh pb-[150px] overflow-y-scroll"
+        ref={scrollRef}
+      >
         {isComplete ? (
           <div className="py-4">
             <div className="text-[12px] text-Text-Secondary text-center">
@@ -162,6 +174,29 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             )}
           </>
         )}
+      </div>
+      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
+        <button
+          onClick={scrollUp}
+          className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
+        >
+          <img
+            src="/icons/arrow-up.svg"
+            alt="Scroll Up"
+            className="w-4 h-4 rotate-90"
+          />
+        </button>
+
+        <button
+          onClick={scrollDown}
+          className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
+        >
+          <img
+            src="/icons/arrow-down-blue.svg"
+            alt="Scroll Down"
+            className="w-4 h-4"
+          />
+        </button>
       </div>
     </>
   );
