@@ -1,5 +1,5 @@
 export function initGlobalErrorHandler() {
-  if (process.env.NODE_ENV !== 'production') return;
+  // if (process.env.NODE_ENV !== 'production') return;
 
   window.onerror = function (message, source, lineno, colno, error) {
     console.error('Global JS Error:', {
