@@ -732,7 +732,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {(isHaveReport && !isShare) && (
+            {isHaveReport && !isShare && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}

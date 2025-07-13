@@ -87,7 +87,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         setActiveAction(
           res.data.length > 0 ? res.data[res.data.length - 1] : null,
         );
-        
+
         setCalendarPrintData(res.data[0].overview);
         setActiveAction(
           res.data.length > 0 ? res.data[res.data.length - 1] : null,

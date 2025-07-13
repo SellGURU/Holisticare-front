@@ -73,7 +73,7 @@ const StatusBarChartPrintV2 = ({
   return (
     <div className="w-full relative flex select-none">
       {sortThreshold().map((el, index) => {
-        const label =mapingData[el.label]  
+        const label = mapingData[el.label];
         return (
           <>
             <div
@@ -106,36 +106,36 @@ const StatusBarChartPrintV2 = ({
                     whiteSpace: 'pre-line',
                     wordBreak: 'break-word',
                     textAlignLast: 'center',
-                    textAlign: 'center'
+                    textAlign: 'center',
                   }}
                 >
-                  {label} 
+                  {label}
                   {label !== '' && label.length > 40 && (
                     <span style={{ whiteSpace: 'nowrap' }}>
                       {' '}
-                      (
-                      {el.condition === 'less_than' && ' > '}
+                      ({el.condition === 'less_than' && ' > '}
                       {el.threshold[0]}
-                      {el.threshold[1] !== undefined ? ' - ' + el.threshold[1] : ''}
-                      {el.condition === 'greater_than' && ' < '}
-                      )
+                      {el.threshold[1] !== undefined
+                        ? ' - ' + el.threshold[1]
+                        : ''}
+                      {el.condition === 'greater_than' && ' < '})
                     </span>
                   )}
                 </span>
                 {label !== '' && label.length <= 40 && (
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                      {' '}
-                      (
-                      {el.condition === 'less_than' && ' > '}
-                      {el.threshold[0]}
-                      {el.threshold[1] !== undefined ? ' - ' + el.threshold[1] : ''}
-                      {el.condition === 'greater_than' && ' < '}
-                      )
-                    </span>
-                  )}
+                  <span style={{ whiteSpace: 'nowrap' }}>
+                    {' '}
+                    ({el.condition === 'less_than' && ' > '}
+                    {el.threshold[0]}
+                    {el.threshold[1] !== undefined
+                      ? ' - ' + el.threshold[1]
+                      : ''}
+                    {el.condition === 'greater_than' && ' < '})
+                  </span>
+                )}
                 {/* </TooltipText> */}
               </div>
-            
+
               {status && status[0] == el.label && (
                 <div
                   className={`absolute  top-[2px]  z-10`}
