@@ -627,7 +627,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           </div>
         </div>
 
-        <div className="w-full max-w-lg flex flex-col md:flex-row items-start gap-[15px] md:gap-[113px]">
+        <div className="w-full max-w-lg flex flex-col px-2 md:px-0 md:flex-row items-start gap-[15px] md:gap-[113px]">
           <h3 className=" text-[10px] md:text-xs font-medium ">Age</h3>
           <div className=" w-full  md:w-[70%] flex flex-col items-center gap-1">
             <div className="text-Text-Quadruple text-xs">

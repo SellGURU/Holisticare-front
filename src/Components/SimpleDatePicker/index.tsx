@@ -64,8 +64,8 @@ export default function SimpleDatePicker({
           setOpen(!open);
           onManualOpen?.();
         }}
-        className={` ${isAddClient ? 'w-full lg:min-w-[200px]' : ''}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : 'sm:w-[133px]  rounded-md '}
-         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-full' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
+        className={` ${isAddClient ? 'w-[90vw] lg:min-w-[200px] md:w-[200px] ' : 'sm:w-[133px]'}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : ' rounded-md '}
+         px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-[90vw]' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
            inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
          } ${ClassName}`}
       >
@@ -78,7 +78,7 @@ export default function SimpleDatePicker({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 right-0 z-50 ">
+        <div className="absolute w-full  top-full mt-2 right-0 z-50 ">
           <Calendar
             value={selectedDay}
             onChange={(newDate) => {
