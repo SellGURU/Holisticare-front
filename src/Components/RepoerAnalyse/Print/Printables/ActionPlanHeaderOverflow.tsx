@@ -19,7 +19,7 @@ const AddActionPlanHeaderOverflow = () => {
             Title
           </div>
           <div
-            className="text-gray-700 text-center font-medium "
+            className=" pl-3 text-gray-700 text-center font-medium "
             style={{ fontSize: 12, width: '280px', color: '#383838' }}
           >
             Frequency

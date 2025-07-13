@@ -123,7 +123,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
             return (
               <>
                 <div
-                  className={`text-Text-Primary break-all flex justify-start bullet-point break-words text-justify mt-3 first:mt-1.5`}
+                  className={`text-Text-Primary  flex justify-start bullet-point break-words text-justify mt-3 first:mt-1.5`}
                 >
                   {el}
                 </div>{' '}
