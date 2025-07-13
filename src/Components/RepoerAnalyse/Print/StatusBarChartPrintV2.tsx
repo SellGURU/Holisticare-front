@@ -73,6 +73,7 @@ const StatusBarChartPrintV2 = ({
   return (
     <div className="w-full relative flex select-none">
       {sortThreshold().map((el, index) => {
+        const label =mapingData[el.label]  
         return (
           <>
             <div
@@ -96,33 +97,45 @@ const StatusBarChartPrintV2 = ({
                   top: '-32px',
                   left: '-4px',
                 }}
-                className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]"
+                className="absolute w-full px-1 text-Primary-DeepTeal flex flex-col items-center justify-center left-[-4px] top-[-35px] opacity-90 text-[10px] break-words text-ellipsis"
               >
                 {/* <TooltipText tooltipValue={mapingData[el.label]}> */}
-                {mapingData[el.label]}
+                <span
+                  style={{
+                    display: 'inline',
+                    whiteSpace: 'pre-line',
+                    wordBreak: 'break-word',
+                    textAlignLast: 'center',
+                    textAlign: 'center'
+                  }}
+                >
+                  {label} 
+                  {label !== '' && label.length > 40 && (
+                    <span style={{ whiteSpace: 'nowrap' }}>
+                      {' '}
+                      (
+                      {el.condition === 'less_than' && ' > '}
+                      {el.threshold[0]}
+                      {el.threshold[1] !== undefined ? ' - ' + el.threshold[1] : ''}
+                      {el.condition === 'greater_than' && ' < '}
+                      )
+                    </span>
+                  )}
+                </span>
+                {label !== '' && label.length <= 40 && (
+                    <span style={{ whiteSpace: 'nowrap' }}>
+                      {' '}
+                      (
+                      {el.condition === 'less_than' && ' > '}
+                      {el.threshold[0]}
+                      {el.threshold[1] !== undefined ? ' - ' + el.threshold[1] : ''}
+                      {el.condition === 'greater_than' && ' < '}
+                      )
+                    </span>
+                  )}
                 {/* </TooltipText> */}
               </div>
-              <div
-                style={{
-                  fontSize: '10px',
-                  color: '#005f73',
-                  top: '-20px',
-                  left: '-4px',
-                }}
-                className="absolute w-full px-1 text-Primary-DeepTeal flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]"
-              >
-                {mapingData[el.label] != '' && <>(</>}
-
-                <>
-                  {el.condition == 'less_than' && ' >  '}
-                  {el.threshold[0] +
-                    (el.threshold[1] != undefined
-                      ? ' - ' + el.threshold[1]
-                      : '')}
-                  {el.condition == 'greater_than' && ' <  '}
-                </>
-                {mapingData[el.label] != '' && <>)</>}
-              </div>
+            
               {status && status[0] == el.label && (
                 <div
                   className={`absolute  top-[2px]  z-10`}
