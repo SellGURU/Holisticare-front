@@ -249,7 +249,7 @@ const ClientCard: FC<ClientCardProps> = ({
       >
         <>
           {isShared ? (
-            <div className="bg-white w-[500px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+            <div className="bg-white w-[90vw] md:w-[500px] h-[196px] rounded-2xl p-4 shadow-800 text-Text-Primary">
               <div className="flex flex-col gap-4 items-center w-full ">
                 <img
                   className="w-[134px] h-[108px] -mt-3"
@@ -266,7 +266,7 @@ const ClientCard: FC<ClientCardProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-white w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
+            <div className="bg-white w-[90vw] md:w-[500px] h-[352px] rounded-2xl p-4 shadow-800 text-Text-Primary">
               <div
                 className="border-b border-Gray-50 pb-2 text-sm font-medium"
                 data-tooltip-id={'tooltip-client-access' + client.name}
@@ -284,7 +284,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   </Tooltip>
                 )}
               </div>
-              <div className="mt-6 text-xs font-medium">
+              <div className="mt-6 text-xs font-medium text-justify">
                 Share the email address and password with your client to give
                 them access.
               </div>
@@ -436,12 +436,12 @@ const ClientCard: FC<ClientCardProps> = ({
           // e.stopPropagation();
           // navigate(`/report/${client.member_id}/${client.name}`);
         }}
-        className="sm:min-w-[315px] w-full xs:w-[344px] md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
+        className="sm:min-w-[315px] w-full xs:w-[344px] ss:w-full md:w-[333px] p-2 sm:p-4 bg-white shadow-200 xl:w-[24%] rounded-[16px] relative"
       >
         {showModal && (
           <div
             ref={showModalRefrence}
-            className="absolute top-12 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
+            className="absolute top-7 md:top-12 right-[10px] z-20 w-[220px] rounded-[16px] px-4 py-2 bg-white border border-Gray-50 shadow-200 flex flex-col gap-3"
           >
             {client.archived ? (
               <>
@@ -543,8 +543,18 @@ const ClientCard: FC<ClientCardProps> = ({
                   </div>
                   {showAssign && (
                     <div
-                      className={`absolute -top-2 ${(indexItem + 1) % 4 == 0 ? 'right-[200px]' : ' -right-[200px]'} max-h-[300px] overflow-auto ${(indexItem + 1) % 4 == 0 ? 'rounded-tl-2xl rounded-b-2xl' : ' rounded-tr-2xl rounded-b-2xl'}  w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}
+                      className={`absolute top-0 md:-top-2 ${(indexItem + 1) % 4 == 0 ? 'right-[200px]' : ' -right-4 md:-right-[200px]'} max-h-[300px] overflow-auto ${(indexItem + 1) % 4 == 0 ? 'rounded-tl-2xl rounded-b-2xl' : ' rounded-tr-2xl rounded-b-2xl'} w-[220px] h-[182px] md:h-auto  md:w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}
                     >
+                     <div onClick={()=>setshowAssign(false)} className=' md:hidden size-5 rotate-180'>
+                     <SvgIcon
+                        src="/icons/arrow-right.svg"
+                        width="20px"
+                        height="20px"
+                        color="#888888"
+                      />
+                     </div>
+                     
+                     
                       {CoachList.map((coach: Coach) => (
                         <div
                           // onClick={() => handleCoachSelection(coach)}
@@ -655,7 +665,7 @@ const ClientCard: FC<ClientCardProps> = ({
             <img
               className="w-full h-full rounded-full object-cover"
               onError={(e: any) => {
-                e.target.src = `https://ui-avatars.com/api/?name=${client.name}`; // Set fallback image
+                e.target.src = `◘${client.name}`; // Set fallback image
               }}
               src={
                 client.picture
@@ -666,7 +676,7 @@ const ClientCard: FC<ClientCardProps> = ({
             />
             {client.favorite && (
               <img
-                className="absolute bottom-0 right-0"
+                className="absolute md:bottom-0 -bottom-2 -right-1 md:right-0 w-[30px] h-[26px] md:w-[34px] md:h-[30px]"
                 src="/icons/Priority.svg"
                 alt=""
               />
@@ -702,7 +712,7 @@ const ClientCard: FC<ClientCardProps> = ({
               ID: {client.member_id}
             </div>
           </div>
-          <div className="flex md:hidden flex-col justify-end ml-4">
+          <div className="flex md:hidden flex-col w-full items-end justify-end ml-4">
             <ButtonPrimary
               onClick={(e) => {
                 e.stopPropagation();
@@ -715,7 +725,7 @@ const ClientCard: FC<ClientCardProps> = ({
               <div className="text-[10px] flex justify-center gap-1 text-nowrap">
                 <img
                   className={`${isExpanded && 'rotate-180'}`}
-                  src="/icons/arrow-circle-down.svg"
+                  src="/icons/arrow-circle-down-white.svg"
                   alt=""
                 />
                 {isExpanded ? 'Show Less' : 'Show More'}
@@ -729,7 +739,7 @@ const ClientCard: FC<ClientCardProps> = ({
             e.stopPropagation();
             setshowModal(!showModal);
           }}
-          className="absolute top-7 right-2 cursor-pointer"
+          className="absolute top-2 md:top-7 right-2 cursor-pointer"
         >
           <img src="/icons/client-card/more.svg" alt="" />
         </div>
