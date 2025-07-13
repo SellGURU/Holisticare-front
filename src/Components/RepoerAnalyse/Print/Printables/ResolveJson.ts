@@ -396,7 +396,7 @@ const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
 const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
   if (Array.isArray(caldenderData)) {
     const grouped = caldenderData?.reduce((acc: any, item: any) => {
-      const key = item.category.toLowerCase();
+      const key = item.category?.toLowerCase() || '';
       if (!acc[key]) acc[key] = [];
       acc[key].push(item);
       return acc;

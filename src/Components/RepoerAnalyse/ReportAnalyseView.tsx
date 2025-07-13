@@ -175,7 +175,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   subscribe('syncReport', () => {
     setCallSync(true);
   });
-  const [accessManager, setAccessManager] = useState<Array<any>>([
+  const [accessManager, setAccessManager] = useState<
+    Array<{
+      name: string;
+      checked: boolean;
+    }>
+  >([
     {
       name: 'Client Summary',
       checked: true,
@@ -426,7 +431,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
-                <div className="  min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
+                <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
                   <div>
                     <div
                       id="Client Summary"
@@ -529,7 +534,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
               .checked == true && (
               <>
-                <div className=" my-[200px] xl:min-h-[400px] text-light-primary-text dark:text-primary-text ">
+                <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
                       id="Needs Focus Biomarker"
@@ -553,11 +558,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
-                <div className="my-10 min-h-[500px]">
+                <div className="my-10 min-h-[700px]">
                   <div className="w-full mb-3 flex items-center justify-between">
                     <div
                       id="Concerning Result"
-                      className="  TextStyle-Headline-4 text-Text-Primary"
+                      className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary"
                     >
                       Concerning Result
                     </div>
@@ -613,7 +618,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
             {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
               .checked == true && (
-              <div className="my-[200px] min-h-[650px]">
+              <div className="my-[200px] min-h-[700px]">
                 <div>
                   <div
                     id="Detailed Analysis"
@@ -659,7 +664,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             )}
             {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
               .checked == true && (
-              <div className="my-[200px] min-h-[650px]">
+              <div className="my-[200px] min-h-[700px]">
                 <div className="w-full flex items-center justify-between">
                   <div
                     id="Holistic Plan"
