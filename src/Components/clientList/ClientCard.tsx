@@ -545,16 +545,18 @@ const ClientCard: FC<ClientCardProps> = ({
                     <div
                       className={`absolute top-0 md:-top-2 ${(indexItem + 1) % 4 == 0 ? '-right-4 md:right-[200px]' : ' -right-4 md:-right-[200px]'} max-h-[300px] overflow-auto ${(indexItem + 1) % 4 == 0 ? 'rounded-tl-2xl rounded-b-2xl' : ' rounded-tr-2xl rounded-b-2xl'} w-[220px] h-[182px] md:h-auto  md:w-[188px] shadow-200 p-3 bg-white flex flex-col gap-3`}
                     >
-                     <div onClick={()=>setshowAssign(false)} className=' md:hidden size-5 rotate-180'>
-                     <SvgIcon
-                        src="/icons/arrow-right.svg"
-                        width="20px"
-                        height="20px"
-                        color="#888888"
-                      />
-                     </div>
-                     
-                     
+                      <div
+                        onClick={() => setshowAssign(false)}
+                        className=" md:hidden size-5 rotate-180"
+                      >
+                        <SvgIcon
+                          src="/icons/arrow-right.svg"
+                          width="20px"
+                          height="20px"
+                          color="#888888"
+                        />
+                      </div>
+
                       {CoachList.map((coach: Coach) => (
                         <div
                           // onClick={() => handleCoachSelection(coach)}
