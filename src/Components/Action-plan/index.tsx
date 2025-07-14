@@ -22,6 +22,7 @@ interface ActionPlanProps {
   setActionPrintData: (data: any) => void;
   isShare?: boolean;
   isHolisticPlanEmpty: boolean;
+  setCalendarPrintData: (data: any) => void;
 }
 
 export const ActionPlan: React.FC<ActionPlanProps> = ({
@@ -29,6 +30,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   isShare,
   calenderDataUper,
   isHolisticPlanEmpty,
+  setCalendarPrintData,
 }) => {
   const { id } = useParams<{ id: string }>();
   // const [calendarData,setCalender] = useState(calenderDataUper);
@@ -79,17 +81,25 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   useEffect(() => {
     if (!isShare) {
       Application.ActionPlanBlockList({ member_id: id }).then((res) => {
-        setCardData(res.data);
-        setActionPrintData(res.data);
-        setActiveAction(
-          res.data.length > 0 ? res.data[res.data.length - 1] : null,
-        );
-        setTimeout(() => {
-          const container: any = document.getElementById('actionList');
-          if (container) {
-            container.scrollLeft = container.scrollWidth; // Set scroll to the very end
-          }
-        }, 500);
+        // console.log(res.data);
+        if (res.data.length > 0) {
+          setCardData(res.data);
+          setActionPrintData(res.data);
+          setActiveAction(
+            res.data.length > 0 ? res.data[res.data.length - 1] : null,
+          );
+
+          setCalendarPrintData(res.data[0].overview);
+          setActiveAction(
+            res.data.length > 0 ? res.data[res.data.length - 1] : null,
+          );
+          setTimeout(() => {
+            const container: any = document.getElementById('actionList');
+            if (container) {
+              container.scrollLeft = container.scrollWidth; // Set scroll to the very end
+            }
+          }, 500);
+        }
       });
     }
   }, []);
@@ -110,13 +120,24 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
             <>
-              {calenderDataUper && (
+              {calenderDataUper && calenderDataUper?.length > 0 ? (
                 <>
-                  {' '}
-                  {calenderDataUper.length > 0 && (
-                    <CalenderComponent data={calenderDataUper} />
+                  {calenderDataUper[0]?.calendar?.length > 0 && (
+                    <CalenderComponent
+                      data={calenderDataUper[0]?.calendar}
+                      isTwoView={false}
+                    />
                   )}
                 </>
+              ) : (
+                <div className=" h-[440px] flex justify-center items-center w-[242px]">
+                  <div>
+                    <img src="/icons/EmptyState.svg" alt="" />
+                    <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                      No Action Plan Generated Yet
+                    </h5>
+                  </div>
+                </div>
               )}
             </>
           ) : (

@@ -165,7 +165,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               onClick={() => {
                 setActiveTreatmentplan('Diet');
               }}
-              className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+              className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] min-w-[74px] gap-2 shadow-100 border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                 aciveTreatmentPlan == 'Diet'
                   ? ' border-Primary-EmeraldGreen'
                   : ''
@@ -180,14 +180,14 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               onClick={() => {
                 setActiveTreatmentplan('Lifestyle');
               }}
-              className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+              className={`text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                 aciveTreatmentPlan == 'Lifestyle'
                   ? ' border-Primary-EmeraldGreen'
                   : ''
               } w-full flex items-center px-4`}
             >
               <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
-                <img src="/icons/Lifestyle.svg" alt="" />
+                <img className="size-4" src="/icons/LifeStyle2.svg" alt="" />
               </div>
               Lifestyle
             </div>
@@ -195,7 +195,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               onClick={() => {
                 setActiveTreatmentplan('Activity');
               }}
-              className={` flex justify-center bg-white cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+              className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 border min-w-[73px] rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                 aciveTreatmentPlan == 'Activity'
                   ? ' border-Primary-EmeraldGreen'
                   : ''
@@ -210,7 +210,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               onClick={() => {
                 setActiveTreatmentplan('Supplement');
               }}
-              className={` flex justify-center bg-white  cursor-pointer h-[48px] gap-2 shadow-100 border rounded-[16px] text-Primary-DeepTeal ${
+              className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
                 aciveTreatmentPlan == 'Supplement'
                   ? ' border-Primary-EmeraldGreen'
                   : ''
@@ -221,8 +221,50 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
               </div>
               Supplement
             </div>
+            <div
+              onClick={() => {
+                setActiveTreatmentplan('Other');
+              }}
+              className={` text-[10px] xs:text-xs flex flex-col md:flex-row justify-center bg-white cursor-pointer h-[80px] md:h-[48px] gap-2 shadow-100 min-w-[73px] border rounded-2xl md:rounded-[16px] text-Primary-DeepTeal ${
+                aciveTreatmentPlan == 'Other'
+                  ? ' border-Primary-EmeraldGreen'
+                  : ''
+              } w-full flex items-center px-4`}
+            >
+              <div className="w-6 h-6 bg-[#E5E5E5]  flex justify-center items-center rounded-[8px]">
+                <img src="/icons/others.svg" alt="" />
+              </div>
+              Other
+            </div>
           </div>
           {TreatMentPlanData.length > 0 && (
+            <div className="w-full flex flex-wrap gap-6 bg-white min-h-[540px] p-4 rounded-[16px] border border-Gray-50 shadow-100 mt-4">
+              {TreatMentPlanData?.filter(
+                (value: any) => value.category == aciveTreatmentPlan,
+              )[0]?.data?.map((el: any, index: number) => {
+                return (
+                  <>
+                    <TreatmentCard
+                      index={index}
+                      data={el}
+                      isOther={aciveTreatmentPlan == 'Other'}
+                    ></TreatmentCard>
+                  </>
+                );
+              })}
+              {TreatMentPlanData?.filter(
+                (value: any) => value.category == aciveTreatmentPlan,
+              )[0]?.data.length < 1 && (
+                <div className="w-full  flex justify-center items-center flex-col">
+                  <img src="/icons/no-recommendations.svg" alt="" />
+                  <div className="text-Text-Primary text-sm font-medium mt-5">
+                    No recommendations found.
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {/* {TreatMentPlanData.length > 0 && (
             <div className="w-full flex flex-wrap gap-6 bg-white p-4 p- rounded-[16px] border border-Gray-50 shadow-100 mt-4">
               {TreatMentPlanData?.filter(
                 (value: any) => value.category == aciveTreatmentPlan,
@@ -230,7 +272,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                 return <TreatmentCard index={index} data={el}></TreatmentCard>;
               })}
             </div>
-          )}
+          )} */}
         </>
       ) : (
         <>
@@ -514,8 +556,6 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                   {TreatMentPlanData?.filter(
                     (value: any) => value.category == aciveTreatmentPlan,
                   )[0]?.data?.map((el: any, index: number) => {
-                    // console.log('TreatMentPlanData => ', TreatMentPlanData);
-
                     return (
                       <>
                         <TreatmentCard

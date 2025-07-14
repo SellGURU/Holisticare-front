@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
-import { splitInstructions } from '../../../help';
 import TooltipTextAuto from '../../../Components/TooltipText/TooltipTextAuto';
+import { splitInstructions } from '../../../help';
 
 interface ActivityCardProps {
   item: any;
@@ -13,7 +13,7 @@ interface ActivityCardProps {
   handleCheckboxChange: (category: string, itemId: number) => void;
 }
 
-export const ActivityCard: React.FC<ActivityCardProps> = ({
+export const ActivityCard: FC<ActivityCardProps> = ({
   item,
   index,
   activeCategory,
@@ -40,7 +40,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
         </div>
 
         <ul className="md:pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-          <div className="w-full flex flex-wrap gap-3 md:gap-6 items-center mb-4">
+          <div className="w-full flex flex-wrap gap-3 md:gap-6 items-center mb-2">
             <div className="text-Text-Primary text-xs font-medium flex items-center">
               <div className="block md:hidden">
                 <Checkbox
@@ -136,7 +136,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               )}
             </div>
           </div>
-          <li className="  mb-2.5">
+          <li className="mb-1.5">
             <span className="text-Text-Secondary bullet-point">
               Key Benefits:
             </span>{' '}

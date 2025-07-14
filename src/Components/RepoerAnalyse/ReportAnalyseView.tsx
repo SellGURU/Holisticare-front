@@ -99,16 +99,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
       },
     );
-    Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
-      (res) => {
-        setCalenderData(res.data);
-        if (res.data.length == 0) {
-          publish('ActionPlanStatus', { isempty: true });
-        } else {
-          publish('ActionPlanStatus', { isempty: false });
-        }
-      },
-    );
+    // Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
+    //   (res) => {
+    //     setCalenderData(res.data);
+    //     if (res.data.length == 0) {
+    //       publish('ActionPlanStatus', { isempty: true });
+    //     } else {
+    //       publish('ActionPlanStatus', { isempty: false });
+    //     }
+    //   },
+    // );
     Application.getPatientsInfo({
       member_id: resolvedMemberID,
     }).then((res) => {
@@ -152,7 +152,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setTreatmentPlanData(res.data);
+      setTreatmentPlanData(res.data.details);
     });
     Application.getCaldenderdataShare(
       {
@@ -160,7 +160,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setCalenderData(res.data);
+      setCalenderData(res.data[0]);
     });
     Application.getPatientsInfoShare(
       {
@@ -175,7 +175,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   subscribe('syncReport', () => {
     setCallSync(true);
   });
-  const [accessManager, setAccessManager] = useState<Array<any>>([
+  const [accessManager, setAccessManager] = useState<
+    Array<{
+      name: string;
+      checked: boolean;
+    }>
+  >([
     {
       name: 'Client Summary',
       checked: true,
@@ -201,6 +206,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     setLoading(true);
     if ((resolvedMemberID != 123 && !isShare) || callSync) {
       fetchData();
+      console.log('aa');
+
       setCallSync(false);
     }
     if (isShare && memberID != 123) {
@@ -247,7 +254,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         refData.push(...val.biomarkers);
       });
     });
-    console.log(refData);
     return refData;
   };
   // useEffect(() => {
@@ -323,7 +329,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const element = section as HTMLElement;
       if (isInViewport(element)) {
         const sectionId = element.id;
-        //   console.log(sectionId)
         publish('scrolledSection', { section: sectionId });
         //   if (sectionId !== currentSection) {
         //     // Update the state and query parameter only if the section changes
@@ -351,13 +356,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       const container = scrollContainerRef.current;
       const isMobile = window.innerWidth < 768;
 
-      console.log(`Scroll Position: ${container.scrollTop}`);
-
       if (isMobile && container.scrollTop > 100) {
-        console.log('Sticky: true');
         setIsSticky(true);
       } else {
-        console.log('Sticky: false');
         setIsSticky(false);
       }
     };
@@ -432,7 +433,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
               <div className="flex flex-col xl:flex-row gap-6 xl:gap-14 ">
-                <div className="  min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
+                <div className="min-w-[430px] w-full xl:w-[330px] relative xl:min-h-[750px]">
                   <div>
                     <div
                       id="Client Summary"
@@ -512,7 +513,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="hidden md:block">
                       {' '}
-                      <InfoToltip isShare={isShare}></InfoToltip>
+                      <InfoToltip />
                     </div>
                   </div>
                   <div
@@ -535,7 +536,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             {accessManager.filter((el) => el.name == 'Needs Focus Biomarker')[0]
               .checked == true && (
               <>
-                <div className=" my-[200px] xl:min-h-[400px] text-light-primary-text dark:text-primary-text ">
+                <div className=" my-[200px] xl:min-h-[700px] text-light-primary-text dark:text-primary-text ">
                   <div>
                     <div
                       id="Needs Focus Biomarker"
@@ -559,11 +560,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
-                <div className="my-10 min-h-[500px]">
+                <div className="my-10 min-h-[700px]">
                   <div className="w-full mb-3 flex items-center justify-between">
                     <div
                       id="Concerning Result"
-                      className="  TextStyle-Headline-4 text-Text-Primary"
+                      className="sectionScrollEl TextStyle-Headline-4 text-Text-Primary"
                     >
                       Concerning Result
                     </div>
@@ -619,7 +620,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
             {accessManager.filter((el) => el.name == 'Detailed Analysis')[0]
               .checked == true && (
-              <div className="my-[200px] min-h-[650px]">
+              <div className="my-[200px] min-h-[700px]">
                 <div>
                   <div
                     id="Detailed Analysis"
@@ -665,7 +666,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             )}
             {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
               .checked == true && (
-              <div className="my-[200px] min-h-[650px]">
+              <div className="my-[200px] min-h-[700px]">
                 <div className="w-full flex items-center justify-between">
                   <div
                     id="Holistic Plan"
@@ -723,12 +724,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   setActionPrintData={(values: any) => {
                     setHelthPlanPrint(values);
                   }}
+                  setCalendarPrintData={(values: any) => {
+                    setCalenderData(values);
+                  }}
                   calenderDataUper={caldenderData}
                   isHolisticPlanEmpty={isHolisticPlanEmpty}
                 />
               </div>
             )}
-            {isHaveReport && (
+            {isHaveReport && !isShare && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}
