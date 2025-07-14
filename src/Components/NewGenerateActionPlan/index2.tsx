@@ -110,6 +110,8 @@ const GenerateActionPlan = () => {
       })
       .finally(() => {
         setISLoadingSaveChanges(false);
+      }).catch(()=>{
+
       });
   };
   const [calendarView, setCalendarView] = useState(false);
@@ -240,7 +242,7 @@ const GenerateActionPlan = () => {
             {/* </> */}
             {/* ) : ( */}
             <>
-              <div className="w-full h-full mt-[190px] pr-[70px] ">
+              <div className="w-full h-ful mt-[190px] pr-[70px] ">
                 <Stadio
                   isCheckSave={checkSave}
                   actions={actions}
