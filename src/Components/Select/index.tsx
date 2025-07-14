@@ -64,7 +64,7 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block ${isLarge ? 'w-full' : 'w-[120px]'} text-nowrap cursor-pointer font-normal`}
+      className={`relative inline-block ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key} // If `key` is meant for this outer div
     >
       {/* Displayed Select Box */}
@@ -72,7 +72,7 @@ const Select: React.FC<SelectProps> = ({
         className={`flex items-center justify-between ${isCapital && 'capitalize'} ${
           isSetting
             ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3'
-            : 'bg-backgroundColor-Secondary border-none py-[9px] px-4 shadow-100 rounded-[8px]'
+            : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
         } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
         aria-haspopup="listbox"
@@ -80,7 +80,7 @@ const Select: React.FC<SelectProps> = ({
         tabIndex={0} // Make it focusable
       >
         <span
-          className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} text-xs`}
+          className={`${selectedValue ? 'text-Text-Primary' : 'text-[#B0B0B0] font-light'} `}
         >
           {selectedValue || placeholder}
         </span>
@@ -94,7 +94,7 @@ const Select: React.FC<SelectProps> = ({
           />
         ) : (
           <img
-            className={`w-3 h-3 object-contain opacity-80 absolute top-2 right-2 transition-transform duration-200 ${
+            className={`w-3 h-3 object-contain opacity-80 absolute top-[10px] right-2 transition-transform duration-200 ${
               isOpen ? 'rotate-180' : ''
             }`}
             src="/icons/arow-down-drop.svg"

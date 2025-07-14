@@ -4,25 +4,20 @@ import Application from '../../api/app';
 
 interface InfoToltipProps {
   mode?: string;
-  isShare?: boolean;
 }
 
-const InfoToltip: React.FC<InfoToltipProps> = ({ mode, isShare }) => {
+const InfoToltip: React.FC<InfoToltipProps> = ({ mode }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [items, setItems] = useState([]);
   useEffect(() => {
-    if (!isShare) {
-      if (mode == 'Treatment') {
-        Application.showPlanPriorty({}).then((res) => {
-          // console.log(res)
-          setItems(res.data);
-        });
-      } else {
-        Application.showCategory({}).then((res) => {
-          // console.log(res)
-          setItems(res.data.items);
-        });
-      }
+    if (mode == 'Treatment') {
+      Application.showPlanPriorty({}).then((res) => {
+        setItems(res.data);
+      });
+    } else {
+      Application.showCategory({}).then((res) => {
+        setItems(res.data.items);
+      });
     }
   }, []);
   return (

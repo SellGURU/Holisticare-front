@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { MainModal } from '../../../Components';
 // import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
@@ -27,7 +27,7 @@ interface SetOrdersProps {
   setActiveCategory: (value: string) => void;
 }
 
-export const SetOrders: React.FC<SetOrdersProps> = ({
+export const SetOrders: FC<SetOrdersProps> = ({
   data,
   // treatMentPlanData,
   setData,
@@ -40,8 +40,6 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
   setActiveCategory,
   setVisibleCategorieys,
 }) => {
-  console.log('data => ', data);
-  console.log('activeCategory => ', activeCategory);
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
   // );
