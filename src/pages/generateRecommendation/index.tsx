@@ -219,7 +219,10 @@ export const GenerateRecommendation = () => {
                 }}
                 className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
               >
-                <img className="md:w-6 md:h-6 w-4 h-4" src="/icons/arrow-back.svg" />
+                <img
+                  className="md:w-6 md:h-6 w-4 h-4"
+                  src="/icons/arrow-back.svg"
+                />
               </div>
               <div className="TextStyle-Headline-5 text-Text-Primary">
                 Generate Holistic Plan
@@ -233,7 +236,11 @@ export const GenerateRecommendation = () => {
                 Skip <img src="/icons/Skip.svg" alt="" />
               </div>
               {currentStepIndex > 0 && (
-                <ButtonPrimary ClassName='px-3 md:px-6 text-[8px] md:text-[12px]' outLine onClick={handleBack}>
+                <ButtonPrimary
+                  ClassName="px-3 md:px-6 text-[8px] md:text-[12px]"
+                  outLine
+                  onClick={handleBack}
+                >
                   <div className="rotate-180">
                     <SvgIcon
                       src="/icons/arrow-right-white.svg"
