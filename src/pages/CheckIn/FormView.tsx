@@ -123,11 +123,11 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollUp = () => {
-    scrollRef.current?.scrollBy({ top: -200, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
   };
 
   const scrollDown = () => {
-    scrollRef.current?.scrollBy({ top: 200, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
   };
   return (
     <>
@@ -186,7 +186,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             className="w-4 h-4 rotate-90"
           />
         </button>
-
+      </div>
+      <div className="fixed bottom-20 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={scrollDown}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
