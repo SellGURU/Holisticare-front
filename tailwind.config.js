@@ -5,6 +5,7 @@ export default {
   theme: {
     screens: {
       xs: '375px', // Add xs breakpoint
+      ss: '480px',
       sm: '640px', // Default Tailwind breakpoints
       md: '768px',
       lg: '1024px',

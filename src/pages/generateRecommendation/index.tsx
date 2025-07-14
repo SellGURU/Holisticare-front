@@ -219,7 +219,7 @@ export const GenerateRecommendation = () => {
                 }}
                 className={`px-[6px] py-[3px] flex items-center justify-center cursor-pointer bg-white border border-Gray-50 rounded-md shadow-100`}
               >
-                <img className="w-6 h-6" src="/icons/arrow-back.svg" />
+                <img className="md:w-6 md:h-6 w-4 h-4" src="/icons/arrow-back.svg" />
               </div>
               <div className="TextStyle-Headline-5 text-Text-Primary">
                 Generate Holistic Plan
@@ -233,7 +233,7 @@ export const GenerateRecommendation = () => {
                 Skip <img src="/icons/Skip.svg" alt="" />
               </div>
               {currentStepIndex > 0 && (
-                <ButtonPrimary outLine onClick={handleBack}>
+                <ButtonPrimary ClassName='px-3 md:px-6 text-[8px] md:text-[12px]' outLine onClick={handleBack}>
                   <div className="rotate-180">
                     <SvgIcon
                       src="/icons/arrow-right-white.svg"
@@ -245,7 +245,7 @@ export const GenerateRecommendation = () => {
                 </ButtonPrimary>
               )}
               <ButtonPrimary
-                ClassName="border border-white"
+                ClassName="border border-white px-3 md:px-6 text-[8px] md:text-[12px]"
                 disabled={isButtonLoading}
                 onClick={() => {
                   if (currentStepIndex == steps.length - 1) {
@@ -285,7 +285,7 @@ export const GenerateRecommendation = () => {
             </div>
           </div>
 
-          <div className=" px-4 md:px-8">
+          <div className="px-4 md:px-8">
             <div className="mt-5  flex justify-between py-4  md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
               {steps.map((label, index) => (
                 <React.Fragment key={index}>
@@ -296,14 +296,14 @@ export const GenerateRecommendation = () => {
                         setCheckedSuggestion([]);
                       }
                     }}
-                    className={` px-2 md:px-4 py-2 cursor-pointer text-[10px] md:text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
+                    className={` text-nowrap px-1 md:px-4 py-2 cursor-pointer text-[7px] xs:text-[9px] md:text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
                       index === currentStepIndex
                         ? 'text-Primary-DeepTeal '
                         : 'text-Text-Secondary'
                     }`}
                   >
                     <div
-                      className={` min-h-5 min-w-5 size-5 rounded-full md:text-xs text-[10px] font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
+                      className={` min-h-5 min-w-5 size-5 rounded-full md:text-xs text-[8px] xs:text-[10px] font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
                     >
                       {index + 1}
                     </div>
@@ -313,7 +313,7 @@ export const GenerateRecommendation = () => {
                     <img
                       src="/icons/chevron-double-right.svg"
                       alt="step-icon"
-                      className="mx-2"
+                      className="md:mx-2 mx-1"
                     />
                   )}
                 </React.Fragment>
@@ -323,7 +323,7 @@ export const GenerateRecommendation = () => {
         </div>
       </div>
       <div className=" px-4 md:px-8">
-        <div className=" mt-[220px] w-full mb-6">
+        <div className=" mt-[220px] w-full mb-6 overflow-x-hidden">
           {currentStepIndex == 0 ? (
             <GeneralCondition
               data={{

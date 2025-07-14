@@ -172,6 +172,8 @@ export const TopBar: React.FC<TopBarProps> = ({
           headLine: '',
         },
   );
+  const [hasReportInRoute, setHasReportInRoute] = useState(false);
+
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
       if (
@@ -197,9 +199,11 @@ export const TopBar: React.FC<TopBarProps> = ({
       );
     });
   };
+
   useEffect(() => {
     getShowBrandInfo();
   }, []);
+
   useEffect(() => {
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
@@ -213,7 +217,30 @@ export const TopBar: React.FC<TopBarProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    const locationAddress = window.location.pathname;
+    const routeParts = locationAddress.split('/').filter((part) => part !== '');
+
+    // Check if route follows pattern: /report/{something}/{id}
+    // where {something} is NOT a generation route
+    const hasReport =
+      routeParts.length >= 3 &&
+      routeParts[0] === 'report' &&
+      !routeParts[1].includes('Generate');
+
+    setHasReportInRoute(hasReport);
+    console.log(
+      'Route changed:',
+      locationAddress,
+      'Route parts:',
+      routeParts,
+      'Has report:',
+      hasReport,
+    );
+  }, [window.location.pathname]);
+
   const shouldEnableActions = !isReportAvailable;
+
   return (
     <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
       <div className="flex gap-2 items-center ">
@@ -241,29 +268,31 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
         <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
-      <div className="flex xl:hidden items-center gap-2 xs:gap-4">
-        <img
-          onClick={() => {
-            setOpenDownload(true);
-          }}
-          src="/icons/document-download.svg"
-          alt=""
-        />
-        <img
-          onClick={() => {
-            setOpenShare(true);
-          }}
-          src="/icons/link-2.svg"
-          alt=""
-        />
-        <img
-          onClick={setShowCombo}
-          src={showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'}
-          alt=""
-        />
-      </div>
+      {hasReportInRoute && (
+        <div className="flex xl:hidden items-center gap-2 xs:gap-4">
+          <img
+            onClick={() => {
+              setOpenDownload(true);
+            }}
+            src="/icons/document-download.svg"
+            alt=""
+          />
+          <img
+            onClick={() => {
+              setOpenShare(true);
+            }}
+            src="/icons/link-2.svg"
+            alt=""
+          />
+          <img
+            onClick={setShowCombo}
+            src={showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'}
+            alt=""
+          />
+        </div>
+      )}
       <div className="hidden xl:flex gap-10">
-        {canDownload && (
+        {canDownload && hasReportInRoute && (
           <div className="flex gap-3">
             <ButtonPrimary
               disabled={shouldEnableActions}
