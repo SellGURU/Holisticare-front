@@ -179,6 +179,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Array<{
       name: string;
       checked: boolean;
+      isShow?: boolean;
     }>
   >([
     {
