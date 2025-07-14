@@ -497,6 +497,15 @@ input[type='range'] {
 .chat-shadow-box {
   box-shadow: 4px 0px 12px 0px rgba(202, 202, 215, 0.25);
 }
+/* .Calendar {
+  width: 100% !important;
+}
+
+@media (max-width: 1200px) {
+  .Calendar {
+    width: 100% !important;
+  }} */
+
 @media (max-width: 640px) {
   .max-sm-absolute {
     position: absolute;

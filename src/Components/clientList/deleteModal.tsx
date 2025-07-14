@@ -44,7 +44,7 @@ export const DeleteModal: React.FC<ArchiveModalProps> = ({
       >
         <>
           <div
-            className={`rounded-2xl p-6 pb-8 bg-white shadow-800 ${isComplete ? 'w-[303px]' : 'w-[500px]'}  h-[196px]`}
+            className={`rounded-2xl p-6 pb-8 bg-white shadow-800 ${isComplete ? 'w-[303px]' : 'w-[90vw] md:w-[500px]'}  h-[196px]`}
           >
             {isComplete ? (
               <div className="flex flex-col items-center">

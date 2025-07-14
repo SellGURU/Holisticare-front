@@ -330,7 +330,7 @@ const ClientList = () => {
       ) : (
         <div
           style={{ height: window.innerHeight - 60 + 'px' }}
-          className=" sm:px-6 pt-8  "
+          className=" sm:px-6 pt-8 overflow-x-hidden "
         >
           {clientList.length > 0 ? (
             <>
@@ -349,7 +349,7 @@ const ClientList = () => {
                 </ButtonSecondary>
               </div>
               <div className="w-full invisible h-[1px] bg-white my-3"></div>
-              <div className="w-full select-none flex justify-between mb-3">
+              <div className="w-full select-none flex flex-col ss:flex-row gap-2 justify-between mb-3">
                 {/* <div
                   onClick={() => {
                     setisFavorite(!isFavorite);

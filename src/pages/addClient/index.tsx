@@ -256,7 +256,7 @@ const AddClient = () => {
             </div>
 
             <div className="flex justify-center w-full">
-              <div className="max-w-[460px] w-full grid gap-4 pt-3 md:pt-0">
+              <div className="md:max-w-[360px] w-full grid gap-4 pt-3 md:pt-0">
                 <div className="w-full flex gap-4 md:gap-0 flex-col md:flex-row justify-between items-start md:overflow-visible md:h-[50px]">
                   <div className="w-full md:w-[220px]">
                     <TextField
@@ -371,7 +371,7 @@ const AddClient = () => {
                     )}
                   </div>
 
-                  <div className="w-full  ml-2 ">
+                  <div className="w-full  md:ml-2 ">
                     <label className="text-Text-Primary text-[12px] font-medium">
                       Date of Birth
                     </label>

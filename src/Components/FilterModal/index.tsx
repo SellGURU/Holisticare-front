@@ -145,7 +145,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   return (
     <div
       ref={modalRef}
-      className="absolute right-0 xs:right-7 sm:top-[200px] md:top-10 md:right-0 w-[250px] xs:w-[330px] md:w-[540px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
+      className="absolute right-5 top-8 xs:right-3  sm:top-[200px] md:top-10 md:right-0 w-[300px] xs:w-[330px] md:w-[540px] bg-white rounded-[16px] shadow-800  md:p-4 p-2  z-50 text-Text-Primary"
     >
       <div className="space-y-6">
         {/* Header */}
@@ -239,7 +239,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         {/* Status Section */}
         <div className="w-full flex flex-col md:flex-row items-start gap-[15px] md:gap-[87px]">
           <h3 className="text-xs font-medium">Status</h3>
-          <div className="flex w-full gap-1 md:gap-0 justify-between text-nowrap">
+          <div className="flex flex-wrap w-full gap-4 md:gap-0 justify-between text-nowrap">
             <label className="flex  items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -510,7 +510,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           <h3 className=" text-[10px] md:text-xs font-medium ">
             Questionnaire Form
           </h3>
-          <div className="flex gap-3 md:gap-[11px]">
+          <div className="flex flex-wrap gap-4 md:gap-[11px]">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -627,9 +627,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
           </div>
         </div>
 
-        <div className="w-full max-w-lg flex flex-col md:flex-row items-start gap-[15px] md:gap-[113px]">
+        <div className="w-full max-w-lg flex flex-col px-2 md:px-0 md:flex-row items-start gap-[15px] md:gap-[113px]">
           <h3 className=" text-[10px] md:text-xs font-medium ">Age</h3>
-          <div className="w-[70%] flex flex-col items-center gap-1">
+          <div className=" w-full  md:w-[70%] flex flex-col items-center gap-1">
             <div className="text-Text-Quadruple text-xs">
               between ({age[0]} - {age[1]})
             </div>
@@ -673,13 +673,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 date={enrollDate.from}
                 setDate={handleFromChange}
                 placeholder="Start date"
-                ClassName="!w-[173px]"
+                ClassName="  md:!w-[173px]"
               />
               <SimpleDatePicker
                 date={enrollDate.to}
                 setDate={handleToChange}
                 placeholder="End date"
-                ClassName="!w-[173px]"
+                ClassName="  md:!w-[173px]"
               />
             </div>
           </div>
