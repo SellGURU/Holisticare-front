@@ -291,7 +291,7 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         isOpen={showchangeOrders}
         onClose={() => setshowchangeOrders(false)}
       >
-        <div className=" w-full relative h-[380px] p-4 rounded-2xl bg-white">
+        <div className=" w-[90vw] md:w-full relative h-[380px] p-4 rounded-2xl bg-white">
           <div className="flex items-center w-full gap-2 border-b border-Gray-50 py-2 text-base font-medium text-Text-Primary">
             <img src="/icons/danger.svg" alt="" />
             Change Order
@@ -372,8 +372,8 @@ export const SetOrders: React.FC<SetOrdersProps> = ({
         </div>
       )}
       <div className="bg-white rounded-2xl shadow-100 p-4 md:p-6 border border-Gray-50">
-        <div className="flex w-full justify-between border-b border-Gray-50 pb-2 md:px-6">
-          <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[100px]">
+        <div className="flex w-full flex-wrap ss:flex-nowrap gap-4 justify-between border-b border-Gray-50 pb-2 md:px-6">
+          <div className="flex w-[80%]   md:w-[50%] gap-8 md:gap-[80px]">
             {categories.map(
               ({ name, visible }) =>
                 visible && (
