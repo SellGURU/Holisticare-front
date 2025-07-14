@@ -108,7 +108,7 @@ const CustomBiomarkers = () => {
             <SearchBox
               value={searchValue}
               ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
-              placeHolder="Search for categories & biomarkers ..."
+              placeHolder="Search categories & biomarkers ..."
               onSearch={(val) => {
                 setSearchValue(val);
               }}
@@ -138,7 +138,7 @@ const CustomBiomarkers = () => {
           </div>
         </>
       ) : (
-        <div className="w-full px-6 py-[80px]">
+        <div className="w-full h-full px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox
@@ -169,18 +169,19 @@ const CustomBiomarkers = () => {
             );
           })}
           {filteredBiomarkers().length == 0 && (
-            <>
-              <div className="flex justify-center items-center mt-12 flex-col gap-2">
+           <div  className='h-full'>
+              <div className="flex h-full  justify-center items-center   flex-col gap-2">
                 <img
                   className="w-[220px]"
                   src="/icons/empty-messages-coach.svg"
                   alt=""
                 />
-              </div>
-              <div className="text-Text-Primary -mt-10 text-center text-base font-medium">
+                 <div className="text-Text-Primary -mt-10  text-center text-base font-medium">
                 No results found.
               </div>
-            </>
+              </div>
+             
+              </div>
           )}
         </div>
       )}

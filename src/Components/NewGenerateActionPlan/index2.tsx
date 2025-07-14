@@ -110,9 +110,8 @@ const GenerateActionPlan = () => {
       })
       .finally(() => {
         setISLoadingSaveChanges(false);
-      }).catch(()=>{
-
-      });
+      })
+      .catch(() => {});
   };
   const [calendarView, setCalendarView] = useState(false);
   const [calendarViewData, setCalendarViewData] = useState<any>(null);

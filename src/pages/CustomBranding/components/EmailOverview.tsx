@@ -30,7 +30,10 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
             style={{ backgroundColor: customTheme.secondaryColor }}
           ></div>
         </div>
-        <div style={{textAlignLast: 'center'}} className="text-[10px] text-Text-Quadruple  text-justify mt-4 px-12 leading-5">
+        <div
+          style={{ textAlignLast: 'center' }}
+          className="text-[10px] text-Text-Quadruple  text-justify mt-4 px-12 leading-5"
+        >
           Hey John, your couch Tim has created an account for you on
           Holisticare. Navigate to the magic link and enter the code to access
           your dashboard.

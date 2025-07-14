@@ -26,7 +26,7 @@ interface LeftItemContentProps {
   handleDeleteImage: () => void;
   onSave: () => void;
   loading: boolean;
-  pageLoading: boolean
+  pageLoading: boolean;
 }
 
 const LeftItemContent: FC<LeftItemContentProps> = ({
@@ -37,7 +37,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   handleDeleteImage,
   onSave,
   loading,
-  pageLoading
+  pageLoading,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorSecondaryInputRef = useRef<HTMLInputElement | null>(null);
@@ -117,7 +117,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
     setErrorLogo('');
     handleImageUpload(event);
   };
-console.log(showSaved);
+  console.log(showSaved);
 
   return (
     <div className=" w-full md:w-[360px] h-fit md:h-full mr-0 md:mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
@@ -304,7 +304,9 @@ console.log(showSaved);
                 type="text"
                 className="text-xs font-light text-Text-Quadruple select-none bg-backgroundColor-Card border-none outline-none w-[70px]"
                 value={customTheme.primaryColor}
-                onChange={(e) => updateCustomTheme('primaryColor', e.target.value)}
+                onChange={(e) =>
+                  updateCustomTheme('primaryColor', e.target.value)
+                }
                 placeholder="#000000"
                 maxLength={9}
                 style={{ padding: 0 }}
@@ -335,7 +337,9 @@ console.log(showSaved);
                 type="text"
                 className="text-xs font-light text-Text-Quadruple bg-backgroundColor-Card border-none outline-none w-[70px]"
                 value={customTheme.secondaryColor}
-                onChange={(e) => updateCustomTheme('secondaryColor', e.target.value)}
+                onChange={(e) =>
+                  updateCustomTheme('secondaryColor', e.target.value)
+                }
                 placeholder="#000000"
                 maxLength={9}
                 style={{ padding: 0 }}
@@ -361,15 +365,19 @@ console.log(showSaved);
           onClick={async () => {
             if (validateForm()) {
               await onSave();
-           
-                setShowSaved(true);
-                setTimeout(() => setShowSaved(false), 6000);
 
-              }
-            
+              setShowSaved(true);
+              setTimeout(() => setShowSaved(false), 6000);
+            }
           }}
         >
-          {loading ? <SpinnerLoader color="#005F73" /> : showSaved ? 'Changes Saved' : 'Apply Changes'}
+          {loading ? (
+            <SpinnerLoader color="#005F73" />
+          ) : showSaved ? (
+            'Changes Saved'
+          ) : (
+            'Apply Changes'
+          )}
         </div>
       </div>
     </div>

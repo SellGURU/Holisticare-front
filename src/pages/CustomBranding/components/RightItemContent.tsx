@@ -20,8 +20,9 @@ const RightItemContent: FC<RightItemContentProps> = ({ customTheme }) => {
     <div className="md:flex-grow-[1] md:mr-4 w-full h-fit md:h-full bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100">
       <div className="w-full h-full">
         <div className="text-sm font-medium text-Text-Primary">Preview</div>
-        <div  className="text-[10px] text-Text-Quadruple mt-3 text-justify">
-        This section shows users a quick, interactive display and allowing you to see <br/> a sample before making a full commitment or decision.
+        <div className="text-[10px] text-Text-Quadruple mt-3 text-justify">
+          This section shows users a quick, interactive display and allowing you
+          to see <br /> a sample before making a full commitment or decision.
         </div>
         <div className="w-full mt-6 flex flex-col items-center gap-7 overflow-x-scroll">
           <ToggleCustomBranding
