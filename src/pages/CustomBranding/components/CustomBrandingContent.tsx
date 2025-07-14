@@ -168,6 +168,7 @@ const CustomBrandingContent = () => {
           handleDeleteImage={handleDeleteImage}
           onSave={onSave}
           loading={loading}
+          pageLoading={pageLoading}
         />
         <RightItemContent customTheme={customTheme} />
       </div>

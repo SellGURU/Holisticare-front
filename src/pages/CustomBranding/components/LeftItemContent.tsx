@@ -26,6 +26,7 @@ interface LeftItemContentProps {
   handleDeleteImage: () => void;
   onSave: () => void;
   loading: boolean;
+  pageLoading: boolean
 }
 
 const LeftItemContent: FC<LeftItemContentProps> = ({
@@ -36,6 +37,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   handleDeleteImage,
   onSave,
   loading,
+  pageLoading
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorSecondaryInputRef = useRef<HTMLInputElement | null>(null);
@@ -43,6 +45,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
   const [errorHeadLine, setErrorHeadLine] = useState('');
   const [errorName, setErrorName] = useState('');
   const [errorLogo, setErrorLogo] = useState('');
+  const [showSaved, setShowSaved] = useState(false);
 
   const validateForm = () => {
     // Validate Name
@@ -114,6 +117,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
     setErrorLogo('');
     handleImageUpload(event);
   };
+console.log(showSaved);
 
   return (
     <div className=" w-full md:w-[360px] h-fit md:h-full mr-0 md:mr-4 bg-backgroundColor-Card border border-Gray-50 rounded-2xl p-4 shadow-100 flex flex-col justify-between">
@@ -145,7 +149,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               <Tooltip
                 id="logo-tooltip"
                 place="right-end"
-                className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
+                className="!bg-white !shadow-100 !opacity-100 !bg-opacity-100  !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
               >
                 <div className="flex items-center gap-1">
                   Supported files:{' '}
@@ -158,13 +162,13 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               </Tooltip>
             </div>
             <div className="flex items-end gap-2">
-              {customTheme.selectedImage == null && (
+              {customTheme.selectedImage == null && !pageLoading && (
                 <div className="text-Red text-[8px] mb-1">
                   {errorLogo || 'Please upload a logo to proceed.'}
                 </div>
               )}
               <div
-                className={`p-[1px] rounded-lg ${customTheme.selectedImage == null ? 'bg-Red' : 'bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A]'}  relative`}
+                className={`p-[1px] rounded-lg ${customTheme.selectedImage == null && !pageLoading ? 'bg-Red' : 'bg-gradient-to-r from-[#005F73] via-[#4CAF50] to-[#6CC24A]'}  relative`}
               >
                 <div
                   className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center cursor-pointer relative overflow-hidden bg-white`}
@@ -217,7 +221,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               <Tooltip
                 id="name-tooltip"
                 place="right-end"
-                className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
+                className="!bg-white !shadow-100 !opacity-100 !bg-opacity-100  !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
               >
                 <div className="flex items-center gap-1">
                   Maximum Characters:{' '}
@@ -253,7 +257,7 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
               <Tooltip
                 id="headline-tooltip"
                 place="right-end"
-                className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
+                className="!bg-white !opacity-100 !bg-opacity-100 !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 !z-[99999]"
               >
                 <div className="flex items-center gap-1">
                   Maximum Characters:{' '}
@@ -296,9 +300,15 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   }
                 />
               </div>
-              <div className="text-xs font-light text-Text-Quadruple">
-                {customTheme.primaryColor}
-              </div>
+              <input
+                type="text"
+                className="text-xs font-light text-Text-Quadruple select-none bg-backgroundColor-Card border-none outline-none w-[70px]"
+                value={customTheme.primaryColor}
+                onChange={(e) => updateCustomTheme('primaryColor', e.target.value)}
+                placeholder="#000000"
+                maxLength={9}
+                style={{ padding: 0 }}
+              />
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -321,9 +331,15 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
                   }
                 />
               </div>
-              <div className="text-xs font-light text-Text-Quadruple">
-                {customTheme.secondaryColor}
-              </div>
+              <input
+                type="text"
+                className="text-xs font-light text-Text-Quadruple bg-backgroundColor-Card border-none outline-none w-[70px]"
+                value={customTheme.secondaryColor}
+                onChange={(e) => updateCustomTheme('secondaryColor', e.target.value)}
+                placeholder="#000000"
+                maxLength={9}
+                style={{ padding: 0 }}
+              />
             </div>
           </div>
         </div>
@@ -341,14 +357,19 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
           Back to Default
         </div>
         <div
-          className="text-Primary-DeepTeal font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
-          onClick={() => {
+          className="text-Primary-DeepTeal text-nowrap font-medium text-sm ml-6 cursor-pointer w-[103px] flex items-center justify-center"
+          onClick={async () => {
             if (validateForm()) {
-              onSave();
-            }
+              await onSave();
+           
+                setShowSaved(true);
+                setTimeout(() => setShowSaved(false), 6000);
+
+              }
+            
           }}
         >
-          {loading ? <SpinnerLoader color="#005F73" /> : 'Apply Changes'}
+          {loading ? <SpinnerLoader color="#005F73" /> : showSaved ? 'Changes Saved' : 'Apply Changes'}
         </div>
       </div>
     </div>

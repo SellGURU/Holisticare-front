@@ -30,13 +30,13 @@ const EmailOverview: FC<EmailOverviewProps> = ({ customTheme }) => {
             style={{ backgroundColor: customTheme.secondaryColor }}
           ></div>
         </div>
-        <div className="text-[10px] text-Text-Quadruple text-center mt-4 px-12 leading-5">
-          Hey John, You couch Tim has created an account for you on
-          Holisticare.Navigate to the magic link an enter the code to access
+        <div style={{textAlignLast: 'center'}} className="text-[10px] text-Text-Quadruple  text-justify mt-4 px-12 leading-5">
+          Hey John, your couch Tim has created an account for you on
+          Holisticare. Navigate to the magic link and enter the code to access
           your dashboard.
         </div>
         <div className="flex items-center justify-center mt-4 text-Text-Primary text-[10px] gap-10">
-          <div>User name: Sample name</div>
+          <div>User name: John</div>
           <div>Code: 123456</div>
         </div>
         <div className="flex items-center justify-center mt-4">
