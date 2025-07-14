@@ -8,6 +8,7 @@ import BoxValue from './components/BoxValue';
 import Frequency from './components/Frequency';
 import RenderNutrient from './components/RenderNutrient';
 import Times from './components/Times';
+import { mockData } from './mockData';
 
 const Tasks = () => {
   const [isLoading, setIsLaoding] = useState(false);
@@ -27,11 +28,11 @@ const Tasks = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollUp = () => {
-    scrollRef.current?.scrollBy({ top: -200, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
   };
 
   const scrollDown = () => {
-    scrollRef.current?.scrollBy({ top: 200, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
   };
 
   return (
@@ -65,79 +66,7 @@ const Tasks = () => {
             <BoxTitleText title="Dose" text="500mg" />
             <BoxValue title="Value" value={value} setVal={setValue} />
             <BoxTexts texts={['Carbs', 'Proteins', 'Fats']} />
-            <BoxActivity
-              activities={[
-                {
-                  title: 'Work',
-                  work: [
-                    {
-                      title: 'Work',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: true,
-                      files: [],
-                    },
-                    {
-                      title: 'Work',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: false,
-                      files: [],
-                    },
-                  ],
-                  superset: [
-                    {
-                      title: 'Work superset',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: true,
-                      files: [
-                        {
-                          video:
-                            'https://youtube.com/shorts/QTJ-PiVnuxY?si=iHv4uKx-n5AAZMCR',
-                          type: 'link',
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  title: 'Test Amir',
-                  work: [
-                    {
-                      title: 'Work 2',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: false,
-                      files: [],
-                    },
-                    {
-                      title: 'Work 3',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: false,
-                      files: [],
-                    },
-                  ],
-                  superset: [
-                    {
-                      title: 'Work 4',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: false,
-                      files: [],
-                    },
-                    {
-                      title: 'Work 5',
-                      link: 'https://asweatlife.com/wp-content/uploads/2018/07/asweatlife_periodization-training_featured-768x512.jpg',
-                      picture: [],
-                      done: true,
-                      files: [],
-                    },
-                  ],
-                },
-              ]}
-            />
+            <BoxActivity activities={mockData} />
             <div className="w-full flex flex-col gap-2 justify-center fixed bottom-0 bg-white left-0 mt-2 border-t border-Gray-50 shadow-Btn px-6 py-4">
               <div className="bg-backgroundColor-Main rounded-xl p-3 w-full flex items-center justify-between">
                 <div className="text-Text-Primary text-xs font-medium">
@@ -198,7 +127,8 @@ const Tasks = () => {
             className="w-4 h-4 rotate-90"
           />
         </button>
-
+      </div>
+      <div className="fixed bottom-36 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={scrollDown}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
