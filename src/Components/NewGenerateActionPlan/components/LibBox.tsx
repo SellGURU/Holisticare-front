@@ -18,6 +18,8 @@ const LibBox: FC<LibBoxProps> = ({
   handleShowConflictsModal,
   index,
 }) => {
+  console.log(data);
+
   const [valueData, setValueData] = useState('');
   useEffect(() => {
     switch (data.Category) {

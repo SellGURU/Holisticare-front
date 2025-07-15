@@ -170,7 +170,7 @@ const Stadio: FC<StadioProps> = ({
         tasks: flattenedActions,
         percents: plans,
       }).then((res) => {
-        if (res.data.conflicts != 'No conflicts detected.') {
+        if (res.data.conflicts.length > 0) {
           setHaveConflic(true);
           setHaveConflicText(res.data.conflicts);
         } else {

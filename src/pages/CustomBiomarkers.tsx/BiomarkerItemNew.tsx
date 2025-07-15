@@ -73,26 +73,30 @@ const biomarkerItem = ({
         setLoading(false);
       });
   };
+  console.log(data);
+
   return (
     <>
-      <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 min-h-[60px]">
-        <div className="flex gap-6 w-full min-h-[60px] justify-start items-start">
+      <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 h-[60px]">
+        <div className="flex gap-6 w-full h-[60px] justify-start items-start">
           <div className="w-[200px]">
-            <div className="text-[12px] font-medium text-Text-Primary">
+            <div className="text-[12px] font-medium text-Text-Primary flex items-center gap-[2px]">
               {data.Biomarker}
+              <span className="text-[10px] text-[#888888]">({data.unit})</span>
             </div>
             <div className="text-[10px] text-nowrap mt-1 text-Text-Quadruple">
               {data.Category}
             </div>
           </div>
-          <div className="w-[70%] mt-20 mb-3">
+          <div className="w-[80%] mt-8  ">
             <StatusBarChartV2
+              isCustom
               mapingData={data.label_mapping_chart}
               data={activeBiomarker.status}
             ></StatusBarChartV2>
           </div>
           <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
-            <div className="invisible">
+            <div className="hidden">
               <Select
                 key="ages"
                 onChange={(val) => {
@@ -102,7 +106,7 @@ const biomarkerItem = ({
                 options={avilableAges()}
               ></Select>
             </div>
-            <div className="invisible">
+            <div className="hidden">
               <Select
                 isCapital
                 key="gender"
