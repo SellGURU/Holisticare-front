@@ -169,19 +169,18 @@ const CustomBiomarkers = () => {
             );
           })}
           {filteredBiomarkers().length == 0 && (
-           <div  className='h-full'>
+            <div className="h-full">
               <div className="flex h-full  justify-center items-center   flex-col gap-2">
                 <img
                   className="w-[220px]"
                   src="/icons/empty-messages-coach.svg"
                   alt=""
                 />
-                 <div className="text-Text-Primary -mt-10  text-center text-base font-medium">
-                No results found.
+                <div className="text-Text-Primary -mt-10  text-center text-base font-medium">
+                  No results found.
+                </div>
               </div>
-              </div>
-             
-              </div>
+            </div>
           )}
         </div>
       )}

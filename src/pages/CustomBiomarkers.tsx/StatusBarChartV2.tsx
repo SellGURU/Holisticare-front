@@ -7,7 +7,7 @@ interface StatusBarChartV2Prps {
   values?: Array<any>;
   unit?: string;
   status?: Array<any>;
-  isCustom?: boolean
+  isCustom?: boolean;
 }
 const StatusBarChartV2 = ({
   data,
@@ -15,7 +15,7 @@ const StatusBarChartV2 = ({
   values,
   unit,
   status,
-  isCustom
+  isCustom,
 }: StatusBarChartV2Prps) => {
   const convertToArray = (data: any) => {
     return Object.entries(data).map(
@@ -85,12 +85,16 @@ const StatusBarChartV2 = ({
                 backgroundColor: resolveColor(el.label),
               }}
             >
-              <div className={`absolute w-full px-1 ${isCustom ? "text-[#888888]" : "text-Primary-DeepTeal"}  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}>
+              <div
+                className={`absolute w-full px-1 ${isCustom ? 'text-[#888888]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-35px] opacity-90 text-[10px]`}
+              >
                 <TooltipText tooltipValue={mapingData[el.label]}>
                   {mapingData[el.label]}
                 </TooltipText>
               </div>
-              <div className={`absolute w-full px-1 ${isCustom ? "text-[#B0B0B0]" : "text-Primary-DeepTeal"}  flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]`}>
+              <div
+                className={`absolute w-full px-1 ${isCustom ? 'text-[#B0B0B0]' : 'text-Primary-DeepTeal'}  flex justify-center left-[-4px] top-[-20px] opacity-90 text-[10px]`}
+              >
                 {mapingData[el.label] != '' && <>(</>}
                 <TooltipText
                   tooltipValue={
