@@ -83,11 +83,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [noteError, setNoteError] = useState('');
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
-     setTotalMacros((prevTheme) => ({
-     ...prevTheme,
-     [key]: value, // Remove the conditional check for value === 0
-     }));
-    };
+    setTotalMacros((prevTheme) => ({
+      ...prevTheme,
+      [key]: value, // Remove the conditional check for value === 0
+    }));
+  };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
   const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(

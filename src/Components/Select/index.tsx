@@ -8,9 +8,9 @@ type SelectProps = {
   isLarge?: boolean;
   value?: string;
   isSetting?: boolean;
-  isStaff?:boolean,
+  isStaff?: boolean;
   placeholder?: string;
-  validation?:boolean
+  validation?: boolean;
 };
 
 const Select: React.FC<SelectProps> = ({

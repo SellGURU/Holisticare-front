@@ -170,11 +170,11 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                   Role
                 </div>
                 <Select
-                isStaff
-                validation={errors.role ? true : false}
-                isLarge
-                placeholder='Select a role'
-                isSetting
+                  isStaff
+                  validation={errors.role ? true : false}
+                  isLarge
+                  placeholder="Select a role"
+                  isSetting
                   options={roles}
                   value={role}
                   onChange={(value) => {

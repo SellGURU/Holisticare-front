@@ -78,7 +78,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   //   console.log(activeAction);
   // });
   // const [isCalenDarGenerated,setISCalenderGenerated] = useState(false);
-  const  getActionPlan =()=>{
+  const getActionPlan = () => {
     if (!isShare) {
       Application.ActionPlanBlockList({ member_id: id }).then((res) => {
         // console.log(res.data);
@@ -102,9 +102,9 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         }
       });
     }
-  }
+  };
   useEffect(() => {
-    getActionPlan()
+    getActionPlan();
   }, []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -116,7 +116,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-console.log(activeAction);
+  console.log(activeAction);
 
   return (
     <>
@@ -162,9 +162,9 @@ console.log(activeAction);
                           }}
                           onDelete={(id: number) => {
                             Application.deleteActionCard({ id: el.id });
-                            getActionPlan()
+                            getActionPlan();
                             console.log(id);
-                            
+
                             // setCardData(
                             //   CardData.filter((card) => card.id !== id),
                             // );

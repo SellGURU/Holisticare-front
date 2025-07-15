@@ -74,15 +74,15 @@ const biomarkerItem = ({
       });
   };
   console.log(data);
-  
+
   return (
     <>
       <div className="w-full relative py-2 px-3  bg-[#F4F4F4] pt-2 rounded-[12px] border border-gray-50 h-[60px]">
         <div className="flex gap-6 w-full h-[60px] justify-start items-start">
           <div className="w-[200px]">
             <div className="text-[12px] font-medium text-Text-Primary flex items-center gap-[2px]">
-              {data.Biomarker} 
-              <span className='text-[10px] text-[#888888]'>({data.unit})</span>
+              {data.Biomarker}
+              <span className="text-[10px] text-[#888888]">({data.unit})</span>
             </div>
             <div className="text-[10px] text-nowrap mt-1 text-Text-Quadruple">
               {data.Category}
@@ -90,7 +90,7 @@ const biomarkerItem = ({
           </div>
           <div className="w-[80%] mt-8  ">
             <StatusBarChartV2
-            isCustom
+              isCustom
               mapingData={data.label_mapping_chart}
               data={activeBiomarker.status}
             ></StatusBarChartV2>

@@ -646,7 +646,9 @@ const Stadio: FC<StadioProps> = ({
           </div>
         </div>
         <div className="w-[342px] h-full">
-          <div className={`w-[342px] sticky top-[190px] p-4 ${haveConflic ? 'h-[639px]' : ' h-[534px]'} bg-white rounded-[24px] border border-gray-50 shadow-100`}>
+          <div
+            className={`w-[342px] sticky top-[190px] p-4 ${haveConflic ? 'h-[639px]' : ' h-[534px]'} bg-white rounded-[24px] border border-gray-50 shadow-100`}
+          >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
               placeHolder="Search for actions ..."

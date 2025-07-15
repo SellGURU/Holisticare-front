@@ -241,7 +241,10 @@ const GenerateActionPlan = () => {
             {/* </> */}
             {/* ) : ( */}
             <>
-              <div style={{height: window.innerHeight - 190 + "px"}} className="w-full overflow-auto mt-[190px] pr-[70px] ">
+              <div
+                style={{ height: window.innerHeight - 190 + 'px' }}
+                className="w-full overflow-auto mt-[190px] pr-[70px] "
+              >
                 <Stadio
                   isCheckSave={checkSave}
                   actions={actions}
