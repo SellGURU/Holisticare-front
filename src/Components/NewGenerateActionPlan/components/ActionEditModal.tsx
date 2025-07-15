@@ -83,11 +83,11 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [noteError, setNoteError] = useState('');
 
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
-    setTotalMacros((prevTheme) => ({
-      ...prevTheme,
-      [key]: value === 0 ? '' : value,
-    }));
-  };
+     setTotalMacros((prevTheme) => ({
+     ...prevTheme,
+     [key]: value, // Remove the conditional check for value === 0
+     }));
+    };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
   const [selectedTimes] = useState<string[]>(defalts ? defalts.Times : []);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(
@@ -721,7 +721,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             className={`${selectedGroup == 'Activity' ? 'w-[95%]' : 'w-[90%]'} border-b border-Gray-50 pb-2 pt-4 text-sm font-medium text-Text-Primary absolute top-0 bg-white z-10`}
           >
             <div className="flex gap-[6px] items-center">
-              {isAdd ? 'Add Action' : 'Edit Action'}
+              {isAdd ? 'Add Action ' : 'Edit Action'}
             </div>
           </h2>
           {step == 0 && (

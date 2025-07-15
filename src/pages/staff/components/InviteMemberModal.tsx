@@ -2,6 +2,7 @@
 import { FC, useState } from 'react';
 import Application from '../../../api/app';
 import { ButtonPrimary } from '../../../Components/Button/ButtonPrimary';
+import Select from '../../../Components/Select';
 
 interface InviteMemberModalProps {
   setShowModal: (value: boolean) => void;
@@ -16,7 +17,6 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
 }) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [openRoll, setOpenRoll] = useState(false);
   const [role, setRole] = useState('');
   const [step, setStep] = useState(1);
   const [registered] = useState(false);
@@ -169,7 +169,25 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   Role
                 </div>
-                <div className="relative inline-block w-full font-normal">
+                <Select
+                isStaff
+                validation={errors.role ? true : false}
+                isLarge
+                placeholder='Select a role'
+                isSetting
+                  options={roles}
+                  value={role}
+                  onChange={(value) => {
+                    setRole(value);
+                    if (showValidation) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        role: validateRole(value),
+                      }));
+                    }
+                  }}
+                />
+                {/* <div className="relative inline-block w-full font-normal">
                   <select
                     onClick={() => setOpenRoll(!openRoll)}
                     onBlur={() => setOpenRoll(false)}
@@ -204,7 +222,7 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                     src="/icons/arow-down-drop.svg"
                     alt=""
                   />
-                </div>
+                </div> */}
                 {showValidation && errors.role && (
                   <div className="text-[10px] mt-1 ml-2 text-red-500">
                     {errors.role}

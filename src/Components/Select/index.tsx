@@ -8,7 +8,9 @@ type SelectProps = {
   isLarge?: boolean;
   value?: string;
   isSetting?: boolean;
+  isStaff?:boolean,
   placeholder?: string;
+  validation?:boolean
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -16,10 +18,12 @@ const Select: React.FC<SelectProps> = ({
   options,
   key,
   isCapital,
+  isStaff,
   isLarge,
   value, // This will now be primarily for controlled component behavior from parent
   isSetting,
   placeholder = 'Select an option',
+  validation,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || ''); // Internal state for selected value
@@ -64,14 +68,14 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div
       ref={selectWrapperRef}
-      className={`relative inline-block ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
+      className={`relative inline-block   ${isLarge ? 'w-full' : 'w-[142px]'} text-nowrap cursor-pointer font-normal`}
       key={key} // If `key` is meant for this outer div
     >
       {/* Displayed Select Box */}
       <div
-        className={`flex items-center justify-between ${isCapital && 'capitalize'} ${
+        className={`flex items-center justify-between ${isStaff && 'h-[28px]'} ${validation && ' border rounded-2xl  border-red-500'} ${isCapital && 'capitalize'} ${
           isSetting
-            ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3'
+            ? 'bg-[#FDFDFD] rounded-2xl border border-Gray-50 py-1 px-3 '
             : 'bg-backgroundColor-Secondary border-none py-[10px] px-3 shadow-100 rounded-[8px]'
         } cursor-pointer w-full ${isOpen && 'rounded-b-none'} pr-8 leading-tight focus:outline-none text-[10px] ${displayedValueColorClass}`}
         onClick={handleSelectClick}
@@ -86,7 +90,7 @@ const Select: React.FC<SelectProps> = ({
         </span>
         {isSetting ? (
           <img
-            className={`w-4 h-4 object-contain absolute top-1 right-2 transition-transform duration-200 ${
+            className={`w-4 h-4 object-contain absolute ${isStaff ? 'top-[6px]' : 'top-1'}  right-2 transition-transform duration-200 ${
               isOpen ? 'rotate-180' : ''
             }`}
             src="/icons/arrow-down-drop-new.svg"
@@ -106,7 +110,7 @@ const Select: React.FC<SelectProps> = ({
       {/* Options Dropdown */}
       {isOpen && (
         <ul
-          className={`absolute ${isOpen && 'rounded-t-none'} z-10 w-full ${isSetting ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50' : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'}  overflow-auto max-h-60`}
+          className={`absolute ${isOpen && 'rounded-t-none'}  z-10 w-full ${isSetting ? 'bg-[#FDFDFD] rounded-lg border border-Gray-50' : 'bg-backgroundColor-Secondary shadow-lg rounded-[8px]'}  overflow-auto max-h-60`}
           role="listbox"
         >
           {options?.map((option) => (
