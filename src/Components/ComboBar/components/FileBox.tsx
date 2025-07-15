@@ -3,15 +3,33 @@ import Application from '../../../api/app';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { publish } from '../../../utils/event';
 import { useEffect, useState } from 'react';
+import { BeatLoader } from 'react-spinners';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
   el: any;
-  onDelete?: () => void;
+  onDelete: () => void;
+  onDeleteData: () => void;
+  deleteId: string;
+  index: number;
+  ids: string;
+  getFileList: () => void;
+  isLoading: boolean;
 }
 
-const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
-  console.log(el);
+const FileBox: React.FC<FileBoxProps> = ({
+  el,
+  onDelete,
+  onDeleteData,
+  deleteId,
+  index,
+  ids,
+  getFileList,
+  isLoading,
+}) => {
+  const [isSureRemoveIndex, setIsSureRemoveIndex] = useState<number | null>(
+    null,
+  );
   const { id } = useParams<{ id: string }>();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -48,7 +66,9 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
         className=" bg-white border border-Gray-50 mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
-        <div className="flex justify-between items-center w-full">
+        <div
+          className={`flex justify-between items-center w-full ${deleteId === ids ? 'opacity-50' : ''}`}
+        >
           <div
             className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
             title={el.file_name}
@@ -56,7 +76,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             {el.file_name || el.file.name}
           </div>
 
-          <div className="w-[70px] text-center">
+          <div className="text-center text-Text-Quadruple text-[10px]">
             {formatDate(
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
             )}
@@ -65,7 +85,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             <>
               <div className="flex w-[55px] justify-center gap-1">
                 <img
-                  onClick={onDelete}
+                  onClick={onDeleteData}
                   src="/icons/close-red.svg"
                   alt="Error"
                   className="w-4 h-4 cursor-pointer"
@@ -74,66 +94,129 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
             </>
           ) : (
             <>
-              <div className="flex w-[55px] justify-center gap-1">
-                <img
-                  onClick={() => {
-                    if (el.file_id) {
-                      Application.downloadFille({
-                        file_id: el.file_id,
-                        member_id: id,
-                      })
-                        .then((res) => {
-                          try {
-                            const blobUrl = res.data;
+              <div className="flex justify-center gap-2 items-center">
+                {isSureRemoveIndex == index ? (
+                  <>
+                    {!isLoading ? (
+                      <div className="flex items-center justify-start gap-2">
+                        <div className="text-Text-Quadruple text-xs">Sure?</div>
+                        <img
+                          src="/icons/tick-circle-green.svg"
+                          alt=""
+                          className="w-[20px] h-[20px] cursor-pointer"
+                          onClick={() => onDelete()}
+                        />
+                        <img
+                          src="/icons/close-circle-red.svg"
+                          alt=""
+                          className="w-[20px] h-[20px] cursor-pointer"
+                          onClick={() => setIsSureRemoveIndex(null)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-start mt-1">
+                        <BeatLoader color="#6CC24A" size={10} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <img
+                      onClick={() => setIsSureRemoveIndex(index)}
+                      src="/icons/delete-green.svg"
+                      alt=""
+                      className="cursor-pointer w-5 h-5"
+                    />
+                    <img
+                      onClick={() => {
+                        if (el.file_id) {
+                          Application.downloadFille({
+                            file_id: el.file_id,
+                            member_id: id,
+                          })
+                            .then((res) => {
+                              try {
+                                const blobUrl = res.data;
 
-                            // Create a direct download link for the blob URL
-                            const link = document.createElement('a');
-                            link.href = blobUrl;
-                            link.download = el.file_name;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                          } catch (error: any) {
-                            console.error('Error downloading file:', error);
-                            console.error('Error details:', {
-                              errorName: error?.name,
-                              errorMessage: error?.message,
-                              errorStack: error?.stack,
+                                // Create a direct download link for the blob URL
+                                const link = document.createElement('a');
+                                link.href = blobUrl;
+                                link.download = el.file_name;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              } catch (error: any) {
+                                console.error('Error downloading file:', error);
+                                console.error('Error details:', {
+                                  errorName: error?.name,
+                                  errorMessage: error?.message,
+                                  errorStack: error?.stack,
+                                });
+                              }
+                            })
+                            .catch((error: any) => {
+                              console.error('Error downloading file:', error);
+                              console.error('Error details:', {
+                                errorName: error?.name,
+                                errorMessage: error?.message,
+                                errorStack: error?.stack,
+                              });
                             });
-                          }
-                        })
-                        .catch((error: any) => {
-                          console.error('Error downloading file:', error);
-                          console.error('Error details:', {
-                            errorName: error?.name,
-                            errorMessage: error?.message,
-                            errorStack: error?.stack,
-                          });
-                        });
-                    } else {
-                      // For direct file object, create a blob URL
-                      const blobUrl = URL.createObjectURL(el.file);
+                        } else {
+                          // For direct file object, create a blob URL
+                          const blobUrl = URL.createObjectURL(el.file);
 
-                      // Create a direct download link for the blob URL
-                      const link = document.createElement('a');
-                      link.href = blobUrl;
-                      link.download = el.file_name || el.file.name;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
+                          // Create a direct download link for the blob URL
+                          const link = document.createElement('a');
+                          link.href = blobUrl;
+                          link.download = el.file_name || el.file.name;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
 
-                      // Clean up the blob URL
-                      URL.revokeObjectURL(blobUrl);
-                    }
-                  }}
-                  className="cursor-pointer -mt-[3px]"
-                  src="/icons/import.svg"
-                  alt=""
-                />
+                          // Clean up the blob URL
+                          URL.revokeObjectURL(blobUrl);
+                        }
+                      }}
+                      className="cursor-pointer w-5 h-5"
+                      src="/icons/import.svg"
+                      alt=""
+                    />
+                  </>
+                )}
               </div>
             </>
           )}
         </div>
+        {deleteId !== '' && deleteId === ids ? (
+          <div className="flex flex-col mt-3">
+            <div className="flex items-center">
+              <img
+                src="/icons/tick-circle-upload.svg"
+                alt=""
+                className="w-5 h-5"
+              />
+              <div className="text-[10px] text-transparent bg-clip-text bg-gradient-to-r from-[#005F73] via-[#3C9C5B] to-[#6CC24A] ml-1">
+                Deleting Completed.
+              </div>
+            </div>
+            <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
+              If you would like to remove its related data from the report,
+              please click the “Sync Data” button.
+            </div>
+            <div className="w-full flex justify-end">
+              <ButtonSecondary
+                ClassName="rounded-[20px] mt-1"
+                size="small"
+                onClick={getFileList}
+              >
+                Sync Data
+              </ButtonSecondary>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
         {el.progress && (
           <>
             {el.status == 'uploading' && (

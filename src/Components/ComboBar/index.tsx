@@ -123,8 +123,12 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   // });
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   subscribe('fileIsUploading', (value: any) => {
     setIsUploading(value.detail.isUploading);
+  });
+  subscribe('fileIsDeleted', (value: any) => {
+    setIsDeleting(value.detail.isDeleting);
   });
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
@@ -148,6 +152,11 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         isUploading: true,
       });
     }
+    if (isSlideOutPanel && isDeleting) {
+      publish('isdeletingBackGround', {
+        isDeleting: true,
+      });
+    }
     setIsSlideOutPanel(false);
   };
   const [updated, setUpdated] = useState(false);
@@ -163,6 +172,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     setIsSlideOutPanel(true);
     publish('isuploadingBackGround', {
       isUploading: false,
+    });
+    publish('isdeletingBackGround', {
+      isDeleting: false,
     });
   };
   const [activeItem, setActiveItem] = useState<string | null>(null);
@@ -193,7 +205,6 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         return <div>No Content</div>;
     }
   };
-  console.log(isSlideOutPanel);
   return (
     <div className="h-full flex flex-col justify-between items-center">
       <SlideOutPanel
