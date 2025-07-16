@@ -1,17 +1,17 @@
 import { useRef, useState } from 'react';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
-import BoxActivity from './components/BoxActivity';
+// import BoxActivity from './components/BoxActivity';
 import BoxTexts from './components/BoxTexts';
 import BoxTitleText from './components/BoxTitleText';
 import BoxValue from './components/BoxValue';
 import Frequency from './components/Frequency';
 import RenderNutrient from './components/RenderNutrient';
 import Times from './components/Times';
-import { mockData } from './mockData';
+// import { mockData } from './mockData';
 
 const Tasks = () => {
-  const [isLoading, setIsLaoding] = useState(false);
+  const [isLoading, ] = useState(false);
   const [status, setStatus] = useState(false);
   const [value, setValue] = useState(6);
   const submit = () => {
@@ -66,7 +66,7 @@ const Tasks = () => {
             <BoxTitleText title="Dose" text="500mg" />
             <BoxValue title="Value" value={value} setVal={setValue} />
             <BoxTexts texts={['Carbs', 'Proteins', 'Fats']} />
-            <BoxActivity activities={mockData} />
+            {/* <BoxActivity activities={mockData} /> */}
             <div className="w-full flex flex-col gap-2 justify-center fixed bottom-0 bg-white left-0 mt-2 border-t border-Gray-50 shadow-Btn px-6 py-4">
               <div className="bg-backgroundColor-Main rounded-xl p-3 w-full flex items-center justify-between">
                 <div className="text-Text-Primary text-xs font-medium">
