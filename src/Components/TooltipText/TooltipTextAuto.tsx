@@ -28,10 +28,22 @@ const TooltipTextAuto: FC<TooltipTextAutoProps> = ({
     }
   }, [children]);
 
+  // Generate a unique class for this instance
+  const uniqueClass = `tooltip-text-auto-${tooltipId}`;
+
   return (
     <>
+      {maxWidth && (
+        <style>{`
+          @media (min-width: 768px) {
+            .${uniqueClass} {
+              max-width: ${maxWidth};
+            }
+          }
+        `}</style>
+      )}
       <div
-        className={`select-none max-w-[150px] sm:max-w-[180px] ${maxWidth && `md:max-w-[${maxWidth}]`}`}
+        className={`select-none max-w-[150px] sm:max-w-[180px] ${uniqueClass}`}
         ref={textRef}
         data-tooltip-id={isEllipsized ? tooltipId : ''}
         data-tooltip-content={typeof children === 'string' ? children : ''}
