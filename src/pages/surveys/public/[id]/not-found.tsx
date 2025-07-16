@@ -1,5 +1,3 @@
-import Link from "next/link"
-
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center">
@@ -16,12 +14,13 @@ export default function NotFound() {
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Survey Not Found</h1>
         <p className="text-gray-600 mb-6">The survey you're looking for doesn't exist or has been removed.</p>
-        <Link
-          href="/"
+        <a
+          href="#"
           className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors inline-block"
+          onClick={(e) => { e.preventDefault(); window.location.href = "/"; }}
         >
           Return Home
-        </Link>
+        </a>
       </div>
     </div>
   )

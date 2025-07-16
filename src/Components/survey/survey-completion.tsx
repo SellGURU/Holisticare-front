@@ -1,8 +1,7 @@
 "use client"
 
 import { CheckCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Button } from "../ui/button"
 
 interface SurveyCompletionProps {
   title: string
@@ -39,14 +38,13 @@ export function SurveyCompletion({ title, submitting }: SurveyCompletionProps) {
       </div>
 
       <div className="mt-10">
-        <Link href="/">
-          <Button
-            className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 transition-all"
-            disabled={submitting}
-          >
-            {submitting ? "Submitting..." : "Return to Dashboard"}
-          </Button>
-        </Link>
+        <Button
+          className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 transition-all"
+          disabled={submitting}
+          onClick={() => { if (!submitting) window.location.href = "/"; }}
+        >
+          {submitting ? "Submitting..." : "Return to Dashboard"}
+        </Button>
       </div>
     </div>
   )

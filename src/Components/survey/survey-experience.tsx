@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { SurveyLanding } from "./survey-landing"
 import { SurveyQuestion } from "./survey-question"
 import { SurveyCompletion } from "./survey-completion"
-import { updateSurveyAssignmentStatus, submitSurveyResponse } from "@/app/actions/survey-actions"
-import { toast } from "@/components/ui/use-toast"
+import { updateSurveyAssignmentStatus, submitSurveyResponse } from "../../utils/survey-actions"
+import { toast } from "../../Components/ui/use-toast"
 
 interface SurveyExperienceProps {
   survey: {
@@ -32,7 +32,7 @@ interface SurveyExperienceProps {
   uniqueCode: string
 }
 
-export function SurveyExperience({ survey, assignment, uniqueCode }: SurveyExperienceProps) {
+export function SurveyExperience({ survey, assignment }: SurveyExperienceProps) {
   const [currentStep, setCurrentStep] = useState(-1) // -1 for landing, questions are 0-based, length for completion
   const [responses, setResponses] = useState<Record<number, string | string[]>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -109,16 +109,7 @@ export function SurveyExperience({ survey, assignment, uniqueCode }: SurveyExper
   const handleSubmit = async (finalResponses: Record<number, string | string[]>) => {
     setSubmitting(true)
     try {
-      const formattedResponses = Object.entries(finalResponses).map(([questionIndex, response]) => {
-        const questionData = sortedQuestions[Number(questionIndex)]
-        return {
-          question: questionData.question,
-          questionType: questionData.type,
-          response: typeof response === "string" ? response : response.join(", "),
-        }
-      })
-
-      await submitSurveyResponse(assignment.id, formattedResponses)
+      await submitSurveyResponse(assignment.id, finalResponses)
       await updateStatus("completed")
 
       toast({

@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import type { SurveyAssignment } from "@/app/actions/survey-actions"
+import { Button } from "../ui/button"
+import type { SurveyAssignment } from "../../utils/survey-actions"
 import { ArrowRight } from "lucide-react"
 
 interface SurveyLandingProps {
