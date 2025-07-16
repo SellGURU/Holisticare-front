@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { DashBoard, Home, Report, Share } from '../pages';
+import { DashBoard, Home, Report, Share, Tasks } from '../pages';
 import ProtectedRoute from './protected';
 import Layout from '../layout';
 // import GenerateNewActionPlan from '../Components/Action-plan/GenerateNewPlan';
@@ -182,6 +182,10 @@ const router = createBrowserRouter([
   {
     path: '/questionary/:encode/:id',
     element: <FormView mode="questionary"></FormView>,
+  },
+  {
+    path: '/tasks',
+    element: <Tasks></Tasks>,
   },
 ]);
 
