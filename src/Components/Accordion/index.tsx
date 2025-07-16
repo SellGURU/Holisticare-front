@@ -80,7 +80,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, time }) => {
       >
         {isActive && (
           <div
-            className={` bg-black-background h-full max-h-[420px] overflow-auto flex   flex-col gap-4 p-4 `}
+            className={` bg-black-background h-full o flex   flex-col gap-4 p-4 `}
           >
             {children}
           </div>

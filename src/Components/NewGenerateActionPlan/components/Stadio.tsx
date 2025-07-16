@@ -570,7 +570,7 @@ const Stadio: FC<StadioProps> = ({
             </div>
           </div>
           <div
-            className={`w-full min-h-[450px] bg-white rounded-[24px] border border-gray-50 shadow-100 ${
+            className={`w-full h-[494px] bg-white pt-2 pr-1 rounded-[24px] border border-gray-50 shadow-100 ${
               actions.checkIn.length == 0 && actions.category.length == 0 && ''
             }`}
             onDragOver={handleDragOver}
@@ -609,7 +609,7 @@ const Stadio: FC<StadioProps> = ({
               </div>
             ) : (
               <>
-                <div className="flex flex-col gap-3 py-3 min-h-[420px]">
+                <div className="flex flex-col gap-3 py-3 min-h-[420px] h-[95%] overflow-auto">
                   {actions.checkIn.map((act: any, index: number) => {
                     return (
                       <>
@@ -645,8 +645,10 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="w-[342px]">
-          <div className="w-[342px] sticky top-[190px] p-4 h-[490px] bg-white rounded-[24px] border border-gray-50 shadow-100">
+        <div className="w-[342px] h-full">
+          <div
+            className={`w-[342px] sticky top-[190px] p-4 ${haveConflic ? 'h-[639px]' : ' h-[534px]'} bg-white rounded-[24px] border border-gray-50 shadow-100`}
+          >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
               placeHolder="Search for actions ..."
@@ -674,7 +676,7 @@ const Stadio: FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[345px] overflow-y-auto">
+              <div className="w-full h-[385px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (

@@ -100,7 +100,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             </div>
           </div>
           <div className="text-Text-Primary mt-1 text-[10px] font-[500] text-center">
-            <TooltipTextAuto maxWidth="600px" tooltipPlace="top">
+            <TooltipTextAuto maxWidth="800px" tooltipPlace="top">
               {value.Category}
             </TooltipTextAuto>
           </div>
@@ -110,7 +110,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         >
           <div className=" flex flex-wrap gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
-              <TooltipTextAuto tooltipPlace="top" maxWidth="600px">
+              <TooltipTextAuto tooltipPlace="top" maxWidth="800px">
                 {value.Recommendation}
               </TooltipTextAuto>
             </div>
@@ -131,7 +131,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         <Tooltip
                           id={`system-score-${index}`}
                           place="top"
-                          className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          className="!bg-white !leading-5 !text-justify !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                           style={{
                             zIndex: 9999,
                             pointerEvents: 'none',
@@ -154,7 +154,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         <Tooltip
                           id={`base-score-${index}`}
                           place="top"
-                          className="!bg-white !leading-5 !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          className="!bg-white !leading-5 !text-justify !text-wrap  !text-[#888888] !text-[11px] !rounded-[6px] !border !border-Gray-50 !p-2"
                           style={{
                             zIndex: 9999,
                             pointerEvents: 'none',
@@ -179,7 +179,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                       <Tooltip
                         id={`score-calc-${index}`}
                         place="top"
-                        className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                        className="!bg-white !w-[270px] !text-justify !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
                         style={{
                           zIndex: 9999,
                           pointerEvents: 'none',
@@ -228,14 +228,14 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               <>
                 {positive ? (
                   <div className="bg-transparent text-[12px] w-full outline-none  resize-none">
-                    <div className="text-Text-Primary">
+                    <div className="text-Text-Primary text-justify">
                       {' '}
                       <span className="text-Text-Secondary bullet-point">
                         Key Benefits:{' '}
                       </span>
                       {positive}
                     </div>
-                    <div className="text-Text-Primary mt-1.5">
+                    <div className="text-Text-Primary mt-1.5 text-justify">
                       <span className="text-Text-Secondary bullet-point">
                         Key Risks:{' '}
                       </span>

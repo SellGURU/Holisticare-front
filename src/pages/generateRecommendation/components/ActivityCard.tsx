@@ -53,12 +53,12 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 onClick={() => handleCheckboxChange(activeCategory, index)}
               >
                 {' '}
-                <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                <TooltipTextAuto tooltipPlace="top" maxWidth="800px">
                   {item.Recommendation}
                 </TooltipTextAuto>
               </label>
               <div className="hidden md:block">
-                <TooltipTextAuto tooltipPlace="top" maxWidth="300px">
+                <TooltipTextAuto tooltipPlace="top" maxWidth="800px">
                   {item.Recommendation}
                 </TooltipTextAuto>
               </div>
@@ -73,7 +73,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <Tooltip
                   id={'system-score'}
                   place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[162px] !text-justify  !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -94,7 +94,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <Tooltip
                   id={'base-score'}
                   place="top"
-                  className="!bg-white !w-[162px] !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-[162px] !leading-5 !text-justify  !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -136,13 +136,13 @@ export const ActivityCard: FC<ActivityCardProps> = ({
               )}
             </div>
           </div>
-          <li className="mb-1.5">
+          <li className="mb-1.5 text-justify">
             <span className="text-Text-Secondary bullet-point">
               Key Benefits:
             </span>{' '}
             {positive}
           </li>
-          <li className="">
+          <li className=" text-justify">
             <span className="text-Text-Secondary bullet-point">Key Risks:</span>{' '}
             {negative}
           </li>
