@@ -12,6 +12,7 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 
 import DefaultData from './default.json';
+import mockData from './mockData.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -29,15 +30,17 @@ const CustomBiomarkers = () => {
   const [errorDetails, setErrorDetails] = useState<string>('');
   const getBiomarkers = () => {
     setIsLoading(true);
-    BiomarkersApi.getBiomarkersList()
-      .then((res) => {
-        setBiomarkers(res.data);
-        // setBiomarkers(mackData);
-      })
-      .finally(() => {
-        // setBiomarkers(mackData);
-        setIsLoading(false);
-      });
+    setBiomarkers(mockData);
+    setIsLoading(false);
+    // BiomarkersApi.getBiomarkersList()
+    //   .then((res) => {
+    //     setBiomarkers(res.data);
+    //     // setBiomarkers(mackData);
+    //   })
+    //   .finally(() => {
+    //     // setBiomarkers(mackData);
+    //     setIsLoading(false);
+    //   });
   };
   useEffect(() => {
     getBiomarkers();
