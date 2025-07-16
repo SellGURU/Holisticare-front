@@ -11,7 +11,7 @@ import Times from './components/Times';
 // import { mockData } from './mockData';
 
 const Tasks = () => {
-  const [isLoading, ] = useState(false);
+  const [isLoading] = useState(false);
   const [status, setStatus] = useState(false);
   const [value, setValue] = useState(6);
   const submit = () => {
