@@ -25,20 +25,22 @@ const biomarkerItem = ({
       return Object.keys(data.thresholds.male);
     }
     return [];
-  }  
+  };
   const [activeEdit, setActiveEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const openModalEdit = () => setActiveEdit(true);
   const closeModalEdit = () => setActiveEdit(false);
-  const [activeBiomarker, setActiveBiomarker] = useState(data.thresholds.male[getMaleThresholdKeys()[0]]);
+  const [activeBiomarker, setActiveBiomarker] = useState(
+    data.thresholds.male[getMaleThresholdKeys()[0]],
+  );
   const [errorDetails, setErrorDetails] = useState('');
   useEffect(() => {
     setActiveBiomarker(data.thresholds.male[getMaleThresholdKeys()[0]]);
   }, [data]);
-  const [gender, setGender] = useState("male");
+  const [gender, setGender] = useState('male');
   const [ageRange, setAgeRange] = useState(getMaleThresholdKeys()[0]);
   const avilableGenders = () => {
-    const resolvedValues: Array<string> = ["male", "female"];
+    const resolvedValues: Array<string> = ['male', 'female'];
     // data.age_groups.map((el: any) => {
     //   if (!resolvedValues.includes(el.gender)) {
     //     resolvedValues.push(el.gender);
@@ -99,7 +101,10 @@ const biomarkerItem = ({
               mapingData={data.label_mapping_chart}
               data={activeBiomarker}
             ></StatusBarChartV2> */}
-            <StatusBarChartv3 isCustom data={activeBiomarker??[]}></StatusBarChartv3>
+            <StatusBarChartv3
+              isCustom
+              data={activeBiomarker ?? []}
+            ></StatusBarChartv3>
           </div>
           <div className="absolute right-4 gap-2 flex justify-end items-center top-2">
             <div className="hidden">
