@@ -113,7 +113,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
   },
   {
     accessorKey: 'Base_Score',
-    header: 'Base Score',
+    header: 'Priority Weight',
     enableSorting: false,
     cell: ({ row }) => {
       return (
