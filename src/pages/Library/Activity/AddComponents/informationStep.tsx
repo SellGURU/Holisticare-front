@@ -179,7 +179,7 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score
+              Priority Weight
             </div>
             <RangeCardLibraryActivity
               value={formik.values.score}

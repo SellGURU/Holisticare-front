@@ -85,7 +85,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                     <th className="py-3 w-[300px] text-center">Instruction</th>
                     <th className="py-3 w-[100px] text-center pl-2">File</th>
                     <th className="py-3 w-[66px] text-center pl-3">
-                      Base Score
+                      Priority Weight
                     </th>
                     <th className="py-3 w-[100px] text-center pl-3">
                       Added on
