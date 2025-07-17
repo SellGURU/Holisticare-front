@@ -27,7 +27,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   );
   useEffect(() => {
     setIsCheced(false);
-  }, [activeBox]); 
+  }, [activeBox]);
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'
@@ -48,9 +48,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(
-        refrences[0].name ? refrences[0].name : '',
-      );
+      setActiveBOx(refrences[0].name ? refrences[0].name : '');
       setActive(refrences[0]);
     }
   }, [refrences]);
@@ -183,176 +181,177 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   </div>
                   {!isCheced ? (
                     <div className="w-full ">
-                      {refrences.map(
-                        (biomarker: any, index: number) => (
+                      {refrences.map((biomarker: any, index: number) => (
+                        <div
+                          key={index}
+                          className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                        >
                           <div
-                            key={index}
-                            className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                            onClick={() => handleBiomarkerToggle(index)}
+                            className="w-full flex justify-between items-center text-sm text-Text-Primary"
                           >
+                            {biomarker.name}
+                            <img
+                              className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
+                              src="/icons/arrow-down.svg"
+                              alt=""
+                            />
+                          </div>
+                          {isBiomarkerOpen[index] && (
                             <div
-                              onClick={() => handleBiomarkerToggle(index)}
-                              className="w-full flex justify-between items-center text-sm text-Text-Primary"
+                              key={index}
+                              className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
                             >
-                              {biomarker.name}
-                              <img
-                                className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
-                                src="/icons/arrow-down.svg"
-                                alt=""
-                              />
-                            </div>
-                            {isBiomarkerOpen[index] && (
-                              <div
-                                key={index}
-                                className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
-                              >
-                                <div className="w-full">
-                                  <div className=" w-full flex justify-between items-center TextStyle-Headline-6 text-Text-Primary">
-                                    {/* {biomarker.name} */}
-                                    <div
-                                      onMouseEnter={() => {
-                                        setShowMoreInfo(true);
-                                      }}
-                                      onMouseLeave={() => {
-                                        setShowMoreInfo(false);
-                                      }}
-                                      className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
-                                    >
-                                      More Info
-                                      <img
-                                        src="/icons/user-navbar/info-circle.svg"
-                                        className="w-4  cursor-pointer h-4 ml-1"
-                                        alt=""
-                                      />
-                                      {showMoreInfo && biomarker.more_info && (
-                                        <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
-                                          <div className="text-[9px] text-Text-Secondary text-justify">
-                                            {biomarker.more_info}
-                                          </div>
+                              <div className="w-full">
+                                <div className=" w-full flex justify-between items-center TextStyle-Headline-6 text-Text-Primary">
+                                  {/* {biomarker.name} */}
+                                  <div
+                                    onMouseEnter={() => {
+                                      setShowMoreInfo(true);
+                                    }}
+                                    onMouseLeave={() => {
+                                      setShowMoreInfo(false);
+                                    }}
+                                    className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                  >
+                                    More Info
+                                    <img
+                                      src="/icons/user-navbar/info-circle.svg"
+                                      className="w-4  cursor-pointer h-4 ml-1"
+                                      alt=""
+                                    />
+                                    {showMoreInfo && biomarker.more_info && (
+                                      <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
+                                        <div className="text-[9px] text-Text-Secondary text-justify">
+                                          {biomarker.more_info}
                                         </div>
-                                      )}
-                                    </div>
-                                    <div className="  cursor-pointer  ">
-                                      <div className="flex gap-2 justify-end items-center">
-                                        <div className="TextStyle-Headline-6  text-Text-Primary">
-                                          Historical Chart
-                                        </div>
-                                        <Toggle
-                                          setChecked={(value) => {
-                                            setIsCheced(value);
-                                          }}
-                                          checked={isCheced}
-                                        ></Toggle>
                                       </div>
+                                    )}
+                                  </div>
+                                  <div className="  cursor-pointer  ">
+                                    <div className="flex gap-2 justify-end items-center">
+                                      <div className="TextStyle-Headline-6  text-Text-Primary">
+                                        Historical Chart
+                                      </div>
+                                      <Toggle
+                                        setChecked={(value) => {
+                                          setIsCheced(value);
+                                        }}
+                                        checked={isCheced}
+                                      ></Toggle>
                                     </div>
                                   </div>
-                                  <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
-                                    Current Value
-                                    {/* <div className=" z-50 mr-0">
+                                </div>
+                                <div className=" my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
+                                  Current Value
+                                  {/* <div className=" z-50 mr-0">
                                       <UnitPopUp
                                         unit={biomarker?.unit}
                                       ></UnitPopUp>
                                     </div> */}
-                                  </div>
-                                  <div className="mt-10">
-                                    {biomarker && (
-                                     <StatusBarChartV3 status={biomarker.status} unit={biomarker.unit} values={biomarker.values} data={biomarker.chart_bounds}></StatusBarChartV3>
-                                    )}
-                                  </div>
+                                </div>
+                                <div className="mt-10">
+                                  {biomarker && (
+                                    <StatusBarChartV3
+                                      status={biomarker.status}
+                                      unit={biomarker.unit}
+                                      values={biomarker.values}
+                                      data={biomarker.chart_bounds}
+                                    ></StatusBarChartV3>
+                                  )}
                                 </div>
                               </div>
-                            )}
-                          </div>
-                        ),
-                      )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="w-full ">
-                      {refrences.map(
-                        (biomarker: any, index: number) => (
+                      {refrences.map((biomarker: any, index: number) => (
+                        <div
+                          key={index}
+                          className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                        >
                           <div
-                            key={index}
-                            className={`my-3 w-full px-2 xs:px-4 py-2 border bg-white ${isBiomarkerOpen[index] ? 'border-Primary-EmeraldGreen ' : 'border-Gray-50'}  rounded-[12px]`}
+                            onClick={() => handleBiomarkerToggle(index)}
+                            className="w-full flex justify-between items-center text-sm text-Text-Primary"
                           >
+                            {biomarker.name}
+                            <img
+                              className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
+                              src="/icons/arrow-down.svg"
+                              alt=""
+                            />
+                          </div>
+                          {isBiomarkerOpen[index] && (
                             <div
-                              onClick={() => handleBiomarkerToggle(index)}
-                              className="w-full flex justify-between items-center text-sm text-Text-Primary"
+                              key={index}
+                              className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
                             >
-                              {biomarker.name}
-                              <img
-                                className={`${isBiomarkerOpen[index] && 'rotate-180'}`}
-                                src="/icons/arrow-down.svg"
-                                alt=""
-                              />
-                            </div>
-                            {isBiomarkerOpen[index] && (
-                              <div
-                                key={index}
-                                className=" w-full py-4 px-2 h-[159px]  rounded-[6px]"
-                              >
-                                <div className="w-full">
-                                  <div className=" w-full flex justify-between items-center TextStyle-Headline-6 text-Text-Primary">
-                                    {/* {biomarker.name} */}
-                                    <div
-                                      onMouseEnter={() => {
-                                        setShowMoreInfo(true);
-                                      }}
-                                      onMouseLeave={() => {
-                                        setShowMoreInfo(false);
-                                      }}
-                                      className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
-                                    >
-                                      More Info
-                                      <img
-                                        src="/icons/user-navbar/info-circle.svg"
-                                        className="w-4  cursor-pointer h-4 ml-1"
-                                        alt=""
-                                      />
-                                      {showMoreInfo && biomarker.more_info && (
-                                        <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
-                                          <div className="text-[9px] text-Text-Secondary text-justify">
-                                            {biomarker.more_info}
-                                          </div>
+                              <div className="w-full">
+                                <div className=" w-full flex justify-between items-center TextStyle-Headline-6 text-Text-Primary">
+                                  {/* {biomarker.name} */}
+                                  <div
+                                    onMouseEnter={() => {
+                                      setShowMoreInfo(true);
+                                    }}
+                                    onMouseLeave={() => {
+                                      setShowMoreInfo(false);
+                                    }}
+                                    className="flex relative justify-start items-center cursor-pointer TextStyle-Button  text-Primary-DeepTeal "
+                                  >
+                                    More Info
+                                    <img
+                                      src="/icons/user-navbar/info-circle.svg"
+                                      className="w-4  cursor-pointer h-4 ml-1"
+                                      alt=""
+                                    />
+                                    {showMoreInfo && biomarker.more_info && (
+                                      <div className="absolute p-2 left-4 xs:left-6 top-4 bg-white w-[270px] xs:w-[320px]h-auto rounded-[16px] z-[60] border border-gray-50 shadow-100">
+                                        <div className="text-[9px] text-Text-Secondary text-justify">
+                                          {biomarker.more_info}
                                         </div>
-                                      )}
-                                    </div>
-                                    <div className="  cursor-pointer  ">
-                                      <div className="flex gap-2 justify-end items-center">
-                                        <div className="TextStyle-Headline-6  text-Text-Primary">
-                                          Historical Chart
-                                        </div>
-                                        <Toggle
-                                          setChecked={(value) => {
-                                            setIsCheced(value);
-                                          }}
-                                          checked={isCheced}
-                                        ></Toggle>
                                       </div>
+                                    )}
+                                  </div>
+                                  <div className="  cursor-pointer  ">
+                                    <div className="flex gap-2 justify-end items-center">
+                                      <div className="TextStyle-Headline-6  text-Text-Primary">
+                                        Historical Chart
+                                      </div>
+                                      <Toggle
+                                        setChecked={(value) => {
+                                          setIsCheced(value);
+                                        }}
+                                        checked={isCheced}
+                                      ></Toggle>
                                     </div>
                                   </div>
-                                  <div className=" my-1 md:my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
-                                    Historical Data
-                                    {/* <div className=" z-50 mr-0">
+                                </div>
+                                <div className=" my-1 md:my-3 flex w-full justify-between items-center text-[10px] text-Text-Primary">
+                                  Historical Data
+                                  {/* <div className=" z-50 mr-0">
                                       <UnitPopUp
                                         unit={biomarker?.unit}
                                       ></UnitPopUp>
                                     </div> */}
-                                  </div>
-                                  <div className="w-full">
-                                    {active && (
-                                      <HistoricalChart
-                                        statusBar={active?.chart_bounds}
-                                        dataStatus={active.status}
-                                        dataPoints={[...active.values]}
-                                        labels={[...active.date]}
-                                      ></HistoricalChart>
-                                    )}
-                                  </div>
+                                </div>
+                                <div className="w-full">
+                                  {active && (
+                                    <HistoricalChart
+                                      statusBar={active?.chart_bounds}
+                                      dataStatus={active.status}
+                                      dataPoints={[...active.values]}
+                                      labels={[...active.date]}
+                                    ></HistoricalChart>
+                                  )}
                                 </div>
                               </div>
-                            )}
-                          </div>
-                        ),
-                      )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

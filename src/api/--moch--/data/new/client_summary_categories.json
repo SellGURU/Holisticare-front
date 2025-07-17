@@ -1,21 +1,16 @@
 {
-	"client_summary": "Your test results show excellent gut health and very good blood sugar control, which are positive signs for your overall well-being. Having a balanced gut environment can support digestion and immunity, while stable blood sugar levels lower your risk for diabetes and related issues. Maintaining this status through a healthy lifestyle like the Mediterranean diet and regular exercise could keep you on a strong health path. Keep monitoring these markers regularly to stay ahead of any changes, and consider discussing your diet and activity habits with your healthcare provider to continue supporting these excellent results.",
-	"total_subcategory": 1,
-	"subcategories": [
-		{
-			"subcategory": "Diabetes & Glucose",
-			"description": "Evaluates glucose levels and diabetes risk.",
-			"position": "abdomen",
-			"num_of_biomarkers": 1,
-			"out_of_ref": 0,
-			"status": [
-				100,
-				0,
-				0,
-				0
-			],
-			"category_description": "Monitors metabolic processes, including glucose regulation and body composition to assess metabolic risks.",
-			"category_name": "Metabolic Health"
-		}
-	]
+  "client_summary": "Your test results show excellent gut health and very good blood sugar control, which are positive signs for your overall well-being. Having a balanced gut environment can support digestion and immunity, while stable blood sugar levels lower your risk for diabetes and related issues. Maintaining this status through a healthy lifestyle like the Mediterranean diet and regular exercise could keep you on a strong health path. Keep monitoring these markers regularly to stay ahead of any changes, and consider discussing your diet and activity habits with your healthcare provider to continue supporting these excellent results.",
+  "total_subcategory": 1,
+  "subcategories": [
+    {
+      "subcategory": "Diabetes & Glucose",
+      "description": "Evaluates glucose levels and diabetes risk.",
+      "position": "abdomen",
+      "num_of_biomarkers": 1,
+      "out_of_ref": 0,
+      "status": [100, 0, 0, 0],
+      "category_description": "Monitors metabolic processes, including glucose regulation and body composition to assess metabolic risks.",
+      "category_name": "Metabolic Health"
+    }
+  ]
 }

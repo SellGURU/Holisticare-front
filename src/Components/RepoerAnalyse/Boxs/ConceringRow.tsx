@@ -51,7 +51,6 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
                   <div className="TextStyle-Body-3 text-Text-Primary pl-4  w-[130px] text-center">
                     {el['Optimal Range'] ? el['Optimal Range'] : '-'}
                   </div>
-
                 </div>
               </div>
             );

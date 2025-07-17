@@ -72,26 +72,15 @@ const StatusBarChartPrintV2 = ({
   };
   const resolvePercentLeft = (el: any) => {
     if (values) {
-      if (
-        ((values[0] - el.low) / (el.high - el.low)) *
-          100 <=
-        5
-      ) {
+      if (((values[0] - el.low) / (el.high - el.low)) * 100 <= 5) {
         return 5;
       }
-      if (
-        ((values[0] - el.low) / (el.high - el.low)) *
-          100 >
-        95
-      ) {
+      if (((values[0] - el.low) / (el.high - el.low)) * 100 > 95) {
         return 95;
       }
-      return (
-        ((values[0] - el.low) / (el.high - el.low)) *
-        100
-      );
+      return ((values[0] - el.low) / (el.high - el.low)) * 100;
     }
-  };  
+  };
   return (
     <div className="w-full relative flex select-none">
       {sortByRange(data).map((el: any, index: number) => {
@@ -133,15 +122,11 @@ const StatusBarChartPrintV2 = ({
                 >
                   {el.label}
                   {el.label !== '' && el.label.length > 40 && (
-                    <>
-                    {getRangeString(el)}
-                    </>
+                    <>{getRangeString(el)}</>
                   )}
                 </span>
                 {el.label !== '' && el.label.length <= 40 && (
-                  <>
-                  {getRangeString(el)}
-                  </>
+                  <>{getRangeString(el)}</>
                 )}
                 {/* </TooltipText> */}
               </div>

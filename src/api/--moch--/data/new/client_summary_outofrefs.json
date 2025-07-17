@@ -1,19 +1,19 @@
 {
-	"detailed_analysis_note": "Total of 1 Biomarkers in 1 Categories",
-	"total_biomarker_note": "Total of 0 biomarkers are Needs Focus in a list of 1 biomarkers.",
-	"biomarkers": [
-		{
-			"category": "Metabolic Health",
-			"subcategory": "Diabetes & Glucose",
-			"name": "Fasting Plasma Glucose",
-			"more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
-			"unit": "mg/dL",
-			"chart_type": "bar",
-			"test_type": "vital",
-			"duration": "6 Month",
-			"outofref": true,
-			"cart_type": 2,
-			"chart_bounds": [
+  "detailed_analysis_note": "Total of 1 Biomarkers in 1 Categories",
+  "total_biomarker_note": "Total of 0 biomarkers are Needs Focus in a list of 1 biomarkers.",
+  "biomarkers": [
+    {
+      "category": "Metabolic Health",
+      "subcategory": "Diabetes & Glucose",
+      "name": "Fasting Plasma Glucose",
+      "more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
+      "unit": "mg/dL",
+      "chart_type": "bar",
+      "test_type": "vital",
+      "duration": "6 Month",
+      "outofref": true,
+      "cart_type": 2,
+      "chart_bounds": [
         {
           "low": null,
           "high": "3.0",
@@ -35,32 +35,26 @@
           "label": "High",
           "status": "Needs Focus"
         }
-			],
-			"values": [
-				"85"
-			],
-			"date": [
-				"2025-07-15"
-			],
-			"status": [
-				"Excellent"
-			],
-			"gene_insight": null,
-			"subcategory_biomarker_count": 1,
-			"subcategory_needs_focus": 0
-		},
-		{
-			"category": "Metabolic Health",
-			"subcategory": "Diabetes & Glucose",
-			"name": "Fasting Plasma Glucose2",
-			"more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
-			"unit": "mg/dL",
-			"chart_type": "bar",
-			"test_type": "vital",
-			"duration": "6 Month",
-			"outofref": true,
-			"cart_type": 2,
-			"chart_bounds": [
+      ],
+      "values": ["85"],
+      "date": ["2025-07-15"],
+      "status": ["Excellent"],
+      "gene_insight": null,
+      "subcategory_biomarker_count": 1,
+      "subcategory_needs_focus": 0
+    },
+    {
+      "category": "Metabolic Health",
+      "subcategory": "Diabetes & Glucose",
+      "name": "Fasting Plasma Glucose2",
+      "more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
+      "unit": "mg/dL",
+      "chart_type": "bar",
+      "test_type": "vital",
+      "duration": "6 Month",
+      "outofref": true,
+      "cart_type": 2,
+      "chart_bounds": [
         {
           "low": null,
           "high": "3.0",
@@ -82,19 +76,13 @@
           "label": "High",
           "status": "Needs Focus"
         }
-			],
-			"values": [
-				"85"
-			],
-			"date": [
-				"2025-07-15"
-			],
-			"status": [
-				"Excellent"
-			],
-			"gene_insight": null,
-			"subcategory_biomarker_count": 1,
-			"subcategory_needs_focus": 0
-		}		
-	]
+      ],
+      "values": ["85"],
+      "date": ["2025-07-15"],
+      "status": ["Excellent"],
+      "gene_insight": null,
+      "subcategory_biomarker_count": 1,
+      "subcategory_needs_focus": 0
+    }
+  ]
 }

@@ -55,9 +55,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(
-        refrences[0].name ? refrences[0].name : '',
-      );
+      setActiveBOx(refrences[0].name ? refrences[0].name : '');
       setActive(refrences[0]);
     }
   }, [refrences]);
@@ -349,7 +347,12 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               unit={active.unit}
                               values={active.values}
                             ></StatusBarChartV2> */}
-                           <StatusBarChartV3 status={active.status} unit={active.unit} values={active.values} data={active.chart_bounds}></StatusBarChartV3>
+                            <StatusBarChartV3
+                              status={active.status}
+                              unit={active.unit}
+                              values={active.values}
+                              data={active.chart_bounds}
+                            ></StatusBarChartV3>
                           </>
                           // <StatusBarChart data={active}></StatusBarChart>
                         )}

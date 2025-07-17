@@ -79,7 +79,7 @@ const HistoricalChart = ({
 
       return aHigh - bHigh;
     });
-  };  
+  };
   const sortedStatusBars = sortByRange().reverse();
 
   return (

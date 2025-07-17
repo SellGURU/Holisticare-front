@@ -292,7 +292,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
     // }
     // return refData;
-    if(ClientSummaryBoxs){
+    if (ClientSummaryBoxs) {
       return ClientSummaryBoxs.subcategories;
     }
     return [];
@@ -562,11 +562,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
-                      .filter((val:any) => val.outofref == true)
-                      .map((el:any, index:number) => {
+                      .filter((val: any) => val.outofref == true)
+                      .map((el: any, index: number) => {
                         return (
                           <>
-                          <RefrenceBox data={el} index={index}></RefrenceBox>
+                            <RefrenceBox data={el} index={index}></RefrenceBox>
                           </>
                         );
                       })}
@@ -651,11 +651,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any, index: number) => {
                     return (
                       <DetiledAnalyse
-                        refrences={
-                          resolveBioMarkers().filter(
-                            (val:any) => val.subcategory == el.subcategory,
-                          )
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                         index={index}
                       ></DetiledAnalyse>
@@ -666,11 +664,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any) => {
                     return (
                       <DetiledAcordin
-                        refrences={
-                          resolveBioMarkers().filter(
-                            (val:any) => val.subcategory == el.subcategory,
-                          )
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                       ></DetiledAcordin>
                     );
@@ -770,13 +766,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   referenceData={referenceData}
                   resolveBioMarkers={resolveBioMarkers}
                   ResolveConceringData={ResolveConceringData}
-                  resolveSubCategories={() => [] }
+                  resolveSubCategories={() => []}
                   helthPlan={ActionPlanPrint}
                   TreatMentPlanData={TreatMentPlanData}
                   ActionPlan={HelthPrint}
                   caldenderData={caldenderData}
                 />
-              {/* <></> */}
+                {/* <></> */}
               </div>
             )}
             {!isHaveReport && (

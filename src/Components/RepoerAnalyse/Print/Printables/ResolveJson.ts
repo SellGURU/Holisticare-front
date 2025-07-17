@@ -456,11 +456,7 @@ const resovleJson = ({
     AddConcerningResult(transformConceringData());
   }
   if (isActiveSection('Detailed Analysis') == true) {
-    AddDetailedAnalyse(
-      referenceData,
-      resolveCategories(),
-      resolveBioMarkers,
-    );
+    AddDetailedAnalyse(referenceData, resolveCategories(), resolveBioMarkers);
   }
   // if (isActiveSection('Holistic Plan') == true) {
   //   addHolisticPlan(helthPlan, TreatMentPlanData);

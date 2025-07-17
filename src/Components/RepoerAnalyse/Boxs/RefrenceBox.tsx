@@ -176,7 +176,12 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                   ),
                 )}
               ></StatusBarChartV2> */}
-              <StatusBarChartv3 status={data.status} unit={data.unit} values={data.values}  data={data.chart_bounds}></StatusBarChartv3>
+              <StatusBarChartv3
+                status={data.status}
+                unit={data.unit}
+                values={data.values}
+                data={data.chart_bounds}
+              ></StatusBarChartv3>
             </div>
           </>
         )}
