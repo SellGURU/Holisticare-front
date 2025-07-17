@@ -63,7 +63,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     setEditAbleValue(value.Instruction);
     const { positive, negative } = splitInstructions(value.Instruction);
     setclient_version(
-      value.client_version ? value.client_version : [positive, negative],
+      Array.isArray(value.client_version) ? value.client_version : [positive, negative],
     );
     setNotes(value['Client Notes']);
   }, [value]);
@@ -83,7 +83,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   const [client_version, setclient_version] = useState(
-    value.client_version ? value.client_version : [positive, negative],
+    Array.isArray(value.client_version) ? value.client_version : [positive, negative],
   );
   useEffect(() => {
     switch (value.Category) {
@@ -419,7 +419,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         <EditModal
           defalts={{
             ...value,
-            client_version: value.client_version
+            client_version: Array.isArray(value.client_version)
               ? value.client_version
               : [positive, negative],
           }}

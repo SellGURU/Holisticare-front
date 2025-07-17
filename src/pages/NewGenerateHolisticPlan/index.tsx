@@ -24,7 +24,7 @@ import { AppContext } from '../../store/app';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
-import StatusBarChartV2 from '../CustomBiomarkers.tsx/StatusBarChartV2';
+import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -82,7 +82,7 @@ const NewGenerateHolisticPlan = () => {
     Application.getResultTab({ member_id: id }).then((res) => {
       setResultTabData(res.data.result_tab);
       if (res.data.result_tab && res.data.result_tab.length > 0) {
-        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+        setActiveEl(res.data.result_tab[0]);
       }
     });
   }, [id]);
@@ -98,13 +98,14 @@ const NewGenerateHolisticPlan = () => {
   //   return subs;
   // };
   const resoveSubctegoriesSubs = () => {
-    const subs: any = [];
-    resultTabData?.map((el: any) => {
-      el.subcategories.map((newSubs: any) => {
-        subs.push(newSubs);
-      });
-    });
-    return subs;
+    // const subs: any = [];
+    // resultTabData?.map((el: any) => {
+    //   el.subcategories.map((newSubs: any) => {
+    //     subs.push(newSubs);
+    //   });
+    // });
+    // return subs;
+    return resultTabData;
   };
   const { treatmentId } = useContext(AppContext);
 
@@ -118,7 +119,7 @@ const NewGenerateHolisticPlan = () => {
         .then((res) => {
           setTratmentPlanData(res.data);
           setClientGools({ ...res.data.client_goals });
-          setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+          setActiveEl(res.data.result_tab[0]);
         })
         .finally(() => {
           setisFirstLoading(false);
@@ -525,11 +526,8 @@ const NewGenerateHolisticPlan = () => {
                     <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-2 md:p-4 mt-4">
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px]">
                         <div className="w-full lg:w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                          {resoveSubctegoriesSubs().map((value: any) => {
+                          {resoveSubctegoriesSubs().map((resol: any) => {
                             return (
-                              <>
-                                {value.biomarkers.map((resol: any) => {
-                                  return (
                                     <>
                                       <div
                                         onClick={() => {
@@ -582,7 +580,7 @@ const NewGenerateHolisticPlan = () => {
                                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                                     Last Value
                                                   </div>
-                                                  <StatusBarChartV2
+                                                  {/* <StatusBarChartV2
                                                     data={resol.chart_bounds}
                                                     mapingData={Object.fromEntries(
                                                       Object.entries(
@@ -600,7 +598,7 @@ const NewGenerateHolisticPlan = () => {
                                                     status={resol.status}
                                                     unit={resol.unit}
                                                     values={resol.values}
-                                                  ></StatusBarChartV2>
+                                                  ></StatusBarChartV2> */}
                                                   {/* <StatusBarChart
                                                     data={resol}
                                                   ></StatusBarChart> */}
@@ -634,9 +632,6 @@ const NewGenerateHolisticPlan = () => {
                                         )}
                                     </>
                                   );
-                                })}
-                              </>
-                            );
                           })}
                         </div>
 
@@ -661,7 +656,8 @@ const NewGenerateHolisticPlan = () => {
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
                                   </div>
-                                  <StatusBarChartV2
+                                  <StatusBarChartV3 values={activeEl.values} unit={activeEl.unit} status={activeEl.status} data={activeEl.chart_bounds}></StatusBarChartV3>
+                                  {/* <StatusBarChartV2
                                     data={activeEl.chart_bounds}
                                     mapingData={Object.fromEntries(
                                       Object.entries(activeEl.chart_bounds).map(
@@ -674,7 +670,7 @@ const NewGenerateHolisticPlan = () => {
                                     status={activeEl.status}
                                     unit={activeEl.unit}
                                     values={activeEl.values}
-                                  ></StatusBarChartV2>
+                                  ></StatusBarChartV2> */}
                                   {/* <StatusBarChart
                                     data={activeEl}
                                   ></StatusBarChart> */}

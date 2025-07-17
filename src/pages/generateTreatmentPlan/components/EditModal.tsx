@@ -40,7 +40,7 @@ const EditModal: FC<EditModalProps> = ({
     defalts ? defalts['Client Notes'] : [],
   );
   const [client_versions, setclient_versions] = useState<string[]>(
-    defalts ? defalts['client_version'] : [],
+    defalts && Array.isArray(defalts['client_version']) ? defalts['client_version'] : [],
   );
   const [showSelect, setShowSelect] = useState(false);
   // const [group, setGroup] = useState(defalts?.Category);
