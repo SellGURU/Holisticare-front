@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import FileBox from './FileBox';
 import { publish, subscribe } from '../../../utils/event';
 import { uploadToAzure } from '../../../help';
-import Circleloader from '../../CircleLoader';
 
 interface FileUpload {
   file: File;
@@ -14,7 +13,6 @@ interface FileUpload {
   azureUrl?: string;
   uploadedSize?: number;
   errorMessage?: string;
-  file_id: string;
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -25,7 +23,6 @@ const formatFileSize = (bytes: number): string => {
 const FileHistoryNew = () => {
   const fileInputRef = useRef<any>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
   useEffect(() => {
@@ -162,7 +159,6 @@ const FileHistoryNew = () => {
         progress: 0.5,
         status: 'uploading' as const,
         uploadedSize: 0,
-        file_id: '',
       }));
 
       // Validate file formats before uploading
@@ -180,7 +176,6 @@ const FileHistoryNew = () => {
               ...fileUpload,
               status: 'error',
               errorMessage: 'File has an unsupported format.',
-              file_id: '',
             },
           ]);
           return false;
@@ -233,64 +228,27 @@ const FileHistoryNew = () => {
     }
     fileInputRef.current.value = '';
   };
-  const [idDeleted, setIdDeleted] = useState<string[]>([]);
-  const getFileList = (id: string) => {
-    setIsLoading(true);
+
+  useEffect(() => {
     Application.getFilleList({ member_id: id })
       .then((res) => {
         if (res.data) {
           setUploadedFiles(res.data);
-          setIdDeleted([]);
         } else {
           throw new Error('Unexpected data format');
         }
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
-  };
-  useEffect(() => {
-    if (id) {
-      getFileList(id);
-    }
   }, [id]);
   subscribe('syncReport', () => {
     Application.getFilleList({ member_id: id }).then((res) => {
       setUploadedFiles(res.data);
-      setIdDeleted([]);
     });
   });
-  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const handleDelete = (fileId: string, memberId: string) => {
-    setLoadingDelete(true);
-    publish('fileIsDeleted', { isDeleting: false });
-    Application.deleteFileHistory({
-      file_id: fileId,
-      member_id: memberId,
-    })
-      .then((res) => {
-        if (res.data) {
-          setIdDeleted((prev) => [...prev, fileId]);
-          publish('fileIsDeleted', {
-            isDeleting: true,
-            files: [fileId],
-          });
-        }
-      })
-      .finally(() => {
-        setLoadingDelete(false);
-      });
-  };
   return (
     <>
-      {isLoading && (
-        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
-          <Circleloader></Circleloader>
-        </div>
-      )}
       <div className="w-full">
         <div
           onClick={() => {
@@ -324,16 +282,10 @@ const FileHistoryNew = () => {
             {uploadedFiles.map((fileUpload, index) => (
               <div key={index}>
                 <FileBox
-                  onDeleteData={() => {
+                  onDelete={() => {
                     setUploadedFiles((prev) =>
                       prev.filter((f) => f.file !== fileUpload.file),
                     );
-                  }}
-                  index={index}
-                  onDelete={() => {
-                    if (id) {
-                      handleDelete(fileUpload.file_id, id);
-                    }
                   }}
                   el={{
                     ...fileUpload,
@@ -342,16 +294,6 @@ const FileHistoryNew = () => {
                     progress: fileUpload.progress || 0.5,
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
-                  deleteId={
-                    idDeleted.includes(fileUpload.file_id)
-                      ? fileUpload.file_id
-                      : ''
-                  }
-                  getFileList={() => {
-                    publish('syncReport', {});
-                  }}
-                  ids={fileUpload.file_id}
-                  isLoading={loadingDelete}
                 />
               </div>
             ))}
