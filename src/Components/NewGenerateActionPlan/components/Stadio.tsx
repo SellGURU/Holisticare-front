@@ -10,7 +10,7 @@ import SpinnerLoader from '../../SpinnerLoader';
 import ActionCard from './ActionCard';
 import ActionEditModal from './ActionEditModal';
 import LibBox from './LibBox';
-import Sort from './Sort';
+// import Sort from './Sort';
 import { SlideOutPanel } from '../../SlideOutPanel';
 import Circleloader from '../../CircleLoader';
 import { Tooltip } from 'react-tooltip';
@@ -182,7 +182,7 @@ const Stadio: FC<StadioProps> = ({
   useEffect(() => {
     conflicCheck();
   }, [actions]);
-  const [sortBy, setSortBy] = useState('System Score');
+  // const [sortBy, setSortBy] = useState('System Score');
   // const resolveTaskCheckText = () => {
   //   if (
   //     actions.category.filter((el) => el.Category == 'Activity').length > 1 &&
@@ -205,18 +205,17 @@ const Stadio: FC<StadioProps> = ({
   //   }
   //   return conflicts;
   // };
-  const handleChangeSort = (value: string) => {
-    setSortBy(value);
-  };
+  // const handleChangeSort = (value: string) => {
+  //   setSortBy(value);
+  // };
   const filteredDataCategory = useMemo(() => {
-    return data.category
-      .filter(
-        (el: any) =>
-          el.Category === selectCategory &&
-          el.Title.toLowerCase().includes(searchValue.toLowerCase()),
-      )
-      .sort((a: any, b: any) => (b[sortBy] || 0) - (a[sortBy] || 0));
-  }, [data.category, selectCategory, searchValue, sortBy]);
+    return data.category.filter(
+      (el: any) =>
+        el.Category === selectCategory &&
+        el.Title.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+    // .sort((a: any, b: any) => (b[sortBy] || 0) - (a[sortBy] || 0));
+  }, [data.category, selectCategory, searchValue]);
   const filteredDataCheckIn = data.checkIn
     .filter(
       (el) =>
@@ -228,18 +227,18 @@ const Stadio: FC<StadioProps> = ({
       category: 'Check-In', // Add the category key with value 'Check-In'
     }));
   const [showAddModal, setshowAddModal] = useState(false);
-  const options = [
-    {
-      label: 'System Score',
-      value: 'System Score',
-      color: 'bg-Primary-DeepTeal',
-    },
-    {
-      label: 'Base Score',
-      value: 'Base_Score',
-      color: 'bg-Primary-EmeraldGreen',
-    },
-  ];
+  // const options = [
+  //   {
+  //     label: 'System Score',
+  //     value: 'System Score',
+  //     color: 'bg-Primary-DeepTeal',
+  //   },
+  //   {
+  //     label: 'Base Score',
+  //     value: 'Base_Score',
+  //     color: 'bg-Primary-EmeraldGreen',
+  //   },
+  // ];
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, item: any) => {
     e.dataTransfer.setData(
@@ -656,11 +655,11 @@ const Stadio: FC<StadioProps> = ({
                 setSearchValue(value);
               }}
             />
-            <Sort
+            {/* <Sort
               options={options}
               handleChangeSort={handleChangeSort}
               sortBy={sortBy}
-            />
+            /> */}
             <div>
               <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
                 {AllCategories.map((cat) => {
@@ -676,7 +675,7 @@ const Stadio: FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[385px] overflow-y-auto">
+              <div className="w-full h-[410px] overflow-y-auto">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (

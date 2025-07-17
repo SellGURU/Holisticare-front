@@ -368,7 +368,7 @@ export const GenerateRecommendation = () => {
                 console.log(data);
                 setCheckedSuggestion([...checkedSuggestions, ...data]);
               }}
-              checkeds={checkedSuggestions}
+              // checkeds={checkedSuggestions}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
                 console.log(newOrders);

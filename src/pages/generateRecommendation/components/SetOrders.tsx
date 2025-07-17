@@ -2,7 +2,7 @@
 import { FC, useEffect, useState } from 'react';
 import { MainModal } from '../../../Components';
 // import Application from '../../../api/app';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import Circleloader from '../../../Components/CircleLoader';
 import { publish, subscribe } from '../../../utils/event';
 import { ActivityCard } from './ActivityCard';
@@ -17,7 +17,7 @@ interface SetOrdersProps {
   treatMentPlanData: any;
   setData: (values: any) => void;
   storeChecked: (data: any) => void;
-  checkeds: Array<any>;
+  // checkeds: Array<any>;
   reset: () => void;
   defaultSuggestions: Array<any>;
   visibleCategoriy: CategoryState[];
@@ -32,7 +32,7 @@ export const SetOrders: FC<SetOrdersProps> = ({
   // treatMentPlanData,
   setData,
   storeChecked,
-  checkeds,
+  // checkeds,
   // reset,
   // defaultSuggestions,
   visibleCategoriy,
@@ -43,14 +43,13 @@ export const SetOrders: FC<SetOrdersProps> = ({
   // const [activeCategory, setActiveCategory] = useState<string>(
   //   visibleCategoriy[visibleCategoriy.length - 1].name || 'Activity',
   // );
-  const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
+  // const [orderedCategories, setOrderedCategories] = useState<Array<string>>([]);
   // const [data, setData] = useState<MockData>(mockData);
   const [activeModalValue] = useState<Array<any>>([]);
   const [showModal, setShowModal] = useState(false);
   // const [FilteredData, setFilteredData] = useState(data);
   // const [isStarted, setisStarted] = useState(false);
-  const { id } = useParams<{ id: string }>();
-  console.log(id);
+  // const { id } = useParams<{ id: string }>();
 
   const [categories, setCategories] =
     useState<CategoryState[]>(visibleCategoriy);
@@ -117,20 +116,19 @@ export const SetOrders: FC<SetOrdersProps> = ({
     );
 
     // Directly update state as needed
-    const selectedInterventions = [
-      ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
-      ...data.filter(
-        (el: any) => el.checked === true && el.Category === activeCategory,
-      ),
-    ];
-    console.log(selectedInterventions);
+    // const selectedInterventions = [
+    //   ...checkeds.filter((el) => orderedCategories.includes(el.Category)),
+    //   ...data.filter(
+    //     (el: any) => el.checked === true && el.Category === activeCategory,
+    //   ),
+    // ];
 
     // Example of state update without API
-    setOrderedCategories((prev) => {
-      const old = [...prev];
-      old.push(activeCategory);
-      return old;
-    });
+    // setOrderedCategories((prev) => {
+    //   const old = [...prev];
+    //   old.push(activeCategory);
+    //   return old;
+    // });
 
     // Update data without API call
     // If there's logic to determine the next data set, implement it here
@@ -151,7 +149,6 @@ export const SetOrders: FC<SetOrdersProps> = ({
     const visibleCategories = categories
       .filter((cat) => cat.visible)
       .map((cat) => cat.name);
-    console.log('visibleCategories => ', visibleCategories);
     const currentIndex = visibleCategories.indexOf(activeCategory);
     // const nextTabName = visibleCategories[currentIndex + 1];
     setIsLoading(false);

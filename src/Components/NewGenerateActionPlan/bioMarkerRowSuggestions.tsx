@@ -109,6 +109,32 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
       )
     );
   }
+  const [color, setColor] = useState<string>('');
+  const [bgColor, setBgColor] = useState<string>('');
+  useEffect(() => {
+    switch (value.Category) {
+      case 'Highly Recommended':
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+      case 'Use Caution':
+        setColor('#FFAB2C');
+        setBgColor('#F9DEDC');
+        break;
+      case 'Beneficial':
+        setColor('#4C88FF');
+        setBgColor('#CADCFF');
+        break;
+      case 'Avoid':
+        setColor('#FC5474');
+        setBgColor('#FFD8E4');
+        break;
+      default:
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+    }
+  }, [value.Category]);
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -193,7 +219,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
             </div>
             <div className="flex justify-between w-full mt-1.5">
               <div className="flex flex-col w-[min-content] flex-grow-[1]">
-                <div className="flex justify-start items-start ml-2">
+                <div className="flex justify-start items-center ml-2">
                   {value.Category === 'Diet' ||
                   value.Category === 'Activity' ||
                   value.Category === 'Supplement' ? (
@@ -253,13 +279,23 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       </div>
                     </>
                   )}
-                  <div
+                  {/* <div
                     className={`text-Text-Secondary text-xs  flex justify-start items-center text-nowrap ml-4 ${value.Category === 'Diet' && 'ml-5'} mr-2`}
                   >
                     • Score:
-                  </div>
-                  <div className={`flex items-center gap-1`}>
+                  </div> */}
+                  <div
+                    className={`flex items-center gap-1 ml-4 ${value.Category === 'Diet' && 'ml-5'}`}
+                  >
                     <div
+                      className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                    >
+                      <div
+                        className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                      ></div>
+                      {value.Category || '-'}
+                    </div>
+                    {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                       data-tooltip-id={`tooltip-system-score-bio-${index}`}
                     >
@@ -279,8 +315,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-[10px] text-Text-Quadruple">
                         Initial score from core health metrics.
                       </div>
-                    </Tooltip>
-                    <div
+                    </Tooltip> */}
+                    {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                       data-tooltip-id={`tooltip-base-score-bio-${index}`}
                     >
@@ -300,7 +336,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                       <div className="text-[10px] text-Text-Quadruple">
                         Score based on all data and AI insights.
                       </div>
-                    </Tooltip>
+                    </Tooltip> */}
                     <div
                       className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                       data-tooltip-id={`tooltip-score-calculation-bio-${index}`}

@@ -186,7 +186,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               )}
               <div className="flex gap-7 items-center">
                 <div className="font-medium text-Text-Primary text-xs">
-                  Base Score
+                  Priority Weight
                 </div>
                 <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
                   <div className="text-[10px] text-Text-Primary">

@@ -86,8 +86,6 @@ const NewGenerateHolisticPlan = () => {
       }
     });
   }, [id]);
-  console.log(resultTabData);
-  console.log(activeEl);
 
   // const resoveSubctegoriesSubs = () => {
   //   const subs: any = [];
@@ -111,7 +109,6 @@ const NewGenerateHolisticPlan = () => {
   const { treatmentId } = useContext(AppContext);
 
   useEffect(() => {
-    console.log(treatmentId);
     if (treatmentId !== null && treatmentId != '') {
       setisFirstLoading(true);
       Application.showHolisticPlan({
@@ -132,7 +129,6 @@ const NewGenerateHolisticPlan = () => {
   // const isChartDataEmpty = !activeEl?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
   // );
-  console.log(activeEl);
   useEffect(() => {
     if (isSaving == 'saving') {
       setTimeout(() => {
