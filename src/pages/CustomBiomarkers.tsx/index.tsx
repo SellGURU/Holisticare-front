@@ -141,7 +141,7 @@ const CustomBiomarkers = () => {
           </div>
         </>
       ) : (
-        <div className="w-full h-full px-6 py-[80px]">
+        <div className="w-full min-h-full px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox

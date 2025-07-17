@@ -68,31 +68,41 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
-      () => {
-        // setReferenceData(res.data);
-        setReferenceData(referencedataMoch);
+      (res) => {
+        setReferenceData(res.data);
+        // setReferenceData(referencedataMoch);
         clearUsedPositions();
       },
-    );
+    ).catch(() => {
+        setReferenceData({
+          "detailed_analysis_note": "Total of 0 Biomarkers in 0 Categories",
+          "total_biomarker_note": "Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.",
+          "biomarkers": []
+        });
+        // setReferenceData(referencedataMoch);
+        clearUsedPositions();      
+    });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
-      // setClientSummaryBoxs(res.data);
-      setClientSummaryBoxs(mydata);
+      setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
 
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
       } else {
         setIsHaveReport(true);
       }
     });
     Application.getConceringResults({ member_id: resolvedMemberID }).then(
-      () => {
-        // setConcerningResult(res.data.table);
-        setConcerningResult(conceringResultData);
+      (res) => {
+        setConcerningResult(res.data.table);
+        // setConcerningResult(conceringResultData);
       },
-    );
+    ).catch(() => {
+     setConcerningResult([]) 
+    });
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
@@ -125,9 +135,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: memberID,
       },
       uniqKey,
-    ).then(() => {
-      // setReferenceData(res.data);
-      setReferenceData(referencedataMoch);
+    ).then((res) => {
+      setReferenceData(res.data);
+      // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
       {
@@ -135,11 +145,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      // setClientSummaryBoxs(res.data);
-      setClientSummaryBoxs(mydata);
+      setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
 
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
       } else {
         setIsHaveReport(true);
@@ -150,9 +160,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         member_id: memberID,
       },
       uniqKey,
-    ).then(() => {
-      // setConcerningResult(res.data.table);
-      setConcerningResult(conceringResultData);
+    ).then((res) => {
+      setConcerningResult(res.data.table);
+      // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
       {

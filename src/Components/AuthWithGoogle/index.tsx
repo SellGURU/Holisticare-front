@@ -41,12 +41,16 @@ const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
       } else {
         navigate('/register-profile');
       }
+    }).catch((err) => {
+      console.log(err);
     });
   };
 
   const Signup = (data: any) => {
     Auth.signup(undefined, undefined, undefined, data).then(() => {
       Login(data);
+    }).catch((err) => {
+      console.log(err);
     });
   };
   return (
