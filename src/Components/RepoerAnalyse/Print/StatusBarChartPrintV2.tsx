@@ -91,7 +91,7 @@ const StatusBarChartPrintV2 = ({
               className={` relative border-l-2 border-white  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
-                backgroundColor:el.color ? el.color : resolveColor(el.status),
+                backgroundColor: el.color ? el.color : resolveColor(el.status),
                 height: '8px',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
