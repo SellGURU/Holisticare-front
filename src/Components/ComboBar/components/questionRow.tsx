@@ -81,9 +81,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                     }).then((res) => {
                       console.log(res);
 
-                      setViewQuestienry(res.data);
-                      setIsView(true);
-                      setshowModal(false);
+                      // setViewQuestienry(res.data);
+                      // setIsView(true);
+                      // setshowModal(false);
+                      window.open(`/surveys-view/${id}/${el.unique_id}`, '_blank');
+
                       // navigate(`/surveys/${id}/${el.unique_id}`)
                     });
                     // Application.Questionary_tracking_action({
