@@ -7,8 +7,8 @@ import Legends from '../Legends';
 import resolveAnalyseIcon from '../resolveAnalyseIcon';
 import Toggle from './Toggle';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
 import HistoricalChart from '../HistoricalChart';
+import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 // import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
@@ -18,14 +18,16 @@ interface DetiledAnalyseProps {
 
 const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
-  console.log(data);
-  console.log(refrences);
+
   const [isCheced, setIsCheced] = useState(false);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
-    refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
+    refrences[0].name ? refrences[0].name : '',
   );
+  useEffect(() => {
+    setIsCheced(false);
+  }, [activeBox]); 
   // const resolveStatusColor =() => {
   //     if(data.status == 'Normal') {
   //         return '#06C78D'
@@ -37,7 +39,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   //         return '#FC5474'
   //     }
   // }
-  const [active, setActive] = useState<any>(refrences?.biomarkers[0] ?? null);
+  const [active, setActive] = useState<any>(refrences[0]);
   subscribe('openDetiledCard', (ev) => {
     // console.log(ev)
     if (ev.detail.id == data.name) {
@@ -47,20 +49,18 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   useEffect(() => {
     if (refrences != null) {
       setActiveBOx(
-        refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
+        refrences[0].name ? refrences[0].name : '',
       );
-      setActive(refrences?.biomarkers[0]);
+      setActive(refrences[0]);
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
-  console.log(active);
   const [isBiomarkerOpen, setIsBiomarkerOpen] = useState<boolean[]>([]);
   const handleBiomarkerToggle = (index: number) => {
     const newIsBiomarkerOpen = [...isBiomarkerOpen];
     newIsBiomarkerOpen[index] = !newIsBiomarkerOpen[index];
     setIsBiomarkerOpen(newIsBiomarkerOpen);
   };
-  console.log(data.subcategory);
 
   return (
     <>
@@ -141,7 +141,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
             </div>
             <div className="w-full  flex items-start gap-2  bg-backgroundColor-Card  rounded-[12px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden ">
-                {refrences?.biomarkers.map((value: any) => {
+                {refrences.map((value: any) => {
                   return (
                     <>
                       <div
@@ -166,7 +166,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   );
                 })}
               </div>
-              {refrences?.biomarkers.length > 0 && (
+              {refrences.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
                   <div className="absolute hidden cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
@@ -183,7 +183,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                   </div>
                   {!isCheced ? (
                     <div className="w-full ">
-                      {refrences.biomarkers.map(
+                      {refrences.map(
                         (biomarker: any, index: number) => (
                           <div
                             key={index}
@@ -255,21 +255,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                   </div>
                                   <div className="mt-10">
                                     {biomarker && (
-                                      <StatusBarChartV2
-                                        // data={active.chart_bounds}
-                                        mapingData={Object.fromEntries(
-                                          Object.entries(
-                                            active.chart_bounds,
-                                          ).map(([key, valuess]: any) => [
-                                            key,
-                                            valuess.label,
-                                          ]),
-                                        )}
-                                        status={active.status}
-                                        unit={active.unit}
-                                        values={active.values}
-                                        data={biomarker.chart_bounds}
-                                      ></StatusBarChartV2>
+                                     <StatusBarChartV3 status={biomarker.status} unit={biomarker.unit} values={biomarker.values} data={biomarker.chart_bounds}></StatusBarChartV3>
                                     )}
                                   </div>
                                 </div>
@@ -281,7 +267,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                     </div>
                   ) : (
                     <div className="w-full ">
-                      {refrences.biomarkers.map(
+                      {refrences.map(
                         (biomarker: any, index: number) => (
                           <div
                             key={index}

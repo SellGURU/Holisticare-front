@@ -258,7 +258,7 @@ const addDetailedAnalyseBox = (
 ) => {
   const biomarkers = resolveSubCategories().filter(
     (val) => val.subcategory == categoryData.subcategory,
-  )[0]?.biomarkers;
+  );
   addDetailedAnalyseCategory(categoryData);
   addDescriptionDetailedAnalyse(categoryData.description);
   biomarkers?.map((ref: any, index: number) => {
@@ -459,15 +459,15 @@ const resovleJson = ({
     AddDetailedAnalyse(
       referenceData,
       resolveCategories(),
-      resolveSubCategories,
+      resolveBioMarkers,
     );
   }
-  if (isActiveSection('Holistic Plan') == true) {
-    addHolisticPlan(helthPlan, TreatMentPlanData);
-  }
-  if (isActiveSection('Action Plan') == true) {
-    AddActionPlan(ActionPlan, caldenderData);
-  }
+  // if (isActiveSection('Holistic Plan') == true) {
+  //   addHolisticPlan(helthPlan, TreatMentPlanData);
+  // }
+  // if (isActiveSection('Action Plan') == true) {
+  //   AddActionPlan(ActionPlan, caldenderData);
+  // }
   return myjson;
 };
 

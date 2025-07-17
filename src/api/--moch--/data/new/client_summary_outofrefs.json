@@ -1,824 +1,100 @@
 {
-  "detailed_analysis_note": "Total of 22 Biomarkers in 2 Categories",
-  "total_biomarker_note": "Total of 1 biomarkers are Needs Focus in a list of 22 biomarkers.",
-  "categories": [
-    {
-      "category": "Micronutrient Levels",
-      "subcategories": [
+	"detailed_analysis_note": "Total of 1 Biomarkers in 1 Categories",
+	"total_biomarker_note": "Total of 0 biomarkers are Needs Focus in a list of 1 biomarkers.",
+	"biomarkers": [
+		{
+			"category": "Metabolic Health",
+			"subcategory": "Diabetes & Glucose",
+			"name": "Fasting Plasma Glucose",
+			"more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
+			"unit": "mg/dL",
+			"chart_type": "bar",
+			"test_type": "vital",
+			"duration": "6 Month",
+			"outofref": true,
+			"cart_type": 2,
+			"chart_bounds": [
         {
-          "subcategory": "Vitamins",
-          "biomarkers": [
-            {
-              "subcategory": "Vitamins",
-              "name": "Beta Carotene",
-              "more_info": "Beta Carotene is a provitamin A carotenoid measured in serum, expressed in micrograms per deciliter (ug/dL). It supports vision, immune function, and skin health as a precursor to vitamin A. Low levels may indicate dietary deficiency, while high levels may suggest excessive supplementation.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/dL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [201, 250],
-                  "label": "High Beta Carotene Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [0, 47],
-                  "label": "Slightly Abnormal Beta Carotene Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [48, 200],
-                  "label": "Optimal Beta Carotene Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [251, 500],
-                  "label": "Significantly High Beta Carotene Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["227.8"],
-              "date": ["2025-06-29"],
-              "status": ["Ok"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "BIOTIN (VITAMIN H)",
-              "more_info": "Biotin, also known as Vitamin B7 or Vitamin H, is a water-soluble B-complex vitamin essential for energy production and the metabolism of fats, carbohydrates, and amino acids. It also plays a key role in maintaining healthy skin, hair, and nails.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ng/mL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [4.01, 7],
-                  "label": "Very High Biotin Level",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [3.01, 4],
-                  "label": "High Biotin Level",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [0.22, 3],
-                  "label": "Optimal Biotin Level",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 0.21],
-                  "label": "Deficient Biotin Level",
-                  "condition": "between"
-                }
-              },
-              "values": ["0.4"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN A (RETINOL)",
-              "more_info": "Vitamin A (Retinol) is a fat-soluble vitamin essential for vision, immune function, and skin health.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mg/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [0.7, 1],
-                  "label": "Low Vitamin A",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [0.61, 0.69],
-                  "label": "Sufficient Vitamin A",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [0.3, 0.6],
-                  "label": "Optimal Vitamin A",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 0.29],
-                  "label": "Vitamin A Deficient",
-                  "condition": "between"
-                }
-              },
-              "values": ["0.5"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN B1 (THIAMIN)",
-              "more_info": "Vitamin B1 (Thiamin) is involved in converting food into energy and supporting nerve function.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [100, 150],
-                  "label": "High Thiamin Level",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [86, 99],
-                  "label": "Sufficient Thiamin Level",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [28, 85],
-                  "label": "Optimal Thiamin Level",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 27],
-                  "label": "Deficient Thiamin Level",
-                  "condition": "between"
-                }
-              },
-              "values": ["72.69"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN B12, active Holo Transcobalamin",
-              "more_info": "Active Vitamin B12 is essential for red blood cell formation, DNA synthesis, and nerve function.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "pmol/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [200.1, 300],
-                  "label": "High B12 Level",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [165.1, 200],
-                  "label": "Sufficient B12 Level",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [25.1, 165],
-                  "label": "Optimal B12 Level",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 25],
-                  "label": "Deficient B12 Level",
-                  "condition": "between"
-                }
-              },
-              "values": ["107.9"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN B2 (RIBOFLAVIN)",
-              "more_info": "Vitamin B2 (Riboflavin) is a B-vitamin measured in serum or via functional tests, expressed in micrograms per liter (ug/L). It supports energy production, skin health, and red blood cell formation. Low levels may indicate deficiency, while high levels are rare due to water-soluble nature.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [296, 320],
-                  "label": "Moderately High Riboflavin Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [160, 179],
-                  "label": "Slightly Abnormal Chromium Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [180, 295],
-                  "label": "Optimal Riboflavin Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 159],
-                  "label": "Significantly Low Riboflavin Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["270.85"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN B6 (PYRIDOXAL PHOSPHATE)",
-              "more_info": "Vitamin B6 plays a key role in amino acid metabolism, neurotransmitter synthesis, and immune health.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ng/mL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [50, 200],
-                  "label": "Very High VITAMIN B6 Level",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [27.3, 49.9],
-                  "label": "High VITAMIN B6 Level",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [8.7, 27.2],
-                  "label": "Optimal VITAMIN B6 Level",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 8.6],
-                  "label": "Deficient VITAMIN B6 Level ",
-                  "condition": "between"
-                }
-              },
-              "values": ["66"],
-              "date": ["2025-06-29"],
-              "status": ["Ok"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN D, 25-OH ",
-              "more_info": "Vitamin D, 25-OH (Total) measures the total circulating form of vitamin D in serum, expressed in nanograms per milliliter (ng/mL). It supports bone health, immune function, and muscle strength. Low levels may indicate deficiency, while high levels may suggest toxicity.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ng/mL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [0, 19],
-                  "label": "Deficient Vitamin D Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [20, 29],
-                  "label": "Insufficient Vitamin D Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [30, 80],
-                  "label": "Sufficient Vitamin D Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [81, 200],
-                  "label": "Toxic Vitamin D Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["25"],
-              "date": ["2025-06-29"],
-              "status": ["Good"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN E",
-              "more_info": "Vitamin E is a powerful antioxidant that helps protect cells from oxidative stress and supports immune health.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mg/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [31, 100],
-                  "label": "Very High Vitamin E Level",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [19, 30],
-                  "label": " High Vitamin E Level",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [5, 18],
-                  "label": "Sufficient Vitamin E Level",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 4],
-                  "label": "Deficient Vitamin E Level",
-                  "condition": "between"
-                }
-              },
-              "values": ["17.06"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Vitamins",
-              "name": "VITAMIN K1",
-              "more_info": "Vitamin K1 (phylloquinone) is a fat-soluble vitamin primarily involved in blood clotting, bone metabolism, and vascular health. It is the most common form of vitamin K found in green leafy vegetables and is essential for activating proteins that regulate blood coagulation.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ng/mL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [4.01, 5],
-                  "label": "Moderate Vitamin K1 Imbalance",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [3.21, 4],
-                  "label": "Slight Vitamin K1 Imbalance",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [0.2, 3.2],
-                  "label": "Optimal Vitamin K1",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 0.19],
-                  "label": "Severe Vitamin K1 Imbalance",
-                  "condition": "between"
-                }
-              },
-              "values": ["1.07"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            }
-          ],
-          "num_of_biomarkers": 10,
-          "needs_focus_count": 0
+          "low": null,
+          "high": "3.0",
+          "color": "",
+          "label": "Normal",
+          "status": "Excellent"
         },
         {
-          "subcategory": "Essential Minerals",
-          "biomarkers": [
-            {
-              "subcategory": "Essential Minerals",
-              "name": "Calcium",
-              "more_info": "Calcium is a vital mineral essential for building and maintaining strong bones and teeth. It also supports muscle contraction, nerve transmission, and hormonal secretion.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mg/dL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [15.1, 30],
-                  "label": "Moderate Calcium Imbalance",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [10.1, 15],
-                  "label": "Slight Calcium Imbalance",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [8.6, 10],
-                  "label": "Optimal Calcium",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 8.5],
-                  "label": "Severe Calcium Imbalance",
-                  "condition": "between"
-                }
-              },
-              "values": ["9.2"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "CHLORIDE (CL)",
-              "more_info": "Chloride (Cl) is an essential electrolyte measured in serum, expressed in millimol per liter (mmol/L). It helps maintain fluid balance, acid-base balance, and nerve function. Abnormal levels may indicate dehydration, kidney dysfunction, or metabolic disorders.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mmol/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [151, 200],
-                  "label": "Moderately Abnormal Chloride Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [108, 150],
-                  "label": "Slightly Abnormal Chloride Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [98, 107],
-                  "label": "Optimal Chloride Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [201, 300],
-                  "label": "Significantly Abnormal Chloride Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["102"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "CHROMIUM",
-              "more_info": "Chromium is a trace mineral measured in serum, expressed in micrograms per liter (ug/L). It supports glucose metabolism and insulin sensitivity. Low levels may indicate deficiency, while high levels may suggest toxicity or environmental exposure.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [0, 0.49],
-                  "label": "Moderately Abnormal Chromium Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [0.5, 0.69],
-                  "label": "Slightly Abnormal Chromium Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [0.7, 27.9],
-                  "label": "Optimal Chromium Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [28, 100],
-                  "label": "Significantly Abnormal Chromium Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["2.85"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "COPPER",
-              "more_info": "Copper is an essential trace mineral involved in numerous physiological processes including energy production, brain development, immune function, and iron metabolism. It also acts as a cofactor for many antioxidant enzymes.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/dL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [150.1, 200],
-                  "label": "Moderate Copper Imbalance",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [130.1, 150],
-                  "label": "Slight Copper Imbalance",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [74.1, 130],
-                  "label": "Optimal Copper",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 74],
-                  "label": "Severe Copper Imbalance",
-                  "condition": "between"
-                }
-              },
-              "values": ["130.21"],
-              "date": ["2025-06-29"],
-              "status": ["Good"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "FLUORIDE (SERUM)",
-              "more_info": "Fluoride is a trace mineral measured in serum, expressed in micrograms per liter (mg/L). It supports dental and bone health by strengthening enamel and bone structure. Abnormal levels may indicate deficiency or toxicity, often related to water or dental product exposure.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mg/l",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Excellent": {
-                  "threshold": [0, 0.1],
-                  "label": "Optimal Fluoride Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0.11, 10],
-                  "label": "Significantly Abnormal Fluoride Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["0.05"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "FOLIC ACID",
-              "more_info": "Folic Acid, or folate, is a B-vitamin (B9) measured in serum, expressed in nanograms per milliliter (ng/mL). It is essential for DNA synthesis, cell division, and preventing neural tube defects. Low levels may indicate deficiency, while high levels are generally safe but may mask B12 deficiency.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ng/mL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [3.38, 5],
-                  "label": "Intermediate Folic Acid Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [5.39, 20],
-                  "label": "Optimal Folic Acid Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0.35, 3.37],
-                  "label": "Deficient Folic Acid Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["11.4"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "Magnesium",
-              "more_info": "Magnesium is an essential mineral measured in serum, expressed in milligrams per deciliter (mg/dL). It supports muscle function, nerve signaling, and energy production. Abnormal levels may indicate dietary deficiency, kidney dysfunction, or metabolic disorders.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mg/dL",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [0.51, 1.59],
-                  "label": "Moderately Abnormal Magnesium Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [2.7, 3.5],
-                  "label": "Slightly Abnormal Magnesium Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [1.6, 2.69],
-                  "label": "Optimal Magnesium Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 0.5],
-                  "label": "Significantly Abnormal Magnesium Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["2.5"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "MANGANESE (SERUM)",
-              "more_info": "Manganese is a trace mineral essential for bone formation, antioxidant defense, carbohydrate metabolism, and wound healing. It acts as a cofactor for multiple enzymes including manganese superoxide dismutase (MnSOD), a key antioxidant enzyme in mitochondria.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [2.01, 3],
-                  "label": "Moderate Manganese Imbalance",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [1.05, 2],
-                  "label": "Slight Manganese Imbalance",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [0.3, 1.04],
-                  "label": "Optimal Manganese",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 0.29],
-                  "label": "Severe Manganese Imbalance",
-                  "condition": "between"
-                }
-              },
-              "values": ["0.86"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "Potassium (K)",
-              "more_info": "Potassium (K) is an essential electrolyte measured in serum, expressed in millimol per liter (mmol/L). It supports nerve function, muscle contractions, and heart rhythm. Abnormal levels may indicate kidney dysfunction, dehydration, or heart issues.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mmol/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [6.1, 8],
-                  "label": "Moderately Abnormal Potassium Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [5.2, 6],
-                  "label": "Slightly Abnormal Magnesium Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [3.5, 5.1],
-                  "label": "Optimal Potassium Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [0, 3.4],
-                  "label": "Significantly Abnormal Potassium Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["4.3"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "SELENIUM (SERUM)",
-              "more_info": "Selenium is an essential trace mineral involved in antioxidant defense, thyroid function, and immune health. It is incorporated into selenoproteins, which have antioxidant properties and are critical for protecting cells from oxidative damage.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [0, 73],
-                  "label": "Moderate Selenium Imbalance",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [91, 99],
-                  "label": "Slight Selenium Imbalance",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [74, 90],
-                  "label": "Optimal Selenium",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [100, 200],
-                  "label": "Severe Selenium Imbalance",
-                  "condition": "between"
-                }
-              },
-              "values": ["95.67"],
-              "date": ["2025-06-29"],
-              "status": ["Good"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "Sodium (Na)",
-              "more_info": "Sodium (Na) is an essential electrolyte measured in serum, expressed in millimol per liter (mmol/L). It regulates fluid balance, nerve function, and muscle contractions. Abnormal levels may indicate dehydration, kidney dysfunction, or hormonal imbalances.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "mmol/L",
-              "duration": "6 Month",
-              "outofref": false,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [151, 200],
-                  "label": "Moderately Abnormal Sodium Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [146, 150],
-                  "label": "Slightly Abnormal Magnesium Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [136, 145],
-                  "label": "Optimal Sodium Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [201, 300],
-                  "label": "Significantly Abnormal Sodium Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["138"],
-              "date": ["2025-06-29"],
-              "status": ["Excellent"],
-              "gene_insight": null
-            },
-            {
-              "subcategory": "Essential Minerals",
-              "name": "Zinc",
-              "more_info": "Zinc is an essential trace mineral measured in serum, expressed in micrograms per deciliter (ug/dL). It supports immune function, wound healing, and DNA synthesis. Low levels may indicate deficiency, while high levels may suggest toxicity or supplementation issues.",
-              "cart_type": 2,
-              "chart_type": "bar",
-              "test_type": "vital",
-              "unit": "ug/dL",
-              "duration": "6 Month",
-              "outofref": true,
-              "chart_bounds": {
-                "Ok": {
-                  "threshold": [50, 59.9],
-                  "label": "Moderately Abnormal Zinc Levels",
-                  "condition": "between"
-                },
-                "Good": {
-                  "threshold": [60, 69.9],
-                  "label": "Slightly Abnormal Zinc Levels",
-                  "condition": "between"
-                },
-                "Excellent": {
-                  "threshold": [70, 114.9],
-                  "label": "Optimal Zinc Levels",
-                  "condition": "between"
-                },
-                "Needs Focus": {
-                  "threshold": [115, 500],
-                  "label": "Significantly Abnormal Zinc Levels",
-                  "condition": "between"
-                }
-              },
-              "values": ["121"],
-              "date": ["2025-06-29"],
-              "status": ["Needs Focus"],
-              "gene_insight": null
-            }
-          ],
-          "num_of_biomarkers": 12,
-          "needs_focus_count": 1
+          "low": "3.1",
+          "high": "4.0",
+          "color": "",
+          "label": "Borderline High",
+          "status": "Good"
+        },
+        {
+          "low": "4.1",
+          "high": "20",
+          "color": "",
+          "label": "High",
+          "status": "Needs Focus"
         }
-      ]
-    }
-  ]
+			],
+			"values": [
+				"85"
+			],
+			"date": [
+				"2025-07-15"
+			],
+			"status": [
+				"Excellent"
+			],
+			"gene_insight": null,
+			"subcategory_biomarker_count": 1,
+			"subcategory_needs_focus": 0
+		},
+		{
+			"category": "Metabolic Health",
+			"subcategory": "Diabetes & Glucose",
+			"name": "Fasting Plasma Glucose2",
+			"more_info": "Fasting plasma glucose measures the level of glucose in the blood after an overnight fast. It is a key test for diagnosing diabetes and prediabetes. Normal levels indicate proper blood sugar regulation, while high levels suggest glucose metabolism issues.",
+			"unit": "mg/dL",
+			"chart_type": "bar",
+			"test_type": "vital",
+			"duration": "6 Month",
+			"outofref": true,
+			"cart_type": 2,
+			"chart_bounds": [
+        {
+          "low": null,
+          "high": "3.0",
+          "color": "",
+          "label": "Normal",
+          "status": "Excellent"
+        },
+        {
+          "low": "3.1",
+          "high": "4.0",
+          "color": "",
+          "label": "Borderline High",
+          "status": "Good"
+        },
+        {
+          "low": "4.1",
+          "high": "20",
+          "color": "",
+          "label": "High",
+          "status": "Needs Focus"
+        }
+			],
+			"values": [
+				"85"
+			],
+			"date": [
+				"2025-07-15"
+			],
+			"status": [
+				"Excellent"
+			],
+			"gene_insight": null,
+			"subcategory_biomarker_count": 1,
+			"subcategory_needs_focus": 0
+		}		
+	]
 }

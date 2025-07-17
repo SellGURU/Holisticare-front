@@ -3,36 +3,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface StatusBarChartPrintV2Prps {
   data: any;
-  mapingData: any;
+  // isCustom?: boolean;
   values?: Array<any>;
   unit?: string;
   status?: Array<any>;
 }
 const StatusBarChartPrintV2 = ({
   data,
-  mapingData,
+  // isCustom,
   values,
   unit,
   status,
 }: StatusBarChartPrintV2Prps) => {
-  const convertToArray = (data: any) => {
-    return Object.entries(data).map(
-      ([label, { condition, threshold }]: any) => ({
-        label,
-        condition,
-        threshold,
-      }),
-    );
-  };
-  const sortThreshold = () => {
-    return convertToArray(data).sort((a, b) => {
-      if (a.threshold[0] > b.threshold[0]) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-  };
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
       return '#FC5474';
@@ -48,46 +30,86 @@ const StatusBarChartPrintV2 = ({
     }
     return '#FBAD37';
   };
+  const getRangeString = (el: {
+    low: number | null;
+    high: number | null;
+  }): string => {
+    let str = '';
+    if (el.low == null) {
+      str += ' <  ';
+    } else {
+      str += el.low;
+    }
+    if (el.high != null && el.low != null) {
+      str += ' - ' + el.high;
+    } else if (el.high != null) {
+      str += el.high;
+    }
+    if (el.high == null) {
+      str += ' >  ';
+    }
+    return str;
+  };
+  const sortByRange = (data: any) => {
+    // console.log(data);
+    return data.sort((a: any, b: any) => {
+      const lowA = parseFloat(a.low ?? '');
+      const lowB = parseFloat(b.low ?? '');
+
+      const aLow = isNaN(lowA) ? -Infinity : lowA;
+      const bLow = isNaN(lowB) ? -Infinity : lowB;
+
+      if (aLow !== bLow) return aLow - bLow;
+
+      const highA = parseFloat(a.high ?? '');
+      const highB = parseFloat(b.high ?? '');
+
+      const aHigh = isNaN(highA) ? Infinity : highA;
+      const bHigh = isNaN(highB) ? Infinity : highB;
+
+      return aHigh - bHigh;
+    });
+  };
   const resolvePercentLeft = (el: any) => {
     if (values) {
       if (
-        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+        ((values[0] - el.low) / (el.high - el.low)) *
           100 <=
         5
       ) {
         return 5;
       }
       if (
-        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+        ((values[0] - el.low) / (el.high - el.low)) *
           100 >
         95
       ) {
         return 95;
       }
       return (
-        ((values[0] - el.threshold[0]) / (el.threshold[1] - el.threshold[0])) *
+        ((values[0] - el.low) / (el.high - el.low)) *
         100
       );
     }
-  };
+  };  
   return (
     <div className="w-full relative flex select-none">
-      {sortThreshold().map((el, index) => {
-        const label = mapingData[el.label];
+      {sortByRange(data).map((el: any, index: number) => {
+        // const label = mapingData[el.label];
         return (
           <>
             <div
-              className={` relative border-l-2 border-white  h-[8px] ${index == convertToArray(data).length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+              className={` relative border-l-2 border-white  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
-                width: 100 / convertToArray(data).length + '%',
-                backgroundColor: resolveColor(el.label),
+                width: 100 / data.length + '%',
+                backgroundColor: resolveColor(el.status),
                 height: '8px',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomRightRadius:
-                  index == convertToArray(data).length - 1 ? '8px' : 'unset',
+                  index == data.length - 1 ? '8px' : 'unset',
                 borderTopRightRadius:
-                  index == convertToArray(data).length - 1 ? '8px' : 'unset',
+                  index == data.length - 1 ? '8px' : 'unset',
               }}
             >
               <div
@@ -109,34 +131,22 @@ const StatusBarChartPrintV2 = ({
                     textAlign: 'center',
                   }}
                 >
-                  {label}
-                  {label !== '' && label.length > 40 && (
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                      {' '}
-                      ({el.condition === 'less_than' && ' > '}
-                      {el.threshold[0]}
-                      {el.threshold[1] !== undefined
-                        ? ' - ' + el.threshold[1]
-                        : ''}
-                      {el.condition === 'greater_than' && ' < '})
-                    </span>
+                  {el.label}
+                  {el.label !== '' && el.label.length > 40 && (
+                    <>
+                    {getRangeString(el)}
+                    </>
                   )}
                 </span>
-                {label !== '' && label.length <= 40 && (
-                  <span style={{ whiteSpace: 'nowrap' }}>
-                    {' '}
-                    ({el.condition === 'less_than' && ' > '}
-                    {el.threshold[0]}
-                    {el.threshold[1] !== undefined
-                      ? ' - ' + el.threshold[1]
-                      : ''}
-                    {el.condition === 'greater_than' && ' < '})
-                  </span>
+                {el.label !== '' && el.label.length <= 40 && (
+                  <>
+                  {getRangeString(el)}
+                  </>
                 )}
                 {/* </TooltipText> */}
               </div>
 
-              {status && status[0] == el.label && (
+              {status && status[0] == el.status && (
                 <div
                   className={`absolute  top-[2px]  z-10`}
                   style={{

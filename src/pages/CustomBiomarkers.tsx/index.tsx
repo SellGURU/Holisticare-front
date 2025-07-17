@@ -30,17 +30,17 @@ const CustomBiomarkers = () => {
   const [errorDetails, setErrorDetails] = useState<string>('');
   const getBiomarkers = () => {
     setIsLoading(true);
-    setBiomarkers(mockData);
-    setIsLoading(false);
-    // BiomarkersApi.getBiomarkersList()
-    //   .then((res) => {
-    //     setBiomarkers(res.data);
-    //     // setBiomarkers(mackData);
-    //   })
-    //   .finally(() => {
-    //     // setBiomarkers(mackData);
-    //     setIsLoading(false);
-    //   });
+    // setBiomarkers(mockData);
+    // setIsLoading(false);
+    BiomarkersApi.getBiomarkersList()
+      .then((res) => {
+        setBiomarkers(res.data);
+        // setBiomarkers(mackData);
+      })
+      .finally(() => {
+        // setBiomarkers(mackData);
+        setIsLoading(false);
+      });
   };
   useEffect(() => {
     getBiomarkers();

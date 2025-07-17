@@ -1,151 +1,21 @@
 {
-  "client_summary": "This document provides a general overview of your results, but the official laboratory report contains the complete results. It does not offer a diagnosis, which should be made by your healthcare provider based on the tests and clinical context. If you have questions or concerns, consult your doctor. More information is available in the detailed report",
-  "total_subcategory": 11,
-  "total_category": 7,
-  "categories": [
-    {
-      "category": "Cardiovascular Health",
-      "description": "Evaluates the health of the cardiovascular system, including risk factors and conditions like arterial stiffness and coronary calcification.",
-      "out_of_ref": 0,
-      "exam": 0,
-      "subcategories": [
-        {
-          "subcategory": "Arterial Stiffness",
-          "description": "Measures the stiffness of arteries, which can indicate cardiovascular risk.",
-          "position": "heart1",
-          "num_of_biomarkers": 5,
-          "out_of_ref": 0,
-          "status": [0, 60, 40, 0]
-        },
-        {
-          "subcategory": "Arterial Thickness",
-          "description": "Assesses the thickness of artery walls to detect potential cardiovascular issues.",
-          "position": "heart2",
-          "num_of_biomarkers": 2,
-          "out_of_ref": 0,
-          "status": [0, 100, 0, 0]
-        },
-        {
-          "subcategory": "Cardiovascular Risk",
-          "description": "Evaluates general cardiovascular health and risk factors.",
-          "position": "heart4",
-          "num_of_biomarkers": 4,
-          "out_of_ref": 0,
-          "status": [0, 100, 0, 0]
-        }
-      ]
-    },
-    {
-      "category": "Hematology",
-      "description": "Focuses on the health of blood, including cell counts and other important blood biomarkers.",
-      "out_of_ref": 0,
-      "exam": 0,
-      "subcategories": [
-        {
-          "subcategory": "Blood",
-          "description": "Evaluates blood health, including red and white blood cell counts and other markers.",
-          "position": "left hand2",
-          "num_of_biomarkers": 7,
-          "out_of_ref": 0,
-          "status": [43, 43, 14, 0]
-        }
-      ]
-    },
-    {
-      "category": "Metabolic Health",
-      "description": "Monitors metabolic processes, including glucose regulation and body composition to assess metabolic risks.",
-      "out_of_ref": 0,
-      "exam": 0,
-      "subcategories": [
-        {
-          "subcategory": "Diabetes & Glucose",
-          "description": "Evaluates glucose levels and diabetes risk.",
-          "position": "abdomen3",
-          "num_of_biomarkers": 2,
-          "out_of_ref": 0,
-          "status": [0, 50, 50, 0]
-        }
-      ]
-    },
-    {
-      "category": "Renal Health",
-      "description": "Evaluates kidney function and potential renal health issues.",
-      "out_of_ref": 1,
-      "exam": 1,
-      "subcategories": [
-        {
-          "subcategory": "Kidney Function",
-          "description": "Monitors kidney health and filtration capacity.",
-          "position": "kidney1",
-          "num_of_biomarkers": 3,
-          "out_of_ref": 1,
-          "status": [33, 33, 0, 33]
-        }
-      ]
-    },
-    {
-      "category": "Liver Health",
-      "description": "Assesses liver function and potential issues related to liver health.",
-      "out_of_ref": 0,
-      "exam": 0,
-      "subcategories": [
-        {
-          "subcategory": "Liver Function",
-          "description": "Monitors liver enzymes and other markers of liver function.",
-          "position": "abdomen11",
-          "num_of_biomarkers": 7,
-          "out_of_ref": 0,
-          "status": [14, 57, 29, 0]
-        }
-      ]
-    },
-    {
-      "category": "Micronutrient Levels",
-      "description": "Assesses the levels of essential vitamins and minerals in the body to ensure nutritional balance.",
-      "out_of_ref": 1,
-      "exam": 1,
-      "subcategories": [
-        {
-          "subcategory": "Major Essential Minerals",
-          "description": "Assesses major minerals like calcium, magnesium, and potassium.",
-          "position": "abdomen10",
-          "num_of_biomarkers": 5,
-          "out_of_ref": 1,
-          "status": [20, 60, 0, 20]
-        },
-        {
-          "subcategory": "Trace Essential Minerals",
-          "description": "Evaluates trace essential minerals for metabolic and enzymatic function.",
-          "position": "abdomen9",
-          "num_of_biomarkers": 3,
-          "out_of_ref": 0,
-          "status": [0, 100, 0, 0]
-        },
-        {
-          "subcategory": "Vitamins",
-          "description": "Measures levels of key vitamins essential for health.",
-          "position": "abdomen8",
-          "num_of_biomarkers": 1,
-          "out_of_ref": 0,
-          "status": [100, 0, 0, 0]
-        }
-      ]
-    },
-    {
-      "category": "Hormonal Health",
-      "description": "Monitors hormone levels, including sex hormones, thyroid function, and other key hormonal balances.",
-      "out_of_ref": 0,
-      "exam": 0,
-      "subcategories": [
-        {
-          "subcategory": "Thyroid Function",
-          "description": "Monitors thyroid function and hormone levels to detect issues like hypothyroidism or hyperthyroidism.",
-          "position": "neck2",
-          "num_of_biomarkers": 3,
-          "out_of_ref": 0,
-          "status": [0, 67, 33, 0]
-        }
-      ]
-    }
-  ]
+	"client_summary": "Your test results show excellent gut health and very good blood sugar control, which are positive signs for your overall well-being. Having a balanced gut environment can support digestion and immunity, while stable blood sugar levels lower your risk for diabetes and related issues. Maintaining this status through a healthy lifestyle like the Mediterranean diet and regular exercise could keep you on a strong health path. Keep monitoring these markers regularly to stay ahead of any changes, and consider discussing your diet and activity habits with your healthcare provider to continue supporting these excellent results.",
+	"total_subcategory": 1,
+	"subcategories": [
+		{
+			"subcategory": "Diabetes & Glucose",
+			"description": "Evaluates glucose levels and diabetes risk.",
+			"position": "abdomen",
+			"num_of_biomarkers": 1,
+			"out_of_ref": 0,
+			"status": [
+				100,
+				0,
+				0,
+				0
+			],
+			"category_description": "Monitors metabolic processes, including glucose regulation and body composition to assess metabolic risks.",
+			"category_name": "Metabolic Health"
+		}
+	]
 }
