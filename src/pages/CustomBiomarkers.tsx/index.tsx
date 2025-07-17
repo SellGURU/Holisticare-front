@@ -12,7 +12,7 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 
 import DefaultData from './default.json';
-import mockData from './mockData.json';
+// import mockData from './mockData.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);

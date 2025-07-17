@@ -421,7 +421,7 @@ const resovleJson = ({
   referenceData,
   resolveBioMarkers,
   transformConceringData,
-  resolveSubCategories,
+  // resolveSubCategories,
   helthPlan,
   TreatMentPlanData,
   isActiveSection,
@@ -458,12 +458,12 @@ const resovleJson = ({
   if (isActiveSection('Detailed Analysis') == true) {
     AddDetailedAnalyse(referenceData, resolveCategories(), resolveBioMarkers);
   }
-  // if (isActiveSection('Holistic Plan') == true) {
-  //   addHolisticPlan(helthPlan, TreatMentPlanData);
-  // }
-  // if (isActiveSection('Action Plan') == true) {
-  //   AddActionPlan(ActionPlan, caldenderData);
-  // }
+  if (isActiveSection('Holistic Plan') == true) {
+    addHolisticPlan(helthPlan, TreatMentPlanData);
+  }
+  if (isActiveSection('Action Plan') == true) {
+    AddActionPlan(ActionPlan, caldenderData);
+  }
   return myjson;
 };
 
