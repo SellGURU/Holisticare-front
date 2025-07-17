@@ -67,21 +67,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
-    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
+      .then((res) => {
         setReferenceData(res.data);
         // setReferenceData(referencedataMoch);
         clearUsedPositions();
-      },
-    ).catch(() => {
+      })
+      .catch(() => {
         setReferenceData({
-          "detailed_analysis_note": "Total of 0 Biomarkers in 0 Categories",
-          "total_biomarker_note": "Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.",
-          "biomarkers": []
+          detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
+          total_biomarker_note:
+            'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
+          biomarkers: [],
         });
         // setReferenceData(referencedataMoch);
-        clearUsedPositions();      
-    });
+        clearUsedPositions();
+      });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
@@ -95,14 +96,14 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setIsHaveReport(true);
       }
     });
-    Application.getConceringResults({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getConceringResults({ member_id: resolvedMemberID })
+      .then((res) => {
         setConcerningResult(res.data.table);
         // setConcerningResult(conceringResultData);
-      },
-    ).catch(() => {
-     setConcerningResult([]) 
-    });
+      })
+      .catch(() => {
+        setConcerningResult([]);
+      });
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
