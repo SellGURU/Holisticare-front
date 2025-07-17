@@ -30,7 +30,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
-    refrences[0].name ? refrences[0].name : '',
+    refrences[0]?.name ? refrences[0]?.name : '',
   );
   useEffect(() => {
     setIsCheced(false);
@@ -55,7 +55,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(refrences[0].name ? refrences[0].name : '');
+      setActiveBOx(refrences[0]?.name ? refrences[0]?.name : '');
       setActive(refrences[0]);
     }
   }, [refrences]);

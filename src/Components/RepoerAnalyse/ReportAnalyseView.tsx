@@ -74,25 +74,27 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         clearUsedPositions();
       })
       .catch(() => {
-        setReferenceData({
-          detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
-          total_biomarker_note:
-            'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
-          biomarkers: [],
-        });
-        // setReferenceData(referencedataMoch);
-        clearUsedPositions();
+        // setReferenceData({
+        //   detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
+        //   total_biomarker_note:
+        //     'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
+        //   biomarkers: [],
+        // });
+        // // setReferenceData(referencedataMoch);
+        // clearUsedPositions();
       });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
-      setClientSummaryBoxs(res.data);
       // setClientSummaryBoxs(mydata);
-
+      
       setISGenerateLoading(false);
+      // console.log(res.data);
       if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
+        setClientSummaryBoxs(mydata)
       } else {
+        setClientSummaryBoxs(res.data);
         setIsHaveReport(true);
       }
     });
@@ -102,7 +104,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
-        setConcerningResult([]);
+        // setConcerningResult([]);
       });
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
