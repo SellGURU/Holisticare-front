@@ -35,6 +35,7 @@ import Supplement from '../pages/supplement/index.tsx';
 import Lifestyle from '../pages/lifestyle/index.tsx';
 import Diet from '../pages/diet/index.tsx';
 import SignUpNameLogo from '../pages/signUpNameLogo/index.tsx';
+import PublicSurveyPage from '../pages/surveys/public/[id]/page.tsx';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -186,6 +187,10 @@ const router = createBrowserRouter([
   {
     path: '/tasks',
     element: <Tasks></Tasks>,
+  },
+  {
+    path: '/surveys/:member-id/:q-id',
+    element: <PublicSurveyPage></PublicSurveyPage>,
   },
 ]);
 

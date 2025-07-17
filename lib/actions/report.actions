@@ -1,0 +1,133 @@
+"use server"
+
+import { revalidatePath } from "next/cache"
+
+// Mock data for reports
+const reports = [
+  {
+    id: "1",
+    clientId: "1",
+    title: "Initial Health Assessment",
+    createdAt: "2023-05-10T14:30:00Z",
+    updatedAt: "2023-05-10T14:30:00Z",
+    status: "published",
+    type: "assessment",
+  },
+  {
+    id: "2",
+    clientId: "1",
+    title: "Monthly Progress Report - May",
+    createdAt: "2023-06-05T10:15:00Z",
+    updatedAt: "2023-06-05T10:15:00Z",
+    status: "published",
+    type: "progress",
+  },
+  {
+    id: "3",
+    clientId: "2",
+    title: "Initial Health Assessment",
+    createdAt: "2023-05-15T09:45:00Z",
+    updatedAt: "2023-05-15T09:45:00Z",
+    status: "published",
+    type: "assessment",
+  },
+]
+
+export type Report = (typeof reports)[0]
+
+// Get all reports
+export async function getAllReports() {
+  // In a real app, this would fetch from a database
+  return reports
+}
+
+// Get reports for a specific client
+export async function getReports(clientId: string) {
+  // In a real app, this would query the database
+  return reports.filter((report) => report.clientId === clientId)
+}
+
+// Get a single report by ID
+export async function getReportById(id: string) {
+  // In a real app, this would fetch from a database
+  const report = reports.find((r) => r.id === id)
+  if (!report) {
+    throw new Error(`Report with ID ${id} not found`)
+  }
+  return report
+}
+
+// Create a new report
+export async function createReport(clientId: string, type = "assessment") {
+  // In a real app, this would insert into a database
+  const newReport = {
+    id: String(reports.length + 1),
+    clientId,
+    title: `New ${type.charAt(0).toUpperCase() + type.slice(1)} Report`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    status: "draft",
+    type,
+  }
+
+  // In a real app, we would add this to the database
+  reports.push(newReport)
+
+  revalidatePath(`/admin/clients/${clientId}/details`)
+  revalidatePath("/admin/reports")
+  return { success: true, report: newReport }
+}
+
+// Update an existing report
+export async function updateReport(id: string, data: Partial<Report>) {
+  // In a real app, this would update the database
+  const reportIndex = reports.findIndex((r) => r.id === id)
+  if (reportIndex === -1) {
+    throw new Error(`Report with ID ${id} not found`)
+  }
+
+  const updatedReport = {
+    ...reports[reportIndex],
+    ...data,
+    updatedAt: new Date().toISOString(),
+  }
+
+  reports[reportIndex] = updatedReport
+
+  revalidatePath(`/admin/reports/${id}`)
+  revalidatePath(`/admin/clients/${updatedReport.clientId}/details`)
+  return { success: true, report: updatedReport }
+}
+
+// Delete a report
+export async function deleteReport(id: string) {
+  // In a real app, this would delete from the database
+  const reportIndex = reports.findIndex((r) => r.id === id)
+  if (reportIndex === -1) {
+    throw new Error(`Report with ID ${id} not found`)
+  }
+
+  const clientId = reports[reportIndex].clientId
+  reports.splice(reportIndex, 1)
+
+  revalidatePath(`/admin/clients/${clientId}/details`)
+  revalidatePath("/admin/reports")
+  return { success: true }
+}
+
+// Get total number of reports
+export async function getReportsCount() {
+  // In a real app, this would be a database count query
+  return reports.length
+}
+
+// Share a report (in a real app, this might generate a shareable link or send an email)
+export async function shareReport(id: string, email: string) {
+  // In a real app, this would generate a shareable link or send an email
+  console.log(`Sharing report ${id} with ${email}`)
+
+  // Simulate a delay
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+
+  return { success: true, message: `Report shared with ${email}` }
+}
