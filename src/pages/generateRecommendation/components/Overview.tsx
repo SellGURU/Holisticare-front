@@ -134,7 +134,7 @@ export const Overview: FC<OverviewProps> = ({
                 >
                   <BioMarkerRowSuggestions
                     index={suggestionIndex}
-                    isOverview
+                    // isOverview
                     value={el}
                     onEdit={() => {}}
                     onchange={() => {}}
