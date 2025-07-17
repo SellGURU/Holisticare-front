@@ -87,12 +87,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       member_id: resolvedMemberID,
     }).then((res) => {
       // setClientSummaryBoxs(mydata);
-      
+
       setISGenerateLoading(false);
       // console.log(res.data);
       if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
-        setClientSummaryBoxs(mydata)
+        setClientSummaryBoxs(mydata);
       } else {
         setClientSummaryBoxs(res.data);
         setIsHaveReport(true);
