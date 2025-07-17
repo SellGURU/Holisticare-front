@@ -15,9 +15,9 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text.length / 134) * 18 + 8;
+    return Math.ceil(text?.length / 134) * 18 + 8;
   }
-  return Math.ceil(text.length / 112) * 30;
+  return Math.ceil(text?.length / 112) * 30;
 };
 
 const addHeader = (title: string, moreInfo: string, id: string) => {

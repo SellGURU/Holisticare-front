@@ -15,7 +15,10 @@ const HistoricalChart = ({
   dataStatus,
   labels,
 }: HistoricalChartProps) => {
-  const resolveColor = (key: string) => {
+  const resolveColor = (key: string,color?:string) => {
+    if(color && color != ''){
+      return color;
+    }
     if (key == 'Needs Focus') {
       return '#FC5474';
     }
@@ -139,12 +142,12 @@ const HistoricalChart = ({
             >
               <div
                 className="w-full h-full opacity-15"
-                style={{ backgroundColor: resolveColor(el.status) }}
+                style={{ backgroundColor: resolveColor(el.status,el.color) }}
               ></div>
 
               <div
                 className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center flex justify-start"
-                style={{ borderColor: resolveColor(el.status) }}
+                style={{ borderColor: resolveColor(el.status,el.color) }}
               >
                 {dataPoints.map((point, index) => (
                   <div
@@ -153,7 +156,7 @@ const HistoricalChart = ({
                   >
                     <div
                       style={{
-                        backgroundColor: resolveColor(el.status),
+                        backgroundColor: resolveColor(el.status,el.color),
                         opacity:
                           dataStatus[index].toLowerCase() ===
                           el.status.toLowerCase()
