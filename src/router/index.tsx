@@ -190,8 +190,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/surveys/:member-id/:q-id',
-    element: <PublicSurveyPage></PublicSurveyPage>
-  }
+    element: <PublicSurveyPage></PublicSurveyPage>,
+  },
 ]);
 
 export default router;

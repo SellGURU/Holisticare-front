@@ -796,7 +796,6 @@ export const Questionary = () => {
                         }}
                         el={el}
                         id={id as string}
-                        
                         resolveForm={resolveForm}
                         deleteRow={() => deleteQuestionRow(index)}
                       ></QuestionRow>

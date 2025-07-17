@@ -6,5 +6,5 @@ export default function Loading() {
         <p className="text-lg text-gray-600">Loading survey...</p>
       </div>
     </div>
-  )
+  );
 }
