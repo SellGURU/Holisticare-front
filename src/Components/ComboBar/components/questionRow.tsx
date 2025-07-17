@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import { useNavigate } from 'react-router-dom';
 // import questionsDataMoch from './questions/data.json';
 // import SvgIcon from "../../../utils/svgIcon";
 
@@ -64,7 +63,6 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   console.log(viewQuestienry);
   console.log(el);
-const navigate = useNavigate()
   return (
     <>
       <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -86,7 +84,7 @@ const navigate = useNavigate()
                       setViewQuestienry(res.data);
                       setIsView(true);
                       setshowModal(false);
-                      navigate(`/surveys/${id}/${el.unique_id}`)
+                      // navigate(`/surveys/${id}/${el.unique_id}`)
 
                     });
                     // Application.Questionary_tracking_action({
@@ -117,9 +115,11 @@ const navigate = useNavigate()
                         //   .catch((err) => {
                         //     console.error('Error fetching the link:', err);
                         //   });
-                         onTryComplete();
-                        setshowModal(false);
-                        navigate(`/surveys/${id}/${el.unique_id}`)
+                        console.log(onTryComplete);
+                        
+                        //  onTryComplete();
+                        // setshowModal(false);
+                        window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                        
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"

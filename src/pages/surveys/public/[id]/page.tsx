@@ -114,7 +114,7 @@ export default function PublicSurveyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <PublicSurveyForm survey={survey} surveyId={qId ? qId : ''} />
+      <PublicSurveyForm survey={survey}  />
     </div>
   );
 }

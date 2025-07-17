@@ -10,34 +10,36 @@ import { Label } from "../ui/label"
 import { Slider } from "../ui/slider"
 import { ArrowRight, CheckCircle2, AlertCircle, Star, Activity } from "lucide-react"
 import { toast } from "../ui/use-toast"
+import Application from "../../api/app"
+import { useParams } from "react-router-dom";
 
 // Define flexible interfaces to handle different API response structures
 interface ApiQuestion {
-  id?: string
-  text?: string
-  question?: string
-  type?: string
-  options?: string[] | null
-  required?: boolean
-  [key: string]: any
+  id?: string;
+  text?: string;
+  question?: string;
+  type?: string;
+  options?: string[] | null;
+  required?: boolean;
+  [key: string]: unknown;
 }
 
 interface ApiSurvey {
-  id?: string
-  title?: string
-  description?: string
-  questions?: ApiQuestion[]
-  [key: string]: any
+  id?: string;
+  title?: string;
+  description?: string;
+  questions?: ApiQuestion[];
+  [key: string]: unknown;
 }
 
 interface PublicSurveyFormProps {
-  survey: ApiSurvey
-  surveyId: string
+  survey: ApiSurvey;
 }
 
-export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
+export function PublicSurveyForm({ survey }: PublicSurveyFormProps) {
+  const { "member-id": memberId, "q-id": qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0) // 0 for intro, 1+ for questions, questions.length+1 for completion
-  const [responses, setResponses] = useState<Record<number, string | string[]>>({})
+  const [responses, setResponses] = useState<Record<number, string | string[]>>({} as Record<number, string | string[]>)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([])
@@ -68,19 +70,22 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
             (firstItem.question !== undefined || firstItem.text !== undefined || firstItem.type !== undefined)
           ) {
             console.log(`Found questions in "${key}" property:`, value)
-            questions = value
+            questions = value as ApiQuestion[]
           }
         }
       })
     }
 
     console.log("Final processed questions:", questions)
-    setSortedQuestions(questions)
+    setSortedQuestions(Array.isArray(questions) ? questions : [])
   }, [survey])
 
   const getQuestionText = (question: ApiQuestion): string => {
     // Try different possible field names for the question text
-    return question.text || question.question || question.title || "Question"
+    if (typeof question.text === 'string' && question.text) return question.text;
+    if (typeof question.question === 'string' && question.question) return question.question;
+    if (typeof question.title === 'string' && question.title) return question.title;
+    return "Question";
   }
 
   const getQuestionOptions = (question: ApiQuestion): string[] => {
@@ -157,7 +162,8 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
           allValid = false
         }
       }
-
+      console.log(allValid);
+      
       if (allValid) {
         handleSubmit()
       } else {
@@ -182,97 +188,28 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
   }
 
   const handleSubmit = async () => {
+    console.log('aaaa');
+    
     setSubmitting(true)
     try {
-      // Create the survey response data in the specified format
-      const formattedResponses = {
-        survey_id: Number.parseInt(surveyId),
-        title: survey.title || "Survey Response",
-        description: survey.description || "Survey Response",
-        questions: [
-          {
-            id: "question1",
-            order: 1,
-            text: "Please describe your daily routine.",
-            type: "paragraph",
-            options: null,
-            required: false,
-            response: responses[0] || "",
-          },
-          {
-            id: "question2",
-            order: 2,
-            text: "Rate your current energy level.",
-            type: "scale",
-            options: [1, 10],
-            required: true,
-            response: responses[1] || "",
-          },
-          {
-            id: "question3",
-            order: 3,
-            text: "Do you drink coffee daily?",
-            type: "yes_no",
-            options: ["Yes", "No"],
-            required: false,
-            response: responses[2] || "",
-          },
-          {
-            id: "question4",
-            order: 4,
-            text: "How do you feel today?",
-            type: "emojis",
-            options: ["😊", "😐", "😢", "😠"],
-            required: true,
-            response: responses[3] || "",
-          },
-          {
-            id: "question5",
-            order: 5,
-            text: "Rate your satisfaction with our service.",
-            type: "star_rating",
-            options: [1, 2, 3, 4, 5],
-            required: false,
-            response: responses[4] || "",
-          },
-          {
-            id: "question7",
-            order: 7,
-            text: "Which of the following symptoms do you experience?",
-            type: "checkbox",
-            options: ["Headache", "Fatigue", "Nausea", "None"],
-            required: true,
-            response: Array.isArray(responses[5]) ? responses[5].join(", ") : responses[5] || "",
-          },
-          {
-            id: "question8",
-            order: 8,
-            text: "What is your preferred workout type?",
-            type: "multiple_choice",
-            options: ["Cardio", "Strength Training", "Yoga", "Pilates"],
-            required: false,
-            response: responses[6] || "",
-          },
-        ],
-      }
+    const respond = sortedQuestions.map((q, idx) => ({
+      ...q,
+      response: responses[idx]
+    }));
 
-      console.log("Submitting responses locally")
+    await Application.SaveQuestionary({
+      member_id: memberId,
+      q_unique_id: qId,
+      respond
+    });
 
-      // Use local mock data instead of making API requests
-      const { submitPublicSurveyResponse } = await import("../../utils/survey-actions")
-      const result = await submitPublicSurveyResponse(surveyId, formattedResponses)
+    setCurrentStep(sortedQuestions.length + 1); // Move to completion screen
 
-      if (!result.success) {
-        throw new Error("Failed to submit survey")
-      }
-
-      setCurrentStep(sortedQuestions.length + 1) // Move to completion screen
-
-      toast({
-        title: "Survey submitted",
-        description: "Thank you for completing the survey!",
-        className: "bg-green-600 text-white",
-      })
+    toast({
+      title: "Survey submitted",
+      description: "Thank you for completing the survey!",
+      className: "bg-green-600 text-white",
+    });
     } catch (error) {
       console.error("Failed to submit survey:", error)
 
@@ -449,7 +386,7 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
             value={(response as string) || ""}
             onChange={(e) => handleResponseChange(e.target.value)}
             placeholder="Type your answer here..."
-            className={`min-h-[120px] text-base ${
+            className={`min-h-[120px] mt-2 text-base ${
               validationError ? "border-red-500 focus-visible:ring-red-500" : ""
             } ${response ? "border-green-500 focus-visible:ring-green-500" : ""}`}
           />
@@ -665,7 +602,7 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
       )}
 
       {currentQuestion && (
-        <Card className="bg-white shadow-xl border-0">
+        <Card style={{height:window.innerHeight - 200 + "px"}} className="bg-white shadow-xl h-fit border-0 flex flex-col relative">
           <CardHeader>
             <div
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium text-white bg-gradient-to-r ${gradientClass} mb-4`}
@@ -680,7 +617,7 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
               <CardDescription className="text-sm text-gray-500 mt-1">Required</CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 h-[60%] overflow-auto">
             {renderQuestion(currentQuestion, currentStep - 1)}
 
             {validationErrors[currentStep - 1] && (
@@ -697,7 +634,7 @@ export function PublicSurveyForm({ survey, surveyId }: PublicSurveyFormProps) {
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between pt-4">
+          <CardFooter className="flex justify-between pt-4 w-full ">
             <Button type="button" variant="outline" onClick={handlePrevious}>
               Back
             </Button>
