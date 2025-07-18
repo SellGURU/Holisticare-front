@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Checkin from '.';
+// import Checkin from '.';
 import Mobile from '../../api/mobile';
 // import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
+import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
+import Checkin from '.';
 
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
@@ -157,23 +159,30 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
               </>
             ) : (
               <>
-                <Checkin
-                  upData={data?.questions}
-                  onChange={(questions) => {
-                    console.log(questions);
-                    setResolvedData({
-                      ...data,
-                      questions: questions,
-                    });
-                  }}
-                ></Checkin>
-                <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
-                  <div className="w-full px-6">
-                    <ButtonPrimary ClassName="w-full" onClick={submit}>
-                      save
-                    </ButtonPrimary>
+                {data && mode == 'questionary' && (
+                  <PublicSurveyForm survey={data} />
+                )}
+                {mode == 'checkin' &&
+                <>
+                  <Checkin
+                    upData={data?.questions}
+                    onChange={(questions) => {
+                      console.log(questions);
+                      setResolvedData({
+                        ...data,
+                        questions: questions,
+                      });
+                    }}
+                  ></Checkin>
+                  <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
+                    <div className="w-full px-6">
+                      <ButtonPrimary ClassName="w-full" onClick={submit}>
+                        save
+                      </ButtonPrimary>
+                    </div>
                   </div>
-                </div>
+                </>
+                }
               </>
             )}
           </>
