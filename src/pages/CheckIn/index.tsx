@@ -55,7 +55,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             question={item.question}
             value={item.response}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
             isPreview={isPreview}
           ></YesNoCard>
@@ -67,7 +67,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             question={item.question}
             value={item.response}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
             isPreview={isPreview}
           ></RangeCard>
@@ -82,7 +82,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             question={item.question}
             value={item.response}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></TextCard>
         );
@@ -94,7 +94,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             isPreview={isPreview}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></RateCard>
         );
@@ -114,7 +114,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             isPreview={isPreview}
             value={item.value}
             onSubmit={(values) => {
-              updateResponse(index - 1, values);
+              updateResponse(index, values);
             }}
           ></UploadCard>
         );
@@ -126,7 +126,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             isPreview={isPreview}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></FeelingCard>
         );
@@ -140,7 +140,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             options={item.options}
             isPreview={isPreview}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></MultiChoice>
         );
@@ -152,7 +152,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             options={item.options}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></CheckBoxCard>
         );
