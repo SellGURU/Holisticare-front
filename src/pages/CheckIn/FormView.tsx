@@ -162,27 +162,27 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                 {data && mode == 'questionary' && (
                   <PublicSurveyForm survey={data} />
                 )}
-                {mode == 'checkin' &&
-                <>
-                  <Checkin
-                    upData={data?.questions}
-                    onChange={(questions) => {
-                      console.log(questions);
-                      setResolvedData({
-                        ...data,
-                        questions: questions,
-                      });
-                    }}
-                  ></Checkin>
-                  <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
-                    <div className="w-full px-6">
-                      <ButtonPrimary ClassName="w-full" onClick={submit}>
-                        save
-                      </ButtonPrimary>
+                {mode == 'checkin' && (
+                  <>
+                    <Checkin
+                      upData={data?.questions}
+                      onChange={(questions) => {
+                        console.log(questions);
+                        setResolvedData({
+                          ...data,
+                          questions: questions,
+                        });
+                      }}
+                    ></Checkin>
+                    <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
+                      <div className="w-full px-6">
+                        <ButtonPrimary ClassName="w-full" onClick={submit}>
+                          save
+                        </ButtonPrimary>
+                      </div>
                     </div>
-                  </div>
-                </>
-                }
+                  </>
+                )}
               </>
             )}
           </>
