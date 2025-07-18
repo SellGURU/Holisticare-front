@@ -73,18 +73,22 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       Mobile.getQuestionaryEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
-      }).then((e) => {
-        setData(e.data);
-        setIsLaoding(false);
-      });
+      })
+        .then((e) => {
+          setData(e.data);
+          setIsLaoding(false);
+        })
+        .catch(() => {});
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
-      }).then((e) => {
-        setData(e.data);
-        setIsLaoding(false);
-      });
+      })
+        .then((e) => {
+          setData(e.data);
+          setIsLaoding(false);
+        })
+        .catch(() => {});
     }
   }, []);
   const submit = () => {
