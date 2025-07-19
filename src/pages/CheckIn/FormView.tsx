@@ -128,13 +128,13 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   };
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollUp = () => {
-    scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
-  };
+  // const scrollUp = () => {
+  //   scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
+  // };
 
-  const scrollDown = () => {
-    scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
-  };
+  // const scrollDown = () => {
+  //   scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
+  // };
   return (
     <>
       <div
@@ -160,7 +160,25 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             ) : (
               <>
                 {data && mode == 'questionary' && (
-                  <PublicSurveyForm survey={data} />
+                  <PublicSurveyForm
+                  onSubmitClient={(e) => {
+                    Mobile.fillQuestionary({
+                      encoded_mi: encode,
+                      unique_id: id,
+                      respond: e,
+                    }).finally(() => {
+                      if (window.flutter_inappwebview) {
+                        window.flutter_inappwebview.callHandler('closeWebView');
+                      } else {
+                        console.warn('Flutter WebView bridge not available');
+                      }
+                      setIsComplete(true);
+                      // window.flutter_inappwebview.callHandler('closeWebView')
+                      // setIsLaoding(false)
+                    });
+                  }}
+                   isClient={true}
+                    survey={data} />
                 )}
                 {mode == 'checkin' && (
                   <>
@@ -188,7 +206,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           </>
         )}
       </div>
-      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
+      
+      {/* <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={scrollUp}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
@@ -211,7 +230,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             className="w-4 h-4"
           />
         </button>
-      </div>
+      </div> */}
     </>
   );
 };
