@@ -51,7 +51,11 @@ interface PublicSurveyFormProps {
   onSubmitClient?: (respond: ApiQuestion[]) => void;
 }
 
-export function PublicSurveyForm({ survey, isClient = false, onSubmitClient }: PublicSurveyFormProps) {
+export function PublicSurveyForm({
+  survey,
+  isClient = false,
+  onSubmitClient,
+}: PublicSurveyFormProps) {
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0); // 0 for intro, 1+ for questions, questions.length+1 for completion
   const [responses, setResponses] = useState<Record<number, string | string[]>>(
@@ -224,15 +228,13 @@ export function PublicSurveyForm({ survey, isClient = false, onSubmitClient }: P
 
       if (isClient) {
         onSubmitClient?.(respond);
-      }else {
+      } else {
         await Application.SaveQuestionary({
           member_id: memberId,
           q_unique_id: qId,
           respond,
         });
-
       }
-
 
       setCurrentStep(sortedQuestions.length + 1); // Move to completion screen
 

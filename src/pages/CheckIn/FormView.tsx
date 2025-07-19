@@ -161,24 +161,27 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
               <>
                 {data && mode == 'questionary' && (
                   <PublicSurveyForm
-                  onSubmitClient={(e) => {
-                    Mobile.fillQuestionary({
-                      encoded_mi: encode,
-                      unique_id: id,
-                      respond: e,
-                    }).finally(() => {
-                      if (window.flutter_inappwebview) {
-                        window.flutter_inappwebview.callHandler('closeWebView');
-                      } else {
-                        console.warn('Flutter WebView bridge not available');
-                      }
-                      setIsComplete(true);
-                      // window.flutter_inappwebview.callHandler('closeWebView')
-                      // setIsLaoding(false)
-                    });
-                  }}
-                   isClient={true}
-                    survey={data} />
+                    onSubmitClient={(e) => {
+                      Mobile.fillQuestionary({
+                        encoded_mi: encode,
+                        unique_id: id,
+                        respond: e,
+                      }).finally(() => {
+                        if (window.flutter_inappwebview) {
+                          window.flutter_inappwebview.callHandler(
+                            'closeWebView',
+                          );
+                        } else {
+                          console.warn('Flutter WebView bridge not available');
+                        }
+                        setIsComplete(true);
+                        // window.flutter_inappwebview.callHandler('closeWebView')
+                        // setIsLaoding(false)
+                      });
+                    }}
+                    isClient={true}
+                    survey={data}
+                  />
                 )}
                 {mode == 'checkin' && (
                   <>
@@ -206,7 +209,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           </>
         )}
       </div>
-      
+
       {/* <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={scrollUp}
