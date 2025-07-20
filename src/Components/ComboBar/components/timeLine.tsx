@@ -182,11 +182,11 @@ const TimeLine: React.FC = () => {
   return (
     <>
       {isLaoding ? (
-        <div className="w-full flex justify-center items-center h-[220px]">
+        <div className="w-full flex justify-center items-center h-[500px]">
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="flex flex-col items-center  text-xs max-h-[530px] md:max-h-[600px] overflow-auto overflow-x-hidden">
+        <div className="flex flex-col items-center  text-xs -8">
           {steps.map((section, index) => (
             <div key={index} className="flex flex-col items-center  relative ">
               <div

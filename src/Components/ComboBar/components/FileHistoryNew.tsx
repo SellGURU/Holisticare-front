@@ -278,7 +278,7 @@ const FileHistoryNew = () => {
           className="flex justify-center w-full items-start overflow-auto"
           style={{ maxHeight: containerMaxHeight }}
         >
-          <div className="mt-4 w-full space-y-2 ">
+          <div className="mt-[2px] w-full space-y-2 ">
             {uploadedFiles.map((fileUpload, index) => (
               <div key={index}>
                 <FileBox

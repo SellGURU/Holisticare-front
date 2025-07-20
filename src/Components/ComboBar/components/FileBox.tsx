@@ -3,6 +3,7 @@ import Application from '../../../api/app';
 import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import { publish } from '../../../utils/event';
 import { useEffect, useState } from 'react';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FileBoxProps {
@@ -49,13 +50,15 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
         <div className="flex justify-between items-center w-full">
+          
           <div
-            className="text-[10px] w-[75px] text-Text-Primary select-none  overflow-hidden whitespace-nowrap text-ellipsis"
-            title={el.file_name}
+            className="text-[10px]  text-Text-Primary select-none "
+          
           >
-            {el.file_name || el.file.name}
+            <TooltipTextAuto maxWidth='77px'>{el.file_name || el.file.name}</TooltipTextAuto>
+      
           </div>
-
+      
           <div className="w-[70px] text-center">
             {formatDate(
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
