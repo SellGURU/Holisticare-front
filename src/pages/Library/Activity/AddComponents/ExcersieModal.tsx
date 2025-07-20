@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import TextField from '../../../../Components/TextField';
-import { RangeCard } from '../../../CheckIn/components';
-import CustomSelect from '../../../../Components/CustomSelect';
-import Checkbox from '../../../../Components/checkbox';
-import { MainModal } from '../../../../Components';
-import Application from '../../../../api/app';
 import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
+import { MainModal } from '../../../../Components';
+import CustomSelect from '../../../../Components/CustomSelect';
+import TextField from '../../../../Components/TextField';
+import Checkbox from '../../../../Components/checkbox';
+import Application from '../../../../api/app';
+import RangeCardLibraryActivity from './RangeCard';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -146,6 +146,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Exercise_Id: exercise.Exercise_Id,
       Files: filesData,
       Base_Score: formik.values.score,
+      Ai_note: formik.values.clinical_guidance,
     };
 
     onSubmit(exerciseData);
@@ -299,6 +300,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       description: exercise.Description || '',
       instruction: exercise.Instruction || '',
       score: exercise.Base_Score || 0,
+      clinical_guidance: exercise.Ai_note || '',
     },
     validationSchema,
     validateOnMount: true,
@@ -410,17 +412,38 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 </div>
               )}
             </div>
-            <RangeCard
-              question="Priority Weight"
-              value={formik.values.score}
-              onSubmit={(score) => {
-                formik.setFieldValue('score', score);
-                setScore(score);
-              }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
-            />
+            <div className="flex flex-col w-full">
+              <div className="text-xs font-medium text-Text-Primary">
+                Priority Weight
+              </div>
+              <RangeCardLibraryActivity
+                value={formik.values.score}
+                changeValue={(_, value) => {
+                  formik.setFieldValue('score', value);
+                  setScore(value);
+                }}
+                showValidation={showValidation}
+                error={Boolean(formik.errors.score)}
+                required={true}
+              />
+              {/* {formik.touched.score && formik.errors.score && (
+              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
+            )} */}
+            </div>
+            {/* Clinical Guidance Field */}
+            <div className="flex flex-col w-full gap-2">
+              <div className="text-xs font-medium text-Text-Primary">
+                Clinical Guidance
+              </div>
+              <textarea
+                placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+                value={formik.values.clinical_guidance}
+                onChange={(e) => {
+                  formik.setFieldValue('clinical_guidance', e.target.value);
+                }}
+                className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              />
+            </div>
             {/* <TextField
               newStyle
               type="text"
@@ -430,7 +453,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setInstruction(e.target.value)}
             /> */}
           </div>
-          <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
+          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[35%] flex flex-col gap-4">
             <div className="text-xs font-medium">Filters</div>
             <div className="grid grid-cols-2 gap-y-2 gap-x-">
@@ -491,7 +514,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
+          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
               disabled={fileUploaded}
