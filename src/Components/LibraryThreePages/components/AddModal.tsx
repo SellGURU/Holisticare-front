@@ -661,7 +661,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           )}
           <div className="flex flex-col mt-4 w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score
+              Priority Weight
             </div>
             <RangeCardLibraryThreePages
               value={addData.score}

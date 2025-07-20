@@ -18,6 +18,7 @@ const BiomarkerBox: FC<BiomarkerBoxProps> = ({
   biomarkersData,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  // console.log(biomarkers);
   // const [isChanged, setIsChanged] = useState(false);
   // const [showSuccess, setShowSuccess] = useState(false);
   // useEffect(() => {

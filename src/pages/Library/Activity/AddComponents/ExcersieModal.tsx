@@ -411,7 +411,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               )}
             </div>
             <RangeCard
-              question="Base Score"
+              question="Priority Weight"
               value={formik.values.score}
               onSubmit={(score) => {
                 formik.setFieldValue('score', score);

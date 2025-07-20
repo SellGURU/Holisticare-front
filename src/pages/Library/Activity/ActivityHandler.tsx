@@ -67,7 +67,9 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                 <th className="py-3 pl-4 w-[160px] rounded-tl-2xl">Title</th>
                 <th className="py-3 w-[250px] text-center">Instruction</th>
                 <th className="py-3 w-[150px] text-center pl-2">Section</th>
-                <th className="py-3 w-[66px] text-center pl-3">Base Score</th>
+                <th className="py-3 w-[66px] text-center pl-3">
+                  Priority Weight
+                </th>
                 <th className="py-3 w-[100px] text-center pl-3">Added on</th>
                 <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl">
                   Action

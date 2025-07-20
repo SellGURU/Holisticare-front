@@ -36,7 +36,7 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (
-      (error.response.status == 401 &&
+      (error.response?.status == 401 &&
         !window.location.href.includes('/login') &&
         !window.location.href.includes('/register') &&
         !window.location.href.includes('/share') &&

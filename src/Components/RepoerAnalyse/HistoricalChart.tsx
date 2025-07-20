@@ -15,7 +15,10 @@ const HistoricalChart = ({
   dataStatus,
   labels,
 }: HistoricalChartProps) => {
-  const resolveColor = (key: string) => {
+  const resolveColor = (key: string, color?: string) => {
+    if (color && color != '') {
+      return color;
+    }
     if (key == 'Needs Focus') {
       return '#FC5474';
     }
@@ -44,23 +47,43 @@ const HistoricalChart = ({
     const rowHeight = 70 / sortedStatuses.length;
     return index * rowHeight + rowHeight / 2; // Center in the row
   };
-  const convertToArray = (data: any) => {
-    return Object.entries(data).map(([key, { condition, threshold }]: any) => ({
-      key,
-      condition,
-      threshold,
-    }));
-  };
-  const sortThreshold = () => {
-    return convertToArray(statusBar).sort((a, b) => {
-      if (a.threshold[0] > b.threshold[0]) {
-        return 1;
-      } else {
-        return -1;
-      }
+  // const convertToArray = (data: any) => {
+  //   return Object.entries(data).map(([key, { condition, threshold }]: any) => ({
+  //     key,
+  //     condition,
+  //     threshold,
+  //   }));
+  // };
+  // const sortThreshold = () => {
+  //   return convertToArray(statusBar).sort((a, b) => {
+  //     if (a.threshold[0] > b.threshold[0]) {
+  //       return 1;
+  //     } else {
+  //       return -1;
+  //     }
+  //   });
+  // };
+  const sortByRange = () => {
+    // console.log(data);
+    return statusBar.sort((a: any, b: any) => {
+      const lowA = parseFloat(a.low ?? '');
+      const lowB = parseFloat(b.low ?? '');
+
+      const aLow = isNaN(lowA) ? -Infinity : lowA;
+      const bLow = isNaN(lowB) ? -Infinity : lowB;
+
+      if (aLow !== bLow) return aLow - bLow;
+
+      const highA = parseFloat(a.high ?? '');
+      const highB = parseFloat(b.high ?? '');
+
+      const aHigh = isNaN(highA) ? Infinity : highA;
+      const bHigh = isNaN(highB) ? Infinity : highB;
+
+      return aHigh - bHigh;
     });
   };
-  const sortedStatusBars = sortThreshold().reverse();
+  const sortedStatusBars = sortByRange().reverse();
 
   return (
     <>
@@ -119,12 +142,12 @@ const HistoricalChart = ({
             >
               <div
                 className="w-full h-full opacity-15"
-                style={{ backgroundColor: resolveColor(el.key) }}
+                style={{ backgroundColor: resolveColor(el.status, el.color) }}
               ></div>
 
               <div
                 className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center flex justify-start"
-                style={{ borderColor: resolveColor(el.key) }}
+                style={{ borderColor: resolveColor(el.status, el.color) }}
               >
                 {dataPoints.map((point, index) => (
                   <div
@@ -133,15 +156,15 @@ const HistoricalChart = ({
                   >
                     <div
                       style={{
-                        backgroundColor: resolveColor(el.key),
+                        backgroundColor: resolveColor(el.status, el.color),
                         opacity:
                           dataStatus[index].toLowerCase() ===
-                          el.key.toLowerCase()
+                          el.status.toLowerCase()
                             ? 1
                             : 0,
                         visibility:
                           dataStatus[index].toLowerCase() ===
-                          el.key.toLowerCase()
+                          el.status.toLowerCase()
                             ? 'visible'
                             : 'hidden',
                       }}
@@ -155,18 +178,18 @@ const HistoricalChart = ({
                 ))}
               </div>
 
-              {el.threshold[1] ? (
+              {el.high ? (
                 <div className="absolute min-w-[16px] right-[-20px]  text-[6px] bottom-[-4px] text-left">
-                  {el.threshold[1]}
+                  {el.high}
                 </div>
               ) : (
                 <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                  {el.threshold[0]}
+                  {el.low}
                 </div>
               )}
               {inde == 0 && (
                 <div className="absolute min-w-[16px] right-[-20px] text-[6px] top-[-4px] text-left">
-                  {el.threshold[1]}
+                  {el.high}
                 </div>
               )}
             </div>

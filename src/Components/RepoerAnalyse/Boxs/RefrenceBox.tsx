@@ -10,7 +10,8 @@ import { Tooltip } from 'react-tooltip';
 // import StatusBarChart from './StatusBarChart';
 // import UnitPopUp from '../../UnitPopup';
 import HistoricalChart from '../HistoricalChart';
-import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
+// import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
+import StatusBarChartv3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 interface RefrenceBoxProps {
   data: any;
   index: number;
@@ -164,7 +165,7 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
           <>
             <div className="mt-14">
               {/* <StatusBarChart data={data}></StatusBarChart> */}
-              <StatusBarChartV2
+              {/* <StatusBarChartV2
                 status={data.status}
                 unit={data.unit}
                 values={data.values}
@@ -174,7 +175,13 @@ const RefrenceBox: React.FC<RefrenceBoxProps> = ({ data, index }) => {
                     ([key, valuess]: any) => [key, valuess.label],
                   ),
                 )}
-              ></StatusBarChartV2>
+              ></StatusBarChartV2> */}
+              <StatusBarChartv3
+                status={data.status}
+                unit={data.unit}
+                values={data.values}
+                data={data.chart_bounds}
+              ></StatusBarChartv3>
             </div>
           </>
         )}

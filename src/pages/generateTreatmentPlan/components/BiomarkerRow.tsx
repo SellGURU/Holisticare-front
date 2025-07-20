@@ -15,7 +15,7 @@ interface BioMarkerRowSuggestionsProps {
   onDelete: () => void;
   onEdit: (value: any) => void;
   editAble?: boolean;
-  isOverview?: boolean;
+  // isOverview?: boolean;
 
   index?: number;
 }
@@ -26,7 +26,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   onDelete,
   onEdit,
   editAble,
-  isOverview,
+  // isOverview,
   index,
 }) => {
   const resolveIcon = () => {
@@ -50,7 +50,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [editableValue, setEditAbleValue] = useState(value.Instruction);
   const [notes, setNotes] = useState<string[]>(value['Client Notes'] || []);
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const [isExpanded, setIsExpanded] = useState(false);
   const [showEditNote, setShowEditNote] = useState(false);
 
   useEffect(() => {
@@ -63,7 +63,9 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     setEditAbleValue(value.Instruction);
     const { positive, negative } = splitInstructions(value.Instruction);
     setclient_version(
-      value.client_version ? value.client_version : [positive, negative],
+      Array.isArray(value.client_version)
+        ? value.client_version
+        : [positive, negative],
     );
     setNotes(value['Client Notes']);
   }, [value]);
@@ -75,16 +77,42 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     });
   };
   const [deleteConfirm, setdeleteConfirm] = useState(false);
-  useEffect(() => console.log(value), [value]);
-
+  const [color, setColor] = useState<string>('');
+  const [bgColor, setBgColor] = useState<string>('');
   const { positive, negative } = splitInstructions(editableValue);
 
   // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
   const [client_version, setclient_version] = useState(
-    value.client_version ? value.client_version : [positive, negative],
+    Array.isArray(value.client_version)
+      ? value.client_version
+      : [positive, negative],
   );
+  useEffect(() => {
+    switch (value.Category) {
+      case 'Highly Recommended':
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+      case 'Use Caution':
+        setColor('#FFAB2C');
+        setBgColor('#F9DEDC');
+        break;
+      case 'Beneficial':
+        setColor('#4C88FF');
+        setBgColor('#CADCFF');
+        break;
+      case 'Avoid':
+        setColor('#FC5474');
+        setBgColor('#FFD8E4');
+        break;
+      default:
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+    }
+  }, [value.Category]);
   return (
     <>
       <ConflictsModal
@@ -106,7 +134,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
           </div>
         </div>
         <div
-          className={`relative  ${isExpanded ? 'min-h-[120px]' : 'min-h-[50px]'} w-full  bg-white px-4 py-3 pr-10 rounded-[16px] items-center border border-Gray-50`}
+          className={`relative min-h-[120px] w-full bg-white px-4 py-3 pr-10 rounded-[16px] items-center border border-Gray-50`}
         >
           <div className=" flex flex-wrap gap-6 items-center">
             <div className="text-xs font-medium text-Text-Primary">
@@ -120,7 +148,15 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 value.Category == 'Lifestyle' ||
                 value.Category == 'Supplement') && (
                 <>
-                  {!editAble && (
+                  <div
+                    className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                  >
+                    <div
+                      className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                    ></div>
+                    {value.Category || '-'}
+                  </div>
+                  {/* {!editAble && (
                     <>
                       <div
                         data-tooltip-id="system-score"
@@ -169,7 +205,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                         </Tooltip>
                       </div>
                     </>
-                  )}
+                  )} */}
                   {value['Practitioner Comments'][0]?.length > 0 && (
                     <div
                       data-tooltip-id={`score-calc-${index}`}
@@ -271,7 +307,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               </div>
             )} */}
           </div>
-          {isExpanded && notes?.length ? (
+          {notes?.length ? (
             <div className="flex flex-col mt-2 pt-1 border-t border-Gray-50">
               {notes?.map((note, index) => (
                 <div
@@ -287,7 +323,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
             ''
           )}
           <div className=" top-4 right-4  absolute">
-            {isExpanded ? (
+            {/* {isExpanded ? (
               <div
                 onClick={() => {
                   setIsExpanded(false);
@@ -312,14 +348,14 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 src="/icons/arow-down-drop.svg"
                 alt=""
               />
-            )}
+            )} */}
 
             <div
-              className={`${isExpanded && editAble ? 'flex' : 'hidden'} flex-col mt-1 items-center gap-[10px]`}
+              className={`${editAble ? 'flex' : 'hidden'} flex-col items-center gap-[10px]`}
             >
               <img
                 onClick={() => setShowEditNote(true)}
-                className={`cursor-pointer w-4  ${deleteConfirm && 'hidden'}`}
+                className={`cursor-pointer w-[24px] h-[24px]  ${deleteConfirm && 'hidden'}`}
                 src="/icons/edit.svg"
                 alt=""
               />
@@ -327,7 +363,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                 <div className="flex flex-col items-center gap-2 pb-1 text-Text-Secondary text-xs -ml-2 -mr-2">
                   Sure?{' '}
                   <img
-                    className="cursor-pointer mr-1 w-[16px] h-[16px]"
+                    className="cursor-pointer mr-1 w-[20px] h-[20px]"
                     onClick={() => {
                       setdeleteConfirm(false);
                       onDelete();
@@ -336,7 +372,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     alt=""
                   />
                   <img
-                    className="cursor-pointer mr-1 w-[16px] h-[16px]"
+                    className="cursor-pointer mr-1 w-[20px] h-[20px]"
                     onClick={() => setdeleteConfirm(false)}
                     src="/icons/cansel-close-circle.svg"
                     alt=""
@@ -347,8 +383,8 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                   <SvgIcon
                     src="/icons/delete.svg"
                     color="#FC5474"
-                    width="16"
-                    height="16px"
+                    width="24px"
+                    height="24px"
                   />
                 </div>
               )}
@@ -387,7 +423,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         <EditModal
           defalts={{
             ...value,
-            client_version: value.client_version
+            client_version: Array.isArray(value.client_version)
               ? value.client_version
               : [positive, negative],
           }}

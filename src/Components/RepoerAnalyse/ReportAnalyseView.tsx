@@ -67,28 +67,45 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
-    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
+      .then((res) => {
         setReferenceData(res.data);
+        // setReferenceData(referencedataMoch);
         clearUsedPositions();
-      },
-    );
+      })
+      .catch(() => {
+        // setReferenceData({
+        //   detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
+        //   total_biomarker_note:
+        //     'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
+        //   biomarkers: [],
+        // });
+        // // setReferenceData(referencedataMoch);
+        // clearUsedPositions();
+      });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
-      setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
+
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      // console.log(res.data);
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
+        setClientSummaryBoxs(mydata);
       } else {
+        setClientSummaryBoxs(res.data);
         setIsHaveReport(true);
       }
     });
-    Application.getConceringResults({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getConceringResults({ member_id: resolvedMemberID })
+      .then((res) => {
         setConcerningResult(res.data.table);
-      },
-    );
+        // setConcerningResult(conceringResultData);
+      })
+      .catch(() => {
+        // setConcerningResult([]);
+      });
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
@@ -123,6 +140,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setReferenceData(res.data);
+      // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
       {
@@ -131,8 +149,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
+
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
       } else {
         setIsHaveReport(true);
@@ -145,6 +165,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setConcerningResult(res.data.table);
+      // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
       {
@@ -248,42 +269,46 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     isHaveReport,
   ]);
   const resolveBioMarkers = () => {
-    const refData: Array<any> = [];
-    referenceData.categories?.forEach((el: any) => {
-      el.subcategories.forEach((val: any) => {
-        refData.push(...val.biomarkers);
-      });
-    });
-    return refData;
+    // const refData: Array<any> = [];
+    // referenceData?.biomarkers.forEach((el: any) => {
+    //     refData.push(...el.biomarkers);
+    // });
+    // return refData;
+    return referenceData?.biomarkers;
   };
   // useEffect(() => {
   //   clearUsedPositions();
   // }, [memberID]);
-  const resolveSubCategories = () => {
-    const refData: Array<any> = [];
-    referenceData?.categories.forEach((el: any) => {
-      refData.push(...el.subcategories);
-    });
-    return refData;
-  };
+  // const resolveSubCategories = () => {
+  //   const refData: Array<any> = [];
+  //   referenceData?.categories.forEach((el: any) => {
+  //     refData.push(...el.subcategories);
+  //   });
+  //   return refData;
+  // };
   const ResolveConceringData = () => {
-    const refData: Array<any> = [];
-    if (ConcerningResult.length > 0) {
-      ConcerningResult.forEach((el: any) => {
-        refData.push(...el.subcategories);
-      });
-    }
-    return refData;
+    // const refData: Array<any> = [];
+    // if (ConcerningResult.length > 0) {
+    //   ConcerningResult.forEach((el: any) => {
+    //     refData.push(...el.subcategories);
+    //   });
+    // }
+    // return refData;
+    return ConcerningResult;
   };
 
   const resolveCategories = () => {
-    const refData: Array<any> = [];
-    if (ClientSummaryBoxs?.categories) {
-      ClientSummaryBoxs?.categories.forEach((el: any) => {
-        refData.push(...el.subcategories);
-      });
+    // const refData: Array<any> = [];
+    // if (ClientSummaryBoxs?.categories) {
+    //   ClientSummaryBoxs?.categories.forEach((el: any) => {
+    //     refData.push(...el.subcategories);
+    //   });
+    // }
+    // return refData;
+    if (ClientSummaryBoxs) {
+      return ClientSummaryBoxs.subcategories;
     }
-    return refData;
+    return [];
   };
   const location = useLocation();
   useEffect(() => {
@@ -550,10 +575,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
-                      .filter((val) => val.outofref == true)
-                      .map((el, index) => {
+                      .filter((val: any) => val.outofref == true)
+                      .map((el: any, index: number) => {
                         return (
-                          <RefrenceBox data={el} index={index}></RefrenceBox>
+                          <>
+                            <RefrenceBox data={el} index={index}></RefrenceBox>
+                          </>
                         );
                       })}
                   </div>
@@ -637,11 +664,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any, index: number) => {
                     return (
                       <DetiledAnalyse
-                        refrences={
-                          resolveSubCategories().filter(
-                            (val) => val.subcategory == el.subcategory,
-                          )[0]
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                         index={index}
                       ></DetiledAnalyse>
@@ -652,11 +677,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any) => {
                     return (
                       <DetiledAcordin
-                        refrences={
-                          resolveSubCategories().filter(
-                            (val) => val.subcategory == el.subcategory,
-                          )[0]
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                       ></DetiledAcordin>
                     );
@@ -756,12 +779,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   referenceData={referenceData}
                   resolveBioMarkers={resolveBioMarkers}
                   ResolveConceringData={ResolveConceringData}
-                  resolveSubCategories={resolveSubCategories}
+                  resolveSubCategories={() => []}
                   helthPlan={ActionPlanPrint}
                   TreatMentPlanData={TreatMentPlanData}
                   ActionPlan={HelthPrint}
                   caldenderData={caldenderData}
                 />
+                {/* <></> */}
               </div>
             )}
             {!isHaveReport && (

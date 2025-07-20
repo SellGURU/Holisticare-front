@@ -18,8 +18,6 @@ const LibBox: FC<LibBoxProps> = ({
   handleShowConflictsModal,
   index,
 }) => {
-  console.log(data);
-
   const [valueData, setValueData] = useState('');
   useEffect(() => {
     switch (data.Category) {
@@ -39,6 +37,32 @@ const LibBox: FC<LibBoxProps> = ({
   }, [data.Category]);
   const [showMore, setShowMore] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
+  const [color, setColor] = useState<string>('');
+  const [bgColor, setBgColor] = useState<string>('');
+  useEffect(() => {
+    switch (data.Category) {
+      case 'Highly Recommended':
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+      case 'Use Caution':
+        setColor('#FFAB2C');
+        setBgColor('#F9DEDC');
+        break;
+      case 'Beneficial':
+        setColor('#4C88FF');
+        setBgColor('#CADCFF');
+        break;
+      case 'Avoid':
+        setColor('#FC5474');
+        setBgColor('#FFD8E4');
+        break;
+      default:
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+    }
+  }, [data.Category]);
 
   return (
     <>
@@ -91,6 +115,14 @@ const LibBox: FC<LibBoxProps> = ({
           >
             <div className={`flex items-center gap-1`}>
               <div
+                className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+              >
+                <div
+                  className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                ></div>
+                {data.Category || '-'}
+              </div>
+              {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-system-score-${index}`}
               >
@@ -110,8 +142,8 @@ const LibBox: FC<LibBoxProps> = ({
                 <div className="text-[10px] text-Text-Quadruple">
                   Initial score from core health metrics.
                 </div>
-              </Tooltip>
-              <div
+              </Tooltip> */}
+              {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-[#DAF6C6] gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
                 data-tooltip-id={`tooltip-base-score-${index}`}
               >
@@ -131,7 +163,7 @@ const LibBox: FC<LibBoxProps> = ({
                 <div className="text-[10px] text-Text-Quadruple">
                   Score based on all data and AI insights.
                 </div>
-              </Tooltip>
+              </Tooltip> */}
               <div
                 className="text-[8px] text-Primary-DeepTeal cursor-pointer"
                 data-tooltip-id={`tooltip-score-calculation-${index}`}

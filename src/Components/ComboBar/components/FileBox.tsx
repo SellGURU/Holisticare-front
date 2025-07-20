@@ -75,6 +75,7 @@ const FileBox: React.FC<FileBoxProps> = ({ el, onDelete }) => {
           ) : (
             <>
               <div className="flex w-[55px] justify-center gap-1">
+                {/* <img src="/icons/delete-green.svg" alt="Download" className="w-4 h-4 cursor-pointer" /> */}
                 <img
                   onClick={() => {
                     if (el.file_id) {
