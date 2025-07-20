@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
-import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
-import FileBox from './FileBox';
-import { publish, subscribe } from '../../../utils/event';
+import Application from '../../../api/app';
 import { uploadToAzure } from '../../../help';
+import { publish, subscribe } from '../../../utils/event';
+import Circleloader from '../../CircleLoader';
+import FileBox from './FileBox';
 
 interface FileUpload {
   file: File;
@@ -13,6 +14,7 @@ interface FileUpload {
   azureUrl?: string;
   uploadedSize?: number;
   errorMessage?: string;
+  file_id: string;
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -25,6 +27,7 @@ const FileHistoryNew = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const { id } = useParams<{ id: string }>();
   const [containerMaxHeight, setContainerMaxHeight] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const calculateHeight = () => {
       const topSpacing = 80;
@@ -129,8 +132,6 @@ const FileHistoryNew = () => {
         ),
       );
     } catch (error: any) {
-      // console.log(error);
-
       let errorMessage = 'Failed to upload file. Please try again.';
 
       if (error?.detail?.includes('already exists')) {
@@ -159,6 +160,7 @@ const FileHistoryNew = () => {
         progress: 0.5,
         status: 'uploading' as const,
         uploadedSize: 0,
+        file_id: '',
       }));
 
       // Validate file formats before uploading
@@ -176,6 +178,7 @@ const FileHistoryNew = () => {
               ...fileUpload,
               status: 'error',
               errorMessage: 'File has an unsupported format.',
+              file_id: fileUpload.file.name,
             },
           ]);
           return false;
@@ -229,7 +232,8 @@ const FileHistoryNew = () => {
     fileInputRef.current.value = '';
   };
 
-  useEffect(() => {
+  const getFileList = (id: string) => {
+    setIsLoading(true);
     Application.getFilleList({ member_id: id })
       .then((res) => {
         if (res.data) {
@@ -240,15 +244,48 @@ const FileHistoryNew = () => {
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
+  };
+  useEffect(() => {
+    if (id) {
+      getFileList(id);
+    }
   }, [id]);
+
   subscribe('syncReport', () => {
     Application.getFilleList({ member_id: id }).then((res) => {
       setUploadedFiles(res.data);
     });
   });
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [isDeleted, setIsDeleted] = useState<string[]>([]);
+  const handleDelete = (fileId: string, memberId: string) => {
+    setLoadingDelete(true);
+    publish('fileIsDeleted', { isDeleting: false });
+    Application.deleteFileHistory({
+      file_id: fileId,
+      member_id: memberId,
+    })
+      .then((res) => {
+        if (res.data) {
+          setLoadingDelete(false);
+          setIsDeleted((prev) => [...prev, fileId]);
+        }
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
+  };
   return (
     <>
+      {isLoading && (
+        <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-85 z-20">
+          <Circleloader></Circleloader>
+        </div>
+      )}
       <div className="w-full">
         <div
           onClick={() => {
@@ -294,6 +331,11 @@ const FileHistoryNew = () => {
                     progress: fileUpload.progress || 0.5,
                     formattedSize: `${formatFileSize(fileUpload.uploadedSize || 0)} / ${formatFileSize(fileUpload?.file?.size || 1)}`,
                   }}
+                  onDeleteHistory={(file_id: string) => {
+                    handleDelete(file_id, id || '');
+                  }}
+                  isLoading={loadingDelete}
+                  isDeleted={isDeleted.includes(fileUpload.file_id)}
                 />
               </div>
             ))}
