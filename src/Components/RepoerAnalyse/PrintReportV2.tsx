@@ -207,7 +207,11 @@ const PrintReportV2: React.FC<PrintReportV2Props> = ({
       {pageJson.map((page: any) => {
         return (
           <>
-            <PagePrintHandler usrInfoData={usrInfoData} pageNumber={resolvePageNumber()} page={page} />
+            <PagePrintHandler
+              usrInfoData={usrInfoData}
+              pageNumber={resolvePageNumber()}
+              page={page}
+            />
           </>
         );
       })}

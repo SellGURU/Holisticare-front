@@ -6,7 +6,7 @@ import PrintHeader from './PrintHeader';
 interface PagePrintHandlerProps {
   page: any;
   pageNumber: number;
-  usrInfoData:any;
+  usrInfoData: any;
 }
 
 const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({
@@ -27,7 +27,7 @@ const PagePrintHandler: React.FC<PagePrintHandlerProps> = ({
           padding: '24px 24px',
         }}
       >
-        <PrintHeader usrInfoData={{ name:usrInfoData.name  }} />
+        <PrintHeader usrInfoData={{ name: usrInfoData.name }} />
         <div className="mt-4"></div>
         <div style={{ zIndex: 60, position: 'relative' }}>
           {page.renderBoxs.map((el: any) => {
