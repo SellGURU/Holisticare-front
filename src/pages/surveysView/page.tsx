@@ -1,8 +1,7 @@
-
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { SurveyResponsesView } from "./survey-responses-view";
-import Application from "../../api/app";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { SurveyResponsesView } from './survey-responses-view';
+import Application from '../../api/app';
 
 interface Question {
   type: string;
@@ -20,7 +19,10 @@ interface SurveyAPIResponse {
 }
 
 export default function SurveyResponsesPage() {
-  const { "member-id": memberId, "q-id": qId } = useParams<{ "member-id": string; "q-id": string }>();
+  const { 'member-id': memberId, 'q-id': qId } = useParams<{
+    'member-id': string;
+    'q-id': string;
+  }>();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [filledBy, setFilledBy] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,7 @@ export default function SurveyResponsesPage() {
         setLoading(false);
       })
       .catch((err: unknown) => {
-        setError((err as Error)?.message || "Failed to load survey response");
+        setError((err as Error)?.message || 'Failed to load survey response');
         setLoading(false);
       });
   }, [memberId, qId]);
@@ -60,10 +62,7 @@ export default function SurveyResponsesPage() {
       {/* <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Survey Responses</h1>
       </div> */}
-      <SurveyResponsesView
-        questions={questions}
-        filled_by={filledBy}
-      />
+      <SurveyResponsesView questions={questions} filled_by={filledBy} />
     </div>
   );
 }
