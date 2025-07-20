@@ -135,7 +135,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                       )}
                     </td>
                   ))}
-                  <td className="px-3 py-3 text-center text-nowrap text-xs">
+                  <td className="px-3 py-3 text-center text-nowrap text-xs flex items-center justify-center !mt-0">
                     {sureRemoveIndex === index ? (
                       <div className="flex items-center justify-center w-full gap-1">
                         <div className="text-Text-Quadruple text-xs">Sure?</div>
