@@ -281,7 +281,9 @@ const AddSummaryJson = (
     'client-summary',
   );
   addUserInfo(usrInfoData);
-  addInformation(ClientSummaryBoxs?.client_summary);
+  if(ClientSummaryBoxs?.client_summary){
+    addInformation(ClientSummaryBoxs?.client_summary);
+  }
   addLegend();
   addCategoriesHandler(resolveCategories);
 };
