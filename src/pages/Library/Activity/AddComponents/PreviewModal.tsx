@@ -268,7 +268,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             )}
           </div>
-          <div className="flex w-full items-start gap-3 mb-10 mt-3 ">
+          <div className="flex w-full items-start gap-3 mt-3 ">
             <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
@@ -277,6 +277,16 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             </div>
           </div>
+          {exercise.Ai_note && (
+            <div className="flex w-full items-start gap-3 mb-7">
+              <div className="text-xs font-medium text-nowrap">
+                Clinical Guidance
+              </div>
+              <div className="text-xs text-[#888888] text-justify">
+                {exercise.Ai_note}
+              </div>
+            </div>
+          )}
         </div>
 
         <div
