@@ -109,6 +109,31 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             </div>
           </div>
         </td>
+        <td
+          className="py-3 text-xs text-[#888888] w-[150px] text-center"
+          data-tooltip-id={`tooltip-activity-clinical-guidance-${index}`}
+        >
+          <div className="text-ellipsis select-none">
+            {exercise?.Ai_note
+              ? exercise?.Ai_note?.length > 47
+                ? exercise?.Ai_note?.substring(0, 47) + '...'
+                : exercise?.Ai_note
+              : '-'}
+          </div>
+          {exercise?.Ai_note?.length > 47 && (
+            <Tooltip
+              id={`tooltip-activity-clinical-guidance-${index}`}
+              place="top"
+              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              style={{
+                zIndex: 9999,
+                pointerEvents: 'none',
+              }}
+            >
+              {exercise.Ai_note}
+            </Tooltip>
+          )}
+        </td>
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
           {formatDate(exercise['Added on'])}
         </td>
