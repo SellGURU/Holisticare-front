@@ -142,6 +142,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     close: closeModal,
   });
   const [isSlideOutPanel, setIsSlideOutPanel] = useState<boolean>(false);
+  const [activeItem, setActiveItem] = useState<string | null>(null);
   const handleCloseSlideOutPanel = () => {
     if (isSlideOutPanel && isUploading) {
       publish('isuploadingBackGround', {
@@ -165,7 +166,6 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       isUploading: false,
     });
   };
-  const [activeItem, setActiveItem] = useState<string | null>(null);
   const renderModalContent = () => {
     switch (activeItem) {
       case 'Client Info':
@@ -175,7 +175,7 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
       case 'File History':
         return <FileHistoryNew></FileHistoryNew>;
       case 'Questionnaire Tracking':
-        return <Questionary></Questionary>;
+        return <Questionary isOpen={isSlideOutPanel && activeItem === 'Questionnaire Tracking'}></Questionary>;
       case "Expert's Note":
         return <Notes></Notes>;
       // Add more cases as needed
