@@ -26,6 +26,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     // description: '',
     score: 0,
     instruction: '',
+    clinical_guidance: '',
   });
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({
@@ -48,6 +49,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         // description: selectedRow ? selectedRow.Description : '',
         score: selectedRow ? selectedRow.Base_Score : 0,
         instruction: selectedRow ? selectedRow.Instruction : '',
+        clinical_guidance: selectedRow ? selectedRow.Clinical_Guidance : '',
       });
       setDose(selectedRow ? selectedRow.Dose : '');
       setValue(selectedRow ? selectedRow.Value : '');
@@ -100,6 +102,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Instruction: addData.instruction,
         Base_Score: addData.score,
         Dose: dose,
+        Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
       clear();
@@ -111,6 +114,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Base_Score: addData.score,
         Value: Number(value),
         Unit: Unit,
+        Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
       clear();
@@ -125,6 +129,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           Protein: Number(totalMacros.Protein),
           Carbs: Number(totalMacros.Carbs),
         },
+        Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
       clear();
@@ -136,6 +141,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       // description: '',
       score: 0,
       instruction: '',
+      clinical_guidance: '',
     });
     setDose('');
     setValue('');
@@ -175,7 +181,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
-    const doseRegex = /^(\d+\s*[a-zA-Z]+)(\s*-\s*\d+\s*[a-zA-Z]+)?$/;
+    const doseRegex = /^(\d+(?:\s*-\s*\d+)?)(\s*[a-zA-Z]+(?:\/[a-zA-Z]+)?)$/;
     const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
 
     const newErrors = {
@@ -315,11 +321,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 value={dose}
                 onChange={(e) => {
                   const value = e.target.value;
-                  const englishOnly = value.replace(/[^a-zA-Z0-9\s-]/g, '');
+                  const englishOnly = value.replace(/[^a-zA-Z0-9\s/-]/g, '');
                   setDose(englishOnly);
 
                   const doseRegex =
-                    /^(\d+\s*[a-zA-Z]+)(\s*-\s*\d+\s*[a-zA-Z]+)?$/;
+                    /^(\d+(?:\s*-\s*\d+)?)(\s*[a-zA-Z]+(?:\/[a-zA-Z]+)?)$/;
 
                   if (englishOnly) {
                     setErrors((prev) => ({
@@ -669,6 +675,20 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               showValidation={showValidation}
               error={errors.score}
               required={true}
+            />
+          </div>
+          {/* Clinical Guidance Field */}
+          <div className="flex flex-col mt-4 w-full gap-2">
+            <div className="text-xs font-medium text-Text-Primary">
+              Clinical Guidance
+            </div>
+            <textarea
+              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+              value={addData.clinical_guidance}
+              onChange={(e) => {
+                updateAddData('clinical_guidance', e.target.value);
+              }}
+              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
             />
           </div>
 

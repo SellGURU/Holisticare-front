@@ -70,6 +70,9 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                 <th className="py-3 w-[66px] text-center pl-3">
                   Priority Weight
                 </th>
+                <th className="py-3 w-[250px] text-center">
+                  Clinical Guidance
+                </th>
                 <th className="py-3 w-[100px] text-center pl-3">Added on</th>
                 <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl">
                   Action
