@@ -1,5 +1,10 @@
-import  { FC, useEffect } from 'react';
-import { useForm, useFieldArray, SubmitHandler, Controller } from 'react-hook-form';
+import { FC, useEffect } from 'react';
+import {
+  useForm,
+  useFieldArray,
+  SubmitHandler,
+  Controller,
+} from 'react-hook-form';
 import SpinnerLoader from '../../Components/SpinnerLoader'; // Adjust path as needed
 import ThresholdRangesEditor from './ThresholdRangesEditor'; // Adjust path as needed
 import TextField from '../../Components/TextField'; // Import TextField
@@ -8,7 +13,7 @@ import TextField from '../../Components/TextField'; // Import TextField
 import {
   ApiBiomarkerData,
   FormBiomarkerData,
-  ApiThresholdRange
+  ApiThresholdRange,
 } from '../../types/biormarker'; // Adjust path as needed
 
 interface EditModalProps {
@@ -29,7 +34,7 @@ const EditModal: FC<EditModalProps> = ({
   setErrorDetails,
 }) => {
   console.log(data);
-  
+
   const {
     control,
     handleSubmit,
@@ -42,14 +47,22 @@ const EditModal: FC<EditModalProps> = ({
       Definition: data.Definition || '',
       unit: data.unit || '',
       thresholds: {
-        male: Object.entries(data.thresholds?.male || {}).map(([ageRange, ranges]) => ({
-          ageRange,
-          ranges: (Array.isArray(ranges) ? ranges : []) as ApiThresholdRange[],
-        })),
-        female: Object.entries(data.thresholds?.female || {}).map(([ageRange, ranges]) => ({
-          ageRange,
-          ranges: (Array.isArray(ranges) ? ranges : []) as ApiThresholdRange[],
-        })),
+        male: Object.entries(data.thresholds?.male || {}).map(
+          ([ageRange, ranges]) => ({
+            ageRange,
+            ranges: (Array.isArray(ranges)
+              ? ranges
+              : []) as ApiThresholdRange[],
+          }),
+        ),
+        female: Object.entries(data.thresholds?.female || {}).map(
+          ([ageRange, ranges]) => ({
+            ageRange,
+            ranges: (Array.isArray(ranges)
+              ? ranges
+              : []) as ApiThresholdRange[],
+          }),
+        ),
       },
     } as FormBiomarkerData, // Explicitly cast for type safety
   });
@@ -61,14 +74,22 @@ const EditModal: FC<EditModalProps> = ({
       Definition: data.Definition || '',
       unit: data.unit || '',
       thresholds: {
-        male: Object.entries(data.thresholds?.male || {}).map(([ageRange, ranges]) => ({
-          ageRange,
-          ranges: (Array.isArray(ranges) ? ranges : []) as ApiThresholdRange[],
-        })),
-        female: Object.entries(data.thresholds?.female || {}).map(([ageRange, ranges]) => ({
-          ageRange,
-          ranges: (Array.isArray(ranges) ? ranges : []) as ApiThresholdRange[],
-        })),
+        male: Object.entries(data.thresholds?.male || {}).map(
+          ([ageRange, ranges]) => ({
+            ageRange,
+            ranges: (Array.isArray(ranges)
+              ? ranges
+              : []) as ApiThresholdRange[],
+          }),
+        ),
+        female: Object.entries(data.thresholds?.female || {}).map(
+          ([ageRange, ranges]) => ({
+            ageRange,
+            ranges: (Array.isArray(ranges)
+              ? ranges
+              : []) as ApiThresholdRange[],
+          }),
+        ),
       },
     } as FormBiomarkerData);
   }, [data, reset]);
@@ -99,20 +120,32 @@ const EditModal: FC<EditModalProps> = ({
       Biomarker: formValues.Biomarker,
       Definition: formValues.Definition || undefined,
       unit: formValues.unit || undefined,
-      thresholds: formValues.thresholds ? {
-        male: formValues.thresholds.male?.reduce((acc, current) => {
-          if (current.ageRange) {
-            acc[current.ageRange] = current.ranges as ApiThresholdRange[];
+      thresholds: formValues.thresholds
+        ? {
+            male:
+              formValues.thresholds.male?.reduce(
+                (acc, current) => {
+                  if (current.ageRange) {
+                    acc[current.ageRange] =
+                      current.ranges as ApiThresholdRange[];
+                  }
+                  return acc;
+                },
+                {} as Record<string, ApiThresholdRange[]>,
+              ) || undefined,
+            female:
+              formValues.thresholds.female?.reduce(
+                (acc, current) => {
+                  if (current.ageRange) {
+                    acc[current.ageRange] =
+                      current.ranges as ApiThresholdRange[];
+                  }
+                  return acc;
+                },
+                {} as Record<string, ApiThresholdRange[]>,
+              ) || undefined,
           }
-          return acc;
-        }, {} as Record<string, ApiThresholdRange[]>) || undefined,
-        female: formValues.thresholds.female?.reduce((acc, current) => {
-          if (current.ageRange) {
-            acc[current.ageRange] = current.ranges as ApiThresholdRange[];
-          }
-          return acc;
-        }, {} as Record<string, ApiThresholdRange[]>) || undefined,
-      } : undefined,
+        : undefined,
     };
 
     onSave(transformedValues);
@@ -139,14 +172,23 @@ const EditModal: FC<EditModalProps> = ({
         </div>
       )}
       <div className="">
-        <div className=" text-Text-Primary TextStyle-Headline-5">Edit Biomarker</div> {/* Changed Title */}
+        <div className=" text-Text-Primary TextStyle-Headline-5">
+          Edit Biomarker
+        </div>{' '}
+        {/* Changed Title */}
         <div className="w-full h-1 border-b-2 mt-2 border-gray-50"></div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="h-[400px] overflow-y-auto pr-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="h-[400px] overflow-y-auto pr-2"
+      >
         {/* Basic Biomarker Details */}
         <div className="mb-4">
-          <label htmlFor="benchmarkArea" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="benchmarkArea"
+            className="block text-sm font-medium text-gray-700"
+          >
             Benchmark Area
           </label>
           <Controller
@@ -168,7 +210,10 @@ const EditModal: FC<EditModalProps> = ({
         </div>
 
         <div className="mb-4">
-          <label htmlFor="biomarkerName" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="biomarkerName"
+            className="block text-sm font-medium text-gray-700"
+          >
             Biomarker Name
           </label>
           <Controller
@@ -191,7 +236,10 @@ const EditModal: FC<EditModalProps> = ({
         </div>
 
         <div className="mb-4">
-          <label htmlFor="definition" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="definition"
+            className="block text-sm font-medium text-gray-700"
+          >
             Definition
           </label>
           <Controller
@@ -210,7 +258,10 @@ const EditModal: FC<EditModalProps> = ({
         </div>
 
         <div className="mb-4">
-          <label htmlFor="unit" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="unit"
+            className="block text-sm font-medium text-gray-700"
+          >
             Unit
           </label>
           <Controller
@@ -230,13 +281,20 @@ const EditModal: FC<EditModalProps> = ({
         </div>
 
         {/* Thresholds Section */}
-        <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Thresholds</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">
+          Thresholds
+        </h3>
 
         {/* Male Thresholds */}
         <div className="mb-6 border p-4 rounded-md bg-gray-50">
-          <h4 className="text-md font-semibold text-gray-800 mb-3">Male Thresholds</h4>
+          <h4 className="text-md font-semibold text-gray-800 mb-3">
+            Male Thresholds
+          </h4>
           {maleAgeRangeFields.map((field, ageRangeIndex) => (
-            <div key={field.id} className="border p-4 mb-3 rounded-md bg-white relative">
+            <div
+              key={field.id}
+              className="border p-4 mb-3 rounded-md bg-white relative"
+            >
               <button
                 type="button"
                 onClick={() => removeMaleAgeRange(ageRangeIndex)}
@@ -245,7 +303,10 @@ const EditModal: FC<EditModalProps> = ({
                 Remove Age Group
               </button>
               <div className="mb-3">
-                <label htmlFor={`maleAgeRange-${ageRangeIndex}`} className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor={`maleAgeRange-${ageRangeIndex}`}
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Age Range (e.g., 18-100)
                 </label>
                 <Controller
@@ -266,7 +327,9 @@ const EditModal: FC<EditModalProps> = ({
                 />
               </div>
 
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Ranges for this Age Group:</h5>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">
+                Ranges for this Age Group:
+              </h5>
               <ThresholdRangesEditor
                 nestIndex={ageRangeIndex}
                 gender="male"
@@ -277,7 +340,14 @@ const EditModal: FC<EditModalProps> = ({
           ))}
           <button
             type="button"
-            onClick={() => appendMaleAgeRange({ ageRange: '', ranges: [{ label: '', status: '', low: null, high: null, color: '' }] })}
+            onClick={() =>
+              appendMaleAgeRange({
+                ageRange: '',
+                ranges: [
+                  { label: '', status: '', low: null, high: null, color: '' },
+                ],
+              })
+            }
             className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-sm"
           >
             Add Male Age Group
@@ -286,9 +356,14 @@ const EditModal: FC<EditModalProps> = ({
 
         {/* Female Thresholds */}
         <div className="mb-6 border p-4 rounded-md bg-gray-50">
-          <h4 className="text-md font-semibold text-gray-800 mb-3">Female Thresholds</h4>
+          <h4 className="text-md font-semibold text-gray-800 mb-3">
+            Female Thresholds
+          </h4>
           {femaleAgeRangeFields.map((field, ageRangeIndex) => (
-            <div key={field.id} className="border p-4 mb-3 rounded-md bg-white relative">
+            <div
+              key={field.id}
+              className="border p-4 mb-3 rounded-md bg-white relative"
+            >
               <button
                 type="button"
                 onClick={() => removeFemaleAgeRange(ageRangeIndex)}
@@ -297,7 +372,10 @@ const EditModal: FC<EditModalProps> = ({
                 Remove Age Group
               </button>
               <div className="mb-3">
-                <label htmlFor={`femaleAgeRange-${ageRangeIndex}`} className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor={`femaleAgeRange-${ageRangeIndex}`}
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Age Range (e.g., 18-100)
                 </label>
                 <Controller
@@ -318,7 +396,9 @@ const EditModal: FC<EditModalProps> = ({
                 />
               </div>
 
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Ranges for this Age Group:</h5>
+              <h5 className="text-sm font-medium text-gray-700 mb-2">
+                Ranges for this Age Group:
+              </h5>
               <ThresholdRangesEditor
                 nestIndex={ageRangeIndex}
                 gender="female"
@@ -329,7 +409,14 @@ const EditModal: FC<EditModalProps> = ({
           ))}
           <button
             type="button"
-            onClick={() => appendFemaleAgeRange({ ageRange: '', ranges: [{ label: '', status: '', low: null, high: null, color: '' }] })}
+            onClick={() =>
+              appendFemaleAgeRange({
+                ageRange: '',
+                ranges: [
+                  { label: '', status: '', low: null, high: null, color: '' },
+                ],
+              })
+            }
             className="mt-2 text-indigo-600 hover:text-indigo-900 border border-indigo-600 px-3 py-1 rounded-md text-sm"
           >
             Add Female Age Group

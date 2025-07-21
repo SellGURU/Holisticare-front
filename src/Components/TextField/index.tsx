@@ -59,7 +59,8 @@ const TextField: React.FC<TextFieldProps> = ({
         }
         return;
       }
-    } else if (type !== 'number') { // <--- Added condition to skip for 'number' type
+    } else if (type !== 'number') {
+      // <--- Added condition to skip for 'number' type
       // For non-email and non-number types, prevent leading spaces
       if (value.startsWith(' ')) {
         return;

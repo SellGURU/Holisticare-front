@@ -62,7 +62,10 @@ export const thresholdRangeSchema = yup.object().shape({
 
 export const ageRangeThresholdSchema = yup.object().shape({
   ageRange: yup.string().required('Age range is required (e.g., 18-100)'),
-  ranges: yup.array(thresholdRangeSchema).min(1, 'At least one range threshold is required for this age group').required(),
+  ranges: yup
+    .array(thresholdRangeSchema)
+    .min(1, 'At least one range threshold is required for this age group')
+    .required(),
 });
 
 export const formBiomarkerSchema = yup.object().shape({
@@ -70,8 +73,21 @@ export const formBiomarkerSchema = yup.object().shape({
   Biomarker: yup.string().required('Biomarker name is required'),
   Definition: yup.string().notRequired().default(''), // Default empty string for optional strings
   unit: yup.string().notRequired().default(''), // Default empty string for optional strings
-  thresholds: yup.object().shape({
-    male: yup.array(ageRangeThresholdSchema).nullable().notRequired().default(null), // Default null for optional arrays
-    female: yup.array(ageRangeThresholdSchema).nullable().notRequired().default(null), // Default null for optional arrays
-  }).nullable().notRequired().default(null), // Default null for optional object
+  thresholds: yup
+    .object()
+    .shape({
+      male: yup
+        .array(ageRangeThresholdSchema)
+        .nullable()
+        .notRequired()
+        .default(null), // Default null for optional arrays
+      female: yup
+        .array(ageRangeThresholdSchema)
+        .nullable()
+        .notRequired()
+        .default(null), // Default null for optional arrays
+    })
+    .nullable()
+    .notRequired()
+    .default(null), // Default null for optional object
 });

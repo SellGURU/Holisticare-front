@@ -1,5 +1,10 @@
 import { FC } from 'react';
-import { useFieldArray, Control, FieldErrors, Controller } from 'react-hook-form';
+import {
+  useFieldArray,
+  Control,
+  FieldErrors,
+  Controller,
+} from 'react-hook-form';
 import TextField from '../../Components/TextField'; // Adjust path as needed
 
 // Import types from the shared file
@@ -19,7 +24,7 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
   errors,
 }) => {
   console.log(errors);
-  
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: `thresholds.${gender}.${nestIndex}.ranges` as `thresholds.${typeof gender}.${number}.ranges`,
@@ -28,7 +33,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
   return (
     <div>
       {fields.map((field, k) => (
-        <div key={field.id} className="border p-3 mb-2 rounded-md bg-gray-100 relative">
+        <div
+          key={field.id}
+          className="border p-3 mb-2 rounded-md bg-gray-100 relative"
+        >
           <button
             type="button"
             onClick={() => remove(k)}
@@ -38,7 +46,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
           </button>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <div>
-              <label htmlFor={`label-${gender}-${nestIndex}-${k}`} className="block text-xs font-medium text-gray-600">
+              <label
+                htmlFor={`label-${gender}-${nestIndex}-${k}`}
+                className="block text-xs font-medium text-gray-600"
+              >
                 Label
               </label>
               <Controller
@@ -60,7 +71,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
               />
             </div>
             <div>
-              <label htmlFor={`status-${gender}-${nestIndex}-${k}`} className="block text-xs font-medium text-gray-600">
+              <label
+                htmlFor={`status-${gender}-${nestIndex}-${k}`}
+                className="block text-xs font-medium text-gray-600"
+              >
                 Status
               </label>
               <Controller
@@ -84,7 +98,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <div>
-              <label htmlFor={`low-${gender}-${nestIndex}-${k}`} className="block text-xs font-medium text-gray-600">
+              <label
+                htmlFor={`low-${gender}-${nestIndex}-${k}`}
+                className="block text-xs font-medium text-gray-600"
+              >
                 Low
               </label>
               <Controller
@@ -94,14 +111,16 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
                   <TextField
                     id={`low-${gender}-${nestIndex}-${k}`}
                     type="number" // <--- Use type="number"
-                    step="any"   // <--- Allow decimals
+                    step="any" // <--- Allow decimals
                     newStyle
                     placeholder="e.g., 10"
                     onBlur={onBlur}
                     name={name}
                     inputRef={ref} // <--- Pass ref
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      onChange(e.target.value === '' ? null : Number(e.target.value));
+                      onChange(
+                        e.target.value === '' ? null : Number(e.target.value),
+                      );
                     }}
                     value={value === null || value === undefined ? '' : value}
                   />
@@ -109,7 +128,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
               />
             </div>
             <div>
-              <label htmlFor={`high-${gender}-${nestIndex}-${k}`} className="block text-xs font-medium text-gray-600">
+              <label
+                htmlFor={`high-${gender}-${nestIndex}-${k}`}
+                className="block text-xs font-medium text-gray-600"
+              >
                 High
               </label>
               <Controller
@@ -119,14 +141,16 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
                   <TextField
                     id={`high-${gender}-${nestIndex}-${k}`}
                     type="number" // <--- Use type="number"
-                    step="any"   // <--- Allow decimals
+                    step="any" // <--- Allow decimals
                     newStyle
                     placeholder="e.g., 20"
                     onBlur={onBlur}
                     name={name}
                     inputRef={ref} // <--- Pass ref
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      onChange(e.target.value === '' ? null : Number(e.target.value));
+                      onChange(
+                        e.target.value === '' ? null : Number(e.target.value),
+                      );
                     }}
                     value={value === null || value === undefined ? '' : value}
                   />
@@ -135,7 +159,10 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
             </div>
           </div>
           <div>
-            <label htmlFor={`color-${gender}-${nestIndex}-${k}`} className="block text-xs font-medium text-gray-600">
+            <label
+              htmlFor={`color-${gender}-${nestIndex}-${k}`}
+              className="block text-xs font-medium text-gray-600"
+            >
               Color
             </label>
             <Controller
@@ -160,7 +187,15 @@ const ThresholdRangesEditor: FC<ThresholdRangesEditorProps> = ({
       ))}
       <button
         type="button"
-        onClick={() => append({ label: '', status: '', low: null, high: null, color: '' } as ApiThresholdRange)}
+        onClick={() =>
+          append({
+            label: '',
+            status: '',
+            low: null,
+            high: null,
+            color: '',
+          } as ApiThresholdRange)
+        }
         className="mt-2 text-blue-500 hover:text-blue-700 border border-blue-500 px-2 py-1 rounded-md text-xs"
       >
         Add Threshold Range
