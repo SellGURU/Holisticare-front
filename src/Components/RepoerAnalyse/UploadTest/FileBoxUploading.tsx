@@ -50,8 +50,20 @@ const FileBoxUploading: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                 <div className=" text-[10px] md:text-[12px] text-Text-Primary font-[600]">
                   {el.file_name || el.file.name}
                 </div>
-                <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
-                  {(el.file.size / 1024).toFixed(2)} KB
+                <div className="flex items-center gap-3">
+                  <div className=" text-[10px] md:text-[12px] text-Text-Secondary">
+                    {(el.file.size / 1024).toFixed(2)} KB
+                  </div>
+                  {el.warning && (
+                    <div className="text-[10px] md:text-[12px] text-Text-Quadruple flex items-center gap-1">
+                      <img
+                        src="/icons/danger-new.svg"
+                        alt=""
+                        className="w-4 h-4"
+                      />
+                      The uploaded file is not one of the clinic's Templates.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
