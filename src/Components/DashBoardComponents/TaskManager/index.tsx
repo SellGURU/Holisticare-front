@@ -166,7 +166,9 @@ const TaskManager = () => {
               <SimpleDatePicker
                 textStyle
                 ClassName=""
-                validation={showValidation && formik.errors.deadline ? true : false}
+                validation={
+                  showValidation && formik.errors.deadline ? true : false
+                }
                 placeholder="Select a deadline"
                 isLarge
                 date={formik.values.deadline}
@@ -283,7 +285,11 @@ const TaskManager = () => {
             )}
           </div>
 
-          <ButtonPrimary ClassName='!font-medium' onClick={() => setshowAddTaskModal(true)} size="small">
+          <ButtonPrimary
+            ClassName="!font-medium"
+            onClick={() => setshowAddTaskModal(true)}
+            size="small"
+          >
             <img src="/icons/add.svg" alt="" />
             New Task
           </ButtonPrimary>
@@ -305,77 +311,73 @@ const TaskManager = () => {
                 key={task.task_id}
                 className="bg-white border border-Gray-50 shadow-100 p-2 rounded-2xl h-[65px] relative"
               >
-               {loading && task.task_id === itemSelected ? (
-                <div className='w-full h-full flex items-center justify-center'>
-                  <Circleloader/>
-
-                </div>
-               ):(
-                <>
-                
-                <div className="w-full flex items-center justify-between">
-                <label
-                  className="flex items-center mb-2 cursor-pointer gap-2 "
-                  htmlFor={task.title}
-                >
-                
-                    <>
-                      <input
-                        type="checkbox"
-                        id={task.title}
-                        checked={task.checked}
-                        onChange={() => {
-                          setItemSelected(task.task_id);
-                          handleCheckBoxChange(task.task_id);
-                        }}
-                        className="hidden"
-                      />
-                      <div
-                        className={`w-4 h-4 flex items-center justify-center  rounded ${
-                          task.checked
-                            ? 'bg-Primary-EmeraldGreen'
-                            : 'bg-white border border-Text-Secondary'
-                        }`}
-                      >
-                        {task.checked && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-3 w-3 text-white"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        )}
-                      </div>
-                    </>
-                  
-
-                  <div
-                    data-tooltip-id={task.title}
-                    className={`text-[12px] truncate max-w-[120px] mr-2 ${
-                      task.checked ? 'line-through' : ''
-                    }`}
-                  >
-                    {task.title}
-                    {task.title.length > 40 && (
-                      <Tooltip
-                        place="top"
-                        id={task.title}
-                        className="!bg-white !w-fit  !text-wrap 
-                      !text-[#888888] !z-[99]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                      >
-                        {task.title}
-                      </Tooltip>
-                    )}
+                {loading && task.task_id === itemSelected ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Circleloader />
                   </div>
-                </label>
+                ) : (
+                  <>
+                    <div className="w-full flex items-center justify-between">
+                      <label
+                        className="flex items-center mb-2 cursor-pointer gap-2 "
+                        htmlFor={task.title}
+                      >
+                        <>
+                          <input
+                            type="checkbox"
+                            id={task.title}
+                            checked={task.checked}
+                            onChange={() => {
+                              setItemSelected(task.task_id);
+                              handleCheckBoxChange(task.task_id);
+                            }}
+                            className="hidden"
+                          />
+                          <div
+                            className={`w-4 h-4 flex items-center justify-center  rounded ${
+                              task.checked
+                                ? 'bg-Primary-EmeraldGreen'
+                                : 'bg-white border border-Text-Secondary'
+                            }`}
+                          >
+                            {task.checked && (
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3 w-3 text-white"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                        </>
 
-                {/* <span
+                        <div
+                          data-tooltip-id={task.title}
+                          className={`text-[12px] truncate max-w-[120px] mr-2 ${
+                            task.checked ? 'line-through' : ''
+                          }`}
+                        >
+                          {task.title}
+                          {task.title.length > 40 && (
+                            <Tooltip
+                              place="top"
+                              id={task.title}
+                              className="!bg-white !w-fit  !text-wrap 
+                      !text-[#888888] !z-[99]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                            >
+                              {task.title}
+                            </Tooltip>
+                          )}
+                        </div>
+                      </label>
+
+                      {/* <span
                 className={`text-xs rounded-2xl py-[2px] px-[9px] text-[8px] flex items-center gap-1 ${
                   task.progress === 'AI-Defined'
                     ? 'bg-[#06C78D1A] bg-opacity-10 text-[#06C78D]'
@@ -387,43 +389,40 @@ const TaskManager = () => {
                 {task.progress || task.priority}
                
               </span> */}
-              
-              </div>
-                   <div className="w-full flex items-center justify-between  px-3">
-                   <div className="text-[10px] text-Text-Triarty pl-3">
-                     {new Date(task.deadline).toLocaleDateString('en-US', {
-                       year: 'numeric',
-                       month: 'long',
-                       day: 'numeric',
-                     })}
-                   </div>
-                   <div className="flex flex-col justify-between gap-3 absolute top-2 right-2">
-                     {task.ai_defined && (
-                       <div className="bg-[#E9F0F2] px-[9px] py-[2px] rounded-2xl flex justify-center items-center gap-1 text-[8px] text-[#267E95]">
-                         <img src="/icons/ai-icon.svg" alt="" />
-                         AI-Defined
-                       </div>
-                     )}
-                     <span
-                       className={`text-[8px] flex items-center gap-1 px-2 rounded-full ${
-                         task.priority === 'High Priority'
-                           ? 'bg-[#FFD8E4]'
-                           : task.priority === 'Medium Priority'
-                             ? 'bg-[#F9DEDC]'
-                             : 'bg-[#DEF7EC]'
-                       }`}
-                     >
-                       <div
-                         className={`rounded-full size-2 ${task.priority === 'High Priority' ? 'bg-[#FC5474]' : task.priority === 'Medium Priority' ? 'bg-[#FFBD59]' : 'bg-[#06C78D]'} `}
-                       ></div>
-                       {task.priority}
-                     </span>
-                   </div>
-                 </div>
-                 </>
-               )}  
-              
-           
+                    </div>
+                    <div className="w-full flex items-center justify-between  px-3">
+                      <div className="text-[10px] text-Text-Triarty pl-3">
+                        {new Date(task.deadline).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </div>
+                      <div className="flex flex-col justify-between gap-3 absolute top-2 right-2">
+                        {task.ai_defined && (
+                          <div className="bg-[#E9F0F2] px-[9px] py-[2px] rounded-2xl flex justify-center items-center gap-1 text-[8px] text-[#267E95]">
+                            <img src="/icons/ai-icon.svg" alt="" />
+                            AI-Defined
+                          </div>
+                        )}
+                        <span
+                          className={`text-[8px] flex items-center gap-1 px-2 rounded-full ${
+                            task.priority === 'High Priority'
+                              ? 'bg-[#FFD8E4]'
+                              : task.priority === 'Medium Priority'
+                                ? 'bg-[#F9DEDC]'
+                                : 'bg-[#DEF7EC]'
+                          }`}
+                        >
+                          <div
+                            className={`rounded-full size-2 ${task.priority === 'High Priority' ? 'bg-[#FC5474]' : task.priority === 'Medium Priority' ? 'bg-[#FFBD59]' : 'bg-[#06C78D]'} `}
+                          ></div>
+                          {task.priority}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>

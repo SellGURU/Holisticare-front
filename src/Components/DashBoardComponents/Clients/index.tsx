@@ -77,12 +77,10 @@ const RecentCheckIns: React.FC = () => {
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
                       <div className=" ">
-                        <TooltipTextAuto maxWidth='70px'>
-                        {client.name}
+                        <TooltipTextAuto maxWidth="70px">
+                          {client.name}
                         </TooltipTextAuto>
-                      
                       </div>
-                    
                     </td>
 
                     <td className="py-2  text-Text-Secondary text-[10px] w-[95px] text-center">

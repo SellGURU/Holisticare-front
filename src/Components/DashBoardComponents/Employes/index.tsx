@@ -204,11 +204,21 @@ const EmployeeRow: React.FC<{
                   <th className="py-2 pl-3 w-[120px] !font-normal rounded-tl-2xl">
                     Client Name
                   </th>
-                  <th className="py-2 w-[80px] text-center !font-normal ">ID</th>
-                  <th className="py-2 w-[40px] text-center !font-normal ">Age</th>
-                  <th className="py-2 w-[40px] text-center !font-normal ">Gender</th>
-                  <th className="py-2 w-[80px] text-center !font-normal ">Enroll Date</th>
-                  <th className="py-2 w-[80px] text-center !font-normal">Assign Date</th>
+                  <th className="py-2 w-[80px] text-center !font-normal ">
+                    ID
+                  </th>
+                  <th className="py-2 w-[40px] text-center !font-normal ">
+                    Age
+                  </th>
+                  <th className="py-2 w-[40px] text-center !font-normal ">
+                    Gender
+                  </th>
+                  <th className="py-2 w-[80px] text-center !font-normal ">
+                    Enroll Date
+                  </th>
+                  <th className="py-2 w-[80px] text-center !font-normal">
+                    Assign Date
+                  </th>
                   <th className="py-2 w-[70px] text-center !font-normal rounded-tr-2xl">
                     Status
                   </th>
@@ -323,8 +333,8 @@ const EmployeeRow: React.FC<{
                 : employee.user_name}
             </div>
             <p className="text-[8px] text-[#888888] capitalize">
-             {employee.role} <span className="mx-1">|</span> Clients
-              Assigned: {employee['clients assigned']}
+              {employee.role} <span className="mx-1">|</span> Clients Assigned:{' '}
+              {employee['clients assigned']}
             </p>
           </div>
           {employee.user_name.length > 15 && (
