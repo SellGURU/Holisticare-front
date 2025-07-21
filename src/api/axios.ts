@@ -3,10 +3,10 @@ import { toast } from 'react-toastify';
 
 axios.interceptors.response.use(
   (response) => {
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 206) {
       toast.dismiss();
     }
-    if (response.data.detail) {
+    if (response.data.detail && response.status != 206) {
       if (
         response.data.detail &&
         response.data.detail.toLowerCase().includes('successfully')
@@ -24,11 +24,12 @@ axios.interceptors.response.use(
       response.data.detail &&
       response.data.notif != true &&
       response.data.detail != 'Invalid token.' &&
-      response.data.detail != 'Not Found'
+      response.data.detail != 'Not Found' &&
+      response.status != 206
     ) {
       toast.error(response.data.detail);
     }
-    if (response.data && response.data.detail) {
+    if (response.data && response.data.detail && response.status != 206) {
       // Handle the custom error provided in the response body
       return Promise.reject(new Error(response.data.detail)); // Reject the promise to trigger the catch block
     }

@@ -191,6 +191,12 @@ const FileBox: React.FC<FileBoxProps> = ({
             </>
           )}
         </div>
+        {el.warning && (
+          <div className="text-[8px] text-Text-Quadruple flex items-center gap-1 mt-1">
+            <img src="/icons/danger-new.svg" alt="" className="w-3 h-3" />
+            The uploaded file is not one of the clinic's Templates.
+          </div>
+        )}
         {el.progress && (
           <>
             {el.status == 'uploading' && (
