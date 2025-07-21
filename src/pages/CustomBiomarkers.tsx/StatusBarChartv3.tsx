@@ -32,6 +32,18 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     }
     return '#FBAD37';
   };
+
+  const createGradient = (data: any[], index: number) => {
+    const sortedData = sortByRange(data);
+    const currentItem = sortedData[index];
+    const nextItem = sortedData[index + 1];
+    
+    const currentColor = currentItem.color || resolveColor(currentItem.status);
+    const nextColor = nextItem ? (nextItem.color || resolveColor(nextItem.status)) : currentColor;
+    
+    return `linear-gradient(to right, ${currentColor}, ${nextColor})`;
+  };
+
   const getRangeString = (el: {
     low: number | null;
     high: number | null;
@@ -89,11 +101,10 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
         return (
           <>
             <div
-              className={` relative border-l-2 border-white  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+              className={` relative  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] '} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
-                backgroundColor:
-                  el.color != '' ? el.color : resolveColor(el.status),
+                background: createGradient(data, index),
               }}
             >
               <div
