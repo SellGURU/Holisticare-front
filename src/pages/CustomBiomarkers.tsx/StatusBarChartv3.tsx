@@ -37,10 +37,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     const sortedData = sortByRange(data);
     const currentItem = sortedData[index];
     const nextItem = sortedData[index + 1];
-    
+
     const currentColor = currentItem.color || resolveColor(currentItem.status);
-    const nextColor = nextItem ? (nextItem.color || resolveColor(nextItem.status)) : currentColor;
-    
+    const nextColor = nextItem
+      ? nextItem.color || resolveColor(nextItem.status)
+      : currentColor;
+
     return `linear-gradient(to right, ${currentColor}, ${nextColor})`;
   };
 
