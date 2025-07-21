@@ -64,14 +64,12 @@ const FileBox: React.FC<FileBoxProps> = ({
             isDeleted ? 'opacity-50' : ''
           }`}
         >
-          <div
-            className="text-[10px]  text-Text-Primary select-none "
-          
-          >
-            <TooltipTextAuto maxWidth='77px'>{el.file_name || el.file.name}</TooltipTextAuto>
-      
+          <div className="text-[10px]  text-Text-Primary select-none ">
+            <TooltipTextAuto maxWidth="77px">
+              {el.file_name || el.file.name}
+            </TooltipTextAuto>
           </div>
-      
+
           <div className="w-[70px] text-center">
             {formatDate(
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),

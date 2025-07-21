@@ -20,9 +20,9 @@ import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
-  isOpen?:boolean
+  isOpen?: boolean;
 }
-export const Questionary : React.FC<QuestionaryProps> = ({isOpen}) => {
+export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryAdd, setTryAdd] = useState(false);
@@ -110,7 +110,7 @@ export const Questionary : React.FC<QuestionaryProps> = ({isOpen}) => {
     }
   }, [isOpen, tryComplete, id]);
   console.log(isOpen);
-  
+
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
   //     ...prev,
@@ -470,7 +470,7 @@ export const Questionary : React.FC<QuestionaryProps> = ({isOpen}) => {
 
     return question.response && question.response !== '';
   };
-console.log(data);
+  console.log(data);
 
   return (
     <div className=" w-full">
@@ -801,11 +801,13 @@ console.log(data);
                             setTryComplete(true);
                           });
                         }}
-                        onAssign={(unique_id:string)=>{
-                          setData((prev:any) =>
-                            prev.map((el:any) =>
-                              el.unique_id === unique_id ? { ...el, assinged_to_client: true } : el
-                            )
+                        onAssign={(unique_id: string) => {
+                          setData((prev: any) =>
+                            prev.map((el: any) =>
+                              el.unique_id === unique_id
+                                ? { ...el, assinged_to_client: true }
+                                : el,
+                            ),
                           );
                         }}
                         el={el}

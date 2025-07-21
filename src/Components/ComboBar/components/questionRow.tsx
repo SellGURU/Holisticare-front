@@ -11,7 +11,7 @@ interface QuestionRowProps {
   id: string;
   deleteRow: () => void;
   onTryComplete: () => void;
-  onAssign:(id:string)=>void
+  onAssign: (id: string) => void;
   resolveForm: (
     type: string,
     questionsData: any,
@@ -24,7 +24,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   id,
   resolveForm,
   onTryComplete,
-  onAssign
+  onAssign,
   // deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
@@ -146,7 +146,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                           }).then(() => {
                             setisAssigned(true);
                             setshowModal(false);
-                            onAssign(el.unique_id)
+                            onAssign(el.unique_id);
                           });
                         }
                       }}
