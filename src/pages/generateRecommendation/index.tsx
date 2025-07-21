@@ -154,14 +154,15 @@ export const GenerateRecommendation = () => {
         setTratmentPlanData({ ...res.data, member_id: id });
         // setTreatmentId(res.data.treatment_id);
         setSuggestionsDefualt(res.data.suggestion_tab);
-      })
-      .finally(() => {
         setIsLoading(false);
       })
+      // .finally(() => {
+      //   setIsLoading(false);
+      // })
       .catch(() => {
         setTimeout(() => {
-          navigate(-1);
-        }, 1000);
+          generatePaln();
+        }, 15000);
       });
   };
   useEffect(() => {
