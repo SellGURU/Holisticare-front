@@ -65,7 +65,7 @@ const FileBox: React.FC<FileBoxProps> = ({
           }`}
         >
           <div className="text-[10px]  text-Text-Primary select-none ">
-            <TooltipTextAuto maxWidth="77px">
+            <TooltipTextAuto tooltipClassName='!bg-white !ml-8 !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]'  maxWidth="77px">
               {el.file_name || el.file.name}
             </TooltipTextAuto>
           </div>
