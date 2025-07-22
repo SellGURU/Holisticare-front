@@ -46,6 +46,8 @@ const Activity = () => {
       getActivityList();
     }
   }, [active]);
+  console.log(dataList);
+  
   return (
     <>
       {loading && (

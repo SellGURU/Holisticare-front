@@ -256,7 +256,6 @@ const RecentCheckIns = () => {
                     </div>
                     <div className={`${showSelect && 'rotate-180'}`}>
                       <SvgIcon
-                    
                         color="#888888"
                         src="/icons/arow-down-drop.svg"
                       />
@@ -415,8 +414,12 @@ const RecentCheckIns = () => {
                   <th className="py-2 pl-3  text-[10px] rounded-tl-2xl">
                     Client Name
                   </th>
-                  <th className="py-2 pl-2 text-[10px] w-[222px] text-center">Title</th>
-                  <th className="py-2 pl-2 text-[10px] w-[101px] text-center">Time</th>
+                  <th className="py-2 pl-2 text-[10px] w-[222px] text-center">
+                    Title
+                  </th>
+                  <th className="py-2 pl-2 text-[10px] w-[101px] text-center">
+                    Time
+                  </th>
                   <th className="py-2 pl-5 rounded-tr-2xl text-[10px]  ">
                     Status
                   </th>

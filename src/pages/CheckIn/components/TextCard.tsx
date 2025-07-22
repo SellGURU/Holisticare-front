@@ -18,7 +18,7 @@ const TextCard: React.FC<TextCardProps> = ({
 }) => {
   const [val, setVal] = useState(value);
   console.log(isPreview);
-  
+
   useEffect(() => {
     if (onChange && !isPreview) {
       onChange(val);

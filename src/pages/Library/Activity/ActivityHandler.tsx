@@ -82,7 +82,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
             <tbody className="border border-t-0 border-[#E9F0F2]">
               {data.map((exercise, index) => (
                 <ActivityRow
-                  key={exercise.Act_Id}
+                  key={index}
                   exercise={exercise}
                   index={index}
                   onDelete={() => {
