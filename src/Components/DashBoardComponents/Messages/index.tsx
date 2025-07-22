@@ -189,12 +189,14 @@ const MessageList: React.FC<MessageListProps> = ({
                               </Tooltip>
                             )}
                           </div>
-                          {expandedMessage === message.member_id && (
-                            <div className="text-[8px] text-Text-Secondary mt-1">
+                         
+                        </div>
+                        {expandedMessage !== message.member_id && (
+                              <div className={`text-[8px] text-Text-Secondary mt-1 ${ message.message === "No messages found" && 'invisible'}`}>
                               {message.Date}
                             </div>
                           )}
-                        </div>
+                      
                       </div>
                       <div
                         className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${

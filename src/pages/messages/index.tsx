@@ -10,7 +10,7 @@ const Messages = () => {
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
 
   return (
-    <div className="h-screen relative ">
+    <div   className="h-[calc(100%-41px)] relative ">
       <div className="w-full fixed md:static top-[40px] h-[67px] md:h-auto z-20 bg-bg-color left-0 right-0  flex justify-between items-center  mt-6 px-6 ">
         <div className="text-Text-Primary font-medium opacity-[87%]">
           Messages

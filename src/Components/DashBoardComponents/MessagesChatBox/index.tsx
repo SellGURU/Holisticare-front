@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 import Application from '../../../api/app';
-import SvgIcon from '../../../utils/svgIcon';
 import Circleloader from '../../CircleLoader';
 import InputMentions from './InputMentions';
 import MainModal from '../../MainModal';
@@ -267,7 +266,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                   ref={wrapperRef}
                 >
                   <div
-                    className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[10px] text-Text-Primary flex justify-between items-center"
+                    className="cursor-pointer bg-backgroundColor-Card border py-2 px-4 pr-3 rounded-2xl leading-tight text-[12px] text-Text-Primary flex justify-between items-center"
                     onClick={() => setIsOpen(!isOpen)}
                   >
                     {options.find((opt) => opt.value === aiMode)?.label}
@@ -281,7 +280,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                   </div>
 
                   {isOpen && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[10px] text-Text-Primary">
+                    <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-2xl shadow-sm text-[12px] text-Text-Primary">
                       {options.map((opt, index) => (
                         <li
                           key={index}
@@ -329,7 +328,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                             <div>
                               <div className="text-Text-Primary font-medium text-[12px]">
                                 {username}{' '}
-                                <span className="text-Text-Primary ml-1">
+                                <span className="text-[#888888] text-[12px] font-normal ml-1">
                                   {new Date(
                                     message.timestamp,
                                   ).toLocaleTimeString([], {
@@ -369,7 +368,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                           <div className="flex justify-end items-start gap-1">
                             <div className="flex flex-col items-end">
                               <div className="text-Text-Primary text-xs font-medium">
-                                <span className="text-Text-Primary mr-1">
+                                <span className="text-[#888888] text-[12px] font-normal mr-1">
                                   {new Date(
                                     message.timestamp,
                                   ).toLocaleTimeString([], {
@@ -399,12 +398,13 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                     <MoonLoader color="#383838" size={12} />
                                   </span>
                                 ) : (
-                                  <span>
-                                    <SvgIcon
-                                      src="./icons/tick-green.svg"
-                                      color="#8a8a8a"
-                                    />
-                                  </span>
+                                  null
+                                  // <span>
+                                  //   <SvgIcon
+                                  //     src="./icons/tick-green.svg"
+                                  //     color="#8a8a8a"
+                                  //   />
+                                  // </span>
                                 )}
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
@@ -521,12 +521,13 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                     <MoonLoader color="#383838" size={12} />
                                   </span>
                                 ) : (
-                                  <span>
-                                    <SvgIcon
-                                      src="./icons/tick-green.svg"
-                                      color="#8a8a8a"
-                                    />
-                                  </span>
+                                  null
+                                  // <span>
+                                  //   <SvgIcon
+                                  //     src="./icons/tick-green.svg"
+                                  //     color="#8a8a8a"
+                                  //   />
+                                  // </span>
                                 )}
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
@@ -555,14 +556,14 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                   <img src="/icons/empty-messages.svg" alt="" />
                   {username
                     ? 'No messages found.'
-                    : 'No items have been selected to display the chat.'}
+                    : 'No messages found.'}
                 </div>
               ) : (
                 ''
               )}
             </div>
             {username && !aiMode ? (
-              <div className="px-2">
+              <div className="px-2 w-full flex justify-center ">
                 <InputMentions
                   // onUpload={handleUpload}
                   // handleDeleteImage={handleDeleteImage}
