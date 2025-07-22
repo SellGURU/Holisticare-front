@@ -61,6 +61,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     undefined,
   );
   const [showYouTubeValidation, setShowYouTubeValidation] = useState(false);
+  const isValidYouTubeUrl = (url: string) => {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
+    return youtubeRegex.test(url);
+  };
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -91,16 +96,35 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
     // Validate YouTube link
-    if (!isYouTubeLinkValid && youTubeLink.trim() !== '') {
+    if (!isYouTubeLinkValid && youTubeLink.trim() === '' && !hasFile) {
       setYouTubeError('Please enter a valid YouTube link.');
       setShowYouTubeValidation(true);
+      if (!hasFile && !isYouTubeLinkValid) {
+        setFileError('At least one of these fields is required.');
+        setShowFileValidation(true);
+        return;
+      }
       return;
+    } else {
+      setYouTubeError(undefined);
+      setShowYouTubeValidation(false);
     }
 
     // Validate file or YouTube link presence
     if (!hasFile && !isYouTubeLinkValid) {
       setFileError('At least one of these fields is required.');
       setShowFileValidation(true);
+      return;
+    } else {
+      setFileError(undefined);
+      setShowFileValidation(false);
+    }
+
+    if (
+      formik.values.title.trim() === '' ||
+      formik.values.instruction.trim() === '' ||
+      formik.values.score === 0
+    ) {
       return;
     }
 
@@ -227,6 +251,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           },
         ]);
         setUploadProgress(100);
+        setYouTubeError(undefined);
+        setShowYouTubeValidation(false);
       } catch (error) {
         console.error('Error uploading file:', error);
         setUploadProgress(0);
@@ -255,11 +281,18 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileUploaded(false);
   };
   const handleYouTubeLinkChange = (link: string) => {
+    setShowYouTubeValidation(true);
+    if (!isValidYouTubeUrl(link)) {
+      setYouTubeError('Please enter a valid YouTube link.');
+    } else {
+      setYouTubeError(undefined);
+      setShowYouTubeValidation(false);
+    }
     setYouTubeLink(link);
     // Clear any error if the link is valid
-    if (showYouTubeValidation) {
-      setYouTubeError(undefined);
-    }
+    // if (showYouTubeValidation) {
+    //   setYouTubeError(undefined);
+    // }
     if (isValidYouTubeUrl(link)) {
       setFileError(undefined);
     }
@@ -269,6 +302,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     formik.resetForm();
     setShowValidation(false);
     setShowFileValidation(false);
+    setShowYouTubeValidation(false);
     setFileError(undefined);
     setTitle(exercise.Title || '');
     // setDescription(exercise.Description || '');
@@ -304,9 +338,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     },
     validationSchema,
     validateOnMount: true,
-    onSubmit: () => {
-      // Handle submit
-    },
+    onSubmit: () => {},
   });
   const [fileError, setFileError] = useState<string | undefined>(undefined);
   const [showFileValidation, setShowFileValidation] = useState(false);
@@ -320,12 +352,6 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setInstruction(formik.values.instruction);
     setScore(formik.values.score);
   }, [formik.values]);
-
-  const isValidYouTubeUrl = (url: string) => {
-    const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
-    return youtubeRegex.test(url);
-  };
   return (
     <MainModal
       isOpen={isOpen}
