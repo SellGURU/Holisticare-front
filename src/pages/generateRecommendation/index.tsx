@@ -62,14 +62,14 @@ export const GenerateRecommendation = () => {
       data?.client_insight &&
       data.client_insight.length > 0 &&
       data?.biomarker_insight &&
-      data.biomarker_insight.length > 0 && 
+      data.biomarker_insight.length > 0 &&
       data?.completion_suggestion &&
-      data.completion_suggestion.length > 0 && 
+      data.completion_suggestion.length > 0 &&
       data?.looking_forwards &&
-      data.looking_forwards.length > 0 
+      data.looking_forwards.length > 0
     );
   };
-  
+
   const hasSuggestionsData = (data: any) => {
     return data?.suggestion_tab && data.suggestion_tab.length > 0;
   };
@@ -97,7 +97,9 @@ export const GenerateRecommendation = () => {
           setSuggestionsDefualt(data.suggestion_tab);
           // If we are specifically waiting for suggestion_tab for Step 2
           if (retryForSuggestions && !suggestionsDataReady) {
-            console.log('Suggestion tab data missing, retrying in 15 seconds...');
+            console.log(
+              'Suggestion tab data missing, retrying in 15 seconds...',
+            );
             setTimeout(() => generatePaln(true), 15000);
           } else {
             setIsLoading(false); // Hide full page loader
@@ -109,9 +111,8 @@ export const GenerateRecommendation = () => {
         }
       })
       .catch(() => {
-
-          setTimeout(() => generatePaln(retryForSuggestions), 15000); // Pass the retryForSuggestions flag
-        });
+        setTimeout(() => generatePaln(retryForSuggestions), 15000); // Pass the retryForSuggestions flag
+      });
   };
 
   useEffect(() => {
@@ -123,7 +124,9 @@ export const GenerateRecommendation = () => {
       // Check if suggestion_tab is empty when moving from General Condition to Set Orders
       if (treatmentPlanData && !hasSuggestionsData(treatmentPlanData)) {
         setisButtonLoading(true); // Show loading on the button
-        console.log('suggestion_tab is empty for Step 2. Re-generating plan...');
+        console.log(
+          'suggestion_tab is empty for Step 2. Re-generating plan...',
+        );
         generatePaln(true); // Call generatePaln specifically to get suggestion_tab data
         return; // Prevent proceeding to the next step immediately
       }
@@ -235,7 +238,9 @@ export const GenerateRecommendation = () => {
   }, []);
 
   // Determine if tab navigation should be disabled
-  const disableTabNavigation = currentStepIndex < 1 && !(treatmentPlanData && hasSuggestionsData(treatmentPlanData));
+  const disableTabNavigation =
+    currentStepIndex < 1 &&
+    !(treatmentPlanData && hasSuggestionsData(treatmentPlanData));
 
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
