@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import MainModal from '../../MainModal';
 import RangeCardLibraryThreePages from './RangeCard';
 import { Tooltip } from 'react-tooltip';
+import SpinnerLoader from '../../SpinnerLoader';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -11,6 +12,11 @@ interface AddModalLibraryTreePagesProps {
   onSubmit: (value: any) => void;
   selectedRow: any;
   setSelectedRow: () => void;
+  error: string | null;
+  handleError: (error: string | null) => void;
+  loadingCall: boolean;
+  clearData: boolean;
+  handleClearData: (value: boolean) => void;
 }
 
 const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
@@ -20,6 +26,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   onSubmit,
   selectedRow,
   setSelectedRow,
+  error,
+  handleError,
+  loadingCall,
+  clearData,
+  handleClearData,
 }) => {
   const [addData, setAddData] = useState({
     title: '',
@@ -105,7 +116,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
-      clear();
     } else if (pageType === 'Lifestyle') {
       const data: any = {
         Title: addData.title,
@@ -117,7 +127,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
-      clear();
     } else {
       const data: any = {
         Title: addData.title,
@@ -132,7 +141,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         Ai_note: addData.clinical_guidance,
       };
       onSubmit(data);
-      clear();
     }
   };
   const clear = () => {
@@ -208,6 +216,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     );
   };
   const [showValidation, setShowValidation] = useState(false);
+  useEffect(() => {
+    if (clearData === true) {
+      clear();
+      handleClearData(false);
+    }
+  }, [clearData]);
   return (
     <MainModal
       isOpen={addShowModal}
@@ -215,6 +229,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         handleCloseModal();
         clear();
         setSelectedRow();
+        handleClearData(false);
       }}
     >
       <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px]   sm:w-[500px] rounded-[16px] p-6">
@@ -399,45 +414,30 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               </div>
               <div className="flex w-full gap-3">
                 <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Enter Value..."
                   value={value}
-                  type="text"
                   onChange={(e) => {
+                    handleError(null);
                     const value = e.target.value;
-                    // Only allow positive integers
                     if (/^\d*$/.test(value)) {
                       setValue(value === '' ? '' : value);
-                      if (value) {
-                        setErrors((prev) => ({ ...prev, value: false }));
-                      } else {
-                        setErrors((prev) => ({ ...prev, value: true }));
-                      }
+                      setErrors((prev) => ({
+                        ...prev,
+                        value: value === '' ? true : false,
+                      }));
                     }
                   }}
-                  onKeyDown={(e) => {
-                    // Allow navigation keys
-                    if (
-                      e.key === 'ArrowUp' ||
-                      e.key === 'ArrowDown' ||
-                      e.key === 'ArrowLeft' ||
-                      e.key === 'ArrowRight' ||
-                      e.key === 'Tab' ||
-                      e.key === 'Enter'
-                    ) {
-                      return;
-                    }
-                    // Allow numbers, backspace, delete
-                    if (
-                      !/[\d\b]/.test(e.key) &&
-                      e.key !== 'Backspace' &&
-                      e.key !== 'Delete' &&
-                      e.key !== 'Tab'
-                    ) {
+                  onPaste={(e) => {
+                    const pastedData = e.clipboardData.getData('text');
+                    if (!/^\d+$/.test(pastedData)) {
                       e.preventDefault();
                     }
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value ? 'border-Red' : 'border-Gray-50'
+                    errors.value || error ? 'border-Red' : 'border-Gray-50'
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
@@ -460,6 +460,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
+              {error && <div className="text-Red text-[10px]">{error}</div>}
             </div>
           )}
 
@@ -483,50 +484,31 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     </div>
                     <input
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       placeholder="Carbohydrates"
                       value={totalMacros.Carbs}
                       onChange={(e) => {
+                        handleError(null);
                         const value = e.target.value;
-                        // Only allow positive integers
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros('Carbs', value === '' ? '' : value);
-                          if (value) {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Carbs: false },
-                            }));
-                          } else {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Carbs: true },
-                            }));
-                          }
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Carbs: value === '' },
+                          }));
                         }
                       }}
-                      onKeyDown={(e) => {
-                        // Allow navigation keys
-                        if (
-                          e.key === 'ArrowUp' ||
-                          e.key === 'ArrowDown' ||
-                          e.key === 'ArrowLeft' ||
-                          e.key === 'ArrowRight' ||
-                          e.key === 'Tab' ||
-                          e.key === 'Enter'
-                        ) {
-                          return;
-                        }
-                        // Allow numbers, backspace, delete
-                        if (
-                          !/[\d\b]/.test(e.key) &&
-                          e.key !== 'Backspace' &&
-                          e.key !== 'Delete' &&
-                          e.key !== 'Tab'
-                        ) {
+                      onPaste={(e) => {
+                        const pastedData = e.clipboardData.getData('text');
+                        if (!/^\d+$/.test(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs ? 'border-Red' : 'border-Gray-50'
+                        errors.macros.Carbs || error
+                          ? 'border-Red'
+                          : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
@@ -543,53 +525,34 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     </div>
                     <input
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       placeholder="Proteins"
                       value={totalMacros.Protein}
                       onChange={(e) => {
+                        handleError(null);
                         const value = e.target.value;
-                        // Only allow positive integers
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros(
                             'Protein',
                             value === '' ? '' : value,
                           );
-                          if (value) {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Protein: false },
-                            }));
-                          } else {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Protein: true },
-                            }));
-                          }
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Protein: value === '' },
+                          }));
                         }
                       }}
-                      onKeyDown={(e) => {
-                        // Allow navigation keys
-                        if (
-                          e.key === 'ArrowUp' ||
-                          e.key === 'ArrowDown' ||
-                          e.key === 'ArrowLeft' ||
-                          e.key === 'ArrowRight' ||
-                          e.key === 'Tab' ||
-                          e.key === 'Enter'
-                        ) {
-                          return;
-                        }
-                        // Allow numbers, backspace, delete
-                        if (
-                          !/[\d\b]/.test(e.key) &&
-                          e.key !== 'Backspace' &&
-                          e.key !== 'Delete' &&
-                          e.key !== 'Tab'
-                        ) {
+                      onPaste={(e) => {
+                        const pastedData = e.clipboardData.getData('text');
+                        if (!/^\d+$/.test(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Protein ? 'border-Red' : 'border-Gray-50'
+                        errors.macros.Protein || error
+                          ? 'border-Red'
+                          : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
@@ -606,50 +569,31 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     </div>
                     <input
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       placeholder="Fats"
                       value={totalMacros.Fats}
                       onChange={(e) => {
+                        handleError(null);
                         const value = e.target.value;
-                        // Only allow positive integers
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros('Fats', value === '' ? '' : value);
-                          if (value) {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Fats: false },
-                            }));
-                          } else {
-                            setErrors((prev) => ({
-                              ...prev,
-                              macros: { ...prev.macros, Fats: true },
-                            }));
-                          }
+                          setErrors((prev) => ({
+                            ...prev,
+                            macros: { ...prev.macros, Fats: value === '' },
+                          }));
                         }
                       }}
-                      onKeyDown={(e) => {
-                        // Allow navigation keys
-                        if (
-                          e.key === 'ArrowUp' ||
-                          e.key === 'ArrowDown' ||
-                          e.key === 'ArrowLeft' ||
-                          e.key === 'ArrowRight' ||
-                          e.key === 'Tab' ||
-                          e.key === 'Enter'
-                        ) {
-                          return;
-                        }
-                        // Allow numbers, backspace, delete
-                        if (
-                          !/[\d\b]/.test(e.key) &&
-                          e.key !== 'Backspace' &&
-                          e.key !== 'Delete' &&
-                          e.key !== 'Tab'
-                        ) {
+                      onPaste={(e) => {
+                        const pastedData = e.clipboardData.getData('text');
+                        if (!/^\d+$/.test(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Fats ? 'border-Red' : 'border-Gray-50'
+                        errors.macros.Fats || error
+                          ? 'border-Red'
+                          : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
@@ -662,6 +606,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     These fields are required.
                   </div>
                 )}
+                {error && <div className="text-Red text-[10px]">{error}</div>}
               </div>
             </div>
           )}
@@ -709,11 +654,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 setShowValidation(true);
                 if (validateFields()) {
                   submit();
-                  clear();
                 }
               }}
             >
-              {selectedRow ? 'Update' : 'Add'}
+              {!loadingCall ? (
+                selectedRow ? (
+                  'Update'
+                ) : (
+                  'Add'
+                )
+              ) : (
+                <SpinnerLoader color="#005F73" />
+              )}
             </div>
           </div>
         </div>
