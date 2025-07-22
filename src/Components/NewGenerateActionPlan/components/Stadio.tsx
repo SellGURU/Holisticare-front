@@ -646,7 +646,7 @@ const Stadio: FC<StadioProps> = ({
         </div>
         <div className="w-[342px] h-full">
           <div
-            className={`w-[342px] sticky top-[190px] p-4 ${haveConflic ? 'min-h-[639px]' : ' min-h-[534px]'} bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-[342px] sticky top-[190px]  p-4  h-[534px] bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
@@ -675,7 +675,7 @@ const Stadio: FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full min-h-[410px]">
+              <div className="w-full h-[410px] overflow-auto ">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (
