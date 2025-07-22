@@ -9,6 +9,7 @@ import { Dropdown } from '../../Components/DropDown';
 import Checkin from '../CheckIn';
 import DashboardApi from '../../api/Dashboard';
 import { Tooltip } from 'react-tooltip';
+import SvgIcon from '../../utils/svgIcon';
 
 type CheckIn = {
   name: string;
@@ -220,7 +221,7 @@ const RecentCheckIns = () => {
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
             <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-              <Checkin upData={Questions}></Checkin>
+              <Checkin isPreview upData={Questions}></Checkin>
               {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
@@ -240,7 +241,7 @@ const RecentCheckIns = () => {
             >
               {showComparisonSelect && (
                 <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
-                  <label className="mb-1">Select Check-In</label>
+                  <label className="mb-1">Completed Check-In Forms</label>
                   <div
                     ref={selectButRef}
                     onClick={() => setShowSelect(!showSelect)}
@@ -248,21 +249,27 @@ const RecentCheckIns = () => {
                       showSelect && 'rounded-b-none'
                     } rounded-[16px] border border-[#E9EDF5]`}
                   >
-                    <div className="text-[12px] text-[#383838]">
-                      {CompareCheckIn || 'Choose one'}
+                    <div
+                      className={`text-[12px] ${CompareCheckIn ? 'text-[#383838]' : 'text-[#B0B0B0] font-light'} `}
+                    >
+                      {CompareCheckIn || 'Select Check-in'}
                     </div>
-                    <div>
-                      <img
+                    <div className={`${showSelect && 'rotate-180'}`}>
+                      <SvgIcon
+                        color="#888888"
+                        src="/icons/arow-down-drop.svg"
+                      />
+                      {/* <img
                         className={`${showSelect && 'rotate-180'}`}
                         src="/icons/arow-down-drop.svg"
                         alt=""
-                      />
+                      /> */}
                     </div>
                   </div>
                   {showSelect && (
                     <div
                       ref={selectRef}
-                      className="w-full z-20 shadow-200 p-2 rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[47px]"
+                      className={`w-full z-20 shadow-200 ${CompareCheckinsList.length > 0 && 'p-2'}  rounded-[16px] rounded-t-none absolute bg-white border border-[#E9EDF5] top-[47px]`}
                     >
                       {CompareCheckinsList.map((checkIn) => (
                         <div
@@ -290,7 +297,7 @@ const RecentCheckIns = () => {
                 </div>
               )}
               {showComparisonSurvey && CompareQuestions && (
-                <Checkin upData={CompareQuestions}></Checkin>
+                <Checkin isPreview upData={CompareQuestions}></Checkin>
 
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}
@@ -407,8 +414,12 @@ const RecentCheckIns = () => {
                   <th className="py-2 pl-3  text-[10px] rounded-tl-2xl">
                     Client Name
                   </th>
-                  <th className="py-2 pl-2 text-[10px]">Title</th>
-                  <th className="py-2 pl-2 text-[10px]">Time</th>
+                  <th className="py-2 pl-2 text-[10px] w-[222px] text-center">
+                    Title
+                  </th>
+                  <th className="py-2 pl-2 text-[10px] w-[101px] text-center">
+                    Time
+                  </th>
                   <th className="py-2 pl-5 rounded-tr-2xl text-[10px]  ">
                     Status
                   </th>
@@ -420,7 +431,7 @@ const RecentCheckIns = () => {
                     key={index}
                     className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b`}
                   >
-                    <td className="py-2 pl-3 flex items-center text-[10px] text-Text-Primary max-w-[120px]">
+                    <td className="py-2 px-2 w-[120px] text-nowrap flex justify-start items-center text-[10px] text-Text-Primary ">
                       <img
                         src={`https://ui-avatars.com/api/?name=${checkIn.name}`}
                         alt={checkIn.name}
@@ -438,15 +449,15 @@ const RecentCheckIns = () => {
                         </Tooltip>
                       )}
                     </td>
-                    <td className="py-2 text-Text-Secondary text-[10px]">
+                    <td className="py-2 text-Text-Secondary text-[10px] w-[222px] text-center">
                       {checkIn.Type}
                     </td>
-                    <td className="py-2 text-Text-Secondary text-[10px]">
+                    <td className="py-2 text-Text-Secondary w-[101px] text-center text-[10px]">
                       {checkIn.Time}
                     </td>
                     <td
                       onClick={() => handleCheckInClick(checkIn)}
-                      className="py-2"
+                      className="py-2 w-[58px]"
                     >
                       <span
                         className={`text-[10px]  w-[75px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${

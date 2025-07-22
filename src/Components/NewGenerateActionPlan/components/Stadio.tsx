@@ -569,7 +569,7 @@ const Stadio: FC<StadioProps> = ({
             </div>
           </div>
           <div
-            className={`w-full h-[494px] bg-white pt-2 pr-1 rounded-[24px] border border-gray-50 shadow-100 ${
+            className={`w-full min-h-[494px] bg-white pt-2 pr-1 rounded-[24px] border border-gray-50 shadow-100 ${
               actions.checkIn.length == 0 && actions.category.length == 0 && ''
             }`}
             onDragOver={handleDragOver}
@@ -577,7 +577,7 @@ const Stadio: FC<StadioProps> = ({
             onDrop={handleDrop}
           >
             {actions.checkIn.length == 0 && actions.category.length == 0 ? (
-              <div className="flex flex-col items-center justify-center w-full h-[450px]">
+              <div className="flex flex-col items-center justify-center w-full min-h-[450px]">
                 <img
                   src="/icons/document-text.svg"
                   alt=""
@@ -608,7 +608,7 @@ const Stadio: FC<StadioProps> = ({
               </div>
             ) : (
               <>
-                <div className="flex flex-col gap-3 py-3 min-h-[420px] h-[95%] overflow-auto">
+                <div className="flex flex-col gap-3 py-3 min-h-[420px] ">
                   {actions.checkIn.map((act: any, index: number) => {
                     return (
                       <>
@@ -646,7 +646,7 @@ const Stadio: FC<StadioProps> = ({
         </div>
         <div className="w-[342px] h-full">
           <div
-            className={`w-[342px] sticky top-[190px] p-4 ${haveConflic ? 'h-[639px]' : ' h-[534px]'} bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-[342px] sticky top-[190px]  p-4  h-[534px] bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
@@ -675,7 +675,7 @@ const Stadio: FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[410px] overflow-y-auto">
+              <div className="w-full h-[410px] overflow-auto ">
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (
