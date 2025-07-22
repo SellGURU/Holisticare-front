@@ -348,7 +348,9 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
         {Description !== '' && (
           <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary font-medium">
             <div className="text-sm font-medium">State</div>
-            <p className="text-xs text-justify my-2 font-normal">{Description}</p>
+            <p className="text-xs text-justify my-2 font-normal">
+              {Description}
+            </p>
             {/* <p className="text-xs text-justify ">{recommendation}</p> */}
             {reference && (
               <a className="text-xs text-[#55B0FF]" href="">

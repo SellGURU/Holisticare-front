@@ -151,14 +151,30 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
-        setTratmentPlanData({ ...res.data, member_id: id });
-        // setTreatmentId(res.data.treatment_id);
-        setSuggestionsDefualt(res.data.suggestion_tab);
-        setIsLoading(false);
+        const data = res.data;
+        // Check if the required fields exist and have data
+        const hasRequiredData =
+          data?.client_insight &&
+          Object.keys(data.client_insight).length > 0 && // Check if object is not empty
+          data?.biomarker_insight &&
+          Object.keys(data.biomarker_insight).length > 0 && // Check if object is not empty
+          data?.completion_suggestion &&
+          data.completion_suggestion.length > 0 && // Check if array is not empty
+          data?.looking_forwards &&
+          Object.keys(data.looking_forwards).length > 0; // Check if object is not empty
+
+        if (hasRequiredData) {
+          setTratmentPlanData({ ...data, member_id: id });
+          setSuggestionsDefualt(data.suggestion_tab);
+          setIsLoading(false);
+        } else {
+          // If data is missing, stick to loading and retry after 15 seconds
+          console.log('Missing required data, retrying in 15 seconds...');
+          setTimeout(() => {
+            generatePaln();
+          }, 15000);
+        }
       })
-      // .finally(() => {
-      //   setIsLoading(false);
-      // })
       .catch(() => {
         setTimeout(() => {
           generatePaln();

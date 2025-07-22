@@ -393,17 +393,18 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                 })}
                               </div>
                               <div className="flex items-end ml-1">
-                                {message.isSending ? (
-                                  <span>
-                                    <MoonLoader color="#383838" size={12} />
-                                  </span>
-                                ) : null
-                                // <span>
-                                //   <SvgIcon
-                                //     src="./icons/tick-green.svg"
-                                //     color="#8a8a8a"
-                                //   />
-                                // </span>
+                                {
+                                  message.isSending ? (
+                                    <span>
+                                      <MoonLoader color="#383838" size={12} />
+                                    </span>
+                                  ) : null
+                                  // <span>
+                                  //   <SvgIcon
+                                  //     src="./icons/tick-green.svg"
+                                  //     color="#8a8a8a"
+                                  //   />
+                                  // </span>
                                 }
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
@@ -515,17 +516,18 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                 })}
                               </div>
                               <div className="flex items-end ml-1">
-                                {message.isSending ? (
-                                  <span>
-                                    <MoonLoader color="#383838" size={12} />
-                                  </span>
-                                ) : null
-                                // <span>
-                                //   <SvgIcon
-                                //     src="./icons/tick-green.svg"
-                                //     color="#8a8a8a"
-                                //   />
-                                // </span>
+                                {
+                                  message.isSending ? (
+                                    <span>
+                                      <MoonLoader color="#383838" size={12} />
+                                    </span>
+                                  ) : null
+                                  // <span>
+                                  //   <SvgIcon
+                                  //     src="./icons/tick-green.svg"
+                                  //     color="#8a8a8a"
+                                  //   />
+                                  // </span>
                                 }
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
