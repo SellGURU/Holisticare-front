@@ -121,20 +121,34 @@ const UploadTest: React.FC<UploadTestProps> = ({
         );
       })
       .catch((err) => {
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  status: 'error',
-                  errorMessage:
-                    err?.response?.data?.message ||
-                    err?.detail ||
-                    'Failed to upload file to backend. Please try again.',
-                }
-              : f,
-          ),
-        );
+        if (err.status == 500) {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    status: 'completed',
+                    // errorMessage: 'File already exists.',
+                  }
+                : f,
+            ),
+          );
+        } else {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    status: 'error',
+                    errorMessage:
+                      err?.response?.data?.message ||
+                      err?.detail ||
+                      'Failed to upload file. Please try again.',
+                  }
+                : f,
+            ),
+          );
+        }
       });
   };
 
