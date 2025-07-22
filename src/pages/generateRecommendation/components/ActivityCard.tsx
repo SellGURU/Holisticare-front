@@ -92,10 +92,12 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                style={{ backgroundColor: bgColor }}
               >
                 <div
-                  className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                  className={`size-[8px] select-none rounded-full`}
+                  style={{ backgroundColor: color }}
                 ></div>
                 {item?.label || '-'}
               </div>
