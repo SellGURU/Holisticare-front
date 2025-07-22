@@ -98,10 +98,12 @@ const StatusBarChartPrintV2 = ({
     el: any,
     status: any,
     values: any,
-    data: any
+    data: any,
   ): 'unique' | 'inRange' | 'none' => {
     if (!status || !data) return 'none';
-    const sameStatusRanges = sortByRange(data).filter((item: any) => item.status === status?.[0]);
+    const sameStatusRanges = sortByRange(data).filter(
+      (item: any) => item.status === status?.[0],
+    );
     if (sameStatusRanges.length === 1) {
       if (status[0] == el.status) return 'unique';
       return 'none';
@@ -168,7 +170,12 @@ const StatusBarChartPrintV2 = ({
               </div>
 
               {(() => {
-                const markerMode = getStatusMarkerMode(el, status, values, data);
+                const markerMode = getStatusMarkerMode(
+                  el,
+                  status,
+                  values,
+                  data,
+                );
                 if (markerMode === 'unique' || markerMode === 'inRange') {
                   return (
                     <div
@@ -179,7 +186,10 @@ const StatusBarChartPrintV2 = ({
                       }}
                     >
                       <div
-                        style={{ backgroundColor: '#005f73', borderRadius: '100%' }}
+                        style={{
+                          backgroundColor: '#005f73',
+                          borderRadius: '100%',
+                        }}
                         className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"
                       ></div>
                       <div

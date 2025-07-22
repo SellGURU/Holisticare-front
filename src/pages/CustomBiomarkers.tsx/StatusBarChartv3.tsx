@@ -103,10 +103,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     el: any,
     status: any,
     values: any,
-    data: any
+    data: any,
   ): 'unique' | 'inRange' | 'none' => {
     if (!status || !data) return 'none';
-    const sameStatusRanges = sortByRange(data).filter((item: any) => item.status === status?.[0]);
+    const sameStatusRanges = sortByRange(data).filter(
+      (item: any) => item.status === status?.[0],
+    );
     if (sameStatusRanges.length === 1) {
       if (status[0] == el.status) return 'unique';
       return 'none';
@@ -149,7 +151,12 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                 {el.label != '' && <>)</>}
               </div>
               {(() => {
-                const markerMode = getStatusMarkerMode(el, status, values, data);
+                const markerMode = getStatusMarkerMode(
+                  el,
+                  status,
+                  values,
+                  data,
+                );
                 if (markerMode === 'unique' || markerMode === 'inRange') {
                   return (
                     <div
