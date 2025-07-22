@@ -414,45 +414,30 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               </div>
               <div className="flex w-full gap-3">
                 <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Enter Value..."
                   value={value}
-                  type="text"
                   onChange={(e) => {
+                    handleError(null);
                     const value = e.target.value;
-                    // Only allow positive integers
                     if (/^\d*$/.test(value)) {
                       setValue(value === '' ? '' : value);
-                      if (value) {
-                        setErrors((prev) => ({ ...prev, value: false }));
-                      } else {
-                        setErrors((prev) => ({ ...prev, value: true }));
-                      }
+                      setErrors((prev) => ({
+                        ...prev,
+                        value: value === '' ? true : false,
+                      }));
                     }
                   }}
-                  onKeyDown={(e) => {
-                    // Allow navigation keys
-                    if (
-                      e.key === 'ArrowUp' ||
-                      e.key === 'ArrowDown' ||
-                      e.key === 'ArrowLeft' ||
-                      e.key === 'ArrowRight' ||
-                      e.key === 'Tab' ||
-                      e.key === 'Enter'
-                    ) {
-                      return;
-                    }
-                    // Allow numbers, backspace, delete
-                    if (
-                      !/[\d\b]/.test(e.key) &&
-                      e.key !== 'Backspace' &&
-                      e.key !== 'Delete' &&
-                      e.key !== 'Tab'
-                    ) {
+                  onPaste={(e) => {
+                    const pastedData = e.clipboardData.getData('text');
+                    if (!/^\d+$/.test(pastedData)) {
                       e.preventDefault();
                     }
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value ? 'border-Red' : 'border-Gray-50'
+                    errors.value || error ? 'border-Red' : 'border-Gray-50'
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
@@ -475,6 +460,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
+              {error && <div className="text-Red text-[10px]">{error}</div>}
             </div>
           )}
 
