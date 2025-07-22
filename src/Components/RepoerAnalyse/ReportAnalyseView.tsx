@@ -542,7 +542,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="hidden md:block">
                       {' '}
-                      <InfoToltip />
+                      <InfoToltip isShare={isShare} />
                     </div>
                   </div>
                   <div
