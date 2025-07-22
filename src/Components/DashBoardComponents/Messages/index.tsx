@@ -151,7 +151,7 @@ const MessageList: React.FC<MessageListProps> = ({
                       );
                     }
                   }}
-                  className={`pt-2 mb-2 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
+                  className={`py-2 mb- cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
                 >
                   <div className="flex justify-start">
                     <div
@@ -189,14 +189,14 @@ const MessageList: React.FC<MessageListProps> = ({
                               </Tooltip>
                             )}
                           </div>
-                         
                         </div>
                         {expandedMessage !== message.member_id && (
-                              <div className={`text-[8px] text-Text-Secondary mt-1 ${ message.message === "No messages found" && 'invisible'}`}>
-                              {message.Date}
-                            </div>
-                          )}
-                      
+                          <div
+                            className={`text-[8px] text-Text-Secondary mt-1 ${message.message === 'No messages found' && 'invisible'}`}
+                          >
+                            {message.Date}
+                          </div>
+                        )}
                       </div>
                       <div
                         className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${

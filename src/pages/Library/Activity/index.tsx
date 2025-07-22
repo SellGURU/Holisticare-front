@@ -47,7 +47,7 @@ const Activity = () => {
     }
   }, [active]);
   console.log(dataList);
-  
+
   return (
     <>
       {loading && (

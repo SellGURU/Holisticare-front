@@ -397,15 +397,14 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                   <span>
                                     <MoonLoader color="#383838" size={12} />
                                   </span>
-                                ) : (
-                                  null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                )}
+                                ) : null
+                                // <span>
+                                //   <SvgIcon
+                                //     src="./icons/tick-green.svg"
+                                //     color="#8a8a8a"
+                                //   />
+                                // </span>
+                                }
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
                                   className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
@@ -520,15 +519,14 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
                                   <span>
                                     <MoonLoader color="#383838" size={12} />
                                   </span>
-                                ) : (
-                                  null
-                                  // <span>
-                                  //   <SvgIcon
-                                  //     src="./icons/tick-green.svg"
-                                  //     color="#8a8a8a"
-                                  //   />
-                                  // </span>
-                                )}
+                                ) : null
+                                // <span>
+                                //   <SvgIcon
+                                //     src="./icons/tick-green.svg"
+                                //     color="#8a8a8a"
+                                //   />
+                                // </span>
+                                }
                                 <div
                                   style={{ overflowWrap: 'anywhere' }}
                                   className="max-w-[500px] bg-[#E9F0F2] border border-[#E2F1F8] px-4 py-2 text-justify mt-1  text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none "
@@ -554,9 +552,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack }) => {
               (aiMode === true && aiMessages.length === 0) ? (
                 <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
                   <img src="/icons/empty-messages.svg" alt="" />
-                  {username
-                    ? 'No messages found.'
-                    : 'No messages found.'}
+                  {username ? 'No messages found.' : 'No messages found.'}
                 </div>
               ) : (
                 ''
