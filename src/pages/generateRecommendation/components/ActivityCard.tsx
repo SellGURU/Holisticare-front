@@ -26,7 +26,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const [bgColor, setBgColor] = useState<string>('');
 
   useEffect(() => {
-    switch (item.Category) {
+    switch (item?.label) {
       case 'Highly Recommended':
         setColor('#06C78D');
         setBgColor('#DEF7EC');
@@ -48,7 +48,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         setBgColor('#DEF7EC');
         break;
     }
-  }, [item.Category]);
+  }, [item?.label]);
 
   return (
     <>
@@ -97,7 +97,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <div
                   className={`size-[8px] select-none bg-[${color}] rounded-full`}
                 ></div>
-                {item.Category || '-'}
+                {item?.label || '-'}
               </div>
               {/* <div
                 data-tooltip-id="system-score"
