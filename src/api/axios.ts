@@ -36,17 +36,21 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
+    // console.log(error);
     if (
       (error.response?.status == 401 &&
         !window.location.href.includes('/login') &&
         !window.location.href.includes('/register') &&
         !window.location.href.includes('/share') &&
         !window.location.href.includes('/forgetPassword')) ||
-      error.response.data.detail == 'Invalid token.'
+      error.response?.data?.detail == 'Invalid token.'
     ) {
       localStorage.clear();
       window.location.reload();
     }
+    if(error.code == 'ERR_NETWORK'){
+      return Promise.reject(error.message);
+    } 
     if (error.response.data.detail && error.response.status != 406) {
       if (
         error.response.data.detail &&

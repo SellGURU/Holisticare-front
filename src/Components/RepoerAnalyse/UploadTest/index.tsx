@@ -122,19 +122,19 @@ const UploadTest: React.FC<UploadTestProps> = ({
       })
       .catch((err) => {
         // console.log('err', err);
-        // if (err.response.status == 504) {
-        //   setUploadedFiles((prev) =>
-        //     prev.map((f) =>
-        //       f.file === file
-        //         ? {
-        //             ...f,
-        //             status: 'completed',
-        //             // errorMessage: 'File already exists.',
-        //           }
-        //         : f,
-        //     ),
-        //   );
-        // } else {
+        if (err == 'Network Error') {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    status: 'completed',
+                    // errorMessage: 'File already exists.',
+                  }
+                : f,
+            ),
+          );
+        } else {
         setUploadedFiles((prev) =>
           prev.map((f) =>
             f.file === file
@@ -149,7 +149,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
               : f,
           ),
         );
-        // }
+        }
       });
   };
 
