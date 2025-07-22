@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import CircularProgressBar from '../../charts/CircularProgressBar';
 import DashboardApi from '../../../api/Dashboard';
-import { Tooltip } from 'react-tooltip';
 import './Clients.css';
+import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 
 type client = {
   picture: string;
@@ -50,13 +50,13 @@ const RecentCheckIns: React.FC = () => {
             </div>
           ) : (
             <table className="w-full  ">
-              <thead>
-                <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
+              <thead className="sticky top-0 z-10 bg-[#E9F0F2]">
+                <tr className="text-left text-[10px] text-Text-Primary border-Gray-50">
                   <th className="py-2 pl-2 rounded-tl-2xl ">Client Name</th>
                   <th className="py-2  text-nowrap w-[95px] text-center">
                     Enroll Date
                   </th>
-                  <th className="py-2 px-3 rounded-tr-2xl w-[95px] text-center">
+                  <th className="py-2 px-3 rounded-tr-2xl  w-[30px] xl:w-[50px] 2xl:w-[95px] text-center">
                     Progress
                   </th>
                 </tr>
@@ -76,28 +76,17 @@ const RecentCheckIns: React.FC = () => {
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
-                      <div className="">
-                        {' '}
-                        {client.name.length > 10
-                          ? client.name.substring(0, 10) + '...'
-                          : client.name}
-                      </div>
-                      {client.name.length > 10 && (
-                        <Tooltip
-                          place="top"
-                          id={client.name}
-                          className="!bg-white !w-fit  !text-wrap 
-                        !text-[#888888]  !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                        >
+                      <div className=" ">
+                        <TooltipTextAuto maxWidth="70px">
                           {client.name}
-                        </Tooltip>
-                      )}
+                        </TooltipTextAuto>
+                      </div>
                     </td>
 
                     <td className="py-2  text-Text-Secondary text-[10px] w-[95px] text-center">
                       {formatDate(client['Enroll Date'])}
                     </td>
-                    <td className="py-2 text-Text-Secondary text-[10px] text-center w-[95px] flex justify-center">
+                    <td className="py-2 text-Text-Secondary text-[10px] text-center w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"
