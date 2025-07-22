@@ -19,7 +19,7 @@ import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
 import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 // import PrintReport from './PrintReport';
@@ -56,7 +56,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
-
+  // const history = useHistory();
+  const location = useLocation();
   useEffect(() => {
     // Watch for changes in isHaveReport
     if (!isHaveReport) {
@@ -192,9 +193,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setUserInfoData(res.data);
     });
   };
+  const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
   subscribe('syncReport', () => {
     setCallSync(true);
+    if (location.search) {
+      navigate(location.pathname, { replace: true });
+    }
   });
   const [accessManager, setAccessManager] = useState<
     Array<{
@@ -310,7 +315,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
     return [];
   };
-  const location = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');

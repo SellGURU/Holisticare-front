@@ -119,7 +119,7 @@ const FileBoxUploading: React.FC<FileBoxProps> = ({ el, onDelete }) => {
                       <div>
                         <div className="text-Text-Secondary text-[10px] md:text-[10px] mt-1">
                           {el.progress < 50 ? ' ' : ''}{' '}
-                          {Math.round(el.progress)}%
+                          {Math.round(el.progress - 2)}%
                         </div>
                       </div>
                     </div>

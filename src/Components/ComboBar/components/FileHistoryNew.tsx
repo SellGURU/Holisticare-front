@@ -272,7 +272,7 @@ const FileHistoryNew = () => {
   const [isDeleted, setIsDeleted] = useState<string[]>([]);
   const handleDelete = (fileId: string, memberId: string) => {
     setLoadingDelete(true);
-    publish('fileIsDeleted', { isDeleting: false });
+    publish('fileIsDeleting', { isDeleting: false });
     Application.deleteFileHistory({
       file_id: fileId,
       member_id: memberId,
@@ -281,6 +281,9 @@ const FileHistoryNew = () => {
         if (res.data) {
           setLoadingDelete(false);
           setIsDeleted((prev) => [...prev, fileId]);
+          publish('fileIsDeleting', {
+            isDeleting: true,
+          });
         }
       })
       .finally(() => {

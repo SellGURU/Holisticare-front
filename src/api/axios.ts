@@ -57,6 +57,9 @@ axios.interceptors.response.use(
         toast.error(error.response.data.detail);
       }
     }
+    // if (error.response.status == 504) {
+    //   return Promise.reject(error);
+    // }
     // console.log(error.response.data.detail)
     // if(error.response.data.detail && error.response.data.detail !='Invalid token.'  && error.response.data.detail !='Not Found'){
     //     toast.error(error.response.data.detail)

@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PopUpChat } from '../popupChat';
 import React, { useEffect, useRef, useState } from 'react';
-import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
 import { useParams } from 'react-router-dom';
-import { SlideOutPanel } from '../SlideOutPanel';
-import { publish, subscribe } from '../../utils/event.ts';
 import Application from '../../api/app.ts';
+import useModalAutoClose from '../../hooks/UseModalAutoClose.ts';
+import { publish, subscribe } from '../../utils/event.ts';
+import { PopUpChat } from '../popupChat';
+import { SlideOutPanel } from '../SlideOutPanel';
 
-import TimeLine from './components/timeLine.tsx';
 import { ChatModal } from './components/chatModal.tsx';
 import { ClientInfo } from './components/clientInfo.tsx';
 import { DataSyncing } from './components/dataSyncing.tsx';
-import { Questionary } from './components/Questionary.tsx';
 import { Notes } from './components/notes.tsx';
+import { Questionary } from './components/Questionary.tsx';
+import TimeLine from './components/timeLine.tsx';
 // import { FilleHistory } from './components/filleHistory.tsx';
-import { SwitchClient } from './components/switchClient.tsx';
-import SvgIcon from '../../utils/svgIcon.tsx';
 import { Tooltip } from 'react-tooltip';
+import SvgIcon from '../../utils/svgIcon.tsx';
 import FileHistoryNew from './components/FileHistoryNew.tsx';
+import { SwitchClient } from './components/switchClient.tsx';
 // import { Tooltip } from 'react-tooltip';
 interface ComboBarProps {
   isHolisticPlan?: boolean;
@@ -123,8 +123,12 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
   // });
   const [toogleOpenChat, setToogleOpenChat] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   subscribe('fileIsUploading', (value: any) => {
     setIsUploading(value.detail.isUploading);
+  });
+  subscribe('fileIsDeleting', (value: any) => {
+    setIsDeleting(value.detail.isDeleting);
   });
   // Refs for modal and button to close it when clicking outside
   const modalRef = useRef<HTMLDivElement>(null);
@@ -149,6 +153,11 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
         isUploading: true,
       });
     }
+    if (isSlideOutPanel && isDeleting) {
+      publish('isDeletingBackGround', {
+        isDeleting: true,
+      });
+    }
     setIsSlideOutPanel(false);
   };
   const [updated, setUpdated] = useState(false);
@@ -164,6 +173,9 @@ export const ComboBar: React.FC<ComboBarProps> = ({ isHolisticPlan }) => {
     setIsSlideOutPanel(true);
     publish('isuploadingBackGround', {
       isUploading: false,
+    });
+    publish('isDeletingBackGround', {
+      isDeleting: false,
     });
   };
   const renderModalContent = () => {
