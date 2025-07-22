@@ -48,9 +48,9 @@ axios.interceptors.response.use(
       localStorage.clear();
       window.location.reload();
     }
-    if(error.code == 'ERR_NETWORK'){
+    if (error.code == 'ERR_NETWORK') {
       return Promise.reject(error.message);
-    } 
+    }
     if (error.response.data.detail && error.response.status != 406) {
       if (
         error.response.data.detail &&

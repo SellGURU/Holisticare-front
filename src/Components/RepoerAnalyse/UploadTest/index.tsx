@@ -135,20 +135,20 @@ const UploadTest: React.FC<UploadTestProps> = ({
             ),
           );
         } else {
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.file === file
-              ? {
-                  ...f,
-                  status: 'error',
-                  errorMessage:
-                    err?.response?.data?.message ||
-                    err?.detail ||
-                    'Failed to upload file. Please try again.',
-                }
-              : f,
-          ),
-        );
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    status: 'error',
+                    errorMessage:
+                      err?.response?.data?.message ||
+                      err?.detail ||
+                      'Failed to upload file. Please try again.',
+                  }
+                : f,
+            ),
+          );
         }
       });
   };
