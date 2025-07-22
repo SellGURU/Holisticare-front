@@ -121,7 +121,7 @@ const UploadTest: React.FC<UploadTestProps> = ({
         );
       })
       .catch((err) => {
-        if (err.status == 500) {
+        if (err.status == 504) {
           setUploadedFiles((prev) =>
             prev.map((f) =>
               f.file === file
