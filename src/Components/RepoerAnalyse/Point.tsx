@@ -19,7 +19,7 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
     if (status == 'Normal') {
       return '#72C13B';
     }
-    return '#B2302E' ;
+    return '#B2302E';
   };
   return (
     <>
