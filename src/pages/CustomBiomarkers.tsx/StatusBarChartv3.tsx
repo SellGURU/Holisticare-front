@@ -95,15 +95,31 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     });
   };
   const resolvePercentLeft = (el: any) => {
-    if (values) {
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 <= 5) {
-        return 5;
-      }
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 > 95) {
-        return 95;
-      }
-      return ((values[0] - el.low) / (el.high - el.low)) * 100;
+    if (!values) return;
+    const value = values[0];
+    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
+    if (el.low == null && el.high != null) {
+      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
+      if (value <= el.high) return 5;
+      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
+      return 95;
     }
+    // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
+    if (el.high == null && el.low != null) {
+      // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
+      if (value >= el.low) return 95;
+      // اگر کمتر بود، درصد را نزدیک 0 قرار بده
+      return 5;
+    }
+    // اگر هر دو مقدار داشتند
+    if (el.low != null && el.high != null) {
+      const percent = ((value - el.low) / (el.high - el.low)) * 100;
+      if (percent <= 5) return 5;
+      if (percent > 95) return 95;
+      return percent;
+    }
+    // اگر هر دو null بودند، مقدار وسط را برگردان
+    return 50;
   };
 
   // Helper function to determine marker mode
