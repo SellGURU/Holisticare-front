@@ -100,7 +100,7 @@ export const ClientCard: FC<ClientCardProps> = ({
         <div className="flex flex-col gap-1">
           <div
             style={{ backgroundColor }}
-            className={`flex items-center px-2.5 h-[20px] rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary ${isSwitch && 'capitalize'}`}
+            className={`flex items-center px-2.5 h-[20px] capitalize rounded-[10px]  justify-center text-[10px] text-nowrap text-Text-Primary ${isSwitch && 'capitalize'}`}
           >
             <div
               className="mr-[5px] size-3 rounded-full"

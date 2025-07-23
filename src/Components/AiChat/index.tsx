@@ -116,7 +116,10 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   const scrollToBottom = () => {
     // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     const objDiv: any = document.getElementById('aiChat');
-    objDiv.scrollTop = objDiv.scrollHeight;
+    if(objDiv){
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
   };
   useEffect(() => {
     scrollToBottom();
@@ -150,105 +153,120 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
       style={{ height: window.innerHeight - 172 + 'px' }}
       className="w-full  mx-auto bg-white shadow-200  md:min-h-[545px] overflow-hidden rounded-[16px] relative flex flex-col justify-between jus p-4 "
     >
-      {/* <div className="text-Text-Primary text-sm font-medium">State</div> */}
-      <div className="p-4 text-center text-primary-text text-xs">
-        {messages.length > 1 && chatStartDate}
-      </div>
-      <div id="aiChat" className="p-4 space-y-4 max-h-full overflow-y-scroll">
-        {messages.map((msg, index: number) => (
+      {
+        messages.length == 0 ? (
+          <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
+                  <img src="/icons/empty-messages.svg" alt="" />
+               No messages found
+                </div>
+        ): (
           <>
-            {msg.sender == 'ai' ? (
+     
+          {/* <div className="text-Text-Primary text-sm font-medium">State</div> */}
+          <div className="p-4 text-center text-primary-text text-xs">
+            {messages.length > 1 && chatStartDate}
+          </div>
+          <div id="aiChat" className="p-4 space-y-4 max-h-full overflow-y-scroll">
+            {messages.map((msg, index: number) => (
               <>
-                {index == messages.length - 1 && (
-                  <div ref={messagesEndRef}></div>
+                {msg.sender == 'ai' ? (
+                  <>
+                    {index == messages.length - 1 && (
+                      <div ref={messagesEndRef}></div>
+                    )}
+                    <div className="flex justify-start items-start gap-1">
+                      <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
+                        <img src="/icons/layer1.svg" alt="" />
+                      </div>
+                      <div>
+                        <div className="text-Text-Primary font-medium text-[12px]">
+                          AI-Copilot{' '}
+                          <span className="text-Text-Secondary text-xs ml-1">
+                            {msg.time}
+                          </span>
+                        </div>
+                        <div
+                          className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
+                          style={{ lineHeight: '26px' }}
+                        >
+                          {formatText(msg.text)}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-end items-start gap-1">
+                      <div className="flex flex-col items-end">
+                        <div className="text-Text-Primary font-medium text-[12px]">
+                          Coach{' '}
+                          <span className="text-Text-Secondary text-xs  ml-1">
+                            {msg.time}
+                          </span>
+                        </div>
+                        <div className="max-w-[500px] bg-[#005F7340] bg-opacity-25  p-4 text-justify mt-1 border-Gray-50 border text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
+                          {formatText(msg.text)}
+                        </div>
+                      </div>
+                      <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
+                        <img
+                          className="rounded-full"
+                          src={`https://ui-avatars.com/api/?name=${'Coach'}`}
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                    {index == messages.length - 1 && (
+                      <div ref={messagesEndRef}></div>
+                    )}
+                  </>
                 )}
-                <div className="flex justify-start items-start gap-1">
-                  <div className="w-[32px] h-[32px] flex justify-center items-center rounded-full bg-backgroundColor-Main ">
-                    <img src="/icons/layer1.svg" alt="" />
-                  </div>
-                  <div>
-                    <div className="text-Text-Primary font-medium text-[12px]">
-                      AI-Copilot{' '}
-                      <span className="text-Text-Secondary text-xs ml-1">
-                        {msg.time}
-                      </span>
-                    </div>
-                    <div
-                      className="max-w-[500px] bg-backgroundColor-Card border border-Gray-50 p-4 text-justify  mt-1 text-[12px] text-Text-Primary rounded-[20px] rounded-tl-none "
-                      style={{ lineHeight: '26px' }}
-                    >
-                      {formatText(msg.text)}
-                    </div>
-                  </div>
-                </div>
               </>
-            ) : (
-              <>
-                <div className="flex justify-end items-start gap-1">
-                  <div className="flex flex-col items-end">
-                    <div className="text-Text-Primary text-[12px]">
-                      Coach{' '}
-                      <span className="text-Text-Secondary text-xs  ml-1">
-                        {msg.time}
-                      </span>
-                    </div>
-                    <div className="max-w-[500px] bg-[#005F7340] bg-opacity-25  p-4 text-justify mt-1 border-Gray-50 border text-Text-Primary text-[12px] rounded-[20px] rounded-tr-none ">
-                      {formatText(msg.text)}
-                    </div>
-                  </div>
-                  <div className="w-[40px] h-[40px] overflow-hidden flex justify-center items-center rounded-full bg-[#383838]">
-                    <img
-                      className="rounded-full"
-                      src={`https://ui-avatars.com/api/?name=${'Coach'}`}
-                      alt=""
-                    />
-                  </div>
-                </div>
-                {index == messages.length - 1 && (
-                  <div ref={messagesEndRef}></div>
-                )}
-              </>
-            )}
-          </>
-          // <div key={msg.id} className={` relative flex ${msg.sender === 'user' ? 'justify-start' : 'justify-end'}`}>
-          //   <div className="flex flex-col items-center space-x-2 max-w-[383px]">
-          //   <div className='text-primary-text flex items-center gap-3 '>{msg.sender === "ai" ? 'ai-coilot' : 'nima'}
-          //   <span className="text-xs  text-gray-400">{msg.time}</span></div>
+              // <div key={msg.id} className={` relative flex ${msg.sender === 'user' ? 'justify-start' : 'justify-end'}`}>
+              //   <div className="flex flex-col items-center space-x-2 max-w-[383px]">
+              //   <div className='text-primary-text flex items-center gap-3 '>{msg.sender === "ai" ? 'ai-coilot' : 'nima'}
+              //   <span className="text-xs  text-gray-400">{msg.time}</span></div>
+    
+              //     <div className={`rounded-[20px] p-3 bg-black-secondary text-primary-text`}>
+              //       <p>{msg.text}</p>
+              //     </div>
+    
+              //   </div>
+              // </div>
+            ))}
+          </div>
+          <div className="">
+            <InputMentions
+            placeHolder={" Ask AI Copilot a question …"}
+              changeBenchMarks={(val: Array<string>) => {
+                setSelectedBenchMarks(val);
+              }}
+              onChange={setInput}
+              onSubmit={handleSend}
+              value={input}
+            ></InputMentions>
+          </div>
+    
+          {/* <div className="p-4 border-t border-gray-700 flex space-x-2">
+            <input
+              type="text"
+              className="flex-1 p-2 bg-gray-700 rounded-lg outline-none"
+              placeholder="Type your message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button
+              className="bg-blue-600 px-4 py-2 rounded-lg"
+              onClick={handleSend}
+            >
+              Send
+            </button>
+          </div> */}
+           </>
 
-          //     <div className={`rounded-[20px] p-3 bg-black-secondary text-primary-text`}>
-          //       <p>{msg.text}</p>
-          //     </div>
-
-          //   </div>
-          // </div>
-        ))}
-      </div>
-      <div className="">
-        <InputMentions
-          changeBenchMarks={(val: Array<string>) => {
-            setSelectedBenchMarks(val);
-          }}
-          onChange={setInput}
-          onSubmit={handleSend}
-          value={input}
-        ></InputMentions>
-      </div>
-
-      {/* <div className="p-4 border-t border-gray-700 flex space-x-2">
-        <input
-          type="text"
-          className="flex-1 p-2 bg-gray-700 rounded-lg outline-none"
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button
-          className="bg-blue-600 px-4 py-2 rounded-lg"
-          onClick={handleSend}
-        >
-          Send
-        </button>
-      </div> */}
+        )
+      }
+    
     </div>
   );
 };

@@ -198,7 +198,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
               />
             </div>
           </div>
-          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[350px] md:max-h-[500px] overflow-auto   ">
+          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 min-h-[500px] h-fit md:h-[600px] 2xl:h-[700px] overflow-auto   ">
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>
@@ -400,7 +400,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[75%] mt-2 overflow-y-auto pr-1`}
+                className={`flex flex-col gap-2 h-[80%] mt-2 overflow-y-auto pr-1`}
                 style={{
                   scrollbarWidth: 'thin',
                   scrollbarColor: '#E5E5E5 transparent',
@@ -444,7 +444,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
     /> */}
             </div>
             <div
-              className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] h-[70%] overflow-y-auto`}
+              className={`flex flex-col gap-3 pr-3 mt-5  h-[80%] overflow-y-auto`}
               style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: '#E5E5E5 transparent',

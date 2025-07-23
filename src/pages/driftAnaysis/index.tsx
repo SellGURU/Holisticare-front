@@ -263,6 +263,14 @@ export const DriftAnaysis = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   const dataToMap = isMobile ? paginatedData : resolvedFiltersData();
+  const clientListRef = useRef<HTMLDivElement>(null);
+
+ 
+  useEffect(() => {
+    if (clientListRef.current) {
+      clientListRef.current.scrollTop = 0; 
+    }
+  }, [activeStatus]); 
 
   return (
     <div
@@ -360,7 +368,7 @@ export const DriftAnaysis = () => {
               <div className="flex md:flex-col gap-3 flex-col-reverse ">
                 <SearchBox
                   onSearch={(search) => setSearchQuery(search)}
-                  placeHolder="Search for client..."
+                  placeHolder="Search clients..."
                 />
                 <StatusMenu
                   status={status}
@@ -371,6 +379,7 @@ export const DriftAnaysis = () => {
 
               {dataToMap.length > 0 ? (
                 <div
+                ref={clientListRef}
                   style={{
                     height: !isMobile ? window.innerHeight - 100 + 'px' : '',
                   }}
