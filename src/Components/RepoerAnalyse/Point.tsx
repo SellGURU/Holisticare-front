@@ -11,15 +11,15 @@ interface PointProps {
 const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
   const resolveColor = () => {
     if (status == 'At risk') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (status == 'Excelent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
     if (status == 'Normal') {
-      return '#0CBC84';
+      return '#72C13B';
     }
-    return '#FF3E5D';
+    return '#B2302E' ;
   };
   return (
     <>

@@ -17,16 +17,16 @@ const StatusBarChartPrintV2 = ({
 }: StatusBarChartPrintV2Prps) => {
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
-      return '#FC5474';
+      return '#B2302E';
     }
     if (key == 'Ok') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (key == 'Good') {
-      return '#06C78D';
+      return '#72C13B';
     }
     if (key == 'Excellent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
     return '#FBAD37';
   };
@@ -81,18 +81,23 @@ const StatusBarChartPrintV2 = ({
       return ((values[0] - el.low) / (el.high - el.low)) * 100;
     }
   };
-  // const createGradient = (data: any[], index: number) => {
-  //   const sortedData = sortByRange(data);
-  //   const currentItem = sortedData[index];
-  //   const nextItem = sortedData[index + 1];
+  const createGradient = (data: any[], index: number) => {
+    const sortedData = sortByRange(data);
+    const currentItem = sortedData[index];
+    const nextItem = sortedData[index + 1];
 
-  //   const currentColor = currentItem.color || resolveColor(currentItem.status);
-  //   const nextColor = nextItem
-  //     ? nextItem.color || resolveColor(nextItem.status)
-  //     : currentColor;
+    const currentColor = currentItem.color || resolveColor(currentItem.status);
 
-  //   return `linear-gradient(to right, ${currentColor}, ${nextColor})`;
-  // };
+    // If this is the last item or there's no next item, return solid color
+    if (!nextItem) {
+      return currentColor;
+    }
+
+    const nextColor = nextItem.color || resolveColor(nextItem.status);
+
+    // Create gradient only at the boundary (last 20% of current segment)
+    return `linear-gradient(to right, ${currentColor} 80%, ${nextColor} 100%)`;
+  };
   // Helper function to determine marker mode
   const getStatusMarkerMode = (
     el: any,
@@ -129,10 +134,10 @@ const StatusBarChartPrintV2 = ({
               className={` relative   h-[8px] ${index == data.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
-                // background: createGradient(data, index),
-                backgroundColor:
-                  el.color != '' ? el.color : resolveColor(el.status),
-                height: '8px !important',
+                background: createGradient(data, index),
+                // backgroundColor:
+                //   el.color != '' ? el.color : resolveColor(el.status),
+                height: '8px ',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomRightRadius:

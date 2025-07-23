@@ -19,16 +19,16 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
   // console.log(data);
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
-      return '#FC5474';
+      return '#B2302E';
     }
     if (key == 'Ok') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (key == 'Good') {
-      return '#06C78D';
+      return '#72C13B';
     }
     if (key == 'Excellent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
     return '#FBAD37';
   };

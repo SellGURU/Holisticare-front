@@ -20,18 +20,17 @@ const HistoricalChart = ({
       return color;
     }
     if (key == 'Needs Focus') {
-      return '#FC5474';
+      return '#B2302E';
     }
     if (key == 'Ok') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (key == 'Good') {
-      return '#06C78D';
+      return '#72C13B';
     }
     if (key == 'Excellent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
-    return '#FBAD37';
   };
   // console.log(dataPoints,dataStatus);
   // const [dataPoints,] = useState<any[]>(['Moderately compromised outcome','Moderately compromised outcome','Moderately Enhanced Outcome','Enhanced Outcome','Excellent Outcome','Excellent Outcome']);
