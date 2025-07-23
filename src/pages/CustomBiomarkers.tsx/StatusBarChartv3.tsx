@@ -59,9 +59,9 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     if (el.low == null) {
       str += ' <  ';
     } else if (el.high == null) {
-      str += ' >  '; 
+      str += ' >  ';
     }
-    if(el.low!=null){
+    if (el.low != null) {
       str += el.low;
     }
     if (el.high != null && el.low != null) {
