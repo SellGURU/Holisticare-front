@@ -46,7 +46,7 @@ const StatusBarChartPrintV2 = ({
       str += el.high;
     }
     if (el.high == null) {
-      str += ' >  ';
+      str += ' < ';
     }
     return str;
   };
@@ -81,18 +81,18 @@ const StatusBarChartPrintV2 = ({
       return ((values[0] - el.low) / (el.high - el.low)) * 100;
     }
   };
-  const createGradient = (data: any[], index: number) => {
-    const sortedData = sortByRange(data);
-    const currentItem = sortedData[index];
-    const nextItem = sortedData[index + 1];
+  // const createGradient = (data: any[], index: number) => {
+  //   const sortedData = sortByRange(data);
+  //   const currentItem = sortedData[index];
+  //   const nextItem = sortedData[index + 1];
 
-    const currentColor = currentItem.color || resolveColor(currentItem.status);
-    const nextColor = nextItem
-      ? nextItem.color || resolveColor(nextItem.status)
-      : currentColor;
+  //   const currentColor = currentItem.color || resolveColor(currentItem.status);
+  //   const nextColor = nextItem
+  //     ? nextItem.color || resolveColor(nextItem.status)
+  //     : currentColor;
 
-    return `linear-gradient(to right, ${currentColor}, ${nextColor})`;
-  };
+  //   return `linear-gradient(to right, ${currentColor}, ${nextColor})`;
+  // };
   // Helper function to determine marker mode
   const getStatusMarkerMode = (
     el: any,
@@ -129,7 +129,8 @@ const StatusBarChartPrintV2 = ({
               className={` relative   h-[8px] ${index == data.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
-                background: createGradient(data, index),
+                // background: createGradient(data, index),
+                backgroundColor:el.color?el.color:resolveColor(el.status),
                 height: '8px !important',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
