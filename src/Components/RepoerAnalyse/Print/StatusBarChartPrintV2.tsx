@@ -130,7 +130,7 @@ const StatusBarChartPrintV2 = ({
               style={{
                 width: 100 / data.length + '%',
                 // background: createGradient(data, index),
-                backgroundColor: el.color ? el.color : resolveColor(el.status),
+                backgroundColor: el.color != '' ? el.color : resolveColor(el.status),
                 height: '8px !important',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
