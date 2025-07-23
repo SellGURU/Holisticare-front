@@ -350,12 +350,15 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
       </div>
       <div className="flex items-center justify-end mt-3 md:mt-0 md:mb-1 mr-1">
         <div
-          className="text-Disable text-sm font-medium cursor-pointer"
+          className={`text-Disable text-sm font-medium ${loading ? 'cursor-not-allowed' : 'cursor-pointer'} `}
           onClick={() => {
-            handleResetTheme();
-            setErrorName('');
-            setErrorHeadLine('');
-            setErrorLogo('');
+            if(!loading){
+              handleResetTheme();
+              setErrorName('');
+              setErrorHeadLine('');
+              setErrorLogo('');
+            }
+           
           }}
         >
           Back to Default

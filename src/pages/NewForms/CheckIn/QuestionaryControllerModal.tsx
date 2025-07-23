@@ -215,10 +215,11 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               (AddquestionStep == 0 || AddquestionStep == 2) ? (
                 <div className="w-full mt-6">
                   <TextField
+                  newStyle
                     type="text"
                     name="formtitle"
                     label="Form Title"
-                    placeholder="Enter form title..."
+                    placeholder="Enter form title (e.g., Feedback Form)"
                     value={titleForm}
                     onChange={(e) => {
                       setTitleForm(e.target.value);

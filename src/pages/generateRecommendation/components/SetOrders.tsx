@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { MainModal } from '../../../Components';
 // import Application from '../../../api/app';
 // import { useParams } from 'react-router-dom';
@@ -279,7 +279,13 @@ export const SetOrders: FC<SetOrdersProps> = ({
     setActiveCategory(localCategories[0].name);
     setshowchangeOrders(false);
   };
+const activityContainer = useRef<HTMLDivElement>(null)
+useEffect(()=>{
 
+  if(activityContainer.current){
+    activityContainer.current.scrollTop = 0
+  }
+},[activeCategory])
   return (
     <>
       <MainModal
@@ -430,7 +436,9 @@ export const SetOrders: FC<SetOrdersProps> = ({
           </div>
         </div>
 
-        <div className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 min-h-[400px] overflow-y-auto">
+        <div style={{
+          scrollBehavior: 'smooth'
+        }} ref={activityContainer} className="relative bg-backgroundColor-Card max-h-[400px] pr-1 overflow-auto border border-Gray-50 rounded-b-2xl py-4 md:pb-8 px-3 md:px-6 min-h-[400px] overflow-y-auto">
           {data
             ?.filter((el: any) => el.Category == activeCategory)
             .map((item: any, index: number) => {

@@ -196,10 +196,11 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             <>
               <div className="w-full mt-6">
                 <TextField
+                newStyle
                   type="text"
                   name="formtitle"
                   label="Form Title"
-                  placeholder="Enter community name..."
+                  placeholder="Enter form title (e.g., Feedback Form)"
                   value={titleForm}
                   onChange={(e) => {
                     setTitleForm(e.target.value);

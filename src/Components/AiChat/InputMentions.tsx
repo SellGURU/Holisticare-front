@@ -11,7 +11,7 @@ interface InputMentionsProps {
   onSubmit: () => void;
   changeBenchMarks: (benchs: Array<string>) => void;
   onUpload?: (file: File) => void;
-  placeHolder?:string
+  placeHolder?: string;
 }
 // const mentions = [
 //   { id: '1', name: 'Time Priorities ' },
@@ -37,7 +37,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
   onSubmit,
   changeBenchMarks,
   onUpload,
-  placeHolder
+  placeHolder,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -140,7 +140,7 @@ const InputMentions: React.FC<InputMentionsProps> = ({
         <input
           className="w-full rounded-md outline-none  py-1 text-xs bg-transparent text-Text-Primary"
           type="text"
-          placeholder= {placeHolder ? placeHolder : "Write message here ..."}
+          placeholder={placeHolder ? placeHolder : 'Write message here ...'}
           value={value}
           onChange={(e) => {
             handelChange(e.target.value);

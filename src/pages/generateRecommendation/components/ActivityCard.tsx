@@ -49,6 +49,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         break;
     }
   }, [item?.label]);
+console.log(item.label);
 
   return (
     <>
@@ -92,10 +93,10 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`bg-[${bgColor}] ${item?.label === "Beneficial" && '!bg-[#CADCFF]'} select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
               >
                 <div
-                  className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                  className={`size-[8px] select-none ${item?.label === "Beneficial" && '!bg-[#4C88FF]'}   bg-[${color}] rounded-full`}
                 ></div>
                 {item?.label || '-'}
               </div>
@@ -149,7 +150,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !bg-opacity-100 !opacity-100 !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
