@@ -39,14 +39,14 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     const nextItem = sortedData[index + 1];
 
     const currentColor = currentItem.color || resolveColor(currentItem.status);
-    
+
     // If this is the last item or there's no next item, return solid color
     if (!nextItem) {
       return currentColor;
     }
-    
+
     const nextColor = nextItem.color || resolveColor(nextItem.status);
-    
+
     // Create gradient only at the boundary (last 20% of current segment)
     return `linear-gradient(to right, ${currentColor} 80%, ${nextColor} 100%)`;
   };
