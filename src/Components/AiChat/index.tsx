@@ -116,10 +116,9 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
   const scrollToBottom = () => {
     // messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     const objDiv: any = document.getElementById('aiChat');
-    if(objDiv){
+    if (objDiv) {
       objDiv.scrollTop = objDiv.scrollHeight;
     }
-
   };
   useEffect(() => {
     scrollToBottom();
@@ -153,20 +152,21 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
       style={{ height: window.innerHeight - 172 + 'px' }}
       className="w-full  mx-auto bg-white shadow-200  md:min-h-[545px] overflow-hidden rounded-[16px] relative flex flex-col justify-between jus p-4 "
     >
-      {
-        messages.length == 0 ? (
-          <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
-                  <img src="/icons/empty-messages.svg" alt="" />
-               No messages found
-                </div>
-        ): (
-          <>
-     
+      {messages.length == 0 ? (
+        <div className="flex flex-col items-center justify-center w-full h-full text-base pt-8 text-Text-Primary font-medium gap-6">
+          <img src="/icons/empty-messages.svg" alt="" />
+          No messages found
+        </div>
+      ) : (
+        <>
           {/* <div className="text-Text-Primary text-sm font-medium">State</div> */}
           <div className="p-4 text-center text-primary-text text-xs">
             {messages.length > 1 && chatStartDate}
           </div>
-          <div id="aiChat" className="p-4 space-y-4 max-h-full overflow-y-scroll">
+          <div
+            id="aiChat"
+            className="p-4 space-y-4 max-h-full overflow-y-scroll"
+          >
             {messages.map((msg, index: number) => (
               <>
                 {msg.sender == 'ai' ? (
@@ -226,18 +226,18 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
               //   <div className="flex flex-col items-center space-x-2 max-w-[383px]">
               //   <div className='text-primary-text flex items-center gap-3 '>{msg.sender === "ai" ? 'ai-coilot' : 'nima'}
               //   <span className="text-xs  text-gray-400">{msg.time}</span></div>
-    
+
               //     <div className={`rounded-[20px] p-3 bg-black-secondary text-primary-text`}>
               //       <p>{msg.text}</p>
               //     </div>
-    
+
               //   </div>
               // </div>
             ))}
           </div>
           <div className="">
             <InputMentions
-            placeHolder={" Ask AI Copilot a question …"}
+              placeHolder={' Ask AI Copilot a question …'}
               changeBenchMarks={(val: Array<string>) => {
                 setSelectedBenchMarks(val);
               }}
@@ -246,7 +246,7 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
               value={input}
             ></InputMentions>
           </div>
-    
+
           {/* <div className="p-4 border-t border-gray-700 flex space-x-2">
             <input
               type="text"
@@ -262,11 +262,8 @@ const AiChat: React.FC<AiChatProps> = ({ memberID }) => {
               Send
             </button>
           </div> */}
-           </>
-
-        )
-      }
-    
+        </>
+      )}
     </div>
   );
 };

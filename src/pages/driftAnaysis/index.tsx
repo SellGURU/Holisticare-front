@@ -265,12 +265,11 @@ export const DriftAnaysis = () => {
   const dataToMap = isMobile ? paginatedData : resolvedFiltersData();
   const clientListRef = useRef<HTMLDivElement>(null);
 
- 
   useEffect(() => {
     if (clientListRef.current) {
-      clientListRef.current.scrollTop = 0; 
+      clientListRef.current.scrollTop = 0;
     }
-  }, [activeStatus]); 
+  }, [activeStatus]);
 
   return (
     <div
@@ -379,7 +378,7 @@ export const DriftAnaysis = () => {
 
               {dataToMap.length > 0 ? (
                 <div
-                ref={clientListRef}
+                  ref={clientListRef}
                   style={{
                     height: !isMobile ? window.innerHeight - 100 + 'px' : '',
                   }}
