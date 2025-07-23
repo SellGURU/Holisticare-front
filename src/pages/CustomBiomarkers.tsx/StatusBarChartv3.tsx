@@ -58,7 +58,10 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     let str = '';
     if (el.low == null) {
       str += ' <  ';
-    } else {
+    } else if (el.high == null) {
+      str += ' >  '; 
+    }
+    if(el.low!=null){
       str += el.low;
     }
     if (el.high != null && el.low != null) {
@@ -66,9 +69,9 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
     } else if (el.high != null) {
       str += el.high;
     }
-    if (el.high == null) {
-      str += ' < ';
-    }
+    // if (el.high == null) {
+    //   str += ' < ';
+    // }
     return str;
   };
   const sortByRange = (data: any) => {

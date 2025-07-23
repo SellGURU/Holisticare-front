@@ -37,7 +37,10 @@ const StatusBarChartPrintV2 = ({
     let str = '';
     if (el.low == null) {
       str += ' <  ';
-    } else {
+    } else if (el.high == null) {
+      str += ' >  '; 
+    }
+    if(el.low!=null){
       str += el.low;
     }
     if (el.high != null && el.low != null) {
@@ -45,9 +48,9 @@ const StatusBarChartPrintV2 = ({
     } else if (el.high != null) {
       str += el.high;
     }
-    if (el.high == null) {
-      str += ' < ';
-    }
+    // if (el.high == null) {
+    //   str += ' < ';
+    // }
     return str;
   };
   const sortByRange = (data: any) => {
@@ -125,18 +128,20 @@ const StatusBarChartPrintV2 = ({
   };
 
   return (
-    <div className="w-full relative flex select-none">
+    <div className="w-full relative flex items-center select-none">
       {sortByRange(data).map((el: any, index: number) => {
         // const label = mapingData[el.label];
         return (
           <>
             <div
-              className={` relative   h-[8px] ${index == data.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
+              className={` relative  ${index == data.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
                 background: createGradient(data, index),
                 // backgroundColor:
                 //   el.color != '' ? el.color : resolveColor(el.status),
+                minHeight: '8px',
+                maxHeight: '8px',
                 height: '8px ',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
