@@ -49,7 +49,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         break;
     }
   }, [item?.label]);
-console.log(item.label);
+  console.log(item.label);
 
   return (
     <>
@@ -93,10 +93,10 @@ console.log(item.label);
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                className={`bg-[${bgColor}] ${item?.label === "Beneficial" && '!bg-[#CADCFF]'} select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`bg-[${bgColor}] ${item?.label === 'Beneficial' && '!bg-[#CADCFF]'} select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
               >
                 <div
-                  className={`size-[8px] select-none ${item?.label === "Beneficial" && '!bg-[#4C88FF]'}   bg-[${color}] rounded-full`}
+                  className={`size-[8px] select-none ${item?.label === 'Beneficial' && '!bg-[#4C88FF]'}   bg-[${color}] rounded-full`}
                 ></div>
                 {item?.label || '-'}
               </div>

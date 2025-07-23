@@ -352,13 +352,12 @@ const LeftItemContent: FC<LeftItemContentProps> = ({
         <div
           className={`text-Disable text-sm font-medium ${loading ? 'cursor-not-allowed' : 'cursor-pointer'} `}
           onClick={() => {
-            if(!loading){
+            if (!loading) {
               handleResetTheme();
               setErrorName('');
               setErrorHeadLine('');
               setErrorLogo('');
             }
-           
           }}
         >
           Back to Default

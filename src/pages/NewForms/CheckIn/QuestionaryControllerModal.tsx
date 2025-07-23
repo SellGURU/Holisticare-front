@@ -215,7 +215,7 @@ const QuestionaryControllerModal: FC<QuestionaryControllerModalProps> = ({
               (AddquestionStep == 0 || AddquestionStep == 2) ? (
                 <div className="w-full mt-6">
                   <TextField
-                  newStyle
+                    newStyle
                     type="text"
                     name="formtitle"
                     label="Form Title"

@@ -361,7 +361,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
         )}
         {RoadMapData?.length > 0 ? (
           <div className="w-full  md:min-h-[186px] md:max-h-[244px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
-            <div className="w-full flex justify-between items-center pr-[14px]">
+            <div className={`w-full flex justify-between items-center ${RoadMapData?.length >1 ?'pr-[14px] ' : 'pr-0'}`}>
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Roadmap
               </h5>
@@ -400,7 +400,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[80%] mt-2 overflow-y-auto pr-1`}
+                className={`flex flex-col gap-2 h-[80%] mt-2 overflow-y-auto ${RoadMapData?.length >1 ?'pr-1 ' : 'pr-0'}`}
                 style={{
                   scrollbarWidth: 'thin',
                   scrollbarColor: '#E5E5E5 transparent',

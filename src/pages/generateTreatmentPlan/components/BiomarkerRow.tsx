@@ -114,7 +114,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
     }
   }, [value?.label]);
   console.log(value.label);
-  
+
   return (
     <>
       <ConflictsModal

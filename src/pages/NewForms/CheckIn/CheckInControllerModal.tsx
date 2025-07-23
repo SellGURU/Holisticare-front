@@ -196,7 +196,7 @@ const CheckInControllerModal: FC<CheckInControllerModalProps> = ({
             <>
               <div className="w-full mt-6">
                 <TextField
-                newStyle
+                  newStyle
                   type="text"
                   name="formtitle"
                   label="Form Title"
