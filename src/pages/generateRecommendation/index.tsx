@@ -55,6 +55,8 @@ export const GenerateRecommendation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isClosed, setisClosed] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
 
   // Function to check if essential data fields are present and not empty
   const hasEssentialData = (data: any) => {
@@ -75,6 +77,8 @@ export const GenerateRecommendation = () => {
   };
 
   const generatePaln = (retryForSuggestions = false) => {
+    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
+
     // Only show full page loader if it's the initial load or a retry for essential data
     if (!retryForSuggestions) {
       setIsLoading(true);
@@ -85,6 +89,7 @@ export const GenerateRecommendation = () => {
       member_id: id,
     })
       .then((res) => {
+        if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
         const data = res.data;
 
         // Check essential data fields (for initial load)
@@ -100,23 +105,34 @@ export const GenerateRecommendation = () => {
             console.log(
               'Suggestion tab data missing, retrying in 15 seconds...',
             );
-            setTimeout(() => generatePaln(true), 15000);
+            timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
           } else {
             setIsLoading(false); // Hide full page loader
             setisButtonLoading(false); // Hide button loader
           }
         } else {
           console.log('Missing essential data, retrying in 15 seconds...');
-          setTimeout(() => generatePaln(), 15000);
+          timeoutRef.current = setTimeout(() => generatePaln(), 15000);
         }
       })
       .catch(() => {
-        setTimeout(() => generatePaln(retryForSuggestions), 15000); // Pass the retryForSuggestions flag
+        if (!isMountedRef.current) return;
+        timeoutRef.current = setTimeout(
+          () => generatePaln(retryForSuggestions),
+          15000,
+        ); // Pass the retryForSuggestions flag
       });
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     generatePaln();
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const handleNext = () => {
