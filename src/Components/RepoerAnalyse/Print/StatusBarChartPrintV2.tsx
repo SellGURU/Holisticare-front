@@ -239,8 +239,8 @@ const StatusBarChartPrintV2 = ({
                             index == 0
                               ? '0px'
                               : '-' +
-                                (
-                                  (values?.[0]?.length || 0) + (unit?.length || 0) ) *
+                                ((values?.[0]?.length || 0) +
+                                  (unit?.length || 0)) *
                                   6.3 +
                                 'px',
                         }}
