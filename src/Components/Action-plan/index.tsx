@@ -5,6 +5,7 @@ import CalenderComponent from '../CalendarComponent/CalendarComponent';
 import { ActionPlanCard } from './ActionPlanCard';
 // import CalendarData from "../../api/--moch--/data/new/Calender.json";
 import Application from '../../api/app';
+import { publish } from '../../utils/event';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import MobileCalendarComponent from '../CalendarComponent/MobileCalendarComponent';
 import ProgressCalenderView from './ProgressCalendarView';
@@ -33,6 +34,12 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   setCalendarPrintData,
 }) => {
   const { id } = useParams<{ id: string }>();
+  const [actionPlanData, setActionPlanData] = useState<any>(calenderDataUper);
+  useEffect(() => {
+    if (calenderDataUper) {
+      setActionPlanData(calenderDataUper);
+    }
+  }, [calenderDataUper]);
   // const [calendarData,setCalender] = useState(calenderDataUper);
 
   const [CardData, setCardData] = useState<Array<any>>([
@@ -82,6 +89,11 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
     if (!isShare) {
       Application.ActionPlanBlockList({ member_id: id }).then((res) => {
         // console.log(res.data);
+        if (res.data.length == 0) {
+          publish('ActionPlanStatus', { isempty: true });
+        } else {
+          publish('ActionPlanStatus', { isempty: false });
+        }
         if (res.data.length > 0) {
           setCardData(res.data);
           setActionPrintData(res.data);
@@ -116,7 +128,6 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  console.log(activeAction);
 
   return (
     <>
@@ -124,11 +135,11 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
         <div className="flex flex-col  justify-center items-center   text-xs w-full  p-3  rounded-lg space-y-3  relative ">
           {isShare ? (
             <>
-              {calenderDataUper && calenderDataUper?.length > 0 ? (
+              {actionPlanData && actionPlanData?.length > 0 ? (
                 <>
-                  {calenderDataUper[0]?.calendar?.length > 0 && (
+                  {actionPlanData[0]?.calendar?.length > 0 && (
                     <CalenderComponent
-                      data={calenderDataUper[0]?.calendar}
+                      data={actionPlanData[0]?.calendar}
                       isTwoView={false}
                     />
                   )}
@@ -160,11 +171,9 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                             // setCalender(el.calendar)
                             setActiveAction(el);
                           }}
-                          onDelete={(id: number) => {
+                          onDelete={() => {
                             Application.deleteActionCard({ id: el.id });
                             getActionPlan();
-                            console.log(id);
-
                             // setCardData(
                             //   CardData.filter((card) => card.id !== id),
                             // );
