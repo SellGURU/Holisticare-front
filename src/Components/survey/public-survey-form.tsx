@@ -21,12 +21,29 @@ import {
   AlertCircle,
   Star,
   Activity,
+  UploadCloud, // Using a different icon for multi-file upload
+  X, // For clearing files
+  Check // For saving files
 } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import Application from '../../api/app';
 import { useParams } from 'react-router-dom';
 
 // Define flexible interfaces to handle different API response structures
+
+// This interface now represents the structure needed for the "File Uploader" question type's response
+interface MultiFileResponse {
+  frontal?: string; // base64 data for frontal
+  back?: string;    // base64 data for back
+  side?: string;    // base64 data for side
+}
+
+// Interface for individual file data within the multi-file response
+interface IndividualFileData {
+  base64: string;
+  type: string;
+}
+
 interface ApiQuestion {
   id?: string;
   text?: string;
@@ -58,9 +75,10 @@ export function PublicSurveyForm({
 }: PublicSurveyFormProps) {
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0); // 0 for intro, 1+ for questions, questions.length+1 for completion
-  const [responses, setResponses] = useState<Record<number, string | string[]>>(
-    {} as Record<number, string | string[]>,
-  );
+  // Updated responses state to also hold MultiFileResponse objects
+  const [responses, setResponses] = useState<
+    Record<number, string | string[] | MultiFileResponse | null> // Allow null for initial or cleared states
+  >({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
@@ -69,23 +87,41 @@ export function PublicSurveyForm({
     Record<number, string>
   >({});
 
+  // State for the temporary file inputs within the 'File Uploader' case
+  const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(null);
+  const [tempBack, setTempBack] = useState<IndividualFileData | null>(null);
+  const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
+  const [isMultiUploadMode, setIsMultiUploadMode] = useState(false); // Controls the visibility of file inputs
+  const currentQuestion =
+    currentStep > 0 && currentStep <= sortedQuestions.length
+      ? sortedQuestions[currentStep - 1]
+      : null;
+  // Reset temp files and upload mode when question changes
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.type === 'File Uploader') {
+      const currentResponse = responses[currentStep - 1] as MultiFileResponse;
+      setTempFrontal(currentResponse?.frontal ? { base64: currentResponse.frontal, type: 'image/*' } : null);
+      setTempBack(currentResponse?.back ? { base64: currentResponse.back, type: 'image/*' } : null);
+      setTempSide(currentResponse?.side ? { base64: currentResponse.side, type: 'image/*' } : null);
+      setIsMultiUploadMode(false); // Exit upload mode by default on question change
+    }
+  }, [currentStep, currentQuestion, responses]);
+
+
   // Process questions when survey data changes
   useEffect(() => {
     console.log('Survey data in form component:', survey);
 
-    // Safely extract questions
     let questions: ApiQuestion[] = [];
 
     if (survey && survey.questions && Array.isArray(survey.questions)) {
       questions = [...survey.questions];
       console.log('Found questions in survey.questions:', questions);
     } else {
-      // Try to find questions in other properties
       console.log('Searching for questions in other properties...');
       Object.entries(survey || {}).forEach(([key, value]) => {
         console.log(`Checking property "${key}":`, value);
         if (Array.isArray(value) && value.length > 0) {
-          // Check if this array contains question-like objects
           const firstItem = value[0];
           if (
             typeof firstItem === 'object' &&
@@ -106,7 +142,6 @@ export function PublicSurveyForm({
   }, [survey]);
 
   const getQuestionText = (question: ApiQuestion): string => {
-    // Try different possible field names for the question text
     if (typeof question.text === 'string' && question.text)
       return question.text;
     if (typeof question.question === 'string' && question.question)
@@ -117,7 +152,6 @@ export function PublicSurveyForm({
   };
 
   const getQuestionOptions = (question: ApiQuestion): string[] => {
-    // Handle different formats of options
     if (!question.options) return [];
     if (Array.isArray(question.options))
       return question.options.map((opt) => opt.toString());
@@ -128,16 +162,20 @@ export function PublicSurveyForm({
     setCurrentStep(1);
   };
 
-  // Validate a single question
   const validateQuestion = (questionIndex: number): boolean => {
     const question = sortedQuestions[questionIndex];
     if (!question) return true;
 
-    // If the question is required, check if there's a response
     if (question.required) {
       const response = responses[questionIndex];
 
-      if (response === undefined || response === null || response === '') {
+      // Standard validation for text, radio, checkbox
+      if (
+        response === undefined ||
+        response === null ||
+        (typeof response === 'string' && response.trim() === '') ||
+        (Array.isArray(response) && response.length === 0)
+      ) {
         setValidationErrors((prev) => ({
           ...prev,
           [questionIndex]: 'This question requires an answer',
@@ -145,17 +183,20 @@ export function PublicSurveyForm({
         return false;
       }
 
-      // For array responses (like checkboxes), check if the array is empty
-      if (Array.isArray(response) && response.length === 0) {
-        setValidationErrors((prev) => ({
-          ...prev,
-          [questionIndex]: 'Please select at least one option',
-        }));
-        return false;
+      // Specific validation for 'File Uploader' type
+      if (question.type === 'File Uploader') {
+        const fileResponse = response as MultiFileResponse;
+        // A file question is considered "answered" if at least one file is uploaded
+        if (!fileResponse.frontal && !fileResponse.back && !fileResponse.side) {
+          setValidationErrors((prev) => ({
+            ...prev,
+            [questionIndex]: 'Please upload at least one file.',
+          }));
+          return false;
+        }
       }
     }
 
-    // Clear any validation errors for this question
     setValidationErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[questionIndex];
@@ -174,7 +215,11 @@ export function PublicSurveyForm({
 
     const questionIndex = currentStep - 1;
 
-    // Validate the current question
+    // Before validating, if in multi-upload mode, ensure changes are saved
+    if (currentQuestion?.type === 'File Uploader' && isMultiUploadMode) {
+        handleMultiFileUploadSave(); // Attempt to save current temp files
+    }
+
     if (!validateQuestion(questionIndex)) {
       return;
     }
@@ -184,26 +229,21 @@ export function PublicSurveyForm({
     if (currentStep < sortedQuestions.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Validate all questions before submitting
       let allValid = true;
+      // Re-validate all questions before final submission
       for (let i = 0; i < sortedQuestions.length; i++) {
         if (!validateQuestion(i)) {
           allValid = false;
+          // Optionally, navigate to the first invalid question
+          setCurrentStep(i + 1);
+          break; // Stop on the first error
         }
       }
-      console.log(allValid);
 
       if (allValid) {
         handleSubmit();
       } else {
         setError('Please answer all required questions before submitting');
-        // Go to the first question with an error
-        const firstErrorIndex = Object.keys(validationErrors)
-          .map(Number)
-          .sort((a, b) => a - b)[0];
-        if (firstErrorIndex !== undefined) {
-          setCurrentStep(firstErrorIndex + 1);
-        }
       }
     }
   };
@@ -212,13 +252,11 @@ export function PublicSurveyForm({
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     } else {
-      setCurrentStep(0); // Go back to intro
+      setCurrentStep(0);
     }
   };
 
   const handleSubmit = async () => {
-    console.log('aaaa');
-
     setSubmitting(true);
     try {
       const respond = sortedQuestions.map((q, idx) => ({
@@ -236,7 +274,7 @@ export function PublicSurveyForm({
         });
       }
 
-      setCurrentStep(sortedQuestions.length + 1); // Move to completion screen
+      setCurrentStep(sortedQuestions.length + 1);
 
       toast({
         title: 'Survey submitted',
@@ -246,9 +284,8 @@ export function PublicSurveyForm({
     } catch (error) {
       console.error('Failed to submit survey:', error);
 
-      // For demo purposes, show success even if the API call fails
       console.log('Simulating successful submission for demo');
-      setCurrentStep(sortedQuestions.length + 1);
+      setCurrentStep(sortedQuestions.length + 1); // Still show success for demo
 
       toast({
         title: 'Survey submitted',
@@ -260,13 +297,14 @@ export function PublicSurveyForm({
     }
   };
 
-  const handleResponseChange = (value: string | string[]) => {
-    setResponses({
-      ...responses,
+  const handleResponseChange = (
+    value: string | string[] | MultiFileResponse | null,
+  ) => {
+    setResponses((prevResponses) => ({
+      ...prevResponses,
       [currentStep - 1]: value,
-    });
+    }));
 
-    // Clear validation error for this question when the user enters a response
     setValidationErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[currentStep - 1];
@@ -282,13 +320,8 @@ export function PublicSurveyForm({
     return Math.round((currentStep / sortedQuestions.length) * 100);
   };
 
-  // Get the current question
-  const currentQuestion =
-    currentStep > 0 && currentStep <= sortedQuestions.length
-      ? sortedQuestions[currentStep - 1]
-      : null;
 
-  // Calculate gradient colors based on progress
+
   const getGradientColor = () => {
     const progress = calculateProgress() / 100;
 
@@ -305,7 +338,6 @@ export function PublicSurveyForm({
 
   const gradientClass = getGradientColor();
 
-  // Render star rating
   const renderStarRating = (
     value: string | undefined,
     max: number,
@@ -337,7 +369,6 @@ export function PublicSurveyForm({
     );
   };
 
-  // Render emoji selection
   const renderEmojiSelection = (
     value: string | undefined,
     options: string[],
@@ -363,7 +394,6 @@ export function PublicSurveyForm({
     );
   };
 
-  // Render scale slider
   const renderScaleSlider = (
     value: string | undefined,
     min: number,
@@ -394,7 +424,6 @@ export function PublicSurveyForm({
     );
   };
 
-  // Render yes/no buttons
   const renderYesNo = (
     value: string | undefined,
     onChange: (value: string) => void,
@@ -427,7 +456,48 @@ export function PublicSurveyForm({
     );
   };
 
-  // Add this function to handle different question types
+  // --- Helper function for individual file input handling ---
+  const handleIndividualFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setTempFile: React.Dispatch<React.SetStateAction<IndividualFileData | null>>,
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setTempFile({
+          base64: reader.result as string,
+          type: file.type,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setTempFile(null);
+    }
+  };
+
+  // --- Function to save temporary files to responses state ---
+  const handleMultiFileUploadSave = () => {
+    const newFileResponse: MultiFileResponse = {
+      frontal: tempFrontal?.base64,
+      back: tempBack?.base64,
+      side: tempSide?.base64,
+    };
+    handleResponseChange(newFileResponse);
+    setIsMultiUploadMode(false); // Exit upload mode after saving
+  };
+
+  // --- Function to clear temporary files and exit upload mode ---
+  const handleMultiFileUploadCancel = () => {
+    setTempFrontal(null);
+    setTempBack(null);
+    setTempSide(null);
+    setIsMultiUploadMode(false); // Exit upload mode
+    // Optionally, clear the main response for this question if cancelled
+    handleResponseChange(null);
+  };
+
   const renderQuestion = (question: ApiQuestion, questionIndex: number) => {
     const questionType = question.type || 'paragraph';
     const questionOptions = getQuestionOptions(question);
@@ -435,7 +505,7 @@ export function PublicSurveyForm({
     const validationError = validationErrors[questionIndex];
 
     switch (questionType) {
-      case 'Paragraph':
+      case 'paragraph':
       case 'text':
         return (
           <Textarea
@@ -541,53 +611,163 @@ export function PublicSurveyForm({
           (value) => handleResponseChange(value),
         );
 
-      case 'File Uploaderr':
+      case 'File Uploader': {
+        const currentFileResponse = (response || {}) as MultiFileResponse;
+        const hasExistingFiles = currentFileResponse.frontal || currentFileResponse.back || currentFileResponse.side;
+
         return (
-          <div className="space-y-4">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <input
-                type="file"
-                id={`file-upload-${questionIndex}`}
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    handleResponseChange(e.target.files[0].name);
-                  }
-                }}
-              />
-              <label
-                htmlFor={`file-upload-${questionIndex}`}
-                className="cursor-pointer flex flex-col items-center justify-center"
-              >
-                <svg
-                  className="w-12 h-12 text-gray-400 mb-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+          <div className="bg-[#FCFCFC] p-3 w-full rounded-[12px] border border-gray-50">
+            <div className="flex justify-between items-center">
+              <div className="text-[12px] text-Text-Primary">
+                {questionIndex + 1}. {getQuestionText(question)}
+              </div>
+              {!isMultiUploadMode && ( // Show upload button only if not in upload mode
+                <div
+                  onClick={() => setIsMultiUploadMode(true)}
+                  className="cursor-pointer flex justify-end items-center gap-1"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  ></path>
-                </svg>
-                <span className="text-gray-600 font-medium">
-                  Click to upload a file
-                </span>
-                <span className="text-gray-500 text-sm mt-1">
-                  or drag and drop
-                </span>
-              </label>
+                  <UploadCloud className="w-4 h-4 text-Primary-EmeraldGreen" />
+                  <span className="text-Primary-EmeraldGreen text-[10px] font-medium">
+                    {hasExistingFiles ? 'Re-upload' : 'Upload'}
+                  </span>
+                </div>
+              )}
             </div>
-            {response && (
-              <div className="text-sm text-gray-600">
-                Selected file: <span className="font-medium">{response}</span>
+
+            {isMultiUploadMode ? (
+              <>
+                <div className="w-full bg-white rounded-[8px] p-2 mt-4">
+                  <div className="flex justify-between items-center">
+                    <div className="text-[12px] text-[#B0B0B0]">{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                    <div className="flex justify-end items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleMultiFileUploadCancel}
+                        className="w-6 h-6 border-[1.6px] border-[#FC5474] rounded-[8px] p-0 flex items-center justify-center"
+                      >
+                        <X className="w-4 h-4 text-[#FC5474]" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleMultiFileUploadSave}
+                        className="w-6 h-6 border-[1.6px] border-Primary-EmeraldGreen bg-Primary-EmeraldGreen rounded-[8px] p-0 flex items-center justify-center"
+                      >
+                        <Check className="w-4 h-4 text-[#FFFFFF]" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="w-full gap-4 flex flex-wrap justify-center items-center mt-2">
+                    {/* Frontal File Input */}
+                    <div className="flex flex-col items-center">
+                      <label htmlFor={`frontal-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                        {tempFrontal?.base64 ? (
+                          <img src={tempFrontal.base64} alt="Frontal Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <UploadCloud className="w-8 h-8 text-gray-400" />
+                            <span className="text-gray-500 text-xs mt-1">Frontal</span>
+                          </>
+                        )}
+                      </label>
+                      <input
+                        type="file"
+                        id={`frontal-upload-${questionIndex}`}
+                        className="hidden"
+                        onChange={(e) => handleIndividualFileChange(e, setTempFrontal)}
+                        accept="image/*" // Restrict to image files
+                      />
+                       {tempFrontal?.base64 && (
+                            <button onClick={() => setTempFrontal(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                        )}
+                    </div>
+
+                    {/* Back File Input */}
+                    <div className="flex flex-col items-center">
+                      <label htmlFor={`back-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                        {tempBack?.base64 ? (
+                          <img src={tempBack.base64} alt="Back Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <UploadCloud className="w-8 h-8 text-gray-400" />
+                            <span className="text-gray-500 text-xs mt-1">Back</span>
+                          </>
+                        )}
+                      </label>
+                      <input
+                        type="file"
+                        id={`back-upload-${questionIndex}`}
+                        className="hidden"
+                        onChange={(e) => handleIndividualFileChange(e, setTempBack)}
+                        accept="image/*"
+                      />
+                        {tempBack?.base64 && (
+                            <button onClick={() => setTempBack(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                        )}
+                    </div>
+
+                    {/* Side File Input */}
+                    <div className="flex flex-col items-center">
+                      <label htmlFor={`side-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                        {tempSide?.base64 ? (
+                          <img src={tempSide.base64} alt="Side Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <UploadCloud className="w-8 h-8 text-gray-400" />
+                            <span className="text-gray-500 text-xs mt-1">Side</span>
+                          </>
+                        )}
+                      </label>
+                      <input
+                        type="file"
+                        id={`side-upload-${questionIndex}`}
+                        className="hidden"
+                        onChange={(e) => handleIndividualFileChange(e, setTempSide)}
+                        accept="image/*"
+                      />
+                        {tempSide?.base64 && (
+                            <button onClick={() => setTempSide(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : hasExistingFiles ? (
+              // Preview section when not in upload mode but files exist
+              <div className="mt-2 flex w-full justify-around items-center">
+                {currentFileResponse.frontal && (
+                  <div className="mb-2 text-center">
+                    <span className="text-[10px] text-gray-600">Frontal: </span>
+                    <img src={currentFileResponse.frontal} alt="Frontal" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  </div>
+                )}
+                {currentFileResponse.back && (
+                  <div className="mb-2 text-center">
+                    <span className="text-[10px] text-gray-600">Back: </span>
+                    <img src={currentFileResponse.back} alt="Back" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  </div>
+                )}
+                {currentFileResponse.side && (
+                  <div className="mb-2 text-center">
+                    <span className="text-[10px] text-gray-600">Side: </span>
+                    <img src={currentFileResponse.side} alt="Side" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              // No files uploaded yet, not in upload mode
+              <div className="mt-4 text-[#B0B0B0] text-[10px]">No files yet.</div>
+            )}
+            {validationError && (
+              <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">
+                <AlertCircle className="h-4 w-4" />
+                <span>{validationError}</span>
               </div>
             )}
           </div>
         );
+      }
 
       case 'Yes/No':
         return renderYesNo(response as string, (value) =>
@@ -605,7 +785,6 @@ export function PublicSurveyForm({
     }
   };
 
-  // If there are no questions, show an error message
   if (sortedQuestions.length === 0 && !loading) {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-10">
@@ -655,7 +834,6 @@ export function PublicSurveyForm({
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-10">
-      {/* Progress bar */}
       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}

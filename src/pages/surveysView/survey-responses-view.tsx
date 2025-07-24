@@ -8,14 +8,23 @@ import {
   CardDescription,
 } from '../../Components/ui/card';
 
+// --- NEW/UPDATED INTERFACES ---
+interface MultiFileResponse {
+  frontal?: string; // base64 data for frontal image
+  back?: string;    // base64 data for back image
+  side?: string;    // base64 data for side image
+}
+
 interface Question {
   type: string;
   order: number;
   question: string;
   required: boolean;
   options?: string[];
-  response?: string | string[];
+  // The response can be a string, array of strings, or the MultiFileResponse object
+  response?: string | string[] | MultiFileResponse;
 }
+// --- END NEW/UPDATED INTERFACES ---
 
 interface SurveyResponsesViewProps {
   questions: Question[];
@@ -30,6 +39,8 @@ export function SurveyResponsesView({
     if (question.response === undefined || question.response === null) {
       return <span className="text-gray-400 italic">No response</span>;
     }
+
+    // Handle Checkbox type
     if (
       question.type.toLowerCase() === 'checkbox' &&
       Array.isArray(question.response)
@@ -44,12 +55,54 @@ export function SurveyResponsesView({
         </ul>
       );
     }
-    // For file uploader, just show the filename
+
+    // Handle "File Uploader" type
     if (question.type.toLowerCase() === 'file uploader') {
-      return <span>{question.response}</span>;
+      const fileResponse = question.response as MultiFileResponse; // Cast to MultiFileResponse
+      const hasFiles = fileResponse.frontal || fileResponse.back || fileResponse.side;
+
+      if (!hasFiles) {
+        return <span className="text-gray-400 italic">No files uploaded</span>;
+      }
+
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+          {fileResponse.frontal && (
+            <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
+              <span className="text-sm font-medium text-gray-700 mb-1">Frontal View</span>
+              <img
+                src={fileResponse.frontal}
+                alt="Frontal File Preview"
+                className="max-w-full h-32 object-contain rounded-md shadow-sm"
+              />
+            </div>
+          )}
+          {fileResponse.back && (
+            <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
+              <span className="text-sm font-medium text-gray-700 mb-1">Back View</span>
+              <img
+                src={fileResponse.back}
+                alt="Back File Preview"
+                className="max-w-full h-32 object-contain rounded-md shadow-sm"
+              />
+            </div>
+          )}
+          {fileResponse.side && (
+            <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
+              <span className="text-sm font-medium text-gray-700 mb-1">Side View</span>
+              <img
+                src={fileResponse.side}
+                alt="Side File Preview"
+                className="max-w-full h-32 object-contain rounded-md shadow-sm"
+              />
+            </div>
+          )}
+        </div>
+      );
     }
-    // For all others, show as text
-    return <span>{question.response}</span>;
+
+    // For all other types, show as text
+    return <span>{question.response.toString()}</span>;
   };
 
   return (
@@ -72,7 +125,7 @@ export function SurveyResponsesView({
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-semibold text-Text-Primary ">
-                  <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs font-mono">
+                  <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs font-mono mr-2">
                     {question.order}
                   </span>
                   <span>{question.question}</span>
