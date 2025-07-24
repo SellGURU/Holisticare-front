@@ -74,15 +74,31 @@ const StatusBarChartPrintV2 = ({
     });
   };
   const resolvePercentLeft = (el: any) => {
-    if (values) {
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 <= 5) {
-        return 5;
-      }
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 > 95) {
-        return 95;
-      }
-      return ((values[0] - el.low) / (el.high - el.low)) * 100;
+    if (!values) return;
+    const value = values[0];
+    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
+    if (el.low == null && el.high != null) {
+      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
+      if (value <= el.high) return 5;
+      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
+      return 95;
     }
+    // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
+    if (el.high == null && el.low != null) {
+      // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
+      if (value >= el.low) return 90;
+      // اگر کمتر بود، درصد را نزدیک 0 قرار بده
+      return 5;
+    }
+    // اگر هر دو مقدار داشتند
+    if (el.low != null && el.high != null) {
+      const percent = ((value - el.low) / (el.high - el.low)) * 100 - 3;
+      if (percent <= 10) return 10;
+      if (percent > 90) return 90;
+      return percent;
+    }
+    // اگر هر دو null بودند، مقدار وسط را برگردان
+    return 50;
   };
   const createGradient = (data: any[], index: number) => {
     const sortedData = sortByRange(data);
@@ -194,7 +210,7 @@ const StatusBarChartPrintV2 = ({
                       className={`absolute  top-[2px]  z-10`}
                       style={{
                         top: '2px',
-                        left: resolvePercentLeft(el) || '50%',
+                        left: resolvePercentLeft(el) + '%' || '50%',
                       }}
                     >
                       <div
@@ -209,7 +225,7 @@ const StatusBarChartPrintV2 = ({
                           backgroundColor: '#005f73',
                           width: '3px',
                           height: '8px',
-                          marginLeft: '2.5px',
+                          marginLeft: '2.4px',
                         }}
                         className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
                       ></div>
@@ -223,10 +239,9 @@ const StatusBarChartPrintV2 = ({
                             index == 0
                               ? '0px'
                               : '-' +
-                                (values &&
-                                  values[0].length + unit &&
-                                  unit?.length) *
-                                  5 +
+                                (
+                                  (values?.[0]?.length || 0) + (unit?.length || 0) ) *
+                                  6.3 +
                                 'px',
                         }}
                       >

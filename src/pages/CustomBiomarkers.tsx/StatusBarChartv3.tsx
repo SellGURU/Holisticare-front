@@ -190,7 +190,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                       }}
                     >
                       <div className="w-1 h-1  rotate-45 bg-Primary-DeepTeal"></div>
-                      <div className="w-[2px] h-[9px] ml-[1.5px] bg-Primary-DeepTeal"></div>
+                      <div className="w-[2px] h-[9px] ml-[1.3px] bg-Primary-DeepTeal"></div>
                       <div
                         className="text-[10px] w-max flex justify-center ml-[0px] items-center gap-[2px] text-Primary-DeepTeal"
                         style={{
@@ -198,10 +198,9 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                             index == 0
                               ? '0px'
                               : '-' +
-                                (values &&
-                                  values[0].length + unit &&
-                                  unit?.length) *
-                                  5 +
+                                (
+                                  (values?.[0]?.length || 0) + (unit?.length || 0) ) *
+                                  6.3 +
                                 'px',
                         }}
                       >
