@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BeatLoader } from 'react-spinners';
+import Application from '../../api/app';
+import { resolveAccesssUser } from '../../help';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
+import { publish, subscribe, unsubscribe } from '../../utils/event';
 import { ButtonPrimary } from '../Button/ButtonPrimary';
 import LogOutModal from '../LogOutModal';
 import { SlideOutPanel } from '../SlideOutPanel';
-import DownloadModal from './downloadModal';
-import { useEffect, useRef, useState } from 'react';
 import SpinnerLoader from '../SpinnerLoader';
-import { publish } from '../../utils/event';
-import { resolveAccesssUser } from '../../help';
-import Application from '../../api/app';
-import useModalAutoClose from '../../hooks/UseModalAutoClose';
-import { subscribe, unsubscribe } from '../../utils/event';
-import { BeatLoader } from 'react-spinners';
+import DownloadModal from './downloadModal';
 // import { CircleLoader } from 'react-spinners';
 // import { useEffect } from "react";
 
@@ -173,6 +172,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         },
   );
   const [hasReportInRoute, setHasReportInRoute] = useState(false);
+  const [hasShareInRoute, setHasShareInRoute] = useState(false);
 
   const getShowBrandInfo = () => {
     Application.getShowBrandInfo().then((res) => {
@@ -228,6 +228,10 @@ export const TopBar: React.FC<TopBarProps> = ({
       routeParts[0] === 'report' &&
       !routeParts[1].includes('Generate');
 
+    const hasShare = routeParts.length >= 3 && routeParts[0] === 'share';
+
+    setHasShareInRoute(hasShare);
+
     setHasReportInRoute(hasReport);
     console.log(
       'Route changed:',
@@ -268,7 +272,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
         <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
       </div>
-      {hasReportInRoute && (
+      {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
           <img
             onClick={() => {
@@ -277,22 +281,26 @@ export const TopBar: React.FC<TopBarProps> = ({
             src="/icons/document-download.svg"
             alt=""
           />
-          <img
-            onClick={() => {
-              setOpenShare(true);
-            }}
-            src="/icons/link-2.svg"
-            alt=""
-          />
-          <img
-            onClick={setShowCombo}
-            src={showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'}
-            alt=""
-          />
+          {!hasShareInRoute && (
+            <img
+              onClick={() => {
+                setOpenShare(true);
+              }}
+              src="/icons/link-2.svg"
+              alt=""
+            />
+          )}
+          {!hasShareInRoute && (
+            <img
+              onClick={setShowCombo}
+              src={showCombo ? '/icons/close.svg' : '/icons/menu-2.svg'}
+              alt=""
+            />
+          )}
         </div>
       )}
       <div className="hidden xl:flex gap-10">
-        {canDownload && hasReportInRoute && (
+        {canDownload && (hasReportInRoute || hasShareInRoute) && (
           <div className="flex gap-3">
             <ButtonPrimary
               disabled={shouldEnableActions}
@@ -320,20 +328,22 @@ export const TopBar: React.FC<TopBarProps> = ({
                 </>
               )}
             </ButtonPrimary>
-            <div
-              onClick={() => {
-                if (shouldEnableActions) return;
-                setOpenShare(true);
-              }}
-              className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
-                shouldEnableActions
-                  ? 'cursor-not-allowed opacity-60'
-                  : 'cursor-pointer'
-              }`}
-            >
-              <img src="/icons/share.svg" alt="" />
-              Share
-            </div>
+            {!hasShareInRoute && (
+              <div
+                onClick={() => {
+                  if (shouldEnableActions) return;
+                  setOpenShare(true);
+                }}
+                className={`flex items-center gap-1 TextStyle-Button text-[#005F73] ${
+                  shouldEnableActions
+                    ? 'cursor-not-allowed opacity-60'
+                    : 'cursor-pointer'
+                }`}
+              >
+                <img src="/icons/share.svg" alt="" />
+                Share
+              </div>
+            )}
           </div>
         )}
         <div className="relative">
