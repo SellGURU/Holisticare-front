@@ -581,7 +581,7 @@ export function PublicSurveyForm({
     const response = responses[questionIndex];
     const validationError = validationErrors[questionIndex];
 
-    switch (questionType) {
+    switch (questionType.toLowerCase()) {
       case 'paragraph':
       case 'text':
         return (
@@ -666,7 +666,7 @@ export function PublicSurveyForm({
           </div>
         );
 
-      case 'Scale':
+      case 'scale':
         return renderScaleSlider(
           response as string,
           Number.parseInt(questionOptions[0] || '1'),
@@ -674,14 +674,14 @@ export function PublicSurveyForm({
           (value) => handleResponseChange(value),
         );
 
-      case 'Star Rating':
+      case 'star rating':
         return renderStarRating(
           response as string,
           questionOptions.length || 5,
           (value) => handleResponseChange(value),
         );
 
-      case 'Emojis':
+      case 'emojis':
         return (
           <EmojiSelector
             currentResponse={response as string}
@@ -691,7 +691,7 @@ export function PublicSurveyForm({
           />
         );
 
-      case 'File Uploader': {
+      case 'file uploader': {
         const currentFileResponse = (response || {}) as MultiFileResponse;
         const hasExistingFiles = currentFileResponse.frontal || currentFileResponse.back || currentFileResponse.side;
 
@@ -847,7 +847,7 @@ export function PublicSurveyForm({
         );
       }
 
-      case 'Yes/No':
+      case 'yes/no':
         return renderYesNo(response as string, (value) =>
           handleResponseChange(value),
         );
