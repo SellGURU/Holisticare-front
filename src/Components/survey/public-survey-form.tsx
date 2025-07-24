@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '../ui/button';
 import {
   Card,
@@ -21,9 +21,9 @@ import {
   AlertCircle,
   Star,
   Activity,
-  UploadCloud, // Using a different icon for multi-file upload
-  X, // For clearing files
-  Check // For saving files
+  UploadCloud,
+  X,
+  Check,
 } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import Application from '../../api/app';
@@ -31,14 +31,12 @@ import { useParams } from 'react-router-dom';
 
 // Define flexible interfaces to handle different API response structures
 
-// This interface now represents the structure needed for the "File Uploader" question type's response
 interface MultiFileResponse {
   frontal?: string; // base64 data for frontal
-  back?: string;    // base64 data for back
-  side?: string;    // base64 data for side
+  back?: string; // base64 data for back
+  side?: string; // base64 data for side
 }
 
-// Interface for individual file data within the multi-file response
 interface IndividualFileData {
   base64: string;
   type: string;
@@ -68,16 +66,127 @@ interface PublicSurveyFormProps {
   onSubmitClient?: (respond: ApiQuestion[]) => void;
 }
 
+// --- EMOJI SELECTOR COMPONENT ---
+interface EmojiSelectorProps {
+  currentResponse: string | undefined; // The selected emoji name from parent
+  onChange: (value: string) => void; // Callback to update parent state
+  questionIndex: number; // Added to interface
+  currentQuestionText: string; // Added to interface
+}
+
+const emojeysData = [ // Defined outside to prevent re-creation on re-renders
+  { name: 'Angry', order: 0, icon: '/images/emoji/angery.gif' },
+  { name: 'Sad', order: 1, icon: '/images/emoji/sad.gif' },
+  { name: 'Neutral', order: 2, icon: '/images/emoji/poker.gif' },
+  { name: 'Smile', order: 3, icon: '/images/emoji/smile.gif' },
+  { name: 'Loved', order: 4, icon: '/images/emoji/love.gif' },
+];
+
+const EmojiSelector: React.FC<EmojiSelectorProps> = ({
+  currentResponse,
+  onChange,
+  // questionIndex, // Not used in component's render logic, can remove from here if not needed
+  // currentQuestionText, // Not used in component's render logic, can remove from here if not needed
+}) => {
+  const touchStartX = useRef(0);
+
+  // Initialize active state based on currentResponse (prop).
+  const [active, setActive] = useState(() => {
+    return emojeysData.find((el) => el.name === currentResponse) || emojeysData[2];
+  });
+
+  // Keep internal active state in sync with external currentResponse
+  useEffect(() => {
+    const newActive = emojeysData.find((el) => el.name === currentResponse) || emojeysData[2];
+    if (newActive.name !== active.name) {
+      setActive(newActive);
+    }
+  }, [currentResponse, active.name]);
+
+  // Handle emoji selection (both click and swipe)
+  const handleEmojiSelect = useCallback((emojiName: string) => {
+    const selectedEmoji = emojeysData.find(el => el.name === emojiName);
+    if (selectedEmoji) {
+      setActive(selectedEmoji); // Update local state
+      onChange(selectedEmoji.name); // Notify parent immediately
+    }
+  }, [onChange]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const touchMoveX = e.touches[0].clientX;
+    const diff = touchStartX.current - touchMoveX;
+    const swipeThreshold = 50;
+
+    if (diff > swipeThreshold) { // Swipe Left
+      if (active.order + 1 <= 4) {
+        handleEmojiSelect(emojeysData[active.order + 1].name);
+      }
+      touchStartX.current = touchMoveX;
+    } else if (diff < -swipeThreshold) { // Swipe Right
+      if (active.order - 1 >= 0) {
+        handleEmojiSelect(emojeysData[active.order - 1].name);
+      }
+      touchStartX.current = touchMoveX;
+    }
+  }, [active, handleEmojiSelect]);
+
+  return (
+    <div className="bg-[#FCFCFC] p-3 w-full h-full rounded-[12px] border border-gray-50">
+      <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          className="flex w-full select-none justify-center items-center gap-4"
+        >
+          {Array.from({ length: 5 }).map((_em, ind) => {
+            const itemIndex = active.order - 2 + ind;
+            const emojiToDisplay = emojeysData[itemIndex];
+
+            return (
+              <div key={itemIndex}>
+                {emojiToDisplay ? (
+                  emojiToDisplay.order === active.order ? (
+                    <div className="w-[40px] h-[40px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                      <img className="w-[32px]" src={active.icon} alt={active.name} />
+                    </div>
+                  ) : (
+                    <img
+                      onClick={() => handleEmojiSelect(emojiToDisplay.name)}
+                      className="w-[28px] cursor-pointer"
+                      src={emojiToDisplay.icon}
+                      alt={emojiToDisplay.name}
+                    />
+                  )
+                ) : (
+                  <div className="w-[28px] h-[28px]"></div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="w-full mt-4 flex justify-center">
+          <div className="text-[14px] text-[#005F73]">{active.name}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+// --- END EMOJI SELECTOR COMPONENT ---
+
+
 export function PublicSurveyForm({
   survey,
   isClient = false,
   onSubmitClient,
 }: PublicSurveyFormProps) {
   const { 'member-id': memberId, 'q-id': qId } = useParams();
-  const [currentStep, setCurrentStep] = useState(0); // 0 for intro, 1+ for questions, questions.length+1 for completion
-  // Updated responses state to also hold MultiFileResponse objects
+  const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
-    Record<number, string | string[] | MultiFileResponse | null> // Allow null for initial or cleared states
+    Record<number, string | string[] | MultiFileResponse | null>
   >({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,26 +196,27 @@ export function PublicSurveyForm({
     Record<number, string>
   >({});
 
-  // State for the temporary file inputs within the 'File Uploader' case
+  // States for 'File Uploader' specific logic
   const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(null);
   const [tempBack, setTempBack] = useState<IndividualFileData | null>(null);
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
-  const [isMultiUploadMode, setIsMultiUploadMode] = useState(false); // Controls the visibility of file inputs
+  const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
+
   const currentQuestion =
     currentStep > 0 && currentStep <= sortedQuestions.length
       ? sortedQuestions[currentStep - 1]
       : null;
-  // Reset temp files and upload mode when question changes
+
+  // Reset temp files and upload mode when question changes (for File Uploader)
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'File Uploader') {
       const currentResponse = responses[currentStep - 1] as MultiFileResponse;
       setTempFrontal(currentResponse?.frontal ? { base64: currentResponse.frontal, type: 'image/*' } : null);
       setTempBack(currentResponse?.back ? { base64: currentResponse.back, type: 'image/*' } : null);
       setTempSide(currentResponse?.side ? { base64: currentResponse.side, type: 'image/*' } : null);
-      setIsMultiUploadMode(false); // Exit upload mode by default on question change
+      setIsMultiUploadMode(false);
     }
   }, [currentStep, currentQuestion, responses]);
-
 
   // Process questions when survey data changes
   useEffect(() => {
@@ -169,7 +279,6 @@ export function PublicSurveyForm({
     if (question.required) {
       const response = responses[questionIndex];
 
-      // Standard validation for text, radio, checkbox
       if (
         response === undefined ||
         response === null ||
@@ -183,10 +292,8 @@ export function PublicSurveyForm({
         return false;
       }
 
-      // Specific validation for 'File Uploader' type
       if (question.type === 'File Uploader') {
         const fileResponse = response as MultiFileResponse;
-        // A file question is considered "answered" if at least one file is uploaded
         if (!fileResponse.frontal && !fileResponse.back && !fileResponse.side) {
           setValidationErrors((prev) => ({
             ...prev,
@@ -215,9 +322,8 @@ export function PublicSurveyForm({
 
     const questionIndex = currentStep - 1;
 
-    // Before validating, if in multi-upload mode, ensure changes are saved
     if (currentQuestion?.type === 'File Uploader' && isMultiUploadMode) {
-        handleMultiFileUploadSave(); // Attempt to save current temp files
+      handleMultiFileUploadSave();
     }
 
     if (!validateQuestion(questionIndex)) {
@@ -230,13 +336,11 @@ export function PublicSurveyForm({
       setCurrentStep(currentStep + 1);
     } else {
       let allValid = true;
-      // Re-validate all questions before final submission
       for (let i = 0; i < sortedQuestions.length; i++) {
         if (!validateQuestion(i)) {
           allValid = false;
-          // Optionally, navigate to the first invalid question
           setCurrentStep(i + 1);
-          break; // Stop on the first error
+          break;
         }
       }
 
@@ -285,7 +389,7 @@ export function PublicSurveyForm({
       console.error('Failed to submit survey:', error);
 
       console.log('Simulating successful submission for demo');
-      setCurrentStep(sortedQuestions.length + 1); // Still show success for demo
+      setCurrentStep(sortedQuestions.length + 1);
 
       toast({
         title: 'Survey submitted',
@@ -297,7 +401,7 @@ export function PublicSurveyForm({
     }
   };
 
-  const handleResponseChange = (
+  const handleResponseChange = useCallback((
     value: string | string[] | MultiFileResponse | null,
   ) => {
     setResponses((prevResponses) => ({
@@ -312,15 +416,13 @@ export function PublicSurveyForm({
     });
 
     setError(null);
-  };
+  }, [currentStep]);
 
   const calculateProgress = () => {
     if (currentStep === 0 || sortedQuestions.length === 0) return 0;
     if (currentStep > sortedQuestions.length) return 100;
     return Math.round((currentStep / sortedQuestions.length) * 100);
   };
-
-
 
   const getGradientColor = () => {
     const progress = calculateProgress() / 100;
@@ -365,31 +467,6 @@ export function PublicSurveyForm({
             You selected: {currentValue} star{currentValue !== 1 ? 's' : ''}
           </span>
         )}
-      </div>
-    );
-  };
-
-  const renderEmojiSelection = (
-    value: string | undefined,
-    options: string[],
-    onChange: (value: string) => void,
-  ) => {
-    return (
-      <div className="flex flex-wrap justify-center gap-4">
-        {options.map((emoji, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => onChange(emoji)}
-            className={`text-4xl p-3 rounded-full transition-all ${
-              value === emoji
-                ? 'bg-green-100 ring-2 ring-green-600 scale-110'
-                : 'bg-gray-50'
-            } hover:bg-green-50`}
-          >
-            {emoji}
-          </button>
-        ))}
       </div>
     );
   };
@@ -485,7 +562,7 @@ export function PublicSurveyForm({
       side: tempSide?.base64,
     };
     handleResponseChange(newFileResponse);
-    setIsMultiUploadMode(false); // Exit upload mode after saving
+    setIsMultiUploadMode(false);
   };
 
   // --- Function to clear temporary files and exit upload mode ---
@@ -493,10 +570,10 @@ export function PublicSurveyForm({
     setTempFrontal(null);
     setTempBack(null);
     setTempSide(null);
-    setIsMultiUploadMode(false); // Exit upload mode
-    // Optionally, clear the main response for this question if cancelled
+    setIsMultiUploadMode(false);
     handleResponseChange(null);
   };
+
 
   const renderQuestion = (question: ApiQuestion, questionIndex: number) => {
     const questionType = question.type || 'paragraph';
@@ -604,11 +681,14 @@ export function PublicSurveyForm({
           (value) => handleResponseChange(value),
         );
 
-      case 'emojis':
-        return renderEmojiSelection(
-          response as string,
-          questionOptions,
-          (value) => handleResponseChange(value),
+      case 'Emojis':
+        return (
+          <EmojiSelector
+            currentResponse={response as string}
+            onChange={handleResponseChange}
+            questionIndex={questionIndex}
+            currentQuestionText={getQuestionText(question)}
+          />
         );
 
       case 'File Uploader': {
@@ -621,7 +701,7 @@ export function PublicSurveyForm({
               <div className="text-[12px] text-Text-Primary">
                 {questionIndex + 1}. {getQuestionText(question)}
               </div>
-              {!isMultiUploadMode && ( // Show upload button only if not in upload mode
+              {!isMultiUploadMode && (
                 <div
                   onClick={() => setIsMultiUploadMode(true)}
                   className="cursor-pointer flex justify-end items-center gap-1"
@@ -676,10 +756,10 @@ export function PublicSurveyForm({
                         id={`frontal-upload-${questionIndex}`}
                         className="hidden"
                         onChange={(e) => handleIndividualFileChange(e, setTempFrontal)}
-                        accept="image/*" // Restrict to image files
+                        accept="image/*"
                       />
                        {tempFrontal?.base64 && (
-                            <button onClick={() => setTempFrontal(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                            <button type="button" onClick={() => setTempFrontal(null)} className="text-red-500 text-xs mt-1">Clear</button>
                         )}
                     </div>
 
@@ -703,7 +783,7 @@ export function PublicSurveyForm({
                         accept="image/*"
                       />
                         {tempBack?.base64 && (
-                            <button onClick={() => setTempBack(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                            <button type="button" onClick={() => setTempBack(null)} className="text-red-500 text-xs mt-1">Clear</button>
                         )}
                     </div>
 
@@ -727,14 +807,13 @@ export function PublicSurveyForm({
                         accept="image/*"
                       />
                         {tempSide?.base64 && (
-                            <button onClick={() => setTempSide(null)} className="text-red-500 text-xs mt-1">Clear</button>
+                            <button type="button" onClick={() => setTempSide(null)} className="text-red-500 text-xs mt-1">Clear</button>
                         )}
                     </div>
                   </div>
                 </div>
               </>
             ) : hasExistingFiles ? (
-              // Preview section when not in upload mode but files exist
               <div className="mt-2 flex w-full justify-around items-center">
                 {currentFileResponse.frontal && (
                   <div className="mb-2 text-center">
@@ -756,7 +835,6 @@ export function PublicSurveyForm({
                 )}
               </div>
             ) : (
-              // No files uploaded yet, not in upload mode
               <div className="mt-4 text-[#B0B0B0] text-[10px]">No files yet.</div>
             )}
             {validationError && (
