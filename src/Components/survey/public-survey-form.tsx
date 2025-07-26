@@ -74,7 +74,8 @@ interface EmojiSelectorProps {
   currentQuestionText: string; // Added to interface
 }
 
-const emojeysData = [ // Defined outside to prevent re-creation on re-renders
+const emojeysData = [
+  // Defined outside to prevent re-creation on re-renders
   { name: 'Angry', order: 0, icon: '/images/emoji/angery.gif' },
   { name: 'Sad', order: 1, icon: '/images/emoji/sad.gif' },
   { name: 'Neutral', order: 2, icon: '/images/emoji/poker.gif' },
@@ -92,47 +93,58 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
 
   // Initialize active state based on currentResponse (prop).
   const [active, setActive] = useState(() => {
-    return emojeysData.find((el) => el.name === currentResponse) || emojeysData[2];
+    return (
+      emojeysData.find((el) => el.name === currentResponse) || emojeysData[2]
+    );
   });
 
   // Keep internal active state in sync with external currentResponse
   useEffect(() => {
-    const newActive = emojeysData.find((el) => el.name === currentResponse) || emojeysData[2];
+    const newActive =
+      emojeysData.find((el) => el.name === currentResponse) || emojeysData[2];
     if (newActive.name !== active.name) {
       setActive(newActive);
     }
   }, [currentResponse, active.name]);
 
   // Handle emoji selection (both click and swipe)
-  const handleEmojiSelect = useCallback((emojiName: string) => {
-    const selectedEmoji = emojeysData.find(el => el.name === emojiName);
-    if (selectedEmoji) {
-      setActive(selectedEmoji); // Update local state
-      onChange(selectedEmoji.name); // Notify parent immediately
-    }
-  }, [onChange]);
+  const handleEmojiSelect = useCallback(
+    (emojiName: string) => {
+      const selectedEmoji = emojeysData.find((el) => el.name === emojiName);
+      if (selectedEmoji) {
+        setActive(selectedEmoji); // Update local state
+        onChange(selectedEmoji.name); // Notify parent immediately
+      }
+    },
+    [onChange],
+  );
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    const touchMoveX = e.touches[0].clientX;
-    const diff = touchStartX.current - touchMoveX;
-    const swipeThreshold = 50;
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      const touchMoveX = e.touches[0].clientX;
+      const diff = touchStartX.current - touchMoveX;
+      const swipeThreshold = 50;
 
-    if (diff > swipeThreshold) { // Swipe Left
-      if (active.order + 1 <= 4) {
-        handleEmojiSelect(emojeysData[active.order + 1].name);
+      if (diff > swipeThreshold) {
+        // Swipe Left
+        if (active.order + 1 <= 4) {
+          handleEmojiSelect(emojeysData[active.order + 1].name);
+        }
+        touchStartX.current = touchMoveX;
+      } else if (diff < -swipeThreshold) {
+        // Swipe Right
+        if (active.order - 1 >= 0) {
+          handleEmojiSelect(emojeysData[active.order - 1].name);
+        }
+        touchStartX.current = touchMoveX;
       }
-      touchStartX.current = touchMoveX;
-    } else if (diff < -swipeThreshold) { // Swipe Right
-      if (active.order - 1 >= 0) {
-        handleEmojiSelect(emojeysData[active.order - 1].name);
-      }
-      touchStartX.current = touchMoveX;
-    }
-  }, [active, handleEmojiSelect]);
+    },
+    [active, handleEmojiSelect],
+  );
 
   return (
     <div className="bg-[#FCFCFC] p-3 w-full h-full rounded-[12px] border border-gray-50">
@@ -151,7 +163,11 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
                 {emojiToDisplay ? (
                   emojiToDisplay.order === active.order ? (
                     <div className="w-[40px] h-[40px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
-                      <img className="w-[32px]" src={active.icon} alt={active.name} />
+                      <img
+                        className="w-[32px]"
+                        src={active.icon}
+                        alt={active.name}
+                      />
                     </div>
                   ) : (
                     <img
@@ -177,7 +193,6 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
 };
 // --- END EMOJI SELECTOR COMPONENT ---
 
-
 export function PublicSurveyForm({
   survey,
   isClient = false,
@@ -197,7 +212,9 @@ export function PublicSurveyForm({
   >({});
 
   // States for 'File Uploader' specific logic
-  const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(null);
+  const [tempFrontal, setTempFrontal] = useState<IndividualFileData | null>(
+    null,
+  );
   const [tempBack, setTempBack] = useState<IndividualFileData | null>(null);
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
   const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
@@ -211,9 +228,21 @@ export function PublicSurveyForm({
   useEffect(() => {
     if (currentQuestion && currentQuestion.type === 'File Uploader') {
       const currentResponse = responses[currentStep - 1] as MultiFileResponse;
-      setTempFrontal(currentResponse?.frontal ? { base64: currentResponse.frontal, type: 'image/*' } : null);
-      setTempBack(currentResponse?.back ? { base64: currentResponse.back, type: 'image/*' } : null);
-      setTempSide(currentResponse?.side ? { base64: currentResponse.side, type: 'image/*' } : null);
+      setTempFrontal(
+        currentResponse?.frontal
+          ? { base64: currentResponse.frontal, type: 'image/*' }
+          : null,
+      );
+      setTempBack(
+        currentResponse?.back
+          ? { base64: currentResponse.back, type: 'image/*' }
+          : null,
+      );
+      setTempSide(
+        currentResponse?.side
+          ? { base64: currentResponse.side, type: 'image/*' }
+          : null,
+      );
       setIsMultiUploadMode(false);
     }
   }, [currentStep, currentQuestion, responses]);
@@ -401,22 +430,23 @@ export function PublicSurveyForm({
     }
   };
 
-  const handleResponseChange = useCallback((
-    value: string | string[] | MultiFileResponse | null,
-  ) => {
-    setResponses((prevResponses) => ({
-      ...prevResponses,
-      [currentStep - 1]: value,
-    }));
+  const handleResponseChange = useCallback(
+    (value: string | string[] | MultiFileResponse | null) => {
+      setResponses((prevResponses) => ({
+        ...prevResponses,
+        [currentStep - 1]: value,
+      }));
 
-    setValidationErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[currentStep - 1];
-      return newErrors;
-    });
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[currentStep - 1];
+        return newErrors;
+      });
 
-    setError(null);
-  }, [currentStep]);
+      setError(null);
+    },
+    [currentStep],
+  );
 
   const calculateProgress = () => {
     if (currentStep === 0 || sortedQuestions.length === 0) return 0;
@@ -536,7 +566,9 @@ export function PublicSurveyForm({
   // --- Helper function for individual file input handling ---
   const handleIndividualFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setTempFile: React.Dispatch<React.SetStateAction<IndividualFileData | null>>,
+    setTempFile: React.Dispatch<
+      React.SetStateAction<IndividualFileData | null>
+    >,
   ) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -573,7 +605,6 @@ export function PublicSurveyForm({
     setIsMultiUploadMode(false);
     handleResponseChange(null);
   };
-
 
   const renderQuestion = (question: ApiQuestion, questionIndex: number) => {
     const questionType = question.type || 'paragraph';
@@ -693,7 +724,10 @@ export function PublicSurveyForm({
 
       case 'file uploader': {
         const currentFileResponse = (response || {}) as MultiFileResponse;
-        const hasExistingFiles = currentFileResponse.frontal || currentFileResponse.back || currentFileResponse.side;
+        const hasExistingFiles =
+          currentFileResponse.frontal ||
+          currentFileResponse.back ||
+          currentFileResponse.side;
 
         return (
           <div className="bg-[#FCFCFC] p-3 w-full rounded-[12px] border border-gray-50">
@@ -718,7 +752,13 @@ export function PublicSurveyForm({
               <>
                 <div className="w-full bg-white rounded-[8px] p-2 mt-4">
                   <div className="flex justify-between items-center">
-                    <div className="text-[12px] text-[#B0B0B0]">{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                    <div className="text-[12px] text-[#B0B0B0]">
+                      {new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </div>
                     <div className="flex justify-end items-center gap-2">
                       <Button
                         variant="outline"
@@ -741,13 +781,22 @@ export function PublicSurveyForm({
                   <div className="w-full gap-4 flex flex-wrap justify-center items-center mt-2">
                     {/* Frontal File Input */}
                     <div className="flex flex-col items-center">
-                      <label htmlFor={`frontal-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                      <label
+                        htmlFor={`frontal-upload-${questionIndex}`}
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                      >
                         {tempFrontal?.base64 ? (
-                          <img src={tempFrontal.base64} alt="Frontal Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={tempFrontal.base64}
+                            alt="Frontal Preview"
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">Frontal</span>
+                            <span className="text-gray-500 text-xs mt-1">
+                              Frontal
+                            </span>
                           </>
                         )}
                       </label>
@@ -755,23 +804,40 @@ export function PublicSurveyForm({
                         type="file"
                         id={`frontal-upload-${questionIndex}`}
                         className="hidden"
-                        onChange={(e) => handleIndividualFileChange(e, setTempFrontal)}
+                        onChange={(e) =>
+                          handleIndividualFileChange(e, setTempFrontal)
+                        }
                         accept="image/*"
                       />
-                       {tempFrontal?.base64 && (
-                            <button type="button" onClick={() => setTempFrontal(null)} className="text-red-500 text-xs mt-1">Clear</button>
-                        )}
+                      {tempFrontal?.base64 && (
+                        <button
+                          type="button"
+                          onClick={() => setTempFrontal(null)}
+                          className="text-red-500 text-xs mt-1"
+                        >
+                          Clear
+                        </button>
+                      )}
                     </div>
 
                     {/* Back File Input */}
                     <div className="flex flex-col items-center">
-                      <label htmlFor={`back-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                      <label
+                        htmlFor={`back-upload-${questionIndex}`}
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                      >
                         {tempBack?.base64 ? (
-                          <img src={tempBack.base64} alt="Back Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={tempBack.base64}
+                            alt="Back Preview"
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">Back</span>
+                            <span className="text-gray-500 text-xs mt-1">
+                              Back
+                            </span>
                           </>
                         )}
                       </label>
@@ -779,23 +845,40 @@ export function PublicSurveyForm({
                         type="file"
                         id={`back-upload-${questionIndex}`}
                         className="hidden"
-                        onChange={(e) => handleIndividualFileChange(e, setTempBack)}
+                        onChange={(e) =>
+                          handleIndividualFileChange(e, setTempBack)
+                        }
                         accept="image/*"
                       />
-                        {tempBack?.base64 && (
-                            <button type="button" onClick={() => setTempBack(null)} className="text-red-500 text-xs mt-1">Clear</button>
-                        )}
+                      {tempBack?.base64 && (
+                        <button
+                          type="button"
+                          onClick={() => setTempBack(null)}
+                          className="text-red-500 text-xs mt-1"
+                        >
+                          Clear
+                        </button>
+                      )}
                     </div>
 
                     {/* Side File Input */}
                     <div className="flex flex-col items-center">
-                      <label htmlFor={`side-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                      <label
+                        htmlFor={`side-upload-${questionIndex}`}
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                      >
                         {tempSide?.base64 ? (
-                          <img src={tempSide.base64} alt="Side Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={tempSide.base64}
+                            alt="Side Preview"
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
-                            <span className="text-gray-500 text-xs mt-1">Side</span>
+                            <span className="text-gray-500 text-xs mt-1">
+                              Side
+                            </span>
                           </>
                         )}
                       </label>
@@ -803,12 +886,20 @@ export function PublicSurveyForm({
                         type="file"
                         id={`side-upload-${questionIndex}`}
                         className="hidden"
-                        onChange={(e) => handleIndividualFileChange(e, setTempSide)}
+                        onChange={(e) =>
+                          handleIndividualFileChange(e, setTempSide)
+                        }
                         accept="image/*"
                       />
-                        {tempSide?.base64 && (
-                            <button type="button" onClick={() => setTempSide(null)} className="text-red-500 text-xs mt-1">Clear</button>
-                        )}
+                      {tempSide?.base64 && (
+                        <button
+                          type="button"
+                          onClick={() => setTempSide(null)}
+                          className="text-red-500 text-xs mt-1"
+                        >
+                          Clear
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -818,24 +909,38 @@ export function PublicSurveyForm({
                 {currentFileResponse.frontal && (
                   <div className="mb-2 text-center">
                     <span className="text-[10px] text-gray-600">Frontal: </span>
-                    <img src={currentFileResponse.frontal} alt="Frontal" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                    <img
+                      src={currentFileResponse.frontal}
+                      alt="Frontal"
+                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
+                    />
                   </div>
                 )}
                 {currentFileResponse.back && (
                   <div className="mb-2 text-center">
                     <span className="text-[10px] text-gray-600">Back: </span>
-                    <img src={currentFileResponse.back} alt="Back" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                    <img
+                      src={currentFileResponse.back}
+                      alt="Back"
+                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
+                    />
                   </div>
                 )}
                 {currentFileResponse.side && (
                   <div className="mb-2 text-center">
                     <span className="text-[10px] text-gray-600">Side: </span>
-                    <img src={currentFileResponse.side} alt="Side" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                    <img
+                      src={currentFileResponse.side}
+                      alt="Side"
+                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
+                    />
                   </div>
                 )}
               </div>
             ) : (
-              <div className="mt-4 text-[#B0B0B0] text-[10px]">No files yet.</div>
+              <div className="mt-4 text-[#B0B0B0] text-[10px]">
+                No files yet.
+              </div>
             )}
             {validationError && (
               <div className="flex items-center space-x-2 text-red-500 text-sm mt-2">

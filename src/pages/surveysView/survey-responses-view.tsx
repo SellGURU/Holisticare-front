@@ -11,8 +11,8 @@ import {
 // --- NEW/UPDATED INTERFACES ---
 interface MultiFileResponse {
   frontal?: string; // base64 data for frontal image
-  back?: string;    // base64 data for back image
-  side?: string;    // base64 data for side image
+  back?: string; // base64 data for back image
+  side?: string; // base64 data for side image
 }
 
 interface Question {
@@ -59,7 +59,8 @@ export function SurveyResponsesView({
     // Handle "File Uploader" type
     if (question.type.toLowerCase() === 'file uploader') {
       const fileResponse = question.response as MultiFileResponse; // Cast to MultiFileResponse
-      const hasFiles = fileResponse.frontal || fileResponse.back || fileResponse.side;
+      const hasFiles =
+        fileResponse.frontal || fileResponse.back || fileResponse.side;
 
       if (!hasFiles) {
         return <span className="text-gray-400 italic">No files uploaded</span>;
@@ -69,7 +70,9 @@ export function SurveyResponsesView({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
           {fileResponse.frontal && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Frontal View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Frontal View
+              </span>
               <img
                 src={fileResponse.frontal}
                 alt="Frontal File Preview"
@@ -79,7 +82,9 @@ export function SurveyResponsesView({
           )}
           {fileResponse.back && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Back View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Back View
+              </span>
               <img
                 src={fileResponse.back}
                 alt="Back File Preview"
@@ -89,7 +94,9 @@ export function SurveyResponsesView({
           )}
           {fileResponse.side && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Side View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Side View
+              </span>
               <img
                 src={fileResponse.side}
                 alt="Side File Preview"
