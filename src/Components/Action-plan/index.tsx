@@ -138,10 +138,12 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
               {actionPlanData && actionPlanData?.length > 0 ? (
                 <>
                   {actionPlanData[0]?.calendar?.length > 0 && (
-                    <CalenderComponent
-                      data={actionPlanData[0]?.calendar}
-                      isTwoView={false}
-                    />
+                      <>
+                        <MobileCalendarComponent
+                          data={actionPlanData[0]?.calendar}
+                        ></MobileCalendarComponent>
+
+                      </>
                   )}
                 </>
               ) : (

@@ -68,6 +68,7 @@ const Share = () => {
             showCombo={showCombo}
             setShowCombo={() => setshowCombo(!showCombo)}
             canDownload
+            isShare
           ></TopBar>
         </div>
         <Draggable

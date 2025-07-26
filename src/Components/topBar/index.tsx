@@ -18,12 +18,14 @@ interface TopBarProps {
   canDownload?: boolean;
   showCombo?: boolean;
   setShowCombo?: () => void;
+  isShare?: boolean;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
   canDownload,
   setShowCombo,
   showCombo,
+  isShare,
 }) => {
   const navigate = useNavigate();
   const printreport = () => {
@@ -201,7 +203,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   };
 
   useEffect(() => {
-    getShowBrandInfo();
+    if(!isShare){
+      getShowBrandInfo();
+    }
   }, []);
 
   useEffect(() => {
@@ -247,31 +251,35 @@ export const TopBar: React.FC<TopBarProps> = ({
 
   return (
     <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">
-      <div className="flex gap-2 items-center ">
-        <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
-        {resolveNav().map((el, index: number) => {
-          return (
-            <>
-              <div
-                onClick={() => {
-                  if (index != resolveNav().length - 1) {
-                    navigate(el.url);
-                  }
-                }}
-                className={`TextStyle-Button ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
-              >
-                {el.name}
-              </div>
-              {index != resolveNav().length - 1 && (
-                <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
-              )}
-            </>
-          );
-        })}
+      {!isShare ?
+        <div className="flex gap-2 items-center ">
+          <img onClick={() => navigate('/')} src="/icons/home.svg" alt="" />
+          {resolveNav().map((el, index: number) => {
+            return (
+              <>
+                <div
+                  onClick={() => {
+                    if (index != resolveNav().length - 1) {
+                      navigate(el.url);
+                    }
+                  }}
+                  className={`TextStyle-Button ${index == 0 ? 'text-[#445A74]' : 'text-[#6783A0] '} ${index == resolveNav().length - 1 ? 'opacity-50' : ''} cursor-pointer ml-1`}
+                >
+                  {el.name}
+                </div>
+                {index != resolveNav().length - 1 && (
+                  <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
+                )}
+              </>
+            );
+          })}
 
-        {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
-        <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
-      </div>
+          {/* <img className="w-5 h-5" src="/icons/arrow-right.svg" alt="" />
+          <span className="TextStyle-Button text-[#6783A0]">Report</span> */}
+        </div>
+        :
+        <div></div>
+      }
       {(hasReportInRoute || hasShareInRoute) && (
         <div className="flex xl:hidden items-center gap-2 xs:gap-4">
           <img
@@ -346,40 +354,42 @@ export const TopBar: React.FC<TopBarProps> = ({
             )}
           </div>
         )}
-        <div className="relative">
-          <div className="flex gap-10 ">
-            {/* <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
-              <img src="/icons/notification-2.svg" alt="" />
-            </div> */}
-            <div
-              ref={buttentRef}
-              onClick={() => {
-                setVisibleClinic(!visibleClinic);
-              }}
-              className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
-            >
-              {customTheme.selectedImage ? (
-                <img
-                  className="size-6 rounded-full "
-                  src={customTheme.selectedImage}
-                  alt=""
-                />
-              ) : (
-                <div className="w-full h-5 flex justify-center items-center">
-                  <BeatLoader size={6}></BeatLoader>
-                </div>
-                // <img src="/icons/topbar-logo2.svg" alt="" />
-              )}
-              {customTheme.name ? customTheme.name : ''}{' '}
+        {!isShare &&
+          <div className="relative">
+            <div className="flex gap-10 ">
+              {/* <div className="size-6 rounded-[31px] bg-white border border-Gray-50 shadow-drop flex items-center justify-center cursor-pointer -mr-4 ">
+                <img src="/icons/notification-2.svg" alt="" />
+              </div> */}
+              <div
+                ref={buttentRef}
+                onClick={() => {
+                  setVisibleClinic(!visibleClinic);
+                }}
+                className="flex select-none items-center gap-1 TextStyle-Body-2 cursor-pointer text-[#383838]"
+              >
+                {customTheme.selectedImage ? (
+                  <img
+                    className="size-6 rounded-full "
+                    src={customTheme.selectedImage}
+                    alt=""
+                  />
+                ) : (
+                  <div className="w-full h-5 flex justify-center items-center">
+                    <BeatLoader size={6}></BeatLoader>
+                  </div>
+                  // <img src="/icons/topbar-logo2.svg" alt="" />
+                )}
+                {customTheme.name ? customTheme.name : ''}{' '}
+              </div>
             </div>
+            {visibleClinic && (
+              <LogOutModal
+                customTheme={customTheme}
+                refrence={refrence}
+              ></LogOutModal>
+            )}
           </div>
-          {visibleClinic && (
-            <LogOutModal
-              customTheme={customTheme}
-              refrence={refrence}
-            ></LogOutModal>
-          )}
-        </div>
+        }
       </div>
       <SlideOutPanel
         isOpen={openDownload || openShare}
