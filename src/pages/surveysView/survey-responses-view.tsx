@@ -12,8 +12,8 @@ import { Star } from 'lucide-react';
 // --- NEW/UPDATED INTERFACES ---
 interface MultiFileResponse {
   frontal?: string; // base64 data for frontal image
-  back?: string;    // base64 data for back image
-  side?: string;    // base64 data for side image
+  back?: string; // base64 data for back image
+  side?: string; // base64 data for side image
 }
 
 interface Question {
@@ -69,7 +69,8 @@ export function SurveyResponsesView({
     // Handle "File Uploader" type
     if (question.type.toLowerCase() === 'file uploader') {
       const fileResponse = question.response as MultiFileResponse; // Cast to MultiFileResponse
-      const hasFiles = fileResponse.frontal || fileResponse.back || fileResponse.side;
+      const hasFiles =
+        fileResponse.frontal || fileResponse.back || fileResponse.side;
 
       if (!hasFiles) {
         return <span className="text-gray-400 italic">No files uploaded</span>;
@@ -79,7 +80,9 @@ export function SurveyResponsesView({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
           {fileResponse.frontal && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Frontal View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Frontal View
+              </span>
               <img
                 src={fileResponse.frontal}
                 alt="Frontal File Preview"
@@ -89,7 +92,9 @@ export function SurveyResponsesView({
           )}
           {fileResponse.back && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Back View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Back View
+              </span>
               <img
                 src={fileResponse.back}
                 alt="Back File Preview"
@@ -99,7 +104,9 @@ export function SurveyResponsesView({
           )}
           {fileResponse.side && (
             <div className="flex flex-col items-center border border-gray-200 rounded-md p-2">
-              <span className="text-sm font-medium text-gray-700 mb-1">Side View</span>
+              <span className="text-sm font-medium text-gray-700 mb-1">
+                Side View
+              </span>
               <img
                 src={fileResponse.side}
                 alt="Side File Preview"
@@ -115,7 +122,7 @@ export function SurveyResponsesView({
     if (question.type.toLowerCase() === 'star rating') {
       const rating = Number.parseInt(question.response.toString()) || 0;
       const maxStars = question.options?.length || 5;
-      
+
       return (
         <div className="flex flex-col items-center space-y-4">
           <div className="flex space-x-2">
@@ -144,20 +151,18 @@ export function SurveyResponsesView({
       const value = Number.parseInt(question.response.toString()) || 0;
       const min = Number.parseInt(question.options?.[0] || '1');
       const max = Number.parseInt(question.options?.[1] || '10');
-      
+
       return (
         <div className="space-y-6 px-4 mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-green-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((value - min) / (max - min)) * 100}%` }}
             ></div>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-gray-500">Low ({min})</span>
-            <span className="text-green-600 font-bold text-xl">
-              {value}
-            </span>
+            <span className="text-green-600 font-bold text-xl">{value}</span>
             <span className="text-sm text-gray-500">High ({max})</span>
           </div>
         </div>
@@ -167,8 +172,10 @@ export function SurveyResponsesView({
     // Handle "Emojis" type
     if (question.type.toLowerCase() === 'emojis') {
       const selectedEmojiName = question.response.toString();
-      const selectedEmoji = emojeysData.find(el => el.name === selectedEmojiName);
-      
+      const selectedEmoji = emojeysData.find(
+        (el) => el.name === selectedEmojiName,
+      );
+
       if (!selectedEmoji) {
         return <span className="text-gray-400 italic">No emoji selected</span>;
       }
@@ -178,11 +185,17 @@ export function SurveyResponsesView({
           <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
             <div className="flex w-full justify-center items-center">
               <div className="w-[60px] h-[60px] min-w-[60px] min-h-[60px] bg-[#FFD64F] flex justify-center items-center rounded-full">
-                <img className="w-[48px]" src={selectedEmoji.icon} alt={selectedEmoji.name} />
+                <img
+                  className="w-[48px]"
+                  src={selectedEmoji.icon}
+                  alt={selectedEmoji.name}
+                />
               </div>
             </div>
             <div className="w-full mt-4 flex justify-center">
-              <div className="text-[14px] text-[#005F73]">{selectedEmoji.name}</div>
+              <div className="text-[14px] text-[#005F73]">
+                {selectedEmoji.name}
+              </div>
             </div>
           </div>
         </div>
