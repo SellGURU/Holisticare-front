@@ -49,7 +49,7 @@ const DeletedTooltipContainer = () => {
             </div>
             <div className="text-Text-Secondary text-[10px] mt-2 text-justify">
               If you would like to remove its related data from the report,
-              please click the “Sync Data” button.
+              please click the “Unsync Data” button.
             </div>
             <div className="flex justify-end mt-2 items-center">
               <ButtonSecondary
@@ -60,7 +60,7 @@ const DeletedTooltipContainer = () => {
                 ClassName="rounded-[20px]"
                 size="small"
               >
-                Sync Data
+                Unsync Data
               </ButtonSecondary>
             </div>
           </div>
