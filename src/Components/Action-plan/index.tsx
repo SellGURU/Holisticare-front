@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CalenderComponent from '../CalendarComponent/CalendarComponent';
 import { ActionPlanCard } from './ActionPlanCard';
@@ -26,7 +26,7 @@ interface ActionPlanProps {
   setCalendarPrintData: (data: any) => void;
 }
 
-export const ActionPlan: React.FC<ActionPlanProps> = ({
+export const ActionPlan: FC<ActionPlanProps> = ({
   setActionPrintData,
   isShare,
   calenderDataUper,
@@ -139,9 +139,18 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
                 <>
                   {actionPlanData[0]?.calendar?.length > 0 && (
                     <>
-                      <MobileCalendarComponent
-                        data={actionPlanData[0]?.calendar}
-                      ></MobileCalendarComponent>
+                      {isMobile ? (
+                        <MobileCalendarComponent
+                          data={actionPlanData[0]?.calendar}
+                        ></MobileCalendarComponent>
+                      ) : (
+                        <>
+                          <CalenderComponent
+                            data={actionPlanData[0]?.calendar}
+                            isTwoView={false}
+                          />
+                        </>
+                      )}
                     </>
                   )}
                 </>
