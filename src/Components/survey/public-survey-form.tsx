@@ -150,19 +150,19 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
               <div key={itemIndex}>
                 {emojiToDisplay ? (
                   emojiToDisplay.order === active.order ? (
-                    <div className="w-[40px] h-[40px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
-                      <img className="w-[32px]" src={active.icon} alt={active.name} />
+                    <div className="w-[60px] h-[60px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                      <img className="w-[48px]" src={active.icon} alt={active.name} />
                     </div>
                   ) : (
                     <img
                       onClick={() => handleEmojiSelect(emojiToDisplay.name)}
-                      className="w-[28px] cursor-pointer"
+                      className="w-[48px] cursor-pointer"
                       src={emojiToDisplay.icon}
                       alt={emojiToDisplay.name}
                     />
                   )
                 ) : (
-                  <div className="w-[28px] h-[28px]"></div>
+                  <div className="w-[48px] h-[48px]"></div>
                 )}
               </div>
             );
@@ -738,12 +738,12 @@ export function PublicSurveyForm({
                       </Button>
                     </div>
                   </div>
-                  <div className="w-full gap-4 flex flex-wrap justify-center items-center mt-2">
+                  <div className="w-full flex justify-center gap-4 justify-items-center mt-2">
                     {/* Frontal File Input */}
-                    <div className="flex flex-col items-center">
-                      <label htmlFor={`frontal-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                      <label htmlFor={`frontal-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white">
                         {tempFrontal?.base64 ? (
-                          <img src={tempFrontal.base64} alt="Frontal Preview" className="w-full h-full object-cover" />
+                          <img src={tempFrontal.base64} alt="Frontal Preview" className="w-full h-full object-cover rounded" />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
@@ -764,10 +764,10 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Back File Input */}
-                    <div className="flex flex-col items-center">
-                      <label htmlFor={`back-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                      <label htmlFor={`back-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white">
                         {tempBack?.base64 ? (
-                          <img src={tempBack.base64} alt="Back Preview" className="w-full h-full object-cover" />
+                          <img src={tempBack.base64} alt="Back Preview" className="w-full h-full object-cover rounded" />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
@@ -788,10 +788,10 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Side File Input */}
-                    <div className="flex flex-col items-center">
-                      <label htmlFor={`side-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden">
+                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                      <label htmlFor={`side-upload-${questionIndex}`} className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white">
                         {tempSide?.base64 ? (
-                          <img src={tempSide.base64} alt="Side Preview" className="w-full h-full object-cover" />
+                          <img src={tempSide.base64} alt="Side Preview" className="w-full h-full object-cover rounded" />
                         ) : (
                           <>
                             <UploadCloud className="w-8 h-8 text-gray-400" />
@@ -814,23 +814,29 @@ export function PublicSurveyForm({
                 </div>
               </>
             ) : hasExistingFiles ? (
-              <div className="mt-2 flex w-full justify-around items-center">
+              <div className="mt-2 grid grid-cols-3 gap-4 justify-items-center">
                 {currentFileResponse.frontal && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Frontal: </span>
-                    <img src={currentFileResponse.frontal} alt="Frontal" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">Frontal</span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img src={currentFileResponse.frontal} alt="Frontal" className="w-full h-full object-cover" />
+                    </div>
                   </div>
                 )}
                 {currentFileResponse.back && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Back: </span>
-                    <img src={currentFileResponse.back} alt="Back" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">Back</span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img src={currentFileResponse.back} alt="Back" className="w-full h-full object-cover" />
+                    </div>
                   </div>
                 )}
                 {currentFileResponse.side && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Side: </span>
-                    <img src={currentFileResponse.side} alt="Side" className="w-[80px] h-[80px] object-cover rounded-md mx-auto" />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">Side</span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img src={currentFileResponse.side} alt="Side" className="w-full h-full object-cover" />
+                    </div>
                   </div>
                 )}
               </div>
