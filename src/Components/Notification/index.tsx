@@ -252,18 +252,17 @@ export const Notification: React.FC<NotificationProps> = ({
                   <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#005F73] to-[#6CC24A]"></span>
                 )}
                 {/* Removed 'action' as it's not in the provided API response, add back if needed */}
-                {notif.proceed_type?.type !== 'read_only' && ( // Only show if type is 'redirect'
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent the parent div's onClick from firing
                       handleProceedClick(notif);
                     }}
-                    className="flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start"
+                    className={` ${notif.proceed_type?.type === 'redirect' ? '' :'invisible'} flex gap-1 items-center text-Primary-DeepTeal text-xs font-medium self-start`}
                   >
                     Proceed
                     <img src="/icons/arrow-right-small 2.svg" alt="" />
                   </button>
-                )}
+           
               </div>
             </div>
           ))
