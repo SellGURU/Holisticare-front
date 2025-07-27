@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { subscribe } from '../../../utils/event';
 import Legends from '../Legends';
 // import StatusBarChart from './StatusBarChart';
-import resolveAnalyseIcon from '../resolveAnalyseIcon';
-import Toggle from './Toggle';
+import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 import HistoricalChart from '../HistoricalChart';
-import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
+import resolveAnalyseIcon from '../resolveAnalyseIcon';
+import Toggle from './Toggle';
 // import UnitPopUp from '../../UnitPopup';
 
 interface DetiledAnalyseProps {
@@ -20,6 +20,7 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const [isCheced, setIsCheced] = useState(false);
+  const [isChecedIndex, setIsChecedIndex] = useState(0);
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
@@ -231,9 +232,13 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                       </div>
                                       <Toggle
                                         setChecked={(value) => {
-                                          setIsCheced(value);
+                                          if (value) {
+                                            setIsChecedIndex(index + 1);
+                                          } else {
+                                            setIsChecedIndex(0);
+                                          }
                                         }}
-                                        checked={isCheced}
+                                        checked={isChecedIndex == index + 1}
                                       ></Toggle>
                                     </div>
                                   </div>
@@ -318,9 +323,13 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
                                       </div>
                                       <Toggle
                                         setChecked={(value) => {
-                                          setIsCheced(value);
+                                          if (value) {
+                                            setIsChecedIndex(index + 1);
+                                          } else {
+                                            setIsChecedIndex(0);
+                                          }
                                         }}
-                                        checked={isCheced}
+                                        checked={isChecedIndex == index + 1}
                                       ></Toggle>
                                     </div>
                                   </div>
