@@ -28,9 +28,8 @@ const MessageList: React.FC<MessageListProps> = ({
   search,
   onSelectMessage,
   messages,
-  setMessages
+  setMessages,
 }) => {
-
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);

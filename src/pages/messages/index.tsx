@@ -42,13 +42,20 @@ const Messages = () => {
         <div
           className={`w-full md:w-[315px] h-full  ${selectedMessage ? 'hidden md:block' : 'block'}`}
         >
-          <MessageList  messages={messages}
-            setMessages={setMessages}  search={search} onSelectMessage={setSelectedMessage} />
+          <MessageList
+            messages={messages}
+            setMessages={setMessages}
+            search={search}
+            onSelectMessage={setSelectedMessage}
+          />
         </div>
         <div
           className={`w-full   ${selectedMessage ? 'block ' : 'hidden md:block '}`}
         >
-          <MessagesChatBox   onMessageSent={handleMessageSent} onBack={() => setSelectedMessage(null)} />
+          <MessagesChatBox
+            onMessageSent={handleMessageSent}
+            onBack={() => setSelectedMessage(null)}
+          />
         </div>
       </div>
     </div>
