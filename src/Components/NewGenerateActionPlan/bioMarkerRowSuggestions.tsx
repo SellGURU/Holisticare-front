@@ -112,7 +112,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
   const [color, setColor] = useState<string>('');
   const [bgColor, setBgColor] = useState<string>('');
   useEffect(() => {
-    switch (value.Category) {
+    switch (value?.label) {
       case 'Highly Recommended':
         setColor('#06C78D');
         setBgColor('#DEF7EC');
@@ -134,7 +134,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
         setBgColor('#DEF7EC');
         break;
     }
-  }, [value.Category]);
+  }, [value?.label]);
   return (
     <>
       <div className="w-full h-auto px-6 p-3 lg:px-6 lg:py-1">
@@ -288,12 +288,14 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                     className={`flex items-center gap-1 ml-4 ${value.Category === 'Diet' && 'ml-5'}`}
                   >
                     <div
-                      className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                      className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                      style={{ backgroundColor: bgColor }}
                     >
                       <div
-                        className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                        className={`size-[8px] select-none rounded-full`}
+                        style={{ backgroundColor: color }}
                       ></div>
-                      {value.Category || '-'}
+                      {value?.label || '-'}
                     </div>
                     {/* <div
                       className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"

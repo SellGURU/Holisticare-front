@@ -42,7 +42,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
         className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-sm text-Text-Primary border-b`}
       >
         <td
-          className="pl-4 py-3 text-xs w-[160px] text-Text-Primary select-none"
+          className="pl-4 py-3 text-xs w-[140px] text-Text-Primary select-none"
           title={exercise.Title.length > 30 ? exercise.Title : undefined} // Tooltip for long titles
         >
           {exercise.Title.length > 30
@@ -72,7 +72,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             </Tooltip>
           )}
         </td>
-        <td className="py-3 w-[150px] text-center  text-[10px] ">
+        <td className="py-3 w-[100px] text-center  text-[10px] ">
           <div className="flex justify-center items-center gap-1">
             {exercise.Sections.slice(0, 2).map((el: any) => {
               return (
@@ -98,6 +98,31 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
               <span className="text-Text-Triarty">/10</span>
             </div>
           </div>
+        </td>
+        <td
+          className="py-3 text-xs text-[#888888] w-[150px] text-center"
+          data-tooltip-id={`tooltip-activity-clinical-guidance-${index}`}
+        >
+          <div className="text-ellipsis select-none">
+            {exercise?.Ai_note
+              ? exercise?.Ai_note?.length > 47
+                ? exercise?.Ai_note?.substring(0, 47) + '...'
+                : exercise?.Ai_note
+              : '-'}
+          </div>
+          {exercise?.Ai_note?.length > 47 && (
+            <Tooltip
+              id={`tooltip-activity-clinical-guidance-${index}`}
+              place="top"
+              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              style={{
+                zIndex: 9999,
+                pointerEvents: 'none',
+              }}
+            >
+              {exercise.Ai_note}
+            </Tooltip>
+          )}
         </td>
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
           {formatDate(exercise['Added On'])}

@@ -17,16 +17,16 @@ const StatusBarChartPrintV2 = ({
 }: StatusBarChartPrintV2Prps) => {
   const resolveColor = (key: string) => {
     if (key == 'Needs Focus') {
-      return '#FC5474';
+      return '#B2302E';
     }
     if (key == 'Ok') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (key == 'Good') {
-      return '#06C78D';
+      return '#72C13B';
     }
     if (key == 'Excellent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
     return '#FBAD37';
   };
@@ -37,7 +37,10 @@ const StatusBarChartPrintV2 = ({
     let str = '';
     if (el.low == null) {
       str += ' <  ';
-    } else {
+    } else if (el.high == null) {
+      str += ' >  ';
+    }
+    if (el.low != null) {
       str += el.low;
     }
     if (el.high != null && el.low != null) {
@@ -45,9 +48,9 @@ const StatusBarChartPrintV2 = ({
     } else if (el.high != null) {
       str += el.high;
     }
-    if (el.high == null) {
-      str += ' >  ';
-    }
+    // if (el.high == null) {
+    //   str += ' < ';
+    // }
     return str;
   };
   const sortByRange = (data: any) => {
@@ -71,28 +74,91 @@ const StatusBarChartPrintV2 = ({
     });
   };
   const resolvePercentLeft = (el: any) => {
-    if (values) {
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 <= 5) {
-        return 5;
-      }
-      if (((values[0] - el.low) / (el.high - el.low)) * 100 > 95) {
-        return 95;
-      }
-      return ((values[0] - el.low) / (el.high - el.low)) * 100;
+    if (!values) return;
+    const value = values[0];
+    // اگر low مقدار null بود، یعنی بازه از منفی بی‌نهایت شروع می‌شود
+    if (el.low == null && el.high != null) {
+      // اگر مقدار کاربر کمتر از high باشد، درصد را نزدیک 0 قرار بده
+      if (value <= el.high) return 5;
+      // اگر بیشتر بود، درصد را نزدیک 100 قرار بده
+      return 95;
     }
+    // اگر high مقدار null بود، یعنی بازه تا مثبت بی‌نهایت ادامه دارد
+    if (el.high == null && el.low != null) {
+      // اگر مقدار کاربر بیشتر از low باشد، درصد را نزدیک 100 قرار بده
+      if (value >= el.low) return 90;
+      // اگر کمتر بود، درصد را نزدیک 0 قرار بده
+      return 5;
+    }
+    // اگر هر دو مقدار داشتند
+    if (el.low != null && el.high != null) {
+      const percent = ((value - el.low) / (el.high - el.low)) * 100 - 3;
+      if (percent <= 10) return 10;
+      if (percent > 90) return 90;
+      return percent;
+    }
+    // اگر هر دو null بودند، مقدار وسط را برگردان
+    return 50;
   };
+  const createGradient = (data: any[], index: number) => {
+    const sortedData = sortByRange(data);
+    const currentItem = sortedData[index];
+    const nextItem = sortedData[index + 1];
+
+    const currentColor = currentItem.color || resolveColor(currentItem.status);
+
+    // If this is the last item or there's no next item, return solid color
+    if (!nextItem) {
+      return currentColor;
+    }
+
+    const nextColor = nextItem.color || resolveColor(nextItem.status);
+
+    // Create gradient only at the boundary (last 20% of current segment)
+    return `linear-gradient(to right, ${currentColor} 80%, ${nextColor} 100%)`;
+  };
+  // Helper function to determine marker mode
+  const getStatusMarkerMode = (
+    el: any,
+    status: any,
+    values: any,
+    data: any,
+  ): 'unique' | 'inRange' | 'none' => {
+    if (!status || !data) return 'none';
+    const sameStatusRanges = sortByRange(data).filter(
+      (item: any) => item.status === status?.[0],
+    );
+    if (sameStatusRanges.length === 1) {
+      if (status[0] == el.status) return 'unique';
+      return 'none';
+    }
+    if (
+      status[0] == el.status &&
+      values &&
+      (el.low === null || Number(values[0]) >= Number(el.low)) &&
+      (el.high === null || Number(values[0]) <= Number(el.high))
+    ) {
+      return 'inRange';
+    }
+    return 'none';
+  };
+
   return (
-    <div className="w-full relative flex select-none">
+    <div className="w-full relative flex items-center select-none">
       {sortByRange(data).map((el: any, index: number) => {
         // const label = mapingData[el.label];
         return (
           <>
             <div
-              className={` relative border-l-2 border-white  h-[8px] ${index == data.length - 1 && 'rounded-r-[8px] border-l border-white'} ${index == 0 && 'rounded-l-[8px]'}`}
+              className={` relative  ${index == data.length - 1 && 'rounded-r-[8px]'} ${index == 0 && 'rounded-l-[8px]'}`}
               style={{
                 width: 100 / data.length + '%',
-                backgroundColor: el.color ? el.color : resolveColor(el.status),
-                height: '8px',
+                background: createGradient(data, index),
+                // backgroundColor:
+                //   el.color != '' ? el.color : resolveColor(el.status),
+                minHeight: '8px',
+                maxHeight: '8px',
+                height: '8px ',
                 borderTopLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomLeftRadius: index == 0 ? '8px' : 'unset',
                 borderBottomRightRadius:
@@ -131,49 +197,62 @@ const StatusBarChartPrintV2 = ({
                 {/* </TooltipText> */}
               </div>
 
-              {status && status[0] == el.status && (
-                <div
-                  className={`absolute  top-[2px]  z-10`}
-                  style={{
-                    top: '2px',
-                    left: resolvePercentLeft(el) || '50%',
-                  }}
-                >
-                  <div
-                    style={{ backgroundColor: '#005f73', borderRadius: '100%' }}
-                    className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"
-                  ></div>
-                  <div
-                    style={{
-                      backgroundColor: '#005f73',
-                      width: '3px',
-                      height: '8px',
-                      marginLeft: '2.5px',
-                    }}
-                    className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
-                  ></div>
-                  <div
-                    className=" w-max flex justify-center ml-0 items-center gap-[2px] text-Primary-DeepTeal"
-                    style={{
-                      fontSize: '10px',
-                      gap: '2px',
-                      color: '#005f73 ',
-                      marginLeft:
-                        index == 0
-                          ? '0px'
-                          : '-' +
-                            (values &&
-                              values[0].length + unit &&
-                              unit?.length) *
-                              5 +
-                            'px',
-                    }}
-                  >
-                    <span className="opacity-40">You: </span>
-                    {values && values[0]} <span>{unit}</span>
-                  </div>
-                </div>
-              )}
+              {(() => {
+                const markerMode = getStatusMarkerMode(
+                  el,
+                  status,
+                  values,
+                  data,
+                );
+                if (markerMode === 'unique' || markerMode === 'inRange') {
+                  return (
+                    <div
+                      className={`absolute  top-[2px]  z-10`}
+                      style={{
+                        top: '2px',
+                        left: resolvePercentLeft(el) + '%' || '50%',
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: '#005f73',
+                          borderRadius: '100%',
+                        }}
+                        className="w-2 h-2  rotate-45 bg-Primary-DeepTeal"
+                      ></div>
+                      <div
+                        style={{
+                          backgroundColor: '#005f73',
+                          width: '3px',
+                          height: '8px',
+                          marginLeft: '2.4px',
+                        }}
+                        className="w-[3px] h-[8px] ml-[2.5px] bg-Primary-DeepTeal"
+                      ></div>
+                      <div
+                        className=" w-max flex justify-center ml-0 items-center gap-[2px] text-Primary-DeepTeal"
+                        style={{
+                          fontSize: '10px',
+                          gap: '2px',
+                          color: '#005f73 ',
+                          marginLeft:
+                            index == 0
+                              ? '0px'
+                              : '-' +
+                                ((values?.[0]?.length || 0) +
+                                  (unit?.length || 0)) *
+                                  6.3 +
+                                'px',
+                        }}
+                      >
+                        <span className="opacity-40">You: </span>
+                        {values && values[0]} <span>{unit}</span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </>
         );

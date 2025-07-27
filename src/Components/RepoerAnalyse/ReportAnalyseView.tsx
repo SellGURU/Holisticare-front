@@ -2,40 +2,40 @@
 
 import SummaryBox from './SummaryBox';
 // import MyChartComponent from "./StatusChart"
-import RefrenceBox from './Boxs/RefrenceBox';
-import DetiledAnalyse from './Boxs/DetiledAnalyse';
 import ConceringRow from './Boxs/ConceringRow';
+import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import RefrenceBox from './Boxs/RefrenceBox';
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
 // import Point from "./Point"
-import { useEffect, useState, useRef, useMemo } from 'react';
-import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
-import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
-import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
-import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
+import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
+import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
+import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
+import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 
+import { useNavigate, useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
 // import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 // import PrintReport from './PrintReport';
+import { useLocation } from 'react-router-dom';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
-import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
-import { publish, subscribe } from '../../utils/event';
-import InfoToltip from '../InfoToltip';
-import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
+import { publish, subscribe } from '../../utils/event';
+import Circleloader from '../CircleLoader';
+import InfoToltip from '../InfoToltip';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
-import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import PrintReportV2 from './PrintReportV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
@@ -56,7 +56,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
-
+  // const history = useHistory();
+  const location = useLocation();
   useEffect(() => {
     // Watch for changes in isHaveReport
     if (!isHaveReport) {
@@ -181,7 +182,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setCalenderData(res.data[0]);
+      // Please don't touch.
+      setCalenderData(res.data);
     });
     Application.getPatientsInfoShare(
       {
@@ -192,9 +194,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setUserInfoData(res.data);
     });
   };
+  const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
   subscribe('syncReport', () => {
     setCallSync(true);
+    if (location.search) {
+      navigate(location.pathname, { replace: true });
+    }
   });
   const [accessManager, setAccessManager] = useState<
     Array<{
@@ -310,7 +316,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
     return [];
   };
-  const location = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
@@ -465,7 +470,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
                     >
                       Client Summary
-                      <div className="ml-4 visible">
+                      <div className="ml-4 invisible">
                         <Legends isGray></Legends>
                       </div>
                     </div>
@@ -538,7 +543,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="hidden md:block">
                       {' '}
-                      <InfoToltip />
+                      <InfoToltip isShare={isShare} />
                     </div>
                   </div>
                   <div
@@ -755,7 +760,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {isHaveReport && !isShare && (
+            {isHaveReport && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}

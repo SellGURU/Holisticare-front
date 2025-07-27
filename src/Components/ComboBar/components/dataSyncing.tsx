@@ -47,7 +47,7 @@ export const DataSyncing = () => {
                         <div className=" w-[18px] md:w-[30px] text-right">
                           {el['Last Sync']}
                         </div>
-                        <div className="text-[8px] ">
+                        <div className="text-[10px] ">
                           <div
                             className={`rounded-full select-none px-1.5  md:px-2.5 py-1 text-Text-Primary flex justify-end items-center gap-1 ${
                               el['State'] == 'Connected'

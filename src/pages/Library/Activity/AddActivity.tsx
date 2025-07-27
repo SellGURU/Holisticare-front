@@ -60,6 +60,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
+          Ai_note: addData.clinical_guidance,
           Sections: rsolveSectionListforSendToApi(),
           Activity_Filters: {
             Conditions: addData.condition,
@@ -82,6 +83,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           // Description: addData.description,
           Base_Score: addData.score,
           Instruction: addData.instruction,
+          Ai_note: addData.clinical_guidance,
           Sections: rsolveSectionListforSendToApi(),
           Activity_Filters: {
             Conditions: addData.condition,
@@ -122,6 +124,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           equipment: res.data.Activity_Filters.Equipment,
           level: res.data.Activity_Filters.Level,
           location: res.data.Activity_Location,
+          clinical_guidance: res.data.Ai_note,
         });
         setSectionList(
           res.data.Sections.map((item: any) => {
@@ -156,6 +159,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
     equipment: [],
     level: '',
     location: [],
+    clinical_guidance: '',
   });
   const updateAddData = (key: keyof typeof addData, value: any) => {
     setAddData((prevTheme) => ({

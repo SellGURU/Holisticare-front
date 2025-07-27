@@ -90,7 +90,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
       : [positive, negative],
   );
   useEffect(() => {
-    switch (value.Category) {
+    switch (value?.label) {
       case 'Highly Recommended':
         setColor('#06C78D');
         setBgColor('#DEF7EC');
@@ -112,7 +112,9 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         setBgColor('#DEF7EC');
         break;
     }
-  }, [value.Category]);
+  }, [value?.label]);
+  console.log(value.label);
+
   return (
     <>
       <ConflictsModal
@@ -154,7 +156,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                     <div
                       className={`size-[8px] select-none bg-[${color}] rounded-full`}
                     ></div>
-                    {value.Category || '-'}
+                    {value?.label || '-'}
                   </div>
                   {/* {!editAble && (
                     <>

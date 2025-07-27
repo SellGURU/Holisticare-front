@@ -8,7 +8,7 @@ const resolveAnalyseIcon = (name: string) => {
   if (name == 'Diabetes & Glucose') {
     return '/icons/biomarkers/donor.svg';
   }
-  if (name == 'Inflammatory health') {
+  if (name == 'Inflammatory Health') {
     return '/icons/biomarkers/medicine.svg';
   }
   if (name == 'Total Body Mass') {

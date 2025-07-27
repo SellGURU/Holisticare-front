@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom';
 // import Checkin from '.';
 import Mobile from '../../api/mobile';
 // import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+// import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
 import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
-import Checkin from '.';
+// import Checkin from '.';
 
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
@@ -17,58 +17,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  // const formData = {
-  //   title: 'Daily Check in',
-  //   questions: [
-  //     {
-  //       type: 'paragraph',
-  //       question: 'Did you stick to the Meal Plan?',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //     {
-  //       type: 'Scale',
-  //       question: 'How many hours did you sleep yesterday?',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'Emojis',
-  //       question: 'How are you feeling today?',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'Star Rating',
-  //       question: 'Rate your workout.',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'File Uploader',
-  //       question: 'Upload your progress pictures.',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       question: 'What snacks did you take today?',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       question: 'How many hours did you work today?(Dropdown sample)',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //   ],
-  // };
+
   const [data, setData] = useState<any>(null);
-  const [resolvedData, setResolvedData] = useState<any>(null);
+  // const [resolvedData, ] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
     if (mode == 'questionary') {
@@ -93,14 +44,14 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         .catch(() => {});
     }
   }, []);
-  const submit = () => {
+  const submit = (e: any) => {
     setIsLaoding(true);
     // window.close();
     if (mode == 'questionary') {
       Mobile.fillQuestionary({
         encoded_mi: encode,
         unique_id: id,
-        respond: resolvedData.questions,
+        respond: e,
       }).finally(() => {
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
@@ -115,7 +66,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
       Mobile.fillCheckin({
         encoded_mi: encode,
         unique_id: id,
-        respond: resolvedData.questions,
+        respond: e,
       }).finally(() => {
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
@@ -159,33 +110,30 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
               </>
             ) : (
               <>
-                {data && mode == 'questionary' && (
-                  <PublicSurveyForm
-                    onSubmitClient={(e) => {
-                      Mobile.fillQuestionary({
-                        encoded_mi: encode,
-                        unique_id: id,
-                        respond: e,
-                      }).finally(() => {
-                        if (window.flutter_inappwebview) {
-                          window.flutter_inappwebview.callHandler(
-                            'closeWebView',
-                          );
-                        } else {
-                          console.warn('Flutter WebView bridge not available');
-                        }
-                        setIsComplete(true);
-                        // window.flutter_inappwebview.callHandler('closeWebView')
-                        // setIsLaoding(false)
-                      });
-                    }}
-                    isClient={true}
-                    survey={data}
-                  />
-                )}
-                {mode == 'checkin' && (
-                  <>
-                    <Checkin
+                <PublicSurveyForm
+                  onSubmitClient={(e) => {
+                    submit(e);
+                    // Mobile.fillQuestionary({
+                    //   encoded_mi: encode,
+                    //   unique_id: id,
+                    //   respond: e,
+                    // }).finally(() => {
+                    //   if (window.flutter_inappwebview) {
+                    //     window.flutter_inappwebview.callHandler(
+                    //       'closeWebView',
+                    //     );
+                    //   } else {
+                    //     console.warn('Flutter WebView bridge not available');
+                    //   }
+                    //   setIsComplete(true);
+                    //   // window.flutter_inappwebview.callHandler('closeWebView')
+                    //   // setIsLaoding(false)
+                    // });
+                  }}
+                  isClient={true}
+                  survey={data}
+                />
+                {/* <Checkin
                       upData={data?.questions}
                       onChange={(questions) => {
                         console.log(questions);
@@ -201,9 +149,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
                           save
                         </ButtonPrimary>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </div> */}
+                {/* </> */}
+                {/* )} */}
               </>
             )}
           </>

@@ -20,18 +20,17 @@ const HistoricalChart = ({
       return color;
     }
     if (key == 'Needs Focus') {
-      return '#FC5474';
+      return '#B2302E';
     }
     if (key == 'Ok') {
-      return '#FBAD37';
+      return '#D8D800';
     }
     if (key == 'Good') {
-      return '#06C78D';
+      return '#72C13B';
     }
     if (key == 'Excellent') {
-      return '#7F39FB';
+      return '#37B45E';
     }
-    return '#FBAD37';
   };
   // console.log(dataPoints,dataStatus);
   // const [dataPoints,] = useState<any[]>(['Moderately compromised outcome','Moderately compromised outcome','Moderately Enhanced Outcome','Enhanced Outcome','Excellent Outcome','Excellent Outcome']);
@@ -84,6 +83,29 @@ const HistoricalChart = ({
     });
   };
   const sortedStatusBars = sortByRange().reverse();
+
+  // Helper function to determine marker mode
+  const getStatusMarkerMode = (
+    el: any,
+    status: any,
+    value: any,
+    data: any,
+  ): 'unique' | 'inRange' | 'none' => {
+    if (!status || !data) return 'none';
+    const sameStatusRanges = data.filter((item: any) => item.status === status);
+    if (sameStatusRanges.length === 1) {
+      if (status === el.status) return 'unique';
+      return 'none';
+    }
+    if (
+      status === el.status &&
+      (el.low === null || Number(value) >= Number(el.low)) &&
+      (el.high === null || Number(value) <= Number(el.high))
+    ) {
+      return 'inRange';
+    }
+    return 'none';
+  };
 
   return (
     <>
@@ -149,42 +171,48 @@ const HistoricalChart = ({
                 className="w-full h-full absolute border-r-[5px] pl-2 top-0 items-center flex justify-start"
                 style={{ borderColor: resolveColor(el.status, el.color) }}
               >
-                {dataPoints.map((point, index) => (
-                  <div
-                    key={`point-${index}`}
-                    className="w-[40px] ml-1 relative"
-                  >
+                {dataPoints.map((point, index) => {
+                  const markerMode = getStatusMarkerMode(
+                    el,
+                    dataStatus[index],
+                    point,
+                    statusBar,
+                  );
+                  return (
                     <div
-                      style={{
-                        backgroundColor: resolveColor(el.status, el.color),
-                        opacity:
-                          dataStatus[index].toLowerCase() ===
-                          el.status.toLowerCase()
-                            ? 1
-                            : 0,
-                        visibility:
-                          dataStatus[index].toLowerCase() ===
-                          el.status.toLowerCase()
-                            ? 'visible'
-                            : 'hidden',
-                      }}
-                      className="w-2 h-2 border border-gray-50 rounded-full relative"
+                      key={`point-${index}`}
+                      className="w-[40px] ml-1 relative"
                     >
-                      <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
-                        {point}
+                      <div
+                        style={{
+                          backgroundColor: resolveColor(el.status, el.color),
+                          opacity:
+                            markerMode === 'unique' || markerMode === 'inRange'
+                              ? 1
+                              : 0,
+                          visibility:
+                            markerMode === 'unique' || markerMode === 'inRange'
+                              ? 'visible'
+                              : 'hidden',
+                        }}
+                        className="w-2 h-2 border border-gray-50 rounded-full relative"
+                      >
+                        <div className="absolute -top-4 left-1/2 max-w-[40px] text-ellipsis overflow-hidden transform text-[8px] text-Text-Primary -translate-x-1/2 py-1 rounded whitespace-nowrap z-10">
+                          {point}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {el.high ? (
-                <div className="absolute min-w-[16px] right-[-20px]  text-[6px] bottom-[-4px] text-left">
+                <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
                   {el.high}
                 </div>
               ) : (
                 <div className="absolute right-[8px]  text-nowrap overflow-hidden text-[8px] bottom-[4px] opacity-35 text-center">
-                  {el.low}
+                  {el.low + '<'}
                 </div>
               )}
               {inde == 0 && (

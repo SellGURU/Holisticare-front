@@ -24,6 +24,7 @@ const initialCategoryState: CategoryState[] = [
   { name: 'Supplement', visible: true },
   { name: 'Lifestyle', visible: true },
 ];
+
 export const GenerateRecommendation = () => {
   const navigate = useNavigate();
   const steps = ['General Condition', 'Set Orders', 'Overview'];
@@ -36,23 +37,127 @@ export const GenerateRecommendation = () => {
   );
   const [Conflicts, setConflicts] = useState([]);
   const [isRescore, setIsRescore] = useState(false);
+
   subscribe('isRescored', () => {
     setIsRescore(true);
   });
   subscribe('isNotRescored', () => {
     setIsRescore(false);
   });
+
+  const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
+  const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
+  const [isButtonLoading, setisButtonLoading] = useState(false);
+  const [, setScrollPosition] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isClosed, setisClosed] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Function to check if essential data fields are present and not empty
+  const hasEssentialData = (data: any) => {
+    return (
+      data?.client_insight &&
+      data.client_insight.length > 0 &&
+      data?.biomarker_insight &&
+      data.biomarker_insight.length > 0 &&
+      data?.completion_suggestion &&
+      data.completion_suggestion.length > 0 &&
+      data?.looking_forwards &&
+      data.looking_forwards.length > 0
+    );
+  };
+
+  const hasSuggestionsData = (data: any) => {
+    return data?.suggestion_tab && data.suggestion_tab.length > 0;
+  };
+
+  const generatePaln = (retryForSuggestions = false) => {
+    if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، اجرا نشود
+
+    // Only show full page loader if it's the initial load or a retry for essential data
+    if (!retryForSuggestions) {
+      setIsLoading(true);
+    }
+    setisButtonLoading(true); // Always show button loading when calling API
+
+    Application.generateTreatmentPlan({
+      member_id: id,
+    })
+      .then((res) => {
+        if (!isMountedRef.current) return; // اگر کامپوننت unmount شده، ادامه نده
+        const data = res.data;
+
+        // Check essential data fields (for initial load)
+        const essentialDataReady = hasEssentialData(data);
+        // Check suggestion_tab data (for Step 2 and Next button)
+        const suggestionsDataReady = hasSuggestionsData(data);
+
+        if (essentialDataReady) {
+          setTratmentPlanData({ ...data, member_id: id });
+          setSuggestionsDefualt(data.suggestion_tab);
+          // If we are specifically waiting for suggestion_tab for Step 2
+          if (retryForSuggestions && !suggestionsDataReady) {
+            console.log(
+              'Suggestion tab data missing, retrying in 15 seconds...',
+            );
+            timeoutRef.current = setTimeout(() => generatePaln(true), 15000);
+          } else {
+            setIsLoading(false); // Hide full page loader
+            setisButtonLoading(false); // Hide button loader
+          }
+        } else {
+          console.log('Missing essential data, retrying in 15 seconds...');
+          timeoutRef.current = setTimeout(() => generatePaln(), 15000);
+        }
+      })
+      .catch(() => {
+        if (!isMountedRef.current) return;
+        timeoutRef.current = setTimeout(
+          () => generatePaln(retryForSuggestions),
+          15000,
+        ); // Pass the retryForSuggestions flag
+      });
+  };
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    generatePaln();
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleNext = () => {
-    if (currentStepIndex == 1 && !isRescore) {
+    if (currentStepIndex === 0) {
+      // Check if suggestion_tab is empty when moving from General Condition to Set Orders
+      if (treatmentPlanData && !hasSuggestionsData(treatmentPlanData)) {
+        setisButtonLoading(true); // Show loading on the button
+        console.log(
+          'suggestion_tab is empty for Step 2. Re-generating plan...',
+        );
+        generatePaln(true); // Call generatePaln specifically to get suggestion_tab data
+        return; // Prevent proceeding to the next step immediately
+      }
+    }
+
+    if (currentStepIndex === 1 && !isRescore) {
       publish('rescore', {});
     } else {
       if (currentStepIndex < steps.length - 1) {
-        if (currentStepIndex == 1) {
+        if (currentStepIndex === 1) {
           setisButtonLoading(true);
           Application.tratmentPlanConflict({
             member_id: id,
             selected_interventions: treatmentPlanData.suggestion_tab.filter(
-              (el: any) => el.checked == true,
+              (el: any) => el.checked === true,
             ),
             biomarker_insight: treatmentPlanData?.biomarker_insight,
             client_insight: treatmentPlanData?.client_insight,
@@ -72,26 +177,21 @@ export const GenerateRecommendation = () => {
       }
     }
   };
+
   const handleBack = () => {
     if (currentStepIndex > 0) {
       setCheckedSuggestion([]);
       if (
-        currentStepIndex == 1 &&
-        activeCategory != VisibleCategories[0].name
+        currentStepIndex === 1 &&
+        activeCategory !== VisibleCategories[0].name
       ) {
         publish('rescoreBack', {});
       } else {
         setCurrentStepIndex(currentStepIndex - 1);
       }
-      // setTratmentPlanData((pre: any) => {
-      //   const newSuggestios = suggestionsDefualt;
-      //   return {
-      //     ...pre,
-      //     suggestion_tab: newSuggestios,
-      //   };
-      // });
     }
   };
+
   const handleSkip = () => {
     if (currentStepIndex < steps.length - 1) {
       setTratmentPlanData((pre: any) => {
@@ -109,6 +209,7 @@ export const GenerateRecommendation = () => {
       setCurrentStepIndex(steps.length - 1);
     }
   };
+
   const handleSave = () => {
     setisButtonLoading(true);
     Application.saveHolisticPlan({
@@ -116,7 +217,7 @@ export const GenerateRecommendation = () => {
       suggestion_tab: [
         ...treatmentPlanData.suggestion_tab.filter(
           (el: any) =>
-            el.checked == true &&
+            el.checked === true &&
             VisibleCategories.filter((el) => el.visible)
               .map((el) => el.name)
               .includes(el.Category),
@@ -131,56 +232,13 @@ export const GenerateRecommendation = () => {
         navigate(`/report/Generate-Holistic-Plan/${id}`);
       });
   };
-  const [checkedSuggestions, setCheckedSuggestion] = useState<Array<any>>([]);
-  const { id } = useParams<{ id: string }>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [treatmentPlanData, setTratmentPlanData] = useState<any>(null);
-  const [suggestionsDefualt, setSuggestionsDefualt] = useState([]);
-  // const getAllCheckedCategories = () => {
-  //   const checkedCategories: string[] = [];
-  //   checkedSuggestions.forEach((el: any) => {
-  //     if (el.checked) {
-  //       checkedCategories.push(el.Category);
-  //     }
-  //   });
-  //   return checkedCategories;
-  // };
-  const generatePaln = () => {
-    setIsLoading(true);
-    Application.generateTreatmentPlan({
-      member_id: id,
-    })
-      .then((res) => {
-        setTratmentPlanData({ ...res.data, member_id: id });
-        // setTreatmentId(res.data.treatment_id);
-        setSuggestionsDefualt(res.data.suggestion_tab);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setTimeout(() => {
-          navigate(-1);
-        }, 1000);
-      });
-  };
-  useEffect(() => {
-    generatePaln();
-  }, []);
-  const [isButtonLoading, setisButtonLoading] = useState(false);
-  const [, setScrollPosition] = useState(0);
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-
     const handleScroll = () => {
       if (container) {
-        // Add null check here
         const position = container.scrollTop;
         setScrollPosition(position);
-        // console.log('scroll position:', position);
       }
     };
 
@@ -194,24 +252,26 @@ export const GenerateRecommendation = () => {
       }
     };
   }, []);
-  const [isClosed, setisClosed] = useState(false);
-  // useEffect(() => console.log(scrollPosition), [scrollPosition]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Determine if tab navigation should be disabled
+  const disableTabNavigation =
+    currentStepIndex < 1 &&
+    !(treatmentPlanData && hasSuggestionsData(treatmentPlanData));
+
   return (
     <div ref={containerRef} className="h-[100vh] overflow-auto">
       {isLoading && (
         <div className="fixed inset-0 flex flex-col justify-center items-center bg-white bg-opacity-95 z-20">
-          {' '}
           <Circleloader></Circleloader>
           <div className="text-Text-Primary TextStyle-Body-1 mt-3 mx-6 text-center lg:mx-0">
             We are generating your Holistic Plan. This may take a moment.
           </div>
         </div>
       )}
-      <div className="fixed w-full  top-0  lg:flex z-[9] bg-bg-color pb-4">
+      <div className="fixed w-full top-0 lg:flex z-[9] bg-bg-color pb-4">
         <div className="w-full">
           <TopBar />
-          <div className="w-full flex justify-between pt-[20px]  md:pt-[40px] px-4 md:px-8 ">
+          <div className="w-full flex justify-between pt-[20px] md:pt-[40px] px-4 md:px-8 ">
             <div className="flex items-center gap-3">
               <div
                 onClick={() => {
@@ -230,7 +290,7 @@ export const GenerateRecommendation = () => {
             </div>
             <div className="flex items-center gap-2">
               <div
-                className={` ${currentStepIndex == steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
+                className={` ${currentStepIndex === steps.length - 1 ? 'hidden' : 'hidden'} items-center text-[12px] cursor-pointer text-Primary-DeepTeal`}
                 onClick={handleSkip}
               >
                 Skip <img src="/icons/Skip.svg" alt="" />
@@ -247,43 +307,42 @@ export const GenerateRecommendation = () => {
                       color="#005F73"
                     ></SvgIcon>
                   </div>
-                  {/* <img src="/icons/arrow-right-white.svg" alt="" /> */}
                   Back
                 </ButtonPrimary>
               )}
               <ButtonPrimary
                 ClassName="border border-white px-3 md:px-6 text-[8px] md:text-[12px]"
+                // Disable next button if essential data or suggestion_tab data is missing for current step
                 disabled={isButtonLoading}
                 onClick={() => {
-                  if (currentStepIndex == steps.length - 1) {
+                  if (currentStepIndex === steps.length - 1) {
                     handleSave();
                   } else handleNext();
                 }}
               >
                 {isButtonLoading ? (
                   <>
-                    {currentStepIndex == 2 && (
+                    {currentStepIndex === 2 && (
                       <img
                         className="w-4"
                         src="/icons/tick-square.svg"
                         alt=""
                       />
                     )}
-                    {currentStepIndex == 2 ? 'Generate' : 'Next'}
-
+                    {currentStepIndex === 2 ? 'Generate' : 'Next'}
                     <SpinnerLoader></SpinnerLoader>
                   </>
                 ) : (
                   <>
-                    {currentStepIndex == 2 && (
+                    {currentStepIndex === 2 && (
                       <img
                         className="w-4"
                         src="/icons/tick-square.svg"
                         alt=""
                       />
                     )}
-                    {currentStepIndex == 2 ? 'Generate' : 'Next'}
-                    {currentStepIndex != 2 && (
+                    {currentStepIndex === 2 ? 'Generate' : 'Next'}
+                    {currentStepIndex !== 2 && (
                       <img src="/icons/arrow-right-white.svg" alt="" />
                     )}
                   </>
@@ -293,21 +352,24 @@ export const GenerateRecommendation = () => {
           </div>
 
           <div className="px-4 md:px-8">
-            <div className="mt-5  flex justify-between py-4  md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full  ">
+            <div className="mt-5 flex justify-between py-4 md:px-[156px] border border-Gray-50 rounded-2xl bg-white shadow-sm w-full">
               {steps.map((label, index) => (
                 <React.Fragment key={index}>
                   <div
                     onClick={() => {
-                      setCurrentStepIndex(index);
-                      if (label != 'Overview') {
-                        setCheckedSuggestion([]);
+                      // Prevent changing tabs if disableTabNavigation is true, unless it's the current tab
+                      if (!disableTabNavigation || index === currentStepIndex) {
+                        setCurrentStepIndex(index);
+                        if (label !== 'Overview') {
+                          setCheckedSuggestion([]);
+                        }
                       }
                     }}
                     className={` text-nowrap px-1 md:px-4 py-2 cursor-pointer text-[7px] xs:text-[9px] md:text-[12px] rounded-full flex items-center justify-center gap-2 mx-1 ${
                       index === currentStepIndex
                         ? 'text-Primary-DeepTeal '
                         : 'text-Text-Secondary'
-                    }`}
+                    } ${disableTabNavigation && index !== currentStepIndex ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div
                       className={` min-h-5 min-w-5 size-5 rounded-full md:text-xs text-[8px] xs:text-[10px] font-medium border ${index === currentStepIndex ? 'text-Primary-DeepTeal border-Primary-DeepTeal' : 'border-[#888888] text-[#888888]'} flex items-center justify-center text-center`}
@@ -331,13 +393,12 @@ export const GenerateRecommendation = () => {
       </div>
       <div className=" px-4 md:px-8">
         <div className=" mt-[220px] w-full mb-6 overflow-x-hidden">
-          {currentStepIndex == 0 ? (
+          {currentStepIndex === 0 ? (
             <GeneralCondition
               data={{
                 biomarkers: treatmentPlanData?.biomarker_insight,
                 clientInsights: treatmentPlanData?.client_insight,
                 completionSuggestions: treatmentPlanData?.completion_suggestion,
-                // lookingForwards:treatmentPlanData?.looking_forwards
                 lookingForwards: treatmentPlanData?.looking_forwards,
               }}
               setData={setTratmentPlanData}
@@ -346,7 +407,7 @@ export const GenerateRecommendation = () => {
               setIsClosed={setisClosed}
               setShowSuggestions={setShowSuggestions}
             ></GeneralCondition>
-          ) : currentStepIndex == 1 ? (
+          ) : currentStepIndex === 1 ? (
             <SetOrders
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
@@ -368,7 +429,6 @@ export const GenerateRecommendation = () => {
                 console.log(data);
                 setCheckedSuggestion([...checkedSuggestions, ...data]);
               }}
-              // checkeds={checkedSuggestions}
               treatMentPlanData={treatmentPlanData}
               setData={(newOrders) => {
                 console.log(newOrders);
@@ -379,7 +439,7 @@ export const GenerateRecommendation = () => {
                   };
                 });
               }}
-              data={treatmentPlanData.suggestion_tab}
+              data={treatmentPlanData?.suggestion_tab}
             ></SetOrders>
           ) : (
             <Overview

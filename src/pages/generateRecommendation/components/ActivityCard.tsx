@@ -26,7 +26,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const [bgColor, setBgColor] = useState<string>('');
 
   useEffect(() => {
-    switch (item.Category) {
+    switch (item?.label) {
       case 'Highly Recommended':
         setColor('#06C78D');
         setBgColor('#DEF7EC');
@@ -48,7 +48,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         setBgColor('#DEF7EC');
         break;
     }
-  }, [item.Category]);
+  }, [item?.label]);
+  console.log(item.label);
 
   return (
     <>
@@ -92,12 +93,14 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
-                className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                style={{ backgroundColor: bgColor }}
               >
                 <div
-                  className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                  className={`size-[8px] select-none rounded-full`}
+                  style={{ backgroundColor: color }}
                 ></div>
-                {item.Category || '-'}
+                {item?.label || '-'}
               </div>
               {/* <div
                 data-tooltip-id="system-score"
@@ -149,7 +152,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !bg-opacity-100 !opacity-100 !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',

@@ -40,7 +40,7 @@ const LibBox: FC<LibBoxProps> = ({
   const [color, setColor] = useState<string>('');
   const [bgColor, setBgColor] = useState<string>('');
   useEffect(() => {
-    switch (data.Category) {
+    switch (data?.label) {
       case 'Highly Recommended':
         setColor('#06C78D');
         setBgColor('#DEF7EC');
@@ -62,7 +62,7 @@ const LibBox: FC<LibBoxProps> = ({
         setBgColor('#DEF7EC');
         break;
     }
-  }, [data.Category]);
+  }, [data?.label]);
 
   return (
     <>
@@ -115,12 +115,14 @@ const LibBox: FC<LibBoxProps> = ({
           >
             <div className={`flex items-center gap-1`}>
               <div
-                className={`bg-[${bgColor}] select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                style={{ backgroundColor: bgColor }}
               >
                 <div
-                  className={`size-[8px] select-none bg-[${color}] rounded-full`}
+                  className={`size-[8px] select-none rounded-full`}
+                  style={{ backgroundColor: color }}
                 ></div>
-                {data.Category || '-'}
+                {data?.label || '-'}
               </div>
               {/* <div
                 className="w-[35px] h-[14px] rounded-3xl bg-Boarder gap-[2.5px] text-[8px] text-Text-Primary flex items-center justify-center cursor-pointer"
