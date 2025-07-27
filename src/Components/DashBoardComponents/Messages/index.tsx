@@ -20,16 +20,20 @@ type Message = {
 interface MessageListProps {
   search: string;
   onSelectMessage: (messageId: string | null) => void;
+  messages: Message[]; // Receive messages from parent
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
 }
 
 const MessageList: React.FC<MessageListProps> = ({
   search,
   onSelectMessage,
+  messages,
+  setMessages
 }) => {
+
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
@@ -46,7 +50,7 @@ const MessageList: React.FC<MessageListProps> = ({
     Application.messagesUsersList()
       .then((res) => {
         setMessages(res.data);
-        setMessagesSearched(res.data);
+        // setMessagesSearched(res.data);
       })
       .finally(() => {
         setIsLoading(false);
