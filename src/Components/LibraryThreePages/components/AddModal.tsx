@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import MainModal from '../../MainModal';
-import RangeCardLibraryThreePages from './RangeCard';
 import { Tooltip } from 'react-tooltip';
+import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
+import RangeCardLibraryThreePages from './RangeCard';
 
 interface AddModalLibraryTreePagesProps {
   addShowModal: boolean;
@@ -12,11 +12,7 @@ interface AddModalLibraryTreePagesProps {
   onSubmit: (value: any) => void;
   selectedRow: any;
   setSelectedRow: () => void;
-  error: string | null;
-  handleError: (error: string | null) => void;
   loadingCall: boolean;
-  clearData: boolean;
-  handleClearData: (value: boolean) => void;
 }
 
 const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
@@ -26,11 +22,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   onSubmit,
   selectedRow,
   setSelectedRow,
-  error,
-  handleError,
   loadingCall,
-  clearData,
-  handleClearData,
 }) => {
   const [addData, setAddData] = useState({
     title: '',
@@ -198,12 +190,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       doseFormat: Boolean(pageType === 'Supplement' && dose && !isDoseValid),
-      value: pageType === 'Lifestyle' && !value,
+      value: (pageType === 'Lifestyle' && !value) || value.length > 5,
       score: addData.score === 0,
       macros: {
-        Fats: pageType === 'Diet' && !totalMacros.Fats,
-        Protein: pageType === 'Diet' && !totalMacros.Protein,
-        Carbs: pageType === 'Diet' && !totalMacros.Carbs,
+        Fats:
+          (pageType === 'Diet' && !totalMacros.Fats) ||
+          totalMacros.Fats.length > 5,
+        Protein:
+          (pageType === 'Diet' && !totalMacros.Protein) ||
+          totalMacros.Protein.length > 5,
+        Carbs:
+          (pageType === 'Diet' && !totalMacros.Carbs) ||
+          totalMacros.Carbs.length > 5,
       },
     };
 
@@ -216,12 +214,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     );
   };
   const [showValidation, setShowValidation] = useState(false);
-  useEffect(() => {
-    if (clearData === true) {
-      clear();
-      handleClearData(false);
-    }
-  }, [clearData]);
   return (
     <MainModal
       isOpen={addShowModal}
@@ -229,7 +221,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         handleCloseModal();
         clear();
         setSelectedRow();
-        handleClearData(false);
       }}
     >
       <div className="flex flex-col justify-between bg-white w-[320px] xs:w-[350px]   sm:w-[500px] rounded-[16px] p-6">
@@ -420,7 +411,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   placeholder="Enter Value..."
                   value={value}
                   onChange={(e) => {
-                    handleError(null);
                     const value = e.target.value;
                     if (/^\d*$/.test(value)) {
                       setValue(value === '' ? '' : value);
@@ -437,7 +427,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     }
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value || error ? 'border-Red' : 'border-Gray-50'
+                    errors.value || value.length > 5
+                      ? 'border-Red'
+                      : 'border-Gray-50'
                   } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                 />
                 <input
@@ -460,7 +452,11 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
-              {error && <div className="text-Red text-[10px]">{error}</div>}
+              {value.length > 5 && (
+                <div className="text-Red text-[10px]">
+                  Value must not exceed 5 digits.
+                </div>
+              )}
             </div>
           )}
 
@@ -489,7 +485,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       placeholder="Carbohydrates"
                       value={totalMacros.Carbs}
                       onChange={(e) => {
-                        handleError(null);
                         const value = e.target.value;
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros('Carbs', value === '' ? '' : value);
@@ -506,7 +501,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs || error
+                        errors.macros.Carbs || totalMacros.Carbs.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -530,7 +525,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       placeholder="Proteins"
                       value={totalMacros.Protein}
                       onChange={(e) => {
-                        handleError(null);
                         const value = e.target.value;
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros(
@@ -550,7 +544,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Protein || error
+                        errors.macros.Protein || totalMacros.Protein.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
@@ -574,7 +568,6 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       placeholder="Fats"
                       value={totalMacros.Fats}
                       onChange={(e) => {
-                        handleError(null);
                         const value = e.target.value;
                         if (/^\d*$/.test(value)) {
                           updateTotalMacros('Fats', value === '' ? '' : value);
@@ -591,14 +584,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Fats || error
+                        errors.macros.Fats || totalMacros.Fats.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
                   </div>
                 </div>
-                {/* Single validation message for all macro fields */}
                 {(errors.macros.Carbs ||
                   errors.macros.Protein ||
                   errors.macros.Fats) && (
@@ -606,7 +598,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     These fields are required.
                   </div>
                 )}
-                {error && <div className="text-Red text-[10px]">{error}</div>}
+                {(totalMacros.Carbs.length > 5 ||
+                  totalMacros.Protein.length > 5 ||
+                  totalMacros.Fats.length > 5) && (
+                  <div className="text-Red text-[10px]">
+                    {totalMacros.Carbs.length > 5
+                      ? 'Carbs'
+                      : totalMacros.Protein.length > 5
+                        ? 'Protein'
+                        : 'Fats'}{' '}
+                    must not exceed 5 digits.
+                  </div>
+                )}
               </div>
             </div>
           )}
