@@ -661,50 +661,52 @@ export function PublicSurveyForm({
         return (
           <div className="space-y-3">
             {questionOptions.map((option, index) => (
-        <div
-        key={index}
-        className={`flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
-          validationError ? 'border-red-500' : ''
-        } ${Array.isArray(response) && response.includes(option) ? 'border-green-500 bg-green-50' : ''}`}
-        onClick={() => {
-          const currentValue = response || [];
-          if (!Array.isArray(currentValue)) {
-            handleResponseChange([option]);
-            return;
-          }
-          if (currentValue.includes(option)) {
-            handleResponseChange(currentValue.filter((item) => item !== option));
-          } else {
-            handleResponseChange([...currentValue, option]);
-          }
-        }}  // Make the div clickable
-      >
-        <Checkbox
-          id={`option-${questionIndex}-${index}`}
-          checked={Array.isArray(response) && response.includes(option)}
-          onCheckedChange={(checked) => {
-            const currentValue = response || [];
-            if (!Array.isArray(currentValue)) {
-              handleResponseChange([option]);
-              return;
-            }
-            if (checked) {
-              handleResponseChange([...currentValue, option]);
-            } else {
-              handleResponseChange(
-                currentValue.filter((item) => item !== option),
-              );
-            }
-          }}
-          className="mt-1 text-green-600 border-green-600"
-        />
-        <Label
-          htmlFor={`option-${questionIndex}-${index}`}
-          className="flex-grow cursor-pointer font-medium"
-        >
-          {option}
-        </Label>
-      </div>
+              <div
+                key={index}
+                className={`flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                  validationError ? 'border-red-500' : ''
+                } ${Array.isArray(response) && response.includes(option) ? 'border-green-500 bg-green-50' : ''}`}
+                onClick={() => {
+                  const currentValue = response || [];
+                  if (!Array.isArray(currentValue)) {
+                    handleResponseChange([option]);
+                    return;
+                  }
+                  if (currentValue.includes(option)) {
+                    handleResponseChange(
+                      currentValue.filter((item) => item !== option),
+                    );
+                  } else {
+                    handleResponseChange([...currentValue, option]);
+                  }
+                }} // Make the div clickable
+              >
+                <Checkbox
+                  id={`option-${questionIndex}-${index}`}
+                  checked={Array.isArray(response) && response.includes(option)}
+                  onCheckedChange={(checked) => {
+                    const currentValue = response || [];
+                    if (!Array.isArray(currentValue)) {
+                      handleResponseChange([option]);
+                      return;
+                    }
+                    if (checked) {
+                      handleResponseChange([...currentValue, option]);
+                    } else {
+                      handleResponseChange(
+                        currentValue.filter((item) => item !== option),
+                      );
+                    }
+                  }}
+                  className="mt-1 text-green-600 border-green-600"
+                />
+                <Label
+                  htmlFor={`option-${questionIndex}-${index}`}
+                  className="flex-grow cursor-pointer font-medium"
+                >
+                  {option}
+                </Label>
+              </div>
             ))}
           </div>
         );
