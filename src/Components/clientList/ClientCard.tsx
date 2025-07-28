@@ -625,11 +625,13 @@ const ClientCard: FC<ClientCardProps> = ({
                   onClick={() => {
                     Application.giveClientAccess({
                       member_id: client.member_id,
-                    }).then((res) => {
-                      setAccessUserName(res.data.username);
-                      setAccessPassword(res.data.password);
-                      setShowAccessModal(true);
-                    }).catch(()=>{});
+                    })
+                      .then((res) => {
+                        setAccessUserName(res.data.username);
+                        setAccessPassword(res.data.password);
+                        setShowAccessModal(true);
+                      })
+                      .catch(() => {});
                   }}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >

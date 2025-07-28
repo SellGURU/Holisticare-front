@@ -116,7 +116,10 @@ export const SwitchClient: FC<SwitchClientProps> = ({
             onChange={(value) => setActiveStatus(value)}
           />
 
-          <div style={{height: window.innerHeight  - 240 + "px"}} className="flex flex-col pr-1 w-full overflow-auto">
+          <div
+            style={{ height: window.innerHeight - 240 + 'px' }}
+            className="flex flex-col pr-1 w-full overflow-auto"
+          >
             <>
               {resolvedFiltersData().length > 0 ? (
                 resolvedFiltersData().map((client, i) => {

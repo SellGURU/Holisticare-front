@@ -30,11 +30,13 @@ type SendMessage = {
 };
 interface MessagesChatBoxProps {
   onBack: () => void;
-  onMessageSent?: (memberId: number) => void; 
-
+  onMessageSent?: (memberId: number) => void;
 }
 
-const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack ,onMessageSent}) => {
+const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({
+  onBack,
+  onMessageSent,
+}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [memberId, setMemberId] = useState<any>(null);
@@ -78,11 +80,11 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack ,onMessageSent
     Application.userMessagesList({ member_id: member_id })
       .then((res) => {
         setMessages(res.data.reverse());
-      }).catch(()=>{})
+      })
+      .catch(() => {})
       .finally(() => {
         setIsLoading(false);
       });
-      
   };
   const aiMessagesList = (member_id: number) => {
     setIsLoading(true);
@@ -90,7 +92,7 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack ,onMessageSent
       .then((res) => {
         setAiMessages(res.data);
       })
-      .catch(()=>{})
+      .catch(() => {})
       .finally(() => {
         setIsLoading(false);
       });
@@ -150,9 +152,8 @@ const MessagesChatBox: React.FC<MessagesChatBoxProps> = ({ onBack ,onMessageSent
       try {
         await Application.sendMessage(newMessage);
         userMessagesList(parseInt(memberId));
-        if(onMessageSent){
-          onMessageSent(parseInt(memberId)); 
-
+        if (onMessageSent) {
+          onMessageSent(parseInt(memberId));
         }
       } catch (err) {
         console.log(err);

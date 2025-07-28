@@ -12,7 +12,7 @@ type Action = {
   state: 'Resolved' | 'Pending';
   alert: string;
   member_id: string;
-  destination: string
+  destination: string;
 };
 
 // const mockActions: Action[] = [
@@ -70,7 +70,7 @@ const Actions: React.FC = () => {
   //   window.addEventListener('resize', checkOverflow);
   //   return () => window.removeEventListener('resize', checkOverflow);
   // }, [filteredActions, expandedCards]);
-const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <>
       {isLoading ? (
@@ -190,14 +190,21 @@ const navigate = useNavigate()
 
                     <div className="flex items-center gap-2">
                       {action.state === 'Pending' && (
-                        <div onClick={()=>{
-                          if(action.destination === "action_plan"){
-                            navigate(`/report/${action.member_id}/${action.patient_name}?section=Action+Plan`)
-                          }
-                          if(action.destination === "holistic_plan"){
-                            navigate(`/report/${action.member_id}/${action.patient_name}?section=Holistic+Plan`)
-                          }
-                        }} className="text-Primary-DeepTeal cursor-pointer text-xs font-medium flex items-center gap-1">
+                        <div
+                          onClick={() => {
+                            if (action.destination === 'action_plan') {
+                              navigate(
+                                `/report/${action.member_id}/${action.patient_name}?section=Action+Plan`,
+                              );
+                            }
+                            if (action.destination === 'holistic_plan') {
+                              navigate(
+                                `/report/${action.member_id}/${action.patient_name}?section=Holistic+Plan`,
+                              );
+                            }
+                          }}
+                          className="text-Primary-DeepTeal cursor-pointer text-xs font-medium flex items-center gap-1"
+                        >
                           Proceed{' '}
                           <img
                             className="rotate-180 size-4"
