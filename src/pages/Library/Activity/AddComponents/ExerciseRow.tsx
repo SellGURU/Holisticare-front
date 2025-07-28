@@ -96,7 +96,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         >
           {exercise?.Files[0]?.Title === 'YouTube Link'
             ? 'Youtube-Link'
-            : 'Uploaded Video'}
+            : exercise?.Files[0]?.Type?.split('/')[0] === 'image'
+              ? 'Uploaded Image'
+              : 'Uploaded Video'}
         </td>
         {/* <td className="py-2 text-Text-Secondary text-[10px]">
       {exercise.file}
