@@ -27,6 +27,7 @@ interface VideoData {
   base64?: string;
   url?: string;
   title?: string;
+  type?: string;
 }
 
 interface FilePreviewModalProps {
@@ -54,12 +55,15 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         return section.Exercises.flatMap((exercise: Exercise) => {
           return exercise.Files.filter(
             (file: File) =>
-              (file.Type === 'link' || file.Type === 'Video') &&
+              (file.Type === 'link' ||
+                file.Type === 'Video' ||
+                file.Type?.split('/')[0] === 'image') &&
               (file.Content.url || file.Content.file_id),
           ).map((file: File) => ({
             url: file.Content.url,
             file_id: file.Content.file_id,
             title: file.Title || 'Video',
+            type: file.Type,
           }));
         });
       });
@@ -71,6 +75,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
               file_id: video.file_id,
               url: video.url,
               title: video.title,
+              type: video.type,
             } as VideoData;
           } else if (video.file_id) {
             const res = await Application.showExerciseFille({
@@ -80,6 +85,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
               file_id: video.file_id,
               base64: res.data.base_64_data,
               title: video.title,
+              type: video.type,
             } as VideoData;
           }
           return null;
@@ -153,10 +159,36 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       console.error('Error processing URL:', error);
     }
   };
+  const [indexImage, setIndexImage] = useState(0);
+  const VISIBLE_COUNT = 2;
+
+  const lastIndex = Math.max(videoData.length - VISIBLE_COUNT, 0);
+
+  const nextSlide = () => {
+    if (indexImage >= lastIndex) {
+      setIndexImage(0);
+    } else {
+      setIndexImage((prev) => prev + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (indexImage <= 0) {
+      setIndexImage(lastIndex);
+    } else {
+      setIndexImage((prev) => prev - 1);
+    }
+  };
 
   return (
     <MainModal isOpen={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-2xl p-4 w-[500px] h-[500px] shadow-800 relative">
+      <div
+        className={`bg-white rounded-2xl p-4 w-[500px] shadow-800 relative ${
+          videoData?.[0]?.type?.split('/')[0] === 'image'
+            ? 'h-[260px]'
+            : 'h-[500px]'
+        }`}
+      >
         <div className="w-full flex justify-between items-center border-b border-Gray-50 pb-2">
           <div className="text-sm font-medium">Files & Videos</div>
           <img
@@ -167,7 +199,13 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
           />
         </div>
 
-        <div className="mt-4 h-[400px] overflow-auto">
+        <div
+          className={`overflow-auto ${
+            videoData?.[0]?.type?.split('/')[0] === 'image'
+              ? 'mt-8'
+              : 'h-[400px] mt-4'
+          }`}
+        >
           {isLoading ? (
             <div className="w-full h-[200px] flex justify-center items-center">
               <Circleloader />
@@ -178,73 +216,112 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {videoData.map((video, index) => (
-                <div
-                  key={index}
-                  className="rounded-xl border border-Gray-50 p-3 bg-white shadow-sm"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-xs font-medium">{video.title}</div>
-                    <div className="flex gap-2">
-                      {video.url ? (
-                        <button
-                          onClick={() => handleUrlClick(video.url!)}
-                          className="text-xs text-Primary-DeepTeal hover:underline"
+              {videoData?.[0]?.type?.split('/')[0] === 'image' ? (
+                <div className="w-full flex justify-center items-center gap-4">
+                  <button onClick={prevSlide} disabled={indexImage === 0}>
+                    <img src="/icons/chevron-left.svg" alt="prev" />
+                  </button>
+
+                  <div className="flex w-full overflow-hidden justify-start items-center">
+                    <div
+                      className="flex transition-transform duration-300 ease-in-out gap-2"
+                      style={{
+                        transform: `translateX(-${indexImage * (120 + 8)}px)`,
+                      }}
+                    >
+                      {videoData.map((src, i) => (
+                        <div
+                          key={i}
+                          className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
                         >
-                          Open Link
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleVideoClick(video)}
-                          className="text-xs text-Primary-DeepTeal hover:underline"
-                        >
-                          Download Video
-                        </button>
-                      )}
+                          <img
+                            src={src.url}
+                            alt={`Slide ${i}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  {video.url ? (
-                    isYouTubeShorts(video.url) ? (
-                      <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
-                        <img
-                          src="/icons/video-preview.svg"
-                          className="size-12 mb-4"
-                          alt="Video"
-                        />
-                        <a
-                          href={video.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline text-sm font-medium"
-                        >
-                          Watch on YouTube
-                        </a>
-                      </div>
-                    ) : (
-                      <iframe
-                        className="rounded-xl h-[150px] w-full border border-Gray-50"
-                        src={getYouTubeEmbedUrl(video.url)}
-                        title="YouTube video player"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    )
-                  ) : (
-                    <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
-                      <img
-                        src="/icons/video-preview.svg"
-                        className="size-12 mb-4"
-                        alt="Video"
-                      />
-                      <div className="text-xs text-Text-Secondary text-center">
-                        Click "Download" to save this video to your device
-                      </div>
-                    </div>
-                  )}
+                  <button
+                    onClick={nextSlide}
+                    disabled={indexImage >= lastIndex}
+                  >
+                    <img src="/icons/chevron-right.svg" alt="next" />
+                  </button>
                 </div>
-              ))}
+              ) : (
+                <>
+                  {videoData.map((video, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xl border border-Gray-50 p-3 bg-white shadow-sm"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-medium">{video.title}</div>
+                        <div className="flex gap-2">
+                          {video.url ? (
+                            <button
+                              onClick={() => handleUrlClick(video.url!)}
+                              className="text-xs text-Primary-DeepTeal hover:underline"
+                            >
+                              Open Link
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleVideoClick(video)}
+                              className="text-xs text-Primary-DeepTeal hover:underline"
+                            >
+                              Download Video
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {video.url ? (
+                        isYouTubeShorts(video.url) ? (
+                          <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
+                            <img
+                              src="/icons/video-preview.svg"
+                              className="size-12 mb-4"
+                              alt="Video"
+                            />
+                            <a
+                              href={video.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:underline text-sm font-medium"
+                            >
+                              Watch on YouTube
+                            </a>
+                          </div>
+                        ) : (
+                          <iframe
+                            className="rounded-xl h-[150px] w-full border border-Gray-50"
+                            src={getYouTubeEmbedUrl(video.url)}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        )
+                      ) : (
+                        <div className="rounded-xl h-[150px] w-full border border-Gray-50 flex flex-col items-center justify-center p-4">
+                          <img
+                            src="/icons/video-preview.svg"
+                            className="size-12 mb-4"
+                            alt="Video"
+                          />
+                          <div className="text-xs text-Text-Secondary text-center">
+                            Click "Download" to save this video to your device
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           )}
         </div>
