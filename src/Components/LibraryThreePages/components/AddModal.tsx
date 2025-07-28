@@ -52,7 +52,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         // description: selectedRow ? selectedRow.Description : '',
         score: selectedRow ? selectedRow.Base_Score : 0,
         instruction: selectedRow ? selectedRow.Instruction : '',
-        clinical_guidance: selectedRow ? selectedRow.Clinical_Guidance : '',
+        clinical_guidance: selectedRow ? selectedRow.Ai_note : '',
       });
       setDose(selectedRow ? selectedRow.Dose : '');
       setValue(selectedRow ? selectedRow.Value : '');
@@ -190,18 +190,18 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       doseFormat: Boolean(pageType === 'Supplement' && dose && !isDoseValid),
-      value: (pageType === 'Lifestyle' && !value) || value.length > 5,
+      value: (pageType === 'Lifestyle' && !value) || value?.length > 5,
       score: addData.score === 0,
       macros: {
         Fats:
           (pageType === 'Diet' && !totalMacros.Fats) ||
-          totalMacros.Fats.length > 5,
+          totalMacros?.Fats?.length > 5,
         Protein:
           (pageType === 'Diet' && !totalMacros.Protein) ||
-          totalMacros.Protein.length > 5,
+          totalMacros?.Protein?.length > 5,
         Carbs:
           (pageType === 'Diet' && !totalMacros.Carbs) ||
-          totalMacros.Carbs.length > 5,
+          totalMacros?.Carbs?.length > 5,
       },
     };
 
