@@ -52,7 +52,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
         // description: selectedRow ? selectedRow.Description : '',
         score: selectedRow ? selectedRow.Base_Score : 0,
         instruction: selectedRow ? selectedRow.Instruction : '',
-        clinical_guidance: selectedRow ? selectedRow.Clinical_Guidance : '',
+        clinical_guidance: selectedRow ? selectedRow.Ai_note : '',
       });
       setDose(selectedRow ? selectedRow.Dose : '');
       setValue(selectedRow ? selectedRow.Value : '');
