@@ -629,7 +629,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
-                    });
+                    }).catch(()=>{});
                   }}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
