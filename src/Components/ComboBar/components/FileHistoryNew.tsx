@@ -350,6 +350,14 @@ const FileHistoryNew = () => {
                 />
               </div>
             ))}
+            {uploadedFiles.length === 0 && (
+              <div className="flex flex-col items-center justify-center mt-10">
+                <img src="/icons/document-text-rectangle.svg" alt="" />
+                <div className="text-xs text-Text-Primary font-medium -mt-4">
+                  No data found.
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
