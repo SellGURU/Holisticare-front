@@ -1203,7 +1203,7 @@ export function PublicSurveyForm({
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6 h-[60%] overflow-auto">
+          <CardContent className="space-y-6 h-[60%]  pb-20 overflow-auto">
             {renderQuestion(currentQuestion, currentStep - 1)}
 
             {validationErrors[currentStep - 1] && (
@@ -1220,7 +1220,7 @@ export function PublicSurveyForm({
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full ">
+          <CardFooter className="flex justify-between bg-white pt-4 absolute bottom-0 w-full ">
             <Button type="button" variant="outline" onClick={handlePrevious}>
               Back
             </Button>
