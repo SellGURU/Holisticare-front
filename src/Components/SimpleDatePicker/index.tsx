@@ -86,6 +86,7 @@ export default function SimpleDatePicker({
       {open && (
         <div className="absolute w-full  top-full mt-2 right-0 z-50 ">
           <Calendar
+          calendarClassName='!w-[220px]'
             value={selectedDay}
             onChange={(newDate) => {
               if (newDate) {
