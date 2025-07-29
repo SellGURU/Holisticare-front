@@ -639,6 +639,7 @@ export function PublicSurveyForm({
                 className={`flex items-center space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
                   validationError ? 'border-red-500' : ''
                 } ${(response as string) === option.toString() ? 'border-green-500 bg-green-50' : ''}`}
+                onClick={() => handleResponseChange(option.toString())} // Make the div clickable
               >
                 <RadioGroupItem
                   value={option.toString()}
@@ -665,6 +666,20 @@ export function PublicSurveyForm({
                 className={`flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
                   validationError ? 'border-red-500' : ''
                 } ${Array.isArray(response) && response.includes(option) ? 'border-green-500 bg-green-50' : ''}`}
+                onClick={() => {
+                  const currentValue = response || [];
+                  if (!Array.isArray(currentValue)) {
+                    handleResponseChange([option]);
+                    return;
+                  }
+                  if (currentValue.includes(option)) {
+                    handleResponseChange(
+                      currentValue.filter((item) => item !== option),
+                    );
+                  } else {
+                    handleResponseChange([...currentValue, option]);
+                  }
+                }} // Make the div clickable
               >
                 <Checkbox
                   id={`option-${questionIndex}-${index}`}
@@ -675,7 +690,6 @@ export function PublicSurveyForm({
                       handleResponseChange([option]);
                       return;
                     }
-
                     if (checked) {
                       handleResponseChange([...currentValue, option]);
                     } else {
@@ -1073,7 +1087,7 @@ export function PublicSurveyForm({
       {currentQuestion && (
         <Card
           style={{ height: window.innerHeight - 200 + 'px' }}
-          className="bg-white shadow-xl h-fit border-0 flex flex-col relative"
+          className="bg-white shadow-xl  border-0 flex flex-col relative"
         >
           <CardHeader>
             <div
@@ -1110,7 +1124,7 @@ export function PublicSurveyForm({
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between pt-4 w-full ">
+          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full ">
             <Button type="button" variant="outline" onClick={handlePrevious}>
               Back
             </Button>
