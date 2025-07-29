@@ -60,7 +60,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         }
         // setIsComplete(true);
         // window.flutter_inappwebview.callHandler('closeWebView')
-        setIsLaoding(false)
+        setIsLaoding(false);
       });
     } else {
       Mobile.fillCheckin({
