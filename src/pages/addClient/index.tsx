@@ -264,7 +264,7 @@ const AddClient = () => {
                       {...formik.getFieldProps('firstName')}
                       label="First Name"
                       onBlur={formik.handleBlur}
-                      placeholder="Enter client’s first name..."
+                      placeholder="Enter first name"
                       inValid={Boolean(
                         (formik.touched.firstName || showValidation) &&
                           formik.errors.firstName,
@@ -285,7 +285,7 @@ const AddClient = () => {
                       {...formik.getFieldProps('lastName')}
                       onBlur={formik.handleBlur}
                       label="Last Name"
-                      placeholder="Enter client’s last name..."
+                      placeholder="Enter last name"
                       inValid={Boolean(
                         (formik.touched.lastName || showValidation) &&
                           formik.errors.lastName,
@@ -325,7 +325,7 @@ const AddClient = () => {
                         </div>
                       ) : (
                         <div className="text-[12px] text-[#B0B0B0] font-light">
-                          Select client’s gender...
+                          Select gender
                         </div>
                       )}
                       <div>
@@ -384,7 +384,7 @@ const AddClient = () => {
                       }  shadow-100 items-center justify-between text-[10px] text-Text-Secondary`}
                     >
                       <SimpleDatePicker
-                        placeholder="Select your date of birth..."
+                        placeholder="Select date of birth"
                         isAddClient
                         date={dateOfBirth}
                         setDate={(date) => {
@@ -427,7 +427,7 @@ const AddClient = () => {
                       formik.errors.email) ||
                       ((formik.touched.email || showValidation) && apiError),
                   )}
-                  placeholder="Enter client’s email address..."
+                  placeholder="Enter an email (e.g. test@example.com)"
                 />
                 <div>
                   <label className="text-Text-Primary text-[12px] font-medium">
@@ -471,7 +471,7 @@ const AddClient = () => {
                           Drag and drop or click to upload.
                         </div>
                         <div className="text-Text-Secondary text-[10px] mt-2">
-                          JPEG, PNG
+                          Accepted formats: .png, .jpg. Up to 4 MB.
                         </div>
                       </div>
                     </div>

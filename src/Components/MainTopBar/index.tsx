@@ -116,7 +116,7 @@ const MainTopBar = () => {
 
     checkNewNotifications();
 
-    const intervalId = setInterval(checkNewNotifications, 15000);
+    const intervalId = setInterval(checkNewNotifications, 120000);
 
     return () => clearInterval(intervalId);
   }, []);

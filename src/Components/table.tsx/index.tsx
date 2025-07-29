@@ -116,7 +116,7 @@ const Table: React.FC<TableProps> = ({ classData, search }) => {
                     {headerGroup.headers.map((header, index) => (
                       <th
                         key={header.id}
-                        className={`px-3 pt-5 pb-3 text-xs   font-medium cursor-pointer `}
+                        className={`px-3 pt-5 pb-3 text-xs text-center  font-medium cursor-pointer `}
                       >
                         <div
                           className={`flex items-center  ${index == 0 ? 'justify-start' : 'justify-center '} `}

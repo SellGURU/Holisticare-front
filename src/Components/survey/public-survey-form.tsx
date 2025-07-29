@@ -201,7 +201,7 @@ export function PublicSurveyForm({
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
-    Record<number, string | string[] | MultiFileResponse | null>
+    Record<number, string | string[] | MultiFileResponse | null | number>
   >({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -278,6 +278,56 @@ export function PublicSurveyForm({
 
     console.log('Final processed questions:', questions);
     setSortedQuestions(Array.isArray(questions) ? questions : []);
+
+    // --- NEW: Initialize responses for all questions ---
+    const initialResponses: Record<
+      number,
+      string | string[] | MultiFileResponse | null
+    > = {};
+    questions.forEach((q, index) => {
+      // Set initial response based on type.
+      // For text, paragraph, scale, star rating, yes/no, and emojis, default to empty string.
+      // For checkbox, default to empty array.
+      // For file uploader, default to empty object.
+      switch (q.type?.toLowerCase()) {
+        case 'checkbox': {
+          // Added block scope
+          initialResponses[index] = [];
+          break;
+        }
+        case 'file uploader': {
+          // Added block scope
+          initialResponses[index] = {};
+          break;
+        }
+        case 'scale': {
+          // Added block scope
+          // For scale, set to a default middle value if options are present
+          const options = getQuestionOptions(q);
+          const min = Number.parseInt(options[0] || '1'); // Safely access with default fallback
+          const max = Number.parseInt(options[1] || '10'); // Safely access with default fallback
+          initialResponses[index] = Math.floor((min + max) / 2).toString();
+          break;
+        }
+        case 'star rating': {
+          // Added block scope
+          initialResponses[index] = '0'; // Default to 0 stars
+          break;
+        }
+        case 'emojis': {
+          // Added block scope
+          initialResponses[index] = emojeysData[2].name; // Default to neutral emoji
+          break;
+        }
+        default: {
+          // Added block scope
+          initialResponses[index] = '';
+          break;
+        }
+      }
+    });
+    setResponses(initialResponses);
+    // --- END NEW INITIALIZATION ---
   }, [survey]);
 
   const getQuestionText = (question: ApiQuestion): string => {
@@ -352,9 +402,12 @@ export function PublicSurveyForm({
     const questionIndex = currentStep - 1;
 
     if (currentQuestion?.type === 'File Uploader' && isMultiUploadMode) {
+      // Ensure file uploads are saved before moving on
       handleMultiFileUploadSave();
     }
 
+    // Always validate the current question before moving.
+    // This is especially important for required questions.
     if (!validateQuestion(questionIndex)) {
       return;
     }
@@ -364,11 +417,12 @@ export function PublicSurveyForm({
     if (currentStep < sortedQuestions.length) {
       setCurrentStep(currentStep + 1);
     } else {
+      // If it's the last question, validate all questions before submitting
       let allValid = true;
       for (let i = 0; i < sortedQuestions.length; i++) {
         if (!validateQuestion(i)) {
           allValid = false;
-          setCurrentStep(i + 1);
+          setCurrentStep(i + 1); // Go back to the first invalid question
           break;
         }
       }
@@ -392,10 +446,43 @@ export function PublicSurveyForm({
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const respond = sortedQuestions.map((q, idx) => ({
-        ...q,
-        response: responses[idx],
-      }));
+      // --- MODIFIED: Ensure response is explicitly an empty string for null/undefined values ---
+      const respond = sortedQuestions.map((q, idx) => {
+        let responseValue = responses[idx];
+
+        // Convert null/undefined to empty string for relevant types
+        if (
+          responseValue === undefined ||
+          responseValue === null ||
+          (typeof responseValue === 'string' && responseValue.trim() === '')
+        ) {
+          // Only set to empty string if it's not a checkbox or file uploader
+          // Checkbox should be [] and File Uploader should be {}
+          if (
+            q.type?.toLowerCase() !== 'checkbox' &&
+            q.type?.toLowerCase() !== 'file uploader' &&
+            q.type?.toLowerCase() !== 'star rating' && // Star rating might default to '0'
+            q.type?.toLowerCase() !== 'scale' && // Scale might have a default value
+            q.type?.toLowerCase() !== 'emojis' // Emojis has a default value
+          ) {
+            responseValue = '';
+          }
+        }
+        // Special handling for number-like responses to ensure they are strings
+        if (
+          (q.type?.toLowerCase() === 'scale' ||
+            q.type?.toLowerCase() === 'star rating') &&
+          typeof responseValue === 'number'
+        ) {
+          responseValue = responseValue.toString();
+        }
+
+        return {
+          ...q,
+          response: responseValue,
+        };
+      });
+      // --- END MODIFICATION ---
 
       if (isClient) {
         onSubmitClient?.(respond);
@@ -417,6 +504,7 @@ export function PublicSurveyForm({
     } catch (error) {
       console.error('Failed to submit survey:', error);
 
+      // Simulating successful submission for demo even on error, remove in production
       console.log('Simulating successful submission for demo');
       setCurrentStep(sortedQuestions.length + 1);
 
@@ -603,7 +691,7 @@ export function PublicSurveyForm({
     setTempBack(null);
     setTempSide(null);
     setIsMultiUploadMode(false);
-    handleResponseChange(null);
+    handleResponseChange({}); // Set to an empty object for file upload type
   };
 
   const renderQuestion = (question: ApiQuestion, questionIndex: number) => {
@@ -638,7 +726,11 @@ export function PublicSurveyForm({
                 key={index}
                 className={`flex items-center space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
                   validationError ? 'border-red-500' : ''
-                } ${(response as string) === option.toString() ? 'border-green-500 bg-green-50' : ''}`}
+                } ${
+                  (response as string) === option.toString()
+                    ? 'border-green-500 bg-green-50'
+                    : ''
+                }`}
                 onClick={() => handleResponseChange(option.toString())} // Make the div clickable
               >
                 <RadioGroupItem
@@ -665,7 +757,11 @@ export function PublicSurveyForm({
                 key={index}
                 className={`flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
                   validationError ? 'border-red-500' : ''
-                } ${Array.isArray(response) && response.includes(option) ? 'border-green-500 bg-green-50' : ''}`}
+                } ${
+                  Array.isArray(response) && response.includes(option)
+                    ? 'border-green-500 bg-green-50'
+                    : ''
+                }`}
                 onClick={() => {
                   const currentValue = response || [];
                   if (!Array.isArray(currentValue)) {
@@ -1087,7 +1183,7 @@ export function PublicSurveyForm({
       {currentQuestion && (
         <Card
           style={{ height: window.innerHeight - 200 + 'px' }}
-          className="bg-white shadow-xl  border-0 flex flex-col relative"
+          className="bg-white shadow-xl  border-0 flex flex-col relative"
         >
           <CardHeader>
             <div
