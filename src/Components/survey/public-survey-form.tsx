@@ -601,7 +601,7 @@ export function PublicSurveyForm({
     return (
       <div className="space-y-6 px-4 mt-4">
         <Slider
-          defaultValue={[currentValue]}
+          value={[currentValue]}
           min={min}
           max={max}
           step={1}
@@ -1220,16 +1220,22 @@ export function PublicSurveyForm({
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between bg-white pt-4 absolute bottom-0 w-full ">
-            <Button type="button" variant="outline" onClick={handlePrevious}>
+          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
+            <Button
+              className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
+              type="button"
+              variant="outline"
+              onClick={handlePrevious}
+            >
               Back
             </Button>
+
             <Button
               type="button"
               onClick={handleNext}
               disabled={submitting}
               data-testid="survey-next-button"
-              className={`bg-gradient-to-r ${gradientClass} hover:brightness-105 transition-all text-white`}
+              className={`bg-gradient-to-r ${gradientClass} -end hover:brightness-105 transition-all text-white`}
             >
               {currentStep === sortedQuestions.length
                 ? submitting
