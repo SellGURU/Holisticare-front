@@ -3,6 +3,7 @@ import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import { ExerciseRow } from './AddComponents/ExerciseRow';
 import ExerciseModal from './AddComponents/ExcersieModal';
 import Application from '../../../api/app';
+import { useState } from 'react';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
@@ -17,14 +18,27 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   setShowAdd,
   ExcercisesListLength,
 }) => {
+  const [loadingCall, setLoadingCall] = useState(false);
+  const [clearData, setClearData] = useState(false);
+  const [showEditModalIndex, setShowEditModalIndex] = useState<number | null>(
+    null,
+  );
+  const handleClearData = (value: boolean) => {
+    setClearData(value);
+  };
   const handleAddExercise = (newExercise: any) => {
+    setLoadingCall(true);
     Application.addExercise(newExercise)
       .then(() => {
         onAdd();
         setShowAdd(false);
+        setClearData(true);
       })
       .catch((error) => {
         console.error('Error adding exercise:', error);
+      })
+      .finally(() => {
+        setLoadingCall(false);
       });
   };
 
@@ -40,12 +54,19 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   };
 
   const handleUpdateExercise = (updatedExercise: any) => {
-    Application.updateExercise(updatedExercise).then(() => {
-      onAdd();
-    });
-    // setData((prevData) =>
-    //   prevData.map((exercise, i) => (i === index ? updatedExercise : exercise)),
-    // );
+    setLoadingCall(true);
+    Application.updateExercise(updatedExercise)
+      .then(() => {
+        onAdd();
+        setShowEditModalIndex(null);
+        setClearData(true);
+      })
+      .catch((error) => {
+        console.error('Error editing exercise:', error);
+      })
+      .finally(() => {
+        setLoadingCall(false);
+      });
   };
 
   return (
@@ -107,6 +128,11 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                         handleDeleteExercise(exercise.Exercise_Id)
                       }
                       onUpdate={handleUpdateExercise}
+                      loadingCall={loadingCall}
+                      clearData={clearData}
+                      handleClearData={handleClearData}
+                      showEditModalIndex={showEditModalIndex}
+                      setShowEditModalIndex={setShowEditModalIndex}
                     />
                   ))}
                 </tbody>
@@ -125,6 +151,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}
         onSubmit={handleAddExercise}
+        loadingCall={loadingCall}
+        clearData={clearData}
+        handleClearData={handleClearData}
       />
     </>
   );

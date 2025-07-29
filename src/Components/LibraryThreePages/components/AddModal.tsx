@@ -13,6 +13,8 @@ interface AddModalLibraryTreePagesProps {
   selectedRow: any;
   setSelectedRow: () => void;
   loadingCall: boolean;
+  clearData: boolean;
+  handleClearData: (value: boolean) => void;
 }
 
 const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
@@ -23,6 +25,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   selectedRow,
   setSelectedRow,
   loadingCall,
+  clearData,
+  handleClearData,
 }) => {
   const [addData, setAddData] = useState({
     title: '',
@@ -214,6 +218,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
     );
   };
   const [showValidation, setShowValidation] = useState(false);
+  useEffect(() => {
+    if (clearData) {
+      clear();
+      handleClearData(false);
+    }
+  }, [clearData]);
   return (
     <MainModal
       isOpen={addShowModal}
