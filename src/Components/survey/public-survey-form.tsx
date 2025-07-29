@@ -1134,7 +1134,7 @@ export function PublicSurveyForm({
   }
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-10">
+    <div className="container max-w-4xl mx-auto px-1 xl:px-4 py-10">
       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}
@@ -1191,7 +1191,7 @@ export function PublicSurveyForm({
             >
               Question {currentStep} of {sortedQuestions.length}
             </div>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-base 2xl:text-2xl font-bold">
               {getQuestionText(currentQuestion)}
               {currentQuestion.required && (
                 <span className="text-red-500 ml-1">*</span>
