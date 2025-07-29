@@ -1213,10 +1213,15 @@ export function PublicSurveyForm({
             )}
           </CardContent>
           <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full ">
-              <Button className={`${currentStep > 1 ? 'visible' : 'invisible'}`} type="button" variant="outline" onClick={handlePrevious}>
-                Back
-              </Button>
-            
+            <Button
+              className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
+              type="button"
+              variant="outline"
+              onClick={handlePrevious}
+            >
+              Back
+            </Button>
+
             <Button
               type="button"
               onClick={handleNext}
