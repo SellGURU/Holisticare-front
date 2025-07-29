@@ -111,7 +111,13 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   };
 
   return (
-    <MainModal isOpen={isOpen} onClose={onClose}>
+    <MainModal
+      isOpen={isOpen}
+      onClose={() => {
+        onClose();
+        setIndexImage(0);
+      }}
+    >
       <div
         className={`bg-white rounded-2xl p-4 ${exercise.Instruction.length > 500 || exercise.Description.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
       >
