@@ -45,7 +45,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
     }
   }, []);
   const submit = (e: any) => {
-    setIsLaoding(true);
+    // setIsLaoding(true);
     // window.close();
     if (mode == 'questionary') {
       Mobile.fillQuestionary({
@@ -74,7 +74,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           console.warn('Flutter WebView bridge not available');
         }
         // setIsComplete(true);
-        setIsLaoding(false);
+        // setIsLaoding(false);
       });
     }
   };
