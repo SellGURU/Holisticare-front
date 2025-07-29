@@ -16,7 +16,7 @@ interface FormViewProps {
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const [isComplete] = useState(false);
 
   const [data, setData] = useState<any>(null);
   // const [resolvedData, ] = useState<any>(null);
@@ -58,7 +58,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         } else {
           console.warn('Flutter WebView bridge not available');
         }
-        setIsComplete(true);
+        // setIsComplete(true);
         // window.flutter_inappwebview.callHandler('closeWebView')
         // setIsLaoding(false)
       });
@@ -73,7 +73,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         } else {
           console.warn('Flutter WebView bridge not available');
         }
-        setIsComplete(true);
+        // setIsComplete(true);
       });
     }
   };
