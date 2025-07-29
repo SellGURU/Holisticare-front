@@ -703,7 +703,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             ClassName="shadow-Btn"
             onClick={handleClear}
           >
-            <img className='size-4' src="/icons/close.svg" alt="" />
+            <img className="size-4" src="/icons/close.svg" alt="" />
             Clear All
           </ButtonPrimary>
           {/* <button

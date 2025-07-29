@@ -84,7 +84,7 @@ const TextField: React.FC<TextFieldProps> = ({
         <input
           ref={inputRef} // <--- Pass the ref here
           type={getInternalInputType()} // Use the internal type resolver
-          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none ${
+          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 text-Text-Primary outline-none ${
             inValid
               ? 'border-Red'
               : newStyle

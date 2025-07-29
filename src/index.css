@@ -517,3 +517,10 @@ input[type='range'] {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #383838 !important; 
+  transition: background-color 5000s ease-in-out 0s; 
+}
