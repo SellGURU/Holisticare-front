@@ -201,8 +201,8 @@ export function PublicSurveyForm({
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
-  Record<number, string | string[] | MultiFileResponse | null | number> 
->({});
+    Record<number, string | string[] | MultiFileResponse | null | number>
+  >({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sortedQuestions, setSortedQuestions] = useState<ApiQuestion[]>([]);
@@ -250,9 +250,9 @@ export function PublicSurveyForm({
   // Process questions when survey data changes
   useEffect(() => {
     console.log('Survey data in form component:', survey);
-  
+
     let questions: ApiQuestion[] = [];
-  
+
     if (survey && survey.questions && Array.isArray(survey.questions)) {
       questions = [...survey.questions];
       console.log('Found questions in survey.questions:', questions);
@@ -275,10 +275,10 @@ export function PublicSurveyForm({
         }
       });
     }
-  
+
     console.log('Final processed questions:', questions);
     setSortedQuestions(Array.isArray(questions) ? questions : []);
-  
+
     // --- NEW: Initialize responses for all questions ---
     const initialResponses: Record<
       number,
@@ -290,15 +290,18 @@ export function PublicSurveyForm({
       // For checkbox, default to empty array.
       // For file uploader, default to empty object.
       switch (q.type?.toLowerCase()) {
-        case 'checkbox': { // Added block scope
+        case 'checkbox': {
+          // Added block scope
           initialResponses[index] = [];
           break;
         }
-        case 'file uploader': { // Added block scope
+        case 'file uploader': {
+          // Added block scope
           initialResponses[index] = {};
           break;
         }
-        case 'scale': { // Added block scope
+        case 'scale': {
+          // Added block scope
           // For scale, set to a default middle value if options are present
           const options = getQuestionOptions(q);
           const min = Number.parseInt(options[0] || '1'); // Safely access with default fallback
@@ -306,15 +309,18 @@ export function PublicSurveyForm({
           initialResponses[index] = Math.floor((min + max) / 2).toString();
           break;
         }
-        case 'star rating': { // Added block scope
+        case 'star rating': {
+          // Added block scope
           initialResponses[index] = '0'; // Default to 0 stars
           break;
         }
-        case 'emojis': { // Added block scope
+        case 'emojis': {
+          // Added block scope
           initialResponses[index] = emojeysData[2].name; // Default to neutral emoji
           break;
         }
-        default: { // Added block scope
+        default: {
+          // Added block scope
           initialResponses[index] = '';
           break;
         }

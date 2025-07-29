@@ -468,10 +468,10 @@ const AddClient = () => {
                           )}
                         </div>
                         <div className="text-[12px] text-Text-Primary">
-                        Drag and drop or click to upload.
+                          Drag and drop or click to upload.
                         </div>
                         <div className="text-Text-Secondary text-[10px] mt-2">
-                        Accepted formats: .png, .jpg. Up to 4 MB.
+                          Accepted formats: .png, .jpg. Up to 4 MB.
                         </div>
                       </div>
                     </div>
