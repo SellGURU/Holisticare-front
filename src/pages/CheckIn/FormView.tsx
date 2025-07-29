@@ -60,7 +60,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
         }
         // setIsComplete(true);
         // window.flutter_inappwebview.callHandler('closeWebView')
-        // setIsLaoding(false)
+        setIsLaoding(false)
       });
     } else {
       Mobile.fillCheckin({
@@ -74,6 +74,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           console.warn('Flutter WebView bridge not available');
         }
         // setIsComplete(true);
+        setIsLaoding(false);
       });
     }
   };
