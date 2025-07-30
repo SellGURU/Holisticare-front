@@ -419,7 +419,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  placeholder="Enter Value..."
+                  placeholder="Enter value amount"
                   value={value}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -444,7 +444,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                 />
                 <input
-                  placeholder="Enter Unit..."
+                  placeholder="Enter unit"
                   value={Unit}
                   type="text"
                   onChange={(e) => {
@@ -493,7 +493,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
-                      placeholder="Carbohydrates"
+                      placeholder="Carb amount"
                       value={totalMacros.Carbs}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -533,7 +533,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
-                      placeholder="Proteins"
+                      placeholder="Protein amount"
                       value={totalMacros.Protein}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -576,7 +576,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
-                      placeholder="Fats"
+                      placeholder="Fat amount"
                       value={totalMacros.Fats}
                       onChange={(e) => {
                         const value = e.target.value;
