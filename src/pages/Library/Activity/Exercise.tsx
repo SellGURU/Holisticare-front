@@ -4,6 +4,7 @@ import { ExerciseRow } from './AddComponents/ExerciseRow';
 import ExerciseModal from './AddComponents/ExcersieModal';
 import Application from '../../../api/app';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
@@ -43,14 +44,19 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   };
 
   const handleDeleteExercise = (exerciseIdToDelete: string) => {
-    Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete }).then(() => {
-      // setData((prevData) =>
-      //   prevData.filter(
-      //     (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
-      //   ),
-      // );
-      onAdd();
-    });
+    Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete })
+      .then(() => {
+        // setData((prevData) =>
+        //   prevData.filter(
+        //     (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
+        //   ),
+        // );
+        onAdd();
+      })
+      .catch((error) => {
+        // console.error('Error deleting exercise:', error);
+        toast.error(error);
+      });
   };
 
   const handleUpdateExercise = (updatedExercise: any) => {
@@ -100,21 +106,25 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
               <table className="w-full  ">
                 <thead className="w-full">
                   <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
-                    <th className="py-3 pl-4 w-[160px] rounded-tl-2xl">
+                    <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">
                       Title
                     </th>
-                    <th className="py-3 w-[300px] text-center">Instruction</th>
-                    <th className="py-3 w-[100px] text-center pl-2">File</th>
-                    <th className="py-3 w-[66px] text-center pl-3">
+                    <th className="py-3 w-[300px] text-center text-nowrap">
+                      Instruction
+                    </th>
+                    <th className="py-3 w-[100px] text-center pl-2 text-nowrap">
+                      File
+                    </th>
+                    <th className="py-3 w-[66px] text-center pl-3 text-nowrap">
                       Priority Weight
                     </th>
-                    <th className="py-3 w-[250px] text-center">
+                    <th className="py-3 w-[250px] text-center text-nowrap">
                       Clinical Guidance
                     </th>
-                    <th className="py-3 w-[100px] text-center pl-3">
+                    <th className="py-3 w-[100px] text-center pl-3 text-nowrap">
                       Added on
                     </th>
-                    <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl">
+                    <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl text-nowrap">
                       Action
                     </th>
                   </tr>

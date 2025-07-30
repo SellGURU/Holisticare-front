@@ -37,6 +37,15 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
     setShowAddActivity(showAdd);
   }, [showAdd]);
   const [editid, setEditid] = useState<string | null>(null);
+  const onDeleteActivity = (id: string) => {
+    Application.deleteActivity(id)
+      .then(() => {
+        onDelete();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
   return (
     <>
       {dataListLength === 0 ? (
@@ -64,17 +73,25 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
           <table className="w-full  ">
             <thead className="w-full">
               <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
-                <th className="py-3 pl-4 w-[160px] rounded-tl-2xl">Title</th>
-                <th className="py-3 w-[250px] text-center">Instruction</th>
-                <th className="py-3 w-[150px] text-center pl-2">Section</th>
-                <th className="py-3 w-[66px] text-center pl-3">
+                <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">
+                  Title
+                </th>
+                <th className="py-3 w-[250px] text-center text-nowrap">
+                  Instruction
+                </th>
+                <th className="py-3 w-[150px] text-center pl-2 text-nowrap">
+                  Section
+                </th>
+                <th className="py-3 w-[66px] text-center pl-3 text-nowrap">
                   Priority Weight
                 </th>
-                <th className="py-3 w-[250px] text-center">
+                <th className="py-3 w-[250px] text-center text-nowrap">
                   Clinical Guidance
                 </th>
-                <th className="py-3 w-[100px] text-center pl-3">Added on</th>
-                <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl">
+                <th className="py-3 w-[100px] text-center pl-3 text-nowrap">
+                  Added on
+                </th>
+                <th className="py-3 w-[80px] text-center pl-3 rounded-tr-2xl text-nowrap">
                   Action
                 </th>
               </tr>
@@ -85,11 +102,7 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
                   key={index}
                   exercise={exercise}
                   index={index}
-                  onDelete={() => {
-                    Application.deleteActivity(exercise.Act_Id).then(() => {
-                      onDelete();
-                    });
-                  }}
+                  onDelete={() => onDeleteActivity(exercise.Act_Id)}
                   onEdit={() => {
                     setShowAdd(true);
                     setEditid(exercise.Act_Id);
