@@ -17,7 +17,7 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
   isQuestionary,
 }) => {
   console.log(onClose);
-  
+
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -52,7 +52,12 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
       )}
       {data && data.questions && data.questions.length > 0 && (
         <div className="w-[90vw] md:w-[500px] bg-white h-[560px] p-4 rounded-[25px] overflow-auto pr-1">
-          <SurveyResponsesView time={data.time} title={data.title} isCustom questions={data.questions} />
+          <SurveyResponsesView
+            time={data.time}
+            title={data.title}
+            isCustom
+            questions={data.questions}
+          />
         </div>
       )}
     </>

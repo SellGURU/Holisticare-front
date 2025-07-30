@@ -119,7 +119,9 @@ export function SurveyResponsesView({
   };
 
   return (
-    <div className={`min-h-screen w-full bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-start ${isCustom ? 'py-8' : 'py-12'} px-2`}>
+    <div
+      className={`min-h-screen w-full bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-start ${isCustom ? 'py-8' : 'py-12'} px-2`}
+    >
       <div className="w-full max-w-2xl space-y-8">
         {isCustom ? (
           <div className="flex w-full items-center justify-between">

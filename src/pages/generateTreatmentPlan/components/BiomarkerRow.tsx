@@ -210,12 +210,12 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                   )} */}
                   {value['Practitioner Comments'][0]?.length > 0 && (
                     <div
-                      data-tooltip-id={`score-calc-${index}`}
+                      data-tooltip-id={`${value.title}-${index}`}
                       className="text-Primary-DeepTeal select-none mt-[2px] cursor-pointer text-[10px]"
                     >
                       Analysis Info
                       <Tooltip
-                        id={`score-calc-${index}`}
+                        id={`${value.title}-${index}`}
                         place="top"
                         className="!bg-white !w-[270px] !text-justify !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
                         style={{
@@ -437,6 +437,18 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
           onAddNotes={handleAddNotes}
         />
       )}
+     {value['Practitioner Comments'][0]?.length > 0 && (
+      <Tooltip
+        id={`${value.title}-${index}`}
+        place="top"
+        className="!bg-white !w-[270px] !text-justify !leading-5 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+        style={{ zIndex: 9999 }}
+      >
+        <div className="text-Text-Primary text-[10px]">
+          {value['Practitioner Comments'][0]}
+        </div>
+      </Tooltip>
+    )}
     </>
   );
 };
