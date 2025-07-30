@@ -4,6 +4,7 @@ import { ExerciseRow } from './AddComponents/ExerciseRow';
 import ExerciseModal from './AddComponents/ExcersieModal';
 import Application from '../../../api/app';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
@@ -50,6 +51,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
       //   ),
       // );
       onAdd();
+    }).catch((error) => {
+      // console.error('Error deleting exercise:', error);
+      toast.error(error);
     });
   };
 
