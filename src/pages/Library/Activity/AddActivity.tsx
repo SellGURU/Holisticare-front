@@ -81,8 +81,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             setShowExerciseValidation(false);
             setShowValidation(false);
           })
-          .catch((error) => {
-            console.error('Error editing activity:', error);
+          .catch((err) => {
+            console.error(err);
           })
           .finally(() => {
             setLoadingCall(false);
@@ -111,8 +111,8 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             setShowExerciseValidation(false);
             setShowValidation(false);
           })
-          .catch((error) => {
-            console.error('Error adding activity:', error);
+          .catch((err) => {
+            console.error(err);
           })
           .finally(() => {
             setLoadingCall(false);

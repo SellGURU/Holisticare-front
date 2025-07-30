@@ -167,6 +167,45 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
       }
     }
   };
+  const onDelete = (id: string) => {
+    if (pageType === 'Supplement') {
+      setLoading(true);
+      Application.deleteSupplement(id)
+        .then(() => {
+          getSupplements();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (pageType === 'Lifestyle') {
+      setLoading(true);
+      Application.deleteLifestyle(id)
+        .then(() => {
+          getLifestyles();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(true);
+      Application.deleteDiet(id)
+        .then(() => {
+          getDiets();
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
   const filteredData = tableData.filter((item) =>
     item.Title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -215,27 +254,7 @@ const LibraryThreePages: FC<LibraryThreePagesProps> = ({ pageType }) => {
             <TableNoPaginateForLibraryThreePages
               pageType={pageType}
               tableData={filteredData}
-              onDelete={(id) => {
-                if (pageType === 'Supplement') {
-                  setLoading(true);
-                  Application.deleteSupplement(id).then(() => {
-                    getSupplements();
-                    setLoading(false);
-                  });
-                } else if (pageType === 'Lifestyle') {
-                  setLoading(true);
-                  Application.deleteLifestyle(id).then(() => {
-                    getLifestyles();
-                    setLoading(false);
-                  });
-                } else {
-                  setLoading(true);
-                  Application.deleteDiet(id).then(() => {
-                    getDiets();
-                    setLoading(false);
-                  });
-                }
-              }}
+              onDelete={(id) => onDelete(id)}
               onEdit={(row) => {
                 setSelectedRow(row);
                 handleOpenModal();
