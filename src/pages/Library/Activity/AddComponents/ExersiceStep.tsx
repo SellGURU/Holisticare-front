@@ -533,8 +533,10 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                       <div className="relative">
                         <img
                           src={
-                            el?.Files[0]?.Type.split('/')[0] === 'image'
-                              ? el?.Files[0]?.Content?.url
+                            Array.isArray(el?.Files) &&
+                            el.Files.length > 0 &&
+                            el.Files[0]?.Type?.startsWith('image')
+                              ? el.Files[0]?.Content?.url
                               : '/images/activity/activity-demo.png'
                           }
                           alt=""
@@ -547,6 +549,15 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                             className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
                           />
                         )}
+                        {Array.isArray(el?.Files) &&
+                          el.Files.length > 0 &&
+                          !el.Files[0]?.Type?.startsWith('image') && (
+                            <img
+                              src="/icons/video-octagon.svg"
+                              alt=""
+                              className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
+                            />
+                          )}
                       </div>
                       <div className="text-xs text-Text-Primary">
                         {el.Title}

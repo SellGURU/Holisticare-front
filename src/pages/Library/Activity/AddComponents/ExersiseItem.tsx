@@ -97,20 +97,24 @@ const ExerciseItem = ({
             <div className="relative">
               <img
                 src={
-                  exercise.Exercise.Files[0]?.Type.split('/')[0] === 'image'
+                  Array.isArray(exercise?.Exercise?.Files) &&
+                  exercise.Exercise.Files.length > 0 &&
+                  exercise.Exercise.Files[0]?.Type?.startsWith('image')
                     ? exercise.Exercise.Files[0]?.Content?.url
                     : '/images/activity/activity-demo.png'
                 }
                 alt=""
                 className="w-8 h-8 bg-cover rounded-lg mr-1"
               />
-              {exercise.Exercise.Files[0]?.Type.split('/')[0] !== 'image' && (
-                <img
-                  src="/icons/video-octagon.svg"
-                  alt=""
-                  className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
-                />
-              )}
+              {Array.isArray(exercise?.Exercise?.Files) &&
+                exercise.Exercise.Files.length > 0 &&
+                !exercise.Exercise.Files[0]?.Type?.startsWith('image') && (
+                  <img
+                    src="/icons/video-octagon.svg"
+                    alt=""
+                    className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
+                  />
+                )}
             </div>
             <div className="text-xs ml-2 font-medium text-Text-Primary">
               {exercise.Exercise.Title}
