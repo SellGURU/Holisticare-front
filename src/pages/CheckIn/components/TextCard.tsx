@@ -17,8 +17,10 @@ const TextCard: React.FC<TextCardProps> = ({
   isPreview,
 }) => {
   const [val, setVal] = useState(value);
+  console.log(isPreview);
+
   useEffect(() => {
-    if (onChange) {
+    if (onChange && !isPreview) {
       onChange(val);
     }
   }, [val]);
@@ -35,6 +37,7 @@ const TextCard: React.FC<TextCardProps> = ({
         <div className="mt-4 ">
           <input
             type="text"
+            readOnly={isPreview}
             placeholder={placeHolder}
             value={val}
             onChange={(e) => {

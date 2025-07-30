@@ -11,6 +11,7 @@ interface QuestionRowProps {
   id: string;
   deleteRow: () => void;
   onTryComplete: () => void;
+  onAssign: (id: string) => void;
   resolveForm: (
     type: string,
     questionsData: any,
@@ -23,11 +24,12 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
   id,
   resolveForm,
   onTryComplete,
+  onAssign,
   // deleteRow,
 }) => {
   const [activeCard, setActiveCard] = useState(1);
   const [isView, setIsView] = useState(false);
-  const [viewQuestienry, setViewQuestienry] = useState<any>({});
+  const [viewQuestienry] = useState<any>({});
   const [showModal, setshowModal] = useState(false);
   const [isAssigned, setisAssigned] = useState(false);
   const [countdown, setCountdown] = useState(3);
@@ -63,7 +65,6 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
   console.log(viewQuestienry);
   console.log(el);
-
   return (
     <>
       <div className=" bg-white border relative border-Gray-50 mb-1 px-5 py-3 min-h-[48px]  w-full rounded-[12px]">
@@ -80,9 +81,17 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                       member_id: id,
                       q_unique_id: el.unique_id,
                     }).then((res) => {
-                      setViewQuestienry(res.data);
-                      setIsView(true);
-                      setshowModal(false);
+                      console.log(res);
+
+                      // setViewQuestienry(res.data);
+                      // setIsView(true);
+                      // setshowModal(false);
+                      window.open(
+                        `/surveys-view/${id}/${el.unique_id}`,
+                        '_blank',
+                      );
+
+                      // navigate(`/surveys/${id}/${el.unique_id}`)
                     });
                     // Application.Questionary_tracking_action({
                     //   form_name: el.title,
@@ -112,8 +121,11 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                         //   .catch((err) => {
                         //     console.error('Error fetching the link:', err);
                         //   });
-                        onTryComplete();
-                        setshowModal(false);
+                        console.log(onTryComplete);
+
+                        //  onTryComplete();
+                        // setshowModal(false);
+                        window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
                     >
@@ -134,6 +146,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
                           }).then(() => {
                             setisAssigned(true);
                             setshowModal(false);
+                            onAssign(el.unique_id);
                           });
                         }
                       }}

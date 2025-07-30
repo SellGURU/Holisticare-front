@@ -186,7 +186,7 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
               )}
               <div className="flex gap-7 items-center">
                 <div className="font-medium text-Text-Primary text-xs">
-                  Base Score
+                  Priority Weight
                 </div>
                 <div className="px-3 py-[2px] rounded-xl bg-[#FFD8E4] flex items-center justify-center">
                   <div className="text-[10px] text-Text-Primary">
@@ -195,6 +195,16 @@ const PreviewModalLibraryTreePages: FC<PreviewModalProps> = ({
                   <div className="text-[10px] text-Text-Quadruple">/10</div>
                 </div>
               </div>
+              {selectedRow?.Ai_note && (
+                <div className="flex gap-8">
+                  <div className="font-medium text-Text-Primary text-xs text-nowrap">
+                    Clinical Guidance
+                  </div>
+                  <div className="text-xs text-Text-Secondary text-justify leading-5">
+                    {selectedRow?.Ai_note}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="w-full flex justify-end items-center p-2 mt-3">
               <div

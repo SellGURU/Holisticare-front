@@ -78,11 +78,16 @@ const LoadGraph: FC<LoadGraphProps> = ({
       .filter((node: any) => node.status === false)
       .map((node: any) => node.id);
 
-    const filteredEdges = graphData.edges.filter(
-      (link: any) =>
+    const filteredEdges = graphData.edges.filter((link: any) => {
+      const sourceExists = graph.hasNode(link.source);
+      const targetExists = graph.hasNode(link.target);
+      return (
+        sourceExists &&
+        targetExists &&
         !inactiveNodeIds.includes(link.source) &&
-        !inactiveNodeIds.includes(link.target),
-    );
+        !inactiveNodeIds.includes(link.target)
+      );
+    });
 
     // Always add all edges to the graph with full opacity
     filteredEdges.forEach((edge: any, index: number) => {

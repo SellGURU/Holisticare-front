@@ -34,7 +34,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
         className={` ${isOpen && 'rounded-b-none'} rounded-xl py-1 px-2 bg-backgroundColor-Main border border-Gray-50 text-Primary-DeepTeal text-[10px] flex items-center gap-2 cursor-pointer`}
         onClick={handleToggle}
       >
-        {selectedOption} <img src="/icons/arrow-down-green.svg" alt="Arrow" />
+        {selectedOption}{' '}
+        <img
+          className={`${isOpen ? 'rotate-180' : ''} transition-transform`}
+          src="/icons/arrow-down-green.svg"
+          alt="Arrow"
+        />
       </div>
       {isOpen && (
         <div className="absolute  w-full  z-10 border bg-backgroundColor-Main border-Gray-50 rounded-b-xl">

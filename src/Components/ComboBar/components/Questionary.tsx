@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Button/ButtonPrimary';
@@ -19,8 +19,10 @@ import {
 import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
 // import DatePicker from '../../DatePicker';
-
-export const Questionary = () => {
+interface QuestionaryProps {
+  isOpen?: boolean;
+}
+export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
   const [data, setData] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const [tryAdd, setTryAdd] = useState(false);
@@ -86,25 +88,29 @@ export const Questionary = () => {
     console.log(questionsFormData);
   }, [questionsFormData]);
   useEffect(() => {
-    setIsLoading(true);
-    if (!tryComplete) {
-      Application.getQuestionary_tracking({ member_id: id })
-        .then((res) => {
-          if (res.data) {
-            setData(res.data);
-          } else {
-            throw new Error('Unexpected data format');
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          // setError("Failed to fetch client data");
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+    if (isOpen) {
+      setIsLoading(true);
+      if (!tryComplete) {
+        Application.getQuestionary_tracking({ member_id: id })
+          .then((res) => {
+            if (res.data) {
+              setData(res.data);
+            } else {
+              throw new Error('Unexpected data format');
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            // setError("Failed to fetch client data");
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
     }
-  }, [id]);
+  }, [isOpen, tryComplete, id]);
+  console.log(isOpen);
+
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
   //     ...prev,
@@ -464,6 +470,7 @@ export const Questionary = () => {
 
     return question.response && question.response !== '';
   };
+  console.log(data);
 
   return (
     <div className=" w-full">
@@ -793,6 +800,15 @@ export const Questionary = () => {
                             setQuestionsFormData(modifiedResponseData);
                             setTryComplete(true);
                           });
+                        }}
+                        onAssign={(unique_id: string) => {
+                          setData((prev: any) =>
+                            prev.map((el: any) =>
+                              el.unique_id === unique_id
+                                ? { ...el, assinged_to_client: true }
+                                : el,
+                            ),
+                          );
                         }}
                         el={el}
                         id={id as string}

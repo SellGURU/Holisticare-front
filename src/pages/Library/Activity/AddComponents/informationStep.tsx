@@ -21,6 +21,7 @@ interface InformationStepProps {
     equipment: Array<string>;
     level: string;
     location: Array<string>;
+    clinical_guidance: string;
   };
   updateAddData: (
     key:
@@ -34,7 +35,8 @@ interface InformationStepProps {
       | 'muscle'
       | 'equipment'
       | 'level'
-      | 'location',
+      | 'location'
+      | 'clinical_guidance',
     value: any,
   ) => void;
   showValidation: boolean; // Add this prop
@@ -71,6 +73,7 @@ const InformationStep: FC<InformationStepProps> = ({
       // description: addData.description,
       instruction: addData.instruction,
       score: addData.score,
+      clinical_guidance: addData.clinical_guidance,
     },
     validationSchema,
     validateOnMount: true,
@@ -85,7 +88,12 @@ const InformationStep: FC<InformationStepProps> = ({
   useEffect(() => {
     updateAddData('title', formik.values.title);
     updateAddData('instruction', formik.values.instruction);
-  }, [formik.values.title, formik.values.instruction]);
+    updateAddData('clinical_guidance', formik.values.clinical_guidance);
+  }, [
+    formik.values.title,
+    formik.values.instruction,
+    formik.values.clinical_guidance,
+  ]);
 
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
@@ -179,7 +187,7 @@ const InformationStep: FC<InformationStepProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
-              Base Score
+              Priority Weight
             </div>
             <RangeCardLibraryActivity
               value={formik.values.score}
@@ -195,8 +203,23 @@ const InformationStep: FC<InformationStepProps> = ({
               <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
             )} */}
           </div>
+          {/* Clinical Guidance Field */}
+          <div className="flex flex-col w-full gap-2">
+            <div className="text-xs font-medium text-Text-Primary">
+              Clinical Guidance
+            </div>
+            <textarea
+              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+              value={formik.values.clinical_guidance}
+              onChange={(e) => {
+                formik.setFieldValue('clinical_guidance', e.target.value);
+                updateAddData('clinical_guidance', e.target.value);
+              }}
+              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+            />
+          </div>
         </div>
-        <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
+        <div className="bg-[#E9EDF5] h-[362px] w-px"></div>
         <div className="flex flex-col gap-4">
           <div className="text-xs font-medium">Filters</div>
           <div className="grid grid-cols-2 gap-y-2 gap-x-">

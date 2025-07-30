@@ -34,9 +34,9 @@ const SummaryBox: React.FC<SummaryBoxProps> = ({ data, isActive }) => {
         <div
           className="w-10 h-10 items-center rounded-full flex justify-center"
           style={{
-            background: `conic-gradient(#7F39FB 0% ${data.status[0]}%,#06C78D ${data.status[0]}% ${data.status[1] + data.status[0]}%,#FBAD37 ${
+            background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
               data.status[1] + data.status[0]
-            }% ${data.status[1] + data.status[2] + data.status[0]}%,#FC5474 ${
+            }% ${data.status[1] + data.status[2] + data.status[0]}%,#B2302E ${
               data.status[2] + data.status[1] + data.status[0]
             }% 100%)`,
           }}

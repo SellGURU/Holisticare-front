@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Application from '../../../api/app';
 import { useParams } from 'react-router-dom';
 // import { ButtonPrimary } from '../../Button/ButtonPrimary';
-import FileBox from './FileBox';
+// import FileBox from './FileBox';
 import FileBoxUpload from './FileBoxUpload';
 import { publish } from '../../../utils/event';
 
@@ -160,9 +160,9 @@ export const FilleHistory = () => {
                       />
                     );
                   })}
-                  {data?.reverse()?.map((el: any) => {
+                  {/* {data?.reverse()?.map((el: any) => {
                     return <FileBox el={el}></FileBox>;
-                  })}
+                  })} */}
                 </div>
               </div>
               {/* <div className="w-full mt-5 flex justify-center">

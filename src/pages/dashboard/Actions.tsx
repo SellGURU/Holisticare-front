@@ -4,12 +4,16 @@ import { Dropdown } from '../../Components/DropDown';
 import DashboardApi from '../../api/Dashboard';
 import { Tooltip } from 'react-tooltip';
 import './Actions.css';
+import { useNavigate } from 'react-router-dom';
 // import { useNavigate } from 'react-router-dom';
 
 type Action = {
   patient_name: string;
   state: 'Resolved' | 'Pending';
   alert: string;
+  member_id: string;
+  destination: string;
+  has_biomarkers?: boolean;
 };
 
 // const mockActions: Action[] = [
@@ -67,7 +71,7 @@ const Actions: React.FC = () => {
   //   window.addEventListener('resize', checkOverflow);
   //   return () => window.removeEventListener('resize', checkOverflow);
   // }, [filteredActions, expandedCards]);
-
+  const navigate = useNavigate();
   return (
     <>
       {isLoading ? (
@@ -176,7 +180,7 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={` text-justify ${
+                      className={` text-justify ${!action.has_biomarkers && 'w-full max-w-max'} ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal max-w-[180px]'
                           : 'truncate max-w-[150px]'
@@ -184,19 +188,34 @@ const Actions: React.FC = () => {
                     >
                       {action.alert}
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      {action.state === 'Pending' && (
-                        <div className="text-Primary-DeepTeal text-xs font-medium flex items-center gap-1">
-                          Proceed{' '}
-                          <img
-                            className="rotate-180 size-4"
-                            src="/icons/arrow-back.svg"
-                            alt=""
-                          />
-                        </div>
-                      )}
-                    </div>
+                    {action.has_biomarkers && (
+                      <div className="flex items-center gap-2">
+                        {action.state === 'Pending' && (
+                          <div
+                            onClick={() => {
+                              if (action.destination === 'action_plan') {
+                                navigate(
+                                  `/report/${action.member_id}/${action.patient_name}?section=Action+Plan`,
+                                );
+                              }
+                              if (action.destination === 'holistic_plan') {
+                                navigate(
+                                  `/report/${action.member_id}/${action.patient_name}?section=Holistic+Plan`,
+                                );
+                              }
+                            }}
+                            className="text-Primary-DeepTeal cursor-pointer text-xs font-medium flex items-center gap-1"
+                          >
+                            Proceed{' '}
+                            <img
+                              className="rotate-180 size-4"
+                              src="/icons/arrow-back.svg"
+                              alt=""
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </li>
               ))}

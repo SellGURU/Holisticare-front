@@ -13,6 +13,7 @@ interface DatePickerProps {
   ClassName?: string;
   textStyle?: boolean;
   onManualOpen?: () => void;
+  validation?: boolean;
 }
 
 export default function SimpleDatePicker({
@@ -25,6 +26,7 @@ export default function SimpleDatePicker({
   errorMessage,
   ClassName,
   textStyle,
+  validation,
   onManualOpen,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
@@ -66,7 +68,11 @@ export default function SimpleDatePicker({
         }}
         className={` ${isAddClient ? 'w-[90vw] lg:min-w-[200px] md:w-[200px] ' : 'sm:w-[133px]'}  ${isLarge ? 'sm:w-[222px] rounded-2xl' : ' rounded-md '}
          px-2 py-1 bg-backgroundColor-Card w-[110px] ${isAddClient ? 'xs:w-[90vw]' : ' xs:w-[145px]'}  flex items-center justify-between ${textStyle ? 'text-xs text-Text-Primary' : 'text-[10px] text-Text-Secondary'}  ${
-           inValid ? 'border-Red' : !isAddClient && 'border border-Gray-50'
+           validation
+             ? '!border-Red border'
+             : inValid
+               ? 'border-Red'
+               : !isAddClient && 'border border-Gray-50'
          } ${ClassName}`}
       >
         {date ? (
@@ -80,6 +86,7 @@ export default function SimpleDatePicker({
       {open && (
         <div className="absolute w-full  top-full mt-2 right-0 z-50 ">
           <Calendar
+            calendarClassName="!w-[220px]"
             value={selectedDay}
             onChange={(newDate) => {
               if (newDate) {

@@ -1,16 +1,16 @@
 export function initGlobalErrorHandler() {
   // if (process.env.NODE_ENV !== 'production') return;
 
-  window.onerror = function (message, source, lineno, colno, error) {
-    console.error('Global JS Error:', {
-      message,
-      source,
-      lineno,
-      colno,
-      error,
-    });
-    showGlobalError();
-  };
+  // window.onerror = function (message, source, lineno, colno, error) {
+  //   console.error('Global JS Error:', {
+  //     message,
+  //     source,
+  //     lineno,
+  //     colno,
+  //     error,
+  //   });
+  //   showGlobalError();
+  // };
 
   window.onunhandledrejection = function (event) {
     console.error('Unhandled Promise Rejection:', event.reason);

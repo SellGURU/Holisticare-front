@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import { MainModal } from '../../../../Components';
 import Application from '../../../../api/app';
+import { MainModal } from '../../../../Components';
 import Circleloader from '../../../../Components/CircleLoader';
 
 interface ViewExerciseModalProps {
@@ -37,14 +37,17 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
   // };
 
   const [videoData, setVideoData] = useState<
-    { file_id: string; base64: string; url?: string }[]
+    { file_id: string; base64: string; url?: string; type?: string }[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchVideos = async () => {
       setIsLoading(true);
       const videoFiles = exercise.Files.filter(
-        (file: any) => file.Type === 'Video' || file.Type === 'link',
+        (file: any) =>
+          file.Type === 'Video' ||
+          file.Type === 'link' ||
+          file.Type?.split('/')[0] === 'image',
       );
 
       const videoPromises = videoFiles.map((file: any) => {
@@ -59,6 +62,12 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
           return Promise.resolve({
             file_id: file.Content.file_id,
             url: file.Content.url, // Use the URL directly for link type
+          });
+        } else if (file.Type?.split('/')[0] === 'image') {
+          return Promise.resolve({
+            file_id: file.Content.file_id,
+            base64: file.Content.url,
+            type: file.Type,
           });
         }
       });
@@ -80,9 +89,35 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
       });
     }
   }, [isOpen, exercise]);
+  const [indexImage, setIndexImage] = useState(0);
+  const VISIBLE_COUNT = 2;
+
+  const lastIndex = Math.max(videoData.length - VISIBLE_COUNT, 0);
+
+  const nextSlide = () => {
+    if (indexImage >= lastIndex) {
+      setIndexImage(0);
+    } else {
+      setIndexImage((prev) => prev + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (indexImage <= 0) {
+      setIndexImage(lastIndex);
+    } else {
+      setIndexImage((prev) => prev - 1);
+    }
+  };
 
   return (
-    <MainModal isOpen={isOpen} onClose={onClose}>
+    <MainModal
+      isOpen={isOpen}
+      onClose={() => {
+        onClose();
+        setIndexImage(0);
+      }}
+    >
       <div
         className={`bg-white rounded-2xl p-4 ${exercise.Instruction.length > 500 || exercise.Description.length > 500 ? 'w-[800px]' : 'w-[500px]'} shadow-800 relative`}
       >
@@ -236,10 +271,47 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="h-[220px] overflow-auto flex flex-col gap-1 ml-[38px]">
+              <div
+                className={`${videoData?.[0]?.type?.split('/')[0] === 'image' ? '' : 'h-[200px]'} overflow-auto flex flex-col gap-1 ml-[38px]`}
+              >
                 {isLoading ? (
                   <div className="w-[370px] h-[200px] flex justify-center items-center">
                     <Circleloader />
+                  </div>
+                ) : videoData?.[0]?.type?.split('/')[0] === 'image' ? (
+                  <div className="w-full flex justify-center items-center gap-4">
+                    <button onClick={prevSlide} disabled={indexImage === 0}>
+                      <img src="/icons/chevron-left.svg" alt="prev" />
+                    </button>
+
+                    <div className="flex w-full overflow-hidden justify-start items-center">
+                      <div
+                        className="flex transition-transform duration-300 ease-in-out gap-2"
+                        style={{
+                          transform: `translateX(-${indexImage * (120 + 8)}px)`,
+                        }}
+                      >
+                        {videoData.map((src, i) => (
+                          <div
+                            key={i}
+                            className="flex-shrink-0 w-[120px] h-[114px] overflow-hidden rounded-xl"
+                          >
+                            <img
+                              src={src.base64}
+                              alt={`Slide ${i}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={nextSlide}
+                      disabled={indexImage >= lastIndex}
+                    >
+                      <img src="/icons/chevron-right.svg" alt="next" />
+                    </button>
                   </div>
                 ) : (
                   videoData.map((video) =>
@@ -268,8 +340,8 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             )}
           </div>
-          <div className="flex w-full items-start gap-3 mb-10 mt-3 ">
-            <div className="text-xs font-medium">Base Score</div>
+          <div className="flex w-full items-start gap-3 mt-3 ">
+            <div className="text-xs font-medium">Priority Weight</div>
             <div className="bg-[#FFD8E4] w-[47px] select-none rounded-xl py-1 px-2 h-[18px] flex justify-center items-center text-[10px]">
               <div className="flex">
                 {exercise.Base_Score}{' '}
@@ -277,6 +349,16 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             </div>
           </div>
+          {exercise.Ai_note && (
+            <div className="flex w-full items-start gap-3 mb-7">
+              <div className="text-xs font-medium text-nowrap">
+                Clinical Guidance
+              </div>
+              <div className="text-xs text-[#888888] text-justify">
+                {exercise.Ai_note}
+              </div>
+            </div>
+          )}
         </div>
 
         <div

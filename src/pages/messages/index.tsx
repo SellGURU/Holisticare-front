@@ -8,9 +8,25 @@ import SearchBox from '../../Components/SearchBox';
 const Messages = () => {
   const [search, setSearch] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const handleMessageSent = (memberId: number) => {
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages];
+      const messageIndex = updatedMessages.findIndex(
+        (msg) => msg.member_id === memberId,
+      );
 
+      if (messageIndex > -1) {
+        const [movedMessage] = updatedMessages.splice(messageIndex, 1);
+        // Update the Date to "Today"
+        movedMessage.Date = 'Today';
+        updatedMessages.unshift(movedMessage); // Move to top
+      }
+      return updatedMessages;
+    });
+  };
   return (
-    <div className="h-screen relative ">
+    <div className="h-[calc(100%-41px)] relative ">
       <div className="w-full fixed md:static top-[40px] h-[67px] md:h-auto z-20 bg-bg-color left-0 right-0  flex justify-between items-center  mt-6 px-6 ">
         <div className="text-Text-Primary font-medium opacity-[87%]">
           Messages
@@ -26,12 +42,20 @@ const Messages = () => {
         <div
           className={`w-full md:w-[315px] h-full  ${selectedMessage ? 'hidden md:block' : 'block'}`}
         >
-          <MessageList search={search} onSelectMessage={setSelectedMessage} />
+          <MessageList
+            messages={messages}
+            setMessages={setMessages}
+            search={search}
+            onSelectMessage={setSelectedMessage}
+          />
         </div>
         <div
           className={`w-full   ${selectedMessage ? 'block ' : 'hidden md:block '}`}
         >
-          <MessagesChatBox onBack={() => setSelectedMessage(null)} />
+          <MessagesChatBox
+            onMessageSent={handleMessageSent}
+            onBack={() => setSelectedMessage(null)}
+          />
         </div>
       </div>
     </div>

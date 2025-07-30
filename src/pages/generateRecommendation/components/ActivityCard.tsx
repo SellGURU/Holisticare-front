@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import Checkbox from '../../../Components/checkbox';
 import ConflictsModal from '../../../Components/NewGenerateActionPlan/components/ConflictsModal';
@@ -22,6 +22,34 @@ export const ActivityCard: FC<ActivityCardProps> = ({
   const { positive, negative } = splitInstructions(item.Instruction);
   const [Conflicts] = useState<Array<any>>(item?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
+  const [color, setColor] = useState<string>('');
+  const [bgColor, setBgColor] = useState<string>('');
+
+  useEffect(() => {
+    switch (item?.label) {
+      case 'Highly Recommended':
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+      case 'Use Caution':
+        setColor('#FFAB2C');
+        setBgColor('#F9DEDC');
+        break;
+      case 'Beneficial':
+        setColor('#4C88FF');
+        setBgColor('#CADCFF');
+        break;
+      case 'Avoid':
+        setColor('#FC5474');
+        setBgColor('#FFD8E4');
+        break;
+      default:
+        setColor('#06C78D');
+        setBgColor('#DEF7EC');
+        break;
+    }
+  }, [item?.label]);
+  console.log(item.label);
 
   return (
     <>
@@ -40,7 +68,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
         </div>
 
         <ul className="md:pl-8 w-full bg-white rounded-2xl border border-Gray-50 py-3 px-4 text-xs text-Text-Primary">
-          <div className="w-full flex flex-wrap gap-3 md:gap-6 items-center mb-2">
+          <div className="w-full flex flex-wrap gap-3 md:gap-4 items-center mb-2">
             <div className="text-Text-Primary text-xs font-medium flex items-center">
               <div className="block md:hidden">
                 <Checkbox
@@ -65,6 +93,16 @@ export const ActivityCard: FC<ActivityCardProps> = ({
             </div>
             <div className="flex gap-2 text-[8px]">
               <div
+                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                style={{ backgroundColor: bgColor }}
+              >
+                <div
+                  className={`size-[8px] select-none rounded-full`}
+                  style={{ backgroundColor: color }}
+                ></div>
+                {item?.label || '-'}
+              </div>
+              {/* <div
                 data-tooltip-id="system-score"
                 className="bg-[#E2F1F8] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
               >
@@ -84,8 +122,8 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     Score based on all data and AI insights.
                   </div>
                 </Tooltip>
-              </div>
-              <div
+              </div> */}
+              {/* <div
                 data-tooltip-id="base-score"
                 className="bg-[#DAF6C6] select-none rounded-full px-2 flex items-center gap-1 cursor-pointer"
               >
@@ -105,7 +143,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                     Initial score from core health metrics.
                   </div>
                 </Tooltip>
-              </div>
+              </div> */}
               <div
                 data-tooltip-id={index + 'score-calc'}
                 className="text-Primary-DeepTeal select-none mt-[2px] text-[8px]"
@@ -114,7 +152,7 @@ export const ActivityCard: FC<ActivityCardProps> = ({
                 <Tooltip
                   id={index + 'score-calc'}
                   place="top"
-                  className="!bg-white !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !bg-opacity-100 !opacity-100 !w-[270px] text-justify !leading-5 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',

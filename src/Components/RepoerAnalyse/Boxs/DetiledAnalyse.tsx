@@ -12,7 +12,7 @@ import HistoricalChart from '../HistoricalChart';
 import GeneticsDnaTable from './GeneticsDnaTable';
 import { Tooltip } from 'react-tooltip';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
-import StatusBarChartV2 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartV2';
+import StatusBarChartV3 from '../../../pages/CustomBiomarkers.tsx/StatusBarChartv3';
 
 interface DetiledAnalyseProps {
   data: any;
@@ -30,7 +30,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   // const labels:Array<string> = data["Out of Reference"].length>0? data["Out of Reference"][0].history.label: ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   // const dataPoints = data["Out of Reference"].length>0? data["Out of Reference"][0].history.values:[50, 75, 60, 90, 80, 100, 95];
   const [activeBox, setActiveBOx] = useState<any>(
-    refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
+    refrences[0]?.name ? refrences[0]?.name : '',
   );
   useEffect(() => {
     setIsCheced(false);
@@ -46,7 +46,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   //         return '#FC5474'
   //     }
   // }
-  const [active, setActive] = useState<any>(refrences?.biomarkers[0]);
+  const [active, setActive] = useState<any>(refrences[0]);
   subscribe('openDetiledCard', (ev) => {
     // console.log(ev)
     if (ev.detail.id == data.name) {
@@ -55,10 +55,8 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
   });
   useEffect(() => {
     if (refrences != null) {
-      setActiveBOx(
-        refrences?.biomarkers[0].name ? refrences?.biomarkers[0].name : '',
-      );
-      setActive(refrences?.biomarkers[0]);
+      setActiveBOx(refrences[0]?.name ? refrences[0]?.name : '');
+      setActive(refrences[0]);
     }
   }, [refrences]);
   const [showMoreInfo, setShowMoreInfo] = useState(false);
@@ -120,13 +118,9 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             <div
               className="w-10 h-10 items-center rounded-full flex justify-center"
               style={{
-                background: `conic-gradient(#7F39FB 0% ${
-                  data.status[0]
-                }%,#06C78D ${data.status[0]}% ${
+                background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
                   data.status[1] + data.status[0]
-                }%,#FBAD37 ${data.status[1] + data.status[0]}% ${
-                  data.status[1] + data.status[2] + data.status[0]
-                }%,#FC5474 ${
+                }% ${data.status[1] + data.status[2] + data.status[0]}%,#B2302E ${
                   data.status[2] + data.status[1] + data.status[0]
                 }% 100%)`,
               }}
@@ -184,7 +178,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
             </div>
             <div className="w-full  flex items-start gap-2 p-4 bg-backgroundColor-Card border border-Gray-50  rounded-[6px] min-h-[30px] mt-4">
               <div className=" w-[330px] h-[150px] overflow-y-scroll pr-2 hidden md:block ">
-                {refrences?.biomarkers.map((value: any) => {
+                {refrences?.map((value: any) => {
                   return (
                     <>
                       <div
@@ -239,7 +233,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                   );
                 })}
               </div>
-              {refrences?.biomarkers.length > 0 && (
+              {refrences.length > 0 && (
                 <div className="flex-grow gap-2 relative flex items-center justify-center">
                   {/* <div className="absolute  cursor-pointer top-4 right-4">
                     <div className="flex gap-2 justify-end items-center">
@@ -338,7 +332,7 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                         </div>
                         {active && (
                           <>
-                            <StatusBarChartV2
+                            {/* <StatusBarChartV2
                               data={active.chart_bounds}
                               mapingData={Object.fromEntries(
                                 Object.entries(active.chart_bounds).map(
@@ -348,7 +342,13 @@ const DetiledAnalyse: React.FC<DetiledAnalyseProps> = ({
                               status={active.status}
                               unit={active.unit}
                               values={active.values}
-                            ></StatusBarChartV2>
+                            ></StatusBarChartV2> */}
+                            <StatusBarChartV3
+                              status={active.status}
+                              unit={active.unit}
+                              values={active.values}
+                              data={active.chart_bounds}
+                            ></StatusBarChartV3>
                           </>
                           // <StatusBarChart data={active}></StatusBarChart>
                         )}

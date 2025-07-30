@@ -198,7 +198,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
               />
             </div>
           </div>
-          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 max-h-[350px] md:max-h-[500px] overflow-auto   ">
+          <div className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 min-h-[500px] h-fit md:h-[600px] 2xl:h-[700px] overflow-auto   ">
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>
@@ -348,7 +348,9 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
         {Description !== '' && (
           <div className="w-full h-fit bg-white rounded-2xl  shadow-200 p-4 text-Text-Primary font-medium">
             <div className="text-sm font-medium">State</div>
-            <p className="text-xs text-justify my-2">{Description}</p>
+            <p className="text-xs text-justify my-2 font-normal">
+              {Description}
+            </p>
             {/* <p className="text-xs text-justify ">{recommendation}</p> */}
             {reference && (
               <a className="text-xs text-[#55B0FF]" href="">
@@ -359,7 +361,9 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
         )}
         {RoadMapData?.length > 0 ? (
           <div className="w-full  md:min-h-[186px] md:max-h-[244px] bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
-            <div className="w-full flex justify-between items-center pr-[14px]">
+            <div
+              className={`w-full flex justify-between items-center ${RoadMapData?.length > 1 ? 'pr-[14px] ' : 'pr-0'}`}
+            >
               <h5 className="text-sm font-medium text-light-primary-text dark:text-primary-text">
                 Roadmap
               </h5>
@@ -398,7 +402,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
               </div>
             ) : (
               <div
-                className={`flex flex-col gap-2 h-[75%] mt-2 overflow-y-auto pr-1`}
+                className={`flex flex-col gap-2 h-[80%] mt-2 overflow-y-auto ${RoadMapData?.length > 1 ? 'pr-1 ' : 'pr-0'}`}
                 style={{
                   scrollbarWidth: 'thin',
                   scrollbarColor: '#E5E5E5 transparent',
@@ -442,7 +446,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
     /> */}
             </div>
             <div
-              className={`flex flex-col gap-3 pr-3 mt-5 pb-[40px] h-[70%] overflow-y-auto`}
+              className={`flex flex-col gap-3 pr-3 mt-5  h-[80%] overflow-y-auto`}
               style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: '#E5E5E5 transparent',

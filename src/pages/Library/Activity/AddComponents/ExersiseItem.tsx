@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
-import SvgIcon from '../../../../utils/svgIcon';
-import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
 import { Tooltip } from 'react-tooltip';
+import useModalAutoClose from '../../../../hooks/UseModalAutoClose';
+import SvgIcon from '../../../../utils/svgIcon';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface ExerciseItemProps {
@@ -96,15 +96,21 @@ const ExerciseItem = ({
           <div className="flex items-center">
             <div className="relative">
               <img
-                src="/images/activity/activity-demo.png"
+                src={
+                  exercise.Exercise.Files[0]?.Type.split('/')[0] === 'image'
+                    ? exercise.Exercise.Files[0]?.Content?.url
+                    : '/images/activity/activity-demo.png'
+                }
                 alt=""
                 className="w-8 h-8 bg-cover rounded-lg mr-1"
               />
-              <img
-                src="/icons/youtube.svg"
-                alt=""
-                className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
-              />
+              {exercise.Exercise.Files[0]?.Type.split('/')[0] !== 'image' && (
+                <img
+                  src="/icons/video-octagon.svg"
+                  alt=""
+                  className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
+                />
+              )}
             </div>
             <div className="text-xs ml-2 font-medium text-Text-Primary">
               {exercise.Exercise.Title}

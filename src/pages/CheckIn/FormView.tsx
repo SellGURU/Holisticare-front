@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Checkin from '.';
+// import Checkin from '.';
 import Mobile from '../../api/mobile';
 // import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
-import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
+// import { ButtonPrimary } from '../../Components/Button/ButtonPrimary';
 import Circleloader from '../../Components/CircleLoader';
+import { PublicSurveyForm } from '../../Components/survey/public-survey-form';
+// import Checkin from '.';
 
 interface FormViewProps {
   mode?: 'questionary' | 'checkin';
@@ -14,121 +16,77 @@ interface FormViewProps {
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  // const formData = {
-  //   title: 'Daily Check in',
-  //   questions: [
-  //     {
-  //       type: 'paragraph',
-  //       question: 'Did you stick to the Meal Plan?',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //     {
-  //       type: 'Scale',
-  //       question: 'How many hours did you sleep yesterday?',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'Emojis',
-  //       question: 'How are you feeling today?',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'Star Rating',
-  //       question: 'Rate your workout.',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'File Uploader',
-  //       question: 'Upload your progress pictures.',
-  //       required: false,
-  //       response: '',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       question: 'What snacks did you take today?',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //     {
-  //       type: 'paragraph',
-  //       question: 'How many hours did you work today?(Dropdown sample)',
-  //       required: false,
-  //       response: '',
-  //       placeHolder: 'Write the snacks you took ...',
-  //     },
-  //   ],
-  // };
+  const [isComplete] = useState(false);
+
   const [data, setData] = useState<any>(null);
-  const [resolvedData, setResolvedData] = useState<any>(null);
+  // const [resolvedData, ] = useState<any>(null);
   useEffect(() => {
     setIsLaoding(true);
     if (mode == 'questionary') {
       Mobile.getQuestionaryEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
-      }).then((e) => {
-        setData(e.data);
-        setIsLaoding(false);
-      });
+      })
+        .then((e) => {
+          setData(e.data);
+          setIsLaoding(false);
+        })
+        .catch(() => {});
     } else {
       Mobile.getCheckInEmpty({
         encoded_mi: encode as string,
         unique_id: id as string,
-      }).then((e) => {
-        setData(e.data);
-        setIsLaoding(false);
-      });
+      })
+        .then((e) => {
+          setData(e.data);
+          setIsLaoding(false);
+        })
+        .catch(() => {});
     }
   }, []);
-  const submit = () => {
-    setIsLaoding(true);
+  const submit = (e: any) => {
+    // setIsLaoding(true);
     // window.close();
     if (mode == 'questionary') {
       Mobile.fillQuestionary({
         encoded_mi: encode,
         unique_id: id,
-        respond: resolvedData.questions,
+        respond: e,
       }).finally(() => {
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
         } else {
           console.warn('Flutter WebView bridge not available');
         }
-        setIsComplete(true);
+        // setIsComplete(true);
         // window.flutter_inappwebview.callHandler('closeWebView')
-        // setIsLaoding(false)
+        setIsLaoding(false);
       });
     } else {
       Mobile.fillCheckin({
         encoded_mi: encode,
         unique_id: id,
-        respond: resolvedData.questions,
+        respond: e,
       }).finally(() => {
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
         } else {
           console.warn('Flutter WebView bridge not available');
         }
-        setIsComplete(true);
+        // setIsComplete(true);
+        // setIsLaoding(false);
       });
     }
   };
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollUp = () => {
-    scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
-  };
+  // const scrollUp = () => {
+  //   scrollRef.current?.scrollBy({ top: -100, behavior: 'smooth' });
+  // };
 
-  const scrollDown = () => {
-    scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
-  };
+  // const scrollDown = () => {
+  //   scrollRef.current?.scrollBy({ top: 100, behavior: 'smooth' });
+  // };
   return (
     <>
       <div
@@ -153,29 +111,55 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
               </>
             ) : (
               <>
-                <Checkin
-                  upData={data?.questions}
-                  onChange={(questions) => {
-                    console.log(questions);
-                    setResolvedData({
-                      ...data,
-                      questions: questions,
-                    });
+                <PublicSurveyForm
+                  onSubmitClient={(e) => {
+                    submit(e);
+                    // Mobile.fillQuestionary({
+                    //   encoded_mi: encode,
+                    //   unique_id: id,
+                    //   respond: e,
+                    // }).finally(() => {
+                    //   if (window.flutter_inappwebview) {
+                    //     window.flutter_inappwebview.callHandler(
+                    //       'closeWebView',
+                    //     );
+                    //   } else {
+                    //     console.warn('Flutter WebView bridge not available');
+                    //   }
+                    //   setIsComplete(true);
+                    //   // window.flutter_inappwebview.callHandler('closeWebView')
+                    //   // setIsLaoding(false)
+                    // });
                   }}
-                ></Checkin>
-                <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
-                  <div className="w-full px-6">
-                    <ButtonPrimary ClassName="w-full" onClick={submit}>
-                      save
-                    </ButtonPrimary>
-                  </div>
-                </div>
+                  isClient={true}
+                  survey={data}
+                />
+                {/* <Checkin
+                      upData={data?.questions}
+                      onChange={(questions) => {
+                        console.log(questions);
+                        setResolvedData({
+                          ...data,
+                          questions: questions,
+                        });
+                      }}
+                    ></Checkin>
+                    <div className="w-full flex justify-center fixed bottom-0 bg-white h-[50px] left-0 my-2">
+                      <div className="w-full px-6">
+                        <ButtonPrimary ClassName="w-full" onClick={submit}>
+                          save
+                        </ButtonPrimary>
+                      </div>
+                    </div> */}
+                {/* </> */}
+                {/* )} */}
               </>
             )}
           </>
         )}
       </div>
-      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
+
+      {/* <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         <button
           onClick={scrollUp}
           className="bg-white border border-gray-300 shadow-md rounded-full p-2 hover:bg-gray-100 transition"
@@ -198,7 +182,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
             className="w-4 h-4"
           />
         </button>
-      </div>
+      </div> */}
     </>
   );
 };
