@@ -97,20 +97,24 @@ const ExerciseItem = ({
             <div className="relative">
               <img
                 src={
-                  exercise.Exercise.Files[0]?.Type.split('/')[0] === 'image'
+                  Array.isArray(exercise?.Exercise?.Files) &&
+                  exercise.Exercise.Files.length > 0 &&
+                  exercise.Exercise.Files[0]?.Type?.startsWith('image')
                     ? exercise.Exercise.Files[0]?.Content?.url
                     : '/images/activity/activity-demo.png'
                 }
                 alt=""
                 className="w-8 h-8 bg-cover rounded-lg mr-1"
               />
-              {exercise.Exercise.Files[0]?.Type.split('/')[0] !== 'image' && (
-                <img
-                  src="/icons/video-octagon.svg"
-                  alt=""
-                  className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
-                />
-              )}
+              {Array.isArray(exercise?.Exercise?.Files) &&
+                exercise.Exercise.Files.length > 0 &&
+                !exercise.Exercise.Files[0]?.Type?.startsWith('image') && (
+                  <img
+                    src="/icons/video-octagon.svg"
+                    alt=""
+                    className="w-[15.48px] h-[16px] absolute top-[8px] left-[9px]"
+                  />
+                )}
             </div>
             <div className="text-xs ml-2 font-medium text-Text-Primary">
               {exercise.Exercise.Title}
@@ -192,15 +196,19 @@ const ExerciseItem = ({
           </div>
         </div>
         <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
-          {Object.entries(exercise.Exercise.Exercise_Filters).map(
-            ([key, value]) => (
-              <div
-                key={key}
-                className="text-[10px] flex justify-center items-center text-[#005F73] bg-[#E9F0F2] rounded-full px-2 "
-              >
-                {String(value)}
-              </div>
-            ),
+          {exercise?.Exercise?.Exercise_Filters && (
+            <>
+              {Object?.entries(exercise?.Exercise?.Exercise_Filters).map(
+                ([key, value]) => (
+                  <div
+                    key={key}
+                    className="text-[10px] flex justify-center items-center text-[#005F73] bg-[#E9F0F2] rounded-full px-2 "
+                  >
+                    {String(value)}
+                  </div>
+                ),
+              )}
+            </>
           )}
         </div>
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
