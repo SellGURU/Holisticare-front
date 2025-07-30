@@ -44,17 +44,19 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   };
 
   const handleDeleteExercise = (exerciseIdToDelete: string) => {
-    Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete }).then(() => {
-      // setData((prevData) =>
-      //   prevData.filter(
-      //     (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
-      //   ),
-      // );
-      onAdd();
-    }).catch((error) => {
-      // console.error('Error deleting exercise:', error);
-      toast.error(error);
-    });
+    Application.DeleteExercise({ Exercise_Id: exerciseIdToDelete })
+      .then(() => {
+        // setData((prevData) =>
+        //   prevData.filter(
+        //     (exercise) => exercise.Exercise_Id !== exerciseIdToDelete,
+        //   ),
+        // );
+        onAdd();
+      })
+      .catch((error) => {
+        // console.error('Error deleting exercise:', error);
+        toast.error(error);
+      });
   };
 
   const handleUpdateExercise = (updatedExercise: any) => {
