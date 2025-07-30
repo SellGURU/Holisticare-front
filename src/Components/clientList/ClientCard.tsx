@@ -278,7 +278,7 @@ const ClientCard: FC<ClientCardProps> = ({
                   <Tooltip
                     place="top"
                     id={'tooltip-client-access' + client.name}
-                    className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                    className="!bg-white !w-[250px] !text-wrap !text-[#888888] !bg-opacity-100 !opacity-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                   >
                     {client.name}`s Access
                   </Tooltip>
@@ -305,7 +305,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       <Tooltip
                         place="top"
                         id={'tooltip-client-access' + AccessUserName}
-                        className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                        className="!bg-white !w-[250px] !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                       >
                         {AccessUserName}
                       </Tooltip>
@@ -342,7 +342,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       <Tooltip
                         place="top"
                         id={'tooltip-client-access' + AccessPassword}
-                        className="!bg-white !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                        className="!bg-white !opacity-100 !bg-opacity-100 !w-[250px] !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                       >
                         {AccessPassword}
                       </Tooltip>
@@ -380,7 +380,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       password: AccessPassword,
                     }).then(() => {
                       setIsShared(true);
-                    });
+                    }).catch(()=>{});
                   }}
                   className="text-sm font-medium text-Primary-DeepTeal cursor-default"
                 >
@@ -488,7 +488,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       setAccessUserName(res.data.username);
                       setAccessPassword(res.data.password);
                       setShowAccessModal(true);
-                    });
+                    }).catch(()=>{});
                   }}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
@@ -564,11 +564,12 @@ const ClientCard: FC<ClientCardProps> = ({
                         >
                           <div>
                             <Checkbox
+                            borderColor={coach.assigned ? 'borderPrimary-DeepTeal' : 'border-[#888888]'}
                               onChange={() => handleCoachSelection(coach)}
                               checked={coach.assigned}
                             />
                           </div>
-                          <div onClick={() => handleCoachSelection(coach)}>
+                          <div className={`${coach.assigned && 'text-Primary-DeepTeal'}`} onClick={() => handleCoachSelection(coach)}>
                             {coach.username}
                           </div>
                         </div>
@@ -703,7 +704,7 @@ const ClientCard: FC<ClientCardProps> = ({
                 <Tooltip
                   place="top"
                   id={client.name}
-                  className="!bg-white !w-[230px] !z-[999] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
+                  className="!bg-white !w-[230px] !bg-opacity-100 !opacity-100 !z-[999] !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                 >
                   {client.name}
                 </Tooltip>
@@ -749,34 +750,38 @@ const ClientCard: FC<ClientCardProps> = ({
         </div>
         <div>
           {isExpanded && (
-            <div className="flex flex-col">
-              <div className="w-full mt-2 flex justify-between">
-                <div className="flex flex-col justify-between border-r border-Gray-50 pr-3 pl-2 py-1">
-                  <div className="flex flex-col gap-1">
-                    <div className="text-[8px] sm:text-[10px] text-Text-Secondary cursor-default">
-                      Enroll Date
+            <div className="flex flex-col h-full">
+              <div className="w-full mt-2 flex h-full justify-between">
+                <div className="flex flex-col justify-between h-full border-r border-Gray-50 pr-3 pl-2 py-1">
+                  <div className="flex flex-col relative h-[128px] justify-between ">
+                    <div className='flex items-center justify-center flex-col'>
+                      <div className="text-[8px] sm:text-[10px] text-Text-Secondary cursor-default">
+                        Enroll Date
+                      </div>
+                      <div className="text-Text-Primary text-[10px] sm:text-xs mb-6 cursor-default">
+                        {client.enroll_date}
+                      </div>
                     </div>
-                    <div className="text-Text-Primary text-[10px] sm:text-xs mb-6 cursor-default">
-                      {client.enroll_date}
-                    </div>
-                    <div className="text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap cursor-default">
-                      Checked on
-                    </div>
-                    <div className="text-Text-Primary text-[10px] text-center sm:text-xs cursor-default">
-                      {client.last_checkin != 'No Data'
-                        ? client.last_checkin
-                        : '-'}
+                    <div className=''>
+                      <div className="text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap cursor-default">
+                        Checked on
+                      </div>
+                      <div className="text-Text-Primary text-[10px] text-center sm:text-xs cursor-default">
+                        {client.last_checkin != 'No Data'
+                          ? client.last_checkin
+                          : '-'}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="w-full flex flex-col gap-1 justify-between pl-3 py-1">
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs cursor-default">
-                    <div className="flex gap-2 w-[85px] items-center  text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
+                    <div className="flex gap-1 w-[85px] items-center  text-Text-Secondary text-[8px] text-nowrap sm:text-[10px] cursor-default">
                       <img src="/icons/user-tick.svg" alt="" />
                       Assigned to
                     </div>
                     <div className="flex text-nowrap truncate max-w-[110px] cursor-default">
-                      {client.assigned_to[0]}
+                      {client.assigned_to[0] || "-"}
                     </div>
                   </div>
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -816,9 +821,19 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[110px] truncate cursor-default"
-                      title={client['Check-in']}
-                    >
+data-tooltip-id={client['Check-in']}                    >
                       {client['Check-in']}
+                      {
+                        client['Check-in'].length > 15 && (
+                          <Tooltip
+                            place="top"
+                            id={client['Check-in']}
+                            className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          >
+                            {client['Check-in']}
+                          </Tooltip>
+                        )}
+                      
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -835,7 +850,7 @@ const ClientCard: FC<ClientCardProps> = ({
                         <Tooltip
                           place="top"
                           id={client.Questionary}
-                          className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                          className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
                         >
                           {client.Questionary}
                         </Tooltip>
@@ -851,7 +866,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       `/drift-analysis?activeMemberId=${client.member_id}&showBack=true`,
                     )
                   }
-                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-default text-Primary-DeepTeal text-sm gap-1`}
+                  className={` ${client.drift_analyzed ? 'visible' : 'invisible'} flex items-center cursor-default text-Primary-DeepTeal text-xs font-medium gap-1`}
                 >
                   <SvgIcon
                     src="/icons/tick-square-blue.svg"
@@ -874,7 +889,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       width="12px"
                       height="12px"
                     />
-                    <div className="text-[10px] sm:text-xs ml-[0.5px]">
+                    <div className="text-[10px] font-medium sm:text-xs ml-[0.5px]">
                       Health Plan
                     </div>
                   </ButtonPrimary>
