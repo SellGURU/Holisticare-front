@@ -24,7 +24,7 @@ import { AppContext } from '../../store/app';
 import HistoricalChart from '../../Components/RepoerAnalyse/HistoricalChart';
 import TooltipTextAuto from '../../Components/TooltipText/TooltipTextAuto';
 import resolveAnalyseIcon from '../../Components/RepoerAnalyse/resolveAnalyseIcon';
-import StatusBarChartV2 from '../CustomBiomarkers.tsx/StatusBarChartV2';
+import StatusBarChartV3 from '../CustomBiomarkers.tsx/StatusBarChartv3';
 const NewGenerateHolisticPlan = () => {
   const navigate = useNavigate();
   const [isAnalysingQuik, setAnalysingQuik] = useState(false);
@@ -82,12 +82,10 @@ const NewGenerateHolisticPlan = () => {
     Application.getResultTab({ member_id: id }).then((res) => {
       setResultTabData(res.data.result_tab);
       if (res.data.result_tab && res.data.result_tab.length > 0) {
-        setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+        setActiveEl(res.data.result_tab[0]);
       }
     });
   }, [id]);
-  console.log(resultTabData);
-  console.log(activeEl);
 
   // const resoveSubctegoriesSubs = () => {
   //   const subs: any = [];
@@ -100,18 +98,18 @@ const NewGenerateHolisticPlan = () => {
   //   return subs;
   // };
   const resoveSubctegoriesSubs = () => {
-    const subs: any = [];
-    resultTabData?.map((el: any) => {
-      el.subcategories.map((newSubs: any) => {
-        subs.push(newSubs);
-      });
-    });
-    return subs;
+    // const subs: any = [];
+    // resultTabData?.map((el: any) => {
+    //   el.subcategories.map((newSubs: any) => {
+    //     subs.push(newSubs);
+    //   });
+    // });
+    // return subs;
+    return resultTabData;
   };
   const { treatmentId } = useContext(AppContext);
 
   useEffect(() => {
-    console.log(treatmentId);
     if (treatmentId !== null && treatmentId != '') {
       setisFirstLoading(true);
       Application.showHolisticPlan({
@@ -121,7 +119,7 @@ const NewGenerateHolisticPlan = () => {
         .then((res) => {
           setTratmentPlanData(res.data);
           setClientGools({ ...res.data.client_goals });
-          setActiveEl(res.data.result_tab[0].subcategories[0].biomarkers[0]);
+          setActiveEl(res.data.result_tab[0]);
         })
         .finally(() => {
           setisFirstLoading(false);
@@ -132,7 +130,6 @@ const NewGenerateHolisticPlan = () => {
   // const isChartDataEmpty = !activeEl?.values.some(
   //   (value: string) => !isNaN(parseFloat(value)),
   // );
-  console.log(activeEl);
   useEffect(() => {
     if (isSaving == 'saving') {
       setTimeout(() => {
@@ -529,64 +526,61 @@ const NewGenerateHolisticPlan = () => {
                     <div className="w-full bg-[#FDFDFD] border border-Gray-50 rounded-[16px] p-2 md:p-4 mt-4">
                       <div className="w-full flex flex-col lg:flex-row gap-2 rounded-[16px] min-h-[30px]">
                         <div className="w-full lg:w-[220px] lg:pr-2 lg:h-[300px] lg:overflow-y-scroll lg:min-w-[220px]">
-                          {resoveSubctegoriesSubs().map((value: any) => {
+                          {resoveSubctegoriesSubs().map((resol: any) => {
                             return (
                               <>
-                                {value.biomarkers.map((resol: any) => {
-                                  return (
-                                    <>
+                                <div
+                                  onClick={() => {
+                                    setActiveEl(resol);
+                                    setisToggle(!isToggle);
+                                  }}
+                                  className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <div className="text-[10px] md:text-[12px] text-Text-Primary">
+                                      <TooltipTextAuto maxWidth="150px">
+                                        {resol.name}
+                                      </TooltipTextAuto>
+                                    </div>
+                                    {resol.status[0] == 'Needs Focus' && (
                                       <div
-                                        onClick={() => {
-                                          setActiveEl(resol);
-                                          setisToggle(!isToggle);
+                                        className="w-2 h-2 md:w-3 md:h-3 rounded-full"
+                                        style={{
+                                          backgroundColor: '#FC5474',
                                         }}
-                                        className={`w-full h-10 mb-2 cursor-pointer ${activeEl?.name == resol.name && isToggle ? 'border-Primary-EmeraldGreen text-light-secandary-text' : 'border-Gray-50 border bg-white'} border items-center rounded-[6px] flex justify-between px-2 md:px-4`}
-                                      >
-                                        <div className="flex items-center gap-1">
-                                          <div className="text-[10px] md:text-[12px] text-Text-Primary">
-                                            <TooltipTextAuto maxWidth="150px">
-                                              {resol.name}
-                                            </TooltipTextAuto>
-                                          </div>
-                                          {resol.status[0] == 'Needs Focus' && (
-                                            <div
-                                              className="w-2 h-2 md:w-3 md:h-3 rounded-full"
-                                              style={{
-                                                backgroundColor: '#FC5474',
-                                              }}
-                                            ></div>
-                                          )}
-                                        </div>
-                                        <img
-                                          className={` ${window.innerWidth > 768 ? '-rotate-90' : 'rotate-0 '} transition-transform w-3 md:w-4 ${activeEl?.name == resol.name && isToggle && window.innerWidth < 768 ? 'rotate-180' : ''}`}
-                                          src="/icons/arrow-down.svg"
-                                          alt=""
-                                        />
+                                      ></div>
+                                    )}
+                                  </div>
+                                  <img
+                                    className={` ${window.innerWidth > 768 ? '-rotate-90' : 'rotate-0 '} transition-transform w-3 md:w-4 ${activeEl?.name == resol.name && isToggle && window.innerWidth < 768 ? 'rotate-180' : ''}`}
+                                    src="/icons/arrow-down.svg"
+                                    alt=""
+                                  />
+                                </div>
+                                {activeEl?.name == resol.name &&
+                                  isToggle &&
+                                  window.innerWidth < 768 && (
+                                    <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
+                                      <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
+                                        <TooltipTextAuto maxWidth="300px">
+                                          {resol.subcategory}
+                                        </TooltipTextAuto>
                                       </div>
-                                      {activeEl?.name == resol.name &&
-                                        isToggle &&
-                                        window.innerWidth < 768 && (
-                                          <div className="w-full p-3 md:p-6 bg-white border border-Gray-50 rounded-xl mb-2">
-                                            <div className="text-Text-Primary text-[12px] md:text-[14px] font-[500]">
-                                              <TooltipTextAuto maxWidth="300px">
-                                                {resol.subcategory}
-                                              </TooltipTextAuto>
+                                      <div>
+                                        <div
+                                          style={{ lineHeight: '20px' }}
+                                          className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
+                                        >
+                                          {resol.description}
+                                        </div>
+                                      </div>
+                                      <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
+                                        <div className="w-full lg:w-[50%]">
+                                          <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
+                                            <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
+                                              Last Value
                                             </div>
-                                            <div>
-                                              <div
-                                                style={{ lineHeight: '20px' }}
-                                                className="text-Text-Secondary text-[10px] md:text-[12px] mt-2 md:mt-3"
-                                              >
-                                                {resol.description}
-                                              </div>
-                                            </div>
-                                            <div className="flex flex-col lg:flex-row w-full justify-center gap-2 md:gap-4 mt-2 md:mt-4">
-                                              <div className="w-full lg:w-[50%]">
-                                                <div className="w-full p-3 md:p-4 bg-white border border-Gray-50 h-[150px] md:h-[179px] rounded-xl">
-                                                  <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
-                                                    Last Value
-                                                  </div>
-                                                  <StatusBarChartV2
+                                            {/* <StatusBarChartV2
                                                     data={resol.chart_bounds}
                                                     mapingData={Object.fromEntries(
                                                       Object.entries(
@@ -604,19 +598,19 @@ const NewGenerateHolisticPlan = () => {
                                                     status={resol.status}
                                                     unit={resol.unit}
                                                     values={resol.values}
-                                                  ></StatusBarChartV2>
-                                                  {/* <StatusBarChart
+                                                  ></StatusBarChartV2> */}
+                                            {/* <StatusBarChart
                                                     data={resol}
                                                   ></StatusBarChart> */}
-                                                </div>
-                                              </div>
-                                              <div className="w-full lg:w-[50%]">
-                                                <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
-                                                  <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
-                                                    Historical Data
-                                                  </div>
-                                                  <div className="mt-0 relative">
-                                                    {/* <HistoricalChart
+                                          </div>
+                                        </div>
+                                        <div className="w-full lg:w-[50%]">
+                                          <div className="w-full p-3 md:p-4 h-[150px] md:h-[179px] bg-white border-Gray-50 border rounded-xl">
+                                            <div className="text-Text-Primary text-nowrap flex justify-between items-center text-[10px] md:text-[12px] font-medium mb-3 md:mb-5">
+                                              Historical Data
+                                            </div>
+                                            <div className="mt-0 relative">
+                                              {/* <HistoricalChart
                                                       statusBar={
                                                         resol.chart_bounds
                                                       }
@@ -630,15 +624,12 @@ const NewGenerateHolisticPlan = () => {
                                                         ...resol.date,
                                                       ].reverse()}
                                                     ></HistoricalChart> */}
-                                                  </div>
-                                                </div>
-                                              </div>
                                             </div>
                                           </div>
-                                        )}
-                                    </>
-                                  );
-                                })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
                               </>
                             );
                           })}
@@ -665,7 +656,13 @@ const NewGenerateHolisticPlan = () => {
                                   <div className="text-Text-Primary flex justify-between w-full items-center gap-2 text-[10px] md:text-[12px] font-medium mb-[40px] md:mb-[60px]">
                                     Last Value
                                   </div>
-                                  <StatusBarChartV2
+                                  <StatusBarChartV3
+                                    values={activeEl.values}
+                                    unit={activeEl.unit}
+                                    status={activeEl.status}
+                                    data={activeEl.chart_bounds}
+                                  ></StatusBarChartV3>
+                                  {/* <StatusBarChartV2
                                     data={activeEl.chart_bounds}
                                     mapingData={Object.fromEntries(
                                       Object.entries(activeEl.chart_bounds).map(
@@ -678,7 +675,7 @@ const NewGenerateHolisticPlan = () => {
                                     status={activeEl.status}
                                     unit={activeEl.unit}
                                     values={activeEl.values}
-                                  ></StatusBarChartV2>
+                                  ></StatusBarChartV2> */}
                                   {/* <StatusBarChart
                                     data={activeEl}
                                   ></StatusBarChart> */}

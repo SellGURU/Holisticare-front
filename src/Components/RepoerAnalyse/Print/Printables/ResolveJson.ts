@@ -15,9 +15,9 @@ const checkPageCanRender = (sizeReqired: number) => {
 
 const resolveHightText = (text: string, isSmal?: boolean) => {
   if (isSmal) {
-    return Math.ceil(text.length / 134) * 18 + 8;
+    return Math.ceil(text?.length / 134) * 18 + 8;
   }
-  return Math.ceil(text.length / 112) * 30;
+  return Math.ceil(text?.length / 112) * 30;
 };
 
 const addHeader = (title: string, moreInfo: string, id: string) => {
@@ -258,7 +258,7 @@ const addDetailedAnalyseBox = (
 ) => {
   const biomarkers = resolveSubCategories().filter(
     (val) => val.subcategory == categoryData.subcategory,
-  )[0]?.biomarkers;
+  );
   addDetailedAnalyseCategory(categoryData);
   addDescriptionDetailedAnalyse(categoryData.description);
   biomarkers?.map((ref: any, index: number) => {
@@ -281,8 +281,9 @@ const AddSummaryJson = (
     'client-summary',
   );
   addUserInfo(usrInfoData);
-  // console.log(ClientSummaryBoxs)
-  addInformation(ClientSummaryBoxs?.client_summary ?? '');
+  if (ClientSummaryBoxs?.client_summary) {
+    addInformation(ClientSummaryBoxs?.client_summary);
+  }
   addLegend();
   addCategoriesHandler(resolveCategories);
 };
@@ -422,7 +423,7 @@ const resovleJson = ({
   referenceData,
   resolveBioMarkers,
   transformConceringData,
-  resolveSubCategories,
+  // resolveSubCategories,
   helthPlan,
   TreatMentPlanData,
   isActiveSection,
@@ -457,11 +458,7 @@ const resovleJson = ({
     AddConcerningResult(transformConceringData());
   }
   if (isActiveSection('Detailed Analysis') == true) {
-    AddDetailedAnalyse(
-      referenceData,
-      resolveCategories(),
-      resolveSubCategories,
-    );
+    AddDetailedAnalyse(referenceData, resolveCategories(), resolveBioMarkers);
   }
   if (isActiveSection('Holistic Plan') == true) {
     addHolisticPlan(helthPlan, TreatMentPlanData);

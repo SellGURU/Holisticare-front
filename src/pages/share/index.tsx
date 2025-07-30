@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
 import { useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import { ReportSideMenu } from '../../Components';
 import ReportAnalyseView from '../../Components/RepoerAnalyse/ReportAnalyseView';
-import { useEffect, useRef, useState } from 'react';
-import Application from '../../api/app';
-import Draggable from 'react-draggable';
+import { TopBar } from '../../Components/topBar';
 import { subscribe, unsubscribe } from '../../utils/event';
 
 const Share = () => {
@@ -58,9 +59,18 @@ const Share = () => {
       unsubscribe('reportStatus', handleReportStatus);
     };
   }, []);
+  const [showCombo, setshowCombo] = useState(false);
   return (
     <>
       <div className="bg-bg-color min-h-screen w-full h-full">
+        <div className="  w-full sticky z-50 top-0 ">
+          <TopBar
+            showCombo={showCombo}
+            setShowCombo={() => setshowCombo(!showCombo)}
+            canDownload
+            isShare
+          ></TopBar>
+        </div>
         <Draggable
           onStart={handleStart}
           onDrag={handleDrag}
@@ -85,6 +95,7 @@ const Share = () => {
         >
           <ReportSideMenu
             onClose={() => isMobileView && setIsMobileMenuOpen(false)}
+            isShare
           ></ReportSideMenu>
         </div>
 

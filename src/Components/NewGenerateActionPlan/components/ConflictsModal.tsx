@@ -15,8 +15,6 @@ const ConflictsModal: React.FC<ConflictsModalProps> = ({
   conflicts,
   handleShowConflictsModal,
 }) => {
-  console.log(conflicts);
-
   return (
     <>
       <MainModal

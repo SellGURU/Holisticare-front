@@ -34,20 +34,28 @@ const AuthWithGoogle = ({ mode }: { mode: 'login' | 'register' }) => {
   });
 
   const Login = (data: any) => {
-    Application.LoginWithGooglge(data).then((res) => {
-      appContext.login(res.data.access_token, res.data.permission);
-      if (mode == 'login') {
-        navigate('/');
-      } else {
-        navigate('/register-profile');
-      }
-    });
+    Application.LoginWithGooglge(data)
+      .then((res) => {
+        appContext.login(res.data.access_token, res.data.permission);
+        if (mode == 'login') {
+          navigate('/');
+        } else {
+          navigate('/register-profile');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const Signup = (data: any) => {
-    Auth.signup(undefined, undefined, undefined, data).then(() => {
-      Login(data);
-    });
+    Auth.signup(undefined, undefined, undefined, data)
+      .then(() => {
+        Login(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <>

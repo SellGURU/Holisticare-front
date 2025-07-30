@@ -12,6 +12,7 @@ import { ButtonSecondary } from '../../Components/Button/ButtosSecondary';
 import AddModal from './AddModal';
 
 import DefaultData from './default.json';
+// import mockData from './mockData.json';
 
 const CustomBiomarkers = () => {
   const [biomarkers, setBiomarkers] = useState<Array<any>>([]);
@@ -29,6 +30,8 @@ const CustomBiomarkers = () => {
   const [errorDetails, setErrorDetails] = useState<string>('');
   const getBiomarkers = () => {
     setIsLoading(true);
+    // setBiomarkers(mockData);
+    // setIsLoading(false);
     BiomarkersApi.getBiomarkersList()
       .then((res) => {
         setBiomarkers(res.data);
@@ -138,7 +141,7 @@ const CustomBiomarkers = () => {
           </div>
         </>
       ) : (
-        <div className="w-full h-full px-6 py-[80px]">
+        <div className="w-full min-h-full px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox

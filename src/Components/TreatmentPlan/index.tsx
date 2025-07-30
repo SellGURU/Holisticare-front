@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useRef, useEffect, useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 // import treatmentPlanData from "../../api/--moch--/data/new/treatment_plan_report.json";
-import TreatmentCard from './TreatmentCard';
-import { SlideOutPanel } from '../SlideOutPanel';
 import { useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
-import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { AppContext } from '../../store/app';
+import { ButtonSecondary } from '../Button/ButtosSecondary';
+import { SlideOutPanel } from '../SlideOutPanel';
+import TreatmentCard from './TreatmentCard';
 
 type CardData = {
   id: number;
@@ -86,6 +86,11 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
   const [aciveTreatmentPlan, setActiveTreatmentplan] = useState('Diet');
   const [TreatMentPlanData, setTreatmentPlanData] =
     useState<any>(treatmentPlanData);
+  useEffect(() => {
+    if (treatmentPlanData) {
+      setTreatmentPlanData(treatmentPlanData);
+    }
+  }, [treatmentPlanData]);
   const [isAnalysisOpen, setisAnalysisOpen] = useState(false);
   const [isClientGoalOpen, setisClientGoalOpen] = useState(false);
   const [NeedFocusData, setNeedFocusData] = useState<Array<any>>([]);
@@ -160,7 +165,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     <>
       {isShare ? (
         <>
-          <div className="w-full mt-8 gap-2 flex justify-between items-center">
+          <div className="w-full gap-1 md:gap-2 mt-4 flex justify-between items-center hidden-scrollbar overflow-x-scroll md:overflow-x-hidden">
             <div
               onClick={() => {
                 setActiveTreatmentplan('Diet');

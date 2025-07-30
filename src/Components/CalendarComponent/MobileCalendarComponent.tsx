@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
 
 const getCurrentMonthWithBuffer = () => {
   const today = new Date();
@@ -72,6 +73,12 @@ const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
     }
     if (category == 'Mind') {
       return '/icons/mind.svg';
+    }
+    if (category == 'Lifestyle') {
+      return '/icons/LifeStyle2.svg';
+    }
+    if (category == '') {
+      return '/icons/check-in.svg';
     }
   };
 
@@ -152,9 +159,9 @@ const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
         {categories.length === 0 && (
           <div className="flex flex-col justify-start items-center ">
             <img
-              src="/icons/NoCalendar.svg"
+              src="/icons/no-calendar-new.svg"
               alt="No Activity"
-              className="w-[159px]"
+              className="-mb-2"
             />
             <span className="text-sm font-medium text-Text-Primary -mt-8">
               No Plan For This Day.
@@ -169,11 +176,11 @@ const MobileCalendarComponent: React.FC<CalenderComponentProps> = ({
             key={category}
             className="mt-4 flex w-full  justify-between bg-backgroundColor-Card rounded-2xl  py-2 px-4 border border-Gray-50"
           >
-            <div className=" min-w-[60px] xs:min-w-[71px]  font-medium text-[8px] xs:text-[10px] text-[#383838] flex flex-col items-center justify-center gap-2">
-              <img src={resolveIcon(category)} alt="" />
-              {category}
+            <div className="w-[30%]  font-medium text-[8px] xs:text-[10px] text-[#383838] flex flex-col items-center justify-center gap-1">
+              <img src={resolveIcon(category)} alt="" className="w-6" />
+              {category == '' ? 'Check-in' : category}
             </div>
-            <div className=" border-l border-Gray-50 pl-4 flex flex-col gap-2">
+            <div className="w-[70%] border-l border-Gray-50 pl-4 flex flex-col gap-2">
               {activitiesForTheDay
                 .filter((activity: any) => activity.category === category)
                 .map((activity: any, i: number) => {

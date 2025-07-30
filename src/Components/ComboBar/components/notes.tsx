@@ -77,28 +77,27 @@ export const Notes = () => {
   };
   return (
     <div className=" w-full relative">
-      <div className="w-full flex justify-between px-3.5 py-3">
-        {/* <div className="text-[14px] text-light-secandary-text dark:text-[#FFFFFFDE]">
+      {/* <div className="text-[14px] text-light-secandary-text dark:text-[#FFFFFFDE]">
         Trainer's Notes (
         {data?.notes ? data.notes.length : "0"})
       </div> */}
-        {loading && (
-          <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-[99%] h-full absolute">
-            <Circleloader />
-          </div>
-        )}
-        {!showAddNote && (
-          <div
-            onClick={() => {
-              setShowAddNote(true);
-            }}
-            className=" text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
-          >
-            <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
-            Add Note
-          </div>
-        )}
-      </div>
+      {loading && (
+        <div className="flex flex-col justify-center items-center bg-white bg-opacity-85 w-[100%] h-full absolute">
+          <Circleloader />
+        </div>
+      )}
+      {!showAddNote && (
+        <div
+          onClick={() => {
+            setShowAddNote(true);
+          }}
+          className=" text-[14px] flex cursor-pointer justify-center items-center gap-1 bg-white border-Primary-DeepTeal border rounded-xl border-dashed px-8 h-8 w-full text-Primary-DeepTeal "
+        >
+          <img className="w-6 h-6" src="/icons/add-blue.svg" alt="" />
+          Add Note
+        </div>
+      )}
+
       {showAddNote && (
         <div className="flex justify-center items-center mb-6">
           <div className="w-full ">
@@ -110,8 +109,8 @@ export const Notes = () => {
               onChange={(e) => {
                 setCommentText(e.target.value);
               }}
-              placeholder="Add your note for this client here..."
-              className="h-[215px] font-light text-[12px] p-2 border border-Gray-50  mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-none outline-none"
+              placeholder="Provide expert commentary on the patient's condition"
+              className="h-[215px] font-light text-[12px] p-2 border border-Gray-50 text-justify  mt-1 rounded-[16px] bg-backgroundColor-Card w-full resize-none outline-none"
             />
             <div className="flex justify-between items-center mt-2">
               <ButtonPrimary
@@ -126,7 +125,7 @@ export const Notes = () => {
                   borderColor: '#005F73',
                 }}
               >
-                <div className=" w-[60px] md:w-[100px] text-xs text-Primary-DeepTeal">
+                <div className=" w-[60px] md:w-[100px] font-medium text-xs text-Primary-DeepTeal">
                   Cancel
                 </div>
               </ButtonPrimary>
@@ -147,7 +146,9 @@ export const Notes = () => {
                 }}
                 style={{ height: '24px' }}
               >
-                <div className=" w-[60px] md:w-[100px] text-xs">Save Note</div>
+                <div className=" w-[60px] md:w-[100px] font-medium text-xs">
+                  Save Note
+                </div>
               </ButtonPrimary>
             </div>
           </div>

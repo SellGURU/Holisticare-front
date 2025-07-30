@@ -20,16 +20,19 @@ type Message = {
 interface MessageListProps {
   search: string;
   onSelectMessage: (messageId: string | null) => void;
+  messages: Message[]; // Receive messages from parent
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>; // Receive setter for initial load
 }
 
 const MessageList: React.FC<MessageListProps> = ({
   search,
   onSelectMessage,
+  messages,
+  setMessages,
 }) => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<string>('All');
   const [expandedMessage, setExpandedMessage] = useState<number | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [messagesSearched, setMessagesSearched] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
@@ -46,7 +49,7 @@ const MessageList: React.FC<MessageListProps> = ({
     Application.messagesUsersList()
       .then((res) => {
         setMessages(res.data);
-        setMessagesSearched(res.data);
+        // setMessagesSearched(res.data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -151,7 +154,7 @@ const MessageList: React.FC<MessageListProps> = ({
                       );
                     }
                   }}
-                  className={`pt-2 mb-2 cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
+                  className={`py-2 mb- cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
                 >
                   <div className="flex justify-start">
                     <div
@@ -189,12 +192,14 @@ const MessageList: React.FC<MessageListProps> = ({
                               </Tooltip>
                             )}
                           </div>
-                          {expandedMessage === message.member_id && (
-                            <div className="text-[8px] text-Text-Secondary mt-1">
-                              {message.Date}
-                            </div>
-                          )}
                         </div>
+                        {expandedMessage !== message.member_id && (
+                          <div
+                            className={`text-[8px] text-Text-Secondary mt-1 ${message.message === 'No messages found' && 'invisible'}`}
+                          >
+                            {message.Date}
+                          </div>
+                        )}
                       </div>
                       <div
                         className={`text-[10px] text-nowrap  overflow-ellipsis overflow-hidden w-[150px] max-w-[150px] text-Text-Secondary   ${

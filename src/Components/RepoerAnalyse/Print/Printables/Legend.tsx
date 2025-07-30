@@ -1,7 +1,7 @@
 const Legend = () => {
   return (
     <div
-      className="w-full relative flex justify-end items-center gap-4 mt-4"
+      className="w-full relative hidden  justify-end items-center gap-4 mt-4"
       style={{ zIndex: 60 }}
     >
       <div className="flex justify-start gap-1 items-center">

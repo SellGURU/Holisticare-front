@@ -108,7 +108,7 @@ export const SwitchClient: FC<SwitchClientProps> = ({
           <SearchBox
             isHaveBorder
             onSearch={(search) => setSearchQuery(search)}
-            placeHolder="Search for client..."
+            placeHolder="Search clients..."
           />
           <StatusMenu
             status={status}
@@ -116,7 +116,10 @@ export const SwitchClient: FC<SwitchClientProps> = ({
             onChange={(value) => setActiveStatus(value)}
           />
 
-          <div className="flex flex-col pr-1  h-[400px] w-full overflow-auto">
+          <div
+            style={{ height: window.innerHeight - 240 + 'px' }}
+            className="flex flex-col pr-1 w-full overflow-auto"
+          >
             <>
               {resolvedFiltersData().length > 0 ? (
                 resolvedFiltersData().map((client, i) => {
@@ -153,7 +156,7 @@ export const SwitchClient: FC<SwitchClientProps> = ({
               )}
             </>
           </div>
-          <div className="w-full flex justify-center mt-3 md:mt-6">
+          <div className="w-full flex justify-center  ">
             <ButtonPrimary size="small" onClick={handleSaveChanges}>
               <img className="size-4" src="/icons/tick-square.svg" alt="" />
               Confirm Switch

@@ -5,11 +5,15 @@ import DashboardApi from '../../api/Dashboard';
 import { Tooltip } from 'react-tooltip';
 import './Actions.css';
 // import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 type Action = {
   patient_name: string;
   state: 'Resolved' | 'Pending';
   alert: string;
+  member_id: string;
+  destination: string;
+  has_biomarkers?: boolean;
 };
 
 // const mockActions: Action[] = [
@@ -67,7 +71,7 @@ const Actions: React.FC = () => {
   //   window.addEventListener('resize', checkOverflow);
   //   return () => window.removeEventListener('resize', checkOverflow);
   // }, [filteredActions, expandedCards]);
-
+  // const navigate = useNavigate();
   return (
     <>
       {isLoading ? (
@@ -176,7 +180,7 @@ const Actions: React.FC = () => {
                   >
                     <div
                       ref={(el) => (textRefs.current[index] = el)}
-                      className={` text-justify ${
+                      className={` text-justify ${!action.has_biomarkers && 'w-full max-w-max'} ${
                         expandedCards.includes(index)
                           ? 'whitespace-normal '
                           : 'truncate '

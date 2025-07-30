@@ -16,6 +16,7 @@ interface FileUpload {
   azureUrl?: string;
   uploadedSize?: number;
   errorMessage?: string;
+  warning?: boolean;
 }
 interface UploadTestProps {
   memberId: any;
@@ -39,8 +40,6 @@ const UploadTest: React.FC<UploadTestProps> = ({
   };
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const handleDeleteFile = (fileToDelete: any) => {
-    console.log(fileToDelete);
-
     Application.deleteLapReport({ file_id: fileToDelete.id })
       .then(() => {
         // setFiles(files.filter((file) => file !== fileToDelete));
@@ -80,56 +79,78 @@ const UploadTest: React.FC<UploadTestProps> = ({
   //   return null; // No error
   // };
   const sendToBackend = async (file: File, azureUrl: string) => {
-    try {
-      await Application.addLabReport(
-        {
-          member_id: memberId,
-          report: {
-            'file name': file.name,
-            blob_url: azureUrl,
-          },
+    await Application.addLabReport(
+      {
+        member_id: memberId,
+        report: {
+          'file name': file.name,
+          blob_url: azureUrl,
         },
-        (progressEvent: any) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total,
-          );
-          // Calculate progress from 50-100%
-          const backendProgress = 50 + percentCompleted / 2;
+      },
+      (progressEvent: any) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total,
+        );
+        // Calculate progress from 50-100%
+        const backendProgress = 50 + percentCompleted / 2;
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.file === file
+              ? {
+                  ...f,
+                  progress: backendProgress,
+                  uploadedSize: progressEvent.loaded,
+                }
+              : f,
+          ),
+        );
+      },
+    )
+      .then((res) => {
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.file === file
+              ? {
+                  ...f,
+                  status: 'completed',
+                  azureUrl,
+                  warning: res.status == 206,
+                }
+              : f,
+          ),
+        );
+      })
+      .catch((err) => {
+        // console.log('err', err);
+        if (err == 'Network Error') {
           setUploadedFiles((prev) =>
             prev.map((f) =>
               f.file === file
                 ? {
                     ...f,
-                    progress: backendProgress,
-                    uploadedSize: progressEvent.loaded,
+                    status: 'completed',
+                    // errorMessage: 'File already exists.',
                   }
                 : f,
             ),
           );
-        },
-      );
-
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.file === file ? { ...f, status: 'completed', azureUrl } : f,
-        ),
-      );
-    } catch (error: any) {
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.file === file
-            ? {
-                ...f,
-                status: 'error',
-                errorMessage:
-                  error?.response?.data?.message ||
-                  error?.detail ||
-                  'Failed to upload file to backend. Please try again.',
-              }
-            : f,
-        ),
-      );
-    }
+        } else {
+          setUploadedFiles((prev) =>
+            prev.map((f) =>
+              f.file === file
+                ? {
+                    ...f,
+                    status: 'error',
+                    errorMessage:
+                      err?.response?.data?.message ||
+                      err?.detail ||
+                      'Failed to upload file. Please try again.',
+                  }
+                : f,
+            ),
+          );
+        }
+      });
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

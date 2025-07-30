@@ -47,15 +47,10 @@ const ConceringRow: React.FC<ConceringRowProps> = ({ data }) => {
                   <div className="TextStyle-Body-3 text-Text-Primary  w-[180px] text-center">
                     {el['Lab Ref Range'] ? el['Lab Ref Range'] : '-'}
                   </div>
-                  {/* <div className="TextStyle-Body-3 text-Text-Primary  w-[130px] text-center">
-                    {el.Baseline}
-                  </div> */}
+
                   <div className="TextStyle-Body-3 text-Text-Primary pl-4  w-[130px] text-center">
                     {el['Optimal Range'] ? el['Optimal Range'] : '-'}
                   </div>
-                  {/* <div className="TextStyle-Body-3 text-Text-Primary w-[130px] text-right">
-                    {el.Changes}
-                  </div> */}
                 </div>
               </div>
             );

@@ -2,40 +2,40 @@
 
 import SummaryBox from './SummaryBox';
 // import MyChartComponent from "./StatusChart"
-import RefrenceBox from './Boxs/RefrenceBox';
-import DetiledAnalyse from './Boxs/DetiledAnalyse';
 import ConceringRow from './Boxs/ConceringRow';
+import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import RefrenceBox from './Boxs/RefrenceBox';
 // import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
 // import Point from "./Point"
-import { useEffect, useState, useRef, useMemo } from 'react';
-import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
-import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
-import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
-import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
+import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
+import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
+import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
+import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
 
+import { useNavigate, useParams } from 'react-router-dom';
+import Application from '../../api/app';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
 // import { BeatLoader } from "react-spinners"
 // import CalenderComponent from "../information/calender/ComponentCalender"
 // import PrintReport from './PrintReport';
+import { useLocation } from 'react-router-dom';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
-import { useLocation } from 'react-router-dom';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
-import { publish, subscribe } from '../../utils/event';
-import InfoToltip from '../InfoToltip';
-import Circleloader from '../CircleLoader';
 import { decodeAccessUser } from '../../help';
+import { publish, subscribe } from '../../utils/event';
+import Circleloader from '../CircleLoader';
+import InfoToltip from '../InfoToltip';
+import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import { AccordionItem } from './Boxs/Accordion';
 import DetiledAcordin from './Boxs/detailedAcordin';
-import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
 import PrintReportV2 from './PrintReportV2';
 interface ReportAnalyseViewprops {
   clientData?: any;
@@ -56,7 +56,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
-
+  // const history = useHistory();
+  const location = useLocation();
   useEffect(() => {
     // Watch for changes in isHaveReport
     if (!isHaveReport) {
@@ -67,28 +68,45 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [isHaveReport, resolvedMemberID]);
   const fetchData = () => {
-    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
+      .then((res) => {
         setReferenceData(res.data);
+        // setReferenceData(referencedataMoch);
         clearUsedPositions();
-      },
-    );
+      })
+      .catch(() => {
+        // setReferenceData({
+        //   detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
+        //   total_biomarker_note:
+        //     'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
+        //   biomarkers: [],
+        // });
+        // // setReferenceData(referencedataMoch);
+        // clearUsedPositions();
+      });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
-      setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
+
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      // console.log(res.data);
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
+        setClientSummaryBoxs(mydata);
       } else {
+        setClientSummaryBoxs(res.data);
         setIsHaveReport(true);
       }
     });
-    Application.getConceringResults({ member_id: resolvedMemberID }).then(
-      (res) => {
+    Application.getConceringResults({ member_id: resolvedMemberID })
+      .then((res) => {
         setConcerningResult(res.data.table);
-      },
-    );
+        // setConcerningResult(conceringResultData);
+      })
+      .catch(() => {
+        // setConcerningResult([]);
+      });
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
@@ -123,6 +141,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setReferenceData(res.data);
+      // setReferenceData(referencedataMoch);
     });
     Application.getClientSummaryCategoriesShare(
       {
@@ -131,8 +150,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setClientSummaryBoxs(res.data);
+      // setClientSummaryBoxs(mydata);
+
       setISGenerateLoading(false);
-      if (res.data.categories.length == 0) {
+      if (res.data.subcategories.length == 0) {
         setIsHaveReport(false);
       } else {
         setIsHaveReport(true);
@@ -145,6 +166,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       uniqKey,
     ).then((res) => {
       setConcerningResult(res.data.table);
+      // setConcerningResult(conceringResultData);
     });
     Application.getOverviewtplanShare(
       {
@@ -160,7 +182,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       },
       uniqKey,
     ).then((res) => {
-      setCalenderData(res.data[0]);
+      // Please don't touch.
+      setCalenderData(res.data);
     });
     Application.getPatientsInfoShare(
       {
@@ -171,9 +194,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setUserInfoData(res.data);
     });
   };
+  const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
   subscribe('syncReport', () => {
     setCallSync(true);
+    if (location.search) {
+      navigate(location.pathname, { replace: true });
+    }
   });
   const [accessManager, setAccessManager] = useState<
     Array<{
@@ -250,44 +277,47 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     isHaveReport,
   ]);
   const resolveBioMarkers = () => {
-    const refData: Array<any> = [];
-    referenceData.categories?.forEach((el: any) => {
-      el.subcategories.forEach((val: any) => {
-        refData.push(...val.biomarkers);
-      });
-    });
-    return refData;
+    // const refData: Array<any> = [];
+    // referenceData?.biomarkers.forEach((el: any) => {
+    //     refData.push(...el.biomarkers);
+    // });
+    // return refData;
+    return referenceData?.biomarkers;
   };
   // useEffect(() => {
   //   clearUsedPositions();
   // }, [memberID]);
-  const resolveSubCategories = () => {
-    const refData: Array<any> = [];
-    referenceData?.categories.forEach((el: any) => {
-      refData.push(...el.subcategories);
-    });
-    return refData;
-  };
+  // const resolveSubCategories = () => {
+  //   const refData: Array<any> = [];
+  //   referenceData?.categories.forEach((el: any) => {
+  //     refData.push(...el.subcategories);
+  //   });
+  //   return refData;
+  // };
   const ResolveConceringData = () => {
-    const refData: Array<any> = [];
-    if (ConcerningResult.length > 0) {
-      ConcerningResult.forEach((el: any) => {
-        refData.push(...el.subcategories);
-      });
-    }
-    return refData;
+    // const refData: Array<any> = [];
+    // if (ConcerningResult.length > 0) {
+    //   ConcerningResult.forEach((el: any) => {
+    //     refData.push(...el.subcategories);
+    //   });
+    // }
+    // return refData;
+    return ConcerningResult;
   };
 
   const resolveCategories = () => {
-    const refData: Array<any> = [];
-    if (ClientSummaryBoxs?.categories) {
-      ClientSummaryBoxs?.categories.forEach((el: any) => {
-        refData.push(...el.subcategories);
-      });
+    // const refData: Array<any> = [];
+    // if (ClientSummaryBoxs?.categories) {
+    //   ClientSummaryBoxs?.categories.forEach((el: any) => {
+    //     refData.push(...el.subcategories);
+    //   });
+    // }
+    // return refData;
+    if (ClientSummaryBoxs) {
+      return ClientSummaryBoxs.subcategories;
     }
-    return refData;
+    return [];
   };
-  const location = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
@@ -430,7 +460,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-scroll xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -442,7 +472,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       className="sectionScrollEl text-Text-Primary TextStyle-Headline-4  flex items-center "
                     >
                       Client Summary
-                      <div className="ml-4 visible">
+                      <div className="ml-4 invisible">
                         <Legends isGray></Legends>
                       </div>
                     </div>
@@ -515,7 +545,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     <div className="hidden md:block">
                       {' '}
-                      <InfoToltip />
+                      <InfoToltip isShare={isShare} />
                     </div>
                   </div>
                   <div
@@ -552,10 +582,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
                     {resolveBioMarkers()
-                      .filter((val) => val.outofref == true)
-                      .map((el, index) => {
+                      .filter((val: any) => val.outofref == true)
+                      .map((el: any, index: number) => {
                         return (
-                          <RefrenceBox data={el} index={index}></RefrenceBox>
+                          <>
+                            <RefrenceBox data={el} index={index}></RefrenceBox>
+                          </>
                         );
                       })}
                   </div>
@@ -639,11 +671,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any, index: number) => {
                     return (
                       <DetiledAnalyse
-                        refrences={
-                          resolveSubCategories().filter(
-                            (val) => val.subcategory == el.subcategory,
-                          )[0]
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                         index={index}
                       ></DetiledAnalyse>
@@ -654,11 +684,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   {resolveCategories().map((el: any) => {
                     return (
                       <DetiledAcordin
-                        refrences={
-                          resolveSubCategories().filter(
-                            (val) => val.subcategory == el.subcategory,
-                          )[0]
-                        }
+                        refrences={resolveBioMarkers().filter(
+                          (val: any) => val.subcategory == el.subcategory,
+                        )}
                         data={el}
                       ></DetiledAcordin>
                     );
@@ -734,7 +762,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {isHaveReport && !isShare && (
+            {isHaveReport && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}
@@ -758,12 +786,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   referenceData={referenceData}
                   resolveBioMarkers={resolveBioMarkers}
                   ResolveConceringData={ResolveConceringData}
-                  resolveSubCategories={resolveSubCategories}
+                  resolveSubCategories={() => []}
                   helthPlan={ActionPlanPrint}
                   TreatMentPlanData={TreatMentPlanData}
                   ActionPlan={HelthPrint}
                   caldenderData={caldenderData}
                 />
+                {/* <></> */}
               </div>
             )}
             {!isHaveReport && (

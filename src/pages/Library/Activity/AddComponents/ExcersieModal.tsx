@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import TextField from '../../../../Components/TextField';
-import { RangeCard } from '../../../CheckIn/components';
-import CustomSelect from '../../../../Components/CustomSelect';
-import Checkbox from '../../../../Components/checkbox';
-import { MainModal } from '../../../../Components';
-import Application from '../../../../api/app';
 import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
+import { MainModal } from '../../../../Components';
+import CustomSelect from '../../../../Components/CustomSelect';
+import TextField from '../../../../Components/TextField';
+import Checkbox from '../../../../Components/checkbox';
+import Application from '../../../../api/app';
+import RangeCardLibraryActivity from './RangeCard';
+import SpinnerLoader from '../../../../Components/SpinnerLoader';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exerciseData: any) => void;
   exercise?: any; // Optional, used for editing
   isEdit?: boolean;
+  loadingCall: boolean;
+  clearData: boolean;
+  handleClearData: (value: boolean) => void;
 }
 interface FileData {
   Title: string;
@@ -31,6 +35,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   onSubmit,
   exercise = {}, // Default to an empty object for adding
   isEdit,
+  loadingCall,
+  clearData,
+  handleClearData,
 }) => {
   const [, setTitle] = useState(exercise.Title || '');
   // const [, setDescription] = useState(exercise.Description || '');
@@ -61,6 +68,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     undefined,
   );
   const [showYouTubeValidation, setShowYouTubeValidation] = useState(false);
+  const isValidYouTubeUrl = (url: string) => {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
+    return youtubeRegex.test(url);
+  };
   useEffect(() => {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
@@ -91,16 +103,35 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     const isYouTubeLinkValid = isValidYouTubeUrl(youTubeLink);
 
     // Validate YouTube link
-    if (!isYouTubeLinkValid && youTubeLink.trim() !== '') {
+    if (!isYouTubeLinkValid && youTubeLink.trim() === '' && !hasFile) {
       setYouTubeError('Please enter a valid YouTube link.');
       setShowYouTubeValidation(true);
+      if (!hasFile && !isYouTubeLinkValid) {
+        setFileError('At least one of these fields is required.');
+        setShowFileValidation(true);
+        return;
+      }
       return;
+    } else {
+      setYouTubeError(undefined);
+      setShowYouTubeValidation(false);
     }
 
     // Validate file or YouTube link presence
     if (!hasFile && !isYouTubeLinkValid) {
       setFileError('At least one of these fields is required.');
       setShowFileValidation(true);
+      return;
+    } else {
+      setFileError(undefined);
+      setShowFileValidation(false);
+    }
+
+    if (
+      formik.values.title.trim() === '' ||
+      formik.values.instruction.trim() === '' ||
+      formik.values.score === 0
+    ) {
       return;
     }
 
@@ -146,11 +177,12 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       Exercise_Id: exercise.Exercise_Id,
       Files: filesData,
       Base_Score: formik.values.score,
+      Ai_note: formik.values.clinical_guidance,
     };
 
     onSubmit(exerciseData);
-    onClose();
-    resetForm();
+    // onClose();
+    // resetForm();
   };
 
   // const handleFileChange = async (
@@ -226,6 +258,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
           },
         ]);
         setUploadProgress(100);
+        setYouTubeError(undefined);
+        setShowYouTubeValidation(false);
       } catch (error) {
         console.error('Error uploading file:', error);
         setUploadProgress(0);
@@ -254,11 +288,18 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setFileUploaded(false);
   };
   const handleYouTubeLinkChange = (link: string) => {
+    setShowYouTubeValidation(true);
+    if (!isValidYouTubeUrl(link)) {
+      setYouTubeError('Please enter a valid YouTube link.');
+    } else {
+      setYouTubeError(undefined);
+      setShowYouTubeValidation(false);
+    }
     setYouTubeLink(link);
     // Clear any error if the link is valid
-    if (showYouTubeValidation) {
-      setYouTubeError(undefined);
-    }
+    // if (showYouTubeValidation) {
+    //   setYouTubeError(undefined);
+    // }
     if (isValidYouTubeUrl(link)) {
       setFileError(undefined);
     }
@@ -268,6 +309,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     formik.resetForm();
     setShowValidation(false);
     setShowFileValidation(false);
+    setShowYouTubeValidation(false);
     setFileError(undefined);
     setTitle(exercise.Title || '');
     // setDescription(exercise.Description || '');
@@ -299,12 +341,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
       description: exercise.Description || '',
       instruction: exercise.Instruction || '',
       score: exercise.Base_Score || 0,
+      clinical_guidance: exercise.Ai_note || '',
     },
     validationSchema,
     validateOnMount: true,
-    onSubmit: () => {
-      // Handle submit
-    },
+    onSubmit: () => {},
   });
   const [fileError, setFileError] = useState<string | undefined>(undefined);
   const [showFileValidation, setShowFileValidation] = useState(false);
@@ -318,18 +359,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setInstruction(formik.values.instruction);
     setScore(formik.values.score);
   }, [formik.values]);
-
-  const isValidYouTubeUrl = (url: string) => {
-    const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|shorts\/|embed\/|v\/)?([a-zA-Z0-9_-]{11})(?:[?&].*)?$/;
-    return youtubeRegex.test(url);
-  };
+  useEffect(() => {
+    if (clearData) {
+      resetForm();
+      handleClearData(false);
+    }
+  }, [clearData]);
   return (
     <MainModal
       isOpen={isOpen}
       onClose={() => {
         resetForm();
         onClose();
+        handleClearData(false);
       }}
     >
       <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
@@ -410,17 +452,38 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 </div>
               )}
             </div>
-            <RangeCard
-              question="Base Score"
-              value={formik.values.score}
-              onSubmit={(score) => {
-                formik.setFieldValue('score', score);
-                setScore(score);
-              }}
-              showValidation={showValidation}
-              error={Boolean(formik.errors.score)}
-              required={true}
-            />
+            <div className="flex flex-col w-full">
+              <div className="text-xs font-medium text-Text-Primary">
+                Priority Weight
+              </div>
+              <RangeCardLibraryActivity
+                value={formik.values.score}
+                changeValue={(_, value) => {
+                  formik.setFieldValue('score', value);
+                  setScore(value);
+                }}
+                showValidation={showValidation}
+                error={Boolean(formik.errors.score)}
+                required={true}
+              />
+              {/* {formik.touched.score && formik.errors.score && (
+              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
+            )} */}
+            </div>
+            {/* Clinical Guidance Field */}
+            <div className="flex flex-col w-full gap-2">
+              <div className="text-xs font-medium text-Text-Primary">
+                Clinical Guidance
+              </div>
+              <textarea
+                placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+                value={formik.values.clinical_guidance}
+                onChange={(e) => {
+                  formik.setFieldValue('clinical_guidance', e.target.value);
+                }}
+                className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              />
+            </div>
             {/* <TextField
               newStyle
               type="text"
@@ -430,7 +493,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setInstruction(e.target.value)}
             /> */}
           </div>
-          <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
+          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[35%] flex flex-col gap-4">
             <div className="text-xs font-medium">Filters</div>
             <div className="grid grid-cols-2 gap-y-2 gap-x-">
@@ -491,7 +554,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="bg-[#E9EDF5] h-[328px] w-px"></div>
+          <div className="bg-[#E9EDF5] h-[365px] w-px"></div>
           <div className="w-[25%] flex flex-col gap-4">
             <TextField
               disabled={fileUploaded}
@@ -617,7 +680,15 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             onClick={handleSubmit}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
-            {isEdit ? 'Save' : 'Add'}
+            {!loadingCall ? (
+              isEdit ? (
+                'Save'
+              ) : (
+                'Add'
+              )
+            ) : (
+              <SpinnerLoader color="#005F73" />
+            )}
           </div>
         </div>
       </div>

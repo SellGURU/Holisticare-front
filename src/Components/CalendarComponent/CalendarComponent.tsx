@@ -2,8 +2,8 @@
 // import { useSelector } from "react-redux";
 
 import { useEffect, useState } from 'react';
-import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import TableNoPaginateForActionPlan from '../Action-plan/TableNoPaginate';
+import Toggle from '../RepoerAnalyse/Boxs/Toggle';
 import Select from '../Select';
 
 // const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

@@ -180,9 +180,22 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
     header: 'Check-in',
     enableSorting: false,
     cell: ({ row }) => {
+      const check_in = row.original['Check-in'] || 'NO Data';
       return (
-        <div className="text-xs text-Text-Secondary ">
-          {row.original['Check-in'] || 'NO Data'}
+        <div
+          data-tooltip-id={check_in}
+          className="text-xs text-Text-Secondary text-center select-none"
+        >
+          {check_in.length > 40 ? check_in.substring(0, 40) + '...' : check_in}
+          {check_in.length > 40 && (
+            <Tooltip
+              place="top"
+              id={check_in}
+              className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+            >
+              {check_in}
+            </Tooltip>
+          )}
         </div>
       );
     },
@@ -196,7 +209,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
       return (
         <div
           data-tooltip-id={questionnaire}
-          className="text-xs text-Text-Secondary text-center"
+          className="text-xs text-Text-Secondary text-center select-none"
         >
           {questionnaire.length > 40
             ? questionnaire.substring(0, 40) + '...'
@@ -205,7 +218,7 @@ export const columns = (dataLength: number): ColumnDef<any>[] => [
             <Tooltip
               place="top"
               id={questionnaire}
-              className="!bg-white !w-fit !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !w-[200px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {questionnaire}
             </Tooltip>

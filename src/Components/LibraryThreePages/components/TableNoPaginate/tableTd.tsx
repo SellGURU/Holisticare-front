@@ -11,20 +11,22 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
       return (
         <>
           <div
-            className="flex justify-start text-xs text-Text-Primary"
+            className="flex justify-start text-xs text-Text-Primary cursor-default"
             data-tooltip-id={`tooltip-${row.original?.Title}`}
           >
             {row.original?.Title?.length > 15
               ? row.original?.Title?.substring(0, 15) + '...'
               : row.original?.Title || '-'}
           </div>
-          <Tooltip
-            id={`tooltip-${row.original?.Title}`}
-            place="top"
-            className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-          >
-            {row.original?.Title}
-          </Tooltip>
+          {row.original?.Title?.length > 15 && (
+            <Tooltip
+              id={`tooltip-${row.original?.Title}`}
+              place="top"
+              className="!bg-white !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+            >
+              {row.original?.Title}
+            </Tooltip>
+          )}
         </>
       );
     },
@@ -38,7 +40,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         <>
           <div
             data-tooltip-id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
-            className="overflow-hidden select-none text-xs text-Text-Quadruple"
+            className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
             style={{
               textWrap: 'nowrap',
               whiteSpace: 'nowrap',
@@ -53,7 +55,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <Tooltip
               id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
               place="top"
-              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+              className="!bg-white !bg-opacity-100 !opacity-100 !w-[250px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {row.original?.Instruction}
             </Tooltip>
@@ -79,7 +81,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
     cell: ({ row }) => {
       return (
         <>
-          <div className="text-xs text-Text-Quadruple">
+          <div className="text-xs text-Text-Quadruple cursor-default">
             {pageType === 'Supplement' ? (
               <div data-tooltip-id={`tooltip-${row.original?.Dose}`}>
                 {row.original?.Dose?.length > 12
@@ -102,7 +104,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <Tooltip
               id={`tooltip-${row.original?.Dose}`}
               place="top"
-              className="!bg-white !w-[376px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+              className="!bg-white !max-w-[250px] !bg-opacity-100 !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {row.original?.Dose}
             </Tooltip>
@@ -113,7 +115,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
   },
   {
     accessorKey: 'Base_Score',
-    header: 'Base Score',
+    header: 'Priority Weight',
     enableSorting: false,
     cell: ({ row }) => {
       return (
@@ -125,6 +127,41 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <div className="text-[10px] text-Text-Quadruple">/10</div>
           </div>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'Clinical Guidance',
+    header: 'Clinical Guidance',
+    enableSorting: false,
+    cell: ({ row }) => {
+      return (
+        <>
+          <div
+            data-tooltip-id={`tooltip-${row.original?.Ai_note}`}
+            className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
+            style={{
+              textWrap: 'nowrap',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {row.original?.Ai_note
+              ? row.original?.Ai_note?.length > 47
+                ? row.original?.Ai_note?.substring(0, 47) + '...'
+                : row.original?.Ai_note
+              : '-'}
+          </div>
+          {row.original?.Ai_note?.length > 47 && (
+            <Tooltip
+              id={`tooltip-${row.original?.Ai_note}`}
+              place="top"
+              className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[250px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+            >
+              {row.original?.Ai_note}
+            </Tooltip>
+          )}
+        </>
       );
     },
   },

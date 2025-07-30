@@ -47,33 +47,33 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
     });
   };
   const resolveQuestionCard = (item: any, index: number) => {
-    switch (item.type) {
-      case 'Yes/No':
+    switch (item.type.toLowerCase()) {
+      case 'yes/no':
         return (
           <YesNoCard
             index={index}
             question={item.question}
             value={item.response}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
             isPreview={isPreview}
           ></YesNoCard>
         );
-      case 'Scale':
+      case 'scale':
         return (
           <RangeCard
             index={index}
             question={item.question}
             value={item.response}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
             isPreview={isPreview}
           ></RangeCard>
         );
 
-      case 'Paragraph':
+      case 'paragraph':
         return (
           <TextCard
             index={index}
@@ -82,11 +82,11 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             question={item.question}
             value={item.response}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></TextCard>
         );
-      case 'Star Rating':
+      case 'star rating':
         return (
           <RateCard
             index={index}
@@ -94,7 +94,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             isPreview={isPreview}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></RateCard>
         );
@@ -106,7 +106,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.value}
           ></ArrangeCard>
         );
-      case 'File Uploader':
+      case 'file uploader':
         return (
           <UploadCard
             index={index}
@@ -114,11 +114,11 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             isPreview={isPreview}
             value={item.value}
             onSubmit={(values) => {
-              updateResponse(index - 1, values);
+              updateResponse(index, values);
             }}
           ></UploadCard>
         );
-      case 'Emojis':
+      case 'emojis':
         return (
           <FeelingCard
             index={index}
@@ -126,7 +126,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             isPreview={isPreview}
             onSubmit={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></FeelingCard>
         );
@@ -140,7 +140,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             options={item.options}
             isPreview={isPreview}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></MultiChoice>
         );
@@ -152,7 +152,7 @@ const Checkin: React.FC<CheckinProps> = ({ upData, onChange, isPreview }) => {
             value={item.response}
             options={item.options}
             onChange={(value) => {
-              updateResponse(index - 1, value);
+              updateResponse(index, value);
             }}
           ></CheckBoxCard>
         );

@@ -182,11 +182,14 @@ const TimeLine: React.FC = () => {
   return (
     <>
       {isLaoding ? (
-        <div className="w-full flex justify-center items-center h-[220px]">
+        <div className="w-full flex justify-center items-center h-[500px]">
           <Circleloader></Circleloader>
         </div>
       ) : (
-        <div className="flex flex-col items-center  text-xs max-h-[530px] md:max-h-[600px] overflow-auto overflow-x-hidden">
+        <div
+          style={{ height: window.innerHeight - 120 + 'px' }}
+          className="flex flex-col items-center  text-xs -8"
+        >
           {steps.map((section, index) => (
             <div key={index} className="flex flex-col items-center  relative ">
               <div
@@ -213,7 +216,7 @@ const TimeLine: React.FC = () => {
                   style={{
                     backgroundColor: resolveStatusColor(section.status),
                   }}
-                  className={`absolute block  w-[3px] h-[120%] right-3 
+                  className={`absolute block h-[100%] w-[3px]  right-3 
             ml-5  -z-[1]`}
                 ></div>
                 {section.steps.map((step: any, index: number) => (

@@ -999,6 +999,9 @@ class Application extends Api {
   static getNotifications = () => {
     return this.get('/notifications', {});
   };
+  static deleteFileHistory = (data: any) => {
+    return this.post(`/patients/delete_lab_report`, data);
+  };
 }
 
 export default Application;

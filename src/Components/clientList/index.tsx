@@ -423,7 +423,7 @@ const ClientList = () => {
                               setSearch(value);
                               handleSearch(value);
                             }}
-                            placeHolder="Search for Client ..."
+                            placeHolder="Search Clients"
                             onBlur={() => {
                               setshowSearch(false);
                             }}

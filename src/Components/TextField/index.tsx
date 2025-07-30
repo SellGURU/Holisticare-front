@@ -3,12 +3,14 @@ import { useState } from 'react';
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   className?: string;
-  type: 'text' | 'password' | 'email' | 'phone' | 'searchBox';
+  type: 'text' | 'password' | 'email' | 'phone' | 'searchBox' | 'number'; // <--- ADDED 'number'
   inValid?: boolean;
   errorMessage?: string;
   newStyle?: boolean;
   largeHeight?: boolean;
   titleRequired?: boolean;
+  inputRef?: React.Ref<HTMLInputElement>; // <--- ADDED ref prop
+  // Note: 'step' and other number-specific props will be passed via ...props
 }
 
 const TextField: React.FC<TextFieldProps> = ({
@@ -17,10 +19,11 @@ const TextField: React.FC<TextFieldProps> = ({
   inValid,
   errorMessage,
   onChange,
-  type,
+  type, // Use 'type' as defined by Controller, not just getInputType for number
   newStyle,
   largeHeight,
   titleRequired,
+  inputRef, // <--- Destructure ref prop
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,10 +32,12 @@ const TextField: React.FC<TextFieldProps> = ({
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const getInputType = () => {
-    if (type === 'password' && showPassword) {
-      return 'text';
+  // Keep getInputType for password toggle, but don't force 'text' for numbers
+  const getInternalInputType = () => {
+    if (type === 'password') {
+      return showPassword ? 'text' : 'password';
     }
+    // For other types, including 'number', use the type directly from props
     return type;
   };
 
@@ -40,11 +45,7 @@ const TextField: React.FC<TextFieldProps> = ({
     const value = event.target.value;
 
     if (type === 'email') {
-      // Remove only leading spaces for email type
       const trimmedValue = value.replace(/^\s+/, '');
-      // Alternatively, you can use: const trimmedValue = value.trimStart();
-
-      // Only proceed if trimming changed the value
       if (trimmedValue !== value) {
         const newEvent = {
           ...event,
@@ -53,21 +54,20 @@ const TextField: React.FC<TextFieldProps> = ({
             value: trimmedValue,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-
         if (onChange) {
           onChange(newEvent);
         }
-        return; // Exit early since we've handled the trimmed value
+        return;
       }
-    } else {
-      // For non-email types, prevent leading spaces
+    } else if (type !== 'number') {
+      // <--- Added condition to skip for 'number' type
+      // For non-email and non-number types, prevent leading spaces
       if (value.startsWith(' ')) {
-        // Optionally, you can show a warning or simply ignore the input
-        return; // Do not call onChange, effectively preventing the change
+        return;
       }
     }
 
-    // If no modifications are needed, call the original onChange handler
+    // If no modifications are needed, or for number type, call the original onChange handler
     if (onChange) {
       onChange(event);
     }
@@ -82,8 +82,9 @@ const TextField: React.FC<TextFieldProps> = ({
       )}
       <div className="relative">
         <input
-          type={getInputType()}
-          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start align-top  pt-0'}  ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none ${
+          ref={inputRef} // <--- Pass the ref here
+          type={getInternalInputType()} // Use the internal type resolver
+          className={`w-full ${newStyle ? 'h-[28px]' : 'h-[32px]'} ${largeHeight && '!h-[100px] placeholder:text-start text-start flex items-start j align-top pt-0'} ${newStyle && 'bg-[#FDFDFD] '} rounded-[16px] mt-1 border placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 text-Text-Primary outline-none ${
             inValid
               ? 'border-Red'
               : newStyle
@@ -91,9 +92,9 @@ const TextField: React.FC<TextFieldProps> = ({
                 : 'border-gray-50'
           } 
             ${type === 'password' ? 'pr-8' : ''}
-           ${!newStyle && 'shadow-300'}`}
-          {...props}
-          onChange={handleChange}
+            ${!newStyle && 'shadow-300'}`}
+          {...props} // <--- Pass all other props (like 'step', 'value', 'name', 'onBlur', 'id')
+          onChange={handleChange} // Use your custom handleChange
         />
         {type === 'password' && (
           <div
