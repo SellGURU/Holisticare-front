@@ -30,6 +30,9 @@ interface Question {
 interface SurveyResponsesViewProps {
   questions: Question[];
   filled_by?: string;
+  title?: string;
+  time?: any;
+  isCustom?: boolean;
 }
 
 // Emoji data for display
@@ -44,6 +47,9 @@ const emojeysData = [
 export function SurveyResponsesView({
   questions,
   filled_by,
+  isCustom,
+  time,
+  title,
 }: SurveyResponsesViewProps) {
   const getResponseDisplay = (question: Question) => {
     if (question.response === undefined || question.response === null) {
@@ -207,17 +213,37 @@ export function SurveyResponsesView({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-start py-12 px-2">
+    <div className={`min-h-screen w-full bg-gradient-to-br from-gray-50 to-blue-50 flex justify-center items-start ${isCustom ? 'py-8' : 'py-12'} px-2`}>
       <div className="w-full max-w-2xl space-y-8">
-        {filled_by && (
-          <div className="mb-4 text-sm text-Text-Secondary text-center">
-            Filled by:{' '}
-            <span className="font-medium text-Text-Primary">{filled_by}</span>
+        {isCustom ? (
+          <div className="flex w-full items-center justify-between">
+            <div className="text-sm text-Text-Primary font-medium">{title}</div>
+            <div className="text-Text-Quadruple text-xs flex items-center gap-1">
+              <img src="/icons/timer-grey.svg" alt="" className="w-4 h-4" />
+              {(() => {
+                const ms = time;
+                const minutes = Math.floor(ms / 60000);
+                const seconds = Math.floor((ms % 60000) / 1000);
+                return `${minutes} min, ${seconds} sec`;
+              })() || '-'}
+            </div>
+          </div>
+        ) : (
+          <div>
+            {filled_by && (
+              <div className="mb-4 text-sm text-Text-Secondary text-center">
+                Filled by:{' '}
+                <span className="font-medium text-Text-Primary">
+                  {filled_by}
+                </span>
+              </div>
+            )}
+            <h2 className="text-2xl font-bold text-center text-Text-Primary mb-6 drop-shadow-sm">
+              Survey Responses
+            </h2>
           </div>
         )}
-        <h2 className="text-2xl font-bold text-center text-Text-Primary mb-6 drop-shadow-sm">
-          Survey Responses
-        </h2>
+
         <div className="space-y-8">
           {questions.map((question, index) => (
             <Card
