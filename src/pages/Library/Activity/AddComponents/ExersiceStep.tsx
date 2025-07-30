@@ -542,13 +542,6 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                           alt=""
                           className="w-8 h-8 bg-cover rounded-lg mr-1"
                         />
-                        {el?.Files[0]?.Type.split('/')[0] !== 'image' && (
-                          <img
-                            src="/icons/video-octagon.svg"
-                            alt=""
-                            className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
-                          />
-                        )}
                         {Array.isArray(el?.Files) &&
                           el.Files.length > 0 &&
                           !el.Files[0]?.Type?.startsWith('image') && (
