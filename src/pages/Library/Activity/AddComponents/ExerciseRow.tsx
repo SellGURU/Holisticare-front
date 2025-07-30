@@ -68,11 +68,20 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
       >
         <td
           className="pl-4 py-3 text-xs w-[160px] text-Text-Primary select-none"
-          title={exercise.Title.length > 30 ? exercise.Title : undefined} // Tooltip for long titles
+          data-tooltip-id={`tooltip-${exercise.Title?.substring(0, 30)}-t`}
         >
           {exercise.Title.length > 30
             ? `${exercise.Title.substring(0, 30)}...`
             : exercise.Title}
+          {exercise.Title.length > 30 && (
+            <Tooltip
+              id={`tooltip-${exercise.Title?.substring(0, 30)}-t`}
+              place="top"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            >
+              {exercise.Title}
+            </Tooltip>
+          )}
         </td>
         <td
           data-tooltip-id={'Instruction' + index}
@@ -87,7 +96,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <Tooltip
               id={`Instruction` + index}
               place="top"
-              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
@@ -136,7 +145,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <Tooltip
               id={`tooltip-activity-clinical-guidance-${index}`}
               place="top"
-              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
