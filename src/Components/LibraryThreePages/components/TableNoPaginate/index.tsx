@@ -89,7 +89,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                         className={`flex items-center  ${index == 0 ? 'justify-start ' : 'justify-center '} `}
                       >
                         <div
-                          className="flex items-center justify-center"
+                          className="flex items-center justify-center text-nowrap"
                           onClick={header.column.getToggleSortingHandler()}
                         >
                           {flexRender(
@@ -110,7 +110,7 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
                     className={`px-3 pt-4 pb-3.5 text-xs font-medium cursor-pointer`}
                   >
                     <div className={`flex items-center justify-center`}>
-                      <div className="flex items-center justify-center">
+                      <div className="flex items-center justify-center text-nowrap">
                         Action
                       </div>
                     </div>

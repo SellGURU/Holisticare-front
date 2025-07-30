@@ -244,7 +244,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           <div className="flex flex-col mt-5 w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">Title</div>
             <input
-              placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s title...`}
+              placeholder={`${pageType === 'Supplement' ? 'Enter supplement title (e.g., Omega-3 Fish Oil)' : pageType === 'Lifestyle' ? 'Enter lifestyle title (e.g., Sleep enough)' : 'Enter diet title (e.g., Low-Carb Plan)'}`}
               value={addData.title}
               onChange={(e) => {
                 updateAddData('title', e.target.value);
@@ -256,7 +256,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               }}
               className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
                 errors.title ? 'border-Red' : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+              } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
             />
             {errors.title && (
               <div className="text-Red text-[10px]">
@@ -283,7 +283,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               }}
               className={`w-full h-[98px] rounded-[16px] text-justify py-1 px-3 border ${
                 errors.description ? 'border-Red' : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
             />
             {errors.description && (
               <div className="text-Red text-[10px]">
@@ -300,7 +300,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               Instruction
             </div>
             <textarea
-              placeholder={`Write the ${pageType === 'Supplement' ? 'supplement' : pageType === 'Lifestyle' ? 'lifestyle' : 'diet'}'s instruction...`}
+              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}'`}
               value={addData.instruction}
               onChange={(e) => {
                 updateAddData('instruction', e.target.value);
@@ -312,7 +312,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               }}
               className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
                 errors.instruction ? 'border-Red' : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
             />
             {errors.instruction && (
               <div className="text-Red text-[10px]">
@@ -333,7 +333,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 />
               </div>
               <input
-                placeholder="Enter the supplement's dose..."
+                placeholder="Enter dose amount"
                 value={dose}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -361,7 +361,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   errors.dose || errors.doseFormat
                     ? 'border-Red'
                     : 'border-Gray-50'
-                } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
               />
               {errors.dose && (
                 <div className="text-Red text-[10px]">
@@ -383,7 +383,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                Dose must include a number followed by a unit (e.g., '50 mg'){' '}
+                Dose must include a number or range and a unit or descriptive
+                form (e.g., '50 mg', '2 drops', or '1–2 tablets').
               </Tooltip>
             </div>
           )}
@@ -440,7 +441,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     errors.value || value.length > 5
                       ? 'border-Red'
                       : 'border-Gray-50'
-                  } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                  } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                 />
                 <input
                   placeholder="Enter Unit..."
@@ -454,7 +455,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     setUnit(onlyLetters);
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
-                   bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                   bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                 />
               </div>
               {errors.value && (
@@ -514,7 +515,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         errors.macros.Carbs || totalMacros.Carbs.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                     />
                   </div>
 
@@ -557,7 +558,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         errors.macros.Protein || totalMacros.Protein.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                     />
                   </div>
 
@@ -597,7 +598,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                         errors.macros.Fats || totalMacros.Fats.length > 5
                           ? 'border-Red'
                           : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
                     />
                   </div>
                 </div>
@@ -646,7 +647,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               onChange={(e) => {
                 updateAddData('clinical_guidance', e.target.value);
               }}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
+              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
             />
           </div>
 
