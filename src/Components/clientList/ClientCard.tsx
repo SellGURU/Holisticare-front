@@ -378,9 +378,11 @@ const ClientCard: FC<ClientCardProps> = ({
                       member_id: client.member_id,
                       username: AccessUserName,
                       password: AccessPassword,
-                    }).then(() => {
-                      setIsShared(true);
-                    }).catch(()=>{});
+                    })
+                      .then(() => {
+                        setIsShared(true);
+                      })
+                      .catch(() => {});
                   }}
                   className="text-sm font-medium text-Primary-DeepTeal cursor-default"
                 >
@@ -484,11 +486,13 @@ const ClientCard: FC<ClientCardProps> = ({
                   onClick={() => {
                     Application.giveClientAccess({
                       member_id: client.member_id,
-                    }).then((res) => {
-                      setAccessUserName(res.data.username);
-                      setAccessPassword(res.data.password);
-                      setShowAccessModal(true);
-                    }).catch(()=>{});
+                    })
+                      .then((res) => {
+                        setAccessUserName(res.data.username);
+                        setAccessPassword(res.data.password);
+                        setShowAccessModal(true);
+                      })
+                      .catch(() => {});
                   }}
                   className="flex items-center gap-2 cursor-pointer TextStyle-Body-2 text-Text-Primary pb-1 border-b border-Secondary-SelverGray "
                 >
@@ -564,12 +568,19 @@ const ClientCard: FC<ClientCardProps> = ({
                         >
                           <div>
                             <Checkbox
-                            borderColor={coach.assigned ? 'borderPrimary-DeepTeal' : 'border-[#888888]'}
+                              borderColor={
+                                coach.assigned
+                                  ? 'borderPrimary-DeepTeal'
+                                  : 'border-[#888888]'
+                              }
                               onChange={() => handleCoachSelection(coach)}
                               checked={coach.assigned}
                             />
                           </div>
-                          <div className={`${coach.assigned && 'text-Primary-DeepTeal'}`} onClick={() => handleCoachSelection(coach)}>
+                          <div
+                            className={`${coach.assigned && 'text-Primary-DeepTeal'}`}
+                            onClick={() => handleCoachSelection(coach)}
+                          >
                             {coach.username}
                           </div>
                         </div>
@@ -754,7 +765,7 @@ const ClientCard: FC<ClientCardProps> = ({
               <div className="w-full mt-2 flex h-full justify-between">
                 <div className="flex flex-col justify-between h-full border-r border-Gray-50 pr-3 pl-2 py-1">
                   <div className="flex flex-col relative h-[128px] justify-between ">
-                    <div className='flex items-center justify-center flex-col'>
+                    <div className="flex items-center justify-center flex-col">
                       <div className="text-[8px] sm:text-[10px] text-Text-Secondary cursor-default">
                         Enroll Date
                       </div>
@@ -762,7 +773,7 @@ const ClientCard: FC<ClientCardProps> = ({
                         {client.enroll_date}
                       </div>
                     </div>
-                    <div className=''>
+                    <div className="">
                       <div className="text-[8px] sm:text-[10px] text-Text-Secondary text-nowrap cursor-default">
                         Checked on
                       </div>
@@ -781,7 +792,7 @@ const ClientCard: FC<ClientCardProps> = ({
                       Assigned to
                     </div>
                     <div className="flex text-nowrap truncate max-w-[110px] cursor-default">
-                      {client.assigned_to[0] || "-"}
+                      {client.assigned_to[0] || '-'}
                     </div>
                   </div>
                   <div className="flex gap-2 w-full text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
@@ -821,19 +832,18 @@ const ClientCard: FC<ClientCardProps> = ({
                     </div>
                     <div
                       className="text-nowrap max-w-[110px] truncate cursor-default"
-data-tooltip-id={client['Check-in']}                    >
+                      data-tooltip-id={client['Check-in']}
+                    >
                       {client['Check-in']}
-                      {
-                        client['Check-in'].length > 15 && (
-                          <Tooltip
-                            place="top"
-                            id={client['Check-in']}
-                            className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                          >
-                            {client['Check-in']}
-                          </Tooltip>
-                        )}
-                      
+                      {client['Check-in'].length > 15 && (
+                        <Tooltip
+                          place="top"
+                          id={client['Check-in']}
+                          className="!bg-white !w-fit !bg-opacity-100 !opacity-100 !text-wrap !text-[#888888] !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                        >
+                          {client['Check-in']}
+                        </Tooltip>
+                      )}
                     </div>
                   </div>
                   <div className="flex w-full gap-2 text-Text-Primary text-[10px] sm:text-xs capitalize cursor-default">
