@@ -196,16 +196,20 @@ const ExerciseItem = ({
           </div>
         </div>
         <div className="min-h-[25px] mt-2 flex flex-wrap gap-2">
-          {Object.entries(exercise.Exercise.Exercise_Filters).map(
-            ([key, value]) => (
-              <div
-                key={key}
-                className="text-[10px] flex justify-center items-center text-[#005F73] bg-[#E9F0F2] rounded-full px-2 "
-              >
-                {String(value)}
-              </div>
-            ),
-          )}
+          {exercise?.Exercise?.Exercise_Filters &&
+          <>
+            {Object?.entries(exercise?.Exercise?.Exercise_Filters).map(
+              ([key, value]) => (
+                <div
+                  key={key}
+                  className="text-[10px] flex justify-center items-center text-[#005F73] bg-[#E9F0F2] rounded-full px-2 "
+                >
+                  {String(value)}
+                </div>
+              ),
+            )}
+          </>
+          }
         </div>
         <div className="w-full h-[1px] bg-Gray-50 my-2"></div>
         <div className="flex justify-between items-center">
