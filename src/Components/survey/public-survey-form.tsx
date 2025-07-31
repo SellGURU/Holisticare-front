@@ -888,18 +888,18 @@ export function PublicSurveyForm({
                       </Button>
                     </div>
                   </div>
-                  <div className="w-full flex justify-center gap-4 justify-items-center mt-2">
+                  <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-4 justify-items-center mt-2">
                     {/* Frontal File Input */}
-                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`frontal-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center  size-52 sm:size-28  overflow-hidden bg-white"
                       >
                         {tempFrontal?.base64 ? (
                           <img
                             src={tempFrontal.base64}
                             alt="Frontal Preview"
-                            className="w-full h-full object-cover rounded"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>
@@ -931,16 +931,16 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Back File Input */}
-                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`back-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center   size-52 sm:size-28 overflow-hidden bg-white"
                       >
                         {tempBack?.base64 ? (
                           <img
                             src={tempBack.base64}
                             alt="Back Preview"
-                            className="w-full h-full object-cover rounded"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>
@@ -972,16 +972,16 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Side File Input */}
-                    <div className="flex flex-col items-center w-full max-w-[112px]">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`side-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden bg-white"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center size-52 sm:size-28 overflow-hidden bg-white"
                       >
                         {tempSide?.base64 ? (
                           <img
                             src={tempSide.base64}
                             alt="Side Preview"
-                            className="w-full h-full object-cover rounded"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>

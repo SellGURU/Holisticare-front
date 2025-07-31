@@ -104,6 +104,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
       onSubmit(resolvedQuestion);
       setQuestionStep(2);
       clear();
+      onCancel()
     }
   };
 
