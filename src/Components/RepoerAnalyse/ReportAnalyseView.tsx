@@ -55,6 +55,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
+  const [showReport, setShowReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   // const history = useHistory();
   const location = useLocation();
@@ -67,6 +68,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   }, [isHaveReport, resolvedMemberID]);
+  useEffect(() => {
+    publish('showReport', {
+      showReport: showReport,
+    });
+  }, [showReport, resolvedMemberID]);
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -131,6 +137,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       member_id: resolvedMemberID,
     }).then((res) => {
       setUserInfoData(res.data);
+      setShowReport(res.data.show_report);
     });
   };
   const fetchShareData = () => {
@@ -464,15 +471,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-          {!isHaveReport && (
+          {!isHaveReport && !showReport ? (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
+          ) : (
+            ''
           )}
           <div
             ref={scrollContainerRef}
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport || showReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -771,7 +780,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {isHaveReport && (
+            {isHaveReport && showReport ? (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}
@@ -803,8 +812,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
                 {/* <></> */}
               </div>
+            ) : (
+              ''
             )}
-            {!isHaveReport && (
+            {!isHaveReport && !showReport ? (
               <>
                 {isGenerateLoading ? (
                   <>
@@ -828,9 +839,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       }, 5000);
                     }}
                     memberId={resolvedMemberID}
+                    showReport={showReport}
                   ></UploadTest>
                 )}
               </>
+            ) : (
+              ''
             )}
           </div>
         </>
