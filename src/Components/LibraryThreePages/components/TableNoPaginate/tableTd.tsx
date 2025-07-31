@@ -12,7 +12,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
         <>
           <div
             className="flex justify-start text-xs text-Text-Primary cursor-default"
-            data-tooltip-id={`tooltip-${row.original?.Title}`}
+            data-tooltip-id={`tooltip-${row.original?.Title?.substring(0, 15)}-t`}
           >
             {row.original?.Title?.length > 15
               ? row.original?.Title?.substring(0, 15) + '...'
@@ -20,7 +20,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
           </div>
           {row.original?.Title?.length > 15 && (
             <Tooltip
-              id={`tooltip-${row.original?.Title}`}
+              id={`tooltip-${row.original?.Title?.substring(0, 15)}-t`}
               place="top"
               className="!bg-white !bg-opacity-100 !max-w-[250px] !opacity-100 !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
@@ -138,7 +138,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
       return (
         <>
           <div
-            data-tooltip-id={`tooltip-${row.original?.Ai_note}`}
+            data-tooltip-id={`tooltip-${row.original?.Ai_note?.substring(0, 25)}-c`}
             className="overflow-hidden select-none text-xs text-Text-Quadruple cursor-default"
             style={{
               textWrap: 'nowrap',
@@ -147,14 +147,14 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             }}
           >
             {row.original?.Ai_note
-              ? row.original?.Ai_note?.length > 47
-                ? row.original?.Ai_note?.substring(0, 47) + '...'
+              ? row.original?.Ai_note?.length > 25
+                ? row.original?.Ai_note?.substring(0, 25) + '...'
                 : row.original?.Ai_note
               : '-'}
           </div>
-          {row.original?.Ai_note?.length > 47 && (
+          {row.original?.Ai_note?.length > 25 && (
             <Tooltip
-              id={`tooltip-${row.original?.Ai_note}`}
+              id={`tooltip-${row.original?.Ai_note?.substring(0, 25)}-c`}
               place="top"
               className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[250px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
