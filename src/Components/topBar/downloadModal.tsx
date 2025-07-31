@@ -40,8 +40,6 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     },
   ]);
   subscribe('ActionPlanStatus', (data: any) => {
-    console.log('ActionPlanStatus:' + data);
-    console.log(data.detail.isempty);
     setDownloadSelect((prev) =>
       prev.map((item) =>
         item.name === 'Action Plan'
@@ -56,8 +54,6 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   });
 
   subscribe('HolisticPlanStatus', (data: any) => {
-    console.log('HolisticPlanStatus:' + data);
-    console.log(data.detail.isempty);
     setDownloadSelect((prev) =>
       prev.map((item) =>
         item.name === 'Holistic Plan'
@@ -113,7 +109,6 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
     .filter((el) => !el.disabled)
     .every((el) => !el.checked);
   const [showValidate, setShowValidate] = useState(false);
-  console.log(showValidate);
   useEffect(() => {
     if (!allUnselected) {
       setShowValidate(false);
