@@ -749,47 +749,52 @@ export function PublicSurveyForm({
           </RadioGroup>
         );
 
-        case 'checkbox':
-          return (
-            <div className="space-y-3">
-              {questionOptions.map((option, index) => {
-                const isChecked = Array.isArray(response) && response.includes(option);
-        
-                return (
-                  <div
-                    key={index}
-                    role="checkbox"
-                    aria-checked={isChecked}
-                    tabIndex={0}
-                    className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
-                      validationError ? 'border-red-500' : ''
-                    } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
-                    onClick={() => {
-                      const currentValue = Array.isArray(response) ? response : [];
-                      if (isChecked) {
-                        handleResponseChange(currentValue.filter((item) => item !== option));
-                      } else {
-                        handleResponseChange([...currentValue, option]);
-                      }
-                    }}
+      case 'checkbox':
+        return (
+          <div className="space-y-3">
+            {questionOptions.map((option, index) => {
+              const isChecked =
+                Array.isArray(response) && response.includes(option);
+
+              return (
+                <div
+                  key={index}
+                  role="checkbox"
+                  aria-checked={isChecked}
+                  tabIndex={0}
+                  className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                    validationError ? 'border-red-500' : ''
+                  } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
+                  onClick={() => {
+                    const currentValue = Array.isArray(response)
+                      ? response
+                      : [];
+                    if (isChecked) {
+                      handleResponseChange(
+                        currentValue.filter((item) => item !== option),
+                      );
+                    } else {
+                      handleResponseChange([...currentValue, option]);
+                    }
+                  }}
+                >
+                  <Checkbox
+                    id={`option-${questionIndex}-${index}`}
+                    checked={isChecked}
+                    onCheckedChange={() => {}}
+                    className="mt-1 text-green-600 border-green-600 pointer-events-none"
+                  />
+                  <Label
+                    htmlFor={`option-${questionIndex}-${index}`}
+                    className="flex-grow font-medium"
                   >
-                    <Checkbox
-                      id={`option-${questionIndex}-${index}`}
-                      checked={isChecked}
-                      onCheckedChange={() => {}}
-                      className="mt-1 text-green-600 border-green-600 pointer-events-none"
-                    />
-                    <Label
-                      htmlFor={`option-${questionIndex}-${index}`}
-                      className="flex-grow font-medium"
-                    >
-                      {option}
-                    </Label>
-                  </div>
-                );
-              })}
-            </div>
-          );
+                    {option}
+                  </Label>
+                </div>
+              );
+            })}
+          </div>
+        );
 
       case 'scale':
         return renderScaleSlider(
