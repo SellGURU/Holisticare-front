@@ -59,20 +59,19 @@ const FileBox: React.FC<FileBoxProps> = ({
         className=" bg-white border border-Gray-50 mb-1 p-1 md:p-3 min-h-[48px] w-full rounded-[12px]  text-Text-Primary text-[10px]"
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
-        <div
-          className={`flex justify-between items-center w-full `}
-        >
+        <div className={`flex justify-between items-center w-full `}>
           <div className="text-[10px]  text-Text-Primary select-none ">
             <TooltipTextAuto
               tooltipClassName="!bg-white ml-8 !w-[180px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
               maxWidth="77px"
             >
-             {el.file_name || el.file.name}
+              {el.file_name || el.file.name}
             </TooltipTextAuto>
           </div>
 
-          <div className={`w-[70px] text-center ${            isDeleted ? 'opacity-50' : ''
-}`}>
+          <div
+            className={`w-[70px] text-center ${isDeleted ? 'opacity-50' : ''}`}
+          >
             {formatDate(
               el.date_uploaded ? el.date_uploaded : new Date().toDateString(),
             )}
@@ -90,8 +89,11 @@ const FileBox: React.FC<FileBoxProps> = ({
             </>
           ) : (
             <>
-              <div className={`flex justify-center gap-2 items-center ${            isDeleted ? 'opacity-50' : ''
-}`}>
+              <div
+                className={`flex justify-center gap-2 items-center ${
+                  isDeleted ? 'opacity-50' : ''
+                }`}
+              >
                 {isSureRemoveId == el.file_id && !isDeleted ? (
                   <>
                     {!isLoading ? (
