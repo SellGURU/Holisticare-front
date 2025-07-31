@@ -319,21 +319,35 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
+
     if (!loading && section) {
-      // Ensure loading is complete
-      const element = document.getElementById(section);
-      if (element) {
+      const tryScroll = () => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+          if (!isVisible) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      };
+
+      const delayAndScroll = () => {
         setTimeout(() => {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }, 500);
-      } else {
-        console.warn(`Element with ID '${section}' not found.`);
-      }
+          tryScroll();
+        }, 700); // a bit longer delay to ensure layout is complete
+      };
+
+      delayAndScroll();
+
+      // Scroll again after more delay in case of late layout shifts
+      const scrollAgain = setTimeout(tryScroll, 1200);
+
+      return () => clearTimeout(scrollAgain);
     }
-  }, [location, loading]); // Add 'loading' to dependencies
+  }, [location, loading]);
+
   useEffect(() => {
     if (!isHaveReport) {
       publish('reportStatus', {
@@ -737,10 +751,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             </div>
             {accessManager.filter((el) => el.name == 'Action Plan')[0]
               .checked == true && (
-              <div
-                id="Action Plan"
-                className="mt-[200px] mb-[50px] min-h-[650px]"
-              >
+              <div className="my-[200px]  min-h-[700px]">
                 <div
                   id="Action Plan"
                   className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
