@@ -318,8 +318,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
     // }
     // return refData;
-    if (ClientSummaryBoxs && !showReport) {
-      return ClientSummaryBoxs.subcategories;
+    if (ClientSummaryBoxs) {
+      if (
+        ClientSummaryBoxs.subcategories.length > 0 &&
+        ClientSummaryBoxs.subcategories[0].subcategory !== 'Diabetes & Glucose'
+      ) {
+        return ClientSummaryBoxs.subcategories;
+      } else {
+        return [];
+      }
     }
     return [];
   };
