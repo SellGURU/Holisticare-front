@@ -41,6 +41,8 @@ export function SurveyResponsesView({
   time,
   title,
 }: SurveyResponsesViewProps) {
+  const sortedQuestions = [...questions].sort((a, b) => a.order - b.order);
+
   const getResponseDisplay = (question: Question) => {
     if (question.response === undefined || question.response === null) {
       return <span className="text-gray-400 italic">No response</span>;
@@ -153,7 +155,7 @@ export function SurveyResponsesView({
         )}
 
         <div className="space-y-8">
-          {questions.map((question, index) => (
+          {sortedQuestions.map((question: Question, index: number) => (
             <Card
               key={index}
               className="shadow-lg border border-gray-200 rounded-xl bg-white/90 hover:shadow-xl transition-shadow duration-200"
@@ -161,7 +163,7 @@ export function SurveyResponsesView({
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-semibold text-Text-Primary ">
                   <span className="bg-blue-100 text-blue-700 rounded px-2 py-0.5 text-xs font-mono mr-2">
-                    {question.order}
+                    {index + 1}
                   </span>
                   <span>{question.question}</span>
                   {question.required && (

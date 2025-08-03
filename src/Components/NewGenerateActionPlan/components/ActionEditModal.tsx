@@ -364,7 +364,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
     if (
       selectedGroup === 'Diet' &&
-      (totalMacros.Carbs === '' || totalMacros.Protein === '' || totalMacros.Fats === '')
+      (totalMacros.Carbs === '' ||
+        totalMacros.Protein === '' ||
+        totalMacros.Fats === '')
     ) {
       return;
     }
@@ -636,10 +638,14 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       newErrors.value = 'This field is required.';
     }
 
-    if (selectedGroup === 'Diet' && 
-      (totalMacros.Carbs === '' || totalMacros.Protein === '' || totalMacros.Fats === '')) {
-    newErrors.macros = 'All macro values are required.';
-  }
+    if (
+      selectedGroup === 'Diet' &&
+      (totalMacros.Carbs === '' ||
+        totalMacros.Protein === '' ||
+        totalMacros.Fats === '')
+    ) {
+      newErrors.macros = 'All macro values are required.';
+    }
 
     if (!selectedGroup) {
       newErrors.category = 'This field is required.';
