@@ -19,9 +19,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
   const [error, setError] = useState(false);
 
   const addOption = () => {
-   
-      setOptions([...options, '']);
-    
+    setOptions([...options, '']);
   };
 
   const handleOptionChange = (index: number, value: string) => {
