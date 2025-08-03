@@ -213,7 +213,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   useEffect(() => {
     setLoading(true);
     fetchPatentData();
-    if(callSync){
+    if (callSync) {
       setCallSync(false);
     }
   }, [resolvedMemberID, memberID, callSync]);
