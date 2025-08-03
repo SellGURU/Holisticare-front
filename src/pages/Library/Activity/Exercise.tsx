@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
-import { ExerciseRow } from './AddComponents/ExerciseRow';
-import ExerciseModal from './AddComponents/ExcersieModal';
-import Application from '../../../api/app';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import Application from '../../../api/app';
+import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
+import ExerciseModal from './AddComponents/ExcersieModal';
+import { ExerciseRow } from './AddComponents/ExerciseRow';
 interface ExerciseHandlerProps {
   data: Array<any>;
   onAdd: () => void;
@@ -74,6 +74,23 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         setLoadingCall(false);
       });
   };
+  const [dynamicHeight, setDynamicHeight] = useState<number | null>(null);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (typeof window !== 'undefined') {
+        const newHeight =
+          window.innerWidth > 720
+            ? window.innerHeight - 220
+            : window.innerHeight - 320;
+        setDynamicHeight(newHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
 
   return (
     <>
@@ -102,7 +119,12 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
       ) : (
         <>
           {data.length > 0 ? (
-            <div className="mt-6 h-[540px] overflow-auto">
+            <div
+              className="mt-6 overflow-y-auto mb-20 md:mb-14"
+              style={{
+                height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
+              }}
+            >
               <table className="w-full  ">
                 <thead className="w-full">
                   <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
