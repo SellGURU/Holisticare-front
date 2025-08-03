@@ -62,32 +62,35 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   }, [isHaveReport, resolvedMemberID]);
   const fetchPatentData = () => {
-    if(isShare){
-      Application.getPatientsInfoShare({
-        member_id: memberID,
-      }, uniqKey).then((res) => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setTimeout(() => {
-          if(res.data.show_report == true){
+          if (res.data.show_report == true) {
             fetchShareData();
-          }            
+          }
         }, 2000);
       });
-    }else{
+    } else {
       Application.getPatientsInfo({
         member_id: resolvedMemberID,
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
         setTimeout(() => {
-          if(res.data.show_report == true){
+          if (res.data.show_report == true) {
             fetchData();
-          }            
+          }
         }, 2000);
       });
     }
-  }
+  };
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -95,9 +98,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         // setReferenceData(referencedataMoch);
         clearUsedPositions();
       })
-      .catch(() => {
-
-      });
+      .catch(() => {});
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
@@ -146,7 +147,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       // setClientSummaryBoxs(mydata);
 
       setISGenerateLoading(false);
-
     });
     Application.getConceringResultsShare(
       {
@@ -212,7 +212,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   ]);
   useEffect(() => {
     fetchPatentData();
-  },  [resolvedMemberID, memberID, callSync]);
+  }, [resolvedMemberID, memberID, callSync]);
   // useEffect(() => {
   //   setLoading(true);
   //   if ((resolvedMemberID != 123 && !isShare) || callSync) {
@@ -235,12 +235,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
       setCalenderData(calenderDataMoch);
-    }else {
+    } else {
       setReferenceData(null);
       setClientSummaryBoxs(null);
       setConcerningResult([]);
       setTreatmentPlanData([]);
-      setCalenderData([]);      
+      setCalenderData([]);
     }
   }, [isHaveReport]);
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
@@ -268,7 +268,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //     refData.push(...el.biomarkers);
     // });
     // return refData;
-    if(referenceData){
+    if (referenceData) {
       return referenceData?.biomarkers;
     }
     return [];
@@ -804,7 +804,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     onGenderate={() => {
                       setISGenerateLoading(true);
                       setTimeout(() => {
-                        fetchPatentData()
+                        fetchPatentData();
                         // publish('QuestionaryTrackingCall', {});
                         // fetchData();
                       }, 5000);
