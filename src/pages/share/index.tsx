@@ -98,14 +98,16 @@ const Share = () => {
             isShare
           ></ReportSideMenu>
         </div>
-
-        <div className="w-full xl:pl-[200px] fixed">
-          <ReportAnalyseView
-            memberID={Number(memberId)}
-            uniqKey={id}
-            isShare
-          ></ReportAnalyseView>
-        </div>
+        {memberId != '123' && (
+          <div className="w-full xl:pl-[200px] fixed">
+            <ReportAnalyseView
+              memberID={Number(memberId)}
+              uniqKey={id}
+              isShare
+            ></ReportAnalyseView>
+          </div>
+          
+        )}
       </div>
     </>
   );

@@ -71,7 +71,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchShareData();
@@ -84,7 +84,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -94,7 +94,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     }
   };
 
-  const fetchPatentDataWithState = (currentDevelopHealthPlan: boolean) => {
+  const fetchPatentDataWithState = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
         {
@@ -104,7 +104,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchShareData();
@@ -117,23 +117,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
         setTimeout(() => {
           if (res.data.show_report == true) {
-            fetchData(currentDevelopHealthPlan);
+            fetchData();
           }
         }, 2000);
       });
     }
   };
-  const [developHealthPlan, setDevelopHealthPlan] = useState(false);
-  const fetchData = (currentDevelopHealthPlan = developHealthPlan) => {
+  const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        if (currentDevelopHealthPlan == true) {
-          setShowUploadTest(false);
-        }
+        // if (currentDevelopHealthPlan == true) {
+        //   setShowUploadTest(false);
+        // }
         // if (
         //   res.data.biomarkers.length == 0 &&
         //   currentDevelopHealthPlan == false
@@ -177,7 +176,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const fetchShareData = () => {
     Application.getClientSummaryOutofrefsShare(
       {
-        member_id: memberID,
+        member_id: resolvedMemberID,
       },
       uniqKey,
     ).then((res) => {
@@ -909,11 +908,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     showReport={isHaveReport}
                     onGenderate={() => {
                       setISGenerateLoading(true);
+                      Application.first_view_report(resolvedMemberID).then(
+                        (res) => {
+                          console.log(res);
+                        },
+                      );
                       setTimeout(() => {
-                        setDevelopHealthPlan(true);
-                        // Call fetchPatentData with the updated state value
-                        const updatedDevelopHealthPlan = true;
-                        fetchPatentDataWithState(updatedDevelopHealthPlan);
+                        fetchPatentDataWithState();
                         // publish('QuestionaryTrackingCall', {});
                         // fetchData();
                       }, 5000);
