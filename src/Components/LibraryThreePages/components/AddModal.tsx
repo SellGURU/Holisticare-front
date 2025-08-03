@@ -376,7 +376,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
               <Tooltip
                 id={`dose-info`}
                 place="top-start"
-                className="!bg-white !w-fit !text-wrap 
+                className="!bg-white !w-fit !text-wrap max-w-[300px]
                      !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 style={{
                   zIndex: 9999,
@@ -396,15 +396,14 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 Value
                 <img
                   data-tooltip-id="value-info"
-                  className="size-2 cursor-pointer"
-                  src="/icons/info-circle-blue.svg"
+                  src="/icons/info-circle.svg"
                   alt=""
                 />
                 <Tooltip
                   id={`value-info`}
                   place="top-start"
-                  className="!bg-white !w-fit !text-wrap 
-                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                  className="!bg-white !w-fit !text-wrap max-w-[300px]
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                   style={{
                     zIndex: 9999,
                     pointerEvents: 'none',
@@ -474,9 +473,26 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Diet Specific Fields */}
           {pageType === 'Diet' && (
             <div className="flex flex-col w-full mt-3.5">
-              <div className="font-medium text-Text-Primary text-xs">
+              <div className="font-medium text-Text-Primary text-xs flex gap-1 items-start">
                 Macros Goal
+                <img
+                  data-tooltip-id="macros-info"
+                  src="/icons/info-circle.svg"
+                  alt=""
+                />
               </div>
+              <Tooltip
+                id={`macros-info`}
+                place="top-start"
+                className="!bg-white !w-fit !text-wrap max-w-[300px]
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+              >
+                Macros Goal must contain just Whole Numbers.
+              </Tooltip>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between mt-3 gap-4">
                   {/* Carbs Input */}
