@@ -435,6 +435,17 @@ const Card: React.FC<CardProps> = ({
               )}
             </>
           ))}
+          {content.length == 0 && 
+          <>
+            <div className="flex justify-center mt-10 items-center w-full">
+              <div className="flex flex-col items-center justify-center">
+                <img src="/icons/Empty/HolisticPlanEmpty.svg" alt="" />
+                <div className="text-Text-Primary text-center mt-[-20px] TextStyle-Headline-6">
+                  No biomarker insights found.
+                </div>
+              </div>
+            </div>          
+          </>}
         </ul>
       )}
     </div>
