@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import SummaryBox from './SummaryBox';
-// import MyChartComponent from "./StatusChart"
 import ConceringRow from './Boxs/ConceringRow';
 import DetiledAnalyse from './Boxs/DetiledAnalyse';
 import RefrenceBox from './Boxs/RefrenceBox';
-// import TreatmentCard from "./Boxs/TreatmentPlanCard"
 import Legends from './Legends';
-// import Point from "./Point"
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
@@ -20,9 +17,6 @@ import Application from '../../api/app';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-// import { BeatLoader } from "react-spinners"
-// import CalenderComponent from "../information/calender/ComponentCalender"
-// import PrintReport from './PrintReport';
 import { useLocation } from 'react-router-dom';
 import { ActionPlan } from '../Action-plan';
 import { TreatmentPlan } from '../TreatmentPlan';
@@ -55,7 +49,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [caldenderData, setCalenderData] = useState<any>(null);
   const [userInfoData, setUserInfoData] = useState<any>(null);
   const [isHaveReport, setIsHaveReport] = useState(true);
-  const [showReport, setShowReport] = useState(true);
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   // const history = useHistory();
   const location = useLocation();
@@ -68,11 +61,33 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   }, [isHaveReport, resolvedMemberID]);
-  useEffect(() => {
-    publish('showReport', {
-      showReport: showReport,
-    });
-  }, [showReport, resolvedMemberID]);
+  const fetchPatentData = () => {
+    if(isShare){
+      Application.getPatientsInfoShare({
+        member_id: memberID,
+      }, uniqKey).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setTimeout(() => {
+          if(res.data.show_report == true){
+            fetchShareData();
+          }            
+        }, 2000);
+      });
+    }else{
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setTimeout(() => {
+          if(res.data.show_report == true){
+            fetchData();
+          }            
+        }, 2000);
+      });
+    }
+  }
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
@@ -81,14 +96,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         clearUsedPositions();
       })
       .catch(() => {
-        // setReferenceData({
-        //   detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
-        //   total_biomarker_note:
-        //     'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
-        //   biomarkers: [],
-        // });
-        // // setReferenceData(referencedataMoch);
-        // clearUsedPositions();
+
       });
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
@@ -97,13 +105,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
       setISGenerateLoading(false);
       // console.log(res.data);
-      if (res.data.subcategories.length == 0) {
-        setIsHaveReport(false);
-        setClientSummaryBoxs(mydata);
-      } else {
-        setClientSummaryBoxs(res.data);
-        setIsHaveReport(true);
-      }
+      setClientSummaryBoxs(res.data);
     });
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
@@ -123,22 +125,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
       },
     );
-    // Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
-    //   (res) => {
-    //     setCalenderData(res.data);
-    //     if (res.data.length == 0) {
-    //       publish('ActionPlanStatus', { isempty: true });
-    //     } else {
-    //       publish('ActionPlanStatus', { isempty: false });
-    //     }
-    //   },
-    // );
-    Application.getPatientsInfo({
-      member_id: resolvedMemberID,
-    }).then((res) => {
-      setUserInfoData(res.data);
-      setShowReport(res.data.show_report);
-    });
   };
   const fetchShareData = () => {
     Application.getClientSummaryOutofrefsShare(
@@ -160,11 +146,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       // setClientSummaryBoxs(mydata);
 
       setISGenerateLoading(false);
-      if (res.data.subcategories.length == 0) {
-        setIsHaveReport(false);
-      } else {
-        setIsHaveReport(true);
-      }
+
     });
     Application.getConceringResultsShare(
       {
@@ -191,14 +173,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     ).then((res) => {
       // Please don't touch.
       setCalenderData(res.data);
-    });
-    Application.getPatientsInfoShare(
-      {
-        member_id: memberID,
-      },
-      uniqKey,
-    ).then((res) => {
-      setUserInfoData(res.data);
     });
   };
   const navigate = useNavigate();
@@ -237,17 +211,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     },
   ]);
   useEffect(() => {
-    setLoading(true);
-    if ((resolvedMemberID != 123 && !isShare) || callSync) {
-      fetchData();
-      console.log('aa');
-
-      setCallSync(false);
-    }
-    if (isShare && memberID != 123) {
-      fetchShareData();
-    }
-  }, [resolvedMemberID, memberID, callSync]);
+    fetchPatentData();
+  },  [resolvedMemberID, memberID, callSync]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if ((resolvedMemberID != 123 && !isShare) || callSync) {
+  //     fetchData();
+  //     setCallSync(false);
+  //   }
+  //   if (isShare && memberID != 123) {
+  //     fetchShareData();
+  //   }
+  // }, [resolvedMemberID, memberID, callSync]);
   useEffect(() => {
     if (isShare) {
       setAccessManager(decodeAccessUser(name as string));
@@ -260,6 +235,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
       setCalenderData(calenderDataMoch);
+    }else {
+      setReferenceData(null);
+      setClientSummaryBoxs(null);
+      setConcerningResult([]);
+      setTreatmentPlanData([]);
+      setCalenderData([]);      
     }
   }, [isHaveReport]);
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
@@ -287,7 +268,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //     refData.push(...el.biomarkers);
     // });
     // return refData;
-    return referenceData?.biomarkers;
+    if(referenceData){
+      return referenceData?.biomarkers;
+    }
+    return [];
   };
   // useEffect(() => {
   //   clearUsedPositions();
@@ -319,49 +303,28 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     // }
     // return refData;
     if (ClientSummaryBoxs) {
-      if (
-        ClientSummaryBoxs.subcategories.length > 0 &&
-        ClientSummaryBoxs.subcategories[0].subcategory !== 'Diabetes & Glucose'
-      ) {
-        return ClientSummaryBoxs.subcategories;
-      } else {
-        return [];
-      }
+      return ClientSummaryBoxs.subcategories;
     }
     return [];
   };
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const section = params.get('section');
-
     if (!loading && section) {
-      const tryScroll = () => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-
-          if (!isVisible) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
-      };
-
-      const delayAndScroll = () => {
+      // Ensure loading is complete
+      const element = document.getElementById(section);
+      if (element) {
         setTimeout(() => {
-          tryScroll();
-        }, 700); // a bit longer delay to ensure layout is complete
-      };
-
-      delayAndScroll();
-
-      // Scroll again after more delay in case of late layout shifts
-      const scrollAgain = setTimeout(tryScroll, 1200);
-
-      return () => clearTimeout(scrollAgain);
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }, 500);
+      } else {
+        console.warn(`Element with ID '${section}' not found.`);
+      }
     }
-  }, [location, loading]);
-
+  }, [location, loading]); // Add 'loading' to dependencies
   useEffect(() => {
     if (!isHaveReport) {
       publish('reportStatus', {
@@ -478,17 +441,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-          {!isHaveReport && !showReport ? (
+          {!isHaveReport && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
-          ) : (
-            ''
           )}
           <div
             ref={scrollContainerRef}
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport || showReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -605,7 +566,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       Needs Focus Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData.total_biomarker_note}
+                      {referenceData?.total_biomarker_note}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
@@ -691,7 +652,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Detailed Analysis
                   </div>
                   <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                    {referenceData.detailed_analysis_note}
+                    {referenceData?.detailed_analysis_note}
                   </div>
                 </div>
 
@@ -767,7 +728,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             </div>
             {accessManager.filter((el) => el.name == 'Action Plan')[0]
               .checked == true && (
-              <div className="my-[200px]  min-h-[700px]">
+              <div
+                id="Action Plan"
+                className="mt-[200px] mb-[50px] min-h-[650px]"
+              >
                 <div
                   id="Action Plan"
                   className="TextStyle-Headline-4 sectionScrollEl text-Text-Primary mb-4"
@@ -787,7 +751,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
               </div>
             )}
-            {isHaveReport && showReport ? (
+            {isHaveReport && (
               // <div className="hidden print:block" id="printDiv">
               //   <PrintReport
               //     helthPlan={ActionPlanPrint}
@@ -819,10 +783,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 />
                 {/* <></> */}
               </div>
-            ) : (
-              ''
             )}
-            {!isHaveReport && !showReport ? (
+            {!isHaveReport && (
               <>
                 {isGenerateLoading ? (
                   <>
@@ -838,20 +800,19 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 ) : (
                   <UploadTest
                     isShare={isShare}
+                    showReport={isHaveReport}
                     onGenderate={() => {
                       setISGenerateLoading(true);
                       setTimeout(() => {
+                        fetchPatentData()
                         // publish('QuestionaryTrackingCall', {});
-                        fetchData();
+                        // fetchData();
                       }, 5000);
                     }}
                     memberId={resolvedMemberID}
-                    showReport={showReport}
                   ></UploadTest>
                 )}
               </>
-            ) : (
-              ''
             )}
           </div>
         </>
