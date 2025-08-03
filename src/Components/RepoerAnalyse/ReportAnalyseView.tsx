@@ -129,18 +129,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        // if (currentDevelopHealthPlan == true) {
-        //   setShowUploadTest(false);
-        // }
-        // if (
-        //   res.data.biomarkers.length == 0 &&
-        //   currentDevelopHealthPlan == false
-        // ) {
-        //   setShowUploadTest(true);
-        // } else {
-        //   setShowUploadTest(false);
-        // }
-        // setReferenceData(referencedataMoch);
+        if (res.data.biomarkers.length == 0) {
+          publish('DetailedAnalysisStatus', { isempty: true });
+        } else {
+          publish('DetailedAnalysisStatus', { isempty: false });
+        }
+        if(res.data.biomarkers.filter((el:any) =>el.outofref == true).length > 0){
+          publish('NeedsFocusBiomarkerStatus', { isempty: false });
+        }else{
+          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        }
+
         clearUsedPositions();
       })
       .catch(() => {});
@@ -156,6 +155,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
         setConcerningResult(res.data.table);
+        if (res.data.table.length == 0) {
+          publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
+        }
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
