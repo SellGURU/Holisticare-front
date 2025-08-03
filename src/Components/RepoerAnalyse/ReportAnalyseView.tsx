@@ -131,8 +131,8 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        if(currentDevelopHealthPlan == true)  {
-          setShowUploadTest(false)
+        if (currentDevelopHealthPlan == true) {
+          setShowUploadTest(false);
         }
         // if (
         //   res.data.biomarkers.length == 0 &&
