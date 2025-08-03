@@ -106,7 +106,6 @@ const Share = () => {
               isShare
             ></ReportAnalyseView>
           </div>
-          
         )}
       </div>
     </>
