@@ -52,15 +52,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   // const history = useHistory();
   const location = useLocation();
-  useEffect(() => {
-    // Watch for changes in isHaveReport
-    if (!isHaveReport) {
-      publish('reportStatus', {
-        isHaveReport: false,
-        memberId: resolvedMemberID,
-      });
-    }
-  }, [isHaveReport, resolvedMemberID]);
+  // useEffect(() => {
+  //   // Watch for changes in isHaveReport
+  //   if (!isHaveReport) {
+  //     publish('reportStatus', {
+  //       isHaveReport: false,
+  //       memberId: resolvedMemberID,
+  //     });
+  //   }
+  // }, [isHaveReport, resolvedMemberID]);
   const fetchPatentData = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -91,10 +91,47 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   };
-  const fetchData = () => {
+
+  const fetchPatentDataWithState = (currentDevelopHealthPlan: boolean) => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchShareData();
+          }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData(currentDevelopHealthPlan);
+          }
+        }, 2000);
+      });
+    }
+  };
+  const [developHealthPlan,setDevelopHealthPlan] = useState(false);
+  const fetchData = (currentDevelopHealthPlan = developHealthPlan) => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
+        if(res.data.biomarkers.length == 0 && currentDevelopHealthPlan == false){
+          setShowUploadTest(true);
+        }else{
+          setShowUploadTest(false);
+        }
         // setReferenceData(referencedataMoch);
         clearUsedPositions();
       })
@@ -329,8 +366,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
     }
   }, [location, loading]); // Add 'loading' to dependencies
+  const [showUploadTest, setShowUploadTest] = useState(true);
   useEffect(() => {
-    if (!isHaveReport) {
+    if (showUploadTest) {
       publish('reportStatus', {
         isHaveReport: false,
         memberId: resolvedMemberID,
@@ -341,7 +379,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         memberId: resolvedMemberID,
       });
     }
-  }, [isHaveReport, resolvedMemberID]);
+  }, [showUploadTest, resolvedMemberID]);
 
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
@@ -372,7 +410,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [id, loading]);
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
+  
   // 2. Modified useEffect with proper dependencies
   useEffect(() => {
     const handleStickyScroll = () => {
@@ -445,7 +483,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-          {!isHaveReport && (
+          {showUploadTest && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
           <div
@@ -453,7 +491,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -842,7 +880,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 {/* <></> */}
               </div>
             )}
-            {!isHaveReport && (
+            {showUploadTest && (
               <>
                 {isGenerateLoading ? (
                   <>
@@ -862,7 +900,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     onGenderate={() => {
                       setISGenerateLoading(true);
                       setTimeout(() => {
-                        fetchPatentData();
+                        setDevelopHealthPlan(true);
+                        // Call fetchPatentData with the updated state value
+                        const updatedDevelopHealthPlan = true;
+                        fetchPatentDataWithState(updatedDevelopHealthPlan);
                         // publish('QuestionaryTrackingCall', {});
                         // fetchData();
                       }, 5000);
