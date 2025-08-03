@@ -468,7 +468,7 @@ const Stadio: FC<StadioProps> = ({
           setshowAddModal(false);
         }}
       />
-      <div className="flex px-6 gap-4">
+      <div className="flex px-6 gap-4 select-none">
         <div className="flex-grow">
           {haveConflic && (
             <div className="w-full  my-2 ">
@@ -495,7 +495,7 @@ const Stadio: FC<StadioProps> = ({
               className={`flex-grow flex justify-between ${selectCategory == 'Checkin' && (actions.checkIn.length === 0 || actions.category.length === 0) ? 'mb-[39px]' : selectCategory == 'Checkin' ? 'mt-2 mb-3' : 'mb-2'}`}
             >
               <div
-                className="flex items-center gap-1 pl-2 cursor-pointer"
+                className="flex items-center gap-1 select-none pl-2 cursor-pointer"
                 onClick={() => setIsSlideOutPanel(true)}
               >
                 <img src="/icons/eye-blue.svg" alt="" className="size-5" />
@@ -503,11 +503,11 @@ const Stadio: FC<StadioProps> = ({
                   Review Holistic Plan
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center select-none gap-3">
                 {actions.checkIn.length !== 0 ||
                 actions.category.length !== 0 ? (
                   <div
-                    className="flex items-center gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
+                    className="flex items-center select-none gap-1 text-xs font-medium text-Primary-DeepTeal cursor-pointer mr-2"
                     onClick={() => setCalendarView(true)}
                   >
                     <img
