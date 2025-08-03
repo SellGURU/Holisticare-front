@@ -219,7 +219,19 @@ export function PublicSurveyForm({
   const [tempBack, setTempBack] = useState<IndividualFileData | null>(null);
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
   const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
-
+  useEffect(() => {
+    if (currentStep > sortedQuestions.length) {
+      const timer = setTimeout(() => {
+        if (window.flutter_inappwebview) {
+          window.flutter_inappwebview.callHandler('closeWebView');
+        } else {
+          window.close();
+        }
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, sortedQuestions.length]);
+  
   const currentQuestion =
     currentStep > 0 && currentStep <= sortedQuestions.length
       ? sortedQuestions[currentStep - 1]
