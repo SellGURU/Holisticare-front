@@ -70,12 +70,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         uniqKey,
       ).then((res) => {
         setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.first_time_view);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
         setTimeout(() => {
-          if (res.data.show_report == true) {
+          // if (res.data.show_report == true) {
             fetchShareData();
-          }
+          // }
         }, 2000);
       });
     } else {
@@ -103,12 +103,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         uniqKey,
       ).then((res) => {
         setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report);
-        setShowUploadTest(!res.data.first_time_view);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
         setTimeout(() => {
-          if (res.data.show_report == true) {
+
             fetchShareData();
-          }
+          // }
         }, 2000);
       });
     } else {
@@ -176,7 +176,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const fetchShareData = () => {
     Application.getClientSummaryOutofrefsShare(
       {
-        member_id: resolvedMemberID,
+        member_id: memberID,
       },
       uniqKey,
     ).then((res) => {
