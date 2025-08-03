@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from 'react';
 // import Uploading from './uploading';
-import { ButtonSecondary } from '../../Button/ButtosSecondary';
 import Application from '../../../api/app';
-import { publish } from '../../../utils/event';
 import { uploadToAzure } from '../../../help';
+import { publish, subscribe } from '../../../utils/event';
+import { ButtonSecondary } from '../../Button/ButtosSecondary';
 // import FileBox from '../../ComboBar/components/FileBox';
 import FileBoxUploading from './FileBoxUploading';
 
@@ -22,12 +22,14 @@ interface UploadTestProps {
   memberId: any;
   onGenderate: () => void;
   isShare?: boolean;
+  showReport: boolean;
 }
 
 const UploadTest: React.FC<UploadTestProps> = ({
   memberId,
   onGenderate,
   isShare,
+  showReport,
 }) => {
   const fileInputRef = useRef<any>(null);
   // const [files, setFiles] = useState<Array<any>>([]);
@@ -207,6 +209,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
     }
     fileInputRef.current.value = '';
   };
+  const [questionaryLength, setQuestionaryLength] = useState(false);
+  subscribe('questionaryLength', (value: any) => {
+    setQuestionaryLength(value.detail.questionaryLength);
+  });
   return (
     <>
       <div className=" w-full  rounded-[16px] h-full md:h-[89vh] top-4 flex justify-center  absolute left-0">
@@ -353,8 +359,10 @@ const UploadTest: React.FC<UploadTestProps> = ({
             <div className="flex justify-center mt-5">
               <ButtonSecondary
                 disabled={
-                  uploadedFiles.filter((el) => el.status == 'completed')
-                    .length == 0
+                  showReport || questionaryLength
+                    ? false
+                    : uploadedFiles.filter((el) => el.status == 'completed')
+                        .length == 0
                 }
                 onClick={() => {
                   onGenderate();

@@ -250,7 +250,7 @@ const FileBox: React.FC<FileBoxProps> = ({
             </div>
             <div className="text-[10px] text-Text-Quadruple mt-2 leading-5">
               If you would like to remove its related data from the report,
-              please click the “Sync Data” button.
+              please click the “Unsync Data” button.
             </div>
             <div className="w-full flex justify-end">
               <ButtonSecondary
@@ -259,9 +259,12 @@ const FileBox: React.FC<FileBoxProps> = ({
                 onClick={() => {
                   setIsSureRemoveId(null);
                   publish('syncReport', {});
+                  publish('fileIsDeleting', {
+                    isDeleting: false,
+                  });
                 }}
               >
-                Sync Data
+                Unsync Data
               </ButtonSecondary>
             </div>
           </div>

@@ -8,12 +8,16 @@ import TextField from '../../../../Components/TextField';
 import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
 import RangeCardLibraryActivity from './RangeCard';
+import SpinnerLoader from '../../../../Components/SpinnerLoader';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exerciseData: any) => void;
   exercise?: any; // Optional, used for editing
   isEdit?: boolean;
+  loadingCall: boolean;
+  clearData: boolean;
+  handleClearData: (value: boolean) => void;
 }
 interface FileData {
   Title: string;
@@ -31,6 +35,9 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   onSubmit,
   exercise = {}, // Default to an empty object for adding
   isEdit,
+  loadingCall,
+  clearData,
+  handleClearData,
 }) => {
   const [, setTitle] = useState(exercise.Title || '');
   // const [, setDescription] = useState(exercise.Description || '');
@@ -174,8 +181,8 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     };
 
     onSubmit(exerciseData);
-    onClose();
-    resetForm();
+    // onClose();
+    // resetForm();
   };
 
   // const handleFileChange = async (
@@ -352,12 +359,19 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     setInstruction(formik.values.instruction);
     setScore(formik.values.score);
   }, [formik.values]);
+  useEffect(() => {
+    if (clearData) {
+      resetForm();
+      handleClearData(false);
+    }
+  }, [clearData]);
   return (
     <MainModal
       isOpen={isOpen}
       onClose={() => {
         resetForm();
         onClose();
+        handleClearData(false);
       }}
     >
       <div className="w-[1107px] h-[503px] rounded-2xl p-4 shadow-800 bg-white text-Text-Primary relative">
@@ -666,7 +680,15 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             onClick={handleSubmit}
             className="text-Primary-DeepTeal cursor-pointer text-sm font-medium"
           >
-            {isEdit ? 'Save' : 'Add'}
+            {!loadingCall ? (
+              isEdit ? (
+                'Save'
+              ) : (
+                'Add'
+              )
+            ) : (
+              <SpinnerLoader color="#005F73" />
+            )}
           </div>
         </div>
       </div>

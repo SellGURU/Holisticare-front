@@ -7,6 +7,7 @@ import {
   CardTitle,
   CardDescription,
 } from '../../Components/ui/card';
+import { Star } from 'lucide-react';
 
 // --- NEW/UPDATED INTERFACES ---
 interface MultiFileResponse {
@@ -33,6 +34,15 @@ interface SurveyResponsesViewProps {
   time?: any;
   isCustom?: boolean;
 }
+
+// Emoji data for display
+const emojeysData = [
+  { name: 'Angry', order: 0, icon: '/images/emoji/angery.gif' },
+  { name: 'Sad', order: 1, icon: '/images/emoji/sad.gif' },
+  { name: 'Neutral', order: 2, icon: '/images/emoji/poker.gif' },
+  { name: 'Smile', order: 3, icon: '/images/emoji/smile.gif' },
+  { name: 'Loved', order: 4, icon: '/images/emoji/love.gif' },
+];
 
 export function SurveyResponsesView({
   questions,
@@ -112,6 +122,90 @@ export function SurveyResponsesView({
               />
             </div>
           )}
+        </div>
+      );
+    }
+
+    // Handle "Star Rating" type
+    if (question.type.toLowerCase() === 'star rating') {
+      const rating = Number.parseInt(question.response.toString()) || 0;
+      const maxStars = question.options?.length || 5;
+
+      return (
+        <div className="flex flex-col items-center space-y-4">
+          <div className="flex space-x-2">
+            {Array.from({ length: maxStars }).map((_, index) => (
+              <div
+                key={index}
+                className={`p-1 rounded-full ${
+                  index < rating ? 'text-yellow-400' : 'text-gray-300'
+                }`}
+              >
+                <Star className="h-8 w-8 fill-current" />
+              </div>
+            ))}
+          </div>
+          {rating > 0 && (
+            <span className="text-green-600 font-medium">
+              Selected: {rating} star{rating !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    // Handle "Scale" type
+    if (question.type.toLowerCase() === 'scale') {
+      const value = Number.parseInt(question.response.toString()) || 0;
+      const min = Number.parseInt(question.options?.[0] || '1');
+      const max = Number.parseInt(question.options?.[1] || '10');
+
+      return (
+        <div className="space-y-6 px-4 mt-4">
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-green-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+            ></div>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-sm text-gray-500">Low ({min})</span>
+            <span className="text-green-600 font-bold text-xl">{value}</span>
+            <span className="text-sm text-gray-500">High ({max})</span>
+          </div>
+        </div>
+      );
+    }
+
+    // Handle "Emojis" type
+    if (question.type.toLowerCase() === 'emojis') {
+      const selectedEmojiName = question.response.toString();
+      const selectedEmoji = emojeysData.find(
+        (el) => el.name === selectedEmojiName,
+      );
+
+      if (!selectedEmoji) {
+        return <span className="text-gray-400 italic">No emoji selected</span>;
+      }
+
+      return (
+        <div className="bg-[#FCFCFC] p-3 w-full rounded-[12px] border border-gray-50">
+          <div className="bg-white mt-2 w-full rounded-[20px] py-3 px-2">
+            <div className="flex w-full justify-center items-center">
+              <div className="w-[60px] h-[60px] min-w-[60px] min-h-[60px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                <img
+                  className="w-[48px]"
+                  src={selectedEmoji.icon}
+                  alt={selectedEmoji.name}
+                />
+              </div>
+            </div>
+            <div className="w-full mt-4 flex justify-center">
+              <div className="text-[14px] text-[#005F73]">
+                {selectedEmoji.name}
+              </div>
+            </div>
+          </div>
         </div>
       );
     }

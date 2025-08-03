@@ -241,8 +241,8 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
                           }`}
                         >
                           {hasAnyExerciseFiles(value.Sections)
-                            ? 'Youtube Link / Video'
-                            : 'No Link / Video'}
+                            ? 'Youtube Link / Video / Image'
+                            : 'No Link / Video / Image'}
                         </div>
                       )}
                       <div className="text-xs text-Text-Primary text-justify ml-1">

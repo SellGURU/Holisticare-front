@@ -4,6 +4,7 @@ import InformationStep from './AddComponents/informationStep';
 import ExersiceStep from './AddComponents/ExersiceStep';
 import Application from '../../../api/app';
 import Circleloader from '../../../Components/CircleLoader';
+import SpinnerLoader from '../../../Components/SpinnerLoader';
 // import SectionOrderModal from './AddComponents/SectionOrder';
 
 interface AddActivityProps {
@@ -16,6 +17,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
   const [step, setStep] = useState(0);
   // const [showSectionOrder, setShowSectionOrder] = useState(false);
   const [loading, setLoading] = useState(editid ? true : false);
+  const [loadingCall, setLoadingCall] = useState(false);
   const [sectionList, setSectionList] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isExerciseStepValid, setIsExerciseStepValid] = useState(false);
@@ -55,6 +57,7 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
       }
 
       if (editid) {
+        setLoadingCall(true);
         Application.editActivity({
           Title: addData.title,
           // Description: addData.description,
@@ -72,12 +75,20 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
           },
           Activity_Location: addData.location,
           Act_Id: editid,
-        }).then(() => {
-          onSave();
-          setShowExerciseValidation(false);
-          setShowValidation(false);
-        });
+        })
+          .then(() => {
+            onSave();
+            setShowExerciseValidation(false);
+            setShowValidation(false);
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+          .finally(() => {
+            setLoadingCall(false);
+          });
       } else {
+        setLoadingCall(true);
         Application.addActivity({
           Title: addData.title,
           // Description: addData.description,
@@ -94,11 +105,18 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
             Terms: addData.terms,
           },
           Activity_Location: addData.location,
-        }).then(() => {
-          onSave();
-          setShowExerciseValidation(false);
-          setShowValidation(false);
-        });
+        })
+          .then(() => {
+            onSave();
+            setShowExerciseValidation(false);
+            setShowValidation(false);
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+          .finally(() => {
+            setLoadingCall(false);
+          });
       }
     }
   };
@@ -252,7 +270,17 @@ const AddActivity: FC<AddActivityProps> = ({ onClose, onSave, editid }) => {
               onClick={nextStep}
               className={`text-Primary-DeepTeal text-[14px] cursor-pointer font-medium`}
             >
-              {step === 0 ? 'Next' : editid ? 'Update' : 'Save'}
+              {!loadingCall ? (
+                step === 0 ? (
+                  'Next'
+                ) : editid ? (
+                  'Update'
+                ) : (
+                  'Save'
+                )
+              ) : (
+                <SpinnerLoader color="#005F73" />
+              )}
             </div>
             {/* <div
               onClick={step === 0 && !isFormValid ? undefined : nextStep}

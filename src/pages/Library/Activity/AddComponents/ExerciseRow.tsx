@@ -1,28 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
-import { MainModal } from '../../../../Components';
+import { Tooltip } from 'react-tooltip';
 import ExerciseModal from './ExcersieModal';
 import PreviewExerciseModal from './PreviewModal';
-import { Tooltip } from 'react-tooltip';
 interface ExerciseRowProps {
   exercise: any;
   index: number;
   onDelete: () => void;
   onUpdate: (updatedExercise: any) => void;
+  loadingCall: boolean;
+  clearData: boolean;
+  handleClearData: (value: boolean) => void;
+  showEditModalIndex: number | null;
+  setShowEditModalIndex: (value: number | null) => void;
 }
 export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   exercise,
   index,
   onDelete,
   onUpdate,
+  loadingCall,
+  clearData,
+  handleClearData,
+  showEditModalIndex,
+  setShowEditModalIndex,
 }) => {
   const [ConfirmDelete, setConfirmDelete] = useState(false);
   const [viewModal, setViewModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleUpdate = (updatedExercise: any) => {
     onUpdate(updatedExercise);
-    setShowEditModal(false);
   };
   const formatDate = (isoString: any) => {
     const date = new Date(isoString);
@@ -34,22 +41,25 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
   };
   return (
     <>
-      <MainModal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
-        <ExerciseModal
-          isEdit
-          exercise={exercise}
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-          onSubmit={handleUpdate}
-        />
-      </MainModal>
+      <ExerciseModal
+        isEdit
+        exercise={exercise}
+        isOpen={showEditModalIndex === index}
+        onClose={() => {
+          setShowEditModalIndex(null);
+        }}
+        onSubmit={handleUpdate}
+        loadingCall={loadingCall}
+        clearData={clearData}
+        handleClearData={handleClearData}
+      />
       <PreviewExerciseModal
         isOpen={viewModal}
         onClose={() => setViewModal(false)}
         exercise={exercise}
         onEdit={() => {
           setViewModal(false);
-          setShowEditModal(true);
+          setShowEditModalIndex(index);
         }}
       />
       <tr
@@ -58,11 +68,20 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
       >
         <td
           className="pl-4 py-3 text-xs w-[160px] text-Text-Primary select-none"
-          title={exercise.Title.length > 30 ? exercise.Title : undefined} // Tooltip for long titles
+          data-tooltip-id={`tooltip-${exercise.Title?.substring(0, 30)}-t`}
         >
           {exercise.Title.length > 30
             ? `${exercise.Title.substring(0, 30)}...`
             : exercise.Title}
+          {exercise.Title.length > 30 && (
+            <Tooltip
+              id={`tooltip-${exercise.Title?.substring(0, 30)}-t`}
+              place="top"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+            >
+              {exercise.Title}
+            </Tooltip>
+          )}
         </td>
         <td
           data-tooltip-id={'Instruction' + index}
@@ -77,7 +96,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <Tooltip
               id={`Instruction` + index}
               place="top"
-              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
@@ -96,7 +115,9 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
         >
           {exercise?.Files[0]?.Title === 'YouTube Link'
             ? 'Youtube-Link'
-            : 'Uploaded Video'}
+            : exercise?.Files[0]?.Type?.split('/')[0] === 'image'
+              ? 'Uploaded Image'
+              : 'Uploaded Video'}
         </td>
         {/* <td className="py-2 text-Text-Secondary text-[10px]">
       {exercise.file}
@@ -124,7 +145,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             <Tooltip
               id={`tooltip-activity-clinical-guidance-${index}`}
               place="top"
-              className="!bg-white !w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
@@ -166,7 +187,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
                 alt=""
               />
               <img
-                onClick={() => setShowEditModal(true)}
+                onClick={() => setShowEditModalIndex(index)}
                 className="cursor-pointer"
                 src="/icons/edit-blue.svg"
                 alt=""

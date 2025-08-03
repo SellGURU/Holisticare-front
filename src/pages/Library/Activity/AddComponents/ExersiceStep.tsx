@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import SearchBox from '../../../../Components/SearchBox';
-import TabNavigation from './TabNavigation';
 import Application from '../../../../api/app';
+import SearchBox from '../../../../Components/SearchBox';
 import ExerciseItem from './ExersiseItem';
 import SuperSetExersiseItem from './SuperSetExersiseItem';
+import TabNavigation from './TabNavigation';
 
 interface Exercise {
   Title: string;
@@ -532,15 +532,25 @@ const ExersiceStep: React.FC<ExersiceStepProps> = ({
                     <div className="flex items-center justify-center gap-[5px]">
                       <div className="relative">
                         <img
-                          src="/images/activity/activity-demo.png"
+                          src={
+                            Array.isArray(el?.Files) &&
+                            el.Files.length > 0 &&
+                            el.Files[0]?.Type?.startsWith('image')
+                              ? el.Files[0]?.Content?.url
+                              : '/images/activity/activity-demo.png'
+                          }
                           alt=""
                           className="w-8 h-8 bg-cover rounded-lg mr-1"
                         />
-                        <img
-                          src="/icons/video-octagon.svg"
-                          alt=""
-                          className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
-                        />
+                        {Array.isArray(el?.Files) &&
+                          el.Files.length > 0 &&
+                          !el.Files[0]?.Type?.startsWith('image') && (
+                            <img
+                              src="/icons/video-octagon.svg"
+                              alt=""
+                              className="w-[17.79px] h-[17.79px] absolute top-[7px] left-[7px]"
+                            />
+                          )}
                       </div>
                       <div className="text-xs text-Text-Primary">
                         {el.Title}

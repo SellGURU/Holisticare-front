@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import Application from '../../api/app';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Define flexible interfaces to handle different API response structures
 
@@ -162,9 +162,9 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
               <div key={itemIndex}>
                 {emojiToDisplay ? (
                   emojiToDisplay.order === active.order ? (
-                    <div className="w-[40px] h-[40px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
+                    <div className="w-[60px] h-[60px] min-w-[40px] min-h-[40px] bg-[#FFD64F] flex justify-center items-center rounded-full">
                       <img
-                        className="w-[32px]"
+                        className="w-[48px]"
                         src={active.icon}
                         alt={active.name}
                       />
@@ -172,13 +172,13 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
                   ) : (
                     <img
                       onClick={() => handleEmojiSelect(emojiToDisplay.name)}
-                      className="w-[28px] cursor-pointer"
+                      className="w-[48px] cursor-pointer"
                       src={emojiToDisplay.icon}
                       alt={emojiToDisplay.name}
                     />
                   )
                 ) : (
-                  <div className="w-[28px] h-[28px]"></div>
+                  <div className="w-[48px] h-[48px]"></div>
                 )}
               </div>
             );
@@ -198,6 +198,7 @@ export function PublicSurveyForm({
   isClient = false,
   onSubmitClient,
 }: PublicSurveyFormProps) {
+  const navigate = useNavigate();
   const { 'member-id': memberId, 'q-id': qId } = useParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<
@@ -491,6 +492,10 @@ export function PublicSurveyForm({
           member_id: memberId,
           q_unique_id: qId,
           respond,
+        }).finally(() => {
+          setTimeout(() => {
+            navigate('/report/' + memberId + '/' + 'N');
+          }, 2000);
         });
       }
 
@@ -736,7 +741,7 @@ export function PublicSurveyForm({
                 <RadioGroupItem
                   value={option.toString()}
                   id={`option-${questionIndex}-${index}`}
-                  className="text-green-600"
+                  className="text-green-600 pointer-events-none"
                 />
                 <Label
                   htmlFor={`option-${questionIndex}-${index}`}
@@ -752,58 +757,47 @@ export function PublicSurveyForm({
       case 'checkbox':
         return (
           <div className="space-y-3">
-            {questionOptions.map((option, index) => (
-              <div
-                key={index}
-                className={`flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
-                  validationError ? 'border-red-500' : ''
-                } ${
-                  Array.isArray(response) && response.includes(option)
-                    ? 'border-green-500 bg-green-50'
-                    : ''
-                }`}
-                onClick={() => {
-                  const currentValue = response || [];
-                  if (!Array.isArray(currentValue)) {
-                    handleResponseChange([option]);
-                    return;
-                  }
-                  if (currentValue.includes(option)) {
-                    handleResponseChange(
-                      currentValue.filter((item) => item !== option),
-                    );
-                  } else {
-                    handleResponseChange([...currentValue, option]);
-                  }
-                }} // Make the div clickable
-              >
-                <Checkbox
-                  id={`option-${questionIndex}-${index}`}
-                  checked={Array.isArray(response) && response.includes(option)}
-                  onCheckedChange={(checked) => {
-                    const currentValue = response || [];
-                    if (!Array.isArray(currentValue)) {
-                      handleResponseChange([option]);
-                      return;
-                    }
-                    if (checked) {
-                      handleResponseChange([...currentValue, option]);
-                    } else {
+            {questionOptions.map((option, index) => {
+              const isChecked =
+                Array.isArray(response) && response.includes(option);
+
+              return (
+                <div
+                  key={index}
+                  role="checkbox"
+                  aria-checked={isChecked}
+                  tabIndex={0}
+                  className={`cursor-pointer flex items-start space-x-3 rounded-lg border p-4 hover:bg-slate-50 transition-colors ${
+                    validationError ? 'border-red-500' : ''
+                  } ${isChecked ? 'border-green-500 bg-green-50' : ''}`}
+                  onClick={() => {
+                    const currentValue = Array.isArray(response)
+                      ? response
+                      : [];
+                    if (isChecked) {
                       handleResponseChange(
                         currentValue.filter((item) => item !== option),
                       );
+                    } else {
+                      handleResponseChange([...currentValue, option]);
                     }
                   }}
-                  className="mt-1 text-green-600 border-green-600"
-                />
-                <Label
-                  htmlFor={`option-${questionIndex}-${index}`}
-                  className="flex-grow cursor-pointer font-medium"
                 >
-                  {option}
-                </Label>
-              </div>
-            ))}
+                  <Checkbox
+                    id={`option-${questionIndex}-${index}`}
+                    checked={isChecked}
+                    onCheckedChange={() => {}}
+                    className="mt-1 text-green-600 border-green-600 pointer-events-none"
+                  />
+                  <Label
+                    htmlFor={`option-${questionIndex}-${index}`}
+                    className="flex-grow font-medium"
+                  >
+                    {option}
+                  </Label>
+                </div>
+              );
+            })}
           </div>
         );
 
@@ -888,18 +882,18 @@ export function PublicSurveyForm({
                       </Button>
                     </div>
                   </div>
-                  <div className="w-full gap-4 flex flex-wrap justify-center items-center mt-2">
+                  <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-4 justify-items-center mt-2">
                     {/* Frontal File Input */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`frontal-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center  size-52 sm:size-28  overflow-hidden bg-white"
                       >
                         {tempFrontal?.base64 ? (
                           <img
                             src={tempFrontal.base64}
                             alt="Frontal Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>
@@ -931,16 +925,16 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Back File Input */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`back-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center   size-52 sm:size-28 overflow-hidden bg-white"
                       >
                         {tempBack?.base64 ? (
                           <img
                             src={tempBack.base64}
                             alt="Back Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>
@@ -972,16 +966,16 @@ export function PublicSurveyForm({
                     </div>
 
                     {/* Side File Input */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center w-full sm:max-w-[112px]">
                       <label
                         htmlFor={`side-upload-${questionIndex}`}
-                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center w-28 h-28 overflow-hidden"
+                        className="cursor-pointer p-4 border border-dashed border-gray-300 rounded-md flex flex-col items-center justify-center size-52 sm:size-28 overflow-hidden bg-white"
                       >
                         {tempSide?.base64 ? (
                           <img
                             src={tempSide.base64}
                             alt="Side Preview"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain rounded"
                           />
                         ) : (
                           <>
@@ -1015,35 +1009,43 @@ export function PublicSurveyForm({
                 </div>
               </>
             ) : hasExistingFiles ? (
-              <div className="mt-2 flex w-full justify-around items-center">
+              <div className="mt-2 grid grid-cols-3 gap-4 justify-items-center">
                 {currentFileResponse.frontal && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Frontal: </span>
-                    <img
-                      src={currentFileResponse.frontal}
-                      alt="Frontal"
-                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
-                    />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">
+                      Frontal
+                    </span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img
+                        src={currentFileResponse.frontal}
+                        alt="Frontal"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                 )}
                 {currentFileResponse.back && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Back: </span>
-                    <img
-                      src={currentFileResponse.back}
-                      alt="Back"
-                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
-                    />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">Back</span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img
+                        src={currentFileResponse.back}
+                        alt="Back"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                 )}
                 {currentFileResponse.side && (
-                  <div className="mb-2 text-center">
-                    <span className="text-[10px] text-gray-600">Side: </span>
-                    <img
-                      src={currentFileResponse.side}
-                      alt="Side"
-                      className="w-[80px] h-[80px] object-cover rounded-md mx-auto"
-                    />
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] text-gray-600 mb-1">Side</span>
+                    <div className="w-28 h-28 border border-gray-200 rounded-md overflow-hidden bg-white">
+                      <img
+                        src={currentFileResponse.side}
+                        alt="Side"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
@@ -1126,7 +1128,7 @@ export function PublicSurveyForm({
   }
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-10">
+    <div className="container max-w-4xl mx-auto px-1 xl:px-4 py-10">
       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-8">
         <div
           className={`h-2 rounded-full transition-all duration-500 bg-gradient-to-r ${gradientClass}`}
@@ -1183,7 +1185,7 @@ export function PublicSurveyForm({
             >
               Question {currentStep} of {sortedQuestions.length}
             </div>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-base 2xl:text-2xl font-bold">
               {getQuestionText(currentQuestion)}
               {currentQuestion.required && (
                 <span className="text-red-500 ml-1">*</span>
@@ -1195,7 +1197,7 @@ export function PublicSurveyForm({
               </CardDescription>
             )}
           </CardHeader>
-          <CardContent className="space-y-6 h-[60%] overflow-auto">
+          <CardContent className="space-y-6 h-[60%]  pb-20 overflow-auto">
             {renderQuestion(currentQuestion, currentStep - 1)}
 
             {validationErrors[currentStep - 1] && (
@@ -1212,7 +1214,7 @@ export function PublicSurveyForm({
               </div>
             )}
           </CardContent>
-          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full ">
+          <CardFooter className="flex justify-between pt-4 absolute bottom-0 w-full bg-white">
             <Button
               className={`${currentStep > 1 ? 'visible' : 'invisible'}`}
               type="button"
