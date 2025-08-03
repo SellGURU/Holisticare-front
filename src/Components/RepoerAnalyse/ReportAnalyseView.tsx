@@ -134,9 +134,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         } else {
           publish('DetailedAnalysisStatus', { isempty: false });
         }
-        if(res.data.biomarkers.filter((el:any) =>el.outofref == true).length > 0){
+        if (
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length >
+          0
+        ) {
           publish('NeedsFocusBiomarkerStatus', { isempty: false });
-        }else{
+        } else {
           publish('NeedsFocusBiomarkerStatus', { isempty: true });
         }
 

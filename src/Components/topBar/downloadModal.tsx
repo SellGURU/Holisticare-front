@@ -70,7 +70,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   subscribe('DetailedAnalysisStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
-        item.name === 'Detailed Analysis' || item.name === 'Needs Focus Biomarker' 
+        item.name === 'Detailed Analysis' ||
+        item.name === 'Needs Focus Biomarker'
           ? {
               ...item,
               disabled: data.detail.isempty,
@@ -83,7 +84,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   subscribe('NeedsFocusBiomarkerStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
-         item.name === 'Needs Focus Biomarker' 
+        item.name === 'Needs Focus Biomarker'
           ? {
               ...item,
               disabled: data.detail.isempty,
@@ -92,11 +93,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           : item,
       ),
     );
-  });  
+  });
   subscribe('ConcerningResultStatus', (data: any) => {
     setDownloadSelect((prev) =>
       prev.map((item) =>
-        item.name === 'Concerning Result' 
+        item.name === 'Concerning Result'
           ? {
               ...item,
               disabled: data.detail.isempty,
@@ -105,7 +106,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           : item,
       ),
     );
-  });  
+  });
   const removeAll = () => {
     setDownloadSelect((pre) => {
       return pre.map((el) => {
