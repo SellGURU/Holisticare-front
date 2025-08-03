@@ -318,7 +318,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //   });
     // }
     // return refData;
-    if (ClientSummaryBoxs) {
+    if (ClientSummaryBoxs && !showReport) {
       return ClientSummaryBoxs.subcategories;
     }
     return [];
