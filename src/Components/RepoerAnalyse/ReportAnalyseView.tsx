@@ -122,14 +122,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       });
     }
   };
-  const [developHealthPlan,setDevelopHealthPlan] = useState(false);
+  const [developHealthPlan, setDevelopHealthPlan] = useState(false);
   const fetchData = (currentDevelopHealthPlan = developHealthPlan) => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        if(res.data.biomarkers.length == 0 && currentDevelopHealthPlan == false){
+        if (
+          res.data.biomarkers.length == 0 &&
+          currentDevelopHealthPlan == false
+        ) {
           setShowUploadTest(true);
-        }else{
+        } else {
           setShowUploadTest(false);
         }
         // setReferenceData(referencedataMoch);
@@ -410,7 +413,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   }, [id, loading]);
   const [isSticky, setIsSticky] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  
+
   // 2. Modified useEffect with proper dependencies
   useEffect(() => {
     const handleStickyScroll = () => {
