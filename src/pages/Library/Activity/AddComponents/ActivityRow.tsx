@@ -71,7 +71,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             <Tooltip
               id={`tooltip-activity-${index}`}
               place="top"
-              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
@@ -123,7 +123,7 @@ export const ActivityRow: React.FC<ActivityRowProps> = ({
             <Tooltip
               id={`tooltip-activity-clinical-guidance-${index}`}
               place="top"
-              className="!bg-white !max-w-[270px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
+              className="!bg-white !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
               style={{
                 zIndex: 9999,
                 pointerEvents: 'none',
