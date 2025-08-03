@@ -71,6 +71,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.show_report);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchShareData();
@@ -83,6 +84,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.show_report);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -102,6 +104,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       ).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.show_report);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchShareData();
@@ -114,6 +117,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.show_report);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData(currentDevelopHealthPlan);
@@ -127,14 +131,17 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        if (
-          res.data.biomarkers.length == 0 &&
-          currentDevelopHealthPlan == false
-        ) {
-          setShowUploadTest(true);
-        } else {
-          setShowUploadTest(false);
+        if(currentDevelopHealthPlan == true)  {
+          setShowUploadTest(false)
         }
+        // if (
+        //   res.data.biomarkers.length == 0 &&
+        //   currentDevelopHealthPlan == false
+        // ) {
+        //   setShowUploadTest(true);
+        // } else {
+        //   setShowUploadTest(false);
+        // }
         // setReferenceData(referencedataMoch);
         clearUsedPositions();
       })
@@ -369,7 +376,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
     }
   }, [location, loading]); // Add 'loading' to dependencies
-  const [showUploadTest, setShowUploadTest] = useState(true);
+  const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
     if (showUploadTest) {
       publish('reportStatus', {
