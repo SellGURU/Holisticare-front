@@ -231,7 +231,7 @@ export function PublicSurveyForm({
       return () => clearTimeout(timer);
     }
   }, [currentStep, sortedQuestions.length]);
-  
+
   const currentQuestion =
     currentStep > 0 && currentStep <= sortedQuestions.length
       ? sortedQuestions[currentStep - 1]

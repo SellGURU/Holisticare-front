@@ -16,7 +16,7 @@ interface FormViewProps {
 const FormView: React.FC<FormViewProps> = ({ mode }) => {
   const { encode, id } = useParams();
   const [isLoading, setIsLaoding] = useState(false);
-  const [isComplete,] = useState(false);
+  const [isComplete] = useState(false);
 
   const [data, setData] = useState<any>(null);
   // const [resolvedData, ] = useState<any>(null);
@@ -46,7 +46,8 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   }, []);
   const submit = (e: any) => {
     setIsLaoding(true);
-    const apiCall = mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
+    const apiCall =
+      mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
 
     apiCall({
       encoded_mi: encode,
@@ -59,7 +60,9 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
           if (window.flutter_inappwebview) {
             window.flutter_inappwebview.callHandler('closeWebView');
           } else {
-            console.warn('Flutter WebView bridge not available, attempting to close window.');
+            console.warn(
+              'Flutter WebView bridge not available, attempting to close window.',
+            );
             window.close();
           }
         }, 1500); // Wait for 1.5 seconds to give the user time to see the success message
