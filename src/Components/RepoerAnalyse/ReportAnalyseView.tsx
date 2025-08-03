@@ -74,7 +74,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setShowUploadTest(false);
         setTimeout(() => {
           // if (res.data.show_report == true) {
-            fetchShareData();
+          fetchShareData();
           // }
         }, 2000);
       });
@@ -106,8 +106,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         setIsHaveReport(true);
         setShowUploadTest(false);
         setTimeout(() => {
-
-            fetchShareData();
+          fetchShareData();
           // }
         }, 2000);
       });
