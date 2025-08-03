@@ -85,7 +85,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
       ...prevTheme,
-      [key]: value, // Remove the conditional check for value === 0
+      [key]: value === '' ? '' : Number(value),
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
@@ -364,7 +364,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
     if (
       selectedGroup === 'Diet' &&
-      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+      (totalMacros.Carbs === '' ||
+        totalMacros.Protein === '' ||
+        totalMacros.Fats === '')
     ) {
       return;
     }
@@ -638,7 +640,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
     if (
       selectedGroup === 'Diet' &&
-      (!totalMacros.Carbs || !totalMacros.Protein || !totalMacros.Fats)
+      (totalMacros.Carbs === '' ||
+        totalMacros.Protein === '' ||
+        totalMacros.Fats === '')
     ) {
       newErrors.macros = 'All macro values are required.';
     }

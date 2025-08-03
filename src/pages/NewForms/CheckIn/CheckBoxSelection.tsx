@@ -19,9 +19,9 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
   const [error, setError] = useState(false);
 
   const addOption = () => {
-    if (options.length < 4) {
+   
       setOptions([...options, '']);
-    }
+    
   };
 
   const handleOptionChange = (index: number, value: string) => {
@@ -63,7 +63,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
           </div>
         </div>
         {isActive && (
-          <div className="w-full mt-2  ">
+          <div className="w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
             <div className=" gap-1  grid grid-cols-2  w-full">
               {options.map((option, index) => {
                 return (
@@ -85,9 +85,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
                 );
               })}
               <div
-                className={`cursor-pointer ${
-                  options.length == 4 && 'hidden'
-                } text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap cursor-pointer ml-1 mt-1`}
+                className={`text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap cursor-pointer ml-1 mt-1`}
                 onClick={addOption}
               >
                 <img
