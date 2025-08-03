@@ -127,8 +127,8 @@ const QuestionRow: React.FC<QuestionRowProps> = ({
 
                         //  onTryComplete();
                         // setshowModal(false);
-                        
-                        navigate(`/surveys/${id}/${el.unique_id}`)
+
+                        navigate(`/surveys/${id}/${el.unique_id}`);
                         // window.open(`/surveys/${id}/${el.unique_id}`, '_blank');
                       }}
                       className="flex items-center gap-2 TextStyle-Body-2 text-xs text-Text-Primary pb-2 border-b border-Secondary-SelverGray  cursor-pointer"
