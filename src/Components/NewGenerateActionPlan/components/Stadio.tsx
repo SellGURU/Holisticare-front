@@ -469,7 +469,7 @@ const Stadio: FC<StadioProps> = ({
         }}
       />
       <div className="flex px-6 gap-4 select-none">
-        <div className="flex-grow">
+        <div className="flex-grow mr-[360px]">
           {haveConflic && (
             <div className="w-full  my-2 ">
               <AlertModal
@@ -577,7 +577,7 @@ const Stadio: FC<StadioProps> = ({
             onDrop={handleDrop}
           >
             {actions.checkIn.length == 0 && actions.category.length == 0 ? (
-              <div className="flex flex-col items-center justify-center w-full min-h-[450px]">
+              <div className="flex flex-col items-center justify-center w-full min-h-[450px] ">
                 <img
                   src="/icons/document-text.svg"
                   alt=""
@@ -644,9 +644,9 @@ const Stadio: FC<StadioProps> = ({
             )}
           </div>
         </div>
-        <div className="w-[342px] h-full">
+        <div className="w-[342px] fixed top-[190px] right-[100px]  h-full">
           <div
-            className={`w-[342px] sticky top-[190px]  p-4  h-[534px] bg-white rounded-[24px] border border-gray-50 shadow-100`}
+            className={`w-[342px]  p-4   bg-white rounded-[24px] border border-gray-50 shadow-100`}
           >
             <SearchBox
               ClassName="rounded-2xl border shadow-none h-[40px] bg-white md:min-w-full"
@@ -655,11 +655,7 @@ const Stadio: FC<StadioProps> = ({
                 setSearchValue(value);
               }}
             />
-            {/* <Sort
-              options={options}
-              handleChangeSort={handleChangeSort}
-              sortBy={sortBy}
-            /> */}
+
             <div>
               <div className="flex w-full gap-2 text-center items-center justify-between mt-2 flex-wrap">
                 {AllCategories.map((cat) => {
@@ -675,7 +671,7 @@ const Stadio: FC<StadioProps> = ({
                   );
                 })}
               </div>
-              <div className="w-full h-[410px] overflow-auto ">
+              <div className="w-full  overflow-auto " style={{height:window.innerHeight -340+"px"}}>
                 <div className="mt-2 grid gap-2">
                   {filteredDataCategory.map((value: any, index: number) => {
                     return (
