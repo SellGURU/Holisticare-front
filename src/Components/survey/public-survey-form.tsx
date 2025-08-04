@@ -220,7 +220,6 @@ export function PublicSurveyForm({
   const [tempSide, setTempSide] = useState<IndividualFileData | null>(null);
   const [isMultiUploadMode, setIsMultiUploadMode] = useState(false);
 
-
   const currentQuestion =
     currentStep > 0 && currentStep <= sortedQuestions.length
       ? sortedQuestions[currentStep - 1]
