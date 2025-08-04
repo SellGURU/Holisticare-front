@@ -1,25 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import SummaryBox from './SummaryBox';
-import ConceringRow from './Boxs/ConceringRow';
-import DetiledAnalyse from './Boxs/DetiledAnalyse';
-import RefrenceBox from './Boxs/RefrenceBox';
-import Legends from './Legends';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
+import ConceringRow from './Boxs/ConceringRow';
+import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import RefrenceBox from './Boxs/RefrenceBox';
+import Legends from './Legends';
+import SummaryBox from './SummaryBox';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import { ActionPlan } from '../Action-plan';
+import { TreatmentPlan } from '../TreatmentPlan';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import { useLocation } from 'react-router-dom';
-import { ActionPlan } from '../Action-plan';
-import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
@@ -611,8 +610,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/biomarkerEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/biomarkerEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Biomarkers Available Yet!
                           </div>
                         </div>
