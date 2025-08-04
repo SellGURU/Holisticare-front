@@ -1,25 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import SummaryBox from './SummaryBox';
-import ConceringRow from './Boxs/ConceringRow';
-import DetiledAnalyse from './Boxs/DetiledAnalyse';
-import RefrenceBox from './Boxs/RefrenceBox';
-import Legends from './Legends';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
+import ConceringRow from './Boxs/ConceringRow';
+import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import RefrenceBox from './Boxs/RefrenceBox';
+import Legends from './Legends';
+import SummaryBox from './SummaryBox';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import { ActionPlan } from '../Action-plan';
+import { TreatmentPlan } from '../TreatmentPlan';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-import { useLocation } from 'react-router-dom';
-import { ActionPlan } from '../Action-plan';
-import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
@@ -52,15 +51,15 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   // const history = useHistory();
   const location = useLocation();
-  useEffect(() => {
-    // Watch for changes in isHaveReport
-    if (!isHaveReport) {
-      publish('reportStatus', {
-        isHaveReport: false,
-        memberId: resolvedMemberID,
-      });
-    }
-  }, [isHaveReport, resolvedMemberID]);
+  // useEffect(() => {
+  //   // Watch for changes in isHaveReport
+  //   if (!isHaveReport) {
+  //     publish('reportStatus', {
+  //       isHaveReport: false,
+  //       memberId: resolvedMemberID,
+  //     });
+  //   }
+  // }, [isHaveReport, resolvedMemberID]);
   const fetchPatentData = () => {
     if (isShare) {
       Application.getPatientsInfoShare(
@@ -70,11 +69,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         uniqKey,
       ).then((res) => {
         setUserInfoData(res.data);
-        setIsHaveReport(res.data.show_report);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
         setTimeout(() => {
-          if (res.data.show_report == true) {
-            fetchShareData();
-          }
+          // if (res.data.show_report == true) {
+          fetchShareData();
+          // }
         }, 2000);
       });
     } else {
@@ -83,6 +83,39 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }).then((res) => {
         setUserInfoData(res.data);
         setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData();
+          }
+        }, 2000);
+      });
+    }
+  };
+
+  const fetchPatentDataWithState = () => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
+        setTimeout(() => {
+          fetchShareData();
+          // }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
         setTimeout(() => {
           if (res.data.show_report == true) {
             fetchData();
@@ -95,7 +128,20 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        // setReferenceData(referencedataMoch);
+        if (res.data.biomarkers.length == 0) {
+          publish('DetailedAnalysisStatus', { isempty: true });
+        } else {
+          publish('DetailedAnalysisStatus', { isempty: false });
+        }
+        if (
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length >
+          0
+        ) {
+          publish('NeedsFocusBiomarkerStatus', { isempty: false });
+        } else {
+          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        }
+
         clearUsedPositions();
       })
       .catch(() => {});
@@ -111,6 +157,11 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
         setConcerningResult(res.data.table);
+        if (res.data.table.length == 0) {
+          publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
+        }
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
@@ -329,8 +380,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
     }
   }, [location, loading]); // Add 'loading' to dependencies
+  const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
-    if (!isHaveReport) {
+    if (showUploadTest) {
       publish('reportStatus', {
         isHaveReport: false,
         memberId: resolvedMemberID,
@@ -341,7 +393,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         memberId: resolvedMemberID,
       });
     }
-  }, [isHaveReport, resolvedMemberID]);
+  }, [showUploadTest, resolvedMemberID]);
 
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
@@ -445,7 +497,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-          {!isHaveReport && (
+          {showUploadTest && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
           <div
@@ -453,7 +505,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -558,8 +610,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/biomarkerEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/biomarkerEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Biomarkers Available Yet!
                           </div>
                         </div>
@@ -602,8 +658,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center mt-10 w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/needsfocusEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/needsfocusEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Concerning Biomarkers Available Yet!
                           </div>
                         </div>
@@ -673,8 +733,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center mt-10 w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/conceningEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/conceningEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Concerning Results Available Yet!
                           </div>
                         </div>
@@ -731,8 +795,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   <>
                     <div className="flex justify-center items-center mt-10 w-full">
                       <div className="flex flex-col items-center justify-center">
-                        <img src="/icons/Empty/detailAnalyseEmpty.svg" alt="" />
-                        <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                        <img
+                          src="/icons/Empty/detailAnalyseEmpty.svg"
+                          alt=""
+                          className="w-[219px]"
+                        />
+                        <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                           No Detailed Analysis Available Yet!
                         </div>
                       </div>
@@ -842,7 +910,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 {/* <></> */}
               </div>
             )}
-            {!isHaveReport && (
+            {showUploadTest && (
               <>
                 {isGenerateLoading ? (
                   <>
@@ -861,8 +929,13 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     showReport={isHaveReport}
                     onGenderate={() => {
                       setISGenerateLoading(true);
+                      Application.first_view_report(resolvedMemberID).then(
+                        (res) => {
+                          console.log(res);
+                        },
+                      );
                       setTimeout(() => {
-                        fetchPatentData();
+                        fetchPatentDataWithState();
                         // publish('QuestionaryTrackingCall', {});
                         // fetchData();
                       }, 5000);

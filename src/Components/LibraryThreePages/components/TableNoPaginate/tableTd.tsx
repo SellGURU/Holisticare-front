@@ -55,7 +55,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <Tooltip
               id={`tooltip-${pageType === 'Supplement' ? row.original?.Sup_Id : pageType === 'Lifestyle' ? row.original?.Life_Id : row.original?.Diet_Id}`}
               place="top"
-              className="!bg-white !bg-opacity-100 !opacity-100 !w-[250px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+              className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {row.original?.Instruction}
             </Tooltip>
@@ -156,7 +156,7 @@ export const columns = (pageType: string): ColumnDef<any>[] => [
             <Tooltip
               id={`tooltip-${row.original?.Ai_note?.substring(0, 25)}-c`}
               place="top"
-              className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[250px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+              className="!bg-white !bg-opacity-100 !opacity-100 !max-w-[300px] !leading-5 !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
             >
               {row.original?.Ai_note}
             </Tooltip>
