@@ -37,7 +37,7 @@ type FilterModalProps = {
   onClearFilters: () => void;
   onClose: () => void;
   filters: any;
-  buttonRefrence: React.RefObject<HTMLDivElement>;
+  buttonRefrence?: React.RefObject<HTMLDivElement>;
 };
 const FilterModal: React.FC<FilterModalProps> = ({
   onApplyFilters,
