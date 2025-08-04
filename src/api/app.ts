@@ -1002,6 +1002,12 @@ class Application extends Api {
   static deleteFileHistory = (data: any) => {
     return this.post(`/patients/delete_lab_report`, data);
   };
+
+  static first_view_report = (memberId: any) => {
+    return this.post('/overview/first_view', {
+      member_id: memberId,
+    });
+  };
 }
 
 export default Application;

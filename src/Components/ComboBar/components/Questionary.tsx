@@ -18,6 +18,7 @@ import {
 } from '../../../pages/CheckIn/components';
 import UploadCard from '../../../pages/CheckIn/components/UploadCard';
 import TooltipTextAuto from '../../TooltipText/TooltipTextAuto';
+import { publish } from '../../../utils/event';
 // import DatePicker from '../../DatePicker';
 interface QuestionaryProps {
   isOpen?: boolean;
@@ -85,9 +86,6 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
     );
   };
   useEffect(() => {
-    console.log(questionsFormData);
-  }, [questionsFormData]);
-  useEffect(() => {
     if (isOpen) {
       setIsLoading(true);
       if (!tryComplete) {
@@ -95,6 +93,13 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
           .then((res) => {
             if (res.data) {
               setData(res.data);
+              if (res.data.length > 0) {
+                if (res.data[0].status === 'completed') {
+                  publish('questionaryLength', {
+                    questionaryLength: true,
+                  });
+                }
+              }
             } else {
               throw new Error('Unexpected data format');
             }
@@ -109,7 +114,6 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
       }
     }
   }, [isOpen, tryComplete, id]);
-  console.log(isOpen);
 
   // const formValueChange = (id: string, value: any) => {
   //   setQuestionsFormData((prev: any) => ({
@@ -139,7 +143,6 @@ export const Questionary: React.FC<QuestionaryProps> = ({ isOpen }) => {
       ),
     }));
   };
-  console.log(questionsFormData);
 
   const validateDate = (dateString: string) => {
     const date = new Date(dateString);

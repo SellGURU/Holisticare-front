@@ -184,7 +184,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                 if (markerMode === 'unique' || markerMode === 'inRange') {
                   return (
                     <div
-                      className={`absolute  top-[2px]  z-10`}
+                      className={`absolute  top-[2px]  z-[8]`}
                       style={{
                         left: resolvePercentLeft(el) + '%' || '50%',
                       }}

@@ -19,9 +19,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   const [error, setError] = useState(false);
 
   const addChoiceOption = () => {
-    if (options.length < 4) {
-      setOptions([...options, '']);
-    }
+    setOptions([...options, '']);
   };
 
   const handleChoiceOptionChange = (index: number, value: string) => {
@@ -63,7 +61,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
           </div>
         </div>
         {isActive && (
-          <div className="flex items-start w-full mt-2">
+          <div className="flex items-start w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
             <div className="grid grid-cols-2 gap-1 w-full">
               {options.map((option, index) => {
                 return (
@@ -84,9 +82,9 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
                 );
               })}
               <div
-                className={`cursor-pointer ${
-                  options.length == 4 && 'hidden'
-                } text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap  ml-1 mt-1`}
+                className={`cursor-pointer
+                
+                 text-[10px] font-medium text-Primary-DeepTeal flex items-center justify-start text-nowrap  ml-1 mt-1`}
                 onClick={addChoiceOption}
               >
                 <img

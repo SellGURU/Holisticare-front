@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
+import Application from '../../../api/app';
 import { MainModal } from '../../../Components';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import AddActivity from './AddActivity';
 import { ActivityRow } from './AddComponents/ActivityRow';
-import Application from '../../../api/app';
 
 interface ActivityHandlerProps {
   data: Array<any>;
@@ -46,6 +46,23 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
         console.error(err);
       });
   };
+  const [dynamicHeight, setDynamicHeight] = useState<number | null>(null);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (typeof window !== 'undefined') {
+        const newHeight =
+          window.innerWidth > 720
+            ? window.innerHeight - 220
+            : window.innerHeight - 320;
+        setDynamicHeight(newHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
   return (
     <>
       {dataListLength === 0 ? (
@@ -69,8 +86,13 @@ const ActivityHandler: FC<ActivityHandlerProps> = ({
           </div>
         </div>
       ) : data.length > 0 ? (
-        <div className="mt-6 h-[540px] overflow-auto">
-          <table className="w-full  ">
+        <div
+          className="mt-6 overflow-y-auto"
+          style={{
+            height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
+          }}
+        >
+          <table className="w-full">
             <thead className="w-full">
               <tr className="text-left text-xs bg-[#F4F4F4] text-Text-Primary border-Gray-50 w-full ">
                 <th className="py-3 pl-4 w-[160px] rounded-tl-2xl text-nowrap">

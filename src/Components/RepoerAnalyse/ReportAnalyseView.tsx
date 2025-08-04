@@ -1,31 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import SummaryBox from './SummaryBox';
-// import MyChartComponent from "./StatusChart"
-import ConceringRow from './Boxs/ConceringRow';
-import DetiledAnalyse from './Boxs/DetiledAnalyse';
-import RefrenceBox from './Boxs/RefrenceBox';
-// import TreatmentCard from "./Boxs/TreatmentPlanCard"
-import Legends from './Legends';
-// import Point from "./Point"
 import { useEffect, useMemo, useRef, useState } from 'react';
 import calenderDataMoch from '../../api/--moch--/data/new/Calender.json';
 import mydata from '../../api/--moch--/data/new/client_summary_categories.json';
 import referencedataMoch from '../../api/--moch--/data/new/client_summary_outofrefs.json';
 import conceringResultData from '../../api/--moch--/data/new/concerning_results.json';
 import treatmentPlanData from '../../api/--moch--/data/new/treatment_plan_report.json';
+import ConceringRow from './Boxs/ConceringRow';
+import DetiledAnalyse from './Boxs/DetiledAnalyse';
+import RefrenceBox from './Boxs/RefrenceBox';
+import Legends from './Legends';
+import SummaryBox from './SummaryBox';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Application from '../../api/app';
+import { ActionPlan } from '../Action-plan';
+import { TreatmentPlan } from '../TreatmentPlan';
 import Point from './Point';
 import resolvePosition, { clearUsedPositions } from './resolvePosition';
 import resolveStatusArray from './resolveStatusArray';
-// import { BeatLoader } from "react-spinners"
-// import CalenderComponent from "../information/calender/ComponentCalender"
-// import PrintReport from './PrintReport';
-import { useLocation } from 'react-router-dom';
-import { ActionPlan } from '../Action-plan';
-import { TreatmentPlan } from '../TreatmentPlan';
 import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
@@ -58,32 +51,100 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   const [isGenerateLoading, setISGenerateLoading] = useState(false);
   // const history = useHistory();
   const location = useLocation();
-  useEffect(() => {
-    // Watch for changes in isHaveReport
-    if (!isHaveReport) {
-      publish('reportStatus', {
-        isHaveReport: false,
-        memberId: resolvedMemberID,
+  // useEffect(() => {
+  //   // Watch for changes in isHaveReport
+  //   if (!isHaveReport) {
+  //     publish('reportStatus', {
+  //       isHaveReport: false,
+  //       memberId: resolvedMemberID,
+  //     });
+  //   }
+  // }, [isHaveReport, resolvedMemberID]);
+  const fetchPatentData = () => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
+        setTimeout(() => {
+          // if (res.data.show_report == true) {
+          fetchShareData();
+          // }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData();
+          }
+        }, 2000);
       });
     }
-  }, [isHaveReport, resolvedMemberID]);
+  };
+
+  const fetchPatentDataWithState = () => {
+    if (isShare) {
+      Application.getPatientsInfoShare(
+        {
+          member_id: memberID,
+        },
+        uniqKey,
+      ).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(true);
+        setShowUploadTest(false);
+        setTimeout(() => {
+          fetchShareData();
+          // }
+        }, 2000);
+      });
+    } else {
+      Application.getPatientsInfo({
+        member_id: resolvedMemberID,
+      }).then((res) => {
+        setUserInfoData(res.data);
+        setIsHaveReport(res.data.show_report);
+        setShowUploadTest(!res.data.first_time_view);
+        setTimeout(() => {
+          if (res.data.show_report == true) {
+            fetchData();
+          }
+        }, 2000);
+      });
+    }
+  };
   const fetchData = () => {
     Application.getClientSummaryOutofrefs({ member_id: resolvedMemberID })
       .then((res) => {
         setReferenceData(res.data);
-        // setReferenceData(referencedataMoch);
+        if (res.data.biomarkers.length == 0) {
+          publish('DetailedAnalysisStatus', { isempty: true });
+        } else {
+          publish('DetailedAnalysisStatus', { isempty: false });
+        }
+        if (
+          res.data.biomarkers.filter((el: any) => el.outofref == true).length >
+          0
+        ) {
+          publish('NeedsFocusBiomarkerStatus', { isempty: false });
+        } else {
+          publish('NeedsFocusBiomarkerStatus', { isempty: true });
+        }
+
         clearUsedPositions();
       })
-      .catch(() => {
-        // setReferenceData({
-        //   detailed_analysis_note: 'Total of 0 Biomarkers in 0 Categories',
-        //   total_biomarker_note:
-        //     'Total of 0 biomarkers are Needs Focus in a list of 0 biomarkers.',
-        //   biomarkers: [],
-        // });
-        // // setReferenceData(referencedataMoch);
-        // clearUsedPositions();
-      });
+      .catch(() => {});
     Application.getClientSummaryCategories({
       member_id: resolvedMemberID,
     }).then((res) => {
@@ -91,17 +152,16 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
       setISGenerateLoading(false);
       // console.log(res.data);
-      if (res.data.subcategories.length == 0) {
-        setIsHaveReport(false);
-        setClientSummaryBoxs(mydata);
-      } else {
-        setClientSummaryBoxs(res.data);
-        setIsHaveReport(true);
-      }
+      setClientSummaryBoxs(res.data);
     });
     Application.getConceringResults({ member_id: resolvedMemberID })
       .then((res) => {
         setConcerningResult(res.data.table);
+        if (res.data.table.length == 0) {
+          publish('ConcerningResultStatus', { isempty: true });
+        } else {
+          publish('ConcerningResultStatus', { isempty: false });
+        }
         // setConcerningResult(conceringResultData);
       })
       .catch(() => {
@@ -117,21 +177,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         }
       },
     );
-    // Application.getCaldenderdata({ member_id: resolvedMemberID }).then(
-    //   (res) => {
-    //     setCalenderData(res.data);
-    //     if (res.data.length == 0) {
-    //       publish('ActionPlanStatus', { isempty: true });
-    //     } else {
-    //       publish('ActionPlanStatus', { isempty: false });
-    //     }
-    //   },
-    // );
-    Application.getPatientsInfo({
-      member_id: resolvedMemberID,
-    }).then((res) => {
-      setUserInfoData(res.data);
-    });
   };
   const fetchShareData = () => {
     Application.getClientSummaryOutofrefsShare(
@@ -153,11 +198,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       // setClientSummaryBoxs(mydata);
 
       setISGenerateLoading(false);
-      if (res.data.subcategories.length == 0) {
-        setIsHaveReport(false);
-      } else {
-        setIsHaveReport(true);
-      }
     });
     Application.getConceringResultsShare(
       {
@@ -184,14 +224,6 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     ).then((res) => {
       // Please don't touch.
       setCalenderData(res.data);
-    });
-    Application.getPatientsInfoShare(
-      {
-        member_id: memberID,
-      },
-      uniqKey,
-    ).then((res) => {
-      setUserInfoData(res.data);
     });
   };
   const navigate = useNavigate();
@@ -233,16 +265,21 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   ]);
   useEffect(() => {
     setLoading(true);
-    if ((resolvedMemberID != 123 && !isShare) || callSync) {
-      fetchData();
-      console.log('aa');
-
+    fetchPatentData();
+    if (callSync) {
       setCallSync(false);
     }
-    if (isShare && memberID != 123) {
-      fetchShareData();
-    }
   }, [resolvedMemberID, memberID, callSync]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if ((resolvedMemberID != 123 && !isShare) || callSync) {
+  //     fetchData();
+  //     setCallSync(false);
+  //   }
+  //   if (isShare && memberID != 123) {
+  //     fetchShareData();
+  //   }
+  // }, [resolvedMemberID, memberID, callSync]);
   useEffect(() => {
     if (isShare) {
       setAccessManager(decodeAccessUser(name as string));
@@ -255,6 +292,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       setConcerningResult(conceringResultData);
       setTreatmentPlanData(treatmentPlanData);
       setCalenderData(calenderDataMoch);
+    } else {
+      setReferenceData(null);
+      setClientSummaryBoxs(null);
+      setConcerningResult([]);
+      setTreatmentPlanData([]);
+      setCalenderData([]);
     }
   }, [isHaveReport]);
   // const [aciveTreatmentPlan ,setActiveTreatmentplan] = useState("Diet")
@@ -282,7 +325,10 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
     //     refData.push(...el.biomarkers);
     // });
     // return refData;
-    return referenceData?.biomarkers;
+    if (referenceData) {
+      return referenceData?.biomarkers;
+    }
+    return [];
   };
   // useEffect(() => {
   //   clearUsedPositions();
@@ -336,8 +382,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       }
     }
   }, [location, loading]); // Add 'loading' to dependencies
+  const [showUploadTest, setShowUploadTest] = useState(false);
   useEffect(() => {
-    if (!isHaveReport) {
+    if (showUploadTest) {
       publish('reportStatus', {
         isHaveReport: false,
         memberId: resolvedMemberID,
@@ -348,7 +395,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         memberId: resolvedMemberID,
       });
     }
-  }, [isHaveReport, resolvedMemberID]);
+  }, [showUploadTest, resolvedMemberID]);
 
   const isInViewport = (element: HTMLElement): boolean => {
     const rect = element.getBoundingClientRect();
@@ -452,7 +499,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
         </div>
       ) : (
         <>
-          {!isHaveReport && (
+          {showUploadTest && (
             <div className="fixed inset-0 w-full h-screen bg-white backdrop-blur-sm opacity-60 z-[9]" />
           )}
           <div
@@ -460,7 +507,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
             onScrollCapture={() => {
               handleScroll();
             }}
-            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${isHaveReport ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
+            className={`pt-[20px] scroll-container relative pb-[50px] xl:pr-28 h-[98vh] xl:ml-6 ${!showUploadTest ? 'overflow-y-scroll' : 'overflow-y-hidden '}  overflow-x-hidden xl:overflow-x-hidden  px-5 xl:px-0`}
           >
             {accessManager.filter((el) => el.name == 'Client Summary')[0]
               .checked == true && (
@@ -561,6 +608,22 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       );
                     })}
                   </div>
+                  {resolveCategories().length == 0 && (
+                    <>
+                      <div className="flex justify-center items-center w-full">
+                        <div className="flex flex-col items-center justify-center">
+                          <img
+                            src="/icons/Empty/biomarkerEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                            No Biomarkers Available Yet!
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -577,7 +640,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                       Needs Focus Biomarkers
                     </div>
                     <div className=" text-Text-Secondary text-[12px]">
-                      {referenceData.total_biomarker_note}
+                      {referenceData?.total_biomarker_note}
                     </div>
                   </div>
                   <div className="w-full mt-4 grid gap-4 xl:grid-cols-2">
@@ -591,7 +654,24 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                         );
                       })}
                   </div>
-
+                  {resolveBioMarkers().filter(
+                    (val: any) => val.outofref == true,
+                  ).length == 0 && (
+                    <>
+                      <div className="flex justify-center items-center mt-10 w-full">
+                        <div className="flex flex-col items-center justify-center">
+                          <img
+                            src="/icons/Empty/needsfocusEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                            No Concerning Biomarkers Available Yet!
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                   {/* <CustomCanvasChart></CustomCanvasChart> */}
                 </div>
                 <div className="my-10 min-h-[700px]">
@@ -607,47 +687,66 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     </div>
                     {/* <div className="text-[#FFFFFF99] text-[12px]">Total of 65 exams in 11 groups</div> */}
                   </div>
-                  <div className=" hidden xl:block">
-                    <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
-                      <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
-                        Name
+                  {ResolveConceringData().length > 0 ? (
+                    <>
+                      <div className=" hidden xl:block">
+                        <div className="w-full bg-gray-100 rounded-t-[6px] border-b border-Gray-50 h-[56px] flex justify-end items-center font-medium">
+                          <div className="TextStyle-Headline-6 text-Text-Primary w-[800px] pl-6">
+                            Name
+                          </div>
+                          <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
+                            Result
+                          </div>
+                          <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
+                            Units
+                          </div>
+                          <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
+                            Lab Ref Range
+                          </div>
+                          {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                          Baseline
+                        </div> */}
+                          <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
+                            Optimal Range
+                          </div>
+                          {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
+                          Changes
+                        </div> */}
+                        </div>
+                        {ResolveConceringData().map((el: any) => {
+                          return (
+                            <>
+                              <ConceringRow data={el}></ConceringRow>
+                            </>
+                          );
+                        })}
                       </div>
-                      <div className="TextStyle-Headline-6 text-Text-Primary w-[120px] text-center">
-                        Result
+                      <div className="flex xl:hidden flex-col gap-3">
+                        {ResolveConceringData().map((el: any) => {
+                          return (
+                            <>
+                              <AccordionItem data={el}></AccordionItem>
+                            </>
+                          );
+                        })}
                       </div>
-                      <div className="TextStyle-Headline-6 text-Text-Primary   w-[120px] text-center">
-                        Units
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-center items-center mt-10 w-full">
+                        <div className="flex flex-col items-center justify-center">
+                          <img
+                            src="/icons/Empty/conceningEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                            No Concerning Results Available Yet!
+                          </div>
+                        </div>
                       </div>
-                      <div className="TextStyle-Headline-6 text-Text-Primary  w-[180px] text-center">
-                        Lab Ref Range
-                      </div>
-                      {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                        Baseline
-                      </div> */}
-                      <div className="TextStyle-Headline-6 text-Text-Primary w-[150px] text-center">
-                        Optimal Range
-                      </div>
-                      {/* <div className="TextStyle-Headline-6 text-Text-Primary  w-[130px] text-center">
-                        Changes
-                      </div> */}
-                    </div>
-                    {ResolveConceringData().map((el: any) => {
-                      return (
-                        <>
-                          <ConceringRow data={el}></ConceringRow>
-                        </>
-                      );
-                    })}
-                  </div>
-                  <div className="flex xl:hidden flex-col gap-3">
-                    {ResolveConceringData().map((el: any) => {
-                      return (
-                        <>
-                          <AccordionItem data={el}></AccordionItem>
-                        </>
-                      );
-                    })}
-                  </div>
+                    </>
+                  )}
                 </div>
               </>
             )}
@@ -663,35 +762,53 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     Detailed Analysis
                   </div>
                   <div className="TextStyle-Body-2 text-Text-Secondary mt-2">
-                    {referenceData.detailed_analysis_note}
+                    {referenceData?.detailed_analysis_note}
                   </div>
                 </div>
-
-                <div className="mt-6 hidden xl:block">
-                  {resolveCategories().map((el: any, index: number) => {
-                    return (
-                      <DetiledAnalyse
-                        refrences={resolveBioMarkers().filter(
-                          (val: any) => val.subcategory == el.subcategory,
-                        )}
-                        data={el}
-                        index={index}
-                      ></DetiledAnalyse>
-                    );
-                  })}
-                </div>
-                <div className="mt-6 block xl:hidden">
-                  {resolveCategories().map((el: any) => {
-                    return (
-                      <DetiledAcordin
-                        refrences={resolveBioMarkers().filter(
-                          (val: any) => val.subcategory == el.subcategory,
-                        )}
-                        data={el}
-                      ></DetiledAcordin>
-                    );
-                  })}
-                </div>
+                {resolveCategories().length > 0 ? (
+                  <>
+                    <div className="mt-6 hidden xl:block">
+                      {resolveCategories().map((el: any, index: number) => {
+                        return (
+                          <DetiledAnalyse
+                            refrences={resolveBioMarkers().filter(
+                              (val: any) => val.subcategory == el.subcategory,
+                            )}
+                            data={el}
+                            index={index}
+                          ></DetiledAnalyse>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-6 block xl:hidden">
+                      {resolveCategories().map((el: any) => {
+                        return (
+                          <DetiledAcordin
+                            refrences={resolveBioMarkers().filter(
+                              (val: any) => val.subcategory == el.subcategory,
+                            )}
+                            data={el}
+                          ></DetiledAcordin>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-center items-center mt-10 w-full">
+                      <div className="flex flex-col items-center justify-center">
+                        <img
+                          src="/icons/Empty/detailAnalyseEmpty.svg"
+                          alt=""
+                          className="w-[219px]"
+                        />
+                        <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
+                          No Detailed Analysis Available Yet!
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             )}
             {accessManager.filter((el) => el.name == 'Holistic Plan')[0]
@@ -795,7 +912,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 {/* <></> */}
               </div>
             )}
-            {!isHaveReport && (
+            {showUploadTest && (
               <>
                 {isGenerateLoading ? (
                   <>
@@ -811,11 +928,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                 ) : (
                   <UploadTest
                     isShare={isShare}
+                    showReport={isHaveReport}
                     onGenderate={() => {
                       setISGenerateLoading(true);
+                      Application.first_view_report(resolvedMemberID).then(
+                        (res) => {
+                          console.log(res);
+                        },
+                      );
                       setTimeout(() => {
+                        fetchPatentDataWithState();
                         // publish('QuestionaryTrackingCall', {});
-                        fetchData();
+                        // fetchData();
                       }, 5000);
                     }}
                     memberId={resolvedMemberID}

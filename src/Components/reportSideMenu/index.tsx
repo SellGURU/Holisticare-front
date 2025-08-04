@@ -105,17 +105,22 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
     }
   }, [name]);
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     const handleReportStatus = (message: any) => {
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
       setIsReportAvailable(eventData.detail.isHaveReport);
     };
-
+    const handleShowReport = (message: any) => {
+      const eventData = message as CustomEvent<{ showReport: boolean }>;
+      setShowReport(eventData.detail.showReport);
+    };
     subscribe('reportStatus', handleReportStatus);
-
+    subscribe('showReport', handleShowReport);
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
+      unsubscribe('showReport', handleShowReport);
     };
   }, []);
 
@@ -127,7 +132,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
       <div className="flex rounded-[7px] p-px gap-[2px] w-[76px] h-[26px] bg-backgroundColor-Main">
         <div
           onClick={() =>
-            !disableClicks && isReportAvailable && setActiveLayer('menu')
+            !disableClicks &&
+            (isReportAvailable || showReport) &&
+            setActiveLayer('menu')
           }
           className={`flex ${ActiveLayer === 'menu' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -137,7 +144,9 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
         </div>
         <div
           onClick={() =>
-            !disableClicks && isReportAvailable && setActiveLayer('layer')
+            !disableClicks &&
+            (isReportAvailable || showReport) &&
+            setActiveLayer('layer')
           }
           className={`flex ${ActiveLayer === 'layer' && 'bg-white '} items-center justify-center px-2 py-[2px] rounded-md cursor-pointer `}
         >
@@ -162,7 +171,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
             resolveSteps().map((item, index) => (
               <div
                 onClick={() => {
-                  if (!disableClicks && isReportAvailable) {
+                  if (!disableClicks && (isReportAvailable || showReport)) {
                     onchangeMenu(item);
                   }
                 }}
@@ -181,7 +190,7 @@ const ReportSideMenu: React.FC<ReportSideMenuProps> = ({
               {resolveSteps().map((item, index) => (
                 <div
                   onClick={() => {
-                    if (!disableClicks && isReportAvailable) {
+                    if (!disableClicks && (isReportAvailable || showReport)) {
                       setactiveImg(index + 1);
                       document.getElementById(item)?.scrollIntoView({
                         behavior: 'smooth',

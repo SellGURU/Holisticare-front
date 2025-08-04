@@ -7,8 +7,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { FC, useEffect, useState } from 'react';
-import { columns } from './tableTd';
 import { FaSort } from 'react-icons/fa';
+import { columns } from './tableTd';
 
 interface TableProps {
   tableData: Array<any>;
@@ -57,14 +57,28 @@ const TableNoPaginateForLibraryThreePages: FC<TableProps> = ({
   const handlePreview = (row: any) => {
     onPreview(row);
   };
+  const [dynamicHeight, setDynamicHeight] = useState<number | null>(null);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (typeof window !== 'undefined') {
+        const newHeight =
+          window.innerWidth > 720
+            ? window.innerHeight - 220
+            : window.innerHeight - 320;
+        setDynamicHeight(newHeight);
+      }
+    };
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
   return (
     <div
-      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto overflow-hidden"
+      className="w-full mt-6 mb-20 md:mb-14 overflow-y-auto"
       style={{
-        height:
-          window.innerWidth > 720
-            ? window.innerHeight - 120 + 'px'
-            : window.innerHeight - 220 + 'px',
+        height: dynamicHeight ? `${dynamicHeight}px` : 'auto',
       }}
     >
       <div
