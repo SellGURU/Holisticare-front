@@ -658,8 +658,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center mt-10 w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/needsfocusEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/needsfocusEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Concerning Biomarkers Available Yet!
                           </div>
                         </div>
@@ -729,8 +733,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                     <>
                       <div className="flex justify-center items-center mt-10 w-full">
                         <div className="flex flex-col items-center justify-center">
-                          <img src="/icons/Empty/conceningEmpty.svg" alt="" />
-                          <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                          <img
+                            src="/icons/Empty/conceningEmpty.svg"
+                            alt=""
+                            className="w-[219px]"
+                          />
+                          <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                             No Concerning Results Available Yet!
                           </div>
                         </div>
@@ -787,8 +795,12 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
                   <>
                     <div className="flex justify-center items-center mt-10 w-full">
                       <div className="flex flex-col items-center justify-center">
-                        <img src="/icons/Empty/detailAnalyseEmpty.svg" alt="" />
-                        <div className="text-Text-Primary text-center mt-[-30px] TextStyle-Headline-4">
+                        <img
+                          src="/icons/Empty/detailAnalyseEmpty.svg"
+                          alt=""
+                          className="w-[219px]"
+                        />
+                        <div className="text-Text-Primary text-center mt-[-30px] text-sm font-medium">
                           No Detailed Analysis Available Yet!
                         </div>
                       </div>
