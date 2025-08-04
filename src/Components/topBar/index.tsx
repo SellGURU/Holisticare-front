@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
 import Application from '../../api/app';
@@ -21,7 +21,7 @@ interface TopBarProps {
   isShare?: boolean;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({
+export const TopBar: FC<TopBarProps> = ({
   canDownload,
   setShowCombo,
   showCombo,
@@ -164,6 +164,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   const [openShare, setOpenShare] = useState(false);
   const [downloadingState, setDownloadingState] = useState('download');
   const [isReportAvailable, setIsReportAvailable] = useState(true);
+  const [showReport, setShowReport] = useState(false);
   const [customTheme, setCustomTheme] = useState(
     localStorage.getItem('brandInfoData')
       ? JSON.parse(localStorage.getItem('brandInfoData') || '{}')
@@ -213,11 +214,15 @@ export const TopBar: React.FC<TopBarProps> = ({
       const eventData = message as CustomEvent<{ isHaveReport: boolean }>;
       setIsReportAvailable(eventData.detail.isHaveReport);
     };
-
+    const handleShowReport = (message: any) => {
+      const eventData = message as CustomEvent<{ showReport: boolean }>;
+      setShowReport(eventData.detail.showReport);
+    };
     subscribe('reportStatus', handleReportStatus);
-
+    subscribe('showReport', handleShowReport);
     return () => {
       unsubscribe('reportStatus', handleReportStatus);
+      unsubscribe('showReport', handleShowReport);
     };
   }, []);
 
@@ -247,7 +252,7 @@ export const TopBar: React.FC<TopBarProps> = ({
     );
   }, [window.location.pathname]);
 
-  const shouldEnableActions = !isReportAvailable;
+  const shouldEnableActions = !isReportAvailable && !showReport;
 
   return (
     <div className="w-full flex items-center justify-between bg-[#E9F0F2] md:bg-white md:border-b  border-gray-50 pl-2 xs:pl-4 pr-3 xs:pr-6 py-2 shadow-100">

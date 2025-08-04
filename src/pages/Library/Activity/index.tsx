@@ -46,7 +46,6 @@ const Activity = () => {
       getActivityList();
     }
   }, [active]);
-  console.log(dataList);
 
   return (
     <>
@@ -56,7 +55,7 @@ const Activity = () => {
         </div>
       )}
       <div>
-        <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 pr-[200px]">
+        <div className="w-full bg-bg-color px-6 pt-8">
           <div className="w-full flex justify-center ">
             <Toggle
               active={active}
@@ -104,7 +103,7 @@ const Activity = () => {
             </div>
           </div>
         </div>
-        <div className="pt-[100px] px-6">
+        <div className="px-6 mb-20 md:mb-14">
           {active == 'Activity' ? (
             <ActivityHandler
               setShowAddActivity={setShowAddActivity}

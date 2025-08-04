@@ -284,8 +284,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
           {cardData.length < 1 ? (
             <div className="w-full h-[450px] flex justify-center items-center">
               <div className="w-full h-full flex flex-col items-center justify-center">
-                <img src="/icons/EmptyState.svg" alt="" />
-                <div className="text-base font-medium text-Text-Primary -mt-9">
+                <img src="/icons/EmptyState.svg" alt="" className="w-[219px]" />
+                <div className="text-sm font-medium text-Text-Primary -mt-9">
                   No Holistic Plan Generated Yet
                 </div>
                 <div className="text-xs text-Text-Primary mt-2 mb-5">

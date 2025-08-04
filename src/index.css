@@ -517,6 +517,9 @@ input[type='range'] {
     scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
 }
+.scroll-container {
+  scroll-padding-top: 60px; /* Adjust as needed */
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

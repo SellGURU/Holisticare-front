@@ -244,7 +244,11 @@ const RecentCheckIns = () => {
                   <label className="mb-1">Completed Check-In Forms</label>
                   <div
                     ref={selectButRef}
-                    onClick={() => setShowSelect(!showSelect)}
+                    onClick={() => {
+                      if (CompareCheckinsList.length > 0) {
+                        setShowSelect(!showSelect);
+                      }
+                    }}
                     className={`w-full  cursor-pointer h-[28px] flex justify-between items-center px-3 bg-[#FDFDFD] ${
                       showSelect && 'rounded-b-none'
                     } rounded-[16px] border border-[#E9EDF5]`}

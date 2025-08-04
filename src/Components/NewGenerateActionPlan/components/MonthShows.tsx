@@ -43,7 +43,7 @@ const MonthShows: React.FC<MonthShowsProps> = ({ days, className = '' }) => {
         return (
           <div
             key={day}
-            className={`flex items-center p-1 justify-center capitalize text-Text-Primary
+            className={`flex items-center p-1 border-x border-Gray-50  justify-center capitalize text-Text-Primary
               ${!isLastInRow ? 'border-r border-Gray-50' : ''}
               ${!isInLastRow ? 'border-b border-Gray-50' : ''}`}
             // style={{ width: '32px', height: '32px' }}

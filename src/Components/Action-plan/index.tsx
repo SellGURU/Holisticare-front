@@ -157,8 +157,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
               ) : (
                 <div className=" h-[440px] flex justify-center items-center w-[242px]">
                   <div>
-                    <img src="/icons/EmptyState.svg" alt="" />
-                    <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                    <img
+                      src="/icons/EmptyState.svg"
+                      alt=""
+                      className="w-[219px]"
+                    />
+                    <h5 className="text-sm font-medium text-Text-Primary text-center -mt-10">
                       No Action Plan Generated Yet
                     </h5>
                   </div>
@@ -256,8 +260,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
               ) : isHolisticPlanEmpty ? (
                 <>
                   <div className=" h-[440px] flex justify-center items-center w-full flex-col">
-                    <img src="/icons/EmptyState.svg" alt="" />
-                    <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                    <img
+                      src="/icons/EmptyState.svg"
+                      alt=""
+                      className="w-[219px]"
+                    />
+                    <h5 className="text-sm font-medium text-Text-Primary text-center -mt-10">
                       No action plan generated yet
                     </h5>
                     <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
@@ -276,8 +284,12 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                 <>
                   <div className=" h-[440px] flex justify-center items-center w-[242px]">
                     <div>
-                      <img src="/icons/EmptyState.svg" alt="" />
-                      <h5 className=" TextStyle-Headline-4 text-Text-Primary text-center -mt-10">
+                      <img
+                        src="/icons/EmptyState.svg"
+                        alt=""
+                        className="w-[219px]"
+                      />
+                      <h5 className="text-sm font-medium text-Text-Primary text-center -mt-10">
                         No Action Plan Generated Yet
                       </h5>
                       <div className="TextStyle-Body-2 text-Text-Primary text-center mt-2">
