@@ -49,7 +49,9 @@ const BioMarkerRowSuggestionsCheckIn: React.FC<
             <div className="flex flex-col justify-start w-full">
               <div className="flex items-center justify-between w-full">
                 <div className="text-Text-Primary text-sm font-medium flex items-center gap-2">
-                  {/* <img src="/icons/check-in.svg" alt="" /> */}
+                  <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px]">
+                    <img className="w-4" src="/icons/check-in.svg" alt="" />
+                  </div>
                   {value.Title}
                 </div>
                 <div className="flex items-center">
