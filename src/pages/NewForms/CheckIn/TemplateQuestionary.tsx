@@ -32,6 +32,8 @@ const TemplateQuestinary: React.FC<TemplateQuestinaryProps> = ({
         return '/images/forms/emotional-health.png';
       case 'Fitness Test Results':
         return '/images/forms/fitness-test.png';
+      case 'German Clinic Dubai Functional Medicine & EMS Client Questionnaire':
+        return '/images/forms/ems.png';
     }
   };
   return (

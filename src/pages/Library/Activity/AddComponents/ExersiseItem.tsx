@@ -68,10 +68,8 @@ const ExerciseItem = ({
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow positive integers
-    if (/^\d*$/.test(value)) {
-      onChange(index, 'Weight', value, exesiseIndex);
-    }
+    // Allow any text (including numbers, characters like "body", etc.)
+    onChange(index, 'Weight', value, exesiseIndex);
   };
 
   const handleRestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
