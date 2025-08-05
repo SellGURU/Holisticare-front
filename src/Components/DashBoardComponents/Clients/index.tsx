@@ -32,7 +32,7 @@ const RecentCheckIns: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 clients-container">
+    <div className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 clients-container ">
       <div className="pb-3 pr-[8px] clients-content">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm text-Text-Primary font-medium flex items-center">
@@ -55,17 +55,17 @@ const RecentCheckIns: React.FC = () => {
             <div className="w-full h-full">
               {/* Header */}
               <div className="sticky top-0 z-10 bg-[#E9F0F2] text-left text-[10px] rounded-t-2xl text-Text-Primary border-Gray-50 flex">
-                <div className="py-2 pl-2 w-[150px] rounded-tl-2xl">
+                <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] rounded-tl-2xl">
                   Client Name
                 </div>
-                <div className="py-2 w-[95px] text-center">Enroll Date</div>
+                <div className="py-2 w-[75px] 2xl:w-[100px] text-center">Enroll Date</div>
                 <div className="py-2 px-3 w-[30px] xl:w-[50px] 2xl:w-[95px] text-center rounded-tr-2xl">
                   Progress
                 </div>
               </div>
 
               {/* Rows */}
-              <div className="overflow-auto h-[80%] ">
+              <div className="overflow-auto w-full h-[80%] ">
                 {Clients.map((client, index) => (
                   <div
                     key={index}
@@ -73,7 +73,7 @@ const RecentCheckIns: React.FC = () => {
                       index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'
                     }`}
                   >
-                    <div className="py-2 pl-2 w-[150px] flex items-center">
+                    <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] flex items-center">
                       <img
                         src={`https://ui-avatars.com/api/?name=${client.name}`}
                         alt={client.name}
@@ -87,7 +87,7 @@ const RecentCheckIns: React.FC = () => {
                       </TooltipTextAuto>
                     </div>
 
-                    <div className="py-2 w-[95px] text-center text-Text-Secondary text-[10px]">
+                    <div className="py-2 w-[75px]  2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
                     </div>
 
