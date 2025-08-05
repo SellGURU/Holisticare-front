@@ -349,7 +349,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
               </div>
             </div>
           </div>
-          {exercise.Ai_note && (
+          {/* {exercise.Ai_note && (
             <div className="flex w-full items-start gap-3 mb-7">
               <div className="text-xs font-medium text-nowrap">
                 Clinical Guidance
@@ -358,7 +358,7 @@ const PreviewExerciseModal: React.FC<ViewExerciseModalProps> = ({
                 {exercise.Ai_note}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         <div
