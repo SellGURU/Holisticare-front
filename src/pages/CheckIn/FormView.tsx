@@ -45,7 +45,7 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
     }
   }, []);
   const submit = (e: any) => {
-    setIsLaoding(true);
+    // setIsLaoding(true);
     const apiCall =
       mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
 
