@@ -447,7 +447,7 @@ const AddClient = () => {
                           ) : (
                             <div className="relative">
                               <img
-                                className="w-[60px] h-[60px] rounded-full"
+                                className="w-[60px] object-contain h-[60px] rounded-full"
                                 src={photo}
                                 alt=""
                               />

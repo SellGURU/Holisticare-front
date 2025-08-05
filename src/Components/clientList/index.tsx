@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 // import { ButtonSecondary } from "../Button/ButtosSecondary";
 import { useNavigate } from 'react-router-dom';
 import Application from '../../api/app';
@@ -321,6 +321,7 @@ const ClientList = () => {
       ),
     );
   };
+  const filterButtonRef = useRef<HTMLDivElement>(null);
   return (
     <>
       {isLoading ? (
@@ -449,6 +450,7 @@ const ClientList = () => {
                       )}
 
                       <div
+                        ref={filterButtonRef}
                         onClick={() => {
                           setshowFilterModal(!showFilterModal);
                         }}
@@ -472,6 +474,7 @@ const ClientList = () => {
 
                     {showFilterModal && (
                       <FilterModal
+                        buttonRefrence={filterButtonRef}
                         filters={filters}
                         onApplyFilters={applyFilters}
                         onClearFilters={clearFilters}

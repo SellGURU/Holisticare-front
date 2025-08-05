@@ -60,10 +60,10 @@ const FileBox: React.FC<FileBoxProps> = ({
         style={{ borderColor: el.status == 'error' ? '#ff0005' : '#e9edf5 ' }}
       >
         <div className={`flex justify-between items-center w-full `}>
-          <div className="text-[10px]  text-Text-Primary select-none ">
+          <div className="text-[10px] w-[70px]  text-Text-Primary select-none ">
             <TooltipTextAuto
               tooltipClassName="!bg-white ml-8 !w-[180px] !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-              maxWidth="77px"
+              maxWidth="70px"
             >
               {el.file_name || el.file.name}
             </TooltipTextAuto>
