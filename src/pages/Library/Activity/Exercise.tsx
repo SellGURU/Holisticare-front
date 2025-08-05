@@ -24,7 +24,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   const [showEditModalIndex, setShowEditModalIndex] = useState<number | null>(
     null,
   );
-  const [showDeleteError, setshowDeleteError] = useState(true);
+  const [showDeleteError, setshowDeleteError] = useState('');
 
   const handleClearData = (value: boolean) => {
     setClearData(value);
@@ -57,8 +57,11 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
       })
       .catch((error) => {
         console.log(error);
+        if (error.detail) {
+          setshowDeleteError(error.detail);
 
-        setshowDeleteError(true);
+        }
+
         // console.error('Error deleting exercise:', error);
         // toast.error(error);
       });
@@ -99,7 +102,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   useEffect(() => {
     if (showDeleteError) {
       const timer = setTimeout(() => {
-        setshowDeleteError(false);
+        setshowDeleteError('');
       }, 10000);
       return () => clearTimeout(timer);
     }
@@ -111,7 +114,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         <div className="absolute right-6 top-[70px] min-w-[366px] w-fit bg-backgroundColor-Card border border-Red py-1 px-4 flex rounded-2xl items-center gap-4 min-h-[28px] text-xs text-Text-Primary select-none">
           {' '}
           <img src="/icons/info-circle-red.svg" alt="" />
-          This exercise can't be deleted as it's currently in use.
+          {showDeleteError}
         </div>
       )}
 
