@@ -1,5 +1,5 @@
 // import { useState } from 'react';
-import { sortKeysWithValues } from './Boxs/Help';
+// import { sortKeysWithValues } from './Boxs/Help';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface HistoricalChartProps {
@@ -19,27 +19,54 @@ const HistoricalChart = ({
     if (color && color != '') {
       return color;
     }
-    if (key == 'Needs Focus') {
+    if (key == 'Needs Focus' || key =='CriticalRange') {
       return '#B2302E';
     }
-    if (key == 'Ok') {
+    if(key == 'DiseaseRange'){
+      return '#BA5225'
+    }
+    if (key == 'Ok' || key =='BorderlineRange') {
       return '#D8D800';
     }
-    if (key == 'Good') {
+    if (key == 'Good' || key =='HealthyRange') {
       return '#72C13B';
     }
-    if (key == 'Excellent') {
+    if (key == 'Excellent' || key =='OptimalRange') {
       return '#37B45E';
     }
+    return '#FBAD37';
   };
   // console.log(dataPoints,dataStatus);
   // const [dataPoints,] = useState<any[]>(['Moderately compromised outcome','Moderately compromised outcome','Moderately Enhanced Outcome','Enhanced Outcome','Excellent Outcome','Excellent Outcome']);
   // const [dataStatus,] = useState<any[]>(['ok','ok','good','excellent','good','needs focus']);
   // Calculate the vertical position for each status
-  const getStatusVerticalPosition = (status: string) => {
-    const sortedStatuses = sortKeysWithValues(statusBar).reverse();
+  const getStatusVerticalPosition = (status: string, value?: number) => {
+    const sortedStatuses = sortByRange().reverse();
+    console.log(sortedStatuses);
+    
+    // If value is provided, find the status that contains this value in its range
+    if (value !== undefined) {
+      const matchingStatus = sortedStatuses.find((el: any) => {
+        const low = parseFloat(el.low ?? '');
+        const high = parseFloat(el.high ?? '');
+        const numValue = Number(value);
+        
+        const isInRange = (el.low === null || numValue >= low) && 
+                         (el.high === null || numValue <= high);
+        
+        return el.status.toLowerCase() === status.toLowerCase() && isInRange;
+      });
+      
+      if (matchingStatus) {
+        const index = sortedStatuses.findIndex((el: any) => el === matchingStatus);
+        const rowHeight = 70 / sortedStatuses.length;
+        return index * rowHeight + rowHeight / 2; // Center in the row
+      }
+    }
+    
+    // Fallback to original logic if no value provided or no matching range found
     const index = sortedStatuses.findIndex(
-      (el: any) => el.key.toLowerCase() === status.toLowerCase(),
+      (el: any) => el.status.toLowerCase() === status.toLowerCase(),
     );
     if (index === -1) return 0;
 
@@ -127,16 +154,18 @@ const HistoricalChart = ({
               <circle cx="5" cy="5" r="2" fill="#888888" />
             </marker>
           </defs>
-          {dataPoints.map((_, index) => {
+          {dataPoints.map((point, index) => {
             if (index === dataPoints.length - 1) return null;
 
             const currentStatus = dataStatus[index];
             const nextStatus = dataStatus[index + 1];
+            const currentValue = dataPoints[index];
+            const nextValue = dataPoints[index + 1];
 
             const x1 = index * 43 + 10;
             const x2 = (index + 1) * 43 + 10;
-            const y1 = getStatusVerticalPosition(currentStatus);
-            const y2 = getStatusVerticalPosition(nextStatus);
+            const y1 = getStatusVerticalPosition(currentStatus, currentValue);
+            const y2 = getStatusVerticalPosition(nextStatus, nextValue);
 
             return (
               <line
