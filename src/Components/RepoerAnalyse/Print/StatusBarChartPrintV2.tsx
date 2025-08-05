@@ -16,19 +16,19 @@ const StatusBarChartPrintV2 = ({
   status,
 }: StatusBarChartPrintV2Prps) => {
   const resolveColor = (key: string) => {
-    if (key == 'Needs Focus' || key =='CriticalRange') {
+    if (key == 'Needs Focus' || key == 'CriticalRange') {
       return '#B2302E';
     }
-    if(key == 'DiseaseRange'){
-      return '#BA5225'
+    if (key == 'DiseaseRange') {
+      return '#BA5225';
     }
-    if (key == 'Ok' || key =='BorderlineRange') {
+    if (key == 'Ok' || key == 'BorderlineRange') {
       return '#D8D800';
     }
-    if (key == 'Good' || key =='HealthyRange') {
+    if (key == 'Good' || key == 'HealthyRange') {
       return '#72C13B';
     }
-    if (key == 'Excellent' || key =='OptimalRange') {
+    if (key == 'Excellent' || key == 'OptimalRange') {
       return '#37B45E';
     }
     return '#FBAD37';

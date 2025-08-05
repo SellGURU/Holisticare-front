@@ -5,7 +5,12 @@ interface PointProps {
   left: number;
   onClick?: () => void;
   name: string;
-  status?: 'CriticalRange' | 'DiseaseRange' | 'BorderlineRange' | 'HealthyRange' | 'OptimalRange';
+  status?:
+    | 'CriticalRange'
+    | 'DiseaseRange'
+    | 'BorderlineRange'
+    | 'HealthyRange'
+    | 'OptimalRange';
 }
 
 const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {

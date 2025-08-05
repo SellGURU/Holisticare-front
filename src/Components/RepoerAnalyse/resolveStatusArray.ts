@@ -6,7 +6,7 @@ const resolveStatusArray = (status: Array<number>) => {
   }
   if (status[3] > 0) {
     return 'DiseaseRange';
-  }  
+  }
   if (status[2] > 0) {
     return 'BorderlineRange';
   }

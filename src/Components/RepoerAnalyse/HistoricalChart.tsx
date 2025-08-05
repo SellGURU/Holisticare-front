@@ -19,19 +19,19 @@ const HistoricalChart = ({
     if (color && color != '') {
       return color;
     }
-    if (key == 'Needs Focus' || key =='CriticalRange') {
+    if (key == 'Needs Focus' || key == 'CriticalRange') {
       return '#B2302E';
     }
-    if(key == 'DiseaseRange'){
-      return '#BA5225'
+    if (key == 'DiseaseRange') {
+      return '#BA5225';
     }
-    if (key == 'Ok' || key =='BorderlineRange') {
+    if (key == 'Ok' || key == 'BorderlineRange') {
       return '#D8D800';
     }
-    if (key == 'Good' || key =='HealthyRange') {
+    if (key == 'Good' || key == 'HealthyRange') {
       return '#72C13B';
     }
-    if (key == 'Excellent' || key =='OptimalRange') {
+    if (key == 'Excellent' || key == 'OptimalRange') {
       return '#37B45E';
     }
     return '#FBAD37';
@@ -43,27 +43,30 @@ const HistoricalChart = ({
   const getStatusVerticalPosition = (status: string, value?: number) => {
     const sortedStatuses = sortByRange().reverse();
     console.log(sortedStatuses);
-    
+
     // If value is provided, find the status that contains this value in its range
     if (value !== undefined) {
       const matchingStatus = sortedStatuses.find((el: any) => {
         const low = parseFloat(el.low ?? '');
         const high = parseFloat(el.high ?? '');
         const numValue = Number(value);
-        
-        const isInRange = (el.low === null || numValue >= low) && 
-                         (el.high === null || numValue <= high);
-        
+
+        const isInRange =
+          (el.low === null || numValue >= low) &&
+          (el.high === null || numValue <= high);
+
         return el.status.toLowerCase() === status.toLowerCase() && isInRange;
       });
-      
+
       if (matchingStatus) {
-        const index = sortedStatuses.findIndex((el: any) => el === matchingStatus);
+        const index = sortedStatuses.findIndex(
+          (el: any) => el === matchingStatus,
+        );
         const rowHeight = 70 / sortedStatuses.length;
         return index * rowHeight + rowHeight / 2; // Center in the row
       }
     }
-    
+
     // Fallback to original logic if no value provided or no matching range found
     const index = sortedStatuses.findIndex(
       (el: any) => el.status.toLowerCase() === status.toLowerCase(),

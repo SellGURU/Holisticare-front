@@ -78,12 +78,15 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               className="md:w-10 md:h-10 w-8 h-8 items-center rounded-full flex justify-center"
               style={{
                 background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
-              data.status[1] + data.status[0]
-            }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
-              data.status[2] + data.status[1] + data.status[0]
-            }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
-              data.status[3] + data.status[2] + data.status[1] + data.status[0]
-            }% 100%)`,
+                  data.status[1] + data.status[0]
+                }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
+                  data.status[2] + data.status[1] + data.status[0]
+                }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
+                  data.status[3] +
+                  data.status[2] +
+                  data.status[1] +
+                  data.status[0]
+                }% 100%)`,
               }}
             >
               <div
