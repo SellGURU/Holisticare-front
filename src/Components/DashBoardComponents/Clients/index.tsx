@@ -58,7 +58,9 @@ const RecentCheckIns: React.FC = () => {
                 <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] rounded-tl-2xl">
                   Client Name
                 </div>
-                <div className="py-2 w-[75px] 2xl:w-[100px] text-center">Enroll Date</div>
+                <div className="py-2 w-[75px] 2xl:w-[100px] text-center">
+                  Enroll Date
+                </div>
                 <div className="py-2 px-3 w-[30px] xl:w-[50px] 2xl:w-[95px] text-center rounded-tr-2xl">
                   Progress
                 </div>
