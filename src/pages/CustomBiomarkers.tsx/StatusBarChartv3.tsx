@@ -205,7 +205,7 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                         }}
                       >
                         <span className="opacity-40">You: </span>
-                        {values && values[0]} <span>{unit}</span>
+                        {values && values[0]} <span className='opacity-70'>{unit}</span>
                       </div>
                     </div>
                   );

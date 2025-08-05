@@ -140,9 +140,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                     <th className="py-3 w-[66px] text-center pl-3 text-nowrap">
                       Priority Weight
                     </th>
-                    <th className="py-3 w-[250px] text-center text-nowrap">
+                    {/* <th className="py-3 w-[250px] text-center text-nowrap">
                       Clinical Guidance
-                    </th>
+                    </th> */}
                     <th className="py-3 w-[100px] text-center pl-3 text-nowrap">
                       Added on
                     </th>

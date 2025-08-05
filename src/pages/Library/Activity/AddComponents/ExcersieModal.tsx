@@ -471,7 +471,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             )} */}
             </div>
             {/* Clinical Guidance Field */}
-            <div className="flex flex-col w-full gap-2">
+            {/* <div className="flex flex-col w-full gap-2">
               <div className="text-xs font-medium text-Text-Primary">
                 Clinical Guidance
               </div>
@@ -483,7 +483,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                 }}
                 className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
               />
-            </div>
+            </div> */}
             {/* <TextField
               newStyle
               type="text"
