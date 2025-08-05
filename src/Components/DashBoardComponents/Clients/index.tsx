@@ -55,7 +55,9 @@ const RecentCheckIns: React.FC = () => {
             <div className="w-full h-full">
               {/* Header */}
               <div className="sticky top-0 z-10 bg-[#E9F0F2] text-left text-[10px] rounded-t-2xl text-Text-Primary border-Gray-50 flex">
-                <div className="py-2 pl-2 w-[150px] rounded-tl-2xl">Client Name</div>
+                <div className="py-2 pl-2 w-[150px] rounded-tl-2xl">
+                  Client Name
+                </div>
                 <div className="py-2 w-[95px] text-center">Enroll Date</div>
                 <div className="py-2 px-3 w-[30px] xl:w-[50px] 2xl:w-[95px] text-center rounded-tr-2xl">
                   Progress
@@ -63,45 +65,43 @@ const RecentCheckIns: React.FC = () => {
               </div>
 
               {/* Rows */}
-              <div className='overflow-auto h-[80%] '>
+              <div className="overflow-auto h-[80%] ">
+                {Clients.map((client, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center text-[10px] text-Text-Primary border-b ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'
+                    }`}
+                  >
+                    <div className="py-2 pl-2 w-[150px] flex items-center">
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${client.name}`}
+                        alt={client.name}
+                        className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
+                      />
+                      <TooltipTextAuto
+                        tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                        maxWidth="70px"
+                      >
+                        {client.name}
+                      </TooltipTextAuto>
+                    </div>
 
-           
-              {Clients.map((client, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center text-[10px] text-Text-Primary border-b ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'
-                  }`}
-                >
-                  <div className="py-2 pl-2 w-[150px] flex items-center">
-                    <img
-                      src={`https://ui-avatars.com/api/?name=${client.name}`}
-                      alt={client.name}
-                      className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
-                    />
-                    <TooltipTextAuto
-                      tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                      maxWidth="70px"
-                    >
-                      {client.name}
-                    </TooltipTextAuto>
-                  </div>
+                    <div className="py-2 w-[95px] text-center text-Text-Secondary text-[10px]">
+                      {formatDate(client['Enroll Date'])}
+                    </div>
 
-                  <div className="py-2 w-[95px] text-center text-Text-Secondary text-[10px]">
-                    {formatDate(client['Enroll Date'])}
+                    <div className="py-2 w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
+                      <CircularProgressBar
+                        percentage={client.Progress || 0}
+                        startColor="#E742EB"
+                        endColor="#3D70F1"
+                        size={26}
+                      />
+                    </div>
                   </div>
-
-                  <div className="py-2 w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
-                    <CircularProgressBar
-                      percentage={client.Progress || 0}
-                      startColor="#E742EB"
-                      endColor="#3D70F1"
-                      size={26}
-                    />
-                  </div>
-                </div>
-              ))}
-                 </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
