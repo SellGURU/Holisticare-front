@@ -280,7 +280,7 @@ const ClientCard: FC<ClientCardProps> = ({
                     id={'tooltip-client-access' + client.name}
                     className="!bg-white !w-[250px] !text-wrap !text-[#888888] !bg-opacity-100 !opacity-100 !text-[8px] !rounded-[6px] !border !border-Gray-50 !p-2 !break-words"
                   >
-                    {client.name}`s Access
+                    {client.name}'s Access
                   </Tooltip>
                 )}
               </div>
