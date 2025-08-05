@@ -71,7 +71,6 @@ const ExerciseItem = ({
     // Allow any text (including numbers, characters like "body", etc.)
     onChange(index, 'Weight', value, exesiseIndex);
   };
-  
 
   const handleRestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
