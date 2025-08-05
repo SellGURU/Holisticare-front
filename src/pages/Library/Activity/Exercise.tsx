@@ -59,7 +59,6 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         console.log(error);
         if (error.detail) {
           setshowDeleteError(error.detail);
-
         }
 
         // console.error('Error deleting exercise:', error);
