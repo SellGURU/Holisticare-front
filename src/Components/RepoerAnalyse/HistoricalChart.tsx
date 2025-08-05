@@ -157,7 +157,7 @@ const HistoricalChart = ({
               <circle cx="5" cy="5" r="2" fill="#888888" />
             </marker>
           </defs>
-          {dataPoints.map((point, index) => {
+          {dataPoints.map((_point, index) => {
             if (index === dataPoints.length - 1) return null;
 
             const currentStatus = dataStatus[index];
