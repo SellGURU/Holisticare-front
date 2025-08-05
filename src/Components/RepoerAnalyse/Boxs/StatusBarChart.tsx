@@ -131,7 +131,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                       data.status[0] == el.key) &&
                       !justView && (
                         <div
-                          className={`absolute  top-[2px]  z-10`}
+                          className={`absolute  top-[2px]  z-[8]`}
                           style={{
                             left: resolvePercentLeft(data, el) + '%',
                           }}
@@ -162,7 +162,7 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data, justView }) => {
                       // el.value[0]?.toString().includes(data.values[0]) ||
                       data.status[0] == el.key && !justView && (
                         <div
-                          className={`absolute  top-[2px]  z-10`}
+                          className={`absolute  top-[2px]  z-[8]`}
                           style={{
                             left: '50%',
                           }}

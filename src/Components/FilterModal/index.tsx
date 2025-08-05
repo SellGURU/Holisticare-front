@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import SimpleDatePicker from '../SimpleDatePicker';
 // import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Range } from 'react-range';
+import useModalAutoClose from '../../hooks/UseModalAutoClose';
 type GenderFilter = {
   male: boolean;
   female: boolean;
@@ -36,12 +37,14 @@ type FilterModalProps = {
   onClearFilters: () => void;
   onClose: () => void;
   filters: any;
+  buttonRefrence?: React.RefObject<HTMLDivElement>;
 };
 const FilterModal: React.FC<FilterModalProps> = ({
   onApplyFilters,
   onClearFilters,
   onClose,
   filters,
+  buttonRefrence,
 }) => {
   const [gender, setGender] = useState<GenderFilter>({
     male: filters.gender.male,
@@ -137,10 +140,11 @@ const FilterModal: React.FC<FilterModalProps> = ({
   // };
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  // useModalAutoClose({
-  //   refrence: modalRef,
-  //   close: onClose,
-  // });
+  useModalAutoClose({
+    refrence: modalRef,
+    buttonRefrence: buttonRefrence,
+    close: onClose,
+  });
 
   return (
     <div

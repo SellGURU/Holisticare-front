@@ -46,37 +46,39 @@ const FormView: React.FC<FormViewProps> = ({ mode }) => {
   }, []);
   const submit = (e: any) => {
     // setIsLaoding(true);
-    // window.close();
-    if (mode == 'questionary') {
-      Mobile.fillQuestionary({
-        encoded_mi: encode,
-        unique_id: id,
-        respond: e,
-      }).finally(() => {
+    const apiCall =
+      mode === 'questionary' ? Mobile.fillQuestionary : Mobile.fillCheckin;
+
+    apiCall({
+      encoded_mi: encode,
+      unique_id: id,
+      respond: e,
+    })
+      .then(() => {
+        // On successful submission, update state and then close the window
+        setTimeout(() => {
+          if (window.flutter_inappwebview) {
+            window.flutter_inappwebview.callHandler('closeWebView');
+          } else {
+            console.warn(
+              'Flutter WebView bridge not available, attempting to close window.',
+            );
+            window.close();
+          }
+        }, 1500); // Wait for 1.5 seconds to give the user time to see the success message
+      })
+      .catch((error) => {
+        // Handle submission error, but still might want to close for a clean slate
+        console.error('Error submitting form:', error);
         if (window.flutter_inappwebview) {
           window.flutter_inappwebview.callHandler('closeWebView');
         } else {
-          console.warn('Flutter WebView bridge not available');
+          window.close();
         }
-        // setIsComplete(true);
-        // window.flutter_inappwebview.callHandler('closeWebView')
+      })
+      .finally(() => {
         setIsLaoding(false);
       });
-    } else {
-      Mobile.fillCheckin({
-        encoded_mi: encode,
-        unique_id: id,
-        respond: e,
-      }).finally(() => {
-        if (window.flutter_inappwebview) {
-          window.flutter_inappwebview.callHandler('closeWebView');
-        } else {
-          console.warn('Flutter WebView bridge not available');
-        }
-        // setIsComplete(true);
-        // setIsLaoding(false);
-      });
-    }
   };
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
