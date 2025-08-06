@@ -111,7 +111,7 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   return (
     <>
       {showDeleteError && (
-        <div className="absolute right-6 top-[70px] min-w-[366px] w-fit bg-backgroundColor-Card border border-Red py-1 px-4 flex rounded-2xl items-center gap-4 min-h-[28px] text-xs text-Text-Primary select-none">
+        <div className="absolute right-6 top-[70px] w-fit bg-backgroundColor-Card border border-Red py-1 px-4 flex rounded-2xl items-center gap-1  text-xs text-Text-Primary select-none">
           {' '}
           <img src="/icons/info-circle-red.svg" alt="" />
           {showDeleteError}
