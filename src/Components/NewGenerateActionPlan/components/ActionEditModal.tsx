@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
-import Checkbox from '../../checkbox';
+// import Checkbox from '../../checkbox';
 // import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
-import CustomSelect from '../../CustomSelect';
+// import CustomSelect from '../../CustomSelect';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import { Tooltip } from 'react-tooltip';
 
@@ -112,29 +112,29 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     Level: defalts?.Activity_Filters?.Level || [],
   });
   const [step, setStep] = useState(0);
-  const updateAddData = (key: keyof typeof addData, value: any) => {
-    setAddData((prevTheme) => ({
-      ...prevTheme,
-      [key]: value,
-    }));
-  };
-  const [ConditionsOptions, setConditionsOptions] = useState([]);
-  const [EquipmentOptions, setEquipmentOptions] = useState([]);
-  const [LevelOptions, setLevelOptions] = useState([]);
-  const [MuscleOptions, setMuscleOptions] = useState([]);
-  const [TermsOptions, setTermsOptions] = useState([]);
-  const [TypesOptions, setTypeOptions] = useState([]);
+  // const updateAddData = (key: keyof typeof addData, value: any) => {
+  //   setAddData((prevTheme) => ({
+  //     ...prevTheme,
+  //     [key]: value,
+  //   }));
+  // };
+  // const [ConditionsOptions, setConditionsOptions] = useState([]);
+  // const [EquipmentOptions, setEquipmentOptions] = useState([]);
+  // const [LevelOptions, setLevelOptions] = useState([]);
+  // const [MuscleOptions, setMuscleOptions] = useState([]);
+  // const [TermsOptions, setTermsOptions] = useState([]);
+  // const [TypesOptions, setTypeOptions] = useState([]);
   const [showExerciseValidation, setShowExerciseValidation] = useState(false);
-  useEffect(() => {
-    Application.getExerciseFilters({}).then((res) => {
-      setConditionsOptions(res.data.Conditions);
-      setEquipmentOptions(res.data.Equipment);
-      setMuscleOptions(res.data.Muscle);
-      setLevelOptions(res.data.Level);
-      setTermsOptions(res.data.Terms);
-      setTypeOptions(res.data.Type);
-    });
-  }, []);
+  // useEffect(() => {
+  //   Application.getExerciseFilters({}).then((res) => {
+  //     setConditionsOptions(res.data.Conditions);
+  //     setEquipmentOptions(res.data.Equipment);
+  //     setMuscleOptions(res.data.Muscle);
+  //     setLevelOptions(res.data.Level);
+  //     setTermsOptions(res.data.Terms);
+  //     setTypeOptions(res.data.Type);
+  //   });
+  // }, []);
 
   // const [baseScore, setBaseScore] = useState(
   //   defalts?.Base_Score === 0 ? defalts?.Base_Score : 5,
@@ -467,16 +467,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   //       : [...prevTimes, time],
   //   );
   // };
-  const toggleLocationSelection = (time: string) => {
-    setSelectedLocations((prevTimes) =>
-      prevTimes.includes(time)
-        ? prevTimes.filter((t) => t !== time)
-        : [...prevTimes, time],
-    );
-  };
+  // const toggleLocationSelection = (time: string) => {
+  //   setSelectedLocations((prevTimes) =>
+  //     prevTimes.includes(time)
+  //       ? prevTimes.filter((t) => t !== time)
+  //       : [...prevTimes, time],
+  //   );
+  // };
 
   // const times = ['morning', 'midday', 'night'];
-  const locations = ['Home', 'Gym'];
+  // const locations = ['Home', 'Gym'];
   const days = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
   const dayMapping: Record<string, string> = {
     sat: 'Saturday',
@@ -1126,7 +1126,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       )}
                   </div>
                 )}
-                {selectedGroup === 'Activity' && (
+                {/* {selectedGroup === 'Activity' && (
                   <>
                     <div className="text-xs font-medium mb-1">Filters</div>
                     <div className="grid grid-cols-2 gap-y-2 gap-x-">
@@ -1190,10 +1190,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                       />
                     </div>
                   </>
-                )}
+                )} */}
               </div>
               <div>
-                {selectedGroup === 'Activity' && (
+                {/* {selectedGroup === 'Activity' && (
                   <div className="my-4">
                     <label className="text-xs font-medium">
                       Activity Location
@@ -1210,13 +1210,13 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         );
                       })}
                     </div>
-                    {/* {selectedLocations.length === 0 && showValidation && (
+                    {selectedLocations.length === 0 && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
                         This field is required.
                       </span>
-                    )} */}
+                    )}
                   </div>
-                )}
+                )} */}
                 <div className="mb-4">
                   <label className="text-xs font-medium">Frequency</label>
                   <div className="flex items-center gap-6 mt-2">
