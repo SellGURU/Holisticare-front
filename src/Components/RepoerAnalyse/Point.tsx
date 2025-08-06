@@ -5,19 +5,30 @@ interface PointProps {
   left: number;
   onClick?: () => void;
   name: string;
-  status?: 'At risk' | 'Normal' | 'Need action' | 'Excelent';
+  status?:
+    | 'CriticalRange'
+    | 'DiseaseRange'
+    | 'BorderlineRange'
+    | 'HealthyRange'
+    | 'OptimalRange';
 }
 
 const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
   const resolveColor = () => {
-    if (status == 'At risk') {
+    if (status == 'CriticalRange') {
+      return '#B2302E';
+    }
+    if (status == 'BorderlineRange') {
       return '#D8D800';
     }
-    if (status == 'Excelent') {
-      return '#37B45E';
+    if (status == 'DiseaseRange') {
+      return '#BA5225';
     }
-    if (status == 'Normal') {
+    if (status == 'HealthyRange') {
       return '#72C13B';
+    }
+    if (status == 'OptimalRange') {
+      return '#B2302E';
     }
     return '#B2302E';
   };
@@ -33,7 +44,7 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
         <div
           data-tooltip-id="point"
           data-tooltip-content={name}
-          className={`absolute cursor-pointer   ${status == 'Need action' ? 'bg-[#FF3E5D] w-[20px] h-[20px] animate-ping' : 'bg-primary-color'}  rounded-full`}
+          className={`absolute cursor-pointer   ${status == 'CriticalRange' ? 'bg-[#FF3E5D] w-[20px] h-[20px] animate-ping' : 'bg-primary-color'}  rounded-full`}
           style={{ top: top - 5, left: left - 4 }}
         ></div>
       </div>

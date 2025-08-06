@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import Application from '../../../api/app';
 import { ButtonSecondary } from '../../../Components/Button/ButtosSecondary';
 import ExerciseModal from './AddComponents/ExcersieModal';
@@ -24,6 +24,8 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
   const [showEditModalIndex, setShowEditModalIndex] = useState<number | null>(
     null,
   );
+  const [showDeleteError, setshowDeleteError] = useState('');
+
   const handleClearData = (value: boolean) => {
     setClearData(value);
   };
@@ -54,8 +56,13 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
         onAdd();
       })
       .catch((error) => {
+        console.log(error);
+        if (error.detail) {
+          setshowDeleteError(error.detail);
+        }
+
         // console.error('Error deleting exercise:', error);
-        toast.error(error);
+        // toast.error(error);
       });
   };
 
@@ -91,9 +98,25 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
 
     return () => window.removeEventListener('resize', updateHeight);
   }, []);
+  useEffect(() => {
+    if (showDeleteError) {
+      const timer = setTimeout(() => {
+        setshowDeleteError('');
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [showDeleteError]);
 
   return (
     <>
+      {showDeleteError && (
+        <div className="absolute right-6 top-[70px] min-w-[366px] w-fit bg-backgroundColor-Card border border-Red py-1 px-4 flex rounded-2xl items-center gap-4 min-h-[28px] text-xs text-Text-Primary select-none">
+          {' '}
+          <img src="/icons/info-circle-red.svg" alt="" />
+          {showDeleteError}
+        </div>
+      )}
+
       {ExcercisesListLength === 0 ? (
         <div className="w-full h-full min-h-[450px] flex justify-center items-center">
           <div>
@@ -140,9 +163,9 @@ const Exercise: React.FC<ExerciseHandlerProps> = ({
                     <th className="py-3 w-[66px] text-center pl-3 text-nowrap">
                       Priority Weight
                     </th>
-                    <th className="py-3 w-[250px] text-center text-nowrap">
+                    {/* <th className="py-3 w-[250px] text-center text-nowrap">
                       Clinical Guidance
-                    </th>
+                    </th> */}
                     <th className="py-3 w-[100px] text-center pl-3 text-nowrap">
                       Added on
                     </th>

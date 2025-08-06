@@ -144,7 +144,7 @@ const BioMarkerRowSuggestions: React.FC<BioMarkerRowSuggestionsProps> = ({
           >
             <div className="flex items-center justify-between w-full">
               <div className="text-Text-Primary flex justify-start items-center text-sm font-medium">
-                <div className="w-6 h-6 bg-[#E5E5E5] mr-2  flex justify-center items-center rounded-[8px]">
+                <div className="w-8 h-8 bg-backgroundColor-Card border border-Gray-50 flex justify-center items-center rounded-[8px] mr-2">
                   <img className="w-4" src={resolvePillarIcon()} alt="" />
                 </div>
                 {value.Title}

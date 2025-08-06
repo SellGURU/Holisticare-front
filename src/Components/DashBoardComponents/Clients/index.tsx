@@ -21,6 +21,7 @@ const RecentCheckIns: React.FC = () => {
       setClients(res.data.client_list);
     });
   }, []);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -29,6 +30,7 @@ const RecentCheckIns: React.FC = () => {
       year: 'numeric',
     }).format(date);
   };
+
   return (
     <div className="w-full bg-white rounded-2xl shadow-200 p-4 pr-2 clients-container ">
       <div className="pb-3 pr-[8px] clients-content">
@@ -40,67 +42,69 @@ const RecentCheckIns: React.FC = () => {
             </span>
           </h2>
         </div>
-        <div className="overflow-y-scroll pb-1 pr-[4px] clients-table">
+
+        <div className=" pb-1  clients-table">
           {Clients.length < 1 ? (
-            <div className=" w-full h-full flex flex-col items-center justify-center">
+            <div className="w-full h-full flex flex-col items-center justify-center">
               <img src="/icons/NoClient.svg" alt="" />
               <div className="text-xs text-Text-Primary -mt-4 text-center">
                 No Client Found
               </div>
             </div>
           ) : (
-            <table className="w-full  ">
-              <thead className="sticky top-0 z-10 bg-[#E9F0F2]">
-                <tr className="text-left text-[10px] text-Text-Primary border-Gray-50">
-                  <th className="py-2 pl-2 rounded-tl-2xl ">Client Name</th>
-                  <th className="py-2  text-nowrap w-[95px] text-center">
-                    Enroll Date
-                  </th>
-                  <th className="py-2 px-3 rounded-tr-2xl  w-[30px] xl:w-[50px] 2xl:w-[95px] text-center">
-                    Progress
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="border border-t-0 border-[#E9F0F2] ">
-                {Clients?.map((client, index) => (
-                  <tr
+            <div className="w-full h-full">
+              {/* Header */}
+              <div className="sticky top-0 z-10 bg-[#E9F0F2] text-left text-[10px] rounded-t-2xl text-Text-Primary border-Gray-50 flex">
+                <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] rounded-tl-2xl">
+                  Client Name
+                </div>
+                <div className="py-2 w-[75px] 2xl:w-[100px] text-center">
+                  Enroll Date
+                </div>
+                <div className="py-2 px-3 w-[30px] xl:w-[50px] 2xl:w-[95px] text-center rounded-tr-2xl">
+                  Progress
+                </div>
+              </div>
+
+              {/* Rows */}
+              <div className="overflow-auto w-full h-[80%] ">
+                {Clients.map((client, index) => (
+                  <div
                     key={index}
-                    className={` ${index % 2 == 0 ? 'bg-white' : 'bg-[#F4F4F4]'} text-[10px] text-Text-Primary border-b`}
+                    className={`flex items-center text-[10px] text-Text-Primary border-b ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-[#F4F4F4]'
+                    }`}
                   >
-                    <td
-                      data-tooltip-id={client.name}
-                      className="py-2 pl-2 w-[95px] flex items-center text-[10px] text-Text-Primary"
-                    >
+                    <div className="py-2 pl-2 w-[100px] 2xl:w-[150px] flex items-center">
                       <img
                         src={`https://ui-avatars.com/api/?name=${client.name}`}
                         alt={client.name}
                         className="w-6 h-6 rounded-full mr-[4px] border border-Primary-DeepTeal"
                       />
-                      <div className=" ">
-                        <TooltipTextAuto
-                          tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                          maxWidth="70px"
-                        >
-                          {client.name}
-                        </TooltipTextAuto>
-                      </div>
-                    </td>
+                      <TooltipTextAuto
+                        tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                        maxWidth="70px"
+                      >
+                        {client.name}
+                      </TooltipTextAuto>
+                    </div>
 
-                    <td className="py-2  text-Text-Secondary text-[10px] w-[95px] text-center">
+                    <div className="py-2 w-[75px]  2xl:w-[100px]  text-center text-Text-Secondary text-[10px]">
                       {formatDate(client['Enroll Date'])}
-                    </td>
-                    <td className="py-2 text-Text-Secondary text-[10px] text-center w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
+                    </div>
+
+                    <div className="py-2 w-[30px] xl:w-[50px] 2xl:w-[95px] flex justify-end 2xl:justify-center">
                       <CircularProgressBar
                         percentage={client.Progress || 0}
                         startColor="#E742EB"
                         endColor="#3D70F1"
                         size={26}
-                      ></CircularProgressBar>
-                    </td>
-                  </tr>
+                      />
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           )}
         </div>
       </div>

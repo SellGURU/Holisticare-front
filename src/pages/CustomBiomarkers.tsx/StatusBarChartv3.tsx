@@ -18,16 +18,19 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
 }) => {
   // console.log(data);
   const resolveColor = (key: string) => {
-    if (key == 'Needs Focus') {
+    if (key == 'Needs Focus' || key == 'CriticalRange') {
       return '#B2302E';
     }
-    if (key == 'Ok') {
+    if (key == 'DiseaseRange') {
+      return '#BA5225';
+    }
+    if (key == 'Ok' || key == 'BorderlineRange') {
       return '#D8D800';
     }
-    if (key == 'Good') {
+    if (key == 'Good' || key == 'HealthyRange') {
       return '#72C13B';
     }
-    if (key == 'Excellent') {
+    if (key == 'Excellent' || key == 'OptimalRange') {
       return '#37B45E';
     }
     return '#FBAD37';
@@ -205,7 +208,8 @@ const StatusBarChartv3: React.FC<StatusBarChartv3Props> = ({
                         }}
                       >
                         <span className="opacity-40">You: </span>
-                        {values && values[0]} <span>{unit}</span>
+                        {values && values[0]}{' '}
+                        <span className="opacity-70">{unit}</span>
                       </div>
                     </div>
                   );
