@@ -130,7 +130,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
             </div>
           </div>
         </td>
-        <td
+        {/* <td
           className="py-3 text-xs text-[#888888] w-[150px] text-center"
           data-tooltip-id={`tooltip-activity-clinical-guidance-${index}`}
         >
@@ -154,7 +154,7 @@ export const ExerciseRow: React.FC<ExerciseRowProps> = ({
               {exercise.Ai_note}
             </Tooltip>
           )}
-        </td>
+        </td> */}
         <td className="py-3 text-xs text-[#888888] w-[100px] text-center">
           {formatDate(exercise['Added on'])}
         </td>

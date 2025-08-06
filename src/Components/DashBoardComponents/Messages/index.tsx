@@ -133,8 +133,16 @@ const MessageList: React.FC<MessageListProps> = ({
               </div>
             </div>
           )}
-          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y divide-Boarder ">
-            {messagesSearched.map((message) => {
+          <ul className="mt-5 w-full h-full pr-3 overflow-y-scroll divide-y ">
+            {messagesSearched.map((message, index) => {
+              const isSelected = expandedMessage === message.member_id;
+              const isBeforeSelected =
+                index < messagesSearched.length - 1 &&
+                messagesSearched[index + 1].member_id === expandedMessage;
+              const isAfterSelected =
+                index > 0 &&
+                messagesSearched[index - 1].member_id === expandedMessage;
+
               return (
                 <li
                   key={message.member_id}
@@ -154,7 +162,12 @@ const MessageList: React.FC<MessageListProps> = ({
                       );
                     }
                   }}
-                  className={`py-2 mb- cursor-pointer ${expandedMessage === message.member_id && 'bg-backgroundColor-Card shadow-100 border border-Gray-50 rounded-2xl p-2'}`}
+                  className={`py-2 cursor-pointer border-y border-Boarder
+              ${index === 0 && '!border-y-0'}
+              ${isSelected ? 'bg-backgroundColor-Card shadow-100 rounded-2xl p-2' : ''}
+              ${isBeforeSelected && '!border-b-0'}
+            ${isAfterSelected && '!border-t-0'}
+            `}
                 >
                   <div className="flex justify-start">
                     <div
