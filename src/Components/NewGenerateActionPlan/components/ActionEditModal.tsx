@@ -729,9 +729,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
             </div>
           </h2>
           {step == 0 && (
-            <div
-              className={`grid `}
-            >
+            <div className={`grid `}>
               <div className="">
                 <div
                   className={`w-full relative overflow-visible mt-2 mb-4 ${defalts?.Category ? 'opacity-50' : 'opacity-100'}`}
