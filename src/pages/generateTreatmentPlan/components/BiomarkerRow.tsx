@@ -61,12 +61,12 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   }, [editableValue]);
   useEffect(() => {
     setEditAbleValue(value.Instruction);
-    const { positive, negative } = splitInstructions(value.Instruction);
-    setclient_version(
-      Array.isArray(value.client_version)
-        ? value.client_version
-        : [positive, negative],
-    );
+    // const { positive, negative } = splitInstructions(value.Instruction);
+    // setclient_version(
+    //   Array.isArray(value.client_version)
+    //     ? value.client_version
+    //     : [positive, negative],
+    // );
     setNotes(value['Client Notes']);
   }, [value]);
   const handleAddNotes = (newNotes: string[]) => {
@@ -84,11 +84,11 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
   // console.log(value);
   const [Conflicts] = useState<Array<any>>(value?.flag?.conflicts);
   const [ShowConflict, setShowConflict] = useState(false);
-  const [client_version, setclient_version] = useState(
-    Array.isArray(value.client_version)
-      ? value.client_version
-      : [positive, negative],
-  );
+  // const [client_version, setclient_version] = useState(
+  //   Array.isArray(value.client_version)
+  //     ? value.client_version
+  //     : [positive, negative],
+  // );
   useEffect(() => {
     switch (value?.label) {
       case 'Highly Recommended':
@@ -113,7 +113,6 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
         break;
     }
   }, [value?.label]);
-  console.log(value.label);
 
   return (
     <>
@@ -244,14 +243,125 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
               )}
             </div>
           </div>
-          <div className="text-[12px] gap-2 w-full">
+          <div className="flex flex-col gap-1 ml-4 mt-3">
+            {value?.Dose?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+                  <img
+                    src="/icons/ruler-new.svg"
+                    alt=""
+                    className="ml-[-2px]"
+                  />
+                  Dose
+                </div>
+                <div className="text-Text-Quadruple text-xs leading-5 mb-1">
+                  {value?.Dose}
+                </div>
+              </>
+            )}
+            <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs">
+              <img src="/icons/lamp-on-new.svg" alt="" className="ml-[-2px]" />
+              Why It Matters
+            </div>
+            <div className="text-Text-Quadruple text-xs leading-5">
+              {value?.Intervnetion_content}
+            </div>
+            <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
+              <img src="/icons/medal-star.svg" alt="" className="ml-[-2px]" />
+              Key Benefits
+            </div>
+            <div className="flex flex-col ml-1">
+              {value?.key_benefits?.map((el: any) => {
+                return (
+                  <div className="text-Text-Quadruple text-xs leading-5">
+                    <span className="text-Text-Secondary">•</span> {el}
+                  </div>
+                );
+              })}
+            </div>
+            {value?.exercises_to_do?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
+                  <img
+                    src="/icons/tick-circle-new.svg"
+                    alt=""
+                    className="ml-[-2px]"
+                  />
+                  Recommended Exercises
+                </div>
+                <div className="flex flex-col ml-1">
+                  {value?.exercises_to_do?.map((el: any) => {
+                    return (
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        <span className="text-Text-Secondary">•</span> {el}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {value?.exercises_to_avoid?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
+                  <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
+                  Exercises to Avoid
+                </div>
+                <div className="flex flex-col ml-1">
+                  {value?.exercises_to_avoid?.map((el: any) => {
+                    return (
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        <span className="text-Text-Secondary">•</span> {el}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {value?.foods_to_eat?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
+                  <img
+                    src="/icons/tick-circle-new.svg"
+                    alt=""
+                    className="ml-[-2px]"
+                  />
+                  Recommended Foods
+                </div>
+                <div className="flex flex-col ml-1">
+                  {value?.foods_to_eat?.map((el: any) => {
+                    return (
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        <span className="text-Text-Secondary">•</span> {el}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {value?.foods_to_avoid?.length > 0 && (
+              <>
+                <div className="flex items-center gap-1 text-Primary-DeepTeal text-xs mt-1.5">
+                  <img src="/icons/slash.svg" alt="" className="ml-[-2px]" />
+                  Foods to Avoid
+                </div>
+                <div className="flex flex-col ml-1">
+                  {value?.foods_to_avoid?.map((el: any) => {
+                    return (
+                      <div className="text-Text-Quadruple text-xs leading-5">
+                        <span className="text-Text-Secondary">•</span> {el}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
             {/* <textarea
               value={editableValue}
               onChange={(e) => setEditableValue(e.target.value)}
               className="bg-transparent text-[12px] outline-none w-full resize-none"
               rows={2}
             /> */}
-            {editAble ? (
+            {/* {editAble ? (
               <>
                 {client_version.map((el: any) => {
                   return (
@@ -288,7 +398,7 @@ const BioMarkerRowSuggestions: FC<BioMarkerRowSuggestionsProps> = ({
                   </div>
                 )}
               </>
-            )}
+            )} */}
             {/* {editableValue.map((el:any) => {
               return (
                 <>
