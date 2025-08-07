@@ -124,10 +124,10 @@ const EditModal: FC<EditModalProps> = ({
         key_benefits: defalts?.key_benefits || [],
         foods_to_eat: defalts?.foods_to_eat || [],
         foods_to_avoid: defalts?.foods_to_avoid || [],
-        Times:defalts?.Times || [],
+        Times: defalts?.Times || [],
         exercises_to_avoid: defalts?.exercises_to_avoid || [],
         exercises_to_do: defalts?.exercises_to_do || [],
-        Intervnetion_content: defalts?.Intervnetion_content || "",
+        Intervnetion_content: defalts?.Intervnetion_content || '',
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
       });
       onClose();
