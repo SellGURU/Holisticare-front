@@ -273,20 +273,23 @@ const EditModal: FC<EditModalProps> = ({
       }
       formik.handleSubmit();
     });
-    if( (newInstruction.length > 400 || (newInstruction.length === 0 &&client_versions.length ==0))){
+    if (
+      newInstruction.length > 400 ||
+      (newInstruction.length === 0 && client_versions.length == 0)
+    ) {
       return;
     }
   };
 
-  const handleInstructionValidationText  = () => {
-    if(newInstruction.length > 400){
+  const handleInstructionValidationText = () => {
+    if (newInstruction.length > 400) {
       return 'You can enter up to 400 characters.';
     }
-    if(newInstruction.length === 0 && client_versions.length ==0){
+    if (newInstruction.length === 0 && client_versions.length == 0) {
       return 'This field is required.';
     }
     return '';
-  }
+  };
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-[99]">
       <div
@@ -467,7 +470,10 @@ const EditModal: FC<EditModalProps> = ({
                 placeholder="Write the action's instruction..."
                 onKeyDown={handleInstructionKeyDown}
                 className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && (newInstruction.length > 400 || (newInstruction.length === 0 &&client_versions.length ==0))
+                  showValidation &&
+                  (newInstruction.length > 400 ||
+                    (newInstruction.length === 0 &&
+                      client_versions.length == 0))
                     ? 'border-Red'
                     : 'border-Gray-50'
                 } rounded-2xl outline-none`}
@@ -486,11 +492,14 @@ const EditModal: FC<EditModalProps> = ({
                   {newNote.length}/400 characters
                 </span> */}
               </div>
-              {showValidation && (newInstruction.length > 400 || (newInstruction.length === 0 &&client_versions.length ==0)) && (
-                <div className="text-Red text-[10px] mt-1">
-                  {handleInstructionValidationText()}
-                </div>
-              )}
+              {showValidation &&
+                (newInstruction.length > 400 ||
+                  (newInstruction.length === 0 &&
+                    client_versions.length == 0)) && (
+                  <div className="text-Red text-[10px] mt-1">
+                    {handleInstructionValidationText()}
+                  </div>
+                )}
             </div>
             <div className="mb-4 flex flex-col gap-2">
               {client_versions.map((note, index) => (
