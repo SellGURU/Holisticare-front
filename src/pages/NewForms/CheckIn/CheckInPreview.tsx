@@ -51,13 +51,15 @@ const CheckInPreview: React.FC<CheckInPreviewProps> = ({
         </div>
       )}
       {data && data.questions && data.questions.length > 0 && (
-        <div className="w-[90vw] md:w-[500px] bg-white h-[560px] p-4 rounded-[25px] overflow-auto pr-1">
-          <SurveyResponsesView
-            time={data.time}
-            title={data.title}
-            isCustom
-            questions={data.questions}
-          />
+        <div className="w-[90vw] md:w-[500px] bg-white h-[560px] p-4 rounded-[25px]  pr-1">
+          <div className="h-[100%] overflow-auto pr-1 rounded-[25px] ">
+            <SurveyResponsesView
+              time={data.time}
+              title={data.title}
+              isCustom
+              questions={data.questions}
+            />
+          </div>
         </div>
       )}
     </>
