@@ -215,11 +215,11 @@ const HistoricalChart = ({
                   {el.low + '<'}
                 </div>
               )}
-              {inde == 0 && (
+              {/* {inde == 0 && (
                 <div className="absolute min-w-[16px] right-[-20px] text-[6px] top-[-4px] text-left">
                   {el.high}
                 </div>
-              )}
+              )} */}
             </div>
           );
         })}
