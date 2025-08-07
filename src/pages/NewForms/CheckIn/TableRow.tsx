@@ -140,7 +140,7 @@ const TableRow: FC<TableRowProps> = ({
             Edit
           </div>
           {sureRemove ? (
-            <div className="flex items-center justify-start gap-3">
+            <div className="flex items-center justify-start gap-1">
               <div className="text-Text-Primary text-xs">Sure?</div>
               <img
                 src="/icons/tick-circle-green.svg"

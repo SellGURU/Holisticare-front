@@ -17,24 +17,26 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm  text-Text-Primary ">
           <TooltipTextAuto maxWidth="300px">{data?.title}</TooltipTextAuto>
-          <div
-            data-tooltip-id={`score-calc-${index}`}
-            className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
-          >
-            Analysis Info{' '}
-            <Tooltip
-              id={`score-calc-${index}`}
-              place="top"
-              className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
-              style={{
-                zIndex: 9999,
-                pointerEvents: 'none',
-              }}
+          <div className="flex justify-start">
+            <div
+              data-tooltip-id={`score-calc-${index}`}
+              className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
             >
-              <div className="text-Text-Secondary">
-                {data?.['Practitioner Comments']?.[0]}
-              </div>
-            </Tooltip>
+              Analysis Info{' '}
+              <Tooltip
+                id={`score-calc-${index}`}
+                place="top"
+                className="!bg-white !w-[270px] !leading-5 text-justify !text-wrap !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2 !opacity-100"
+                style={{
+                  zIndex: 9999,
+                  pointerEvents: 'none',
+                }}
+              >
+                <div className="text-Text-Secondary">
+                  {data?.['Practitioner Comments']?.[0]}
+                </div>
+              </Tooltip>
+            </div>
           </div>
         </div>
         {/* {!isOther && (

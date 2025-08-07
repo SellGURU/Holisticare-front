@@ -155,7 +155,7 @@ export const Notes = () => {
         </div>
       )}
       <div
-        className="flex justify-center items-center h-[500px] overflow-y-scroll"
+        className={`flex w-full justify-center items-center h-[500px] ${data?.length > 6 && 'overflow-y-scroll pr-1'}`}
         style={{
           alignItems: data?.length > 0 ? 'start' : 'center',
         }}
@@ -165,7 +165,7 @@ export const Notes = () => {
             <div className="w-full ">
               {data?.map((el: any, index: number) => {
                 return (
-                  <div className="my-2" key={index}>
+                  <div className="my-2 w-full" key={index}>
                     <Accordion time={el.time} title={formatDate(el.date)}>
                       {editIndex === index ? (
                         <textarea
