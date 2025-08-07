@@ -272,8 +272,8 @@ const ClientCard: FC<ClientCardProps> = ({
                 data-tooltip-id={'tooltip-client-access' + client.name}
               >
                 {client.name.length > 35
-                  ? client.name.substring(0, 35) + '...`s Access'
-                  : client.name + '`s Access'}
+                  ? client.name.substring(0, 35) + "...'s Access"
+                  : client.name + "'s Access"}
                 {client.name.length > 35 && (
                   <Tooltip
                     place="top"
