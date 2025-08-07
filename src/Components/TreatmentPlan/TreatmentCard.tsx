@@ -17,6 +17,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
       <div className="w-full flex flex-col  flex-wrap gap-3">
         <div className="text-sm  text-Text-Primary ">
           <TooltipTextAuto maxWidth="300px">{data?.title}</TooltipTextAuto>
+          <div className='flex justify-start'>
           <div
             data-tooltip-id={`score-calc-${index}`}
             className="text-Primary-DeepTeal select-none  ml-1 cursor-pointer text-[10px]"
@@ -35,6 +36,7 @@ const TreatmentCard: FC<TreatmentCardProps> = ({ data, isOther, index }) => {
                 {data?.['Practitioner Comments']?.[0]}
               </div>
             </Tooltip>
+            </div>
           </div>
         </div>
         {/* {!isOther && (
