@@ -511,7 +511,10 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
           </div>
         )}
         {emptyActionPlan && (
-          <div style={{height:window.innerHeight - 180  +"px"}} className="w-full flex justify-center items-center bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div
+            style={{ height: window.innerHeight - 180 + 'px' }}
+            className="w-full flex justify-center items-center bg-white rounded-2xl shadow-200 p-4 text-Text-Primary"
+          >
             <div>
               <img src="./icons/rafiki.svg" alt="" />
               <div className="text-base font-medium text-center mt-2">

@@ -139,14 +139,14 @@ const InviteMemberModal: FC<InviteMemberModalProps> = ({
                 </div>
               )}
             </div>
-            <div className="w-full flex items-baseline gap-2">
-              <div className="flex flex-col">
+            <div className="w-full flex flex-col md:flex-row items-baseline gap-2">
+              <div className="flex flex-col w-full">
                 <div className="text-Text-Primary text-[12px] font-medium mb-1">
                   E-mail
                 </div>
                 <input
                   placeholder="Write the email ..."
-                  className={`w-[222px] h-[28px] border ${showValidation && errors.email ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
+                  className={` w-full md:w-[222px] h-[28px] border ${showValidation && errors.email ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card rounded-2xl text-xs font-light px-4 placeholder:text-Text-Fivefold outline-none`}
                   type="email"
                   value={email}
                   onChange={(e) => {
