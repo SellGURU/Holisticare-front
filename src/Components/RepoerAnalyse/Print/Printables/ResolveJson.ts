@@ -396,8 +396,8 @@ const AddActionPLanRowCategory = (category: string, item: Array<any>) => {
   });
 };
 const AddActionPlan = (actionPlanData: any, caldenderData: any) => {
-  console.log(actionPlanData);
-  console.log(caldenderData);
+  // console.log(actionPlanData);
+  // console.log(caldenderData);
 
   if (Array.isArray(caldenderData)) {
     const grouped = caldenderData?.reduce((acc: any, item: any) => {

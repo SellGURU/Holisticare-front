@@ -239,9 +239,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       } else {
         setCallSync(true);
         if (location.search) {
-          navigate(location.pathname + '?section=Holistic+Plan', {
-            replace: true,
-          });
+          navigate(location.pathname, { replace: true });
         }
       }
     };
