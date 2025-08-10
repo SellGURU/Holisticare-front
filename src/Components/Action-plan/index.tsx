@@ -101,7 +101,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
             res.data.length > 0 ? res.data[res.data.length - 1] : null,
           );
 
-          setCalendarPrintData(res.data[res.data.length-1].overview);
+          setCalendarPrintData(res.data[res.data.length - 1].overview);
           setActiveAction(
             res.data.length > 0 ? res.data[res.data.length - 1] : null,
           );
