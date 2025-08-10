@@ -8,6 +8,7 @@ import { AppContext } from '../../store/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
+import { publish } from '../../utils/event';
 
 type CardData = {
   id: number;
@@ -143,7 +144,7 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
     if (index === cardData.length - 1) {
       Application.deleteHolisticPlan({
         treatment_id: id,
-      });
+      }).catch(() => {});
 
       setCardData((prevCardData) => {
         const newCardData = prevCardData.filter((_, i) => i !== index);
@@ -158,7 +159,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
 
       setShowModalIndex(null);
-      setDeleteConfirmIndex(null);
+      // setDeleteConfirmIndex(null);
+
+      publish('syncReport', { part: 'treatmentPlan' });
     }
   };
   return (
@@ -359,14 +362,15 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
                             {index + 1 < 10 && 0}
                             {index + 1}
                           </div>
-                          {index === cardData.length - 1 && (
-                            <img
-                              onClick={() => setShowModalIndex(index)}
-                              className="-mr-5 ml-3 cursor-pointer"
-                              src="/icons/dots.svg"
-                              alt=""
-                            />
-                          )}
+                          {index === cardData.length - 1 &&
+                            card.editable == true && (
+                              <img
+                                onClick={() => setShowModalIndex(index)}
+                                className="-mr-5 ml-3 cursor-pointer"
+                                src="/icons/dots.svg"
+                                alt=""
+                              />
+                            )}
                         </div>
 
                         <div className="rounded-full bg-Secondary-SelverGray px-2.5 py-[2px] flex items-center gap-1 text-[10px] text-Primary-DeepTeal">

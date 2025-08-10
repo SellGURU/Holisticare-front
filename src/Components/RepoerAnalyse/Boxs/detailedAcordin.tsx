@@ -79,8 +79,13 @@ const DetiledAcordin: React.FC<DetiledAnalyseProps> = ({ data, refrences }) => {
               style={{
                 background: `conic-gradient(#37B45E 0% ${data.status[0]}%,#72C13B ${data.status[0]}% ${data.status[1] + data.status[0]}%,#D8D800 ${
                   data.status[1] + data.status[0]
-                }% ${data.status[1] + data.status[2] + data.status[0]}%,#B2302E ${
+                }% ${data.status[1] + data.status[2] + data.status[0]}%,#BA5225 ${
                   data.status[2] + data.status[1] + data.status[0]
+                }% ${data.status[3] + data.status[2] + data.status[1] + data.status[0]}%,#B2302E ${
+                  data.status[3] +
+                  data.status[2] +
+                  data.status[1] +
+                  data.status[0]
                 }% 100%)`,
               }}
             >

@@ -39,7 +39,7 @@ const NewGenerateHolisticPlan = () => {
     Application.saveTreatmentPaln({
       ...treatmentPlanData,
       member_id: id,
-    });
+    }).catch(() => {});
 
     setisFinalLoading(true);
     setTimeout(() => {

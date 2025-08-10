@@ -63,10 +63,8 @@ export const GenerateRecommendation = () => {
     return (
       data?.client_insight &&
       data.client_insight.length > 0 &&
-      // data?.biomarker_insight &&
-      // data.biomarker_insight.length > 0 &&
       data?.completion_suggestion &&
-      data.completion_suggestion.length > 0 &&
+      // data.completion_suggestion.length > 0 &&
       data?.looking_forwards &&
       data.looking_forwards.length > 0
     );
