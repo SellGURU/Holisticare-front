@@ -81,7 +81,8 @@ const RecentCheckIns: React.FC = () => {
                           tooltipClassName="!bg-white !w-fit !bg-opacity-100 !opacity-100 !h-fit !break-words !leading-5 !text-justify !text-wrap !shadow-100 !text-[#888888] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
                           maxWidth="70px"
                         >
-                          {client.name}
+                                                   {client.name}
+
                         </TooltipTextAuto>
                       </div>
                     </td>

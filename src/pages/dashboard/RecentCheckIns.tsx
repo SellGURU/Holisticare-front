@@ -6,10 +6,10 @@ import './RecentCheckIns.css';
 
 import useModalAutoClose from '../../hooks/UseModalAutoClose';
 import { Dropdown } from '../../Components/DropDown';
-import Checkin from '../CheckIn';
 import DashboardApi from '../../api/Dashboard';
 import { Tooltip } from 'react-tooltip';
 import SvgIcon from '../../utils/svgIcon';
+import { SurveyResponsesView } from '../surveysView/survey-responses-view';
 
 type CheckIn = {
   name: string;
@@ -174,17 +174,14 @@ const RecentCheckIns = () => {
       // resetModalStates();
     }
   };
-  // const resetModalStates = () => {
-  //   setisStickMealPlan(true);
-  //   setHoursSlept(0);
-  //   setSelectedFeeling('Neutral');
-  //   setVal(55);
-  //   setShowComparisonSelect(false);
-  //   setShowComparisonSurvey(false);
-  //   setComparisonData(null);
-  //   setCompareCheckIn('');
-  //   setShowSelect(false);
-  // };
+  const resetModalStates = () => {
+  
+    setShowComparisonSelect(false);
+    setShowComparisonSurvey(false);
+    setShowComparisonSelect(false)
+    setCompareCheckIn('');
+    setShowSelect(false);
+  };
   console.log(CompareQuestions);
 
   return (
@@ -193,10 +190,10 @@ const RecentCheckIns = () => {
         isOpen={showcheckInModal}
         onClose={() => {
           setCheckInModal(false);
-          // resetModalStates();
+          resetModalStates();
         }}
       >
-        <div className="bg-white relative min-w-[500px] w-full h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
+        <div className="bg-white relative w-[800px]  h-[552px] rounded-2xl p-6 pb-8 shadow-800 text-Text-Primary">
           <div className="w-full flex items-center gap-2 border-b border-Gray-50 pb-2 text-sm font-medium">
             <div className="size-6 rounded-full border border-Primary-DeepTeal p-[2px]">
               <img
@@ -220,8 +217,9 @@ const RecentCheckIns = () => {
             </div>
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
-            <div className={`${showComparisonSelect ? 'w-[50%]' : 'w-full'}`}>
-              <Checkin isPreview upData={Questions}></Checkin>
+            <div className={`${showComparisonSelect ? 'w-[50%] mt-[64px]' : 'w-full'} `}>
+              {/* <Checkin isPreview upData={Questions}></Checkin> */}
+              <SurveyResponsesView questions={Questions}/>
               {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
@@ -237,7 +235,7 @@ const RecentCheckIns = () => {
               /> */}
             </div>
             <div
-              className={`flex  flex-col w-[436px]  ${!showComparisonSelect && 'hidden'}`}
+              className={`flex  flex-col w-[436px] gap-4 pr-1  ${!showComparisonSelect && 'hidden'}`}
             >
               {showComparisonSelect && (
                 <div className="flex flex-col relative min-w-[222px] text-xs font-medium">
@@ -301,8 +299,11 @@ const RecentCheckIns = () => {
                 </div>
               )}
               {showComparisonSurvey && CompareQuestions && (
-                <Checkin isPreview upData={CompareQuestions}></Checkin>
-
+                <div>
+ <SurveyResponsesView questions={CompareQuestions}/>
+                </div>
+                // <Checkin isPreview upData={CompareQuestions}></Checkin>
+               
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}
                 //   isStickMealPlan={isStickMealPlan}
@@ -424,7 +425,7 @@ const RecentCheckIns = () => {
                   <th className="py-2 pl-2 text-[10px] w-[101px] text-center">
                     Time
                   </th>
-                  <th className="py-2 pl-5 rounded-tr-2xl text-[10px]  ">
+                  <th className="py-2 w-[100px] text-center rounded-tr-2xl text-[10px]  ">
                     Status
                   </th>
                 </tr>
@@ -461,7 +462,7 @@ const RecentCheckIns = () => {
                     </td>
                     <td
                       onClick={() => handleCheckInClick(checkIn)}
-                      className="py-2 w-[58px]"
+                      className="py-2 w-[100px] pl-3"
                     >
                       <span
                         className={`text-[10px]  w-[75px] h-[14px] font-medium pb-[2px] py-1 px-2 rounded-full flex items-center justify-center gap-1 ${

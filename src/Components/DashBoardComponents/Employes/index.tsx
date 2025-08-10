@@ -193,11 +193,11 @@ const EmployeeRow: React.FC<{
         isOpen={showAssignListModal}
         onClose={() => setshowAssignListModal(false)}
       >
-        <div className="bg-white rounded-2xl p-6 pb-8 shadow-800 w-[706px] h-[416px]">
+        <div className="bg-white rounded-2xl p-6  shadow-800 w-[706px] relative h-[416px]">
           <div className="w-full border-b pb-2 border-Gray-50 text-sm font-medium">
             Assign List
           </div>
-          <div className="h-[256px] overflow-auto mt-4 w-full pr-[6px]">
+          <div className="h-[80%] overflow-auto mt-4 w-full pr-[6px]">
             <table className="w-full  ">
               <thead>
                 <tr className="text-left text-[10px] bg-[#E9F0F2] text-Text-Primary border-Gray-50  ">
@@ -307,7 +307,7 @@ const EmployeeRow: React.FC<{
           </div>
           <div
             onClick={() => setshowAssignListModal(false)}
-            className="w-full text-end mt-10 text-sm font-medium text-[#909090] cursor-pointer"
+            className="w-full text-end text-sm font-medium text-[#909090] cursor-pointer absolute right-6 bottom-4"
           >
             close
           </div>
