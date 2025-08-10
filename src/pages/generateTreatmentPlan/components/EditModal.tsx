@@ -266,19 +266,19 @@ const EditModal: FC<EditModalProps> = ({
     if (newNote.length > 400) {
       return;
     }
-
-    formik.validateForm().then((errors) => {
-      if (Object.keys(errors).length > 0) {
-        return;
-      }
-      formik.handleSubmit();
-    });
     if (
       newInstruction.length > 400 ||
       (newInstruction.length === 0 && client_versions.length == 0)
     ) {
       return;
     }
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length > 0) {
+        return;
+      }
+      formik.handleSubmit();
+    });
+
   };
 
   const handleInstructionValidationText = () => {
