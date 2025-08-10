@@ -58,18 +58,18 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
     }).then(() => {
       setMessagesData((prevData) =>
         prevData.map((message) =>
-          message.id === id ? { ...message, isDone: true } : message
+          message.id === id ? { ...message, isDone: true } : message,
         ),
       );
-  
+
       setTimeout(() => {
-        setMessagesData((prevData) =>
-          prevData.filter((message) => message.id !== id) // remove after success
+        setMessagesData(
+          (prevData) => prevData.filter((message) => message.id !== id), // remove after success
         );
       }, 3000);
     });
   };
-  
+
   const handleDelete = (id: string) => {
     setMessagesData((prevData) =>
       prevData.filter((message) => message.id !== id),
@@ -191,13 +191,16 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                     ai_generation_mode: val,
                   })
                     .then((res) => setData({ ...res.data }))
-                    .catch(()=>{})
+                    .catch(() => {})
                     .finally(() => setisloadingAi(false));
                 }}
               />
             </div>
           </div>
-          <div style={{height:window.innerHeight - 220 + "px"}} className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 overflow-auto   ">
+          <div
+            style={{ height: window.innerHeight - 220 + 'px' }}
+            className=" w-full bg-backgroundColor-Card rounded-2xl px-4 py-3 border border-Gray-50 shadow-100 mt-3 overflow-auto   "
+          >
             {Object.entries(data).map(
               ([categoryName, actions], categoryIndex) => (
                 <div className="max-h-[]" key={categoryIndex}>
@@ -205,26 +208,50 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                     <div className="flex items-center mb-2 gap-2">
                       <div className="bg-backgroundColor-Main border border-Gray-50 rounded-lg p-2 ">
                         {categoryName == 'Diet' && (
-                          <img className='size-4' src={'/icons/diet.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/diet.svg'}
+                            alt=""
+                          />
                         )}
                         {categoryName == 'Activity' && (
-                          <img className='size-4' src={'/icons/weight.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/weight.svg'}
+                            alt=""
+                          />
                         )}
                         {categoryName == 'Mind' && (
-                          <img className='size-4' src={'/icons/mind.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/mind.svg'}
+                            alt=""
+                          />
                         )}
                         {categoryName == 'Supplement' && (
-                          <img className='size-4' src={'/icons/Supplement.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/Supplement.svg'}
+                            alt=""
+                          />
                         )}
                         {categoryName == 'Lifestyle' && (
-                          <img className='size-4' src={'/icons/LifeStyle2.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/LifeStyle2.svg'}
+                            alt=""
+                          />
                         )}
                         {categoryName == '' && (
-                          <img className='size-4' src={'/icons/check-in.svg'} alt="" />
+                          <img
+                            className="size-4"
+                            src={'/icons/check-in.svg'}
+                            alt=""
+                          />
                         )}
                       </div>
                       <h3 className="text-xs text-Text-Primary">
-                        {categoryName || "Check-in"}
+                        {categoryName || 'Check-in'}
                       </h3>
 
                       <MiniAnallyseButton
@@ -250,7 +277,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                                 [categoryName]: res.data[categoryName],
                               }));
                             })
-                            .catch(()=>{})
+                            .catch(() => {})
                             .finally(() =>
                               setCategoryLoadingStates((prev) => ({
                                 ...prev,
@@ -324,7 +351,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                   tasks: data,
                 })
                   .then(() => toast.success('Tasks saved successfully!'))
-                  .catch(()=>{})
+                  .catch(() => {})
                   .finally(() => setbuttonLoading(false));
               }}
             >
@@ -390,7 +417,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
                     ai_generation_mode: val,
                   })
                     .then((res) => SetRoadMapData(res.data.RoadMap))
-                    .catch(()=>{})
+                    .catch(() => {})
                     .finally(() => setisLoading(false));
                 }}
               ></MiniAnallyseButton>
@@ -484,7 +511,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
           </div>
         )}
         {emptyActionPlan && (
-          <div className="w-full flex justify-center items-center  h-full bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
+          <div style={{height:window.innerHeight - 180  +"px"}} className="w-full flex justify-center items-center bg-white rounded-2xl shadow-200 p-4 text-Text-Primary">
             <div>
               <img src="./icons/rafiki.svg" alt="" />
               <div className="text-base font-medium text-center mt-2">
