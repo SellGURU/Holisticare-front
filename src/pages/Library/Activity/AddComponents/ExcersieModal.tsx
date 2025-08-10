@@ -55,6 +55,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   const [location, setLocation] = useState<string[]>(
     exercise.Exercise_Location || [],
   );
+  const [locationBoxs, setLocationBoxs] = useState([]);
   const [fileList, setFileList] = useState<FileData[]>(exercise.Files || []);
   const [, setScore] = useState(exercise.Base_Score || 0);
   const [youTubeLink, setYouTubeLink] = useState<string>('');
@@ -82,6 +83,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
         setLevelOptions(res.data.Level);
         setTermsOptions(res.data.Terms);
         setTypeOptions(res.data.Type);
+        setLocationBoxs(res.data.Location);
       });
     }
   }, [isOpen]);
@@ -542,8 +544,17 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
             </div>
             <div className="flex flex-col text-xs gap-3 mt-2">
               Exercise Location
-              <div className="flex gap-6">
-                <Checkbox
+              <div className="flex flex-wrap gap-6">
+                {locationBoxs.map((el) => {
+                  return (
+                    <Checkbox
+                      checked={location.includes(el)}
+                      onChange={() => handleCheckboxChange(el)}
+                      label={el}
+                    />
+                  );
+                })}
+                {/* <Checkbox
                   checked={location.includes('Home')}
                   onChange={() => handleCheckboxChange('Home')}
                   label="Home"
@@ -552,7 +563,7 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
                   checked={location.includes('Gym')}
                   onChange={() => handleCheckboxChange('Gym')}
                   label="Gym"
-                />
+                /> */}
               </div>
             </div>
           </div>
