@@ -113,7 +113,7 @@ const EditModal: FC<EditModalProps> = ({
         'Practitioner Comments': practitionerComments,
         Instruction: defalts?.Instruction
           ? defalts?.Instruction
-          : newInstruction,
+          : [...client_versions, newInstruction].join(', '),
         client_version:
           newInstruction.trim() !== ''
             ? [...client_versions, newInstruction]
@@ -278,7 +278,6 @@ const EditModal: FC<EditModalProps> = ({
       }
       formik.handleSubmit();
     });
-
   };
 
   const handleInstructionValidationText = () => {

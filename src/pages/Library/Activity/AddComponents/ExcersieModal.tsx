@@ -74,15 +74,17 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
     return youtubeRegex.test(url);
   };
   useEffect(() => {
+    if (isOpen) {
     Application.getExerciseFilters({}).then((res) => {
       setConditionsOptions(res.data.Conditions);
       setEquipmentOptions(res.data.Equipment);
       setMuscleOptions(res.data.Muscle);
       setLevelOptions(res.data.Level);
-      setTermsOptions(res.data.Terms);
-      setTypeOptions(res.data.Type);
-    });
-  }, []);
+        setTermsOptions(res.data.Terms);
+        setTypeOptions(res.data.Type);
+      });
+    }
+  }, [isOpen]);
   useEffect(() => {
     const existingLink = fileList.find((file) => file.Type === 'link');
     if (existingLink) {
