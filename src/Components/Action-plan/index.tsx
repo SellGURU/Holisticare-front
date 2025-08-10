@@ -101,7 +101,7 @@ export const ActionPlan: FC<ActionPlanProps> = ({
             res.data.length > 0 ? res.data[res.data.length - 1] : null,
           );
 
-          setCalendarPrintData(res.data[0].overview);
+          setCalendarPrintData(res.data[res.data.length-1].overview);
           setActiveAction(
             res.data.length > 0 ? res.data[res.data.length - 1] : null,
           );
@@ -187,11 +187,19 @@ export const ActionPlan: FC<ActionPlanProps> = ({
                           }}
                           onDelete={() => {
                             Application.deleteActionCard({ id: el.id });
-                            getActionPlan();
-                            // setCardData(
-                            //   CardData.filter((card) => card.id !== id),
-                            // );
-                            // setActiveAction(CardData[0]);
+                            setTimeout(() => {
+                              getActionPlan();
+                              publish('syncReport', { part: 'treatmentPlan' });
+                            }, 3000);
+                            setCardData((prevCardData) => {
+                              const newCardData = prevCardData.filter(
+                                (card) => card.id !== el.id,
+                              );
+                              return newCardData;
+                            });
+                            if (CardData.length > 0) {
+                              setActiveAction(CardData[CardData.length - 1]);
+                            }
                           }}
                           key={i}
                           el={el}

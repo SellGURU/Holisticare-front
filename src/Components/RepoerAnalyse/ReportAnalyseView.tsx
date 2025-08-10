@@ -167,7 +167,7 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       .catch(() => {
         // setConcerningResult([]);
       });
-      getTreatmentPlanData()
+    getTreatmentPlanData();
   };
   const getTreatmentPlanData = () => {
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
@@ -234,18 +234,18 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
 
   useEffect(() => {
     const handleSyncReport = (data: any) => {
-      if(data.detail.part == "treatmentPlan"){
-        getTreatmentPlanData()
-      }else{
+      if (data.detail.part == 'treatmentPlan') {
+        getTreatmentPlanData();
+      } else {
         setCallSync(true);
-        if (location.search ) {
+        if (location.search) {
           navigate(location.pathname, { replace: true });
         }
       }
     };
 
     subscribe('syncReport', handleSyncReport);
-    
+
     return () => {
       unsubscribe('syncReport', handleSyncReport);
     };
