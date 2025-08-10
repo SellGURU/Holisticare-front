@@ -75,11 +75,11 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
   };
   useEffect(() => {
     if (isOpen) {
-    Application.getExerciseFilters({}).then((res) => {
-      setConditionsOptions(res.data.Conditions);
-      setEquipmentOptions(res.data.Equipment);
-      setMuscleOptions(res.data.Muscle);
-      setLevelOptions(res.data.Level);
+      Application.getExerciseFilters({}).then((res) => {
+        setConditionsOptions(res.data.Conditions);
+        setEquipmentOptions(res.data.Equipment);
+        setMuscleOptions(res.data.Muscle);
+        setLevelOptions(res.data.Level);
         setTermsOptions(res.data.Terms);
         setTypeOptions(res.data.Type);
       });
