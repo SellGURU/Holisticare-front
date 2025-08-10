@@ -175,10 +175,9 @@ const RecentCheckIns = () => {
     }
   };
   const resetModalStates = () => {
-  
     setShowComparisonSelect(false);
     setShowComparisonSurvey(false);
-    setShowComparisonSelect(false)
+    setShowComparisonSelect(false);
     setCompareCheckIn('');
     setShowSelect(false);
   };
@@ -217,9 +216,11 @@ const RecentCheckIns = () => {
             </div>
           </div>
           <div className="flex w-full gap-5 mt-5 h-[392px] overflow-auto">
-            <div className={`${showComparisonSelect ? 'w-[50%] mt-[64px]' : 'w-full'} `}>
+            <div
+              className={`${showComparisonSelect ? 'w-[50%] mt-[64px]' : 'w-full'} `}
+            >
               {/* <Checkin isPreview upData={Questions}></Checkin> */}
-              <SurveyResponsesView questions={Questions}/>
+              <SurveyResponsesView questions={Questions} />
               {/* <SurveySection
                 isStickMealPlan={isStickMealPlan}
                 setisStickMealPlan={setisStickMealPlan}
@@ -300,10 +301,10 @@ const RecentCheckIns = () => {
               )}
               {showComparisonSurvey && CompareQuestions && (
                 <div>
- <SurveyResponsesView questions={CompareQuestions}/>
+                  <SurveyResponsesView questions={CompareQuestions} />
                 </div>
                 // <Checkin isPreview upData={CompareQuestions}></Checkin>
-               
+
                 // <SurveySection
                 //   setFeeling={(value) => setSelectedFeeling(value)}
                 //   isStickMealPlan={isStickMealPlan}
