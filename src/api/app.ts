@@ -1009,7 +1009,7 @@ class Application extends Api {
     });
   };
   static saveActionEdit = (data: any) => {
-    return this.post('/drift_analysis/edit_action_plan',data);
+    return this.post('/drift_analysis/edit_action_plan', data);
   };
 }
 
