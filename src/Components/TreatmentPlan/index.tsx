@@ -8,6 +8,7 @@ import { AppContext } from '../../store/app';
 import { ButtonSecondary } from '../Button/ButtosSecondary';
 import { SlideOutPanel } from '../SlideOutPanel';
 import TreatmentCard from './TreatmentCard';
+import { publish } from '../../utils/event';
 
 type CardData = {
   id: number;
@@ -158,7 +159,9 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
       });
 
       setShowModalIndex(null);
-      setDeleteConfirmIndex(null);
+      // setDeleteConfirmIndex(null);
+      
+      publish("syncReport",{part:"treatmentPlan"})
     }
   };
   return (

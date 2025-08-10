@@ -23,7 +23,7 @@ import UploadTest from './UploadTest';
 // import { toast } from "react-toastify"
 // import { useConstructor } from "@/help"
 import { decodeAccessUser } from '../../help';
-import { publish, subscribe } from '../../utils/event';
+import { publish, subscribe, unsubscribe } from '../../utils/event';
 import Circleloader from '../CircleLoader';
 import InfoToltip from '../InfoToltip';
 import TooltipTextAuto from '../TooltipText/TooltipTextAuto';
@@ -167,6 +167,9 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
       .catch(() => {
         // setConcerningResult([]);
       });
+      getTreatmentPlanData()
+  };
+  const getTreatmentPlanData = () => {
     Application.getOverviewtplan({ member_id: resolvedMemberID }).then(
       (res) => {
         setTreatmentPlanData(res.data);
@@ -228,12 +231,25 @@ const ReportAnalyseView: React.FC<ReportAnalyseViewprops> = ({
   };
   const navigate = useNavigate();
   const [callSync, setCallSync] = useState(false);
-  subscribe('syncReport', () => {
-    setCallSync(true);
-    if (location.search) {
-      navigate(location.pathname, { replace: true });
-    }
-  });
+
+  useEffect(() => {
+    const handleSyncReport = (data: any) => {
+      if(data.detail.part == "treatmentPlan"){
+        getTreatmentPlanData()
+      }else{
+        setCallSync(true);
+        if (location.search ) {
+          navigate(location.pathname+'?section=Holistic+Plan', { replace: true });
+        }
+      }
+    };
+
+    subscribe('syncReport', handleSyncReport);
+    
+    return () => {
+      unsubscribe('syncReport', handleSyncReport);
+    };
+  }, []);
   const [accessManager, setAccessManager] = useState<
     Array<{
       name: string;
