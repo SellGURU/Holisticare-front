@@ -61,7 +61,10 @@ const PackagePage = () => {
   const [showDowngrade, setshowDowngrade] = useState(false);
   return (
     <>
-      <div style={{height:window.innerHeight - 60 + "px" }} className="w-full overflow-auto px-2 md:px-4 py-3">
+      <div
+        style={{ height: window.innerHeight - 60 + 'px' }}
+        className="w-full overflow-auto px-2 md:px-4 py-3"
+      >
         <div className="w-full flex justify-between items-center mb-4">
           <div className="text-base font-medium text-Text-Primary">
             Packages
@@ -133,7 +136,6 @@ const PackagePage = () => {
                   </>
                 )}
                 <ButtonSecondary
-                
                   onClick={() => {
                     setShowManagePackage(true);
                   }}

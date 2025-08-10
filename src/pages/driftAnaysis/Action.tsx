@@ -170,6 +170,7 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
   const [categoryLoadingStates, setCategoryLoadingStates] = useState<{
     [key: string]: boolean;
   }>({});
+console.log(memberID);
 
   return (
     <>
@@ -342,30 +343,31 @@ export const Action: FC<ActionProps> = ({ memberID }) => {
             )}
           </div>
           <div className="w-full flex justify-center mt-5">
-            <ButtonPrimary
-              onClick={() => {
-                setbuttonLoading(true);
-                Application.ActionPlanSaveTask({
-                  member_id: memberID,
-                  blocks_id: blockID,
-                  tasks: data,
-                })
-                  .then(() => toast.success('Tasks saved successfully!'))
-                  .catch(() => {})
-                  .finally(() => setbuttonLoading(false));
-              }}
-            >
-              {buttonLoading ? (
-                <div className="">
-                  <BeatLoader size={5} color="#ffffff"></BeatLoader>
-                </div>
-              ) : (
-                <>
-                  <img src="/icons/tick-square.svg" alt="" />
-                  Save Changes
-                </>
-              )}
-            </ButtonPrimary>
+          <ButtonPrimary
+  onClick={() => {
+    setbuttonLoading(true);
+    Application.saveActionEdit({
+      member_id: memberID,
+      block_id: blockID, // changed key name
+      plan: data         // changed key name
+    })
+      .then(() => toast.success('Tasks saved successfully!'))
+      .catch(() => {})
+      .finally(() => setbuttonLoading(false));
+  }}
+>
+  {buttonLoading ? (
+    <div className="">
+      <BeatLoader size={5} color="#ffffff"></BeatLoader>
+    </div>
+  ) : (
+    <>
+      <img src="/icons/tick-square.svg" alt="" />
+      Save Changes
+    </>
+  )}
+</ButtonPrimary>
+
           </div>
         </SlideOutPanel>
       )}

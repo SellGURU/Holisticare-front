@@ -16,22 +16,25 @@ export const ClinicPreferences = () => {
   const [loading, setloading] = useState(false);
   const [changesSaved, setChangesSaved] = useState(false);
   useEffect(() => {
-    Application.getToneList({}).then((res) => {
-      setOptions(res.data.options);
-    }).catch(()=>{});
+    Application.getToneList({})
+      .then((res) => {
+        setOptions(res.data.options);
+      })
+      .catch(() => {});
     getSettingData();
   }, []);
   const getSettingData = () => {
     setloading(true);
-    Application.getSettingData({}).then((res) => {
-      setPreferences(res.data.tone);
-      setInitialPreferences(res.data.tone);
+    Application.getSettingData({})
+      .then((res) => {
+        setPreferences(res.data.tone);
+        setInitialPreferences(res.data.tone);
 
-      settextValue(res.data.focus_area);
-      setInitialTextValue(res.data.focus_area);
-      setloading(false);
-    })
-    .catch(()=>{});
+        settextValue(res.data.focus_area);
+        setInitialTextValue(res.data.focus_area);
+        setloading(false);
+      })
+      .catch(() => {});
   };
   console.log(Preferences);
   console.log(initialPreferences);
