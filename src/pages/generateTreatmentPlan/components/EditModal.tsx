@@ -6,6 +6,12 @@ import * as Yup from 'yup';
 import Application from '../../../api/app';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import SvgIcon from '../../../utils/svgIcon';
+import {
+  DoseFormatInfoText,
+  DoseInfoText,
+  DoseValidationEnglish,
+  DoseValidationMetric,
+} from '../../../utils/library-unification';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -403,8 +409,8 @@ const EditModal: FC<EditModalProps> = ({
                 value={formik.values.Dose}
                 onChange={(e) => {
                   // Only allow English characters and numbers
-                  const value = e.target.value.replace(/[^0-9a-zA-Z\s]/g, '');
-                  formik.setFieldValue('Dose', value);
+                  const englishOnly = DoseValidationEnglish(e.target.value);
+                  formik.setFieldValue('Dose', englishOnly);
                 }}
                 placeholder="Write Dose"
                 type="text"
@@ -420,13 +426,17 @@ const EditModal: FC<EditModalProps> = ({
                   {formik.errors.Dose}
                 </div>
               )}
+              {!DoseValidationMetric(formik.values.Dose) && (
+                <div className="text-Red text-[10px]">{DoseFormatInfoText}</div>
+              )}
               {selectedGroupDose && (
                 <Tooltip
                   id="more-info"
                   place="right"
-                  className="!bg-white !leading-5 !text-wrap !shadow-100 !text-[#B0B0B0] !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
+                  className="!bg-white !w-fit !text-wrap max-w-[300px]
+                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
                 >
-                  Dose must include a number followed by a unit (e.g., '50 mg')
+                  {DoseInfoText}
                 </Tooltip>
               )}
             </div>
