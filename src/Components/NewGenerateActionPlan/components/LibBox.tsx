@@ -111,11 +111,11 @@ const LibBox: FC<LibBoxProps> = ({
         </div>
         {!checkIn && (
           <div
-            className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6`}
+            className={`${showMore ? '' : 'ml-6'} mt-2 flex items-center gap-6 justify-between`}
           >
             <div className={`flex items-center gap-1`}>
               <div
-                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary`}
+                className={`select-none rounded-full px-2 py-[2px] flex items-center gap-1 text-[8px] text-Text-Primary text-nowrap`}
                 style={{ backgroundColor: bgColor }}
               >
                 <div
