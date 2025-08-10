@@ -160,8 +160,8 @@ export const TreatmentPlan: React.FC<TreatmentPlanProps> = ({
 
       setShowModalIndex(null);
       // setDeleteConfirmIndex(null);
-      
-      publish("syncReport",{part:"treatmentPlan"})
+
+      publish('syncReport', { part: 'treatmentPlan' });
     }
   };
   return (
