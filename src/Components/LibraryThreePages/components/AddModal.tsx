@@ -1,6 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
+import {
+  DoseFormatInfoText,
+  DoseInfoText,
+  DoseValidationEnglish,
+  DoseValidationMetric,
+  LengthValidation,
+  MacrosFormatInfoText,
+  MacrosInfoText,
+  MacrosValidationNumber,
+  ValueFormatInfoText,
+  ValueInfoText,
+  ValueValidation,
+} from '../../../utils/library-unification';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
 import RangeCardLibraryThreePages from './RangeCard';
@@ -185,8 +198,8 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
   });
 
   const validateFields = () => {
-    const doseRegex = /^(\d+(?:\s*-\s*\d+)?)(\s*[a-zA-Z]+(?:\/[a-zA-Z]+)?)$/;
-    const isDoseValid = pageType === 'Supplement' ? doseRegex.test(dose) : true;
+    const doseRegex = DoseValidationMetric(dose);
+    const isDoseValid = pageType === 'Supplement' ? doseRegex : true;
 
     const newErrors = {
       title: !addData.title,
@@ -194,18 +207,20 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
       instruction: !addData.instruction,
       dose: pageType === 'Supplement' && !dose,
       doseFormat: Boolean(pageType === 'Supplement' && dose && !isDoseValid),
-      value: (pageType === 'Lifestyle' && !value) || value?.length > 5,
+      value:
+        (pageType === 'Lifestyle' && !value) ||
+        value?.length > LengthValidation,
       score: addData.score === 0,
       macros: {
         Fats:
           (pageType === 'Diet' && !totalMacros.Fats) ||
-          totalMacros?.Fats?.length > 5,
+          totalMacros?.Fats?.length > LengthValidation,
         Protein:
           (pageType === 'Diet' && !totalMacros.Protein) ||
-          totalMacros?.Protein?.length > 5,
+          totalMacros?.Protein?.length > LengthValidation,
         Carbs:
           (pageType === 'Diet' && !totalMacros.Carbs) ||
-          totalMacros?.Carbs?.length > 5,
+          totalMacros?.Carbs?.length > LengthValidation,
       },
     };
 
@@ -337,17 +352,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 value={dose}
                 onChange={(e) => {
                   const value = e.target.value;
-                  const englishOnly = value.replace(/[^a-zA-Z0-9\s/-]/g, '');
+                  const englishOnly = DoseValidationEnglish(value);
                   setDose(englishOnly);
 
-                  const doseRegex =
-                    /^(\d+(?:\s*-\s*\d+)?)(\s*[a-zA-Z]+(?:\/[a-zA-Z]+)?)$/;
+                  const doseRegex = DoseValidationMetric(englishOnly);
 
                   if (englishOnly) {
                     setErrors((prev) => ({
                       ...prev,
                       dose: false,
-                      doseFormat: Boolean(!doseRegex.test(englishOnly)),
+                      doseFormat: Boolean(!doseRegex),
                     }));
                   } else {
                     setErrors((prev) => ({
@@ -369,9 +383,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                 </div>
               )}
               {errors.doseFormat && (
-                <div className="text-Red text-[10px]">
-                  Dose must follow the described format.
-                </div>
+                <div className="text-Red text-[10px]">{DoseFormatInfoText}</div>
               )}
               <Tooltip
                 id={`dose-info`}
@@ -383,8 +395,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                Dose must include a number or range and a unit or descriptive
-                form (e.g., '50 mg', '2 drops', or '1–2 tablets').
+                {DoseInfoText}
               </Tooltip>
             </div>
           )}
@@ -409,8 +420,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     pointerEvents: 'none',
                   }}
                 >
-                  Provide the numerical value, and if needed, enter the unit
-                  manually (e.g., 8 + Hours)
+                  {ValueInfoText}
                 </Tooltip>
               </div>
               <div className="flex w-full gap-3">
@@ -422,7 +432,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   value={value}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value)) {
+                    if (ValueValidation(value)) {
                       setValue(value === '' ? '' : value);
                       setErrors((prev) => ({
                         ...prev,
@@ -432,12 +442,12 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   }}
                   onPaste={(e) => {
                     const pastedData = e.clipboardData.getData('text');
-                    if (!/^\d+$/.test(pastedData)) {
+                    if (!ValueValidation(pastedData)) {
                       e.preventDefault();
                     }
                   }}
                   className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value || value.length > 5
+                    errors.value || value.length > LengthValidation
                       ? 'border-Red'
                       : 'border-Gray-50'
                   } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
@@ -462,9 +472,9 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   This field is required.
                 </div>
               )}
-              {value.length > 5 && (
+              {value.length > LengthValidation && (
                 <div className="text-Red text-[10px]">
-                  Value must not exceed 5 digits.
+                  {ValueFormatInfoText}
                 </div>
               )}
             </div>
@@ -491,7 +501,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                   pointerEvents: 'none',
                 }}
               >
-                Macros Goal must contain just Whole Numbers.
+                {MacrosInfoText}
               </Tooltip>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between mt-3 gap-4">
@@ -513,7 +523,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       value={totalMacros.Carbs}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (/^\d*$/.test(value)) {
+                        if (MacrosValidationNumber(value)) {
                           updateTotalMacros('Carbs', value === '' ? '' : value);
                           setErrors((prev) => ({
                             ...prev,
@@ -523,12 +533,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       }}
                       onPaste={(e) => {
                         const pastedData = e.clipboardData.getData('text');
-                        if (!/^\d+$/.test(pastedData)) {
+                        if (!MacrosValidationNumber(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs || totalMacros.Carbs.length > 5
+                        errors.macros.Carbs ||
+                        totalMacros.Carbs.length > LengthValidation
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
@@ -553,7 +564,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       value={totalMacros.Protein}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (/^\d*$/.test(value)) {
+                        if (MacrosValidationNumber(value)) {
                           updateTotalMacros(
                             'Protein',
                             value === '' ? '' : value,
@@ -566,12 +577,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       }}
                       onPaste={(e) => {
                         const pastedData = e.clipboardData.getData('text');
-                        if (!/^\d+$/.test(pastedData)) {
+                        if (!MacrosValidationNumber(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Protein || totalMacros.Protein.length > 5
+                        errors.macros.Protein ||
+                        totalMacros.Protein.length > LengthValidation
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
@@ -596,7 +608,7 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       value={totalMacros.Fats}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (/^\d*$/.test(value)) {
+                        if (MacrosValidationNumber(value)) {
                           updateTotalMacros('Fats', value === '' ? '' : value);
                           setErrors((prev) => ({
                             ...prev,
@@ -606,12 +618,13 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                       }}
                       onPaste={(e) => {
                         const pastedData = e.clipboardData.getData('text');
-                        if (!/^\d+$/.test(pastedData)) {
+                        if (!MacrosValidationNumber(pastedData)) {
                           e.preventDefault();
                         }
                       }}
                       className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Fats || totalMacros.Fats.length > 5
+                        errors.macros.Fats ||
+                        totalMacros.Fats.length > LengthValidation
                           ? 'border-Red'
                           : 'border-Gray-50'
                       } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
@@ -625,16 +638,16 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
                     These fields are required.
                   </div>
                 )}
-                {(totalMacros.Carbs.length > 5 ||
-                  totalMacros.Protein.length > 5 ||
-                  totalMacros.Fats.length > 5) && (
+                {(totalMacros.Carbs.length > LengthValidation ||
+                  totalMacros.Protein.length > LengthValidation ||
+                  totalMacros.Fats.length > LengthValidation) && (
                   <div className="text-Red text-[10px]">
-                    {totalMacros.Carbs.length > 5
+                    {totalMacros.Carbs.length > LengthValidation
                       ? 'Carbs'
-                      : totalMacros.Protein.length > 5
+                      : totalMacros.Protein.length > LengthValidation
                         ? 'Protein'
                         : 'Fats'}{' '}
-                    must not exceed 5 digits.
+                    {MacrosFormatInfoText}
                   </div>
                 )}
               </div>
