@@ -7,8 +7,17 @@ import SvgIcon from '../../../utils/svgIcon';
 // import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
 // import CustomSelect from '../../CustomSelect';
-import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import { Tooltip } from 'react-tooltip';
+import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
+import {
+  DoseFormatInfoText,
+  DoseInfoText,
+  DoseValidationEnglish,
+  DoseValidationMetric,
+  MacrosInfoText,
+  ValueInfoText,
+  ValueValidation,
+} from '../../../utils/library-unification';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -49,23 +58,24 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const [errors, setErrors] = useState({
     title: '',
     instruction: '',
-    dose: '',
+    dose: false,
     value: '',
     macros: '',
     category: '',
     frequency: '',
     clientNotes: '',
+    doseFormat: false,
   });
-  const [touchedFields, setTouchedFields] = useState({
-    title: false,
-    instruction: false,
-    dose: false,
-    value: false,
-    macros: false,
-    category: false,
-    frequency: false,
-    clientNotes: false,
-  });
+  // const [touchedFields, setTouchedFields] = useState({
+  //   title: false,
+  //   instruction: false,
+  //   dose: false,
+  //   value: false,
+  //   macros: false,
+  //   category: false,
+  //   frequency: false,
+  //   clientNotes: false,
+  // });
 
   const toggleDaySelection = (day: string) => {
     setSelectedDays((prev) =>
@@ -345,6 +355,17 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     setSectionList([]);
     setShowValidation(false);
     setShowExerciseValidation(false);
+    setErrors({
+      title: '',
+      instruction: '',
+      dose: false,
+      value: '',
+      macros: '',
+      category: '',
+      frequency: '',
+      clientNotes: '',
+      doseFormat: false,
+    });
   };
 
   const handleApplyClick = () => {
@@ -357,6 +378,10 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
 
     // Category specific validations
     if (selectedGroup === 'Supplement' && !dose) {
+      setErrors((prev) => ({
+        ...prev,
+        dose: true,
+      }));
       return;
     }
     if (selectedGroup === 'Lifestyle' && !value) {
@@ -574,52 +599,45 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     return false;
   };
 
-  const validateDose = (value: string) => {
-    if (!value) {
-      return 'This field is required.';
-    }
-    const doseRegex = /^\d+\s*[a-zA-Z]+$/;
-    if (!doseRegex.test(value)) {
-      return 'Dose must follow the described format.';
-    }
-    return '';
-  };
+  // const validateDose = (value: string) => {
+  //   if (!value) {
+  //     return 'This field is required.';
+  //   }
+  //   const doseRegex = /^\d+\s*[a-zA-Z]+$/;
+  //   if (!doseRegex.test(value)) {
+  //     return 'Dose must follow the described format.';
+  //   }
+  //   return '';
+  // };
 
-  const handleDoseBlur = () => {
-    setTouchedFields((prev) => ({ ...prev, dose: true }));
-    const error = validateDose(dose);
-    setErrors((prev) => ({ ...prev, dose: error }));
-  };
+  // const handleDoseBlur = () => {
+  //   setTouchedFields((prev) => ({ ...prev, dose: true }));
+  //   const error = validateDose(dose);
+  //   setErrors((prev) => ({ ...prev, dose: error }));
+  // };
 
-  const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow English characters, numbers, and spaces
-    const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
-    setDose(englishOnly);
-    if (touchedFields.dose) {
-      const error = validateDose(englishOnly);
-      setErrors((prev) => ({ ...prev, dose: error }));
-    }
-  };
-
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow positive integers
-    if (/^\d*$/.test(value)) {
-      setValue(value === '' ? '' : Number(value));
-    }
-  };
+  // const handleDoseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   // Only allow English characters, numbers, and spaces
+  //   const englishOnly = value.replace(/[^a-zA-Z0-9\s]/g, '');
+  //   setDose(englishOnly);
+  //   if (touchedFields.dose) {
+  //     const error = validateDose(englishOnly);
+  //     setErrors((prev) => ({ ...prev, dose: error }));
+  //   }
+  // };
 
   const validateForm = () => {
     const newErrors = {
       title: '',
       instruction: '',
-      dose: '',
+      dose: false,
       value: '',
       macros: '',
       category: '',
       frequency: '',
       clientNotes: '',
+      doseFormat: false,
     };
 
     if (!title) {
@@ -631,7 +649,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
     }
 
     if (selectedGroup === 'Supplement') {
-      newErrors.dose = validateDose(dose);
+      newErrors.dose = !dose;
     }
 
     if (selectedGroup === 'Lifestyle' && !value) {
@@ -859,22 +877,46 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                          Dose must include a number followed by a unit (e.g.,
-                          '50 mg')
+                          {DoseInfoText}
                         </div>
                       </Tooltip>
                     </div>
                     <input
-                      placeholder="Write the supplement's dose..."
+                      placeholder="Enter dose amount"
                       value={dose}
-                      onChange={handleDoseChange}
-                      onBlur={handleDoseBlur}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${showValidation && touchedFields.dose && errors.dose ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const englishOnly = DoseValidationEnglish(value);
+                        setDose(englishOnly);
+
+                        const doseRegex = DoseValidationMetric(englishOnly);
+
+                        if (englishOnly) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            dose: false,
+                            doseFormat: Boolean(!doseRegex),
+                          }));
+                        } else {
+                          setErrors((prev) => ({
+                            ...prev,
+                            dose: true,
+                            doseFormat: false,
+                          }));
+                        }
+                      }}
+                      // onBlur={handleDoseBlur}
+                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${(errors.dose || errors.doseFormat) && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
                     />
-                    {showValidation && touchedFields.dose && errors.dose && (
+                    {errors.dose && showValidation && (
                       <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        {errors.dose}
+                        This field is required.
                       </span>
+                    )}
+                    {errors.doseFormat && (
+                      <div className="text-Red text-[10px]">
+                        {DoseFormatInfoText}
+                      </div>
                     )}
                   </div>
                 )}
@@ -895,37 +937,25 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !w-[284px] !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                          Provide the numerical value, and if needed, enter the
-                          unit manually (e.g., 8 + Hours)
+                          {ValueInfoText}
                         </div>
                       </Tooltip>
                     </div>
                     <div className="flex justify-between">
                       <div className="w-[48%]">
                         <input
-                          placeholder="Enter Value..."
+                          placeholder="Enter value amount"
                           value={value}
                           type="text"
-                          onChange={handleValueChange}
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (ValueValidation(value)) {
+                              setValue(value === '' ? '' : value);
                             }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
+                          }}
+                          onPaste={(e) => {
+                            const pastedData = e.clipboardData.getData('text');
+                            if (!ValueValidation(pastedData)) {
                               e.preventDefault();
                             }
                           }}
@@ -938,7 +968,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         )}
                       </div>
                       <input
-                        placeholder="Enter Unit..."
+                        placeholder="Enter unit"
                         value={unit}
                         type="text"
                         onChange={(e) => {
@@ -970,7 +1000,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
                       >
                         <div className="flex items-center gap-1">
-                          Macros Goal must contain just Whole Numbers.
+                          {MacrosInfoText}
                         </div>
                       </Tooltip>
                     </div>
@@ -986,7 +1016,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                         </div>
                         <input
                           type="number"
-                          placeholder="Carbohydrates"
+                          placeholder="Carb amount"
                           value={totalMacros.Carbs}
                           onChange={(e) =>
                             updateTotalMacros(
