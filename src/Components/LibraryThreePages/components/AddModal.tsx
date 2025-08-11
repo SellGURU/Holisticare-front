@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useEffect, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
 import {
   DoseFormatInfoText,
   DoseInfoText,
@@ -16,6 +15,10 @@ import {
 } from '../../../utils/library-unification';
 import MainModal from '../../MainModal';
 import SpinnerLoader from '../../SpinnerLoader';
+import { TextField } from '../../UnitComponents';
+import TextAreaField from '../../UnitComponents/TextAreaField';
+import ThreeTextField from '../../UnitComponents/ThreeTextField';
+import TwoTextField from '../../UnitComponents/TwoTextField';
 import RangeCardLibraryThreePages from './RangeCard';
 
 interface AddModalLibraryTreePagesProps {
@@ -256,29 +259,21 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           <div className="w-full h-[1px] bg-Boarder my-3"></div>
 
           {/* Title Field */}
-          <div className="flex flex-col mt-5 w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">Title</div>
-            <input
-              placeholder={`${pageType === 'Supplement' ? 'Enter supplement title (e.g., Omega-3 Fish Oil)' : pageType === 'Lifestyle' ? 'Enter lifestyle title (e.g., Sleep enough)' : 'Enter diet title (e.g., Low-Carb Plan)'}`}
-              value={addData.title}
-              onChange={(e) => {
-                updateAddData('title', e.target.value);
-                if (e.target.value) {
-                  setErrors((prev) => ({ ...prev, title: false }));
-                } else {
-                  setErrors((prev) => ({ ...prev, title: true }));
-                }
-              }}
-              className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                errors.title ? 'border-Red' : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-            />
-            {errors.title && (
-              <div className="text-Red text-[10px]">
-                This field is required.
-              </div>
-            )}
-          </div>
+          <TextField
+            label="Title"
+            placeholder={`${pageType === 'Supplement' ? 'Enter supplement title (e.g., Omega-3 Fish Oil)' : pageType === 'Lifestyle' ? 'Enter lifestyle title (e.g., Sleep enough)' : 'Enter diet title (e.g., Low-Carb Plan)'}`}
+            value={addData.title}
+            onChange={(e) => {
+              updateAddData('title', e.target.value);
+              if (e.target.value) {
+                setErrors((prev) => ({ ...prev, title: false }));
+              } else {
+                setErrors((prev) => ({ ...prev, title: true }));
+              }
+            }}
+            isValid={errors.title}
+            validationText={errors.title ? 'This field is required.' : ''}
+          />
 
           {/* Description Field */}
           {/* <div className="flex flex-col mt-4 w-full gap-2">
@@ -310,348 +305,183 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
           {/* Base Score Field */}
 
           {/* Instruction Field */}
-          <div className="flex flex-col mt-4 w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Instruction
-            </div>
-            <textarea
-              placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}'`}
-              value={addData.instruction}
-              onChange={(e) => {
-                updateAddData('instruction', e.target.value);
-                if (e.target.value) {
-                  setErrors((prev) => ({ ...prev, instruction: false }));
-                } else {
-                  setErrors((prev) => ({ ...prev, instruction: true }));
-                }
-              }}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border ${
-                errors.instruction ? 'border-Red' : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
-            />
-            {errors.instruction && (
-              <div className="text-Red text-[10px]">
-                This field is required.
-              </div>
-            )}
-          </div>
+          <TextAreaField
+            label="Instruction"
+            placeholder={`${pageType === 'Supplement' ? 'Enter instructions (e.g., Take 1 capsule daily with food)' : pageType === 'Lifestyle' ? 'Enter instructions (e.g., Sleep at least 8 hours per day)' : 'Enter instructions (e.g., Limit carbs to under 100g daily)'}'`}
+            value={addData.instruction}
+            onChange={(e) => {
+              updateAddData('instruction', e.target.value);
+              if (e.target.value) {
+                setErrors((prev) => ({ ...prev, instruction: false }));
+              } else {
+                setErrors((prev) => ({ ...prev, instruction: true }));
+              }
+            }}
+            isValid={errors.instruction}
+            validationText={errors.instruction ? 'This field is required.' : ''}
+          />
 
           {/* Supplement Specific Field */}
           {pageType === 'Supplement' && (
-            <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
-                Dose
-                <img
-                  data-tooltip-id="dose-info"
-                  src="/icons/info-circle.svg"
-                  alt=""
-                />
-              </div>
-              <input
-                placeholder="Enter dose amount"
-                value={dose}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const englishOnly = DoseValidationEnglish(value);
-                  setDose(englishOnly);
+            <TextField
+              label="Dose"
+              placeholder="Enter dose amount"
+              value={dose}
+              onChange={(e) => {
+                const value = e.target.value;
+                const englishOnly = DoseValidationEnglish(value);
+                setDose(englishOnly);
 
-                  const doseRegex = DoseValidationMetric(englishOnly);
+                const doseRegex = DoseValidationMetric(englishOnly);
 
-                  if (englishOnly) {
-                    setErrors((prev) => ({
-                      ...prev,
-                      dose: false,
-                      doseFormat: Boolean(!doseRegex),
-                    }));
-                  } else {
-                    setErrors((prev) => ({
-                      ...prev,
-                      dose: true,
-                      doseFormat: false,
-                    }));
-                  }
-                }}
-                className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                  errors.dose || errors.doseFormat
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-              />
-              {errors.dose && (
-                <div className="text-Red text-[10px]">
-                  This field is required.
-                </div>
-              )}
-              {errors.doseFormat && (
-                <div className="text-Red text-[10px]">{DoseFormatInfoText}</div>
-              )}
-              <Tooltip
-                id={`dose-info`}
-                place="top-start"
-                className="!bg-white !w-fit !text-wrap max-w-[300px]
-                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                style={{
-                  zIndex: 9999,
-                  pointerEvents: 'none',
-                }}
-              >
-                {DoseInfoText}
-              </Tooltip>
-            </div>
+                if (englishOnly) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    dose: false,
+                    doseFormat: Boolean(!doseRegex),
+                  }));
+                } else {
+                  setErrors((prev) => ({
+                    ...prev,
+                    dose: true,
+                    doseFormat: false,
+                  }));
+                }
+              }}
+              isValid={errors.dose || errors.doseFormat}
+              validationText={
+                errors.dose
+                  ? 'This field is required.'
+                  : errors.doseFormat
+                    ? DoseFormatInfoText
+                    : ''
+              }
+              InfoText={DoseInfoText}
+            />
           )}
 
           {/* Lifestyle Specific Field */}
           {pageType === 'Lifestyle' && (
-            <div className="flex flex-col mt-5 w-full gap-2">
-              <div className="text-xs font-medium text-Text-Primary flex gap-1 items-start">
-                Value
-                <img
-                  data-tooltip-id="value-info"
-                  src="/icons/info-circle.svg"
-                  alt=""
-                />
-                <Tooltip
-                  id={`value-info`}
-                  place="top-start"
-                  className="!bg-white !w-fit !text-wrap max-w-[300px]
-                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                  style={{
-                    zIndex: 9999,
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {ValueInfoText}
-                </Tooltip>
-              </div>
-              <div className="flex w-full gap-3">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="Enter value amount"
-                  value={value}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (ValueValidation(value)) {
-                      setValue(value === '' ? '' : value);
-                      setErrors((prev) => ({
-                        ...prev,
-                        value: value === '' ? true : false,
-                      }));
-                    }
-                  }}
-                  onPaste={(e) => {
-                    const pastedData = e.clipboardData.getData('text');
-                    if (!ValueValidation(pastedData)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                    errors.value || value.length > LengthValidation
-                      ? 'border-Red'
-                      : 'border-Gray-50'
-                  } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-                />
-                <input
-                  placeholder="Enter unit"
-                  value={Unit}
-                  type="text"
-                  onChange={(e) => {
-                    const onlyLetters = e.target.value.replace(
-                      /[^a-zA-Z]/g,
-                      '',
-                    );
-                    setUnit(onlyLetters);
-                  }}
-                  className={`w-full h-[28px] rounded-[16px] py-1 px-3 border  border-Gray-50
-                   bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-                />
-              </div>
-              {errors.value && (
-                <div className="text-Red text-[10px]">
-                  This field is required.
-                </div>
-              )}
-              {value.length > LengthValidation && (
-                <div className="text-Red text-[10px]">
-                  {ValueFormatInfoText}
-                </div>
-              )}
-            </div>
+            <TwoTextField
+              label="Value"
+              onePlaceholder="Enter value amount"
+              twoPlaceholder="Enter unit"
+              oneValue={value}
+              twoValue={Unit}
+              isValid={errors.value || value.length > LengthValidation}
+              validationText={
+                errors.value
+                  ? 'This field is required.'
+                  : value.length > LengthValidation
+                    ? ValueFormatInfoText
+                    : ''
+              }
+              InfoText={ValueInfoText}
+              oneOnChange={(e) => {
+                const value = e.target.value;
+                if (ValueValidation(value)) {
+                  setValue(value === '' ? '' : value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    value: value === '' ? true : false,
+                  }));
+                }
+              }}
+              onPaste={(e) => {
+                const pastedData = e.clipboardData.getData('text');
+                if (!ValueValidation(pastedData)) {
+                  e.preventDefault();
+                }
+              }}
+              twoOnChange={(e) => {
+                const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, '');
+                setUnit(onlyLetters);
+              }}
+            />
           )}
 
           {/* Diet Specific Fields */}
           {pageType === 'Diet' && (
-            <div className="flex flex-col w-full mt-3.5">
-              <div className="font-medium text-Text-Primary text-xs flex gap-1 items-start">
-                Macros Goal
-                <img
-                  data-tooltip-id="macros-info"
-                  src="/icons/info-circle.svg"
-                  alt=""
-                />
-              </div>
-              <Tooltip
-                id={`macros-info`}
-                place="top-start"
-                className="!bg-white !w-fit !text-wrap max-w-[300px]
-                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                style={{
-                  zIndex: 9999,
-                  pointerEvents: 'none',
-                }}
-              >
-                {MacrosInfoText}
-              </Tooltip>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between mt-3 gap-4">
-                  {/* Carbs Input */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1">
-                      <div className="text-[10px] font-medium text-Text-Primary">
-                        Carbs
-                      </div>
-                      <div className="text-[10px] text-Text-Quadruple">
-                        (gr)
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Carb amount"
-                      value={totalMacros.Carbs}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (MacrosValidationNumber(value)) {
-                          updateTotalMacros('Carbs', value === '' ? '' : value);
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Carbs: value === '' },
-                          }));
-                        }
-                      }}
-                      onPaste={(e) => {
-                        const pastedData = e.clipboardData.getData('text');
-                        if (!MacrosValidationNumber(pastedData)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Carbs ||
+            <ThreeTextField
+              label="Macros Goal"
+              onePlaceholder="Carb amount"
+              twoPlaceholder="Protein amount"
+              threePlaceholder="Fat amount"
+              oneValue={totalMacros.Carbs}
+              twoValue={totalMacros.Protein}
+              threeValue={totalMacros.Fats}
+              oneOnChange={(e) => {
+                const value = e.target.value;
+                if (MacrosValidationNumber(value)) {
+                  updateTotalMacros('Carbs', value === '' ? '' : value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    macros: { ...prev.macros, Carbs: value === '' },
+                  }));
+                }
+              }}
+              onPaste={(e) => {
+                const pastedData = e.clipboardData.getData('text');
+                if (!MacrosValidationNumber(pastedData)) {
+                  e.preventDefault();
+                }
+              }}
+              twoOnChange={(e) => {
+                const value = e.target.value;
+                if (MacrosValidationNumber(value)) {
+                  updateTotalMacros('Protein', value === '' ? '' : value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    macros: { ...prev.macros, Protein: value === '' },
+                  }));
+                }
+              }}
+              threeOnChange={(e) => {
+                const value = e.target.value;
+                if (MacrosValidationNumber(value)) {
+                  updateTotalMacros('Fats', value === '' ? '' : value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    macros: { ...prev.macros, Fats: value === '' },
+                  }));
+                }
+              }}
+              oneIsValid={
+                errors.macros.Carbs ||
+                totalMacros.Carbs.length > LengthValidation
+              }
+              twoIsValid={
+                errors.macros.Protein ||
+                totalMacros.Protein.length > LengthValidation
+              }
+              threeIsValid={
+                errors.macros.Fats || totalMacros.Fats.length > LengthValidation
+              }
+              validationText={
+                errors.macros.Carbs ||
+                errors.macros.Protein ||
+                errors.macros.Fats
+                  ? 'These fields are required.'
+                  : totalMacros.Carbs.length > LengthValidation ||
+                      totalMacros.Protein.length > LengthValidation ||
+                      totalMacros.Fats.length > LengthValidation
+                    ? `${
                         totalMacros.Carbs.length > LengthValidation
-                          ? 'border-Red'
-                          : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-                    />
-                  </div>
-
-                  {/* Proteins Input */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1">
-                      <div className="text-[10px] font-medium text-Text-Primary">
-                        Proteins
-                      </div>
-                      <div className="text-[10px] text-Text-Quadruple">
-                        (gr)
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Protein amount"
-                      value={totalMacros.Protein}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (MacrosValidationNumber(value)) {
-                          updateTotalMacros(
-                            'Protein',
-                            value === '' ? '' : value,
-                          );
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Protein: value === '' },
-                          }));
-                        }
-                      }}
-                      onPaste={(e) => {
-                        const pastedData = e.clipboardData.getData('text');
-                        if (!MacrosValidationNumber(pastedData)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Protein ||
-                        totalMacros.Protein.length > LengthValidation
-                          ? 'border-Red'
-                          : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-                    />
-                  </div>
-
-                  {/* Fats Input */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1">
-                      <div className="text-[10px] font-medium text-Text-Primary">
-                        Fats
-                      </div>
-                      <div className="text-[10px] text-Text-Quadruple">
-                        (gr)
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      placeholder="Fat amount"
-                      value={totalMacros.Fats}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (MacrosValidationNumber(value)) {
-                          updateTotalMacros('Fats', value === '' ? '' : value);
-                          setErrors((prev) => ({
-                            ...prev,
-                            macros: { ...prev.macros, Fats: value === '' },
-                          }));
-                        }
-                      }}
-                      onPaste={(e) => {
-                        const pastedData = e.clipboardData.getData('text');
-                        if (!MacrosValidationNumber(pastedData)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${
-                        errors.macros.Fats ||
-                        totalMacros.Fats.length > LengthValidation
-                          ? 'border-Red'
-                          : 'border-Gray-50'
-                      } bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold`}
-                    />
-                  </div>
-                </div>
-                {(errors.macros.Carbs ||
-                  errors.macros.Protein ||
-                  errors.macros.Fats) && (
-                  <div className="text-Red text-[10px]">
-                    These fields are required.
-                  </div>
-                )}
-                {(totalMacros.Carbs.length > LengthValidation ||
-                  totalMacros.Protein.length > LengthValidation ||
-                  totalMacros.Fats.length > LengthValidation) && (
-                  <div className="text-Red text-[10px]">
-                    {totalMacros.Carbs.length > LengthValidation
-                      ? 'Carbs'
-                      : totalMacros.Protein.length > LengthValidation
-                        ? 'Protein'
-                        : 'Fats'}{' '}
-                    {MacrosFormatInfoText}
-                  </div>
-                )}
-              </div>
-            </div>
+                          ? 'Carbs'
+                          : totalMacros.Protein.length > LengthValidation
+                            ? 'Protein'
+                            : 'Fats'
+                      } ${MacrosFormatInfoText}`
+                    : ''
+              }
+              oneLabel="Carbs"
+              twoLabel="Proteins"
+              threeLabel="Fats"
+              oneUnit="(gr)"
+              twoUnit="(gr)"
+              threeUnit="(gr)"
+              InfoText={MacrosInfoText}
+            />
           )}
           <div className="flex flex-col mt-4 w-full">
             <div className="text-xs font-medium text-Text-Primary">
@@ -666,19 +496,14 @@ const AddModalLibraryTreePages: FC<AddModalLibraryTreePagesProps> = ({
             />
           </div>
           {/* Clinical Guidance Field */}
-          <div className="flex flex-col mt-4 w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Clinical Guidance
-            </div>
-            <textarea
-              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
-              value={addData.clinical_guidance}
-              onChange={(e) => {
-                updateAddData('clinical_guidance', e.target.value);
-              }}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-normal placeholder:text-Text-Fivefold resize-none`}
-            />
-          </div>
+          <TextAreaField
+            label="Clinical Guidance"
+            placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+            value={addData.clinical_guidance}
+            onChange={(e) => {
+              updateAddData('clinical_guidance', e.target.value);
+            }}
+          />
 
           {/* Action Buttons */}
           <div className="w-full flex justify-end items-center p-2 mt-5">
