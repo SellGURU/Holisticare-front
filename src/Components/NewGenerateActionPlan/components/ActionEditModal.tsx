@@ -7,17 +7,24 @@ import SvgIcon from '../../../utils/svgIcon';
 // import RangeCard from './RangeCard';
 import MainModal from '../../MainModal';
 // import CustomSelect from '../../CustomSelect';
-import { Tooltip } from 'react-tooltip';
 import ExersiceStep from '../../../pages/Library/Activity/AddComponents/ExersiceStep';
 import {
   DoseFormatInfoText,
   DoseInfoText,
   DoseValidationEnglish,
   DoseValidationMetric,
+  LengthValidation,
+  MacrosFormatInfoText,
   MacrosInfoText,
+  MacrosValidationNumber,
+  ValueFormatInfoText,
   ValueInfoText,
   ValueValidation,
 } from '../../../utils/library-unification';
+import { TextField } from '../../UnitComponents';
+import TextAreaField from '../../UnitComponents/TextAreaField';
+import ThreeTextField from '../../UnitComponents/ThreeTextField';
+import TwoTextField from '../../UnitComponents/TwoTextField';
 
 interface ActionEditModalProps {
   isOpen: boolean;
@@ -95,7 +102,7 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
   const updateTotalMacros = (key: keyof typeof totalMacros, value: any) => {
     setTotalMacros((prevTheme) => ({
       ...prevTheme,
-      [key]: value === '' ? '' : Number(value),
+      [key]: value,
     }));
   };
   const [instructions, setInstructions] = useState(defalts?.Instruction);
@@ -168,9 +175,9 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       setValue(defalts.Value || null);
       setUnit(defalts.Unit || null);
       setTotalMacros({
-        Fats: defalts?.['Total Macros']?.Fats || 0,
-        Protein: defalts?.['Total Macros']?.Protein || 0,
-        Carbs: defalts?.['Total Macros']?.Carbs || 0,
+        Fats: defalts?.['Total Macros']?.Fats || '',
+        Protein: defalts?.['Total Macros']?.Protein || '',
+        Carbs: defalts?.['Total Macros']?.Carbs || '',
       });
       setInstructions(defalts.Instruction || '');
       // setSelectedTimes(defalts.Times || []);
@@ -446,11 +453,16 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
         Unit: unit,
       });
     } else if (selectedGroup === 'Diet') {
+      const numberMacros = {
+        Fats: Number(totalMacros.Fats),
+        Protein: Number(totalMacros.Protein),
+        Carbs: Number(totalMacros.Carbs),
+      };
       onSubmit({
         Category: selectedGroup,
         Title: title,
         Instruction: instructions,
-        'Total Macros': totalMacros,
+        'Total Macros': numberMacros,
         'Client Notes': newNote.trim() !== '' ? [...notes, newNote] : notes,
         frequencyDates:
           frequencyType === 'weekly'
@@ -724,7 +736,6 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
       saveActivity();
     }
   };
-
   return (
     <MainModal
       onClose={() => {
@@ -809,350 +820,178 @@ const ActionEditModal: React.FC<ActionEditModalProps> = ({
                     </div>
                   )}
                 </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-medium">Title</label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Write the action's title..."
-                    type="text"
-                    className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-[6px] px-3 border ${!title && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                  />
-                  {!title && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div>
-                {/* <div className={`mb-4`}>
-                  <label className="block text-xs font-medium">
-                    Description
-                  </label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    onKeyDown={handleNoteKeyDown}
-                    className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!description && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                    rows={6}
-                    placeholder="Write the action's description..."
-                  />
-                  {!description && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div> */}
-                {/*  */}
-                <div className="mb-4">
-                  <label className="flex w-full justify-start gap-1 items-center text-xs font-medium">
-                    Instruction
-                  </label>
-                  <textarea
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
-                    placeholder="Write the action's instruction..."
-                    className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${!instructions && showValidation ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-                    rows={6}
-                  />
-                  {!instructions && showValidation && (
-                    <span className="text-[10px] mt-[-16px] ml-2 text-red-500">
-                      This field is required.
-                    </span>
-                  )}
-                </div>
+                <TextField
+                  label="Title"
+                  placeholder="Write the action's title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  isValid={!title && showValidation}
+                  validationText={
+                    !title && showValidation ? 'This field is required.' : ''
+                  }
+                  margin="mb-4"
+                />
+                <TextAreaField
+                  label="Instruction"
+                  placeholder="Write the action's instruction..."
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  isValid={!instructions && showValidation}
+                  validationText={
+                    !instructions && showValidation
+                      ? 'This field is required.'
+                      : ''
+                  }
+                  margin="mb-4"
+                />
                 {selectedGroup === 'Supplement' && (
-                  <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs flex font-medium text-Text-Primary">
-                      Dose
-                      <div data-tooltip-id="dose-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="dose-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          {DoseInfoText}
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <input
-                      placeholder="Enter dose amount"
-                      value={dose}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const englishOnly = DoseValidationEnglish(value);
-                        setDose(englishOnly);
-
-                        const doseRegex = DoseValidationMetric(englishOnly);
-
-                        if (englishOnly) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            dose: false,
-                            doseFormat: Boolean(!doseRegex),
-                          }));
-                        } else {
-                          setErrors((prev) => ({
-                            ...prev,
-                            dose: true,
-                            doseFormat: false,
-                          }));
-                        }
-                      }}
-                      // onBlur={handleDoseBlur}
-                      className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${(errors.dose || errors.doseFormat) && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                    />
-                    {errors.dose && showValidation && (
-                      <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                        This field is required.
-                      </span>
-                    )}
-                    {errors.doseFormat && (
-                      <div className="text-Red text-[10px]">
-                        {DoseFormatInfoText}
-                      </div>
-                    )}
-                  </div>
+                  <TextField
+                    label="Dose"
+                    placeholder="Enter dose amount"
+                    value={dose}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const englishOnly = DoseValidationEnglish(value);
+                      setDose(englishOnly);
+                      const doseRegex = DoseValidationMetric(englishOnly);
+                      if (englishOnly) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          dose: false,
+                          doseFormat: Boolean(!doseRegex),
+                        }));
+                      } else {
+                        setErrors((prev) => ({
+                          ...prev,
+                          dose: true,
+                          doseFormat: false,
+                        }));
+                      }
+                    }}
+                    isValid={(!dose || errors.doseFormat) && showValidation}
+                    InfoText={DoseInfoText}
+                    validationText={
+                      !dose && showValidation
+                        ? 'This field is required.'
+                        : errors.doseFormat
+                          ? DoseFormatInfoText
+                          : ''
+                    }
+                    margin="mb-4"
+                  />
                 )}
                 {selectedGroup === 'Lifestyle' && (
-                  <div className="flex flex-col mb-4 w-full gap-2">
-                    <div className="text-xs flex items-center  font-medium text-Text-Primary">
-                      Value
-                      <div data-tooltip-id="value-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="value-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !w-[284px] !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          {ValueInfoText}
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <div className="flex justify-between">
-                      <div className="w-[48%]">
-                        <input
-                          placeholder="Enter value amount"
-                          value={value}
-                          type="text"
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (ValueValidation(value)) {
-                              setValue(value === '' ? '' : value);
-                            }
-                          }}
-                          onPaste={(e) => {
-                            const pastedData = e.clipboardData.getData('text');
-                            if (!ValueValidation(pastedData)) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!value && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                        {!value && showValidation && (
-                          <span className="text-[10px] mt-[-4px] ml-2 text-red-500">
-                            This field is required.
-                          </span>
-                        )}
-                      </div>
-                      <input
-                        placeholder="Enter unit"
-                        value={unit}
-                        type="text"
-                        onChange={(e) => {
-                          const onlyLetters = e.target.value.replace(
-                            /[^a-zA-Z]/g,
-                            '',
-                          );
-                          setUnit(onlyLetters);
-                        }}
-                        className={`w-[48%] h-[28px] rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                      />
-                    </div>
-                  </div>
+                  <TwoTextField
+                    label="Value"
+                    onePlaceholder="Enter value amount"
+                    twoPlaceholder="Enter unit"
+                    oneValue={value}
+                    twoValue={unit}
+                    oneOnChange={(e) => {
+                      const value = e.target.value;
+                      if (ValueValidation(value)) {
+                        setValue(value === '' ? '' : value);
+                      }
+                    }}
+                    twoOnChange={(e) => {
+                      const onlyLetters = e.target.value.replace(
+                        /[^a-zA-Z]/g,
+                        '',
+                      );
+                      setUnit(onlyLetters);
+                    }}
+                    onPaste={(e) => {
+                      const pastedData = e.clipboardData.getData('text');
+                      if (!ValueValidation(pastedData)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    isValid={
+                      (!value || value.length > LengthValidation) &&
+                      showValidation
+                    }
+                    InfoText={ValueInfoText}
+                    validationText={
+                      !value && showValidation
+                        ? 'This field is required.'
+                        : value.length > LengthValidation
+                          ? ValueFormatInfoText
+                          : ''
+                    }
+                    margin="mb-4"
+                  />
                 )}
                 {selectedGroup === 'Diet' && (
-                  <div className="flex flex-col w-full mb-4">
-                    <div className="font-medium flex text-Text-Primary text-xs">
-                      Macros Goal
-                      <div data-tooltip-id="Macros-tooltip">
-                        <img
-                          src="/icons/info-circle.svg"
-                          alt=""
-                          className="w-2.5 h-2.5 cursor-pointer ml-1 mb-2"
-                        />
-                      </div>
-                      <Tooltip
-                        id="Macros-tooltip"
-                        place="right-end"
-                        className="!bg-white !shadow-100 !text-Text-Quadruple !text-[10px] !rounded-[6px] !border !border-gray-50 flex flex-col !z-[99999]"
-                      >
-                        <div className="flex items-center gap-1">
-                          {MacrosInfoText}
-                        </div>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center justify-between mt-3 gap-4">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Carbs
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Carb amount"
-                          value={totalMacros.Carbs}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Carbs',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
-                            )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Carbs && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Proteins
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Proteins"
-                          value={totalMacros.Protein}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Protein',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
-                            )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Protein && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1">
-                          <div className="text-[10px] font-medium text-Text-Primary">
-                            Fats
-                          </div>
-                          <div className="text-[10px] text-Text-Quadruple">
-                            (gr)
-                          </div>
-                        </div>
-                        <input
-                          type="number"
-                          placeholder="Fats"
-                          value={totalMacros.Fats}
-                          onChange={(e) =>
-                            updateTotalMacros(
-                              'Fats',
-                              e.target.value === ''
-                                ? ''
-                                : Number(e.target.value),
-                            )
-                          }
-                          onKeyDown={(e) => {
-                            // Allow navigation keys
-                            if (
-                              e.key === 'ArrowUp' ||
-                              e.key === 'ArrowDown' ||
-                              e.key === 'ArrowLeft' ||
-                              e.key === 'ArrowRight' ||
-                              e.key === 'Tab' ||
-                              e.key === 'Enter'
-                            ) {
-                              return;
-                            }
-                            // Allow numbers, backspace, delete
-                            if (
-                              !/[\d\b]/.test(e.key) &&
-                              e.key !== 'Backspace' &&
-                              e.key !== 'Delete' &&
-                              e.key !== 'Tab'
-                            ) {
-                              e.preventDefault();
-                            }
-                          }}
-                          className={`w-full h-[28px] rounded-[16px] py-1 px-3 border ${!totalMacros.Fats && showValidation ? 'border-red-500' : 'border-Gray-50'} bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold`}
-                        />
-                      </div>
-                    </div>
-                    {(!totalMacros.Carbs ||
-                      !totalMacros.Protein ||
-                      !totalMacros.Fats) &&
-                      showValidation && (
-                        <span className="text-[10px] mt-1 ml-2 text-red-500">
-                          These fields are required.
-                        </span>
-                      )}
-                  </div>
+                  <ThreeTextField
+                    label="Macros Goal"
+                    onePlaceholder="Carb amount"
+                    twoPlaceholder="Protein amount"
+                    threePlaceholder="Fat amount"
+                    oneValue={totalMacros.Carbs}
+                    twoValue={totalMacros.Protein}
+                    threeValue={totalMacros.Fats}
+                    oneOnChange={(e) => {
+                      const value = e.target.value;
+                      if (MacrosValidationNumber(value)) {
+                        updateTotalMacros('Carbs', value === '' ? '' : value);
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const pastedData = e.clipboardData.getData('text');
+                      if (!MacrosValidationNumber(pastedData)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    twoOnChange={(e) => {
+                      const value = e.target.value;
+                      if (MacrosValidationNumber(value)) {
+                        updateTotalMacros('Protein', value === '' ? '' : value);
+                      }
+                    }}
+                    threeOnChange={(e) => {
+                      const value = e.target.value;
+                      if (MacrosValidationNumber(value)) {
+                        updateTotalMacros('Fats', value === '' ? '' : value);
+                      }
+                    }}
+                    oneIsValid={
+                      (!totalMacros.Carbs && showValidation) ||
+                      totalMacros.Carbs.length > LengthValidation
+                    }
+                    twoIsValid={
+                      (!totalMacros.Protein && showValidation) ||
+                      totalMacros.Protein.length > LengthValidation
+                    }
+                    threeIsValid={
+                      (!totalMacros.Fats && showValidation) ||
+                      totalMacros.Fats.length > LengthValidation
+                    }
+                    validationText={
+                      (!totalMacros.Carbs && showValidation) ||
+                      (!totalMacros.Protein && showValidation) ||
+                      (!totalMacros.Fats && showValidation)
+                        ? 'These fields are required.'
+                        : totalMacros.Carbs.length > LengthValidation ||
+                            totalMacros.Protein.length > LengthValidation ||
+                            totalMacros.Fats.length > LengthValidation
+                          ? `${
+                              totalMacros.Carbs.length > LengthValidation
+                                ? 'Carbs'
+                                : totalMacros.Protein.length > LengthValidation
+                                  ? 'Protein'
+                                  : 'Fats'
+                            } ${MacrosFormatInfoText}`
+                          : ''
+                    }
+                    oneLabel="Carbs"
+                    twoLabel="Proteins"
+                    threeLabel="Fats"
+                    oneUnit="(gr)"
+                    twoUnit="(gr)"
+                    threeUnit="(gr)"
+                    InfoText={MacrosInfoText}
+                    margin="mb-4"
+                  />
                 )}
                 {/* {selectedGroup === 'Activity' && (
                   <>
