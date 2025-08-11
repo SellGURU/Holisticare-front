@@ -217,8 +217,8 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           />
           <div className="text-Text-Primary text-base font-medium mt-9">
             {isQuestionary
-              ? 'No questionary form existed yet.'
-              : 'No check-in form existed yet.'}
+              ? ' No questionnaire form exists yet.'
+              : 'No check-in form exists yet.'}
           </div>
           <ButtonSecondary
             ClassName="rounded-[20px] w-[229px] mt-9"
@@ -243,6 +243,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setEditFormId('');
           setShowReposition(false);
           setShowAddModal(false);
+          setErrorCheckIn('')
         }}
       >
         <CheckInControllerModal
@@ -251,6 +252,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setEditFormId('');
             setShowReposition(false);
             setShowAddModal(false);
+            setErrorCheckIn('')
           }}
           onSave={(values) => {
             onsave(values);
@@ -298,6 +300,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       <MainModal
         isOpen={(showFeedback || showReposition) && isQuestionary}
         onClose={() => {
+          setErrorQuestionary('')
           setShowFeedBack(false);
           setEditFormId('');
           setSelectedTemplate(null);
@@ -311,6 +314,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setEditFormId('');
             setSelectedTemplate(null);
             setShowReposition(false);
+            setErrorQuestionary('')
           }}
           onSave={(values) => {
             onsaveQuestionary(values);
