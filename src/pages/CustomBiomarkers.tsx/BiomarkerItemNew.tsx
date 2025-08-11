@@ -89,7 +89,9 @@ const biomarkerItem = ({
           <div className="md:w-[200px]">
             <div className=" text-[10px] md:text-[12px] font-medium text-Text-Primary   ">
               {data.Biomarker}
-              <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">({data.unit})</span>
+              <span className=" text-[8px] md:text-[10px] text-[#888888] ml-[2px]">
+                ({data.unit})
+              </span>
             </div>
             <div className=" text-[8px] md:text-[10px] text-nowrap mt-1 text-Text-Quadruple">
               {data.Category}
@@ -128,7 +130,7 @@ const biomarkerItem = ({
                 options={avilableGenders()}
               ></Select>
             </div>
-            <div  onClick={openModalEdit}>
+            <div onClick={openModalEdit}>
               <SvgIcon color="#005F73" src="./icons/edit-green.svg"></SvgIcon>
             </div>
           </div>
