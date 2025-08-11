@@ -243,7 +243,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
           setEditFormId('');
           setShowReposition(false);
           setShowAddModal(false);
-          setErrorCheckIn('')
+          setErrorCheckIn('');
         }}
       >
         <CheckInControllerModal
@@ -252,7 +252,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setEditFormId('');
             setShowReposition(false);
             setShowAddModal(false);
-            setErrorCheckIn('')
+            setErrorCheckIn('');
           }}
           onSave={(values) => {
             onsave(values);
@@ -300,7 +300,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
       <MainModal
         isOpen={(showFeedback || showReposition) && isQuestionary}
         onClose={() => {
-          setErrorQuestionary('')
+          setErrorQuestionary('');
           setShowFeedBack(false);
           setEditFormId('');
           setSelectedTemplate(null);
@@ -314,7 +314,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ isQuestionary, search }) => {
             setEditFormId('');
             setSelectedTemplate(null);
             setShowReposition(false);
-            setErrorQuestionary('')
+            setErrorQuestionary('');
           }}
           onSave={(values) => {
             onsaveQuestionary(values);

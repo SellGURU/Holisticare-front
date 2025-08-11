@@ -36,7 +36,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
   }, [options, showValidation]);
 
   return (
-    <div className="flex flex-col gap-2 w-[49%] min-h-[40px]">
+    <div className="flex flex-col gap-2 w-full md:w-[49%] min-h-[40px]">
       <div
         className={`flex flex-col items-center justify-start w-full min-h-[40px] h-fit rounded-xl px-3 py-1 border ${
           isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'
@@ -62,7 +62,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
         </div>
         {isActive && (
           <div className="flex items-start w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
-            <div className="grid grid-cols-2 gap-1 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
               {options.map((option, index) => {
                 return (
                   <div
@@ -76,7 +76,7 @@ const MultiChoceSelection: React.FC<MultiChoceSelectionProps> = ({
                       onChange={(e) =>
                         handleChoiceOptionChange(index, e.target.value)
                       }
-                      className={`bg-backgroundColor-Card border  rounded-2xl py-1 px-2 text-[8px] w-[130px]`}
+                      className={`bg-backgroundColor-Card border  rounded-2xl py-1 px-2 text-[8px] w-full md:w-[130px]`}
                     />
                   </div>
                 );

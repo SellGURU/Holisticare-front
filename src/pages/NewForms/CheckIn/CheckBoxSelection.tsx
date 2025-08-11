@@ -36,7 +36,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
   }, [options, showValidation]);
 
   return (
-    <div className="flex flex-col gap-2 w-[49%] min-h-[40px]">
+    <div className="flex flex-col gap-2 w-full md:w-[49%] min-h-[40px]">
       <div
         className={`flex flex-col items-center justify-start w-full min-h-[40px] h-fit rounded-xl px-3 py-2 border ${
           isActive ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'
@@ -62,11 +62,11 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
         </div>
         {isActive && (
           <div className="w-full mt-2 max-h-[150px] overflow-y-auto pr-2">
-            <div className=" gap-1  grid grid-cols-2  w-full">
+            <div className=" gap-1  grid md:grid-cols-2  w-full">
               {options.map((option, index) => {
                 return (
                   <div
-                    className="flex items-center justify-center gap-1"
+                    className="flex w-full md:w-auto items-center justify-center gap-1"
                     key={index}
                   >
                     {/* <div className="w-3 h-3 rounded-[2px] border border-Primary-DeepTeal"></div> */}
@@ -77,7 +77,7 @@ const CheckBoxSelection: React.FC<CheckBoxSelectionProps> = ({
                         handleOptionChange(index, e.target.value)
                       }
                       className={`bg-backgroundColor-Card border 
-                       rounded-2xl py-1 px-2 text-[8px] w-[130px]`}
+                       rounded-2xl py-1 px-2 text-[8px] w-full md:w-[130px]`}
                     />
                   </div>
                 );
