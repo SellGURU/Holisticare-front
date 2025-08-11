@@ -4,14 +4,15 @@ import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import * as Yup from 'yup';
 import Application from '../../../api/app';
+import { TextField } from '../../../Components/UnitComponents';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
-import SvgIcon from '../../../utils/svgIcon';
 import {
   DoseFormatInfoText,
   DoseInfoText,
   DoseValidationEnglish,
   DoseValidationMetric,
 } from '../../../utils/library-unification';
+import SvgIcon from '../../../utils/svgIcon';
 // import Checkbox from '../../../Components/checkbox';
 interface EditModalProps {
   isOpen: boolean;
@@ -58,6 +59,10 @@ const EditModal: FC<EditModalProps> = ({
     defalts ? defalts['Practitioner Comments'] : [],
   );
   const [showValidation, setShowValidation] = useState(false);
+  const [errors, setErrors] = useState({
+    dose: false,
+    doseFormat: false,
+  });
   const clearFields = () => {
     formik.resetForm();
     setNewNote('');
@@ -391,55 +396,42 @@ const EditModal: FC<EditModalProps> = ({
                 </div>
               )}
             </div>
-            <div
-              className={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
-            >
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Dose{' '}
-                {/* {selectedGroupDose && <span className="text-Red">*</span>} */}
-                <img
-                  className="cursor-pointer"
-                  data-tooltip-id={'more-info'}
-                  src="/icons/info-circle.svg"
-                  alt=""
-                />
-              </label>
-              <input
-                name="Dose"
-                value={formik.values.Dose}
-                onChange={(e) => {
-                  // Only allow English characters and numbers
-                  const englishOnly = DoseValidationEnglish(e.target.value);
-                  formik.setFieldValue('Dose', englishOnly);
-                }}
-                placeholder="Write Dose"
-                type="text"
-                disabled={!selectedGroupDose}
-                className={`mt-1 ${!selectedGroupDose && 'cursor-not-allowed'} text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && formik.errors.Dose && selectedGroupDose
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-              />
-              {showValidation && formik.errors.Dose && selectedGroupDose && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Dose}
-                </div>
-              )}
-              {!DoseValidationMetric(formik.values.Dose) && (
-                <div className="text-Red text-[10px]">{DoseFormatInfoText}</div>
-              )}
-              {selectedGroupDose && (
-                <Tooltip
-                  id="more-info"
-                  place="right"
-                  className="!bg-white !w-fit !text-wrap max-w-[300px]
-                     !text-[#888888] !opacity-100 !bg-opacity-100 !shadow-100 text-justify !text-[10px] !rounded-[6px] !border !border-Gray-50 !p-2"
-                >
-                  {DoseInfoText}
-                </Tooltip>
-              )}
-            </div>
+            <TextField
+              label="Dose"
+              value={formik.values.Dose}
+              onChange={(e) => {
+                const value = e.target.value;
+                const englishOnly = DoseValidationEnglish(value);
+                formik.setFieldValue('Dose', englishOnly);
+
+                const doseRegex = DoseValidationMetric(englishOnly);
+
+                if (englishOnly) {
+                  setErrors({
+                    dose: false,
+                    doseFormat: Boolean(!doseRegex),
+                  });
+                } else {
+                  setErrors({
+                    dose: true,
+                    doseFormat: false,
+                  });
+                }
+                formik.setFieldValue('Dose', englishOnly);
+              }}
+              disabled={!selectedGroupDose}
+              placeholder="Write Dose"
+              margin={`${selectedGroupDose ? 'opacity-100' : 'opacity-50'} mb-4`}
+              isValid={(errors.dose || errors.doseFormat) && selectedGroupDose}
+              validationText={
+                errors.dose && selectedGroupDose
+                  ? 'This field is required.'
+                  : errors.doseFormat
+                    ? DoseFormatInfoText
+                    : ''
+              }
+              InfoText={DoseInfoText}
+            />
 
             {/* Instructions Field */}
             {/* <div className="mb-4">
