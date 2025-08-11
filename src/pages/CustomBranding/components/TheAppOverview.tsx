@@ -77,10 +77,10 @@ const TheAppOverview: FC<TheAppOverviewProps> = ({ customTheme }) => {
   const [selectedMeal, setselectedMeal] = useState('Breakfast');
   const [selectedPage, setselectedPage] = useState('Overview');
   return (
-    <div className="w-full flex items-center justify-center gap-8">
+    <div className="w-full flex flex-col md:flex-row items-center justify-center gap-8">
       <div
         style={{ background: gradientWithOpacity }}
-        className="w-[203px] h-[360px] rounded-[12.72px] shadow-400 pt-4 relative flex flex-col items-center justify-center gap-2 select-none"
+        className="  w-[203px] h-[360px] rounded-[12.72px] shadow-400 pt-4 relative flex flex-col items-center justify-center gap-2 select-none"
       >
         {customTheme.selectedImage && (
           <img
