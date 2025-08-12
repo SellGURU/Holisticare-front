@@ -162,35 +162,36 @@ const AddClient = () => {
       <div className="w-full hidden md:block sticky z-50 top-0 ">
         <MainTopBar></MainTopBar>
       </div>
-      <div className="w-full p-3 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto">
+      <div className="w-full p-2 xs:p-4 sm:p-6 md:p-8 h-[100vh] overflow-y-auto">
         {isAdded ? (
           <>
             <div className="w-full flex justify-center items-center h-[80vh]">
-              <div className=" w-[300px] md:w-[468px] h-[256px] md:h-[324px] bg-white rounded-[16px] border border-Gray-50 shadow-200">
-                <div className="w-full flex justify-center mt-4 md:mt-8">
+              <div className="  w-[95vw] md:w-[468px] h-fit sm:h-[324px] bg-white rounded-[16px] border border-Gray-50 shadow-200 p-2 sm:p-0">
+                <div className="w-full flex justify-center md:mt-8">
                   <img src="/icons/tick-circle-background-new.svg" alt="" />
                 </div>
                 <div className="">
-                  <div className="text-center font-medium text-xs md:text-[14px] text-Text-Primary">
+                  <div className="text-center  font-medium text-[10px] xs:text-xs md:text-[14px] text-Text-Primary">
                     The client has been successfully saved!
                   </div>
                   <div className="flex justify-center">
-                    <div className="text-justify w-[90%] text-xs text-Text-Primary mt-2 leading-6">
+                    <div style={{textAlignLast:'center'}} className="text-justify w-[90%] md:text-xs text-[10px] text-Text-Primary mt-2 leading-6">
                       To set up their profile or monitor their progress, please
                       navigate to the client’s Health Plan. Here, you can view
                       detailed insights and track all updates to ensure their
                       wellness journey is progressing smoothly.
                     </div>
                   </div>
-                  <div className="flex gap-1 w-full justify-between items-center px-2 md:px-8 mt-4">
+                  <div className="flex gap-1 flex-wrap w-full justify-center xs:justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
-                      style={{
-                        width: '188px',
-                        paddingRight: '32px',
-                        paddingLeft: '32px',
-                        paddingTop: '8px',
-                        paddingBottom: '8px',
-                      }}
+                    ClassName='px-4 md:px-8 py-2 w-[188px]'
+                      // style={{
+                        
+                      //   paddingRight: '32px',
+                      //   paddingLeft: '32px',
+                      //   paddingTop: '8px',
+                      //   paddingBottom: '8px',
+                      // }}
                       size="normal"
                       onClick={() => {
                         // setIsAdded(false);
@@ -209,13 +210,13 @@ const AddClient = () => {
                       </div>
                     </ButtonPrimary>
                     <ButtonPrimary
-                      style={{
-                        paddingRight: '32px',
-                        paddingLeft: '32px',
-                        paddingTop: '8px',
-                        paddingBottom: '8px',
-                      }}
-                      ClassName=" md:w-[200px]"
+                      // style={{
+                      //   paddingRight: '32px',
+                      //   paddingLeft: '32px',
+                      //   paddingTop: '8px',
+                      //   paddingBottom: '8px',
+                      // }}
+                      ClassName='px-4 md:px-8 py-2 w-[188px] md:w-[200px]'
                       size="normal"
                       onClick={() => {
                         navigate(
