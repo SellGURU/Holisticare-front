@@ -28,7 +28,7 @@ const Point: React.FC<PointProps> = ({ top, left, onClick, status, name }) => {
       return '#72C13B';
     }
     if (status == 'OptimalRange') {
-      return '#B2302E';
+      return '#37B45E';
     }
     return '#B2302E';
   };
