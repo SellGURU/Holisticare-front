@@ -175,7 +175,10 @@ const AddClient = () => {
                     The client has been successfully saved!
                   </div>
                   <div className="flex justify-center">
-                    <div style={{textAlignLast:'center'}} className="text-justify w-[90%] md:text-xs text-[10px] text-Text-Primary mt-2 leading-6">
+                    <div
+                      style={{ textAlignLast: 'center' }}
+                      className="text-justify w-[90%] md:text-xs text-[10px] text-Text-Primary mt-2 leading-6"
+                    >
                       To set up their profile or monitor their progress, please
                       navigate to the client’s Health Plan. Here, you can view
                       detailed insights and track all updates to ensure their
@@ -184,9 +187,9 @@ const AddClient = () => {
                   </div>
                   <div className="flex gap-1 flex-wrap w-full justify-center xs:justify-between items-center px-2 md:px-8 mt-4">
                     <ButtonPrimary
-                    ClassName='px-4 md:px-8 py-2 w-[188px]'
+                      ClassName="px-4 md:px-8 py-2 w-[188px]"
                       // style={{
-                        
+
                       //   paddingRight: '32px',
                       //   paddingLeft: '32px',
                       //   paddingTop: '8px',
@@ -216,7 +219,7 @@ const AddClient = () => {
                       //   paddingTop: '8px',
                       //   paddingBottom: '8px',
                       // }}
-                      ClassName='px-4 md:px-8 py-2 w-[188px] md:w-[200px]'
+                      ClassName="px-4 md:px-8 py-2 w-[188px] md:w-[200px]"
                       size="normal"
                       onClick={() => {
                         navigate(
