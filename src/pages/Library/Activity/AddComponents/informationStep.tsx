@@ -4,9 +4,11 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Checkbox from '../../../../Components/checkbox';
 import CustomSelect from '../../../../Components/CustomSelect';
-import TextField from '../../../../Components/TextField';
 import RangeCardLibraryActivity from './RangeCard';
 import Application from '../../../../api/app';
+import { TextField } from '../../../../Components/UnitComponents';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
+// import TextField from '../../../../Components/TextField';
 
 interface InformationStepProps {
   addData: {
@@ -120,22 +122,20 @@ const InformationStep: FC<InformationStepProps> = ({
     <>
       <div className="w-full flex gap-4 mt-6 relative">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-medium text-Text-Primary">Title</div>
-            <TextField
-              type="text"
-              newStyle
-              placeholder="Write the activity's title..."
-              value={formik.values.title}
-              onChange={(e) => formik.setFieldValue('title', e.target.value)}
-              onBlur={formik.handleBlur}
-              className="w-[360px]"
-              errorMessage={
-                showValidation ? 'This field is required.' : undefined
-              }
-              inValid={showValidation && Boolean(formik.errors.title)}
-            />
-          </div>
+          <TextField
+            label="Title"
+            placeholder="Write the activity's title..."
+            margin="!w-[360px]"
+            value={formik.values.title}
+            onChange={(e) => {
+              formik.setFieldValue('title', e.target.value);
+              updateAddData('title', e.target.value);
+            }}
+            isValid={showValidation && Boolean(formik.errors.title)}
+            validationText={
+              showValidation && formik.errors.title ? formik.errors.title : ''
+            }
+          />
 
           {/* <div className="flex flex-col w-full gap-2">
             <div className="text-xs font-medium text-Text-Primary">
@@ -162,30 +162,22 @@ const InformationStep: FC<InformationStepProps> = ({
             )}
           </div> */}
 
-          <div className="flex flex-col w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Instruction
-            </div>
-            <textarea
-              placeholder="Write the activity's Instruction..."
-              value={formik.values.instruction}
-              onChange={(e) => {
-                formik.setFieldValue('instruction', e.target.value);
-                updateAddData('instruction', e.target.value);
-              }}
-              name="instruction"
-              className={`w-full h-[62px] rounded-[16px] py-1 px-3 border ${
-                showValidation && formik.errors.instruction
-                  ? 'border-Red'
-                  : 'border-Gray-50'
-              } bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
-            />
-            {showValidation && formik.errors.instruction && (
-              <div className="text-Red text-[10px]">
-                {formik.errors.instruction}
-              </div>
-            )}
-          </div>
+          <TextAreaField
+            label="Instruction"
+            placeholder="Write the activity's Instruction..."
+            value={formik.values.instruction}
+            onChange={(e) => {
+              formik.setFieldValue('instruction', e.target.value);
+              updateAddData('instruction', e.target.value);
+            }}
+            isValid={showValidation && Boolean(formik.errors.instruction)}
+            validationText={
+              showValidation && Boolean(formik.errors.instruction)
+                ? formik.errors.instruction
+                : ''
+            }
+            margin="mt-0"
+          />
           <div className="flex flex-col w-full">
             <div className="text-xs font-medium text-Text-Primary">
               Priority Weight
@@ -200,25 +192,18 @@ const InformationStep: FC<InformationStepProps> = ({
               error={Boolean(formik.errors.score)}
               required={true}
             />
-            {/* {formik.touched.score && formik.errors.score && (
-              <div className="text-Red text-xs mt-1">{formik.errors.score}</div>
-            )} */}
           </div>
           {/* Clinical Guidance Field */}
-          <div className="flex flex-col w-full gap-2">
-            <div className="text-xs font-medium text-Text-Primary">
-              Clinical Guidance
-            </div>
-            <textarea
-              placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
-              value={formik.values.clinical_guidance}
-              onChange={(e) => {
-                formik.setFieldValue('clinical_guidance', e.target.value);
-                updateAddData('clinical_guidance', e.target.value);
-              }}
-              className={`w-full h-[98px] text-justify rounded-[16px] py-1 px-3 border border-Gray-50 bg-backgroundColor-Card text-xs font-light placeholder:text-Text-Fivefold resize-none`}
-            />
-          </div>
+          <TextAreaField
+            label="Clinical Guidance"
+            placeholder="Enter clinical notes (e.g., Avoid in pregnancy; monitor in liver conditions)"
+            value={formik.values.clinical_guidance}
+            onChange={(e) => {
+              formik.setFieldValue('clinical_guidance', e.target.value);
+              updateAddData('clinical_guidance', e.target.value);
+            }}
+            margin="mt-0"
+          />
         </div>
         <div className="bg-[#E9EDF5] h-[362px] w-px"></div>
         <div className="flex flex-col gap-4">
