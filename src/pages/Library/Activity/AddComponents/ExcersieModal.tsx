@@ -9,6 +9,7 @@ import Checkbox from '../../../../Components/checkbox';
 import Application from '../../../../api/app';
 import RangeCardLibraryActivity from './RangeCard';
 import SpinnerLoader from '../../../../Components/SpinnerLoader';
+import TextAreaField from '../../../../Components/UnitComponents/TextAreaField';
 interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -434,28 +435,21 @@ const ExerciseModal: React.FC<ExerciseModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
             /> */}
 
-            <div className="flex flex-col gap-1">
-              <div className="text-xs font-medium text-Text-Primary">
-                Instruction
-              </div>
-              <textarea
-                value={formik.values.instruction}
-                onChange={(e) =>
-                  formik.setFieldValue('instruction', e.target.value)
-                }
-                placeholder="Write the exercise's Instruction..."
-                className={`bg-[#FDFDFD] w-full rounded-[16px] mt-1 text-justify border ${
-                  showValidation && formik.errors.instruction
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } placeholder:text-xs placeholder:font-light placeholder:text-[#B0B0B0] text-[12px] px-3 outline-none resize-none h-fit min-h-[62px] py-2`}
-              />
-              {showValidation && formik.errors.instruction && (
-                <div className="text-Red text-[10px]">
-                  {String(formik.errors.instruction)}
-                </div>
-              )}
-            </div>
+            <TextAreaField
+              label="Instruction"
+              placeholder="Write the exercise's Instruction..."
+              value={formik.values.instruction}
+              onChange={(e) => {
+                formik.setFieldValue('instruction', e.target.value);
+              }}
+              margin="mt-0"
+              isValid={showValidation && Boolean(formik.errors.instruction)}
+              validationText={
+                showValidation && formik.errors.instruction
+                  ? String(formik.errors.instruction)
+                  : ''
+              }
+            />
             <div className="flex flex-col w-full">
               <div className="text-xs font-medium text-Text-Primary">
                 Priority Weight
