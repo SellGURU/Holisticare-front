@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormik } from 'formik';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
 import * as Yup from 'yup';
 import Application from '../../../api/app';
 import { TextField } from '../../../Components/UnitComponents';
+import SelectBoxField from '../../../Components/UnitComponents/SelectBoxField';
+import TextAreaField from '../../../Components/UnitComponents/TextAreaField';
 import useModalAutoClose from '../../../hooks/UseModalAutoClose';
 import {
   DoseFormatInfoText,
@@ -51,7 +52,6 @@ const EditModal: FC<EditModalProps> = ({
       ? defalts['client_version']
       : [],
   );
-  const [showSelect, setShowSelect] = useState(false);
   // const [group, setGroup] = useState(defalts?.Category);
   // const [practitionerComment, setPractitionerComment] = useState('');
 
@@ -75,9 +75,9 @@ const EditModal: FC<EditModalProps> = ({
     // setGroups([]);
   };
 
-  const selectRef = useRef(null);
+  // const selectRef = useRef(null);
   const modalRef = useRef(null);
-  const selectButRef = useRef(null);
+  // const selectButRef = useRef(null);
   const validationSchema = Yup.object({
     Category: Yup.string().required('This field is required.'),
     Recommendation: Yup.string().required('This field is required.'),
@@ -174,13 +174,13 @@ const EditModal: FC<EditModalProps> = ({
       }
     }
   }, [formik.values.Category, groups]);
-  useModalAutoClose({
-    refrence: selectRef,
-    buttonRefrence: selectButRef,
-    close: () => {
-      setShowSelect(false);
-    },
-  });
+  // useModalAutoClose({
+  //   refrence: selectRef,
+  //   buttonRefrence: selectButRef,
+  //   close: () => {
+  //     setShowSelect(false);
+  //   },
+  // });
 
   useModalAutoClose({
     refrence: modalRef,
@@ -320,82 +320,39 @@ const EditModal: FC<EditModalProps> = ({
         >
           <form onSubmit={formik.handleSubmit}>
             {/* Category Field */}
-            <div className="w-full relative overflow-visible mt-1 mb-4">
-              <label className="text-xs font-medium text-Text-Primary">
-                Category
-              </label>
-              <div
-                onClick={() => setShowSelect(!showSelect)}
-                className={`w-full cursor-pointer h-[28px] flex justify-between items-center px-3 bg-backgroundColor-Card rounded-[16px] border mt-1 ${
-                  showValidation && formik.errors.Category
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                }`}
-              >
-                {formik.values.Category ? (
-                  <div className="text-[12px] text-Text-Primary">
-                    {formik.values.Category}
-                  </div>
-                ) : (
-                  <div className="text-[12px] text-gray-400">Select Group</div>
-                )}
-                <div>
-                  <img
-                    className={`${showSelect && 'rotate-180'}`}
-                    src="/icons/arow-down-drop.svg"
-                    alt=""
-                  />
-                </div>
-              </div>
-              {showValidation && formik.errors.Category && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Category}
-                </div>
-              )}
-              {showSelect && (
-                <div className="w-full z-20 shadow-200 py-1 px-3 rounded-br-2xl rounded-bl-2xl absolute bg-backgroundColor-Card border border-gray-50 top-[56px]">
-                  {groups.map((groupObj, index) => {
-                    const groupName = Object.keys(groupObj)[0];
-                    return (
-                      <div
-                        key={index}
-                        onClick={() => {
-                          formik.setFieldValue('Category', groupName);
-                          if (groupName !== 'Supplement') {
-                            formik.setFieldValue('Dose', '');
-                          }
-                          setShowSelect(false);
-                        }}
-                        className="text-[12px] text-Text-Primary my-1 cursor-pointer"
-                      >
-                        {groupName}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-xs font-medium">Title</label>
-              <input
-                name="Recommendation"
-                value={formik.values.Recommendation}
-                onChange={formik.handleChange}
-                placeholder="Write recommendation's title…"
-                type="text"
-                className={`mt-1 text-xs block w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && formik.errors.Recommendation
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-              />
-              {showValidation && formik.errors.Recommendation && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Recommendation}
-                </div>
-              )}
-            </div>
+            <SelectBoxField
+              label="Category"
+              options={groups.map((group) => Object.keys(group)[0])}
+              value={formik.values.Category}
+              onChange={(value) => {
+                formik.setFieldValue('Category', value);
+                if (value !== 'Supplement') {
+                  formik.setFieldValue('Dose', '');
+                }
+              }}
+              isValid={showValidation && Boolean(formik.errors.Category)}
+              validationText={
+                showValidation && formik.errors.Category
+                  ? String(formik.errors.Category)
+                  : ''
+              }
+              placeholder="Select Group"
+            />
+            <TextField
+              label="Title"
+              placeholder="Write recommendation's title…"
+              value={formik.values.Recommendation}
+              onChange={(e) => {
+                formik.setFieldValue('Recommendation', e.target.value);
+              }}
+              isValid={showValidation && Boolean(formik.errors.Recommendation)}
+              validationText={
+                showValidation && formik.errors.Recommendation
+                  ? String(formik.errors.Recommendation)
+                  : ''
+              }
+              margin="mb-4"
+            />
             <TextField
               label="Dose"
               value={formik.values.Dose}
@@ -434,74 +391,29 @@ const EditModal: FC<EditModalProps> = ({
             />
 
             {/* Instructions Field */}
-            {/* <div className="mb-4">
-              <label className="flex w-full gap-1 items-center text-xs font-medium">
-                Instructions
-              </label>
-              <input
-                name="Instruction"
-                value={formik.values.Instruction}
-                onChange={formik.handleChange}
-                placeholder="Write the action's instruction..."
-                type="text"
-                className={`mt-1 text-xs block resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${showValidation && formik.errors.Instruction ? 'border-red-500' : 'border-Gray-50'} rounded-2xl outline-none placeholder:text-Text-Fivefold`}
-              />
-              {showValidation && formik.errors.Instruction && (
-                <div className="text-Red text-[10px] mt-1">
-                  {formik.errors.Instruction}
-                </div>
-              )}
-            </div> */}
-            <div className="mb-4">
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Instructions{' '}
-                <img
-                  className="cursor-pointer w-2 h-2"
-                  data-tooltip-id={'more-info-Instructions'}
-                  src="/icons/info-circle-blue.svg"
-                  alt=""
-                />
-              </label>
-              <textarea
-                name="Instruction"
-                value={newInstruction}
-                onChange={(e) => {
-                  setNewInstruction(e.target.value);
-                }}
-                placeholder="Write the action's instruction..."
-                onKeyDown={handleInstructionKeyDown}
-                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation &&
-                  (newInstruction.length > 400 ||
-                    (newInstruction.length === 0 &&
-                      client_versions.length == 0))
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-                rows={4}
-              />
-              <div className="flex justify-between items-center mt-1">
-                <Tooltip
-                  id="more-info-Instructions"
-                  place="right"
-                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                >
-                  After writing each instruction, press the Enter key to save it
-                  and be able to add another instruction.
-                </Tooltip>
-                {/* <span className="text-[10px] text-Text-Quadruple">
-                  {newNote.length}/400 characters
-                </span> */}
-              </div>
-              {showValidation &&
+            <TextAreaField
+              label="Instructions"
+              placeholder="Write the action's instruction..."
+              value={newInstruction}
+              onChange={(e) => {
+                setNewInstruction(e.target.value);
+              }}
+              onKeyDown={handleInstructionKeyDown}
+              isValid={
+                showValidation &&
                 (newInstruction.length > 400 ||
-                  (newInstruction.length === 0 &&
-                    client_versions.length == 0)) && (
-                  <div className="text-Red text-[10px] mt-1">
-                    {handleInstructionValidationText()}
-                  </div>
-                )}
-            </div>
+                  (newInstruction.length === 0 && client_versions.length == 0))
+              }
+              validationText={
+                showValidation &&
+                (newInstruction.length > 400 ||
+                  (newInstruction.length === 0 && client_versions.length == 0))
+                  ? handleInstructionValidationText()
+                  : ''
+              }
+              InfoText="After writing each instruction, press the Enter key to save it and be able to add another instruction."
+              margin="mb-4"
+            />
             <div className="mb-4 flex flex-col gap-2">
               {client_versions.map((note, index) => (
                 <div key={index} className="w-full flex gap-1 items-start">
@@ -544,49 +456,23 @@ const EditModal: FC<EditModalProps> = ({
             </div> */}
 
             {/* Client Notes */}
-            <div className="mb-4">
-              <label className="text-xs font-medium flex items-start gap-[2px]">
-                Client Notes{' '}
-                <img
-                  className="cursor-pointer w-2 h-2"
-                  data-tooltip-id={'more-info-notes'}
-                  src="/icons/info-circle-blue.svg"
-                  alt=""
-                />
-              </label>
-              <textarea
-                value={newNote}
-                onChange={(e) => {
-                  setNewNote(e.target.value);
-                }}
-                onKeyDown={handleNoteKeyDown}
-                className={`mt-1 block text-xs resize-none w-full bg-backgroundColor-Card py-1 px-3 border ${
-                  showValidation && newNote.length > 400
-                    ? 'border-Red'
-                    : 'border-Gray-50'
-                } rounded-2xl outline-none`}
-                rows={4}
-                placeholder="Write notes ..."
-              />
-              <div className="flex justify-between items-center mt-1">
-                <Tooltip
-                  id="more-info-notes"
-                  place="right"
-                  className="!bg-white !w-[310px] !leading-5 !text-wrap !shadow-100 !text-Text-Primary !text-[10px] !rounded-[6px] !border !border-Gray-50 flex flex-col !z-[99999]"
-                >
-                  After writing each note, press the Enter key to save it and be
-                  able to add another note.
-                </Tooltip>
-                {/* <span className="text-[10px] text-Text-Quadruple">
-                  {newNote.length}/400 characters
-                </span> */}
-              </div>
-              {showValidation && newNote.length > 400 && (
-                <div className="text-Red text-[10px] mt-1">
-                  You can enter up to 400 characters.
-                </div>
-              )}
-            </div>
+            <TextAreaField
+              label="Client Notes"
+              placeholder="Write notes ..."
+              value={newNote}
+              onChange={(e) => {
+                setNewNote(e.target.value);
+              }}
+              onKeyDown={handleNoteKeyDown}
+              isValid={showValidation && newNote.length > 400}
+              validationText={
+                showValidation && newNote.length > 400
+                  ? 'You can enter up to 400 characters.'
+                  : ''
+              }
+              InfoText="After writing each note, press the Enter key to save it and be able to add another note."
+              margin="mb-4"
+            />
 
             {/* Notes List */}
             <div className="mb-4 flex flex-col gap-2">
