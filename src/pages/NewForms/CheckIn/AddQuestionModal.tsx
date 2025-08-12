@@ -110,7 +110,7 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
 
   return (
     <>
-      <div className="w-full rounded-2xl p-4  mb-3 mt-2">
+      <div className="w-full rounded-2xl p-2 md:p-4  mb-3 mt-2">
         <div className="w-full flex items-center justify-between">
           <div className="text-Text-Primary text-xs font-medium flex items-center gap-2">
             <div
@@ -226,13 +226,13 @@ const AddQuestionsModal: React.FC<AddQuestionsModalProps> = ({
           </label>
         </div>
         <div
-          className={`flex flex-wrap items-start gap-2 mt-2 bg-backgroundColor-Card border rounded-[14px] p-4 ${type == '' && showValidation ? ' border-Red ' : 'border-Gray-50'}`}
+          className={`flex flex-wrap items-start gap-2 mt-2 bg-backgroundColor-Card overflow-auto  md:overflow-hidden h-[250px] md:h-auto border rounded-[14px] p-4 ${type == '' && showValidation ? ' border-Red ' : 'border-Gray-50'}`}
         >
           {checkInTypes.map((item, index) => {
             return (
               <>
                 <div
-                  className={`flex items-center justify-start w-[49%] h-[40px] rounded-xl px-3 py-1 border ${type === item.title ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'} cursor-pointer`}
+                  className={`flex items-center justify-start w-full md:w-[49%] h-[40px] rounded-xl px-3 py-1 border ${type === item.title ? 'border-Primary-EmeraldGreen' : 'border-Gray-50'} cursor-pointer`}
                   key={index}
                   onClick={() => {
                     if (type === item.title) {

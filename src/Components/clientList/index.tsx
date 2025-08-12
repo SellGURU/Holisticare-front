@@ -415,7 +415,7 @@ const ClientList = () => {
                     </div>
                     <div className="w-full relative  flex  justify-end gap-[6px] sm:gap-3 items-center">
                       {showSearch ? (
-                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[300px] xs:min-w-[360px] md:min-w-[90px] xl:min-w-[360px] rounded-2xl">
+                        <div className="   max-sm-absolute  w-full top-8  z-50 min-w-[260px] xs:min-w-[360px] md:min-w-[90px] xl:min-w-[360px] rounded-2xl">
                           <SearchBox
                             style={{ width: '100%' }}
                             id="searchBar"

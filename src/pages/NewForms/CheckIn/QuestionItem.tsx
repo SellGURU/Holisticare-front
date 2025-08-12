@@ -24,16 +24,15 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
     <>
       <div className="flex items-center justify-between w-full h-[36px] py-2 px-4 bg-backgroundColor-Card rounded-xl border border-Gray-50">
         <div className="text-Text-Quadruple text-ellipsis overflow-hidden text-nowrap text-[10px] w-[60%]">
-          {index != undefined ? index + 1 : ''}
+          {index != undefined ? index + 1 + '.' : ''}
           {'  '}
           {question.question}
         </div>
-        <div className="flex items-center justify-between w-[40%]">
+        <div className="flex items-center justify-between w-full gap-4 md:w-[40%]">
           <div className="text-Orange text-[8px] flex items-center justify-center w-[41%]">
             {question.required ? (
               <img
                 src="./icons/danger-new.svg"
-                alt=""
                 className="w-[12px] h-[12px] mr-1"
               />
             ) : (
@@ -41,11 +40,11 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             )}
             {question.required ? 'Required' : ''}
           </div>
-          <div className="text-Text-Quadruple text-[10px] w-[30%] flex items-center justify-center text-nowrap">
+          <div className="text-Text-Quadruple text-[10px] md:w-[30%] flex items-center justify-center text-nowrap">
             {question.type}
           </div>
           <div
-            className={`flex items-center justify-end ${sureRemove ? 'w-[35%]' : 'w-[24%]'}`}
+            className={`flex items-center justify-end ${sureRemove ? 'md:w-[35%]' : 'md:w-[24%]'}`}
           >
             <>
               {isReposition ? (

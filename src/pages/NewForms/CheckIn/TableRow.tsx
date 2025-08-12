@@ -94,7 +94,7 @@ const TableRow: FC<TableRowProps> = ({
               onClick={handleOpenModal}
               src="/icons/more-blue.svg"
               alt=""
-              className="cursor-pointer px-4 py-2"
+              className="cursor-pointer md:px-4 py-2"
             />
           </div>
         </td>

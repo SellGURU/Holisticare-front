@@ -102,12 +102,12 @@ const CustomBiomarkers = () => {
   };
   return (
     <>
-      <div className="fixed w-full z-30 bg-bg-color px-6 pt-8 pb-2 md:pr-[200px]">
-        <div className="w-full flex justify-between items-center">
+      <div className="fixed w-full z-30 bg-bg-color px-2 md:px-6 pt-8 pb-2 md:pr-[200px]">
+        <div className="w-full flex flex-col md:flex-row gap-4 justify-between md:items-center">
           <div className="text-Text-Primary font-medium opacity-[87%] text-nowrap">
             Custom Biomarker
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row pr-4 md:pr-0 md:items-center gap-4">
             <SearchBox
               value={searchValue}
               ClassName="rounded-2xl !h-7 !py-[0px] !px-3 !shadow-[unset]"
@@ -141,7 +141,7 @@ const CustomBiomarkers = () => {
           </div>
         </>
       ) : (
-        <div className="w-full min-h-full px-6 py-[80px]">
+        <div className="w-full min-h-full px-2 md:px-6 py-[80px]">
           {resolveAllBenchmarks().map((benchmark) => {
             return (
               <BioMarkerBox
